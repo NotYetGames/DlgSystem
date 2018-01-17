@@ -1,0 +1,36 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+#pragma once
+
+#include "CoreMinimal.h"
+
+#include "DlgNode.h"
+
+#include "DlgNode_End.generated.h"
+
+
+/**
+ * Node ending the Dialogue.
+ * Does not have text, if it is entered the Dialogue is over.
+ * Events and enter conditions are taken into account.
+ */
+UCLASS(BlueprintType)
+class DLGSYSTEM_API UDlgNode_End : public UDlgNode
+{
+	GENERATED_BODY()
+
+public:
+	// Begin UObject Interface.
+	/** @return a one line description of an object. */
+	FString GetDesc()
+	{
+		return TEXT("Node ending the Dialogue.\nDoes not have text, if it is entered the Dialogue is over.\nEvents and enter conditions are taken into account.");
+	}
+
+	// Begin UDlgNode Interface.
+	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyEvaluated) override { return false; }
+	bool OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext) override { return false; }
+
+#if WITH_EDITOR
+	FString GetNodeTypeString() const override { return TEXT("End"); }
+#endif
+};

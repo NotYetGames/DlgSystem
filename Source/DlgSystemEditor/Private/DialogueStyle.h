@@ -1,0 +1,46 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+#pragma once
+
+#include "SlateStyle.h"
+
+// how everything looks, fancy stuff
+class FDialogueStyle
+{
+public:
+	static void Initialize();
+
+	static void Shutdown();
+
+	static TSharedPtr<ISlateStyle> Get() { return StyleSet; }
+
+	/** Gets the style name. */
+	static FName GetStyleSetName() { return TEXT("DlgSystemStyle"); }
+
+	/** Gets the small property name variant */
+	static FName GetSmallProperty(const FName& PropertyName)
+	{
+		return FName(*(PropertyName.ToString() + TEXT(".Small")));
+	}
+
+public:
+	static const FName PROPERTY_DialogueClassIcon;
+	static const FName PROPERTY_DialogueClassThumbnail;
+	static const FName PROPERTY_GraphNodeCircleBox;
+
+	static const FName PROPERTY_ConditionIcon;
+	static const FName PROPERTY_EventIcon;
+	static const FName PROPERTY_QuestionMarkIcon;
+	static const FName PROPERTY_ReloadAssetIcon;
+	static const FName PROPERTY_OpenAssetIcon;
+	static const FName PROPERTY_FindAssetIcon;
+
+	static const FName PROPERTY_SaveAllDialoguesIcon;
+	static const FName PROPERTY_FindDialogueIcon;
+	static const FName PROPERTY_BrowseDialogueIcon;
+
+	static const FName PROPERTY_FindInDialogueEditorIcon;
+	static const FName PROPERTY_FindInAllDialogueEditorIcon;
+
+private:
+	static TSharedPtr<FSlateStyleSet> StyleSet;
+};

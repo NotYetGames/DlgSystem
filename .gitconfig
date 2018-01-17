@@ -1,0 +1,7 @@
+[core]
+	symlinks = true
+	autocrlf = input
+	eol = lf
+[color "diff"]
+	whitespace = red reverse
+

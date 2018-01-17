@@ -1,0 +1,92 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+#pragma once
+
+#include "PropertyEditorModule.h"
+#include "IDetailCustomization.h"
+#include "IDetailPropertyRow.h"
+
+#include "DlgManager.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode.h"
+#include "DialogueDetailsPanelUtils.h"
+
+class FTextPropertyPickList_CustomRowHelper;
+class FMultiLineEditableTextBox_CustomRowHelper;
+
+/**
+ * How the details customization panel looks for UDialogueGraphNode object
+ * See FDlgSystemEditorModule::StartupModule for usage.
+ */
+class FDialogueGraphNode_Details : public IDetailCustomization
+{
+	typedef FDialogueGraphNode_Details Self;
+
+public:
+	// Makes a new instance of this detail layout class for a specific detail view requesting it
+	static TSharedRef<IDetailCustomization> MakeInstance() { return MakeShareable(new Self); }
+
+	// IDetailCustomization interface
+	/** Called when details should be customized */
+	void CustomizeDetails(IDetailLayoutBuilder& DetailBuilder) override;
+private:
+
+	/** Gets the ParticipantNames from all Dialogues. */
+	TArray<FName> GetAllDialoguesParticipantNames() const
+	{
+		TArray<FName> OutArray;
+		UDlgManager::GetAllDialoguesParticipantNames(OutArray);
+		return OutArray;
+	}
+
+	/** Gets the current Dialogue Participant Names. */
+	TArray<FName> GetCurrentDialogueParticipantNames() const
+	{
+		return DetailsPanel::GetDialogueSortedParticipantNames(Dialogue);
+	}
+
+	/** Handler for when text in the editable text box changed */
+	void HandleParticipantTextCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo)
+	{
+		Dialogue->RefreshData();
+	}
+
+	// The IsVirtualParent property changed
+	void OnIsVirtualParentChanged();
+
+	// Getters for visibility of some properties
+	EVisibility GetVoiceSoundWaveVisibility() const
+	{
+		const UDlgEditorSettings* Settings = GetDefault<UDlgEditorSettings>();
+		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWave ||
+			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWaveAndDialogueWave
+			   ? EVisibility::Visible : EVisibility::Hidden;
+	}
+
+	EVisibility GetVoiceDialogueWaveVisibility() const
+	{
+		const UDlgEditorSettings* Settings = GetDefault<UDlgEditorSettings>();
+		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedDialogueWave ||
+			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWaveAndDialogueWave
+			   ? EVisibility::Visible : EVisibility::Hidden;
+	}
+
+private:
+	/** Hold the reference to the Graph Node this represents */
+	UDialogueGraphNode* GraphNode = nullptr;
+
+	/** Cache some properties. */
+	// Property Handles
+	TSharedPtr<IPropertyHandle> IsVirtualParentPropertyHandle;
+	TSharedPtr<IPropertyHandle> TextPropertyHandle;
+
+	// Property rows
+	TSharedPtr<FTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
+	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
+	IDetailPropertyRow* VoiceSoundWavePropertyRow = nullptr;
+	IDetailPropertyRow* VoiceDialogueWavePropertyRow = nullptr;
+
+	/** The details panel layout builder reference. */
+	IDetailLayoutBuilder* DetailLayoutBuilder = nullptr;
+
+	/** Hold a reference to dialogue we are displaying. */
+	UDlgDialogue* Dialogue = nullptr;
+};

@@ -1,0 +1,65 @@
+DlgVersion 5
+DlgName "TestDialogue"
+DlgGuid {  A -743047120 B 1156639802 C 1124860857 D 1676713096 }
+Node_Speech StartNode
+{
+	Text ""
+	bIsVirtualParent False
+	OwnerName "None"
+	bCheckChildrenOnEvaluation False
+	Children
+	{
+		{  TargetIndex 0 Text "Next" }
+		{  TargetIndex 1 Text "" }
+	}
+}
+Node Nodes
+{
+	// 0
+	Node_Speech 
+	{
+		Text "I can talk!"
+		bIsVirtualParent False
+		OwnerName "TestOwner"
+		bCheckChildrenOnEvaluation False
+		EnterConditions { {  Strength "EDlgConditionStrength::DlgConditionStrengthStrong" ConditionType "EDlgConditionType::DlgConditionIntCall" ParticipantName "None" CallbackName "NodeVariable" Operation "EDlgOperation::DlgEqual" IntValue 0 FloatValue 0.0 bBoolValue True bLongTermMemory True } }
+		EnterEvents { {  ParticipantName "None" EventType "EDlgEventType::DlgEventModifyInt" EventName "NodeVariable" IntValue 0 FloatValue 0.0 bDelta False bValue False } }
+		Children
+		{
+			{
+				TargetIndex 2
+				Text "Next"
+				Conditions { {  Strength "EDlgConditionStrength::DlgConditionStrengthStrong" ConditionType "EDlgConditionType::DlgConditionIntCall" ParticipantName "None" CallbackName "EdgeVariable" Operation "EDlgOperation::DlgEqual" IntValue 100 FloatValue 0.0 bBoolValue True bLongTermMemory True } }
+			}
+		}
+	}
+	// 1
+	Node_Speech 
+	{
+		Text "Meow. Yeah I can speak too"
+		bIsVirtualParent False
+		OwnerName "Cat"
+		bCheckChildrenOnEvaluation False
+		Children { {  TargetIndex 2 Text "Next" } }
+	}
+	// 2
+	Node_Speech 
+	{
+		Text "You don't say?"
+		bIsVirtualParent False
+		OwnerName "TestOwner"
+		bCheckChildrenOnEvaluation False
+		EnterEvents
+		{
+			{  ParticipantName "None" EventType "EDlgEventType::DlgEventModifyInt" EventName "DefaultValue" IntValue 0 FloatValue 0.0 bDelta False bValue False }
+			{  ParticipantName "None" EventType "EDlgEventType::DlgEventModifyInt" EventName "Default" IntValue 0 FloatValue 0.0 bDelta False bValue False }
+		}
+		Children { {  TargetIndex 3 Text "Finish" } }
+	}
+	// 3
+	Node_End 
+	{
+		OwnerName "TestOwner"
+		bCheckChildrenOnEvaluation False
+	}
+}

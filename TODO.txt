@@ -1,0 +1,66 @@
+TODO list:
+- validate if the dialogue text files data is valid
+- better error communication between the DlgSystem and DlgSystemEditor
+- add compile error text to nodes, Use ValidateNodeDuringCompilation
+- add search functionality for nodes, search by name, description, variable names, etc.
+- find a way to add one condition icon for each condition. Can be same condition icon multiple times or the edge icon multiple times.
+
+Future TODO list:
+- diff editor view
+- add complex tooltips, something like the animation state machines
+- fix FDlgCondition::IntValue weak value reference to a NodeIndex when the condition is of type DlgConditionNodeVisited in a more smarter way
+   (maybe fake it with the custom details panel and use this as the value? https://docs.unrealengine.com/latest/INT/API/Runtime/CoreUObject/UObject/UObjectBase/GetUniqueID/index.html)
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+DONE:
+- do NOT trust the user input from text files, especially the GUID
+- handle renames when using both export formats
+- handle deletions when using both export formats
+- dialogue overview panel
+	- it could display data gathered from all dialogues: could contain a list of participants, and detailed data from the selected participant: which dialogues is he/she in, which events, conditions, variables does he/she have
+	the dialogues should have a "find in content browser" button which jumps the content browser to the dialogue (a button like that is pretty common in the engine)
+	- if an event is selected it should list the dialogues it is in, and the node id-s of the nodes inside each dialogue
+
+- add context sensitive custom text pick list (like blueprints)
+- find a way to remove the state of the last GraphEdge after ctrl + click on an wire then dismissing the context menu
+- autocomplete "Variable Name" / "Event Name" like blueprint nodes
+- Add custom Name/Owner selection to all structures in the details view
+- reassign node visited index on copy paste nodes
+- add filters in the content browser for types that implement our Dialogue interface.
+- make undo/redo work
+- make display options to show only primary or only secondary nodes
+- distinguish between primary edges and secondary edges (check node_categorisation.png),
+- icons on node: [has condition icon] [has event icon], later maybe [has voice] icon
+- Fix saving of .dlg files when saving uasset files from the UEEditor save prompt right before quiting
+- Fix deleting of uasset, also delete the .dlg file
+- break speech sequence into speech nodes
+- add dialogue editor settings, something similar to UGraphEditorSettings
+- fixed smaller max node width (best would be if we could break the text into more line, but still the size of the nodes sohuld be limited)
+- Fix moving of uasset, also move the .dlg file
+- Dropdown for character names instead of writing them all the time
+- fix FDlgCondition::IntValue weak value reference to a NodeIndex when the condition is of type DlgConditionNodeVisited
+- node type should not be mentioned in the node title
+- child node's "x" coordinate should determine the order on compile (children array)
+- selectable edges something similar to the animation state machines (AnimationBlueprintEditor)
+- make the nodes looks nicer, maybe something like the animation nodes or the behvaviour tree nodes (BehaviourTreeEditor)
+- find a way to to export the dialogue data when clicking on the save button
+- (NO NEED for this) add compile button and make compile work
+   Meaning that the dialogue data is updated from the graph and everything is fine and dandy
+- find a way to handle desyncs between the text file, dialogue data and the graph data (maybe there should a priority of what data is more important),
+there can be multiple situations:
+    1. text file (.dlg) != dialogue data && dialogue data == graph data
+    2. text file (.dlg) == dialogue data && dialogue data != graph data
+    3. text file (.dlg) != dialogue data && dialogue data != graph data
+    4. (THIS IS FINE) text file (.dlg) == dialogue data && dialogue data == graph data
+    All of these assume that the text file (.dlg) has no relation to the graph data that is because
+    the flow of data should be text file -> dialogue data -> graph data when loading.
+    And when saving it should be graph data -> dialogue data -> text file (.dlg)
+                                            ^                ^
+                                            |                |
+                                          compile        export/save
+	SOLVED by:
+	- no need for the compile button, the compile happens after save or after operations are done in the editor
+	- you do something in the editor, the graph data changes and dialogue data will be compiled from the graph data
+	- you press the save button, the graph data -> dialogue data -> text file (.dlg) and the uasset is saved to
+	- you press the reload buttton, everything is updated according to text file -> dialogue data -> graph data
+	- when you manually edit the Dialgoue data properties it will update the graph data automatically

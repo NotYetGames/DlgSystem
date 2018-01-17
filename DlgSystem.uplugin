@@ -1,0 +1,28 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "DlgSystem",
+	"Description": "Dialogue system (with text based dialogues) and nice Editor for editing dialogues",
+	"Category": "Editor",
+	"CreatedBy": "NotYetGames",
+	"CreatedByURL": "https://gitlab.com/NotYetGames/DlgSystem",
+	"DocsURL": "https://gitlab.com/NotYetGames/DlgSystem",
+	"MarketplaceURL": "",
+	"SupportURL": "https://gitlab.com/NotYetGames/DlgSystem",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "DlgSystem",
+			"Type": "Runtime",
+			"LoadingPhase": "PreDefault"
+		},
+		{
+			"Name": "DlgSystemEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit"
+		}
+	]
+}

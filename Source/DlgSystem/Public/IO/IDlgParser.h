@@ -1,0 +1,90 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+#pragma once
+
+#include "UnrealType.h"
+#include "UObjectIterator.h"
+#include "Array.h"
+#include "Object.h"
+
+class DLGSYSTEM_API IDlgParser
+{
+public:
+	virtual ~IDlgParser() {}
+
+	/** Initializes the parser with the specified FilePath. */
+	virtual void InitializeParser(const FString& FilePath) = 0;
+	/** Initializes the parser with the speficied input string */
+	virtual void InitializeParserFromString(const FString& Text) {};
+
+	/** Is the parsed file valid? */
+	virtual bool IsValidFile() const = 0;
+
+	/**
+	 * Reads all property from the config file.
+	 *
+	 * @param ReferenceClass: UStruct (or UClass) of the TargetObject
+	 * @param TargetObject: pointer to the object instance the function will modify based on the config values
+	 * @param DefaultObjectOuter: Outer used for UObject construction if necessary
+	 */
+	virtual void ReadAllProperty(const UStruct* ReferenceClass, void* TargetObject, UObject* DefaultObjectOuter = nullptr) = 0;
+
+protected:
+	// the old removed engine function this code still uses a lot:
+	template<typename T>
+	T* SmartCastProperty(UProperty* Src)
+	{
+		T* Result = dynamic_cast<T*>(Src);
+		if (Result == nullptr)
+		{
+			UArrayProperty* ArrayProp = dynamic_cast<UArrayProperty*>(Src);
+			if (ArrayProp != nullptr)
+			{
+				Result = dynamic_cast<T*>(ArrayProp->Inner);
+			}
+		}
+		return Result;
+	}
+
+	/**
+	 * Searches the proper not abstract class
+	 *
+	 * @param ParentClass: the class we are looking for has to inherit from this class
+	 * @param Name: the name of the class we are looking for (without engine pretags, e.g. Actor for AActor)
+	 *
+	 * @return the class, or nullptr if it does not exist
+	 */
+	const UClass* GetChildClassFromName(const UClass* ParentClass, const FString& Name)
+	{
+		for (UClass* Class : StructCache)
+		{
+			if (Class->IsChildOf(ParentClass) && Class->GetName() == Name)
+			{
+				return Class;
+			}
+		}
+
+		for (TObjectIterator<UClass> It; It; ++It)
+		{
+			if (It->IsChildOf(ParentClass) && !It->HasAnyClassFlags(CLASS_Abstract) && (*It)->GetName() == Name)
+			{
+				StructCache.Add(*It);
+				return *It;
+			}
+		}
+
+		return nullptr;
+	}
+
+	/**
+	 * Default way to create new objects
+	 */
+	static UObject* CreateDefaultUObject(const UClass* StructDefinition, UObject* ObjectOuter)
+	{
+		return NewObject<UObject>(ObjectOuter == nullptr ? (UObject*)GetTransientPackage() : ObjectOuter,
+								 const_cast<UClass*>(StructDefinition), NAME_None, RF_Transactional);
+	}
+
+protected:
+	/** each time a class is read it also cached here, so next time when it has to be found based on name it can be found faster */
+	TArray<UClass*> StructCache;
+};
