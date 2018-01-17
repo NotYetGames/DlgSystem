@@ -23,7 +23,7 @@ charset = utf-8
 indent_style = space
 indent_size = 2
 
-# Bash files
-[*.sh]
+# Bash/Python files
+[*.{sh, py}]
 indent_style = space
 indent_size = 4

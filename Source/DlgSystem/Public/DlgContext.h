@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
 #include "DlgDialogue.h"

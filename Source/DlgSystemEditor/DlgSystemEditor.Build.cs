@@ -1,4 +1,4 @@
-// Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
+// Copyright 2017-2018 Csaba Molnar, Daniel Butum
 
 using UnrealBuildTool;
 

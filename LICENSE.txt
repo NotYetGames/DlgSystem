@@ -1,4 +1,4 @@
-Anything if not otherwise specified is covered under the MIT license.
+Anything not covered by the Unreal Engine EULA and if not otherwise specified is covered under the MIT license.
 
 MIT License
 
