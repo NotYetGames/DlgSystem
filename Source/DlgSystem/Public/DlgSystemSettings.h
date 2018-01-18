@@ -49,7 +49,7 @@ enum class EDlgVoiceDisplayedFields : uint8
 // Config = DlgSystemPlugin, DefaultConfig
 // UDeveloperSettings classes are autodiscovered https://wiki.unrealengine.com/CustomSettings
 UCLASS(Config = EditorPerProjectUserSettings, DefaultConfig, meta = (DisplayName = "Dialogue Editor Settings"))
-class UDlgSystemSettings : public UDeveloperSettings
+class DLGSYSTEM_API UDlgSystemSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
 

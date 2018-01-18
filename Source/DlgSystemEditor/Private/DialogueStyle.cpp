@@ -27,6 +27,9 @@ const FName FDialogueStyle::PROPERTY_QuestionMarkIcon(TEXT("DlgSystemEditor.Ques
 
 // Tied with FDialogueEditorCommands::DialogueReloadData
 const FName FDialogueStyle::PROPERTY_ReloadAssetIcon(TEXT("DlgSystemEditor.DialogueReloadData"));
+
+// Tied with FDialogueEditorCommands::ToggleShowPrimarySecondaryEdges
+const FName FDialogueStyle::PROPERTY_ShowPrimarySecondaryEdgesIcon(TEXT("DlgSystemEditor.ToggleShowPrimarySecondaryEdges"));
 const FName FDialogueStyle::PROPERTY_OpenAssetIcon(TEXT("DlgSystemEditor.OpenAsset.Icon"));
 const FName FDialogueStyle::PROPERTY_FindAssetIcon(TEXT("DlgSystemEditor.FindAsset.Icon"));
 
@@ -41,7 +44,10 @@ const FName FDialogueStyle::PROPERTY_FindInDialogueEditorIcon(TEXT("DlgSystemEdi
 // Tied with FDialogueEditorCommands::FindInAllDialogues
 const FName FDialogueStyle::PROPERTY_FindInAllDialogueEditorIcon(TEXT("DlgSystemEditor.FindInAllDialogues"));
 
+// The private ones
 TSharedPtr<FSlateStyleSet> FDialogueStyle::StyleSet = nullptr;
+FString FDialogueStyle::EngineContentRoot = FString();
+FString FDialogueStyle::PluginContentRoot = FString();
 
 void FDialogueStyle::Initialize()
 {
@@ -51,13 +57,14 @@ void FDialogueStyle::Initialize()
 		return;
 	}
 
-	// register the current style
 	StyleSet = MakeShareable(new FSlateStyleSet(GetStyleSetName()));
+	EngineContentRoot = FPaths::EngineContentDir() / TEXT("Editor/Slate");
 	TSharedPtr<IPlugin> CurrentPlugin = IPluginManager::Get().FindPlugin(DIALOGUE_SYSTEM_PLUGIN_NAME);
 	if (CurrentPlugin.IsValid())
 	{
 		// Replaces the Engine Content Root (Engine/Editor/Slate) with the plugin content root
 		StyleSet->SetContentRoot(CurrentPlugin->GetContentDir());
+		PluginContentRoot = CurrentPlugin->GetContentDir();
 	}
 	else
 	{
@@ -65,38 +72,48 @@ void FDialogueStyle::Initialize()
 		return;
 	}
 
-#define IMAGE_PLUGIN_BRUSH(RelativePath, ...) FSlateImageBrush(StyleSet->RootToContentDir(RelativePath, TEXT(".png")), __VA_ARGS__)
-#define BOX_BRUSH(RelativePath, ... ) FSlateBoxBrush(StyleSet->RootToContentDir(RelativePath, TEXT(".png")), __VA_ARGS__ )
+	StyleSet->Set(PROPERTY_DialogueClassIcon, new FSlateImageBrush(GetPluginContentPath("Icons/Dialogue_16x.png"), Icon16x16));
+	StyleSet->Set(PROPERTY_DialogueClassThumbnail,  new FSlateImageBrush(GetPluginContentPath("Icons/Dialogue_64x.png"), Icon64x64));
 
-	StyleSet->Set(PROPERTY_DialogueClassIcon, new IMAGE_PLUGIN_BRUSH("Icons/Dialogue_16x", Icon16x16));
-	StyleSet->Set(PROPERTY_DialogueClassThumbnail, new IMAGE_PLUGIN_BRUSH("Icons/Dialogue_64x", Icon64x64));
-	StyleSet->Set(PROPERTY_ReloadAssetIcon, new IMAGE_PLUGIN_BRUSH("Icons/Dialogue_Reload_40x", Icon40x40));
-	StyleSet->Set(GetSmallProperty(PROPERTY_ReloadAssetIcon), new IMAGE_PLUGIN_BRUSH("Icons/Dialogue_Reload_16x", Icon16x16));
-	StyleSet->Set("DlgSystemEditor.ToggleShowPrimarySecondaryEdges", new IMAGE_PLUGIN_BRUSH("Icons/Dialogue_ShowPrimarySecondaryEdges_40x", Icon40x40));
-	StyleSet->Set("DlgSystemEditor.ToggleShowPrimarySecondaryEdges.Small", new IMAGE_PLUGIN_BRUSH("Icons/Dialogue_ShowPrimarySecondaryEdges_40x", Icon16x16));
+	StyleSet->Set(PROPERTY_ReloadAssetIcon,
+				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_Cascade_RestartInLevel_40x.png"), Icon40x40));
+	StyleSet->Set(GetSmallProperty(PROPERTY_ReloadAssetIcon),
+				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_Refresh_16x.png"), Icon16x16));
 
-	StyleSet->Set(PROPERTY_FindInDialogueEditorIcon, new IMAGE_PLUGIN_BRUSH("Icons/Dialogue_Find_40x", Icon40x40));
-	StyleSet->Set(GetSmallProperty(PROPERTY_FindInDialogueEditorIcon), new IMAGE_PLUGIN_BRUSH("Icons/Dialogue_Find_40x", Icon20x20));
+	StyleSet->Set(PROPERTY_ShowPrimarySecondaryEdgesIcon,
+				  new FSlateImageBrush(GetPluginContentPath("Icons/Dialogue_ShowPrimarySecondaryEdges_40x.png"), Icon40x40));
+	StyleSet->Set(GetSmallProperty(PROPERTY_ShowPrimarySecondaryEdgesIcon),
+				  new FSlateImageBrush(GetPluginContentPath("Icons/Dialogue_ShowPrimarySecondaryEdges_40x.png"), Icon16x16));
 
-	StyleSet->Set(PROPERTY_FindInAllDialogueEditorIcon, new IMAGE_PLUGIN_BRUSH("Icons/Dialogue_FindAll_40x", Icon40x40));
-	StyleSet->Set(GetSmallProperty(PROPERTY_FindInAllDialogueEditorIcon), new IMAGE_PLUGIN_BRUSH("Icons/Dialogue_FindAll_40x", Icon20x20));
+	StyleSet->Set(PROPERTY_FindInDialogueEditorIcon,
+				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_Blueprint_Find_40px.png"), Icon40x40));
+	StyleSet->Set(GetSmallProperty(PROPERTY_FindInDialogueEditorIcon),
+				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_Blueprint_Find_40px.png"), Icon20x20));
+
+	StyleSet->Set(PROPERTY_FindInAllDialogueEditorIcon,
+				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_FindInAnyBlueprint_40px.png"), Icon40x40));
+	StyleSet->Set(GetSmallProperty(PROPERTY_FindInAllDialogueEditorIcon),
+				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_FindInAnyBlueprint_40px.png"), Icon20x20));
 
 	// Level Editor Save All Dialogues
-	StyleSet->Set(PROPERTY_SaveAllDialoguesIcon, new IMAGE_PLUGIN_BRUSH("Icons/SaveDialogue_16x", Icon16x16));
-	StyleSet->Set(PROPERTY_FindDialogueIcon, new IMAGE_PLUGIN_BRUSH("Icons/FindDialogue_16x", Icon16x16));
-	StyleSet->Set(PROPERTY_BrowseDialogueIcon, new IMAGE_PLUGIN_BRUSH("Icons/BrowseDialogue_16x", Icon16x16));
+	StyleSet->Set(PROPERTY_SaveAllDialoguesIcon,
+				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_file_saveall_16px.png"), Icon16x16));
+	StyleSet->Set(PROPERTY_FindDialogueIcon, new FSlateImageBrush(GetEngineContentPath("Icons/icon_Genericfinder_16x.png"), Icon16x16));
+	StyleSet->Set(PROPERTY_BrowseDialogueIcon,
+				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_tab_ContentBrowser_16x.png"), Icon16x16));
 
 	// Set common used properties
-	StyleSet->Set(PROPERTY_ConditionIcon, new IMAGE_PLUGIN_BRUSH("Icons/Condition_96x", Icon96x96));
-	StyleSet->Set(PROPERTY_EventIcon, new IMAGE_PLUGIN_BRUSH("Icons/Event_96x", Icon96x96));
-	StyleSet->Set(PROPERTY_QuestionMarkIcon, new IMAGE_PLUGIN_BRUSH("Icons/QuestionMark_16x", Icon16x16));
-	StyleSet->Set(PROPERTY_OpenAssetIcon, new IMAGE_PLUGIN_BRUSH("Icons/OpenAsset_16px", Icon16x16));
-	StyleSet->Set(PROPERTY_FindAssetIcon, new IMAGE_PLUGIN_BRUSH("Icons/FindAsset_16x", Icon16x16));
-	StyleSet->Set(PROPERTY_GraphNodeCircleBox, new BOX_BRUSH("Icons/Circle_20x", Icon20x20, FMargin(8.0f / 20.0f)));
+	StyleSet->Set(PROPERTY_ConditionIcon, new FSlateImageBrush(GetPluginContentPath("Icons/Condition_96x.png"), Icon96x96));
+	StyleSet->Set(PROPERTY_EventIcon, new FSlateImageBrush(GetPluginContentPath("Icons/Event_96x.png"), Icon96x96));
+	StyleSet->Set(PROPERTY_QuestionMarkIcon, new FSlateImageBrush(GetPluginContentPath("Icons/QuestionMark_16x.png"), Icon16x16));
+	StyleSet->Set(PROPERTY_OpenAssetIcon,
+				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_asset_open_16px.png"), Icon16x16));
+	StyleSet->Set(PROPERTY_FindAssetIcon,
+				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_Genericfinder_16x.png"), Icon16x16));
+	StyleSet->Set(PROPERTY_GraphNodeCircleBox,
+				  new FSlateBoxBrush(GetEngineContentPath("BehaviorTree/IndexCircle.png"), Icon20x20, FMargin(8.0f / 20.0f)));
 
-#undef IMAGE_PLUGIN_BRUSH
-#undef BOX_BRUSH
-
+	// Register the current style
 	FSlateStyleRegistry::RegisterSlateStyle(*StyleSet.Get());
 }
 

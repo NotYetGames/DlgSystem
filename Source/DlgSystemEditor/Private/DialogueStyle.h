@@ -22,14 +22,28 @@ public:
 		return FName(*(PropertyName.ToString() + TEXT(".Small")));
 	}
 
+	/** Get the RelativePath to the DlgSystem Content Dir */
+	static FString GetPluginContentPath(const FString& RelativePath)
+	{
+		return PluginContentRoot / RelativePath;
+	}
+
+	/** Get the RelativePath to the Engine Content Dir */
+	static FString GetEngineContentPath(const FString& RelativePath)
+	{
+		return EngineContentRoot / RelativePath;
+	}
+
 public:
 	static const FName PROPERTY_DialogueClassIcon;
 	static const FName PROPERTY_DialogueClassThumbnail;
-	static const FName PROPERTY_GraphNodeCircleBox;
 
+	static const FName PROPERTY_GraphNodeCircleBox;
 	static const FName PROPERTY_ConditionIcon;
 	static const FName PROPERTY_EventIcon;
 	static const FName PROPERTY_QuestionMarkIcon;
+
+	static const FName PROPERTY_ShowPrimarySecondaryEdgesIcon;
 	static const FName PROPERTY_ReloadAssetIcon;
 	static const FName PROPERTY_OpenAssetIcon;
 	static const FName PROPERTY_FindAssetIcon;
@@ -42,5 +56,12 @@ public:
 	static const FName PROPERTY_FindInAllDialogueEditorIcon;
 
 private:
+	/** Singleton instance. */
 	static TSharedPtr<FSlateStyleSet> StyleSet;
+
+	/** Engine content root. */
+	static FString EngineContentRoot;
+
+	/** DlgSystem Content Root */
+	static FString PluginContentRoot;
 };
