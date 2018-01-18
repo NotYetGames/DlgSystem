@@ -21,7 +21,8 @@
 // Unique DlgDialogue Object version id, generated with random
 const FGuid FDlgDialogueObjectVersion::GUID(0x2B8E5105, 0x6F66348F, 0x2A8A0B25, 0x9047A071);
 // Register Dialogue custom version with Core
-FDevVersionRegistration GRegisterDlgDialogueObjectVersion(FDlgDialogueObjectVersion::GUID, FDlgDialogueObjectVersion::LatestVersion, TEXT("Dev-DlgDialogue"));
+FDevVersionRegistration GRegisterDlgDialogueObjectVersion(FDlgDialogueObjectVersion::GUID,
+														  FDlgDialogueObjectVersion::LatestVersion, TEXT("Dev-DlgDialogue"));
 
 // Update dialogue up to the ConvertedNodesToUObject version
 void UpdateDialogueToVersion_ConvertedNodesToUObject(UDlgDialogue* Dialogue)
@@ -304,6 +305,13 @@ void UDlgDialogue::CompileDialogueNodesFromGraphNodes()
 
 void UDlgDialogue::ReloadFromFile()
 {
+	// Simply ignore reloading
+	if (TextFormat == EDlgDialogueTextFormat::DlgDialogueNoTextFormat)
+	{
+		RefreshData();
+		return;
+	}
+
 	StartNode = nullptr;
 	Nodes.Empty();
 
@@ -312,6 +320,7 @@ void UDlgDialogue::ReloadFromFile()
 	UE_LOG(LogDlgSystem, Log, TEXT("Reloading data for Dialogue = `%s` FROM file = `%s`"), *GetPathName(), *TextFileName);
 
 	// TODO(leyyin): Check for errors
+	check(TextFormat != EDlgDialogueTextFormat::DlgDialogueNoTextFormat);
 	switch (TextFormat)
 	{
 		case EDlgDialogueTextFormat::DlgDialogueTextFormatJson:
@@ -379,10 +388,17 @@ void UDlgDialogue::OnAssetSaved()
 
 void UDlgDialogue::ExportToFile() const
 {
+	// Simply ignore saving
+	if (TextFormat == EDlgDialogueTextFormat::DlgDialogueNoTextFormat)
+	{
+		return;
+	}
+
 	// TODO(leyyin): Check for errors
 	const FString& TextFileName = GetTextFilePathName();
 	UE_LOG(LogDlgSystem, Log, TEXT("Exporting data for Dialogue = `%s` TO file = `%s`"), *GetPathName(), *TextFileName);
 
+	check(TextFormat != EDlgDialogueTextFormat::DlgDialogueNoTextFormat)
 	switch (TextFormat)
 	{
 		case EDlgDialogueTextFormat::DlgDialogueTextFormatJson:
@@ -625,6 +641,10 @@ FString UDlgDialogue::GetTextFileExtension(EDlgDialogueTextFormat InTextFormat)
 {
 	switch (InTextFormat)
 	{
+		// Empty
+		case EDlgDialogueTextFormat::DlgDialogueNoTextFormat:
+			return FString();
+
 		// JSON has the .json added at the end
 		case EDlgDialogueTextFormat::DlgDialogueTextFormatJson:
 			return TEXT(".dlg.json");

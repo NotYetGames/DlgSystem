@@ -138,7 +138,8 @@ void FDlgSystemModule::HandleDialogueDeleted(UDlgDialogue* DeletedDialogue)
 
 	// Iterate over all possible text formats
 	const int32 TextFormatsNum = static_cast<int32>(EDlgDialogueTextFormat::DlgDialogueTextFormat_Num);
-	for (int32 TextFormatIndex = 0; TextFormatIndex < TextFormatsNum; TextFormatIndex++)
+	for (int32 TextFormatIndex = static_cast<int32>(EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue);
+			   TextFormatIndex < TextFormatsNum; TextFormatIndex++)
 	{
 		const EDlgDialogueTextFormat CurrentTextFormat = static_cast<EDlgDialogueTextFormat>(TextFormatIndex);
 		const FString FullPathName = TextFilePathName + UDlgDialogue::GetTextFileExtension(CurrentTextFormat);
@@ -201,7 +202,8 @@ void FDlgSystemModule::HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, cons
 
 	// Iterate over all possible text formats
 	const int32 TextFormatsNum = static_cast<int32>(EDlgDialogueTextFormat::DlgDialogueTextFormat_Num);
-	for (int32 TextFormatIndex = 0; TextFormatIndex < TextFormatsNum; TextFormatIndex++)
+	for (int32 TextFormatIndex = static_cast<int32>(EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue);
+			   TextFormatIndex < TextFormatsNum; TextFormatIndex++)
 	{
 		const EDlgDialogueTextFormat CurrentTextFormat = static_cast<EDlgDialogueTextFormat>(TextFormatIndex);
 		const FString FileExtension = UDlgDialogue::GetTextFileExtension(CurrentTextFormat);

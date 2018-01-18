@@ -19,7 +19,7 @@ bool FDlgTestStructPrimitives::operator==(const FDlgTestStructPrimitives& Other)
 {
 	return bBoolean == Other.bBoolean &&
 		   Integer == Other.Integer &&
-		   FMath::Abs(Float - Other.Float) < KINDA_SMALL_NUMBER &&
+		   FMath::IsNearlyEqual(Float, Other.Float) &&
 		   String == Other.String &&
 		   Name == Other.Name &&
 		   Text.ToString() == Other.Text.ToString() &&

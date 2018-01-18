@@ -55,7 +55,6 @@ bool DlgIOTester::TestStruct(const FString& StructDescription)
 	Parser.InitializeParserFromString(Writer.GetAsString());
 	Parser.ReadAllProperty(StructType::StaticStruct(), &ImportedStruct);
 
-
 	if (ExportedStruct == ImportedStruct)
 	{
 		return true;

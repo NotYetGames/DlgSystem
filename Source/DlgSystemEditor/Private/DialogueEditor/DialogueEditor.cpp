@@ -495,7 +495,12 @@ void FDialogueEditor::BindEditorCommands()
 
 	// The toolbar reload button
 	ToolkitCommands->MapAction(DialogueCommands.DialogueReloadData,
-		FExecuteAction::CreateSP(this, &Self::OnCommandDialogueReload));
+		FExecuteAction::CreateSP(this, &Self::OnCommandDialogueReload),
+		FCanExecuteAction::CreateLambda([this]
+		{
+			return GetSettings().DialogueTextFormat != EDlgDialogueTextFormat::DlgDialogueNoTextFormat;
+		})
+	);
 
 	// The Show primary/secondary edge buttons
 	ToolkitCommands->MapAction(DialogueCommands.ToggleShowPrimarySecondaryEdges,
@@ -1011,6 +1016,12 @@ bool FDialogueEditor::CanPasteNodes() const
 
 void FDialogueEditor::OnCommandDialogueReload() const
 {
+	// Ignore
+	if (GetSettings().DialogueTextFormat == EDlgDialogueTextFormat::DlgDialogueNoTextFormat)
+	{
+		return;
+	}
+
 	check(DialogueBeingEdited);
 	const EAppReturnType::Type Response = FPlatformMisc::MessageBoxExt(EAppMsgType::YesNo,
 		TEXT("You are about to overwrite your data in the editor with the data from the text file(.dlg)"),
@@ -1023,7 +1034,7 @@ void FDialogueEditor::OnCommandDialogueReload() const
 	//const FScopedTransaction Transaction(LOCTEXT("DialogueEditorReloadFromFile", "Dialogue Editor: Reload from file"));
 
 	// Opposite of this steps are in the SaveAsset_Execute
-	// Reload data, text file (.dlg) -> dialogue data
+	// Reload data, text file -> dialogue data
 	DialogueBeingEdited->SetTextFormat(GetSettings().DialogueTextFormat);
 	DialogueBeingEdited->ReloadFromFile();
 
