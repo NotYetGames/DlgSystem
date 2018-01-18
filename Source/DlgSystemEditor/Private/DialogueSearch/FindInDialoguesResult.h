@@ -52,7 +52,7 @@ public:
 	/** Is this the root node? Aka no parent. */
 	bool IsRootNode() const { return !Parent.IsValid(); }
 
-	/** Is this the leaft node? Aka no children. */
+	/** Is this the leaf node? Aka no children. */
 	bool IsLeafNode() const { return Children.Num() == 0; }
 
 	/**

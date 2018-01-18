@@ -176,11 +176,14 @@ void SFindInDialogues::MakeSearchQuery(const FString& InSearchString, const bool
 					->QuerySingleDialogue(InSearchString, DialogueEditorPtr.Pin()->GetDialogueBeingEdited(), RootSearchResult);
 
 			// Do now show the Dialogue in the search results.
-//			if (RootSearchResult->Children.Num() == 1)
-//			{
-//				// Should only be one anyways, show the results of the Dialogue as children of the root
-//				RootSearchResult->Children = RootSearchResult->Children[0]->Children;
-//			}
+			if (RootSearchResult->Children.Num() == 1 && RootSearchResult->Children[0].IsValid())
+			{
+				// Make the root be the first result (aka de dialogue).
+				// NOTE: we must keep a reference here otherwise it crashes inside the parent reset
+				FFindInDialoguesResultPtr TempChild = RootSearchResult->Children[0];
+				RootSearchResult = TempChild;
+				RootSearchResult->Parent.Reset();
+			}
 		}
 	}
 	else
@@ -190,7 +193,19 @@ void SFindInDialogues::MakeSearchQuery(const FString& InSearchString, const bool
 	}
 
 	ItemsFound = RootSearchResult->Children;
-	RootSearchResult->ExpandAllChildren(TreeView);
+	if (ItemsFound.Num() == 0)
+	{
+		// Some Items found
+		ItemsFound.Add(MakeShareable(new FFindInDialoguesResult(LOCTEXT("DialogueSearchNoResults", "No Results found"), RootSearchResult)));
+		HighlightText = FText::GetEmpty();
+
+	}
+	else
+	{
+		// No Items found
+		RootSearchResult->ExpandAllChildren(TreeView);
+	}
+
 	TreeView->RequestTreeRefresh();
 }
 
@@ -262,7 +277,7 @@ TSharedRef<ITableRow> SFindInDialogues::HandleGenerateRow(FFindInDialoguesResult
 	// We have categories if we are searching in multiple Dialogues
 	// OR the grandparent of this item is not valid (aka root node)
 	const bool bIsCategoryWidget = !bIsInFindWithinDialogueMode &&
-		(InItem->GetParent().IsValid() && InItem->GetParent().Pin()->IsRootNode());
+		(!InItem->GetParent().IsValid() || (InItem->GetParent().IsValid() && InItem->GetParent().Pin()->IsRootNode()));
 
 	// Category entry
 	if (bIsCategoryWidget)
