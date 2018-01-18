@@ -279,7 +279,6 @@ bool FDlgSystemEditorModule::SaveAllDialogues()
 	TArray<UPackage*> PackagesToSave;
 	for (UDlgDialogue* Dialogue : Dialogues)
 	{
-		Dialogue->SetTextFormat(GetDefault<UDlgSystemSettings>()->DialogueTextFormat);
 		Dialogue->MarkPackageDirty();
 		PackagesToSave.Add(Dialogue->GetOutermost());
 	}

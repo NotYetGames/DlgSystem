@@ -381,9 +381,6 @@ public:
 	/** Adds a new node to this dialogue, returns the index location of the added node in the Nodes array. */
 	int32 AddNode(UDlgNode* NodeToAdd) { return Nodes.Add(NodeToAdd); }
 
-	/** Text format used for the text file */
-	void SetTextFormat(EDlgDialogueTextFormat InTextFormat) { TextFormat = InTextFormat; }
-
 	/**
 	 * @param	bAddExtension	If this adds the .dlg or .dlg.json extension depending on the TextFormat.
 	 * @return The path (as a relative path) and name of the text file, or empty string if something is wrong.
@@ -438,9 +435,6 @@ private:
 
 	// Useful for syncing on the first run with the text file.
 	bool bIsSyncedWithTextFile = false;
-
-	// The text Format used for saving the text file.
-	EDlgDialogueTextFormat TextFormat = EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue;
 
 #if WITH_EDITORONLY_DATA
 	// EdGraph based representation of the DlgDialogue class

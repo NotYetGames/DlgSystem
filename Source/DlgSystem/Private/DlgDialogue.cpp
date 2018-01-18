@@ -306,6 +306,7 @@ void UDlgDialogue::CompileDialogueNodesFromGraphNodes()
 void UDlgDialogue::ReloadFromFile()
 {
 	// Simply ignore reloading
+	const EDlgDialogueTextFormat TextFormat = GetDefault<UDlgSystemSettings>()->DialogueTextFormat;
 	if (TextFormat == EDlgDialogueTextFormat::DlgDialogueNoTextFormat)
 	{
 		RefreshData();
@@ -388,9 +389,10 @@ void UDlgDialogue::OnAssetSaved()
 
 void UDlgDialogue::ExportToFile() const
 {
-	// Simply ignore saving
+	const EDlgDialogueTextFormat TextFormat = GetDefault<UDlgSystemSettings>()->DialogueTextFormat;
 	if (TextFormat == EDlgDialogueTextFormat::DlgDialogueNoTextFormat)
 	{
+		// Simply ignore saving
 		return;
 	}
 
@@ -596,7 +598,7 @@ FString UDlgDialogue::GetTextFilePathName(bool bAddExtension/* = true*/) const
 	if (bAddExtension)
 	{
 		// Modify the extension of the base text file depending on the extension
-		TextFileName += GetTextFileExtension(TextFormat);
+		TextFileName += GetTextFileExtension(GetDefault<UDlgSystemSettings>()->DialogueTextFormat);
 	}
 
 	return TextFileName;

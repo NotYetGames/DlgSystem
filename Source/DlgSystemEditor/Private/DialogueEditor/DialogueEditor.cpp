@@ -113,13 +113,11 @@ FText FDialogueEditor::GetToolkitName() const
 // Begin FAssetEditorToolkit
 void FDialogueEditor::SaveAsset_Execute()
 {
-	DialogueBeingEdited->SetTextFormat(GetSettings().DialogueTextFormat);
 	FAssetEditorToolkit::SaveAsset_Execute();
 }
 
 void FDialogueEditor::SaveAssetAs_Execute()
 {
-	DialogueBeingEdited->SetTextFormat(GetSettings().DialogueTextFormat);
 	FAssetEditorToolkit::SaveAssetAs_Execute();
 }
 // End of FAssetEditorToolkit
@@ -248,9 +246,6 @@ void FDialogueEditor::InitDialogueEditor(const EToolkitMode::Type Mode,
 	// Bind Undo/Redo methods
 	DialogueBeingEdited->SetFlags(RF_Transactional);
 
-	// Set right text format
-	DialogueBeingEdited->SetTextFormat(GetSettings().DialogueTextFormat);
-
 	// Gather data for the showing of primary/secondary edges
 	if (GetSettings().bShowPrimarySecondaryEdges)
 	{
@@ -371,7 +366,6 @@ void FDialogueEditor::SetDialogueBeingEdited(UDlgDialogue* NewDialogue)
 	// set to the new dialogue
 	UDlgDialogue* OldDialogue = DialogueBeingEdited;
 	DialogueBeingEdited = NewDialogue;
-	DialogueBeingEdited->SetTextFormat(GetSettings().DialogueTextFormat);
 
 	// Let the viewport know that we are editing something different
 
@@ -1035,7 +1029,6 @@ void FDialogueEditor::OnCommandDialogueReload() const
 
 	// Opposite of this steps are in the SaveAsset_Execute
 	// Reload data, text file -> dialogue data
-	DialogueBeingEdited->SetTextFormat(GetSettings().DialogueTextFormat);
 	DialogueBeingEdited->ReloadFromFile();
 
 	// Update graph, dialogue data -> graph

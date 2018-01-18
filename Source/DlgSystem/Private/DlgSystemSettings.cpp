@@ -46,14 +46,6 @@ void UDlgSystemSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
 	const FName PropertyName = PropertyChangedEvent.Property != nullptr ? PropertyChangedEvent.Property->GetFName() : NAME_None;
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(Self, DialogueTextFormat))
-	{
-		// Set the new text format to all dialogues
-		for (UDlgDialogue* Dialogue : UDlgManager::GetAllDialoguesFromMemory())
-		{
-			Dialogue->SetTextFormat(DialogueTextFormat);
-		}
-	}
 }
 #endif // WITH_EDITOR
 
