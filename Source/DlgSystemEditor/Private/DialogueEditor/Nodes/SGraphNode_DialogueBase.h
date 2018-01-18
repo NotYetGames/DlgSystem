@@ -7,7 +7,7 @@
 #include "SGraphPanel.h"
 
 #include "DialogueGraphNode.h"
-#include "DlgEditorSettings.h"
+#include "DlgSystemSettings.h"
 
 class SVerticalBox;
 
@@ -70,7 +70,7 @@ protected:
 	UDialogueGraphNode_Base* DialogueGraphNode_Base = nullptr;
 
 	// Cache the Dialogue settings
-	const UDlgEditorSettings* Settings = nullptr;
+	const UDlgSystemSettings* Settings = nullptr;
 
 	/** The area where output/input pins reside */
 	TSharedPtr<SVerticalBox> PinsNodeBox;

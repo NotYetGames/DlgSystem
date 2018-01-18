@@ -8,7 +8,7 @@
 #include "SGraphPanel.h"
 
 #include "DialogueGraphNode.h"
-#include "DlgEditorSettings.h"
+#include "DlgSystemSettings.h"
 #include "SGraphNode_DialogueBase.h"
 
 class SVerticalBox;

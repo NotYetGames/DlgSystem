@@ -55,7 +55,7 @@ private:
 	// Getters for visibility of some properties
 	EVisibility GetVoiceSoundWaveVisibility() const
 	{
-		const UDlgEditorSettings* Settings = GetDefault<UDlgEditorSettings>();
+		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWave ||
 			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWaveAndDialogueWave
 			   ? EVisibility::Visible : EVisibility::Hidden;
@@ -63,7 +63,7 @@ private:
 
 	EVisibility GetVoiceDialogueWaveVisibility() const
 	{
-		const UDlgEditorSettings* Settings = GetDefault<UDlgEditorSettings>();
+		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedDialogueWave ||
 			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWaveAndDialogueWave
 			   ? EVisibility::Visible : EVisibility::Hidden;

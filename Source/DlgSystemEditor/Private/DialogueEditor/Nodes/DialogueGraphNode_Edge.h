@@ -146,7 +146,7 @@ public:
 	/** Should this edge be drawn? */
 	bool ShouldDrawEdge() const
 	{
-		const UDlgEditorSettings* Settings = GetDefault<UDlgEditorSettings>();
+		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 		if (Settings->bShowPrimarySecondaryEdges)
 		{
 			return IsPrimaryEdge() ? Settings->bDrawPrimaryEdges : Settings->bDrawSecondaryEdges;

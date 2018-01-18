@@ -6,7 +6,7 @@
 #include "EditorStyle.h"
 #include "SGraphPin.h"
 
-#include "DlgEditorSettings.h"
+#include "DlgSystemSettings.h"
 #include "DialogueGraphNode_Edge.h"
 
 /** Own SGraphPin  custom class, allows us to customize the pins as we like. */
@@ -121,7 +121,7 @@ protected:
 	/** @return The color that we should use to draw this pin */
 	FSlateColor GetPinColor() const override
 	{
-		const UDlgEditorSettings* Settings = GetDefault<UDlgEditorSettings>();
+		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 		return IsHovered() ? Settings->BorderHoveredBackgroundColor : Settings->BorderBackgroundColor;
 	}
 

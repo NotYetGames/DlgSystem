@@ -10,7 +10,7 @@
 #include "DlgSystemEditorPrivatePCH.h"
 #include "DlgDialogue.h"
 #include "DialogueEditor/DialogueEditorCommands.h"
-#include "DlgEditorSettings.h"
+#include "DlgSystemSettings.h"
 
 #define LOCTEXT_NAMESPACE "DialogueGraphNode"
 
@@ -243,7 +243,7 @@ FLinearColor UDialogueGraphNode::GetNodeBackgroundColor() const
 		return FLinearColor::Black;
 	}
 
-	const UDlgEditorSettings* Settings = GetDefault<UDlgEditorSettings>();
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 	if (IsSpeechNode())
 	{
 		if (IsVirtualParentNode())

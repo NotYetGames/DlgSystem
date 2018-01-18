@@ -167,7 +167,7 @@ void UDialogueGraphNode_Edge::CreateConnections(UDialogueGraphNode* ParentNode, 
 
 FLinearColor UDialogueGraphNode_Edge::GetEdgeColor(bool bIsHovered) const
 {
-	const UDlgEditorSettings* Settings = GetDefault<UDlgEditorSettings>();
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 	if (bIsHovered)
 	{
 		return Settings->WireHoveredColor;

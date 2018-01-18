@@ -14,7 +14,7 @@ FDialogueGraphConnectionDrawingPolicy::FDialogueGraphConnectionDrawingPolicy(
 	int32 InBackLayerID, int32 InFrontLayerID, float ZoomFactor, const FSlateRect& InClippingRect,
 	FSlateWindowElementList& InDrawElements, UEdGraph* InGraphObj)
 	: Super(InBackLayerID, InFrontLayerID, ZoomFactor, InClippingRect, InDrawElements),
-	  Graph(InGraphObj), DialogueSettings(GetDefault<UDlgEditorSettings>())
+	  Graph(InGraphObj), DialogueSettings(GetDefault<UDlgSystemSettings>())
 {
 }
 

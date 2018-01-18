@@ -11,7 +11,7 @@
 #include "DialogueEditor/IDialogueEditor.h"
 #include "DialogueEditor/DialogueEditorUtilities.h"
 #include "DlgDialogue.h"
-#include "DlgEditorSettings.h"
+#include "DlgSystemSettings.h"
 
 class IDetailsView;
 class UDlgDialogue;
@@ -280,14 +280,14 @@ private:
 //	/** Called when the selection changes in the GraphEditor */
 //	void OnSelectedNodesChanged(const TSet<class UObject*>& NewSelection);
 
-	const UDlgEditorSettings& GetSettings() const { return *Settings; }
+	const UDlgSystemSettings& GetSettings() const { return *Settings; }
 
 private:
 	// The dialogue we are currently editing
 	UDlgDialogue* DialogueBeingEdited;
 
-	// The dialogue editor settings
-	UDlgEditorSettings* Settings = nullptr;
+	// The dialogue system settings
+	UDlgSystemSettings* Settings = nullptr;
 
 	// Graph Editor
 	TSharedPtr<SGraphEditor> GraphEditorView;

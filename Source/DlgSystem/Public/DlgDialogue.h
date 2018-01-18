@@ -5,6 +5,8 @@
 
 #include "DlgIDialogueEditorModule.h"
 #include "DlgMemory.h"
+#include "DlgSystemSettings.h"
+
 #include "DlgDialogue.generated.h"
 
 class UDlgNode;

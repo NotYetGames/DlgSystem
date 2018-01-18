@@ -17,7 +17,7 @@ void SGraphNode_DialogueBase::Construct(const FArguments& InArgs, UDialogueGraph
 {
 	GraphNode = Cast<UEdGraphNode>(InNode);
 	DialogueGraphNode_Base = InNode;
-	Settings = GetDefault<UDlgEditorSettings>();
+	Settings = GetDefault<UDlgSystemSettings>();
 }
 
 void SGraphNode_DialogueBase::CreatePinWidgets()

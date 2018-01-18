@@ -199,7 +199,7 @@ void UDialogueGraph::AutoPositionGraphNodes() const
 	static constexpr bool bIsDirectionVertical = true;
 	UDialogueGraphNode_Root* RootNode = GetRootGraphNode();
 	const TArray<UDialogueGraphNode*> DialogueGraphNodes = GetAllDialogueGraphNodes();
-	const UDlgEditorSettings* Settings = GetDefault<UDlgEditorSettings>();
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 
 	// TODO investigate Node->SnapToGrid
 	FDialogueEditorUtilities::AutoPositionGraphNodes(RootNode, DialogueGraphNodes,

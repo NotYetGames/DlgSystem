@@ -20,7 +20,7 @@ UEdGraphNode* FConvertSpeechSequenceNodeToSpeechNodes_DialogueGraphSchemaAction:
 
 	UDlgDialogue* Dialogue = FDialogueEditorUtilities::GetDialogueForGraph(ParentGraph);
 	const UEdGraphSchema* GraphSchema = ParentGraph->GetSchema();
-	const FVector2D PositionOffset(0.f, GetDefault<UDlgEditorSettings>()->OffsetBetweenRowsY);
+	const FVector2D PositionOffset(0.f, GetDefault<UDlgSystemSettings>()->OffsetBetweenRowsY);
 	FVector2D Position = Location;
 
 	const UDlgNode_SpeechSequence& SpeechSequence_DialogueNode = SelectedSpeechSequenceGraphNode->GetDialogueNode<UDlgNode_SpeechSequence>();

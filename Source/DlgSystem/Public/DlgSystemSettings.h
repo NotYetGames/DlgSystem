@@ -6,8 +6,26 @@
 
 #include "DlgIDialogueEditorModule.h"
 
-#include "DlgEditorSettings.generated.h"
+#include "DlgSystemSettings.generated.h"
 
+/**
+ *  Defines the format of the Dialogue text
+ */
+UENUM()
+enum class EDlgDialogueTextFormat : uint8
+{
+	/** No Text Format used. Only the uasset */
+	DlgDialogueNoTextFormat			UMETA(DisplayName = "No Text Format"),
+
+	/** The own Dialogue Text format */
+	DlgDialogueTextFormatDialogue	UMETA(DisplayName = "DlgText"),
+
+	/** The JSON format. */
+	DlgDialogueTextFormatJson		UMETA(DisplayName = "JSON"),
+
+	/** Hidden, represents the number of text formats */
+	DlgDialogueTextFormat_Num 		UMETA(Hidden),
+};
 
 /**
  *  Defines the displayed properties of the voice fields.
@@ -31,14 +49,14 @@ enum class EDlgVoiceDisplayedFields : uint8
 // Config = DlgSystemPlugin, DefaultConfig
 // UDeveloperSettings classes are autodiscovered https://wiki.unrealengine.com/CustomSettings
 UCLASS(Config = EditorPerProjectUserSettings, DefaultConfig, meta = (DisplayName = "Dialogue Editor Settings"))
-class UDlgEditorSettings : public UDeveloperSettings
+class UDlgSystemSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
 
-	typedef UDlgEditorSettings Self;
+	typedef UDlgSystemSettings Self;
 
 public:
-	UDlgEditorSettings();
+	UDlgSystemSettings();
 
 	// UDeveloperSettings interface
 	/** Gets the settings container name for the settings, either Project or Editor */
@@ -60,7 +78,7 @@ public:
 	// UObject interface
 	bool CanEditChange(const UProperty* InProperty) const override;
 	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-#endif
+#endif // WITH_EDITOR
 
 	// Own functions
 	// Set the primary secondary edges bool, also save the config.
@@ -182,7 +200,7 @@ public:
 	UPROPERTY(Category = "Graph Node Speech Sequence", Config, EditAnywhere)
 	FMargin DescriptionSpeakerMargin = FMargin(1.f);
 
-	/** The horizontal aligment of the Speaker in case the node is a speech sequence. */
+	/** The horizontal alignment of the Speaker in case the node is a speech sequence. */
 	UPROPERTY(Category = "Graph Node Speech Sequence", Config, EditAnywhere)
 	TEnumAsByte<EHorizontalAlignment> DescriptionSpeakerHorizontalAlignment = HAlign_Center;
 
@@ -210,7 +228,7 @@ public:
 	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
 	FLinearColor WireWithConditionsColor = FLinearColor{1.f, 0.341176f, 0.133333f, 1.0f}; // orangeish
 
-	/** The color of the wire when hoverd over */
+	/** The color of the wire when hovered over */
 	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
 	FLinearColor WireHoveredColor = FLinearColor{1.0f, 0.596078f, 0.0f, 1.0f}; // orange
 

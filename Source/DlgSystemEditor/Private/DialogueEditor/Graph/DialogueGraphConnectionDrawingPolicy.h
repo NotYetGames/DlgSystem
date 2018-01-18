@@ -5,7 +5,7 @@
 #include "Widgets/SWidget.h"
 #include "ConnectionDrawingPolicy.h"
 
-#include "DlgEditorSettings.h"
+#include "DlgSystemSettings.h"
 
 class FSlateWindowElementList;
 class UEdGraph;
@@ -72,5 +72,5 @@ protected:
 	TMap<UEdGraphNode*, int32> NodeWidgetMap;
 
 	// Cache the settings
-	const UDlgEditorSettings* DialogueSettings;
+	const UDlgSystemSettings* DialogueSettings;
 };

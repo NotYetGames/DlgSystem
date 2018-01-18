@@ -3,25 +3,6 @@
 
 #include "CoreMinimal.h"
 
-/**
- *  Defines the format of the Dialogue text
- */
-UENUM()
-enum class EDlgDialogueTextFormat : uint8
-{
-	/** No Text Format used. Only the uasset */
-	DlgDialogueNoTextFormat			UMETA(DisplayName = "No Text Format"),
-
-	/** The own Dialogue Text format */
-	DlgDialogueTextFormatDialogue	UMETA(DisplayName = "DlgText"),
-
-	/** The JSON format. */
-	DlgDialogueTextFormatJson		UMETA(DisplayName = "JSON"),
-
-	/** Hidden, represents the number of text formats */
-	DlgDialogueTextFormat_Num 		UMETA(Hidden),
-};
-
 #if WITH_EDITOR
 class UEdGraph;
 class UDlgDialogue;

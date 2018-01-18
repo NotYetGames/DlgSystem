@@ -53,7 +53,7 @@ public:
 	int32 GetDialogueNodeIndex() const override { return INDEX_NONE; }
 
 	/** Gets the background color of this node. */
-	FLinearColor GetNodeBackgroundColor() const override { return GetDefault<UDlgEditorSettings>()->RootNodeColor; }
+	FLinearColor GetNodeBackgroundColor() const override { return GetDefault<UDlgSystemSettings>()->RootNodeColor; }
 
 protected:
 	// Begin UDialogueGraphNode interface

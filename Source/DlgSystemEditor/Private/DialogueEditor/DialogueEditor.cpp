@@ -238,7 +238,7 @@ void FDialogueEditor::InitDialogueEditor(const EToolkitMode::Type Mode,
 										 const TSharedPtr<IToolkitHost>& InitToolkitHost,
 										 UDlgDialogue* InitDialogue)
 {
-	Settings = GetMutableDefault<UDlgEditorSettings>();
+	Settings = GetMutableDefault<UDlgSystemSettings>();
 
 	// close all other editors editing this asset
 	FAssetEditorManager::Get().CloseOtherEditors(InitDialogue, this);

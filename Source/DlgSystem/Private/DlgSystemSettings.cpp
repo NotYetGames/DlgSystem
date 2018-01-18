@@ -1,29 +1,28 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "DlgEditorSettings.h"
+#include "DlgSystemSettings.h"
 
 #include "DlgManager.h"
 
-#define LOCTEXT_NAMESPACE "DlgEditorSettings"
+#define LOCTEXT_NAMESPACE "DlgSystemSettings"
 
 //////////////////////////////////////////////////////////////////////////
-// UDlgEditorSettings
-
-UDlgEditorSettings::UDlgEditorSettings()
+// UDlgSystemSettings
+UDlgSystemSettings::UDlgSystemSettings()
 {
-
 }
 
-FText UDlgEditorSettings::GetSectionText() const
+#if WITH_EDITOR
+FText UDlgSystemSettings::GetSectionText() const
 {
 	return LOCTEXT("SectionText", "Dialogue Editor");
 }
 
-FText UDlgEditorSettings::GetSectionDescription() const
+FText UDlgSystemSettings::GetSectionDescription() const
 {
 	return LOCTEXT("SectionDescription", "Configure the look and feel of the Dialogue Editor.");
 }
 
-bool UDlgEditorSettings::CanEditChange(const UProperty* InProperty) const
+bool UDlgSystemSettings::CanEditChange(const UProperty* InProperty) const
 {
 	bool bIsEditable = Super::CanEditChange(InProperty);
 	if (bIsEditable && InProperty)
@@ -42,7 +41,7 @@ bool UDlgEditorSettings::CanEditChange(const UProperty* InProperty) const
 	return bIsEditable;
 }
 
-void UDlgEditorSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+void UDlgSystemSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
@@ -56,5 +55,6 @@ void UDlgEditorSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 		}
 	}
 }
+#endif // WITH_EDITOR
 
 #undef LOCTEXT_NAMESPACE
