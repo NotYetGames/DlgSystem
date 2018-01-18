@@ -40,6 +40,10 @@ public class DlgSystem : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"Projects", // IPluginManager
+
+				// UI
+				"SlateCore",
+				"Slate"
 				// ... add private dependencies that you statically link with here ...
 			});
 
