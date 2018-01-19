@@ -5,6 +5,7 @@
 #include "Visibility.h"
 
 class UDlgDialogue;
+class FMultiLineEditableTextBox_CustomRowHelper;
 
 /**
  * How the details customization panel looks for the FDlgEdge
@@ -49,8 +50,12 @@ private:
 	/** The property handle of the entire struct. */
 	TSharedPtr<IPropertyHandle> StructPropertyHandle;
 
-	/** Bool flag indicating to show or not the Text Property of the Edge*/
+	/** Bool flag indicating to show or not the Text Property of the Edge */
 	bool bShowTextProperty = true;
+
+	/** Cache some properties */
+	TSharedPtr<IPropertyHandle> TextPropertyHandle;
+	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
 
 	/** Hold a reference to dialogue we are displaying. */
 	UDlgDialogue* Dialogue = nullptr;

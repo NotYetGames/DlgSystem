@@ -11,7 +11,8 @@ class FDetailWidgetRow;
 /**
  * Helper for a custom row when using SMultiLineEditableTextBox.
  */
-class FMultiLineEditableTextBox_CustomRowHelper : public FBase_CustomRowHelper, public TSharedFromThis<FMultiLineEditableTextBox_CustomRowHelper>
+class FMultiLineEditableTextBox_CustomRowHelper : public FBase_CustomRowHelper,
+		public TSharedFromThis<FMultiLineEditableTextBox_CustomRowHelper>
 {
 	typedef FMultiLineEditableTextBox_CustomRowHelper Self;
 	typedef FBase_CustomRowHelper Super;

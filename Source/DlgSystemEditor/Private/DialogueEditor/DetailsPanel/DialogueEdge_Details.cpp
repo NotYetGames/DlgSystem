@@ -7,6 +7,7 @@
 #include "DlgNode.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
+#include "CustomRowHelpers/MultiLineEditableTextBox_CustomRowHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueEdge_Details"
 
@@ -44,9 +45,23 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, Conditions)).ToSharedRef());
 
 	// Text
-	IDetailPropertyRow* TextPropertyRow = &StructBuilder.AddProperty(
-		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, Text)).ToSharedRef());
-	TextPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility));
+	TextPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, Text));
+	FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
+
+	TextPropertyRow = MakeShareable(new FMultiLineEditableTextBox_CustomRowHelper(DetailWidgetRow, TextPropertyHandle));
+	TextPropertyRow->SetMultiLineEditableTextBoxWidget(
+		SNew(SMultiLineEditableTextBox)
+		.Font(FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont")))
+		.SelectAllTextWhenFocused(false)
+		.ClearKeyboardFocusOnCommit(false)
+		.SelectAllTextOnCommit(false)
+		.AutoWrapText(true)
+		.ModiferKeyForNewLine(DetailsPanel::GetModifierKeyFromDialogueSettings())
+		.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
+		.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
+	)
+	->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility))
+	->Update();
 }
 
 #undef LOCTEXT_NAMESPACE

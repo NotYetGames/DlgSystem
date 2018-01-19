@@ -19,6 +19,20 @@ static constexpr const TCHAR* META_ClampMax = TEXT("ClampMax");
 
 namespace DetailsPanel
 {
+	/** Gets the appropriate modifier key for an input field depending on the Dialogue System Settings */
+	inline EModifierKey::Type GetModifierKeyFromDialogueSettings()
+	{
+		switch (GetDefault<UDlgSystemSettings>()->DialogueTextInputKeyForNewLine)
+		{
+			case EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineShiftPlusEnter:
+				return EModifierKey::Shift;
+
+			case EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineEnter:
+			default:
+				return EModifierKey::None;
+		}
+	}
+
 	/** Resets the numeric property to not have any limits */
 	inline void ResetNumericPropertyLimits(TSharedPtr<IPropertyHandle> PropertyHandle)
 	{

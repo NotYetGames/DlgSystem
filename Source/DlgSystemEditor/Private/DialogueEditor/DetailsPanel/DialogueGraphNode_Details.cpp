@@ -111,7 +111,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 		// Text
 		{
 			TextPropertyHandle = PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameText());
-			FDetailWidgetRow* DetailWidgetRow = &SpeechDataCategory.AddCustomRow(LOCTEXT("TextSearcKey", "Text"));
+			FDetailWidgetRow* DetailWidgetRow = &SpeechDataCategory.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
 
 			TextPropertyRow = MakeShareable(new FMultiLineEditableTextBox_CustomRowHelper(DetailWidgetRow, TextPropertyHandle));
 			TextPropertyRow->SetMultiLineEditableTextBoxWidget(
@@ -121,7 +121,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 				.ClearKeyboardFocusOnCommit(false)
 				.SelectAllTextOnCommit(false)
 				.AutoWrapText(true)
-				.ModiferKeyForNewLine(EModifierKey::None)
+				.ModiferKeyForNewLine(DetailsPanel::GetModifierKeyFromDialogueSettings())
 				.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
 				.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
 			)

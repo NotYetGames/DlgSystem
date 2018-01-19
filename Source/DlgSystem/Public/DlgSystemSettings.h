@@ -46,6 +46,19 @@ enum class EDlgVoiceDisplayedFields : uint8
 	DlgVoiceDisplayedSoundWaveAndDialogueWave	UMETA(DisplayName = "Sound Wave & Dialogue Wave")
 };
 
+/**
+ * Defines what key combination to press to add a new line to an FText
+ */
+UENUM()
+enum class EDlgTextInputKeyForNewLine : uint8
+{
+	/** Press 'Enter' to add a new line. */
+	DlgTextInputKeyForNewLineEnter					UMETA(DisplayName = "Enter"),
+
+	/** Presst 'Shift + Enter' to add a new line. (like in blueprints) */
+	DlgTextInputKeyForNewLineShiftPlusEnter			UMETA(DisplayName = "Shift + Enter"),
+};
+
 // Config = DlgSystemPlugin, DefaultConfig
 // UDeveloperSettings classes are autodiscovered https://wiki.unrealengine.com/CustomSettings
 UCLASS(Config = EditorPerProjectUserSettings, DefaultConfig, meta = (DisplayName = "Dialogue Editor Settings"))
@@ -131,12 +144,16 @@ public:
 
 public:
 	/** The dialogue text format used for saving and reloading from text files. */
-	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
+	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Format")
 	EDlgDialogueTextFormat DialogueTextFormat = EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue;
 
 	/** What Voice fields to show in the Dialogue Editor, if any. */
-	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
+	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Displayed Voice Fields")
 	EDlgVoiceDisplayedFields DialogueDisplayedVoiceFields = EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWave;
+
+	/** What key combination to press to add a new line fo FText fields in the Dialogue Editor. */
+	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Input Key for NewLine")
+	EDlgTextInputKeyForNewLine DialogueTextInputKeyForNewLine = EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineEnter;
 
 	/** Whether the description text wraps onto a new line when it's length exceeds this width; if this value is zero or negative, no wrapping occurs. */
 	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
