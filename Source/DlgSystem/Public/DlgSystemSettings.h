@@ -140,13 +140,13 @@ public:
 
 	/** Whether the description text wraps onto a new line when it's length exceeds this width; if this value is zero or negative, no wrapping occurs. */
 	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
-	float DescriptionWrapTextAt = 512.f;
+	float DescriptionWrapTextAt = 256.f;
 
 	/** The amount of blank space left around the edges of the description text area. */
 	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
 	FMargin DescriptionTextMargin = FMargin(5.f);
 
-	/** The horizontal aligment of the graph node title and icon */
+	/** The horizontal alignment of the graph node title and icon */
 	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
 	TEnumAsByte<EHorizontalAlignment> TitleHorizontalAlignment = HAlign_Fill;
 
