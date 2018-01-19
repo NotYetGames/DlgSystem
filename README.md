@@ -1,15 +1,46 @@
 # DlgSystem (Dialogue System) Plugin
 
-Features:
-- a
-- b
-- c
+Master branch Unreal version: 4.18
+
+## Features:
+
+- 100% free, source code included
+- Full Blueprint and C++ support
+- Events and conditions
+- Branching based on different node types and conditions
+- Well structured runtime and editor modules
+- Full editor support including:
+    - Graph Editor
+    - Search window
+    - Dialogue Browser to get a good overview of all the dialogues
+    - Customized blueprint nodes to handle certain events and conditions in Blueprint easily
+    - Settings panel in Editor Preferences to modify the layout
+    - Option to import from and export to plain text formats (e.g. json)
+
+## General Information
 
 See the [Wiki](https://gitlab.com/NotYetGames/DlgSystem/wikis/home) for the manual and tutorials.
 
-And example [DlgSystemExample project](https://gitlab.com/NotYetGames/DlgSystemExample) is also provided.
+[DlgSystemExample project](https://gitlab.com/NotYetGames/DlgSystemExample) is also provided.
+
+This plugin is primary developed and used for our own [game](warriorb.com).
+We have put significant effort into it and decided to make it open source in order to help out other teams facing similar challenges.
+
+Contribution, feedback and constructive criticism are appreciated and we would be really happy to hear about your game using our tool. 
+
+Should it prove useful to you, the best way to say thanks is to mention us and our game to your own audience.
+
+Brought to you by NotYet.
+Discord: https://discord.gg/5gH5tWR
+Website: notyet.eu
+Twitter: https://twitter.com/NotYetDevs
 
 ## Conventions
+
+### Branches
+The supported unreal versions have their own branches.
+The master branch is usually updated to the newest engine versions as soon as possible (way before the engine version is in a stable state).
+The outdated version branches are kept but not updated anymore.
 
 ### Code Style
 
@@ -25,19 +56,3 @@ Every commit message that has `[G]` means that after updating to that commit the
 (`Right click on project file` -> `Generate Visual Studio project files`) (or from the command line regenerate the project).
 
 Eg: `[G] New Dialogue Editor mode`
-
-Each engine version update has `[4.xx]` tag. Source may or may not be compatible with older versions anymore
-
-Eg: `[4.18][C] Engine update`
-
-
-## Tips
-- When comparing property names from `FPropertyChangedEvent` (handled by `PostEditChangeProperty` for example) use the `GET_MEMBER_NAME_CHECKED` instead of `TEXT`.
-eg:
-```cpp
-PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(UClassChildOfUObject, PropertyInClass)
-```
-
-## Gotchas
-- If you override the `PostEditChangeProperty` method this will be the one that gets called when a property changes.
-But if you also override `PostEditChangeChainProperty` (without calling `Super`) this will be the ONLY METHOD called, no the previous one (`PostEditChangeProperty`)
