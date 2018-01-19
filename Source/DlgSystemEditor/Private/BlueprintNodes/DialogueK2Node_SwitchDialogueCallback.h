@@ -19,6 +19,8 @@ enum class EDlgDialogueCallback : uint8
 	DlgIntValue UMETA(DisplayName = "Condition asking for an int value"),
 
 	DlgBoolValue UMETA(DisplayName = "Condition asking for a bool value"),
+
+	DlgNameValue UMETA(DisplayName = "Condition asking for a name value"),
 };
 
 /**

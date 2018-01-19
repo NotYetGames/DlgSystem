@@ -100,37 +100,34 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 		IDetailCategoryBuilder& SpeechDataCategory = DetailLayoutBuilder->EditCategory(TEXT("Speech Node Data"));
 		SpeechDataCategory.InitiallyCollapsed(false);
 
-		// IsVirtualParent
 		if (!bIsRootNode)
 		{
 			IsVirtualParentPropertyHandle = PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameIsVirtualParent());
 			IsVirtualParentPropertyHandle->SetOnPropertyValueChanged(FSimpleDelegate::CreateSP(this, &Self::OnIsVirtualParentChanged));
 			SpeechDataCategory.AddProperty(IsVirtualParentPropertyHandle);
-		}
 
-		// Text
-		{
-			TextPropertyHandle = PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameText());
-			FDetailWidgetRow* DetailWidgetRow = &SpeechDataCategory.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
+			// Text
+			{
+				TextPropertyHandle = PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameText());
+				FDetailWidgetRow* DetailWidgetRow = &SpeechDataCategory.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
 
-			TextPropertyRow = MakeShareable(new FMultiLineEditableTextBox_CustomRowHelper(DetailWidgetRow, TextPropertyHandle));
-			TextPropertyRow->SetMultiLineEditableTextBoxWidget(
-				SNew(SMultiLineEditableTextBox)
-				.Font(FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont")))
-				.SelectAllTextWhenFocused(false)
-				.ClearKeyboardFocusOnCommit(false)
-				.SelectAllTextOnCommit(false)
-				.AutoWrapText(true)
-				.ModiferKeyForNewLine(DetailsPanel::GetModifierKeyFromDialogueSettings())
-				.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
-				.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
-			)
-			->Update();
-		}
+				TextPropertyRow = MakeShareable(new FMultiLineEditableTextBox_CustomRowHelper(DetailWidgetRow, TextPropertyHandle));
+				TextPropertyRow->SetMultiLineEditableTextBoxWidget(
+					SNew(SMultiLineEditableTextBox)
+					.Font(FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont")))
+					.SelectAllTextWhenFocused(false)
+					.ClearKeyboardFocusOnCommit(false)
+					.SelectAllTextOnCommit(false)
+					.AutoWrapText(true)
+					.ModiferKeyForNewLine(DetailsPanel::GetModifierKeyFromDialogueSettings())
+					.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
+					.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
+				)
+				->Update();
+			}
 
-		// Voice
-		if (!bIsRootNode)
-		{
+			// Voice
+
 			// SoundWave
 			VoiceSoundWavePropertyRow = &SpeechDataCategory.AddProperty(
 				PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameVoiceSoundWave()));

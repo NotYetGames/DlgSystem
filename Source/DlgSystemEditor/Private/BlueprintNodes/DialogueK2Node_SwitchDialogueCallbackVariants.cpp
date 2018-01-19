@@ -83,3 +83,20 @@ FText UDialogueK2Node_SwitchDialogueCallbackBoolValue::GetTooltipText() const
 {
 	return NSLOCTEXT("K2Node", "SwitchDialogueBoolValue_ToolTip", "Lists all available Bool value names from all dialogues for the owner based on IDlgDialogueParticipant::GetParticipantName() function call");
 }
+
+
+UDialogueK2Node_SwitchDialogueCallbackNameValue::UDialogueK2Node_SwitchDialogueCallbackNameValue(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	CallbackType = EDlgDialogueCallback::DlgNameValue;
+}
+
+FText UDialogueK2Node_SwitchDialogueCallbackNameValue::GetNodeTitle(ENodeTitleType::Type TitleType) const
+{
+	return NSLOCTEXT("K2Node", "Switch_DialogueNameValue", "Switch on Relevant Dialogue Name Value");
+}
+
+FText UDialogueK2Node_SwitchDialogueCallbackNameValue::GetTooltipText() const
+{
+	return NSLOCTEXT("K2Node", "SwitchDialogueNameValue_ToolTip", "Lists all available Name value names from all dialogues for the owner based on IDlgDialogueParticipant::GetParticipantName() function call");
+}

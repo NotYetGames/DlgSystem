@@ -201,6 +201,10 @@ bool UDialogueK2Node_SwitchDialogueCallback::RefreshPinNames()
 			UDlgManager::GetAllDialoguesBoolNames(ParticipantName, NewPinNames);
 			break;
 
+		case EDlgDialogueCallback::DlgNameValue:
+			UDlgManager::GetAllDialoguesNameNames(ParticipantName, NewPinNames);
+			break;
+
 		default:
 			unimplemented();
 	}

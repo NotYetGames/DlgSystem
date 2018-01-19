@@ -69,3 +69,15 @@ public:
 	FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	FText GetTooltipText() const override;
 };
+
+UCLASS()
+class UDialogueK2Node_SwitchDialogueCallbackNameValue : public UDialogueK2Node_SwitchDialogueCallback
+{
+	GENERATED_BODY()
+
+public:
+	UDialogueK2Node_SwitchDialogueCallbackNameValue(const FObjectInitializer& ObjectInitializer);
+
+	FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+	FText GetTooltipText() const override;
+};
