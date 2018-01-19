@@ -227,6 +227,9 @@ public:
 		return DialogueNode ? DialogueNode->GetNodeEnterEvents().Num() > 0 : false;
 	}
 
+	/** Does this node has any voice properties set? */
+	bool HasVoicePropertiesSet() const;
+
 	/** Gets the node depth in the graph. */
 	int32 GetNodeDepth() const { return NodeDepth; }
 

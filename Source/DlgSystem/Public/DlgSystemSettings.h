@@ -175,6 +175,10 @@ public:
 	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
 	bool bShowHasEnterEventsIcon = true;
 
+	/** To show or not the voice icon in the case the node has any voice members set */
+	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	bool bShowHasVoiceIcon = true;
+
 	// Colors based on https://material.io/guidelines/style/color.html#color-color-palette
 
 	/** The background color of the normal speech node. */

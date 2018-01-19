@@ -161,6 +161,9 @@ protected:
 	/** Gets the tooltip for the event overlay. */
 	FText GetEventOverlayTooltipText() const;
 
+	/** Gets the tooltip for the voice overlay. */
+	FText GetVoiceOverlayTooltipText() const;
+
 	/** Get the visibility of the overlay widgets. */
 	EVisibility GetOverlayWidgetVisibility() const;
 
@@ -196,4 +199,7 @@ protected:
 
 	/** The widget we use to display if the node has any enter events */
 	TSharedPtr<SWidget> EventOverlayWidget;
+
+	/** The widget we use to display if the node has voice/sound variables set */
+	TSharedPtr<SWidget> VoiceOverlayWidget;
 };

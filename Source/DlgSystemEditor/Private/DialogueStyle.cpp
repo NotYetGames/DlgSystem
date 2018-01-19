@@ -23,6 +23,7 @@ const FName FDialogueStyle::PROPERTY_DialogueClassThumbnail(TEXT("ClassThumbnail
 const FName FDialogueStyle::PROPERTY_GraphNodeCircleBox(TEXT("DlgSystemEditor.Graph.Node.Circle"));
 const FName FDialogueStyle::PROPERTY_ConditionIcon(TEXT("DlgSystemEditor.Condition.Icon"));
 const FName FDialogueStyle::PROPERTY_EventIcon(TEXT("DlgSystemEditor.Event.Icon"));
+const FName FDialogueStyle::PROPERTY_VoiceIcon(TEXT("DlgSystemEditor.Voice.Icon"));
 const FName FDialogueStyle::PROPERTY_QuestionMarkIcon(TEXT("DlgSystemEditor.QuestionMark.Icon"));
 
 // Tied with FDialogueEditorCommands::DialogueReloadData
@@ -105,6 +106,7 @@ void FDialogueStyle::Initialize()
 	// Set common used properties
 	StyleSet->Set(PROPERTY_ConditionIcon, new FSlateImageBrush(GetPluginContentPath("Icons/Condition_96x.png"), Icon96x96));
 	StyleSet->Set(PROPERTY_EventIcon, new FSlateImageBrush(GetPluginContentPath("Icons/Event_96x.png"), Icon96x96));
+	StyleSet->Set(PROPERTY_VoiceIcon, new FSlateImageBrush(GetPluginContentPath("Icons/Speaker_96x.png"), Icon96x96));
 	StyleSet->Set(PROPERTY_QuestionMarkIcon, new FSlateImageBrush(GetPluginContentPath("Icons/QuestionMark_16x.png"), Icon16x16));
 	StyleSet->Set(PROPERTY_OpenAssetIcon,
 				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_asset_open_16px.png"), Icon16x16));

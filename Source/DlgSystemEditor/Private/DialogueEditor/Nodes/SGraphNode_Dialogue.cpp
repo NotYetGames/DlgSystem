@@ -49,6 +49,8 @@ TArray<FOverlayWidgetInfo> SGraphNode_DialogueNode::GetOverlayWidgets(bool bSele
 {
 	check(IndexOverlayWidget.IsValid());
 	check(ConditionOverlayWidget.IsValid());
+	check(EventOverlayWidget.IsValid());
+	check(VoiceOverlayWidget.IsValid());
 	TArray<FOverlayWidgetInfo> Widgets;
 	constexpr float DistanceBetweenWidgetsY = 1.5f;
 	FVector2D OriginRightSide(0.0f, 0.0f);
@@ -56,18 +58,28 @@ TArray<FOverlayWidgetInfo> SGraphNode_DialogueNode::GetOverlayWidgets(bool bSele
 
 	// Add Index overlay
 	{
-		FOverlayWidgetInfo Overlay(IndexOverlayWidget);
 		// Position on the right of the node
+		FOverlayWidgetInfo Overlay(IndexOverlayWidget);
 		Overlay.OverlayOffset = FVector2D(WidgetSize.X - IndexOverlayWidget->GetDesiredSize().X / 2.0f, OriginRightSide.Y);
 		Widgets.Add(Overlay);
 		OriginRightSide.Y += IndexOverlayWidget->GetDesiredSize().Y + DistanceBetweenWidgetsY;
 	}
 
+	// Add Voice overlay
+	if (Settings->bShowHasVoiceIcon && DialogueGraphNode->HasVoicePropertiesSet())
+	{
+		// Position on the right of the node
+		FOverlayWidgetInfo Overlay(VoiceOverlayWidget);
+		Overlay.OverlayOffset = FVector2D(WidgetSize.X - VoiceOverlayWidget->GetDesiredSize().X / 3.0f, OriginRightSide.Y);
+		Widgets.Add(Overlay);
+		OriginRightSide.Y += VoiceOverlayWidget->GetDesiredSize().Y + DistanceBetweenWidgetsY;
+	}
+
 	// Add Condition overlay
 	if (Settings->bShowHasEnterConditionsIcon && DialogueGraphNode->HasEnterConditions())
 	{
-		FOverlayWidgetInfo Overlay(ConditionOverlayWidget);
 		// Position on the left of the node
+		FOverlayWidgetInfo Overlay(ConditionOverlayWidget);
 		Overlay.OverlayOffset = FVector2D(-ConditionOverlayWidget->GetDesiredSize().X / 1.5f, OriginLeftSide.Y);
 		Widgets.Add(Overlay);
 		OriginLeftSide.Y += ConditionOverlayWidget->GetDesiredSize().Y + DistanceBetweenWidgetsY;
@@ -76,8 +88,8 @@ TArray<FOverlayWidgetInfo> SGraphNode_DialogueNode::GetOverlayWidgets(bool bSele
 	// Add Event overlay
 	if (Settings->bShowHasEnterEventsIcon && DialogueGraphNode->HasEnterEvents())
 	{
-		FOverlayWidgetInfo Overlay(EventOverlayWidget);
 		// Position on the left of the node
+		FOverlayWidgetInfo Overlay(EventOverlayWidget);
 		Overlay.OverlayOffset = FVector2D(-EventOverlayWidget->GetDesiredSize().X / 1.5f, OriginLeftSide.Y);
 		Widgets.Add(Overlay);
 		OriginLeftSide.Y += EventOverlayWidget->GetDesiredSize().Y + DistanceBetweenWidgetsY;
@@ -149,6 +161,22 @@ void SGraphNode_DialogueNode::UpdateGraphNode()
 			]
 		)
 		.ToolTipText(this, &Self::GetEventOverlayTooltipText)
+		.Visibility(this, &Self::GetOverlayWidgetVisibility)
+		.OnGetBackgroundColor(this, &Self::GetOverlayWidgetBackgroundColor);
+
+	VoiceOverlayWidget = SNew(SDialogueNodeOverlayWidget)
+		.OverlayBody(
+			SNew(SBox)
+			.HAlign(HAlign_Fill)
+			.VAlign(VAlign_Fill)
+			.WidthOverride(WidthOverride)
+			.HeightOverride(HeightOverride)
+			[
+				SNew(SImage)
+				.Image(FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_VoiceIcon))
+			]
+		)
+		.ToolTipText(this, &Self::GetVoiceOverlayTooltipText)
 		.Visibility(this, &Self::GetOverlayWidgetVisibility)
 		.OnGetBackgroundColor(this, &Self::GetOverlayWidgetBackgroundColor);
 
@@ -466,6 +494,11 @@ FText SGraphNode_DialogueNode::GetConditionOverlayTooltipText() const
 FText SGraphNode_DialogueNode::GetEventOverlayTooltipText() const
 {
 	return LOCTEXT("NodeEventTooltip", "Node has enter events.\nOn node enter this events are executed.");
+}
+
+FText SGraphNode_DialogueNode::GetVoiceOverlayTooltipText() const
+{
+	return LOCTEXT("NodeVoiceTooltip", "Node has some voice variables set. Either the SoundWave or the DialogueWave.");
 }
 
 void SGraphNode_DialogueNode::OnIndexHoverStateChanged(bool bHovered)

@@ -306,6 +306,34 @@ void UDialogueGraphNode::RegisterListeners()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin own functions
+bool UDialogueGraphNode::HasVoicePropertiesSet() const
+{
+	if (DialogueNode == nullptr)
+	{
+		return false;
+	}
+
+	// Try simple node
+	if (DialogueNode->GetNodeVoiceSoundWave() != nullptr || DialogueNode->GetNodeVoiceDialogueWave() != nullptr)
+	{
+		return true;
+	}
+
+	// Speech sequence node
+	if (IsSpeechSequenceNode())
+	{
+		for (const FDlgSpeechSequenceEntry Sequence : GetDialogueNode<UDlgNode_SpeechSequence>().GetNodeSpeechSequence())
+		{
+			if (Sequence.VoiceSoundWave != nullptr || Sequence.VoiceDialogueWave != nullptr)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 void UDialogueGraphNode::SetDialogueNodeDataChecked(int32 InIndex, UDlgNode* InNode)
 {
 	const UDlgDialogue* Dialogue = GetDialogue();

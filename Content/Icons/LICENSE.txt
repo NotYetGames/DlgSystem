@@ -5,6 +5,9 @@ Icons from http://game-icons.net/lorc/originals/conversation.html
 Icons from http://game-icons.net/lorc/originals/uncertainty.html
 - QuestionMark_16x.png
 
+Icons from http://game-icons.net/delapouite/gui/speaker.html
+- Speaker_96x.png
+
 Icons from https://material.io/icons
 - Event_96x.png
 
