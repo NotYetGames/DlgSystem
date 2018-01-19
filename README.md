@@ -17,6 +17,8 @@ Master branch Unreal version: 4.18
     - Settings panel in Editor Preferences to modify the layout
     - Option to import from and export to plain text formats (e.g. json)
 
+Not yet convinced? Have you seen our [`showcase page`](https://gitlab.com/NotYetGames/DlgSystem/wikis/Feature-Showcase)?
+
 ## General Information
 
 See the [Wiki](https://gitlab.com/NotYetGames/DlgSystem/wikis/home) for the manual and tutorials.
