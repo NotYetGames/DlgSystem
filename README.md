@@ -5,7 +5,9 @@ Features:
 - b
 - c
 
-See Wiki for tutorials on how to install. TODO.
+See the [Wiki](https://gitlab.com/NotYetGames/DlgSystem/wikis/home) for the manual and tutorials.
+
+And example [DlgSystemExample project](https://gitlab.com/NotYetGames/DlgSystemExample) is also provided.
 
 ## Conventions
 
