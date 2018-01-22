@@ -280,4 +280,3 @@ private:
 	/** selected option. */
 	SortOptionType SelectedSortOption;
 };
-

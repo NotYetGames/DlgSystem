@@ -4,11 +4,15 @@
 #include "ModuleManager.h"
 #include "AssetRegistryModule.h"
 #include "GameplayDebugger.h"
+#include "TabManager.h"
+#include "Widgets/Docking/SDockTab.h"
+#include "IConsoleManager.h"
 
 #include "DlgSystemPrivatePCH.h"
 #include "DlgManager.h"
 #include "DlgDialogue.h"
 #include "GameplayDebugger/DlgGameplayDebuggerCategory.h"
+#include "GameplayDebugger/SDlgDataDisplay.h"
 
 #define LOCTEXT_NAMESPACE "FDlgSystemModule"
 
@@ -40,10 +44,35 @@ void FDlgSystemModule::StartupModule()
 		EGameplayDebuggerCategoryState::EnabledInGameAndSimulate);
 	GameplayDebuggerModule.NotifyCategoriesChanged();
 #endif // WITH_GAMEPLAY_DEBUGGER
+
+	// Register tab spawners
+	bHasRegisteredTabSpawners = true;
+	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(DIALOGUE_DATA_DISPLAY_TAB_ID,
+				FOnSpawnTab::CreateLambda([this](const FSpawnTabArgs& Args) -> TSharedRef<SDockTab>
+				{
+					TSharedRef<SDockTab> DialogueDataDisplayTab = SNew(SDockTab)
+						.TabRole(ETabRole::NomadTab);
+					DialogueDataDisplayTab->SetContent(GetDialogueDataDisplayWindow(DialogueDataDisplayTab));
+					return DialogueDataDisplayTab;
+				}))
+				.SetDisplayName(LOCTEXT("DialogueDataDisplayTitle", "Dialogue Data Display"))
+				.SetTooltipText(LOCTEXT("DialogueDataDisplayTooltipText", "Open the Dialogue Data Display tab."));
+
+	// Register commands
+	ConsoleCommandDialogueDataDisplay = IConsoleManager::Get().RegisterConsoleCommand(TEXT("DialogueDataDisplay"),
+		TEXT("Displays the Dialogue Data Window"),
+		FConsoleCommandDelegate::CreateRaw(this, &Self::DisplayDialogueDataWindow), ECVF_Default);
 }
 
 void FDlgSystemModule::ShutdownModule()
 {
+	// Unregister the console commands
+	IConsoleManager::Get().UnregisterConsoleObject(ConsoleCommandDialogueDataDisplay);
+
+	// Unregister the tab spawners
+	bHasRegisteredTabSpawners = false;
+	FGlobalTabmanager::Get()->UnregisterTabSpawner(DIALOGUE_DATA_DISPLAY_TAB_ID);
+
 #if WITH_GAMEPLAY_DEBUGGER
 	// If the gameplay debugger is available, unregister the category
 	if (IGameplayDebugger::IsAvailable())
@@ -94,6 +123,24 @@ TArray<UDlgDialogue*> FDlgSystemModule::GetDialoguesWithDuplicateGuid()
 	return DuplicateDialogues;
 }
 
+TSharedRef<SWidget> FDlgSystemModule::GetDialogueDataDisplayWindow(const TSharedRef<SDockTab>& InParentTab)
+{
+	TSharedPtr<SDlgDataDisplay> DialogueData = DialogueDataDisplayWidget.Pin();
+	if (!DialogueData.IsValid())
+	{
+		DialogueData = SNew(SDlgDataDisplay);
+		DialogueDataDisplayWidget = DialogueData;
+	}
+
+	return DialogueData.ToSharedRef();
+}
+
+void FDlgSystemModule::DisplayDialogueDataWindow()
+{
+	check(bHasRegisteredTabSpawners);
+	FGlobalTabmanager::Get()->InvokeTab(FTabId(DIALOGUE_DATA_DISPLAY_TAB_ID));
+}
+
 void FDlgSystemModule::HandleOnInMemoryAssetDeleted(UObject* DeletedObject)
 {
 	// Should be safe to access it here
@@ -132,8 +179,10 @@ void FDlgSystemModule::HandleDialogueDeleted(UDlgDialogue* DeletedDialogue)
 	if (TextFilePathName.IsEmpty())
 	{
 		// Memory corruption? tread carefully here
-		UE_LOG(LogDlgSystem, Error, TEXT("Can't delete text file for Dialogue = `%s` because the file path name is empty :O"),
-				*DeletedDialogue->GetPathName());
+		UE_LOG(LogDlgSystem,
+			   Error,
+			   TEXT("Can't delete text file for Dialogue = `%s` because the file path name is empty :O"),
+			   *DeletedDialogue->GetPathName());
 		return;
 	}
 
@@ -187,7 +236,10 @@ void FDlgSystemModule::HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, cons
 	const FString CurrentTextFilePathName = RenamedDialogue->GetTextFilePathName(false);
 	if (OldTextFilePathName == CurrentTextFilePathName)
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("Dialogue was renamed but the paths before and after are equal :O | `%s` == `%s`"), *OldTextFilePathName, *CurrentTextFilePathName);
+		UE_LOG(LogDlgSystem,
+			   Error,
+			   TEXT("Dialogue was renamed but the paths before and after are equal :O | `%s` == `%s`"),
+			   *OldTextFilePathName, *CurrentTextFilePathName);
 		return;
 	}
 
