@@ -43,11 +43,11 @@ struct FDlgParticipantData
 {
 	GENERATED_USTRUCT_BODY()
 
-	/** FName based conditions */
+	/** FName based conditions (aka conditions of type DlgConditionEventCall). */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSet<FName> Conditions;
 
-	/** FName based events */
+	/** FName based events (aka events of type EDlgEventType) */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSet<FName> Events;
 

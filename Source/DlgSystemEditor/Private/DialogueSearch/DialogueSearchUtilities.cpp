@@ -7,7 +7,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueSearchUtilities
-FDialogueSearchFoundResultPtr FDialogueSearchUtilities::GetGraphNodesForEventName(
+FDialogueSearchFoundResultPtr FDialogueSearchUtilities::GetGraphNodesForEventEventName(
 		const FName& EventName, const UDlgDialogue* Dialogue)
 {
 	FDialogueSearchFoundResultPtr FoundResult = FDialogueSearchFoundResult::Make();
@@ -25,7 +25,7 @@ FDialogueSearchFoundResultPtr FDialogueSearchUtilities::GetGraphNodesForEventNam
 	return FoundResult;
 }
 
-FDialogueSearchFoundResultPtr FDialogueSearchUtilities::GetGraphNodesForConditionName(
+FDialogueSearchFoundResultPtr FDialogueSearchUtilities::GetGraphNodesForConditionEventCallName(
 		const FName& ConditionName, const UDlgDialogue* Dialogue)
 {
 	FDialogueSearchFoundResultPtr FoundResult = FDialogueSearchFoundResult::Make();

@@ -269,7 +269,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 			{
 				PopulateVariablePropertiesFromSearchResult(
 					ParticipantProps->AddDialogueToEvent(EventName, Dialogue),
-					FDialogueSearchUtilities::GetGraphNodesForEventName(EventName, Dialogue),
+					FDialogueSearchUtilities::GetGraphNodesForEventEventName(EventName, Dialogue),
 					DialogueGuid);
 			}
 
@@ -280,7 +280,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 			{
 				PopulateVariablePropertiesFromSearchResult(
 					ParticipantProps->AddDialogueToCondition(ConditionName, Dialogue),
-					FDialogueSearchUtilities::GetGraphNodesForConditionName(ConditionName, Dialogue),
+					FDialogueSearchUtilities::GetGraphNodesForConditionEventCallName(ConditionName, Dialogue),
 					DialogueGuid);
 			}
 

@@ -45,15 +45,17 @@ class FDialogueSearchUtilities
 public:
 
 	/**
-	 * Gets all the graph nodes that contain the specified EventName
+	 * Gets all the graph nodes that contain the specified EventName (of the EventType DlgEventEvent)
 	 */
-	static FDialogueSearchFoundResultPtr GetGraphNodesForEventName(const FName& EventName, const UDlgDialogue* Dialogue);
+	static FDialogueSearchFoundResultPtr GetGraphNodesForEventEventName(const FName& EventName,
+																		const UDlgDialogue* Dialogue);
 
 	/**
-	 * Gets all the graph nodes that contain the specified ConditionName.
+	 * Gets all the graph nodes that contain the specified ConditionName (of the ConditionType DlgConditionEventCall)
 	 * This contains both graph nodes and edges.
 	 */
-	static FDialogueSearchFoundResultPtr GetGraphNodesForConditionName(const FName& ConditionName, const UDlgDialogue* Dialogue);
+	static FDialogueSearchFoundResultPtr GetGraphNodesForConditionEventCallName(const FName& ConditionName,
+																				const UDlgDialogue* Dialogue);
 
 	/**
 	 * Gets all the graph nodes that contain the specified IntVariableName.
