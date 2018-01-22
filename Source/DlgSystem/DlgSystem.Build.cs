@@ -5,14 +5,14 @@ using UnrealBuildTool;
 public class DlgSystem : ModuleRules
 {
 	public DlgSystem(ReadOnlyTargetRules Target) : base(Target)
-    {
-        // Enable IWYU
-        // https://docs.unrealengine.com/latest/INT/Programming/UnrealBuildSystem/IWYUReferenceGuide/index.html
-        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-        bEnforceIWYU = true;
-        //PrivatePCHHeaderFile = "Private/DlgSystemPrivatePCH.h";
+	{
+		// Enable IWYU
+		// https://docs.unrealengine.com/latest/INT/Programming/UnrealBuildSystem/IWYUReferenceGuide/index.html
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+		bEnforceIWYU = true;
+		//PrivatePCHHeaderFile = "Private/DlgSystemPrivatePCH.h";
 
-        PublicIncludePaths.AddRange(
+		PublicIncludePaths.AddRange(
 			new string[] {
 				"DlgSystem/Public"
 				// ... add public include paths required here ...
@@ -48,12 +48,24 @@ public class DlgSystem : ModuleRules
 			});
 
 		// We need this dependency when the DlgSystem works in the editor mode/built with editor
-		if (Target.bBuildEditor == true)
-        {
-            PrivateDependencyModuleNames.Add("UnrealEd");
-        }
+		if (Target.bBuildEditor)
+		{
+			PrivateDependencyModuleNames.Add("UnrealEd");
+		}
 
-        DynamicallyLoadedModuleNames.AddRange(
+		// Add GameplayDebugger functionality if not 'Shipping' or 'Test' Target.
+		if (Target.bBuildDeveloperTools ||
+			(Target.Configuration != UnrealTargetConfiguration.Shipping && Target.Configuration != UnrealTargetConfiguration.Test))
+		{
+			PrivateDependencyModuleNames.Add("GameplayDebugger");
+			Definitions.Add("WITH_GAMEPLAY_DEBUGGER=1");
+		}
+		else
+		{
+			Definitions.Add("WITH_GAMEPLAY_DEBUGGER=0");
+		}
+
+		DynamicallyLoadedModuleNames.AddRange(
 			new string[] {
 				// ... add any modules that your module loads dynamically here ...
 			});

@@ -60,7 +60,7 @@ void FDialogueStyle::Initialize()
 
 	StyleSet = MakeShareable(new FSlateStyleSet(GetStyleSetName()));
 	EngineContentRoot = FPaths::EngineContentDir() / TEXT("Editor/Slate");
-	TSharedPtr<IPlugin> CurrentPlugin = IPluginManager::Get().FindPlugin(DIALOGUE_SYSTEM_PLUGIN_NAME);
+	TSharedPtr<IPlugin> CurrentPlugin = IPluginManager::Get().FindPlugin(DIALOGUE_SYSTEM_PLUGIN_NAME.ToString());
 	if (CurrentPlugin.IsValid())
 	{
 		// Replaces the Engine Content Root (Engine/Editor/Slate) with the plugin content root

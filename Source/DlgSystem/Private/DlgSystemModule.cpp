@@ -3,10 +3,12 @@
 
 #include "ModuleManager.h"
 #include "AssetRegistryModule.h"
+#include "GameplayDebugger.h"
 
 #include "DlgSystemPrivatePCH.h"
 #include "DlgManager.h"
 #include "DlgDialogue.h"
+#include "GameplayDebugger/DlgGameplayDebuggerCategory.h"
 
 #define LOCTEXT_NAMESPACE "FDlgSystemModule"
 
@@ -29,10 +31,29 @@ void FDlgSystemModule::StartupModule()
 	// the asset registry.
 	AssetRegistry.OnAssetRemoved().AddRaw(this, &Self::HandleAssetRemoved);
 	AssetRegistry.OnAssetRenamed().AddRaw(this, &Self::HandleAssetRenamed);
+
+#if WITH_GAMEPLAY_DEBUGGER
+	// If the gameplay debugger is available, register the category and notify the editor about the changes
+	IGameplayDebugger& GameplayDebuggerModule = IGameplayDebugger::Get();
+	GameplayDebuggerModule.RegisterCategory(DIALOGUE_SYSTEM_PLUGIN_NAME,
+		IGameplayDebugger::FOnGetCategory::CreateStatic(&FDlgGameplayDebuggerCategory::MakeInstance),
+		EGameplayDebuggerCategoryState::EnabledInGameAndSimulate);
+	GameplayDebuggerModule.NotifyCategoriesChanged();
+#endif // WITH_GAMEPLAY_DEBUGGER
 }
 
 void FDlgSystemModule::ShutdownModule()
 {
+#if WITH_GAMEPLAY_DEBUGGER
+	// If the gameplay debugger is available, unregister the category
+	if (IGameplayDebugger::IsAvailable())
+	{
+		IGameplayDebugger& GameplayDebuggerModule = IGameplayDebugger::Get();
+		GameplayDebuggerModule.UnregisterCategory(DIALOGUE_SYSTEM_PLUGIN_NAME);
+		GameplayDebuggerModule.NotifyCategoriesChanged();
+	}
+#endif // WITH_GAMEPLAY_DEBUGGER
+
 	// This function may be called during shutdown to clean up your module. For modules that support dynamic reloading,
 	// we call this function before unloading the module.
 	const FModuleManager& ModuleManger = FModuleManager::Get();

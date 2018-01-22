@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 // The name of the Dialogue System plugin as defined in the .uplugin file
-const FString DIALOGUE_SYSTEM_PLUGIN_NAME(TEXT("DlgSystem"));
+const FName DIALOGUE_SYSTEM_PLUGIN_NAME(TEXT("DlgSystem"));
 
 class UDlgDialogue;
 struct FAssetData;
