@@ -79,16 +79,6 @@ UDlgContext* UDlgManager::StartDialogue(UDlgDialogue* Dialogue, const TArray<UOb
 	return nullptr;
 }
 
-const TMap<FGuid, FDlgHistory>& UDlgManager::GetDlgHistory()
-{
-	return DlgMemory::GetInstance()->GetHistoryMaps();
-}
-
-void UDlgManager::SetDlgHistory(const TMap<FGuid, FDlgHistory>& DlgHistory)
-{
-	DlgMemory::GetInstance()->SetHistoryMap(DlgHistory);
-}
-
 UDlgContext* UDlgManager::StartMonologue(UDlgDialogue* Dialogue, UObject* Participant)
 {
 	TArray<UObject*> Participants;
@@ -169,6 +159,16 @@ TArray<UDlgDialogue*> UDlgManager::GetDialoguesWithDuplicateGuid()
 	}
 
 	return DuplicateDialogues;
+}
+
+const TMap<FGuid, FDlgHistory>& UDlgManager::GetDialogueHistory()
+{
+	return DlgMemory::GetInstance()->GetHistoryMaps();
+}
+
+void UDlgManager::SetDialogueHistory(const TMap<FGuid, FDlgHistory>& DlgHistory)
+{
+	DlgMemory::GetInstance()->SetHistoryMap(DlgHistory);
 }
 
 bool UDlgManager::DoesObjectImplementDialogueParticipantInterface(UObject* Object)

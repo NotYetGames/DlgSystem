@@ -38,12 +38,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = DialogueLaunch)
 	static UDlgContext* StartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants);
 
-	UFUNCTION(BlueprintCallable, Category = DialogueData)
-	static const TMap<FGuid, FDlgHistory>& GetDlgHistory();
-
-	UFUNCTION(BlueprintCallable, Category = DialogueData)
-	static void SetDlgHistory(const TMap<FGuid, FDlgHistory>& DlgHistory);
-
 	/**
 	 * Helper methods, same as StartDialogue but with fixed amount of participant(s)
 	 */
@@ -100,6 +94,14 @@ public:
 	{
 		Map.KeySort(PredicateSortFNameAlphabeticallyAscending);
 	}
+
+	/** Gets the Dialogue History from the UDlgMemory. */
+	UFUNCTION(BlueprintCallable, Category = DialogueData)
+	static const TMap<FGuid, FDlgHistory>& GetDialogueHistory();
+
+	/** Sets the UDlgMemory Dialogue history. */
+	UFUNCTION(BlueprintCallable, Category = DialogueData)
+	static void SetDialogueHistory(const TMap<FGuid, FDlgHistory>& DlgHistory);
 
 	/** Does the Object implement the Dialogue Participant Interface? */
 	UFUNCTION(BlueprintCallable, Category = DialogueData)
