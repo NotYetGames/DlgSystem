@@ -59,7 +59,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = DialogueLaunch)
 	static UDlgContext* StartDialogue4(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1, UObject* Participant2, UObject* Participant3);
 
-
 	/**
 	 * Loads all dialogues from the filesystem into memory
 	 */
@@ -80,6 +79,9 @@ public:
 		return Array;
 	}
 
+	/** Gets all the dialogues that have a duplicate GUID, should not happen, like ever. */
+	static TArray<UDlgDialogue*> GetDialoguesWithDuplicateGuid();
+
 	/** Gets all the loaded dialogues from memory that have the ParticipantName included insided them. */
 	static TArray<UDlgDialogue*> GetAllDialoguesForParticipantName(const FName& ParticipantName);
 
@@ -98,6 +100,10 @@ public:
 	{
 		Map.KeySort(PredicateSortFNameAlphabeticallyAscending);
 	}
+
+	/** Does the Object implement the Dialogue Participant Interface? */
+	UFUNCTION(BlueprintCallable, Category = DialogueData)
+	static bool DoesObjectImplementDialogueParticipantInterface(UObject* Object);
 
 	/** Gets all the unique participant names sorted alphabetically from all the Dialogues loaded into memory. */
 	UFUNCTION(BlueprintPure, Category = DialogueData)

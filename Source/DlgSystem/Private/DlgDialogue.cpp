@@ -17,6 +17,7 @@
 #include "IO/DlgJsonParser.h"
 #include "DlgNode_Speech.h"
 #include "DlgNode_End.h"
+#include "DlgManager.h"
 
 // Unique DlgDialogue Object version id, generated with random
 const FGuid FDlgDialogueObjectVersion::GUID(0x2B8E5105, 0x6F66348F, 0x2A8A0B25, 0x9047A071);
@@ -348,7 +349,7 @@ void UDlgDialogue::ReloadFromFile()
 
 	// TODO(leyyin): validate if data is legit, indicies exist and that sort.
 	// Check if Guid is not a duplicate
-	TArray<UDlgDialogue*> DuplicateDialogues = FDlgSystemModule::GetDialoguesWithDuplicateGuid();
+	TArray<UDlgDialogue*> DuplicateDialogues = UDlgManager::GetDialoguesWithDuplicateGuid();
 	if (DuplicateDialogues.Num() > 0)
 	{
 		if (DuplicateDialogues.Contains(this))

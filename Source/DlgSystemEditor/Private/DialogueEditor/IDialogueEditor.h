@@ -24,7 +24,7 @@ public:
 	/** Refresh the viewport and property/details panel. */
 	virtual void Refresh() = 0;
 
-	/** Useful for setting the last target node on drap operations. */
+	/** Useful for setting the last target node on drop operations. */
 	virtual UDialogueGraphNode_Edge* GetLastTargetGraphEdgeBeforeDrag() const = 0;
 	virtual void SetLastTargetGraphEdgeBeforeDrag(UDialogueGraphNode_Edge* InEdge) = 0;
 

@@ -4,6 +4,7 @@
 #include "UObjectIterator.h"
 #include "Engine/ObjectLibrary.h"
 #include "IPluginManager.h"
+#include "Engine/Blueprint.h"
 
 #include "DlgSystemPrivatePCH.h"
 #include "DlgDialogueParticipant.h"
@@ -15,17 +16,21 @@ UDlgContext* UDlgManager::StartDialogue(UDlgDialogue* Dialogue, const TArray<UOb
 {
 	if (Dialogue == nullptr || Dialogue->GetParticipantData().Num() == 0)
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("Failed to start dialogue - Invalid dialogue! (Either nullptr or a dialogue without any participants)"));
+		UE_LOG(LogDlgSystem,
+			   Error,
+			   TEXT("Failed to start dialogue - Invalid dialogue! (Either nullptr or a dialogue without any participants)"));
 		return nullptr;
 	}
 
 	// check participant data:
-
 	const TMap<FName, FDlgParticipantData>& DialogueParticipants = Dialogue->GetParticipantData();
 	if (DialogueParticipants.Num() != Participants.Num())
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("Failed to start dialogue - the amount of participants does not match the dialogue's "
-										 "expectation! Dialogue Participants Num %d != Participants Num %d"), DialogueParticipants.Num(), Participants.Num());
+		UE_LOG(LogDlgSystem,
+			   Error,
+			   TEXT("Failed to start dialogue - the amount of participants does not match the dialogue's "
+					"expectation! Dialogue Participants Num %d != Participants Num %d"),
+			   DialogueParticipants.Num(), Participants.Num());
 		return nullptr;
 	}
 
@@ -43,8 +48,11 @@ UDlgContext* UDlgManager::StartDialogue(UDlgDialogue* Dialogue, const TArray<UOb
 		// Be sure it is a participant
 		if (!Participant->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
 		{
-			UE_LOG(LogDlgSystem, Error, TEXT("Failed to start dialogue - Participant object at index = %d with ObjectName = `%s`"
-											 "does not implement the IDlgDialogueParticipant interface!"), ParticipantIndex, *Participant->GetName());
+			UE_LOG(LogDlgSystem,
+				   Error,
+				   TEXT("Failed to start dialogue - Participant object at index = %d with ObjectName = `%s`"
+						"does not implement the IDlgDialogueParticipant interface!"),
+				   ParticipantIndex, *Participant->GetName());
 			return nullptr;
 		}
 
@@ -52,8 +60,11 @@ UDlgContext* UDlgManager::StartDialogue(UDlgDialogue* Dialogue, const TArray<UOb
 		const FName ParticipantName = IDlgDialogueParticipant::Execute_GetParticipantName(Participant);
 		if (!DialogueParticipants.Find(ParticipantName))
 		{
-			UE_LOG(LogDlgSystem, Error, TEXT("Failed to start dialogue - Input Participant at index = %d "
-											 "does not have a participant with name = `%s` in the Dialogue"), ParticipantIndex, *ParticipantName.ToString());
+			UE_LOG(LogDlgSystem,
+				   Error,
+				   TEXT("Failed to start dialogue - Input Participant at index = %d "
+						"does not have a participant with name = `%s` in the Dialogue"),
+				   ParticipantIndex, *ParticipantName.ToString());
 			return nullptr;
 		}
 		ParticipantBinding.Add(ParticipantName, Participant);
@@ -134,6 +145,53 @@ void UDlgManager::LoadAllDialoguesIntoMemory()
 	ObjectLibrary->LoadAssetDataFromPaths(PathsToSeach);
 	ObjectLibrary->LoadAssetsFromAssetData();
 	ObjectLibrary->RemoveFromRoot();
+}
+
+TArray<UDlgDialogue*> UDlgManager::GetDialoguesWithDuplicateGuid()
+{
+	TArray<UDlgDialogue*> Dialogues = GetAllDialoguesFromMemory();
+	TArray<UDlgDialogue*> DuplicateDialogues;
+
+	TSet<FGuid> DialogueGuids;
+	for (UDlgDialogue* Dialogue : Dialogues)
+	{
+		const FGuid id = Dialogue->GetDlgGuid();
+		if (DialogueGuids.Find(id) == nullptr)
+		{
+			// does not exist, good
+			DialogueGuids.Add(id);
+		}
+		else
+		{
+			// how?
+			DuplicateDialogues.Add(Dialogue);
+		}
+	}
+
+	return DuplicateDialogues;
+}
+
+bool UDlgManager::DoesObjectImplementDialogueParticipantInterface(UObject* Object)
+{
+	static const UClass* DialogueParticipantClass = UDlgDialogueParticipant::StaticClass();
+
+	// Apparently blueprints only work this way
+	if (UBlueprint* Blueprint = Cast<UBlueprint>(Object))
+	{
+		if (UClass* GeneratedClass = Cast<UClass>(Blueprint->GeneratedClass))
+		{
+			return GeneratedClass->ImplementsInterface(DialogueParticipantClass);
+		}
+	}
+
+	// A class object, does this ever happen?
+	if (UClass* Class = Cast<UClass>(Object))
+	{
+		return Class->ImplementsInterface(DialogueParticipantClass);
+	}
+
+	// All other object types
+	return Object->GetClass()->ImplementsInterface(DialogueParticipantClass);
 }
 
 TArray<UDlgDialogue*> UDlgManager::GetAllDialoguesForParticipantName(const FName& ParticipantName)

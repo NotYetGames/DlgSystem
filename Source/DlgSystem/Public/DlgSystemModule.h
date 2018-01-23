@@ -26,9 +26,6 @@ public:
 	void StartupModule() override;
 	void ShutdownModule() override;
 
-	/** Gets all the dialogues that have a duplicate GUID, should not happen, like ever. */
-	static TArray<UDlgDialogue*> GetDialoguesWithDuplicateGuid();
-
 	/** Gets the debug Dialogue Data Display Window. */
 	TSharedRef<SWidget> GetDialogueDataDisplayWindow(const TSharedRef<SDockTab>& InParentTab);
 

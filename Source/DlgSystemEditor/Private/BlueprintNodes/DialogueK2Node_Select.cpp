@@ -11,6 +11,7 @@
 #include "DlgSystemEditorPrivatePCH.h"
 #include "DlgDialogue.h"
 #include "DlgManager.h"
+#include "DialogueBlueprintUtilities.h"
 
 #define LOCTEXT_NAMESPACE "DlgK2Node_Select"
 
@@ -354,7 +355,7 @@ void UDialogueK2Node_Select::GetPrintStringFunction(FName& FunctionName, UClass*
 
 bool UDialogueK2Node_Select::RefreshPinNames()
 {
-	const FName ParticipantName = FDlgSystemEditorModule::GetParticipantNameFromNode(this);
+	const FName ParticipantName = FDialogueBlueprintUtilities::GetParticipantNameFromNode(this);
 	if (ParticipantName == NAME_None)
 		return false;
 

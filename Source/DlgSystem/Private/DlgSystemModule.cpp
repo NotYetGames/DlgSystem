@@ -99,30 +99,6 @@ void FDlgSystemModule::ShutdownModule()
 	UE_LOG(LogDlgSystem, Verbose, TEXT("Stopped DlgSystemModule"));
 }
 
-TArray<UDlgDialogue*> FDlgSystemModule::GetDialoguesWithDuplicateGuid()
-{
-	TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
-	TArray<UDlgDialogue*> DuplicateDialogues;
-
-	TSet<FGuid> DialogueGuids;
-	for (UDlgDialogue* Dialogue : Dialogues)
-	{
-		const FGuid id = Dialogue->GetDlgGuid();
-		if (DialogueGuids.Find(id) == nullptr)
-		{
-			// does not exist, good
-			DialogueGuids.Add(id);
-		}
-		else
-		{
-			// how?
-			DuplicateDialogues.Add(Dialogue);
-		}
-	}
-
-	return DuplicateDialogues;
-}
-
 TSharedRef<SWidget> FDlgSystemModule::GetDialogueDataDisplayWindow(const TSharedRef<SDockTab>& InParentTab)
 {
 	TSharedPtr<SDlgDataDisplay> DialogueData = DialogueDataDisplayWidget.Pin();

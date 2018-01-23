@@ -8,9 +8,14 @@
 #include "Commands/UICommandList.h"
 #include "Docking/WorkspaceItem.h"
 
+// The name of the Dialogue System Editor plugin as defined in the .uplugin file
+const FName DIALOGUE_SYSTEM_EDITOR_PLUGIN_NAME(TEXT("DlgSystemEditor"));
+
 class FSpawnTabArgs;
 class UK2Node;
 class UDlgDialogue;
+struct FGraphPanelNodeFactory;
+struct FGraphPanelPinFactory;
 
 class FDlgSystemEditorModule : public IModuleInterface
 {
@@ -23,15 +28,6 @@ public:
 	void ShutdownModule() override;
 
 	// Own functions
-	/**
-	 * Tries to get the dialogue name... it expects the owner of the node to implement IDlgDialogueParticipant interface
-	 * @return		the participant name on success or NAME_None on failure.
-	 */
-	static FName GetParticipantNameFromNode(UK2Node* Node);
-
-	/** Self explanatory what the method does */
-	static bool DoesObjectImplementDialogueParticipantInterface(UObject* Object);
-
 	/**
 	 * Save all the dialogues.
 	 * @return True on success or false on failure.
@@ -62,10 +58,10 @@ private:
 	TArray<FName> RegisteredCustomPropertyTypeLayout;
 
 	/** The factory of how the nodes look. */
-	TSharedPtr<struct FGraphPanelNodeFactory> DialogueGraphNodeFactory;
+	TSharedPtr<FGraphPanelNodeFactory> DialogueGraphNodeFactory;
 
 	/** The factory of how the pins look. */
-	TSharedPtr<struct FGraphPanelPinFactory> DialogueGraphPinFactory;
+	TSharedPtr<FGraphPanelPinFactory> DialogueGraphPinFactory;
 
 	/**
 	 * Global Editor commands bound from this plugin.

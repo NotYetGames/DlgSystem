@@ -76,7 +76,7 @@ public:
 
 		if (UObject* Object = InItem.GetAsset())
 		{
-			return FDlgSystemEditorModule::DoesObjectImplementDialogueParticipantInterface(Object);
+			return UDlgManager::DoesObjectImplementDialogueParticipantInterface(Object);
 		}
 
 		return false;

@@ -59,7 +59,7 @@ void FDlgSystemEditorModule::StartupModule()
 	UDlgManager::LoadAllDialoguesIntoMemory();
 
 	// May the math Gods have mercy on us!
-	for (UDlgDialogue* Dialogue : FDlgSystemModule::GetDialoguesWithDuplicateGuid())
+	for (UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGuid())
 	{
 		// GUID already exists (╯°□°）╯︵ ┻━┻
 		// Does this break the universe?
@@ -233,46 +233,6 @@ void FDlgSystemEditorModule::ShutdownModule()
 	UE_LOG(LogDlgSystemEditor, Verbose, TEXT("Stopped DlgSystemEditorModule"));
 }
 
-FName FDlgSystemEditorModule::GetParticipantNameFromNode(UK2Node* Node)
-{
-	// NOTE we can't call Node->GetBlueprint() because this is called in strange places ;)
-	if (UEdGraph* Graph = Cast<UEdGraph>(Node->GetOuter()))
-	{
-		if (UBlueprint* Blueprint = FBlueprintEditorUtils::FindBlueprintForGraph(Graph))
-		{
-			if (DoesObjectImplementDialogueParticipantInterface(Blueprint))
-			{
-				return IDlgDialogueParticipant::Execute_GetParticipantName(Blueprint->GeneratedClass->GetDefaultObject());
-			}
-		}
-	}
-
-	return NAME_None;
-}
-
-bool FDlgSystemEditorModule::DoesObjectImplementDialogueParticipantInterface(UObject* Object)
-{
-	static const UClass* DialogueParticipantClass = UDlgDialogueParticipant::StaticClass();
-
-	// Apparently blueprints only work this way
-	if (UBlueprint* Blueprint = Cast<UBlueprint>(Object))
-	{
-		if (UClass* GeneratedClass = Cast<UClass>(Blueprint->GeneratedClass))
-		{
-			return GeneratedClass->ImplementsInterface(DialogueParticipantClass);
-		}
-	}
-
-	// A class object, does this ever happen?
-	if (UClass* Class = Cast<UClass>(Object))
-	{
-		return Class->ImplementsInterface(DialogueParticipantClass);
-	}
-
-	// All other object types
-	return Object->GetClass()->ImplementsInterface(DialogueParticipantClass);
-}
-
 bool FDlgSystemEditorModule::SaveAllDialogues()
 {
 	TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
@@ -317,19 +277,6 @@ void FDlgSystemEditorModule::HandleOnSaveAllDialogues()
 
 void FDlgSystemEditorModule::ExtendMenu()
 {
-	struct Local
-	{
-		static void FillFileLoadAndSaveItems(FMenuBuilder& MenuBuilder)
-		{
-			// Save Dialogues
-			MenuBuilder.BeginSection("DialogueFileLoadAndSave", LOCTEXT("DialogueKeyFileAndSearch", "Dialogue"));
-			{
-				MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().SaveAllDialogues);
-			}
-			MenuBuilder.EndSection();
-		}
-	};
-
 	TSharedRef<FExtender> FileMenuExtender(new FExtender);
 
 	// Fill after the File->FileLoadAndSave
@@ -337,7 +284,15 @@ void FDlgSystemEditorModule::ExtendMenu()
 		"FileLoadAndSave",
 		EExtensionHook::After,
 		GlobalEditorCommands.ToSharedRef(),
-		FMenuExtensionDelegate::CreateStatic(&Local::FillFileLoadAndSaveItems));
+		FMenuExtensionDelegate::CreateLambda([this](FMenuBuilder& MenuBuilder)
+		{
+			// Save Dialogues
+			MenuBuilder.BeginSection("DialogueFileLoadAndSave", LOCTEXT("DialogueKeyFileAndSearch", "Dialogue"));
+			{
+				MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().SaveAllDialogues);
+			}
+			MenuBuilder.EndSection();
+		}));
 
 	// Add to the level editor
 	FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>(NAME_MODULE_LevelEditor);
