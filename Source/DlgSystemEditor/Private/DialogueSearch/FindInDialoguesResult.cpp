@@ -101,8 +101,7 @@ FReply FFindInDialoguesDialogueNode::OnClick()
 {
 	if (Dialogue.IsValid())
 	{
-		FAssetEditorManager::Get().OpenEditorForAsset(const_cast<UDlgDialogue*>(Dialogue.Get()));
-		return FReply::Handled();
+		return FDialogueEditorUtilities::OpenEditorForAsset(Dialogue.Get()) ? FReply::Handled() : FReply::Unhandled();
 	}
 
 	return FReply::Unhandled();

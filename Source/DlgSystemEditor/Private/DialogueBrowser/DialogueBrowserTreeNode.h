@@ -4,10 +4,12 @@
 #include "CoreMinimal.h"
 #include "STreeView.h"
 
-struct FDialogueTreeNode;
+class FDialogueBrowserTreeNode;
 class UDlgDialogue;
+class UDialogueGraphNode;
+class UDialogueGraphNode_Edge;
 
-typedef TSharedPtr<FDialogueTreeNode> FDialogueTreeNodePtr;
+typedef TSharedPtr<FDialogueBrowserTreeNode> FDialogueBrowserTreeNodePtr;
 
 /** The types of categories. */
 enum class EDialogueTreeNodeCategoryType : uint8
@@ -30,7 +32,6 @@ enum class EDialogueTreeNodeTextType : uint8
 {
 	Default = 0,
 
-	Participant,
 	ParticipantDialogue,
 	ParticipantEvent,
 	ParticipantCondition,
@@ -74,23 +75,20 @@ enum class EDialogueTreeNodeType : uint8
 /**
  * Defines the singular item in the Tree.
  */
-struct FDialogueTreeNode : TSharedFromThis<FDialogueTreeNode>
+class FDialogueBrowserTreeNode : public  TSharedFromThis<FDialogueBrowserTreeNode>
 {
-private:
-	typedef FDialogueTreeNode Self;
-	typedef TSharedPtr<Self> SelfPtr;
+	typedef FDialogueBrowserTreeNode Self;
 
 public:
-	explicit FDialogueTreeNode(const FName& InText)
-		: Text(InText)
-	{
-	}
+	explicit FDialogueBrowserTreeNode(const FName& InText);
+	FDialogueBrowserTreeNode(const FName& InText, TSharedPtr<Self> InParent);
+	virtual ~FDialogueBrowserTreeNode() {}
 
-	FDialogueTreeNode(const FName& InText, const FName& InParticipantName)
-		: Text(InText),
-		ParticipantName(InParticipantName)
-	{
-	}
+	/** Gets the Participant Name that has this Node belongs to */
+	virtual const FName GetParentParticipantName() const;
+
+	/* Called when user clicks on the search item */
+	virtual FReply OnClick();
 
 	/** Getters for the properties */
 	// Text:
@@ -107,15 +105,6 @@ public:
 		return Text.ToString().Contains(InSearch, SearchCase);
 	}
 
-	// ParticipantName:
-	bool HasParticipantName() const { return ParticipantName.IsValid() && !ParticipantName.IsNone(); }
-	const FName& GetParticipantName() const { return ParticipantName; }
-	Self* SetParticipantName(const FName& InParticipantName)
-	{
-		ParticipantName = InParticipantName;
-		return this;
-	}
-
 	// VariableName:
 	const FName& GetVariableName() const { return VariableName; }
 	Self* SetVariableName(const FName& InVariableName)
@@ -126,11 +115,6 @@ public:
 
 	// Type:
 	EDialogueTreeNodeType GetType() const { return Type; }
-	Self* SetType(EDialogueTreeNodeType InType)
-	{
-		Type = InType;
-		return this;
-	}
 
 	// TextType:
 	EDialogueTreeNodeTextType GetTextType() const { return TextType; }
@@ -148,14 +132,6 @@ public:
 		return this;
 	}
 
-	// Object:
-	const TWeakObjectPtr<UObject>& GetObject() const { return Object; }
-	Self* SetObject(const TWeakObjectPtr<UObject>& InObject)
-	{
-		Object = InObject;
-		return this;
-	}
-
 	// bIsVisible:
 	bool IsVisible() const { return bIsVisible; }
 	Self* SetIsVisible(const bool InIsVisible)
@@ -165,21 +141,21 @@ public:
 	}
 
 	// ParentNode:
-	bool HasParentNode() const { return ParentNode.IsValid(); }
-	TWeakPtr<Self> GetParentNode() const { return ParentNode; }
-	Self* SetParentNode(TWeakPtr<Self> InParentNode)
+	bool HasParent() const { return Parent.IsValid(); }
+	TWeakPtr<Self> GetParent() const { return Parent; }
+	Self* SetParent(TWeakPtr<Self> InParentNode)
 	{
-		ParentNode = InParentNode;
+		Parent = InParentNode;
 		return this;
 	}
 
 	// Children/InlineChildren:
-	Self* AddChild(const SelfPtr& ChildNode, const bool bIsInline = false)
+	Self* AddChild(const TSharedPtr<Self>& ChildNode, const bool bIsInline = false)
 	{
 		ensure(!ChildNode->IsRoot());
 		ensure(!IsSeparator());
 
-		ChildNode->SetParentNode(this->AsShared());
+		ChildNode->SetParent(this->AsShared());
 		if (bIsInline)
 		{
 			InlineChildren.Add(ChildNode);
@@ -193,11 +169,11 @@ public:
 	bool HasInlineChildren() const { return InlineChildren.Num() > 0; }
 	bool HasChildren() const { return Children.Num() > 0; }
 	bool IsLeafNode() const { return Children.Num() == 0; }
-	const TArray<SelfPtr>& GetChildren() const { return Children; }
-	const TArray<SelfPtr>& GetInlineChildren() const { return InlineChildren; }
-	void GetVisibleChildren(TArray<SelfPtr>& OutChildren)
+	const TArray<TSharedPtr<Self>>& GetChildren() const { return Children; }
+	const TArray<TSharedPtr<Self>>& GetInlineChildren() const { return InlineChildren; }
+	void GetVisibleChildren(TArray<TSharedPtr<Self>>& OutChildren)
 	{
-		for (const SelfPtr& Child : Children)
+		for (const TSharedPtr<Self>& Child : Children)
 		{
 			if (Child->IsVisible())
 			{
@@ -205,21 +181,21 @@ public:
 			}
 		}
 	}
-	Self* SetChildren(const TArray<SelfPtr>& InChildren)
+	Self* SetChildren(const TArray<TSharedPtr<Self>>& InChildren)
 	{
 		Children = InChildren;
-		for (const SelfPtr& Child : Children)
+		for (const TSharedPtr<Self>& Child : Children)
 		{
-			Child->SetParentNode(this->AsShared());
+			Child->SetParent(this->AsShared());
 		}
 		return this;
 	}
-	Self* SetInlineChildren(const TArray<SelfPtr>& InChildren)
+	Self* SetInlineChildren(const TArray<TSharedPtr<Self>>& InChildren)
 	{
 		InlineChildren = InChildren;
-		for (const SelfPtr& Child : InlineChildren)
+		for (const TSharedPtr<Self>& Child : InlineChildren)
 		{
-			Child->SetParentNode(this->AsShared());
+			Child->SetParent(this->AsShared());
 		}
 		return this;
 	}
@@ -272,7 +248,7 @@ public:
 	 * Aka Flattened tree.
 	 * @param  OutNodeArray	The array to fill out with decendent nodes.
 	 */
-	void GetAllNodes(TArray<SelfPtr>& OutNodeArray) const;
+	void GetAllNodes(TArray<TSharedPtr<Self>>& OutNodeArray) const;
 
 	/**
 	 * Takes the tree view and expands its elements for each child.
@@ -280,88 +256,44 @@ public:
 	 * @param  TreeView		The tree responsible for visualizing this node hierarchy.
 	 * @param  bRecursive	Determines if you want children/descendants to expand their children as well.
 	 */
-	void ExpandAllChildren(TSharedPtr<STreeView<SelfPtr>> TreeView, bool bRecursive = true);
+	void ExpandAllChildren(TSharedPtr<STreeView<TSharedPtr<Self>>> TreeView, bool bRecursive = true);
 
 	/**
 	 * Filters the node so that it will only containt paths to nodes that contains the specified string.
 	 * @param OutNodes	Array of arrays, each array inside represents a node path that remains to the Node that contains the InSearch
 	 * @param InSearch The string to search by
 	 */
-	void FilterPathsToNodesThatContainText(const FString& InSearch, TArray<TArray<SelfPtr>>& OutNodes);
+	void FilterPathsToNodesThatContainText(const FString& InSearch, TArray<TArray<TSharedPtr<Self>>>& OutNodes);
 
 	/** Gets the textual representation of this item */
 	FString ToString() const;
 
-	/** Helper methods. */
-	static SelfPtr Make(const FName& InText) { return MakeShareable(new Self(InText)); }
-	static SelfPtr Make(const FName& InText, const FName& ParticipantName)
-	{
-		return MakeShareable(new Self(InText, ParticipantName));
-	}
-	static SelfPtr MakeCategory(const FName& InText, const FName& ParticipantName)
-	{
-		FDialogueTreeNodePtr Ptr = Make(InText, ParticipantName);
-		Ptr->SetType(EDialogueTreeNodeType::Category);
-		return Ptr;
-	}
 
-	static SelfPtr MakeSeparator()
+	/** Is this equal with Other? */
+	virtual bool IsEqual(const Self& Other)
 	{
-		FDialogueTreeNodePtr Ptr = Make(TEXT("SEPARATOR"));
-		Ptr->SetType(EDialogueTreeNodeType::Separator);
-		return Ptr;
-	}
-
-	static SelfPtr MakeRoot()
-	{
-		FDialogueTreeNodePtr Ptr = Make(TEXT("ROOT"));
-		Ptr->SetType(EDialogueTreeNodeType::RootNode);
-		return Ptr;
-	}
-
-	static SelfPtr DeepCopy(const SelfPtr& Other)
-	{
-		SelfPtr Copy = MakeShareable(new Self(Other->GetText()));
-		Copy->SetParticipantName(Other->GetParticipantName());
-		Copy->SetVariableName(Other->GetVariableName());
-		Copy->SetType(Other->GetType());
-		Copy->SetCategoryType(Other->GetCategoryType());
-		Copy->SetTextType(Other->GetTextType());
-		Copy->SetObject(Other->GetObject());
-
-		// Deep copy children
-		for (const SelfPtr& ChildItem : Other->GetInlineChildren())
-		{
-			Copy->AddChild(DeepCopy(ChildItem), true);
-		}
-		for (const SelfPtr& ChildItem : Other->GetChildren())
-		{
-			Copy->AddChild(DeepCopy(ChildItem), false);
-		}
-
-		return Copy;
-	}
-
-	bool operator==(const Self& Other)
-	{
-		return Text == Other.GetText() &&
-				ParticipantName == Other.GetParticipantName() &&
+		return 	Text == Other.GetText() &&
 				VariableName == Other.GetVariableName() &&
 				Type == Other.GetType() &&
 				CategoryType == Other.GetCategoryType() &&
 				TextType == Other.GetTextType();
-	 }
+	}
+
+	bool operator==(const Self& Other)
+	{
+		return IsEqual(Other);
+	}
 
 private:
-	void GetPathToChildThatContainsText(const SelfPtr& Child, const FString& InSearch, TArray<TArray<SelfPtr>>& OutNodes);
+	void GetPathToChildThatContainsText(const TSharedPtr<Self>& Child,
+										const FString& InSearch,
+										TArray<TArray<TSharedPtr<Self>>>& OutNodes);
 
 protected:
+	// The Displayed Text
 	FName Text;
 
-	// Variables that may be set or not.
-	FName ParticipantName = NAME_None;
-
-	// Used to store Event, Condition, IntName, etc
+	// Used to store Event, Condition, IntName, Dialogue name etc
 	FName VariableName = NAME_None;
 
 	/** The type of this item. */
@@ -376,15 +308,139 @@ protected:
 	// Is this node displayed?
 	bool bIsVisible = true;
 
-	// The object it represents if any.
-	TWeakObjectPtr<UObject> Object;
-
 	/** The node that this is a direct child of (empty if this is a root node) */
-	TWeakPtr<Self> ParentNode;
+	TWeakPtr<Self> Parent;
 
 	// Inline Nodes, Nodes that are displayed in the same line as this Node
-	TArray<SelfPtr> InlineChildren;
+	TArray<TSharedPtr<Self>> InlineChildren;
 
 	// Children of this item
-	TArray<SelfPtr> Children;
+	TArray<TSharedPtr<Self>> Children;
+};
+
+
+/** Root node of the Dialogue browser */
+class FDialogueBrowserTreeRootNode : public FDialogueBrowserTreeNode
+{
+	typedef FDialogueBrowserTreeNode Super;
+public:
+	FDialogueBrowserTreeRootNode();
+};
+
+/** Separator node of the Dialogue browser */
+class FDialogueBrowserTreeSeparatorNode : public FDialogueBrowserTreeNode
+{
+	typedef FDialogueBrowserTreeNode Super;
+public:
+	FDialogueBrowserTreeSeparatorNode(FDialogueBrowserTreeNodePtr InParent = nullptr);
+};
+
+/**
+ * Category node of the Dialogue browser. Defines a node that is a Category.
+ * The same as FDialogueBrowserTreeNode only that is of type Text.
+ */
+class FDialogueBrowserTreeCategoryNode : public FDialogueBrowserTreeNode
+{
+	typedef FDialogueBrowserTreeNode Super;
+public:
+	FDialogueBrowserTreeCategoryNode(const FName& InText, const EDialogueTreeNodeCategoryType InCategoryType,
+									FDialogueBrowserTreeNodePtr InParent);
+};
+
+/** Node results that represents the Participant Name. */
+class FDialogueBrowserTreeParticipantNode : public FDialogueBrowserTreeNode
+{
+	typedef FDialogueBrowserTreeParticipantNode Self;
+	typedef FDialogueBrowserTreeNode Super;
+public:
+	FDialogueBrowserTreeParticipantNode(const FName& InText, FDialogueBrowserTreeNodePtr InParent,
+										const FName& InParticipantName);
+
+	// ParticipantName:
+	const FName GetParentParticipantName() const override;
+	Self* SetParticipantName(const FName& InParticipantName)
+	{
+		ParticipantName = InParticipantName;
+		return this;
+	}
+
+	bool operator==(const Self& Other)
+	{
+		return ParticipantName == Other.GetParentParticipantName() &&
+			   IsEqual(Other);
+	 }
+
+protected:
+	/** The Participant Name it represents. */
+	FName ParticipantName = NAME_None;
+};
+
+/** Similar to the FDialogueBrowserTreeParticipantNode only this is a Category */
+class FDialogueBrowserTreeCategoryParticipantNode : public FDialogueBrowserTreeParticipantNode
+{
+	typedef FDialogueBrowserTreeParticipantNode Super;
+public:
+	FDialogueBrowserTreeCategoryParticipantNode(const FName& InText, FDialogueBrowserTreeNodePtr InParent,
+		const FName& InParticipantName) :
+		Super(InText, InParent, InParticipantName)
+	{
+		Type = EDialogueTreeNodeType::Category;
+	}
+};
+
+/** Node results that represents the Dialogue. */
+class FDialogueBrowserTreeDialogueNode : public FDialogueBrowserTreeNode
+{
+	typedef FDialogueBrowserTreeNode Super;
+public:
+	FDialogueBrowserTreeDialogueNode(const FName& InText, FDialogueBrowserTreeNodePtr InParent,
+									const TWeakObjectPtr<const UDlgDialogue>& InObject);
+
+	// Dialogue:
+	const TWeakObjectPtr<const UDlgDialogue>& GetDialogue() const { return Dialogue; }
+
+	// FDialogueBrowserTreeNode Interface
+	FReply OnClick() override;
+
+protected:
+	/** The Dialogue this represents. */
+	TWeakObjectPtr<const UDlgDialogue> Dialogue;
+};
+
+/** Node results that represents the GraphNode. */
+class FDialogueBrowserTreeGraphNode : public FDialogueBrowserTreeNode
+{
+	typedef FDialogueBrowserTreeNode Super;
+public:
+	FDialogueBrowserTreeGraphNode(const FName& InText, FDialogueBrowserTreeNodePtr InParent,
+								const TWeakObjectPtr<const UDialogueGraphNode>& InObject);
+
+	// GraphNode:
+	const TWeakObjectPtr<const UDialogueGraphNode>& GetGraphNode() const { return GraphNode; }
+
+	// FDialogueBrowserTreeNode Interface
+	FReply OnClick() override;
+
+protected:
+	/** The GraphNode this represents. */
+	TWeakObjectPtr<const UDialogueGraphNode> GraphNode;
+};
+
+/** Node results that represents the EdgeNode. */
+class FDialogueBrowserTreeEdgeNode : public FDialogueBrowserTreeNode
+{
+	typedef FDialogueBrowserTreeNode Super;\
+public:
+	FDialogueBrowserTreeEdgeNode(const FName& InText, FDialogueBrowserTreeNodePtr InParent,
+								const TWeakObjectPtr<const UDialogueGraphNode_Edge>& InObject);
+
+	// EdgeNode:
+	const TWeakObjectPtr<const UDialogueGraphNode_Edge>& GetEdgeNode() const { return EdgeNode; }
+
+	// FDialogueBrowserTreeNode Interface
+	FReply OnClick() override;
+
+protected:
+	/** The EdgeNode this represents. */
+	TWeakObjectPtr<const UDialogueGraphNode_Edge> EdgeNode;
 };

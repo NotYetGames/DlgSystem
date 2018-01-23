@@ -104,8 +104,8 @@ void SDialogueBrowser::Construct(const FArguments& InArgs)
 		MakeShareable(new FDialogueBrowserSortOption(EDialogueBrowserSortOption::Name, TEXT("Name")))
 	};
 
-	RootTreeItem = FDialogueTreeNode::MakeRoot();
-	ParticipantsTreeView = SNew(STreeView<FDialogueTreeNodePtr>)
+	RootTreeItem = MakeShareable(new FDialogueBrowserTreeRootNode);
+	ParticipantsTreeView = SNew(STreeView<FDialogueBrowserTreeNodePtr>)
 		.ItemHeight(32)
 		.TreeItemsSource(&RootChildren)
 		.OnGenerateRow(this, &Self::HandleGenerateRow)
@@ -114,7 +114,7 @@ void SDialogueBrowser::Construct(const FArguments& InArgs)
 		.SelectionMode(ESelectionMode::Single)
 		.OnMouseButtonDoubleClick(this, &Self::HandleDoubleClick)
 		.OnSetExpansionRecursive(this, &Self::HandleSetExpansionRecursive)
-		.OnItemToString_Debug_Lambda([](FDialogueTreeNodePtr TextItem) { return TextItem->GetTextAsFString(); })
+		.OnItemToString_Debug_Lambda([](FDialogueBrowserTreeNodePtr TextItem) { return TextItem->GetTextAsFString(); })
 		.HeaderRow(
 			SNew(SHeaderRow)
 			.Visibility(EVisibility::Visible)
@@ -208,7 +208,7 @@ void SDialogueBrowser::Construct(const FArguments& InArgs)
 void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 {
 	// First, save off current expansion state
-	TSet<FDialogueTreeNodePtr> OldExpansionState;
+	TSet<FDialogueBrowserTreeNodePtr> OldExpansionState;
 	if (bPreserveExpansion)
 	{
 		ParticipantsTreeView->GetExpandedItems(OldExpansionState);
@@ -341,19 +341,20 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 		// Sort by dialogue references
 		AllParticipants.Sort([this](const FName& A, const FName& B)
 		{
-			return Self::PredicateSortByDialoguesNumDescending(A, B, ParticipantsProperties);
+			return FDialogueBrowserUtilities::PredicateSortByDialoguesNumDescending(A, B, ParticipantsProperties);
 		});
 	}
 
 	// Build the tree
 	for (const FName& Name : AllParticipants)
 	{
-		const FDialogueTreeNodePtr Participant = FDialogueTreeNode::MakeCategory(Name, Name);
+		const FDialogueBrowserTreeNodePtr Participant =
+			MakeShareable(new FDialogueBrowserTreeCategoryParticipantNode(Name, RootTreeItem, Name));
 		Participant->SetCategoryType(EDialogueTreeNodeCategoryType::Participant);
 
 		BuildTreeViewItem(Participant);
 		RootTreeItem->AddChild(Participant)
-					->AddChild(FDialogueTreeNode::MakeSeparator());
+					->AddChild(MakeShareable(new FDialogueBrowserTreeSeparatorNode(RootTreeItem)));
 	}
 	RootTreeItem->GetVisibleChildren(RootChildren);
 
@@ -366,12 +367,12 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 	if (bPreserveExpansion && OldExpansionState.Num() > 0)
 	{
 		// Flattened tree
-		TArray<FDialogueTreeNodePtr> AllNodes;
+		TArray<FDialogueBrowserTreeNodePtr> AllNodes;
 		RootTreeItem->GetAllNodes(AllNodes);
 
 		// Expand to match the old state
-		RestoreExpansionState<FDialogueTreeNodePtr>(ParticipantsTreeView,
-			AllNodes, OldExpansionState, Self::PredicateCompareDialogueTreeNode);
+		RestoreExpansionState<FDialogueBrowserTreeNodePtr>(ParticipantsTreeView,
+			AllNodes, OldExpansionState, FDialogueBrowserUtilities::PredicateCompareDialogueTreeNode);
 	}
 }
 
@@ -385,7 +386,7 @@ void SDialogueBrowser::GenerateFilteredItems()
 	}
 
 	// Get all valid paths
-	TArray<TArray<FDialogueTreeNodePtr>> OutPaths;
+	TArray<TArray<FDialogueBrowserTreeNodePtr>> OutPaths;
 	RootTreeItem->FilterPathsToNodesThatContainText(FilterString, OutPaths);
 	RootChildren.Empty();
 	RootTreeItem->GetVisibleChildren(RootChildren);
@@ -394,7 +395,7 @@ void SDialogueBrowser::GenerateFilteredItems()
 	ParticipantsTreeView->ClearExpandedItems(); // Triggers RequestTreeRefresh
 
 	// Mark paths as expanded
-	for (const TArray<FDialogueTreeNodePtr>& Path : OutPaths)
+	for (const TArray<FDialogueBrowserTreeNodePtr>& Path : OutPaths)
 	{
 		const int32 PathNum = Path.Num();
 		for (int32 PathIndex = 0; PathIndex < PathNum; PathIndex++)
@@ -427,7 +428,7 @@ TSharedRef<SWidget> SDialogueBrowser::GetFilterTextBoxWidget()
 	return GetFilterTextBoxWidget();
 }
 
-void SDialogueBrowser::AddDialogueChildrenToItemFromProperty(FDialogueTreeNodePtr InItem,
+void SDialogueBrowser::AddDialogueChildrenToItemFromProperty(FDialogueBrowserTreeNodePtr InItem,
 	 const FDlgTreeVariablePropertiesPtr* PropertyPtr, const EDialogueTreeNodeTextType TextType)
 {
 	// List the dialogues that contain this event for this property
@@ -444,15 +445,15 @@ void SDialogueBrowser::AddDialogueChildrenToItemFromProperty(FDialogueTreeNodePt
 			continue;
 		}
 
-		const FDialogueTreeNodePtr DialogueItem = FDialogueTreeNode::Make(Dialogue->GetDlgFName(), InItem->GetParticipantName());
+		const FDialogueBrowserTreeNodePtr DialogueItem =
+			MakeShareable(new FDialogueBrowserTreeDialogueNode(Dialogue->GetDlgFName(), InItem, Dialogue));
 		DialogueItem->SetTextType(TextType)
-					->SetVariableName(InItem->GetVariableName())
-					->SetObject(Dialogue);
+					->SetVariableName(InItem->GetVariableName());
 		InItem->AddChild(DialogueItem);
 	}
 }
 
-void SDialogueBrowser::AddGraphNodeChildrenToItem(FDialogueTreeNodePtr InItem,
+void SDialogueBrowser::AddGraphNodeChildrenToItem(FDialogueBrowserTreeNodePtr InItem,
 								const TSet<TWeakObjectPtr<UDialogueGraphNode>>& GraphNodes,
 								const EDialogueTreeNodeTextType TextType)
 {
@@ -464,14 +465,14 @@ void SDialogueBrowser::AddGraphNodeChildrenToItem(FDialogueTreeNodePtr InItem,
 		}
 
 		const FName Text = *FString::Printf(TEXT("%d"), GraphNode->GetDialogueNodeIndex());
-		const FDialogueTreeNodePtr NodeItem = FDialogueTreeNode::Make(Text, InItem->GetParticipantName());
-		NodeItem->SetTextType(TextType)
-				->SetObject(GraphNode);
+		const FDialogueBrowserTreeNodePtr NodeItem =
+			MakeShareable(new FDialogueBrowserTreeGraphNode(Text, InItem, GraphNode));
+		NodeItem->SetTextType(TextType);
 		InItem->AddChild(NodeItem, true);
 	}
 }
 
-void SDialogueBrowser::AddEdgeNodeChildrenToItem(FDialogueTreeNodePtr InItem,
+void SDialogueBrowser::AddEdgeNodeChildrenToItem(FDialogueBrowserTreeNodePtr InItem,
 								const TSet<TWeakObjectPtr<UDialogueGraphNode_Edge>>& EdgeNodes,
 								const EDialogueTreeNodeTextType TextType)
 {
@@ -493,46 +494,53 @@ void SDialogueBrowser::AddEdgeNodeChildrenToItem(FDialogueTreeNodePtr InItem,
 			ToChild = EdgeNode->GetChildNode()->GetDialogueNodeIndex();
 		}
 		const FName Text = *FString::Printf(TEXT("%d -> %d"), FromParent, ToChild);
-		const FDialogueTreeNodePtr NodeItem = FDialogueTreeNode::Make(Text, InItem->GetParticipantName());
-		NodeItem->SetTextType(TextType)
-				->SetObject(EdgeNode);
+		const FDialogueBrowserTreeNodePtr NodeItem =
+			MakeShareable(new FDialogueBrowserTreeEdgeNode(Text, InItem, EdgeNode));
+		NodeItem->SetTextType(TextType);
 		InItem->AddChild(NodeItem, true);
 	}
 }
 
-void SDialogueBrowser::AddGraphNodeBaseChildrenToItemFromProperty(FDialogueTreeNodePtr InItem,
+void SDialogueBrowser::AddGraphNodeBaseChildrenToItemFromProperty(FDialogueBrowserTreeNodePtr InItem,
 	const FDlgTreeVariablePropertiesPtr* PropertyPtr, const EDialogueTreeNodeTextType GraphNodeTextType,
 	const EDialogueTreeNodeTextType EdgeNodeTextType)
 {
-	if (PropertyPtr == nullptr || !InItem->GetObject().IsValid() || !InItem->GetObject()->IsA<UDlgDialogue>())
+	TSharedPtr<FDialogueBrowserTreeDialogueNode> DialogueItem =
+		StaticCastSharedPtr<FDialogueBrowserTreeDialogueNode>(InItem);
+	if (!DialogueItem.IsValid())
+	{
+		return;
+	}
+	if (PropertyPtr == nullptr || !DialogueItem->GetDialogue().IsValid())
 	{
 		return;
 	}
 
 	const FDlgTreeVariablePropertiesPtr Property = *PropertyPtr;
-	const UDlgDialogue* Dialogue = CastChecked<UDlgDialogue>(InItem->GetObject().Get());
+	const UDlgDialogue* Dialogue = DialogueItem->GetDialogue().Get();
 	const FGuid DialogueGuid = Dialogue->GetDlgGuid();
 
 	// Display the GraphNode
 	if (Property->HasGraphNodeSet(DialogueGuid))
 	{
-		AddGraphNodeChildrenToItem(InItem, Property->GetGraphNodeSet(DialogueGuid), GraphNodeTextType);
+		AddGraphNodeChildrenToItem(DialogueItem, Property->GetGraphNodeSet(DialogueGuid), GraphNodeTextType);
 	}
 	if (Property->HasEdgeNodeSet(DialogueGuid))
 	{
-		AddEdgeNodeChildrenToItem(InItem, Property->GetEdgeNodeSet(DialogueGuid), EdgeNodeTextType);
+		AddEdgeNodeChildrenToItem(DialogueItem, Property->GetEdgeNodeSet(DialogueGuid), EdgeNodeTextType);
 	}
 }
 
-void SDialogueBrowser::BuildTreeViewItem(FDialogueTreeNodePtr Item)
+void SDialogueBrowser::BuildTreeViewItem(FDialogueBrowserTreeNodePtr Item)
 {
-	if (!Item->HasParticipantName())
+	const FName ParticipantName = Item->GetParentParticipantName();
+	if (!ParticipantName.IsValid() || ParticipantName.IsNone())
 	{
 		return;
 	}
 
 	// Do we have the Participant cached?
-	FDlgTreeParticipantPropertiesPtr* ParticipantPropertiesPtr = ParticipantsProperties.Find(Item->GetParticipantName());
+	FDlgTreeParticipantPropertiesPtr* ParticipantPropertiesPtr = ParticipantsProperties.Find(ParticipantName);
 	if (ParticipantPropertiesPtr == nullptr)
 	{
 		return;
@@ -546,7 +554,7 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueTreeNodePtr Item)
 		case EDialogueTreeNodeCategoryType::Participant:
 		{
 			// Display the categories for the participant
-			Item->SetChildren(MakeParticipantCategoriesChildren(Item->GetParticipantName()));
+			Item->SetChildren(MakeParticipantCategoriesChildren(Item));
 			break;
 		}
 		case EDialogueTreeNodeCategoryType::Dialogue:
@@ -559,9 +567,9 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueTreeNodePtr Item)
 					continue;
 				}
 
-				const FDialogueTreeNodePtr DialogueItem = FDialogueTreeNode::Make(Dialogue->GetDlgFName(), Item->GetParticipantName());
-				DialogueItem->SetTextType(EDialogueTreeNodeTextType::ParticipantDialogue)
-							->SetObject(Dialogue);
+				const FDialogueBrowserTreeNodePtr DialogueItem =
+					MakeShareable(new FDialogueBrowserTreeDialogueNode(Dialogue->GetDlgFName(), Item, Dialogue));
+				DialogueItem->SetTextType(EDialogueTreeNodeTextType::ParticipantDialogue);
 				Item->AddChild(DialogueItem);
 
 			}
@@ -572,7 +580,8 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueTreeNodePtr Item)
 			// Display the events for this category
 			for (const auto& Pair : ParticipantProperties->GetEvents())
 			{
-				const FDialogueTreeNodePtr EventItem = FDialogueTreeNode::Make(Pair.Key, Item->GetParticipantName());
+				const FDialogueBrowserTreeNodePtr EventItem =
+					MakeShareable(new FDialogueBrowserTreeNode(Pair.Key, Item));
 				EventItem->SetTextType(EDialogueTreeNodeTextType::ParticipantEvent)
 						 ->SetVariableName(Pair.Key);
 				Item->AddChild(EventItem);
@@ -583,7 +592,8 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueTreeNodePtr Item)
 		{
 			for (const auto& Pair : ParticipantProperties->GetConditions())
 			{
-				const FDialogueTreeNodePtr ConditionItem = FDialogueTreeNode::Make(Pair.Key, Item->GetParticipantName());
+				const FDialogueBrowserTreeNodePtr ConditionItem =
+					MakeShareable(new FDialogueBrowserTreeNode(Pair.Key, Item));
 				ConditionItem->SetTextType(EDialogueTreeNodeTextType::ParticipantCondition)
 							 ->SetVariableName(Pair.Key);
 				Item->AddChild(ConditionItem);
@@ -595,7 +605,7 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueTreeNodePtr Item)
 			// Only display the categories if the Participant has at least one variable.
 			if (ParticipantProperties->HasVariables())
 			{
-				Item->SetChildren(MakeVariableCategoriesChildren(Item->GetParticipantName()));
+				Item->SetChildren(MakeVariableCategoriesChildren(Item));
 			}
 			break;
 		}
@@ -603,7 +613,8 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueTreeNodePtr Item)
 		{
 			for (const auto& Pair: ParticipantProperties->GetIntegers())
 			{
-				const FDialogueTreeNodePtr IntItem = FDialogueTreeNode::Make(Pair.Key, Item->GetParticipantName());
+				const FDialogueBrowserTreeNodePtr IntItem =
+					MakeShareable(new FDialogueBrowserTreeNode(Pair.Key, Item));
 				IntItem->SetTextType(EDialogueTreeNodeTextType::ParticipantVariableInt)
 					   ->SetVariableName(Pair.Key);
 				Item->AddChild(IntItem);
@@ -614,7 +625,8 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueTreeNodePtr Item)
 		{
 			for (const auto& Pair : ParticipantProperties->GetFloats())
 			{
-				const FDialogueTreeNodePtr FloatItem = FDialogueTreeNode::Make(Pair.Key, Item->GetParticipantName());
+				const FDialogueBrowserTreeNodePtr FloatItem =
+					MakeShareable(new FDialogueBrowserTreeNode(Pair.Key, Item));
 				FloatItem->SetTextType(EDialogueTreeNodeTextType::ParticipantVariableFloat)
 						 ->SetVariableName(Pair.Key);
 				Item->AddChild(FloatItem);
@@ -625,7 +637,8 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueTreeNodePtr Item)
 		{
 			for (const auto& Pair : ParticipantProperties->GetBools())
 			{
-				const FDialogueTreeNodePtr BoolItem = FDialogueTreeNode::Make(Pair.Key, Item->GetParticipantName());
+				const FDialogueBrowserTreeNodePtr BoolItem =
+					MakeShareable(new FDialogueBrowserTreeNode(Pair.Key, Item));
 				BoolItem->SetTextType(EDialogueTreeNodeTextType::ParticipantVariableBool)
 						->SetVariableName(Pair.Key);
 				Item->AddChild(BoolItem);
@@ -695,7 +708,6 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueTreeNodePtr Item)
 				ParticipantProperties->Floats.Find(Item->GetVariableName()),
 				EDialogueTreeNodeTextType::FloatVariableGraphNode, EDialogueTreeNodeTextType::FloatVariableEdgeNode);
 			break;
-
 		case EDialogueTreeNodeTextType::BoolVariableDialogue:
 			// List the graph nodes for the dialogue that contains this bool variable
 			AddGraphNodeBaseChildrenToItemFromProperty(Item,
@@ -709,19 +721,19 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueTreeNodePtr Item)
 	}
 
 	// Recursively call on children
-	for (const FDialogueTreeNodePtr& ChildItem : Item->GetChildren())
+	for (const FDialogueBrowserTreeNodePtr& ChildItem : Item->GetChildren())
 	{
 		BuildTreeViewItem(ChildItem);
 	}
 
-	// The same for the inline children, handled separetly.
-	for (const FDialogueTreeNodePtr& ChildItem : Item->GetInlineChildren())
+	// The same for the inline children, handled separately.
+	for (const FDialogueBrowserTreeNodePtr& ChildItem : Item->GetInlineChildren())
 	{
 		BuildTreeViewItem(ChildItem);
 	}
 }
 
-TSharedRef<SWidget> SDialogueBrowser::MakeButtonWidgetForGraphNodes(const TArray<FDialogueTreeNodePtr>& InChildren)
+TSharedRef<SWidget> SDialogueBrowser::MakeButtonWidgetForGraphNodes(const TArray<FDialogueBrowserTreeNodePtr>& InChildren)
 {
 	TSharedPtr<SWrapBox> Buttons = SNew(SWrapBox)
 			.PreferredWidth(600.f);
@@ -729,7 +741,7 @@ TSharedRef<SWidget> SDialogueBrowser::MakeButtonWidgetForGraphNodes(const TArray
 	// Constructs [Node 1] [Node 2]
 	const FText GraphNodeTooltip = LOCTEXT("JumpToNodeTipGraphNode", "Opens the Dialogue Editor and jumps to the Node");
 	const FText EdgeNodeTooltip = LOCTEXT("JumpToNodeTipEdgeNode", "Opens the Dialogue Editor and jumps to the Edge");
-	for (const FDialogueTreeNodePtr& ChildItem : InChildren)
+	for (const FDialogueBrowserTreeNodePtr& ChildItem : InChildren)
 	{
 		const bool bIsEdgeNodeText =  ChildItem->IsEdgeNodeText();
 		if (ChildItem->IsGraphNodeText() || bIsEdgeNodeText)
@@ -742,7 +754,7 @@ TSharedRef<SWidget> SDialogueBrowser::MakeButtonWidgetForGraphNodes(const TArray
 					// Jump To node
 					SNew(SButton)
 					.ToolTipText(bIsEdgeNodeText ? EdgeNodeTooltip : GraphNodeTooltip)
-					.OnClicked(this, &Self::JumpToNodeForItem, ChildItem)
+					.OnClicked(ChildItem.Get(), &FDialogueBrowserTreeNode::OnClick)
 					[
 						SNew(STextBlock)
 						.Text(ChildItem->GetTextAsFText())
@@ -755,7 +767,7 @@ TSharedRef<SWidget> SDialogueBrowser::MakeButtonWidgetForGraphNodes(const TArray
 	return Buttons.ToSharedRef();
 }
 
-TSharedRef<SWidget> SDialogueBrowser::MakeInlineWidget(const FDialogueTreeNodePtr InItem)
+TSharedRef<SWidget> SDialogueBrowser::MakeInlineWidget(const FDialogueBrowserTreeNodePtr InItem)
 {
 	if (!InItem.IsValid())
 	{
@@ -799,7 +811,7 @@ TSharedRef<SWidget> SDialogueBrowser::MakeInlineWidget(const FDialogueTreeNodePt
 	return SMissingWidget::MakeMissingWidget();
 }
 
-TSharedRef<SWidget> SDialogueBrowser::MakeButtonsWidgetForDialogue(const FDialogueTreeNodePtr InItem)
+TSharedRef<SWidget> SDialogueBrowser::MakeButtonsWidgetForDialogue(const FDialogueBrowserTreeNodePtr InItem)
 {
 	return SNew(SHorizontalBox)
 		// Find in Content Browser
@@ -832,7 +844,7 @@ TSharedRef<SWidget> SDialogueBrowser::MakeButtonsWidgetForDialogue(const FDialog
 			SNew(SButton)
 			.ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
 			.ToolTipText(LOCTEXT("OpenDialogueToolTip", "Opens the dialogue editor."))
-			.OnClicked(this, &Self::OpenEditorForItem, InItem)
+			.OnClicked(InItem.Get(), &FDialogueBrowserTreeNode::OnClick)
 			[
 				SNew(SBox)
 				.HAlign(HAlign_Fill)
@@ -855,22 +867,23 @@ void SDialogueBrowser::HandleSearchTextCommited(const FText& InText, ETextCommit
 //	RefreshTree(false);
 }
 
-TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(FDialogueTreeNodePtr InItem, const TSharedRef<STableViewBase>& OwnerTable)
+TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(FDialogueBrowserTreeNodePtr InItem,
+	const TSharedRef<STableViewBase>& OwnerTable)
 {
 	// Build row
-	TSharedPtr<STableRow<FDialogueTreeNodePtr>> TableRow;
+	TSharedPtr<STableRow<FDialogueBrowserTreeNodePtr>> TableRow;
 	FMargin RowPadding = FMargin(2.f, 2.f);
 	const bool bIsCategory = InItem->IsCategory();
 	const bool bIsSeparator = InItem->IsSeparator();
 
 	if (bIsCategory)
 	{
-		TableRow = SNew(SCategoryHeaderTableRow<FDialogueTreeNodePtr>, OwnerTable)
+		TableRow = SNew(SCategoryHeaderTableRow<FDialogueBrowserTreeNodePtr>, OwnerTable)
 				.Visibility(InItem->IsVisible() ? EVisibility::Visible : EVisibility::Collapsed);
 	}
 	else
 	{
-		TableRow = SNew(STableRow<FDialogueTreeNodePtr>, OwnerTable)
+		TableRow = SNew(STableRow<FDialogueBrowserTreeNodePtr>, OwnerTable)
 			.Padding(1.0f)
 			.Visibility(InItem->IsVisible() ? EVisibility::Visible : EVisibility::Collapsed)
 			.ShowSelection(!bIsSeparator);
@@ -920,7 +933,7 @@ TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(FDialogueTreeNodePtr I
 		if (InItem->GetCategoryType() == EDialogueTreeNodeCategoryType::Participant)
 		{
 			int32 DialogueReferences = 0;
-			FDlgTreeParticipantPropertiesPtr* ParticipantPropertiesPtr = ParticipantsProperties.Find(InItem->GetParticipantName());
+			FDlgTreeParticipantPropertiesPtr* ParticipantPropertiesPtr = ParticipantsProperties.Find(InItem->GetParentParticipantName());
 			if (ParticipantPropertiesPtr)
 			{
 				DialogueReferences = (*ParticipantPropertiesPtr)->GetDialogues().Num();
@@ -1013,7 +1026,7 @@ TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(FDialogueTreeNodePtr I
 				[
 					SNew(SButton)
 					.ToolTipText(LOCTEXT("JumpToNodeTip", "Opens the Editor for the Dialogue and jumps to the node"))
-					.OnClicked(this, &Self::JumpToNodeForItem, InItem)
+					.OnClicked(InItem.Get(), &FDialogueBrowserTreeNode::OnClick)
 					[
 						SNew(STextBlock)
 						.Text(LOCTEXT("JumpToNode", "Jump"))
@@ -1044,7 +1057,7 @@ TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(FDialogueTreeNodePtr I
 	return TableRow.ToSharedRef();
 }
 
-void SDialogueBrowser::HandleGetChildren(FDialogueTreeNodePtr InItem, TArray<FDialogueTreeNodePtr>& OutChildren)
+void SDialogueBrowser::HandleGetChildren(FDialogueBrowserTreeNodePtr InItem, TArray<FDialogueBrowserTreeNodePtr>& OutChildren)
 {
 	if (!InItem.IsValid() || InItem->IsSeparator())
 	{
@@ -1056,12 +1069,12 @@ void SDialogueBrowser::HandleGetChildren(FDialogueTreeNodePtr InItem, TArray<FDi
 	}
 }
 
-void SDialogueBrowser::HandleParticipantsTreeSelectionChanged(FDialogueTreeNodePtr NewValue, ESelectInfo::Type SelectInfo)
+void SDialogueBrowser::HandleParticipantsTreeSelectionChanged(FDialogueBrowserTreeNodePtr NewValue, ESelectInfo::Type SelectInfo)
 {
 
 }
 
-void SDialogueBrowser::HandleDoubleClick(FDialogueTreeNodePtr InItem)
+void SDialogueBrowser::HandleDoubleClick(FDialogueBrowserTreeNodePtr InItem)
 {
 	if (!InItem.IsValid())
 	{
@@ -1070,16 +1083,7 @@ void SDialogueBrowser::HandleDoubleClick(FDialogueTreeNodePtr InItem)
 
 	if (InItem->IsText())
 	{
-		if (InItem->IsDialogueText())
-		{
-			// Open the dialogue editor when clicking on a dialogue.
-			OpenEditorForItem(InItem);
-		}
-		else if (InItem->IsGraphNodeText() || InItem->IsEdgeNodeText())
-		{
-			// Open the dialogue editor and jump to node
-			JumpToNodeForItem(InItem);
-		}
+		InItem->OnClick();
 	}
 
 	// Expand on double click
@@ -1089,12 +1093,12 @@ void SDialogueBrowser::HandleDoubleClick(FDialogueTreeNodePtr InItem)
 	}
 }
 
-void SDialogueBrowser::HandleSetExpansionRecursive(FDialogueTreeNodePtr InItem, bool bInIsItemExpanded)
+void SDialogueBrowser::HandleSetExpansionRecursive(FDialogueBrowserTreeNodePtr InItem, bool bInIsItemExpanded)
 {
 	if (InItem.IsValid() && InItem->HasChildren())
 	{
 		ParticipantsTreeView->SetItemExpansion(InItem, bInIsItemExpanded);
-		for (const FDialogueTreeNodePtr Child : InItem->GetChildren())
+		for (const FDialogueBrowserTreeNodePtr Child : InItem->GetChildren())
 		{
 			HandleSetExpansionRecursive(Child, bInIsItemExpanded);
 		}
@@ -1110,40 +1114,101 @@ void SDialogueBrowser::HandleSortSelectionChanged(SortOptionType Selection, ESel
 	}
 }
 
-FReply SDialogueBrowser::OpenEditorForItem(FDialogueTreeNodePtr InItem)
+FReply SDialogueBrowser::FindInContentBrowserForItem(const FDialogueBrowserTreeNodePtr InItem)
 {
-	if (InItem.IsValid() && InItem->GetObject().IsValid())
+	TSharedPtr<FDialogueBrowserTreeDialogueNode> DialogueItem =
+		StaticCastSharedPtr<FDialogueBrowserTreeDialogueNode>(InItem);
+	if (!DialogueItem.IsValid())
 	{
-		return FDialogueEditorUtilities::OpenEditorForAsset(InItem->GetObject().Get()) ? FReply::Handled() : FReply::Unhandled();
+		return FReply::Unhandled();
 	}
 
-	return FReply::Unhandled();
-}
-
-FReply SDialogueBrowser::JumpToNodeForItem(const FDialogueTreeNodePtr InItem)
-{
-	if (InItem.IsValid() && InItem->GetObject().IsValid())
-	{
-		if (const UDialogueGraphNode_Base* GraphNodeBase = Cast<UDialogueGraphNode_Base>(InItem->GetObject().Get()))
-		{
-			return FDialogueEditorUtilities::OpenEditorAndJumpToGraphNode(GraphNodeBase) ? FReply::Handled() : FReply::Unhandled();
-		}
-	}
-
-	return FReply::Unhandled();
-}
-
-FReply SDialogueBrowser::FindInContentBrowserForItem(const FDialogueTreeNodePtr InItem)
-{
 	static constexpr bool bFocusContentBrowser = true;
-	if (InItem.IsValid() && InItem->GetObject().IsValid() && GEditor)
+	if (GEditor && DialogueItem->GetDialogue().IsValid())
 	{
-		TArray<UObject*> ObjectsToSyncTo{InItem->GetObject().Get()};
+		TArray<UObject*> ObjectsToSyncTo{const_cast<UDlgDialogue*>(DialogueItem->GetDialogue().Get())};
 		GEditor->SyncBrowserToObjects(ObjectsToSyncTo, bFocusContentBrowser);
 		return FReply::Handled();
 	}
 
 	return FReply::Unhandled();
+}
+
+TArray<FDialogueBrowserTreeNodePtr> SDialogueBrowser::MakeParticipantCategoriesChildren(FDialogueBrowserTreeNodePtr Parent) const
+{
+	TArray<FDialogueBrowserTreeNodePtr> Categories;
+	{
+		FDialogueBrowserTreeNodePtr Category = MakeShareable(
+			new FDialogueBrowserTreeCategoryNode(TEXT("Dialogues"), EDialogueTreeNodeCategoryType::Dialogue, Parent));
+		Categories.Add(Category);
+	}
+	{
+		FDialogueBrowserTreeNodePtr Category = MakeShareable(
+			new FDialogueBrowserTreeCategoryNode(TEXT("Events"), EDialogueTreeNodeCategoryType::Event, Parent));
+		Categories.Add(Category);
+	}
+	{
+		FDialogueBrowserTreeNodePtr Category = MakeShareable(
+			new FDialogueBrowserTreeCategoryNode(TEXT("Conditions"), EDialogueTreeNodeCategoryType::Condition, Parent));
+		Categories.Add(Category);
+	}
+	{
+		FDialogueBrowserTreeNodePtr Category = MakeShareable(
+			new FDialogueBrowserTreeCategoryNode(TEXT("Variables"), EDialogueTreeNodeCategoryType::Variable, Parent));
+		Categories.Add(Category);
+	}
+	return Categories;
+}
+
+TArray<FDialogueBrowserTreeNodePtr> SDialogueBrowser::MakeVariableCategoriesChildren(FDialogueBrowserTreeNodePtr Parent) const
+{
+	TArray<FDialogueBrowserTreeNodePtr> Categories;
+	{
+		FDialogueBrowserTreeNodePtr Category = MakeShareable(
+			new FDialogueBrowserTreeCategoryNode(TEXT("Integers"), EDialogueTreeNodeCategoryType::VariableInt, Parent));
+		Categories.Add(Category);
+	}
+	{
+		FDialogueBrowserTreeNodePtr Category = MakeShareable(
+			new FDialogueBrowserTreeCategoryNode(TEXT("Floats"), EDialogueTreeNodeCategoryType::VariableFloat, Parent));
+		Categories.Add(Category);
+	}
+	{
+		FDialogueBrowserTreeNodePtr Category = MakeShareable(
+			new FDialogueBrowserTreeCategoryNode(TEXT("Bools"), EDialogueTreeNodeCategoryType::VariableBool, Parent));
+		Categories.Add(Category);
+	}
+	return Categories;
+}
+
+TSharedRef<SHorizontalBox> SDialogueBrowser::MakeIconAndTextWidget(const FText& InText,
+	const FSlateBrush* IconBrush, const int32 IconSize)
+{
+	return SNew(SHorizontalBox)
+		+SHorizontalBox::Slot()
+		.VAlign(VAlign_Center)
+		.AutoWidth()
+		[
+			SNew(SBox)
+			.HAlign(HAlign_Fill)
+			.VAlign(VAlign_Fill)
+			.WidthOverride(IconSize)
+			.HeightOverride(IconSize)
+			[
+				SNew(SImage)
+				.Image(IconBrush)
+			]
+		]
+
+		+SHorizontalBox::Slot()
+		.VAlign(VAlign_Center)
+		.AutoWidth()
+		.Padding(2.f, 0.f)
+		[
+			SNew(STextBlock)
+			.Text(InText)
+			.HighlightText(this, &Self::GetFilterText)
+		];
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -16,7 +16,6 @@ typedef TSharedPtr<FFindInDialoguesResult> FFindInDialoguesResultPtr;
 /* Base class that matched the search results. When used by itself it is a simple text node. */
 class FFindInDialoguesResult : public TSharedFromThis<FFindInDialoguesResult>
 {
-private:
 	typedef FFindInDialoguesResult Self;
 
 public:
@@ -90,7 +89,6 @@ public:
 /** Tree Node search results that represents the Dialogue. */
 class FFindInDialoguesDialogueNode : public FFindInDialoguesResult
 {
-private:
 	typedef FFindInDialoguesResult Super;
 
 public:
@@ -110,7 +108,6 @@ public:
 /** Tree Node result that represents the GraphNode */
 class FFindInDialoguesGraphNode : public FFindInDialoguesResult
 {
-private:
 	typedef FFindInDialoguesResult Super;
 
 public:
@@ -128,7 +125,6 @@ public:
 /** Tree Node result that represents the EdgeNode */
 class FFindInDialoguesEdgeNode : public FFindInDialoguesResult
 {
-private:
 	typedef FFindInDialoguesResult Super;
 
 public:
@@ -138,7 +134,8 @@ public:
 	FReply OnClick() override;
 	TSharedRef<SWidget> CreateIcon() const override;
 	/** End FFindInDialoguesResult interface */
+
 public:
-	/** The GraphNode this represents. */
+	/** The EdgeNode this represents. */
 	TWeakObjectPtr<const UDialogueGraphNode_Edge> EdgeNode;
 };

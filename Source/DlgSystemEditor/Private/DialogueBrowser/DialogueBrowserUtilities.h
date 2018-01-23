@@ -3,6 +3,9 @@
 
 #include "CoreMinimal.h"
 
+#include "DialogueBrowserTreeNode.h"
+#include "DialogueTreeProperties/ParticipantProperties_DialogueTree.h"
+
 enum class EDialogueBrowserSortOption : uint8
 {
 	Name = 0,
@@ -31,3 +34,34 @@ public:
 	// TODO add ascending descending
 };
 
+class FDialogueBrowserUtilities
+{
+public:
+	static bool PredicateCompareDialogueTreeNode(FDialogueBrowserTreeNodePtr FirstNode, FDialogueBrowserTreeNodePtr SecondNode)
+	{
+		check(FirstNode.IsValid());
+		check(SecondNode.IsValid());
+		return *FirstNode == *SecondNode;
+	}
+
+	/** Predicate that sorts participants by dialogue number references, in descending order. */
+	static bool PredicateSortByDialoguesNumDescending(const FName& FirstParticipant, const FName& SecondParticipant,
+		const TMap<FName, FDlgTreeParticipantPropertiesPtr>& ParticipantsProperties)
+	{
+		int32 FirstNum = 0;
+		int32 SecondNum = 0;
+
+		const FDlgTreeParticipantPropertiesPtr* FirstPtr = ParticipantsProperties.Find(FirstParticipant);
+		if (FirstPtr)
+		{
+			FirstNum = (*FirstPtr)->GetDialogues().Num();
+		}
+		const FDlgTreeParticipantPropertiesPtr* SecondPtr = ParticipantsProperties.Find(SecondParticipant);
+		if (SecondPtr)
+		{
+			SecondNum = (*SecondPtr)->GetDialogues().Num();
+		}
+
+		return FirstNum > SecondNum;
+	}
+};
