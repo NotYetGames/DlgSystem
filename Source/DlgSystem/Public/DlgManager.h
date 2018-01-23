@@ -95,16 +95,16 @@ public:
 		Map.KeySort(PredicateSortFNameAlphabeticallyAscending);
 	}
 
-	/** Gets the Dialogue History from the UDlgMemory. */
-	UFUNCTION(BlueprintCallable, Category = DialogueData)
-	static const TMap<FGuid, FDlgHistory>& GetDialogueHistory();
-
 	/** Sets the UDlgMemory Dialogue history. */
 	UFUNCTION(BlueprintCallable, Category = DialogueData)
 	static void SetDialogueHistory(const TMap<FGuid, FDlgHistory>& DlgHistory);
 
+	/** Gets the Dialogue History from the UDlgMemory. */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	static const TMap<FGuid, FDlgHistory>& GetDialogueHistory();
+
 	/** Does the Object implement the Dialogue Participant Interface? */
-	UFUNCTION(BlueprintCallable, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = DialogueData)
 	static bool DoesObjectImplementDialogueParticipantInterface(UObject* Object);
 
 	/** Gets all the unique participant names sorted alphabetically from all the Dialogues loaded into memory. */

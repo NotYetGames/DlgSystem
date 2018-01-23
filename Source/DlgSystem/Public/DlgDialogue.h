@@ -336,6 +336,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	FGuid GetDlgGuid() const { check(DlgGuid.IsValid()); return DlgGuid; }
 
+	/** Regenerate the DlgGuid of this Dialogue */
+	void RegenerateGuid() { DlgGuid = FGuid::NewGuid(); }
+
 	/** Gets all the nodes */
 	const TArray<UDlgNode*>& GetNodes() const { return Nodes; }
 

@@ -58,6 +58,20 @@ void FDlgSystemEditorModule::StartupModule()
 	UE_LOG(LogDlgSystemEditor, Verbose, TEXT("Started DlgSystemEditorModule"));
 	UDlgManager::LoadAllDialoguesIntoMemory();
 
+	// Try to fix duplicate GUID
+	// Can happen for one of the following reasons:
+	// - duplicated files outside of UE
+	// - somehow loaded from text files?
+	// - the universe hates us? +_+
+	for (UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGuid())
+	{
+		UE_LOG(LogDlgSystemEditor, Warning, TEXT("Dialogue = `%s`, GUID = `%s` has a Duplicate GUID. Regenerating."),
+				*Dialogue->GetPathName(), *Dialogue->GetDlgGuid().ToString())
+		Dialogue->RegenerateGuid();
+		Dialogue->MarkPackageDirty();
+	}
+
+	// Give it another try, Give up :((
 	// May the math Gods have mercy on us!
 	for (UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGuid())
 	{

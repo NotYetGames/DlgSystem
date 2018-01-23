@@ -99,7 +99,7 @@ void UDlgDialogue::PostLoad()
 	// Create thew new Guid
 	if (!DlgGuid.IsValid())
 	{
-		DlgGuid = FGuid::NewGuid();
+		RegenerateGuid();
 		UE_LOG(LogDlgSystem, Verbose, TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because of of invalid DlgGuid."),
 			   *DlgGuid.ToString(), *GetPathName());
 	}
@@ -166,7 +166,7 @@ void UDlgDialogue::PostInitProperties()
 	// Initialize with a valid GUID
 	if (DialogueVersion >= FDlgDialogueObjectVersion::AddGuid && !DlgGuid.IsValid())
 	{
-		DlgGuid = FGuid::NewGuid();
+		RegenerateGuid();
 		UE_LOG(LogDlgSystem, Verbose, TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because of new created Dialogue."),
 			   *DlgGuid.ToString(), *GetPathName());
 	}
@@ -205,7 +205,7 @@ void UDlgDialogue::PostDuplicate(bool bDuplicateForPIE)
 
 	// Used when duplicating dialogues.
 	// Make new guid for this copied Dialogue.
-	DlgGuid = FGuid::NewGuid();
+	RegenerateGuid();
 	UE_LOG(LogDlgSystem, Verbose, TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because Dialogue was copied."),
 		   *DlgGuid.ToString(), *GetPathName());
 }
@@ -216,7 +216,7 @@ void UDlgDialogue::PostEditImport()
 
 	// Used when duplicating dialogues.
 	// Make new guid for this copied Dialogue
-	DlgGuid = FGuid::NewGuid();
+	RegenerateGuid();
 	UE_LOG(LogDlgSystem, Verbose, TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because Dialogue was copied."),
 		   *DlgGuid.ToString(), *GetPathName());
 }
@@ -226,10 +226,6 @@ TSharedPtr<IDlgDialogueEditorModule> UDlgDialogue::DialogueEditorModule = nullpt
 
 bool UDlgDialogue::CanEditChange(const UProperty* InProperty) const
 {
-	// Graph view changed, but data was not updated from the graph, prevent stupid mistakes
-//	if (GetOutermost()->IsDirty())
-//		return false;
-
 	return Super::CanEditChange(InProperty);
 }
 
@@ -355,7 +351,7 @@ void UDlgDialogue::ReloadFromFile()
 		if (DuplicateDialogues.Contains(this))
 		{
 			// found duplicate of this Dialogue
-			DlgGuid = FGuid::NewGuid();
+			RegenerateGuid();
 			UE_LOG(LogDlgSystem,
 				Warning,
 				TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because the input file contained a duplicate GUID."),
