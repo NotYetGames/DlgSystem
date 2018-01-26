@@ -472,73 +472,73 @@ TSharedPtr<SFindInDialogues> FFindInDialogueSearchManager::GetGlobalFindResults(
 	return FindResultsToUse;
 }
 
-void FFindInDialogueSearchManager::EnableGlobalFindResults(const bool bEnable, TSharedPtr<FWorkspaceItem> ParentTabCategory)
+void FFindInDialogueSearchManager::EnableGlobalFindResults(TSharedPtr<FWorkspaceItem> ParentTabCategory)
 {
 	const TSharedRef<FGlobalTabmanager>& GlobalTabManager = FGlobalTabmanager::Get();
 
-	if (bEnable)
+	// Register the spawners for all global Find Results tabs
+	const FSlateIcon GlobalFindResultsIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_FindDialogueIcon);
+
+	// Add the menu item
+	if (!ParentTabCategory.IsValid())
 	{
-		// Register the spawners for all global Find Results tabs
-		const FSlateIcon GlobalFindResultsIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_FindDialogueIcon);
+		ParentTabCategory = WorkspaceMenu::GetMenuStructure().GetToolsCategory();
+	}
 
-		// Add the menu item
-		if (!ParentTabCategory.IsValid())
+	GlobalFindResultsMenuItem = ParentTabCategory->AddGroup(
+		LOCTEXT("WorkspaceMenu_GlobalFindResultsCategory", "Find in Dialogues"),
+		LOCTEXT("GlobalFindResultsMenuTooltipText", "Find references to conditions, events, text and variables in all Dialogues."),
+		GlobalFindResultsIcon,
+		true);
+
+	// Register tab spawners
+	for (int32 TabIdx = 0; TabIdx < ARRAY_COUNT(GlobalFindResultsTabIDs); TabIdx++)
+	{
+		const FName TabID = GlobalFindResultsTabIDs[TabIdx];
+
+		// Tab not registered yet, good.
+		if (!GlobalTabManager->CanSpawnTab(TabID))
 		{
-			ParentTabCategory = WorkspaceMenu::GetMenuStructure().GetToolsCategory();
-		}
-
-		GlobalFindResultsMenuItem = ParentTabCategory->AddGroup(
-			LOCTEXT("WorkspaceMenu_GlobalFindResultsCategory", "Find in Dialogues"),
-			LOCTEXT("GlobalFindResultsMenuTooltipText", "Find references to conditions, events, text and variables in all Dialogues."),
-			GlobalFindResultsIcon,
-			true);
-
-		// Register tab spawners
-		for (int32 TabIdx = 0; TabIdx < ARRAY_COUNT(GlobalFindResultsTabIDs); TabIdx++)
-		{
-			const FName TabID = GlobalFindResultsTabIDs[TabIdx];
-
-			// Tab not registered yet, good.
-			if (!GlobalTabManager->CanSpawnTab(TabID))
-			{
-				const FText DisplayName = FText::Format(LOCTEXT("GlobalFindResultsDisplayName", "Find in Dialogues {0}"),
-														FText::AsNumber(TabIdx + 1));
-				GlobalTabManager->RegisterNomadTabSpawner(TabID, FOnSpawnTab::CreateRaw(this, &Self::SpawnGlobalFindResultsTab, TabIdx))
-					.SetDisplayName(DisplayName)
-					.SetIcon(GlobalFindResultsIcon)
-					.SetGroup(GlobalFindResultsMenuItem.ToSharedRef());
-			}
+			const FText DisplayName = FText::Format(LOCTEXT("GlobalFindResultsDisplayName", "Find in Dialogues {0}"),
+													FText::AsNumber(TabIdx + 1));
+			GlobalTabManager->RegisterNomadTabSpawner(TabID, FOnSpawnTab::CreateRaw(this, &Self::SpawnGlobalFindResultsTab, TabIdx))
+				.SetDisplayName(DisplayName)
+				.SetIcon(GlobalFindResultsIcon)
+				.SetGroup(GlobalFindResultsMenuItem.ToSharedRef());
 		}
 	}
-	else
+}
+
+void FFindInDialogueSearchManager::DisableGlobalFindResults()
+{
+	const TSharedRef<FGlobalTabmanager>& GlobalTabManager = FGlobalTabmanager::Get();
+
+	// Close all Global Find Results tabs when turning the feature off, since these may not get closed along with the Blueprint Editor contexts above.
+	for (TWeakPtr<SFindInDialogues> FindResultsPtr : GlobalFindResultsWidgets)
 	{
-		// Close all Global Find Results tabs when turning the feature off, since these may not get closed along with the Blueprint Editor contexts above.
-		for (TWeakPtr<SFindInDialogues> FindResultsPtr : GlobalFindResultsWidgets)
+		TSharedPtr<SFindInDialogues> FindResults = FindResultsPtr.Pin();
+		if (FindResults.IsValid())
 		{
-			TSharedPtr<SFindInDialogues> FindResults = FindResultsPtr.Pin();
-			if (FindResults.IsValid())
-			{
-				FindResults->CloseHostTab();
-			}
+			FindResults->CloseHostTab();
 		}
-		GlobalFindResultsWidgets.Empty();
+	}
+	GlobalFindResultsWidgets.Empty();
 
-		// Unregister tab spawners
-		for (int32 TabIdx = 0; TabIdx < ARRAY_COUNT(GlobalFindResultsTabIDs); TabIdx++)
+	// Unregister tab spawners
+	for (int32 TabIdx = 0; TabIdx < ARRAY_COUNT(GlobalFindResultsTabIDs); TabIdx++)
+	{
+		const FName TabID = GlobalFindResultsTabIDs[TabIdx];
+		if (GlobalTabManager->CanSpawnTab(TabID))
 		{
-			const FName TabID = GlobalFindResultsTabIDs[TabIdx];
-			if (GlobalTabManager->CanSpawnTab(TabID))
-			{
-				GlobalTabManager->UnregisterNomadTabSpawner(TabID);
-			}
+			GlobalTabManager->UnregisterNomadTabSpawner(TabID);
 		}
+	}
 
-		// Remove the menu item
-		if (GlobalFindResultsMenuItem.IsValid())
-		{
-			WorkspaceMenu::GetMenuStructure().GetToolsCategory()->RemoveItem(GlobalFindResultsMenuItem.ToSharedRef());
-			GlobalFindResultsMenuItem.Reset();
-		}
+	// Remove the menu item
+	if (GlobalFindResultsMenuItem.IsValid())
+	{
+		WorkspaceMenu::GetMenuStructure().GetToolsCategory()->RemoveItem(GlobalFindResultsMenuItem.ToSharedRef());
+		GlobalFindResultsMenuItem.Reset();
 	}
 }
 
@@ -574,7 +574,7 @@ void FFindInDialogueSearchManager::Initialize(TSharedPtr<FWorkspaceItem> ParentT
 	}
 
 	// Register global find results tabs
-	EnableGlobalFindResults(true, ParentTabCategory);
+	EnableGlobalFindResults(ParentTabCategory);
 }
 
 void FFindInDialogueSearchManager::UnInitialize()
@@ -588,24 +588,30 @@ void FFindInDialogueSearchManager::UnInitialize()
 	FCoreUObjectDelegates::OnAssetLoaded.RemoveAll(this);
 
 	// Shut down the global find results tab feature.
-	EnableGlobalFindResults(false);
+	DisableGlobalFindResults();
 }
 
 void FFindInDialogueSearchManager::BuildCache()
 {
-	AssetRegistryModule = &FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));
-
 	// Difference between this and the UDlgManger::GetAllDialoguesFromMemory is that this loads all Dialogues
 	// even those that are not loaded into memory.
-	FARFilter ClassFilter;
-	ClassFilter.bRecursiveClasses = true;
-	ClassFilter.ClassNames.Add(UDlgDialogue::StaticClass()->GetFName());
+	// TODO this seems slow :(
+	// AssetRegistryModule = &FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));
+	// FARFilter ClassFilter;
+	// ClassFilter.bRecursiveClasses = true;
+	// ClassFilter.ClassNames.Add(UDlgDialogue::StaticClass()->GetFName());
+	// TArray<FAssetData> DialogueAssets;
+	// AssetRegistryModule->Get().GetAssets(ClassFilter, DialogueAssets);
+	// for (FAssetData& Asset : DialogueAssets)
+	// {
+	// 	HandleAssetAdded(Asset);
+	// }
 
-	TArray<FAssetData> DialogueAssets;
-	AssetRegistryModule->Get().GetAssets(ClassFilter, DialogueAssets);
-	for (FAssetData& Asset : DialogueAssets)
+	// We already loaded all Dialogues into memory in the StartupModule.
+	for (UDlgDialogue* Dialogue : UDlgManager::GetAllDialoguesFromMemory())
 	{
-		HandleAssetAdded(Asset);
+		FAssetData AssetData(Dialogue);
+		HandleAssetAdded(AssetData);
 	}
 }
 
@@ -620,7 +626,6 @@ void FFindInDialogueSearchManager::HandleAssetAdded(const FAssetData& InAssetDat
 	}
 
 	// Ignore other assets
-	// TODO wth?
 	if (InAssetData.GetClass() && !InAssetData.GetClass()->IsChildOf<UDlgDialogue>())
 	{
 		return;

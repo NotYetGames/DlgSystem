@@ -242,7 +242,7 @@ void FDlgSystemEditorModule::ShutdownModule()
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(DialogueBrowserTabName);
 
 	// Unregister the Dialogue Search
-	FFindInDialogueSearchManager::Get()->EnableGlobalFindResults(false);
+	FFindInDialogueSearchManager::Get()->DisableGlobalFindResults();
 
 	UE_LOG(LogDlgSystemEditor, Verbose, TEXT("Stopped DlgSystemEditorModule"));
 }

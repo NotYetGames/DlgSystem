@@ -93,8 +93,11 @@ public:
 	/** Find or create the global find results widget */
 	TSharedPtr<SFindInDialogues> GetGlobalFindResults();
 
-	/** Enable or disable the global find results tab feature in the Windows Menu. */
-	void EnableGlobalFindResults(const bool bEnable, TSharedPtr<FWorkspaceItem> ParentTabCategory = nullptr);
+	/** Enables the global find results tab feature in the Windows Menu. */
+	void EnableGlobalFindResults(TSharedPtr<FWorkspaceItem> ParentTabCategory = nullptr);
+
+	/** Disables the global find results tab feature in the Windows Menu. */
+	void DisableGlobalFindResults();
 
 	/** Initializes the manager. Should only be called once in the FDlgSystemEditorModule::StartupModule()  */
 	void Initialize(TSharedPtr<FWorkspaceItem> ParentTabCategory = nullptr);
