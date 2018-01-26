@@ -327,6 +327,7 @@ public:
 	FDialogueBrowserTreeRootNode();
 };
 
+
 /** Separator node of the Dialogue browser */
 class FDialogueBrowserTreeSeparatorNode : public FDialogueBrowserTreeNode
 {
@@ -334,6 +335,7 @@ class FDialogueBrowserTreeSeparatorNode : public FDialogueBrowserTreeNode
 public:
 	FDialogueBrowserTreeSeparatorNode(FDialogueBrowserTreeNodePtr InParent = nullptr);
 };
+
 
 /**
  * Category node of the Dialogue browser. Defines a node that is a Category.
@@ -346,6 +348,7 @@ public:
 	FDialogueBrowserTreeCategoryNode(const FName& InText, const EDialogueTreeNodeCategoryType InCategoryType,
 									FDialogueBrowserTreeNodePtr InParent);
 };
+
 
 /** Node results that represents the Participant Name. */
 class FDialogueBrowserTreeParticipantNode : public FDialogueBrowserTreeNode
@@ -375,6 +378,7 @@ protected:
 	FName ParticipantName = NAME_None;
 };
 
+
 /** Similar to the FDialogueBrowserTreeParticipantNode only this is a Category */
 class FDialogueBrowserTreeCategoryParticipantNode : public FDialogueBrowserTreeParticipantNode
 {
@@ -387,6 +391,7 @@ public:
 		Type = EDialogueTreeNodeType::Category;
 	}
 };
+
 
 /** Node results that represents the Dialogue. */
 class FDialogueBrowserTreeDialogueNode : public FDialogueBrowserTreeNode
@@ -407,6 +412,7 @@ protected:
 	TWeakObjectPtr<const UDlgDialogue> Dialogue;
 };
 
+
 /** Node results that represents the GraphNode. */
 class FDialogueBrowserTreeGraphNode : public FDialogueBrowserTreeNode
 {
@@ -425,6 +431,7 @@ protected:
 	/** The GraphNode this represents. */
 	TWeakObjectPtr<const UDialogueGraphNode> GraphNode;
 };
+
 
 /** Node results that represents the EdgeNode. */
 class FDialogueBrowserTreeEdgeNode : public FDialogueBrowserTreeNode

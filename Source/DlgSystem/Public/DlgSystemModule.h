@@ -55,6 +55,6 @@ private:
 	/** Holds the widget reflector singleton. */
 	TWeakPtr<SDlgDataDisplay> DialogueDataDisplayWidget;
 
-	/** Holds the console command for the DialogueDataDisplayWidget. */
-	IConsoleCommand* ConsoleCommandDialogueDataDisplay;
+	/** Holds the console commands for this Module */
+	TArray<IConsoleCommand*> ConsoleCommands;
 };

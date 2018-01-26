@@ -59,15 +59,25 @@ void FDlgSystemModule::StartupModule()
 				.SetTooltipText(LOCTEXT("DialogueDataDisplayTooltipText", "Open the Dialogue Data Display tab."));
 
 	// Register commands
-	ConsoleCommandDialogueDataDisplay = IConsoleManager::Get().RegisterConsoleCommand(TEXT("DialogueDataDisplay"),
+	IConsoleManager& ConsoleManager = IConsoleManager::Get();
+	ConsoleCommands.Add(ConsoleManager.RegisterConsoleCommand(TEXT("Dlg.DataDisplay"),
 		TEXT("Displays the Dialogue Data Window"),
-		FConsoleCommandDelegate::CreateRaw(this, &Self::DisplayDialogueDataWindow), ECVF_Default);
+		FConsoleCommandDelegate::CreateRaw(this, &Self::DisplayDialogueDataWindow), ECVF_Default));
+	ConsoleCommands.Add(ConsoleManager.RegisterConsoleCommand(TEXT("Dlg.LoadAllDialogues"),
+		TEXT("Load All Dialogues into memory"),
+		FConsoleCommandDelegate::CreateLambda([]()
+		{
+			UDlgManager::LoadAllDialoguesIntoMemory();
+		}), ECVF_Default));
 }
 
 void FDlgSystemModule::ShutdownModule()
 {
 	// Unregister the console commands
-	IConsoleManager::Get().UnregisterConsoleObject(ConsoleCommandDialogueDataDisplay);
+	for (IConsoleCommand* Comand : ConsoleCommands)
+	{
+		IConsoleManager::Get().UnregisterConsoleObject(Comand);
+	}
 
 	// Unregister the tab spawners
 	bHasRegisteredTabSpawners = false;

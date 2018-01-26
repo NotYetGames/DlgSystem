@@ -124,79 +124,72 @@ void SDialogueBrowser::Construct(const FArguments& InArgs)
 
 	ChildSlot
 	[
-		SNew(SSplitter)
-		.Orientation(EOrientation::Orient_Horizontal)
-
-		+SSplitter::Slot()
-		.Value(0.2f)
+		SNew(SBorder)
+		.Padding(FMargin(3.f))
+		.BorderImage(FEditorStyle::GetBrush("ToolPanel.GroupBorder"))
 		[
-			SNew(SBorder)
-			.Padding(FMargin(3.f))
-			.BorderImage(FEditorStyle::GetBrush("ToolPanel.GroupBorder"))
+			SNew(SVerticalBox)
+
+			// Top bar
+			+SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(2.f, 1.f)
 			[
-				SNew(SVerticalBox)
+				SNew(SHorizontalBox)
 
-				// Top bar
-				+SVerticalBox::Slot()
-				.AutoHeight()
-				.Padding(2.f, 1.f)
+				// Search Input
+				+SHorizontalBox::Slot()
+				.FillWidth(1.0f)
+				.Padding(0.f, 0.f, 4.f, 0.f)
 				[
-					SNew(SHorizontalBox)
+					GetFilterTextBoxWidget()
+				]
 
-					// Search Input
-					+SHorizontalBox::Slot()
-					.FillWidth(1.0f)
-					.Padding(0.f, 0.f, 4.f, 0.f)
+				// Sort menu
+				+SHorizontalBox::Slot()
+				.AutoWidth()
+				[
+					SNew(SComboBox<SortOptionType>)
+					.OptionsSource(&SortOptions)
+					.InitiallySelectedItem(DefaultSortOption)
+					.ContentPadding(FMargin(4.0, 2.0))
+					.OnGenerateWidget_Lambda([](SortOptionType NameItem)
+					{
+						return SNew(STextBlock)
+							.Text(NameItem->GetFText());
+					})
+					.OnSelectionChanged(this, &Self::HandleSortSelectionChanged)
+					.ToolTipText(LOCTEXT("AddFilterToolTip", "Sort by a specific criteria."))
 					[
-						GetFilterTextBoxWidget()
-					]
-
-					// Sort menu
-					+SHorizontalBox::Slot()
-					.AutoWidth()
-					[
-						SNew(SComboBox<SortOptionType>)
-						.OptionsSource(&SortOptions)
-						.InitiallySelectedItem(DefaultSortOption)
-						.ContentPadding(FMargin(4.0, 2.0))
-						.OnGenerateWidget_Lambda([](SortOptionType NameItem)
-						{
-							return SNew(STextBlock)
-								.Text(NameItem->GetFText());
-						})
-						.OnSelectionChanged(this, &Self::HandleSortSelectionChanged)
-						.ToolTipText(LOCTEXT("AddFilterToolTip", "Sort by a specific criteria."))
-						[
-							SNew(STextBlock)
-							.Text(LOCTEXT("Sort", "Sort By"))
-						]
-					]
-
-					// Refresh dialogues
-					+SHorizontalBox::Slot()
-					.AutoWidth()
-					[
-						SNew(SButton)
-						.ToolTipText(LOCTEXT("RefreshToolTip", "Refreshes/Reloads the Dialogue Browser view."))
-						.OnClicked(this, &Self::HandleOnRefresh)
-						[
-							MakeIconAndTextWidget(LOCTEXT("RefreshDialogues", "Refresh"),
-								FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_ReloadAssetIcon))
-						]
+						SNew(STextBlock)
+						.Text(LOCTEXT("Sort", "Sort By"))
 					]
 				]
 
-				// The Tree view
-				+SVerticalBox::Slot()
-				.AutoHeight()
-				.FillHeight(1.0f)
+				// Refresh dialogues
+				+SHorizontalBox::Slot()
+				.AutoWidth()
 				[
-					SNew(SBorder)
-					.BorderImage(FEditorStyle::GetBrush("ToolPanel.GroupBorder"))
-					.Padding(FMargin(0.0f, 4.0f))
+					SNew(SButton)
+					.ToolTipText(LOCTEXT("RefreshToolTip", "Refreshes/Reloads the Dialogue Browser view."))
+					.OnClicked(this, &Self::HandleOnRefresh)
 					[
-						ParticipantsTreeView.ToSharedRef()
+						MakeIconAndTextWidget(LOCTEXT("RefreshDialogues", "Refresh"),
+							FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_ReloadAssetIcon))
 					]
+				]
+			]
+
+			// The Tree view
+			+SVerticalBox::Slot()
+			.AutoHeight()
+			.FillHeight(1.0f)
+			[
+				SNew(SBorder)
+				.BorderImage(FEditorStyle::GetBrush("ToolPanel.GroupBorder"))
+				.Padding(FMargin(0.0f, 4.0f))
+				[
+					ParticipantsTreeView.ToSharedRef()
 				]
 			]
 		]
