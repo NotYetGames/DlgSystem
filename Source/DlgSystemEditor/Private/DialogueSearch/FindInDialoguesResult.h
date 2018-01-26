@@ -19,12 +19,8 @@ class FFindInDialoguesResult : public TSharedFromThis<FFindInDialoguesResult>
 	typedef FFindInDialoguesResult Self;
 
 public:
-	/* Create a root */
-	FFindInDialoguesResult(const FText& InDisplayText);
-
 	/* Create a listing for a search result*/
-	FFindInDialoguesResult(const FText& InDisplayText, FFindInDialoguesResultPtr InParent);
-
+	FFindInDialoguesResult(const FText& InDisplayText, TSharedPtr<Self> InParent);
 	virtual ~FFindInDialoguesResult() {}
 
 	/* Called when user clicks on the search item */
@@ -49,10 +45,10 @@ public:
 	TWeakPtr<Self> GetParent() const { return Parent; }
 
 	/** Is this the root node? Aka no parent. */
-	bool IsRootNode() const { return !Parent.IsValid(); }
+	bool IsRoot() const { return !Parent.IsValid(); }
 
 	/** Is this the leaf node? Aka no children. */
-	bool IsLeafNode() const { return Children.Num() == 0; }
+	bool IsLeaf() const { return Children.Num() == 0; }
 
 	/**
 	 * Takes the tree view and expands its elements for each child.
@@ -60,11 +56,11 @@ public:
 	 * @param  TreeView		The tree responsible for visualizing this node hierarchy.
 	 * @param  bRecursive	Determines if you want children/descendants to expand their children as well.
 	 */
-	void ExpandAllChildren(TSharedPtr<STreeView<FFindInDialoguesResultPtr>> TreeView, bool bRecursive = true);
+	void ExpandAllChildren(TSharedPtr<STreeView<TSharedPtr<Self>>> TreeView, bool bRecursive = true);
 
 public:
 	/** Any children listed under this node. */
-	TArray<FFindInDialoguesResultPtr> Children;
+	TArray<TSharedPtr<Self>> Children;
 
 	/** The node that this is a direct child of (empty if this is a root node)  */
 	TWeakPtr<Self> Parent;

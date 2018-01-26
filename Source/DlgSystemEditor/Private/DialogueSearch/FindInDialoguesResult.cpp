@@ -12,12 +12,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FFindInDialoguesResult
-FFindInDialoguesResult::FFindInDialoguesResult(const FText& InDisplayText)
-	: DisplayText(InDisplayText)
-{
-}
-
-FFindInDialoguesResult::FFindInDialoguesResult(const FText& InDisplayText, FFindInDialoguesResultPtr InParent)
+FFindInDialoguesResult::FFindInDialoguesResult(const FText& InDisplayText, TSharedPtr<Self> InParent)
 	: Parent(InParent), DisplayText(InDisplayText)
 {
 }
@@ -55,7 +50,7 @@ const UDlgDialogue* FFindInDialoguesResult::GetParentDialogue() const
 	return nullptr;
 }
 
-void FFindInDialoguesResult::ExpandAllChildren(TSharedPtr<STreeView<FFindInDialoguesResultPtr>> TreeView,
+void FFindInDialoguesResult::ExpandAllChildren(TSharedPtr<STreeView<TSharedPtr<Self>>> TreeView,
 												bool bRecursive /*= true*/)
 {
 	static constexpr bool bShouldExpandItem = true;
@@ -66,7 +61,7 @@ void FFindInDialoguesResult::ExpandAllChildren(TSharedPtr<STreeView<FFindInDialo
 	}
 
 	TreeView->SetItemExpansion(this->AsShared(), bShouldExpandItem);
-	for (FFindInDialoguesResultPtr& ChildNode : Children)
+	for (TSharedPtr<Self>& ChildNode : Children)
 	{
 		if (bRecursive)
 		{

@@ -6,6 +6,8 @@
 #include "EditorStyle.h"
 #include "AssetEditorManager.h"
 #include "SComboBox.h"
+#include "SSearchBox.h"
+#include "SImage.h"
 #include "SMissingWidget.h"
 
 #include "DlgManager.h"
@@ -109,7 +111,7 @@ void SDialogueBrowser::Construct(const FArguments& InArgs)
 		.ItemHeight(32)
 		.TreeItemsSource(&RootChildren)
 		.OnGenerateRow(this, &Self::HandleGenerateRow)
-		.OnSelectionChanged(this, &Self::HandleParticipantsTreeSelectionChanged)
+		.OnSelectionChanged(this, &Self::HandleTreeSelectionChanged)
 		.OnGetChildren(this, &Self::HandleGetChildren)
 		.SelectionMode(ESelectionMode::Single)
 		.OnMouseButtonDoubleClick(this, &Self::HandleDoubleClick)
@@ -1062,7 +1064,7 @@ void SDialogueBrowser::HandleGetChildren(FDialogueBrowserTreeNodePtr InItem, TAr
 	}
 }
 
-void SDialogueBrowser::HandleParticipantsTreeSelectionChanged(FDialogueBrowserTreeNodePtr NewValue, ESelectInfo::Type SelectInfo)
+void SDialogueBrowser::HandleTreeSelectionChanged(FDialogueBrowserTreeNodePtr NewValue, ESelectInfo::Type SelectInfo)
 {
 
 }

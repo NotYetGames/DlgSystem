@@ -26,6 +26,9 @@ public:
 	void StartupModule() override;
 	void ShutdownModule() override;
 
+	/** Sets the reference actor for the World. Without this the runtime module won't know how to get the UWorld. */
+	void SetReferenceActor(AActor* InReferenceActor) { ReferenceActor = InReferenceActor; }
+
 	/** Gets the debug Dialogue Data Display Window. */
 	TSharedRef<SWidget> GetDialogueDataDisplayWindow(const TSharedRef<SDockTab>& InParentTab);
 
@@ -57,4 +60,7 @@ private:
 
 	/** Holds the console commands for this Module */
 	TArray<IConsoleCommand*> ConsoleCommands;
+
+	/** Reference Actor used to get the UWorld. */
+	AActor* ReferenceActor = nullptr;
 };

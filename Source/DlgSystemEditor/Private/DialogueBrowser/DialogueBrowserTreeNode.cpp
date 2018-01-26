@@ -7,10 +7,6 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeNode
-FDialogueBrowserTreeNode::FDialogueBrowserTreeNode(const FName& InText) : Text(InText), Parent(nullptr)
-{
-}
-
 FDialogueBrowserTreeNode::FDialogueBrowserTreeNode(const FName& InText, TSharedPtr<Self> InParent)
 	: Text(InText), Parent(InParent)
 {
@@ -186,7 +182,7 @@ FString FDialogueBrowserTreeNode::ToString() const
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeRootNode
 FDialogueBrowserTreeRootNode::FDialogueBrowserTreeRootNode() :
-	Super(TEXT("ROOT"))
+	Super(TEXT("ROOT"), nullptr)
 {
 	Type = EDialogueTreeNodeType::RootNode;
 }
@@ -225,6 +221,15 @@ const FName FDialogueBrowserTreeParticipantNode::GetParentParticipantName() cons
 	}
 
 	return Super::GetParentParticipantName();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// FDialogueBrowserTreeCategoryParticipantNode
+FDialogueBrowserTreeCategoryParticipantNode::FDialogueBrowserTreeCategoryParticipantNode(const FName& InText,
+	FDialogueBrowserTreeNodePtr InParent, const FName& InParticipantName) :
+	Super(InText, InParent, InParticipantName)
+{
+	Type = EDialogueTreeNodeType::Category;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

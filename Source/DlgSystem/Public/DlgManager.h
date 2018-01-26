@@ -2,8 +2,10 @@
 #pragma once
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObjectIterator.h"
+#include "EngineUtils.h"
 
 #include "DlgDialogue.h"
+#include "DlgDialogueParticipant.h"
 
 #include "DlgManager.generated.h"
 
@@ -64,12 +66,28 @@ public:
 		TArray<UDlgDialogue*> Array;
 		for (TObjectIterator<UDlgDialogue> Itr; Itr; ++Itr)
 		{
-			if ((*Itr) != nullptr && !(*Itr)->IsPendingKill())
+			UDlgDialogue* Dialogue = *Itr;
+			if (Dialogue != nullptr && !Dialogue->IsPendingKill())
 			{
-				Array.Add(*Itr);
+				Array.Add(Dialogue);
 			}
 		}
+		return Array;
+	}
 
+	/** Gets all the actors from the provided World that implement the Dialogue Participant Interface */
+	static TArray<AActor*> GetAllActorsImplementingDialogueParticipantInterface(UWorld* World)
+	{
+		TArray<AActor*> Array;
+		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
+		{
+			AActor* Actor = *Itr;
+			if (Actor != nullptr && !Actor->IsPendingKill() &&
+				Actor->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
+			{
+				Array.Add(Actor);
+			}
+		}
 		return Array;
 	}
 

@@ -277,7 +277,7 @@ TSharedRef<ITableRow> SFindInDialogues::HandleGenerateRow(FFindInDialoguesResult
 	// We have categories if we are searching in multiple Dialogues
 	// OR the grandparent of this item is not valid (aka root node)
 	const bool bIsCategoryWidget = !bIsInFindWithinDialogueMode &&
-		(!InItem->GetParent().IsValid() || (InItem->GetParent().IsValid() && InItem->GetParent().Pin()->IsRootNode()));
+		(!InItem->GetParent().IsValid() || (InItem->GetParent().IsValid() && InItem->GetParent().Pin()->IsRoot()));
 
 	// Category entry
 	if (bIsCategoryWidget)

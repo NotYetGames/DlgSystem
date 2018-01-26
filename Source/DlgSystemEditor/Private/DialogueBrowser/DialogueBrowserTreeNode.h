@@ -80,7 +80,6 @@ class FDialogueBrowserTreeNode : public  TSharedFromThis<FDialogueBrowserTreeNod
 	typedef FDialogueBrowserTreeNode Self;
 
 public:
-	explicit FDialogueBrowserTreeNode(const FName& InText);
 	FDialogueBrowserTreeNode(const FName& InText, TSharedPtr<Self> InParent);
 	virtual ~FDialogueBrowserTreeNode() {}
 
@@ -385,11 +384,7 @@ class FDialogueBrowserTreeCategoryParticipantNode : public FDialogueBrowserTreeP
 	typedef FDialogueBrowserTreeParticipantNode Super;
 public:
 	FDialogueBrowserTreeCategoryParticipantNode(const FName& InText, FDialogueBrowserTreeNodePtr InParent,
-		const FName& InParticipantName) :
-		Super(InText, InParent, InParticipantName)
-	{
-		Type = EDialogueTreeNodeType::Category;
-	}
+		const FName& InParticipantName);
 };
 
 

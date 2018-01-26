@@ -114,7 +114,7 @@ TSharedRef<SWidget> FDlgSystemModule::GetDialogueDataDisplayWindow(const TShared
 	TSharedPtr<SDlgDataDisplay> DialogueData = DialogueDataDisplayWidget.Pin();
 	if (!DialogueData.IsValid())
 	{
-		DialogueData = SNew(SDlgDataDisplay);
+		DialogueData = SNew(SDlgDataDisplay, ReferenceActor);
 		DialogueDataDisplayWidget = DialogueData;
 	}
 

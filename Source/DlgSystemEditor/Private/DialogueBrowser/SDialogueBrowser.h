@@ -5,7 +5,6 @@
 #include "SCompoundWidget.h"
 #include "SListView.h"
 #include "STreeView.h"
-#include "SImage.h"
 #include "SSearchBox.h"
 
 #include "DialogueBrowserTreeNode.h"
@@ -13,6 +12,7 @@
 #include "DialogueBrowserUtilities.h"
 
 class UDlgDialogue;
+class SImage;
 
 /**
  * Implements the Dialogue Browser
@@ -83,8 +83,8 @@ private:
 	/** General Get children  */
 	void HandleGetChildren(FDialogueBrowserTreeNodePtr InItem, TArray<FDialogueBrowserTreeNodePtr>& OutChildren);
 
-	/** Handles changes in the ParticipantsListViewWidget */
-	void HandleParticipantsTreeSelectionChanged(FDialogueBrowserTreeNodePtr NewValue, ESelectInfo::Type SelectInfo);
+	/** Handles changes in the Tree View. */
+	void HandleTreeSelectionChanged(FDialogueBrowserTreeNodePtr NewValue, ESelectInfo::Type SelectInfo);
 
 	/** User clicked on item. */
 	void HandleDoubleClick(FDialogueBrowserTreeNodePtr InItem);
@@ -93,7 +93,6 @@ private:
 	FReply HandleOnRefresh()
 	{
 		RefreshTree(true);
-
 		return FReply::Handled();
 	}
 
@@ -150,11 +149,8 @@ private:
 	/** The root data source */
 	FDialogueBrowserTreeNodePtr RootTreeItem;
 
-	/** The root children. */
+	/** The root children. Kept seperate so that we do not corrupt the data. */
 	TArray<FDialogueBrowserTreeNodePtr> RootChildren;
-
-	/** The original root tree item, before filter was applied. */
-	FDialogueBrowserTreeNodePtr OriginalRootTreeItem;
 
 	/** Tree view for showing all participants, etc. */
 	TSharedPtr<STreeView<FDialogueBrowserTreeNodePtr>> ParticipantsTreeView;
