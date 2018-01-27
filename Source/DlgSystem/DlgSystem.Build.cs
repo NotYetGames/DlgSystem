@@ -43,7 +43,8 @@ public class DlgSystem : ModuleRules
 
 				// UI
 				"SlateCore",
-				"Slate"
+				"Slate",
+                "InputCore"
 				// ... add private dependencies that you statically link with here ...
 			});
 
