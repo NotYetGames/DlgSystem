@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgDataDisplayTreeNode
 FDlgDataDisplayTreeNode::FDlgDataDisplayTreeNode(const FText& InDisplayText, TSharedPtr<Self> InParent)
-	: DisplayText(InDisplayText), Parent(InParent)
+	: Super(InDisplayText, InParent)
 {
 }
 

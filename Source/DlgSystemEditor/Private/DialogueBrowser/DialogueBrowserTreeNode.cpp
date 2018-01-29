@@ -9,8 +9,8 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeNode
-FDialogueBrowserTreeNode::FDialogueBrowserTreeNode(const FName& InText, TSharedPtr<Self> InParent)
-	: Text(InText), Parent(InParent)
+FDialogueBrowserTreeNode::FDialogueBrowserTreeNode(const FText& InDisplayText, TSharedPtr<Self> InParent)
+	: Super(InDisplayText, InParent)
 {
 }
 
@@ -24,56 +24,12 @@ const FName FDialogueBrowserTreeNode::GetParentParticipantName() const
 	return NAME_None;
 }
 
-FReply FDialogueBrowserTreeNode::OnClick()
-{
-	// If there is a parent, handle it using the parent's functionality
-	if (Parent.IsValid())
-	{
-		return Parent.Pin()->OnClick();
-	}
-
-	return FReply::Unhandled();
-}
-
-void FDialogueBrowserTreeNode::GetAllNodes(TArray<TSharedPtr<Self>>& OutNodeArray) const
-{
-	for (const FDialogueBrowserTreeNodePtr& ChildNode : Children)
-	{
-		OutNodeArray.Add(ChildNode);
-		ChildNode->GetAllNodes(OutNodeArray);
-	}
-}
-
-void FDialogueBrowserTreeNode::ExpandAllChildren(TSharedPtr<STreeView<TSharedPtr<Self>>> TreeView, bool bRecursive /*= true*/)
-{
-	if (!HasChildren())
-	{
-		return;
-	}
-	static constexpr bool bShouldExpandItem = true;
-
-	TreeView->SetItemExpansion(this->AsShared(), bShouldExpandItem);
-	for (TSharedPtr<Self>& ChildNode : Children)
-	{
-		if (bRecursive)
-		{
-			// recursive on all children.
-			ChildNode->ExpandAllChildren(TreeView, bRecursive);
-		}
-		else
-		{
-			// Only direct children
-			TreeView->SetItemExpansion(ChildNode, bShouldExpandItem);
-		}
-	}
-}
-
 void FDialogueBrowserTreeNode::GetPathToChildThatContainsText(const TSharedPtr<Self>& Child,
 	const FString& InSearch, TArray<TArray<TSharedPtr<Self>>>& OutNodes)
 {
 	// Child has text, build path to it
 	bool bChildIsVisible;
-	if (!Child->IsSeparator() && Child->TextContains(InSearch))
+	if (!Child->IsSeparator() && Child->DoesDisplayTextContains(InSearch))
 	{
 		bChildIsVisible = true;
 
@@ -168,7 +124,7 @@ FString FDialogueBrowserTreeNode::ToString() const
 		}
 	};
 
-	AddKeyValueField("Text", Text.ToString(), false);
+	AddKeyValueField("Text", DisplayText.ToString(), false);
 	//AddFNameToOutput("ParticipantName", ParticipantName);
 	AddFNameToOutput("VariableName", VariableName);
 
@@ -185,7 +141,7 @@ FString FDialogueBrowserTreeNode::ToString() const
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeRootNode
 FDialogueBrowserTreeRootNode::FDialogueBrowserTreeRootNode() :
-	Super(TEXT("ROOT"), nullptr)
+	Super(FText::FromString(TEXT("ROOT")), nullptr)
 {
 }
 
@@ -193,7 +149,7 @@ FDialogueBrowserTreeRootNode::FDialogueBrowserTreeRootNode() :
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeSeparatorNode
 FDialogueBrowserTreeSeparatorNode::FDialogueBrowserTreeSeparatorNode(FDialogueBrowserTreeNodePtr InParent) :
-	Super(TEXT("SEPARATOR"), InParent)
+	Super(FText::FromString(TEXT("SEPARATOR")), InParent)
 {
 	Type = EDialogueTreeNodeType::Separator;
 }
@@ -201,9 +157,9 @@ FDialogueBrowserTreeSeparatorNode::FDialogueBrowserTreeSeparatorNode(FDialogueBr
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeCategoryNode
-FDialogueBrowserTreeCategoryNode::FDialogueBrowserTreeCategoryNode(const FName& InText,
+FDialogueBrowserTreeCategoryNode::FDialogueBrowserTreeCategoryNode(const FText& InDisplayText,
 	const EDialogueTreeNodeCategoryType InCategoryType, FDialogueBrowserTreeNodePtr InParent) :
-	Super(InText, InParent)
+	Super(InDisplayText, InParent)
 {
 	Type = EDialogueTreeNodeType::Category;
 	CategoryType = InCategoryType;
@@ -212,9 +168,9 @@ FDialogueBrowserTreeCategoryNode::FDialogueBrowserTreeCategoryNode(const FName& 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeParticipantNode
-FDialogueBrowserTreeParticipantNode::FDialogueBrowserTreeParticipantNode(const FName& InText,
+FDialogueBrowserTreeParticipantNode::FDialogueBrowserTreeParticipantNode(const FText& InDisplayText,
 	FDialogueBrowserTreeNodePtr InParent, const FName& InParticipantName)
-	: Super(InText, InParent), ParticipantName(InParticipantName)
+	: Super(InDisplayText, InParent), ParticipantName(InParticipantName)
 {
 }
 
@@ -231,9 +187,9 @@ const FName FDialogueBrowserTreeParticipantNode::GetParentParticipantName() cons
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeCategoryParticipantNode
-FDialogueBrowserTreeCategoryParticipantNode::FDialogueBrowserTreeCategoryParticipantNode(const FName& InText,
+FDialogueBrowserTreeCategoryParticipantNode::FDialogueBrowserTreeCategoryParticipantNode(const FText& InDisplayText,
 	FDialogueBrowserTreeNodePtr InParent, const FName& InParticipantName) :
-	Super(InText, InParent, InParticipantName)
+	Super(InDisplayText, InParent, InParticipantName)
 {
 	Type = EDialogueTreeNodeType::Category;
 }
@@ -241,9 +197,9 @@ FDialogueBrowserTreeCategoryParticipantNode::FDialogueBrowserTreeCategoryPartici
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeDialogueNode
-FDialogueBrowserTreeDialogueNode::FDialogueBrowserTreeDialogueNode(const FName& InText,
+FDialogueBrowserTreeDialogueNode::FDialogueBrowserTreeDialogueNode(const FText& InDisplayText,
 	FDialogueBrowserTreeNodePtr InParent, const TWeakObjectPtr<const UDlgDialogue>& InObject) :
-	Super(InText, InParent), Dialogue(InObject)
+	Super(InDisplayText, InParent), Dialogue(InObject)
 {
 }
 
@@ -261,9 +217,9 @@ FReply FDialogueBrowserTreeDialogueNode::OnClick()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeGraphNode
-FDialogueBrowserTreeGraphNode::FDialogueBrowserTreeGraphNode(const FName& InText, FDialogueBrowserTreeNodePtr InParent,
-	const TWeakObjectPtr<const UDialogueGraphNode>& InObject) :
-	Super(InText, InParent), GraphNode(InObject)
+FDialogueBrowserTreeGraphNode::FDialogueBrowserTreeGraphNode(const FText& InDisplayText,
+	FDialogueBrowserTreeNodePtr InParent, const TWeakObjectPtr<const UDialogueGraphNode>& InObject) :
+	Super(InDisplayText, InParent), GraphNode(InObject)
 {
 }
 
@@ -281,9 +237,9 @@ FReply FDialogueBrowserTreeGraphNode::OnClick()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeEdgeNode
-FDialogueBrowserTreeEdgeNode::FDialogueBrowserTreeEdgeNode(const FName& InText, FDialogueBrowserTreeNodePtr InParent,
-	const TWeakObjectPtr<const UDialogueGraphNode_Edge>& InObject) :
-	Super(InText, InParent), EdgeNode(InObject)
+FDialogueBrowserTreeEdgeNode::FDialogueBrowserTreeEdgeNode(const FText& InDisplayText,
+	FDialogueBrowserTreeNodePtr InParent, const TWeakObjectPtr<const UDialogueGraphNode_Edge>& InObject) :
+	Super(InDisplayText, InParent), EdgeNode(InObject)
 {
 }
 

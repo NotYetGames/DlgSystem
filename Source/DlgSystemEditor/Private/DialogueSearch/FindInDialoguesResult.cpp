@@ -15,20 +15,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FFindInDialoguesResult
 FFindInDialoguesResult::FFindInDialoguesResult(const FText& InDisplayText, TSharedPtr<Self> InParent)
-	: Parent(InParent), DisplayText(InDisplayText)
+	: Super(InDisplayText, InParent)
 {
-}
-
-/* Called when user clicks on the search item */
-FReply FFindInDialoguesResult::OnClick()
-{
-	// If there is a parent, handle it using the parent's functionality
-	if (Parent.IsValid())
-	{
-		return Parent.Pin()->OnClick();
-	}
-
-	return FReply::Unhandled();
 }
 
 TSharedRef<SWidget>	FFindInDialoguesResult::CreateIcon() const
@@ -51,33 +39,6 @@ const UDlgDialogue* FFindInDialoguesResult::GetParentDialogue() const
 
 	return nullptr;
 }
-
-void FFindInDialoguesResult::ExpandAllChildren(TSharedPtr<STreeView<TSharedPtr<Self>>> TreeView,
-												bool bRecursive /*= true*/)
-{
-	static constexpr bool bShouldExpandItem = true;
-
-	if (Children.Num() == 0)
-	{
-		return;
-	}
-
-	TreeView->SetItemExpansion(this->AsShared(), bShouldExpandItem);
-	for (TSharedPtr<Self>& ChildNode : Children)
-	{
-		if (bRecursive)
-		{
-			// recursive on all children.
-			ChildNode->ExpandAllChildren(TreeView, bRecursive);
-		}
-		else
-		{
-			// Only direct children
-			TreeView->SetItemExpansion(ChildNode, bShouldExpandItem);
-		}
-	}
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FFindInDialoguesRootNode

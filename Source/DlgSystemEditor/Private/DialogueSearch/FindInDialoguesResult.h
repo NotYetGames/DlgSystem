@@ -5,26 +5,23 @@
 #include "Reply.h"
 
 #include "DlgDialogue.h"
+#include "TreeViewHelpers/DlgTreeViewNode.h"
 
 class FFindInDialoguesResult;
 class UDialogueGraphNode;
 class UDialogueGraphNode_Edge;
 
-
 typedef TSharedPtr<FFindInDialoguesResult> FFindInDialoguesResultPtr;
 
 /* Base class that matched the search results. When used by itself it is a simple text node. */
-class FFindInDialoguesResult : public TSharedFromThis<FFindInDialoguesResult>
+class FFindInDialoguesResult : public FDlgTreeViewNode<FFindInDialoguesResult>
 {
 	typedef FFindInDialoguesResult Self;
+	typedef FDlgTreeViewNode Super;
 
 public:
 	/* Create a listing for a search result*/
 	FFindInDialoguesResult(const FText& InDisplayText, TSharedPtr<Self> InParent);
-	virtual ~FFindInDialoguesResult() {}
-
-	/* Called when user clicks on the search item */
-	virtual FReply OnClick();
 
 	/* Create an icon to represent the result */
 	virtual TSharedRef<SWidget>	CreateIcon() const;
@@ -35,39 +32,10 @@ public:
 	/* Get Category for this search result */
 	FText GetCategory() const { return Category; }
 
-	/** Returns the display string for the row */
-	FText GetDisplayText() const { return DisplayText; }
-
 	/* Gets the comment on this node if any */
 	FString GetCommentString() const { return CommentString; }
 
-	/** Gets the parent of this node if any. */
-	TWeakPtr<Self> GetParent() const { return Parent; }
-
-	/** Is this the root node? Aka no parent. */
-	bool IsRoot() const { return !Parent.IsValid(); }
-
-	/** Is this the leaf node? Aka no children. */
-	bool IsLeaf() const { return Children.Num() == 0; }
-
-	/**
-	 * Takes the tree view and expands its elements for each child.
-	 *
-	 * @param  TreeView		The tree responsible for visualizing this node hierarchy.
-	 * @param  bRecursive	Determines if you want children/descendants to expand their children as well.
-	 */
-	void ExpandAllChildren(TSharedPtr<STreeView<TSharedPtr<Self>>> TreeView, bool bRecursive = true);
-
 public:
-	/** Any children listed under this node. */
-	TArray<TSharedPtr<Self>> Children;
-
-	/** The node that this is a direct child of (empty if this is a root node)  */
-	TWeakPtr<Self> Parent;
-
-	/** The display text for this item */
-	FText DisplayText;
-
 	/** The category of this node. */
 	FText Category;
 
