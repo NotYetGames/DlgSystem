@@ -212,9 +212,6 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 	RootChildren.Empty();
 	ParticipantsProperties.Empty();
 
-	// Build fast lookup structure for participants
-	TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
-
 	auto PopulateVariablePropertiesFromSearchResult = []( const FDlgTreeVariablePropertiesPtr VariableProperties,
 			const FDialogueSearchFoundResultPtr SearchResult, const FGuid& DialogueGuid)
 	{
@@ -230,6 +227,8 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 		}
 	};
 
+	// Build fast lookup structure for participants (the ParticipantsProperties)
+	TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
 	for (UDlgDialogue* Dialogue : Dialogues)
 	{
 		const FGuid DialogueGuid = Dialogue->GetDlgGuid();
@@ -244,7 +243,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 			if (ParticipantPropsPtr == nullptr)
 			{
 				// participant does not exist, create it
-				ParticipantProps = FParticipantProperties_DialogueTree::Make({Dialogue});
+				ParticipantProps = MakeShareable(new FParticipantProperties_DialogueTree({Dialogue}));
 				ParticipantsProperties.Add(ParticipantName, ParticipantProps);
 			}
 			else
@@ -253,9 +252,6 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 				ParticipantProps = *ParticipantPropsPtr;
 				ParticipantProps->AddDialogue(Dialogue);
 			}
-
-			// TODO this could work better once we have implemented the SDialogueSearch
-			// and added caching, See FindInBlueprints.h
 
 			// Populate events
 			TSet<FName> EventsNames;
@@ -651,62 +647,62 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueBrowserTreeNodePtr Item)
 		case EDialogueTreeNodeTextType::ParticipantEvent:
 			// List the dialogues that contain this event for this participant
 			AddDialogueChildrenToItemFromProperty(Item,
-				ParticipantProperties->Events.Find(Item->GetVariableName()),
+				ParticipantProperties->GetEvents().Find(Item->GetVariableName()),
 				EDialogueTreeNodeTextType::EventDialogue);
 			break;
 		case EDialogueTreeNodeTextType::ParticipantCondition:
 			// List the dialogues that contain this condition for this participant
 			AddDialogueChildrenToItemFromProperty(Item,
-				ParticipantProperties->Conditions.Find(Item->GetVariableName()),
+				ParticipantProperties->GetConditions().Find(Item->GetVariableName()),
 				EDialogueTreeNodeTextType::ConditionDialogue);
 			break;
 		case EDialogueTreeNodeTextType::ParticipantVariableInt:
 			// List the dialogues that contain this int variable for this participant
 			AddDialogueChildrenToItemFromProperty(Item,
-				ParticipantProperties->Integers.Find(Item->GetVariableName()),
+				ParticipantProperties->GetIntegers().Find(Item->GetVariableName()),
 				EDialogueTreeNodeTextType::IntVariableDialogue);
 			break;
 		case EDialogueTreeNodeTextType::ParticipantVariableFloat:
 			// List the dialogues that contain this float variable for this participant
 			AddDialogueChildrenToItemFromProperty(Item,
-				ParticipantProperties->Floats.Find(Item->GetVariableName()),
+				ParticipantProperties->GetFloats().Find(Item->GetVariableName()),
 				EDialogueTreeNodeTextType::FloatVariableDialogue);
 			break;
 		case EDialogueTreeNodeTextType::ParticipantVariableBool:
 			// List the dialogues that contain this bool variable for this participant
 			AddDialogueChildrenToItemFromProperty(Item,
-				ParticipantProperties->Bools.Find(Item->GetVariableName()),
+				ParticipantProperties->GetBools().Find(Item->GetVariableName()),
 				EDialogueTreeNodeTextType::BoolVariableDialogue);
 			break;
 
 		case EDialogueTreeNodeTextType::EventDialogue:
 			// List the graph nodes for the dialogue that contains this event
 			AddGraphNodeBaseChildrenToItemFromProperty(Item,
-				ParticipantProperties->Events.Find(Item->GetVariableName()),
+				ParticipantProperties->GetEvents().Find(Item->GetVariableName()),
 				EDialogueTreeNodeTextType::EventGraphNode, EDialogueTreeNodeTextType::EventGraphNode);
 			break;
 		case EDialogueTreeNodeTextType::ConditionDialogue:
 			// List the graph nodes for the dialogue that contains this condition
 			AddGraphNodeBaseChildrenToItemFromProperty(Item,
-				ParticipantProperties->Conditions.Find(Item->GetVariableName()),
+				ParticipantProperties->GetConditions().Find(Item->GetVariableName()),
 				EDialogueTreeNodeTextType::ConditionGraphNode, EDialogueTreeNodeTextType::ConditionEdgeNode);
 			break;
 		case EDialogueTreeNodeTextType::IntVariableDialogue:
 			// List the graph nodes for the dialogue that contains this int variable
 			AddGraphNodeBaseChildrenToItemFromProperty(Item,
-				ParticipantProperties->Integers.Find(Item->GetVariableName()),
+				ParticipantProperties->GetIntegers().Find(Item->GetVariableName()),
 				EDialogueTreeNodeTextType::IntVariableGraphNode, EDialogueTreeNodeTextType::IntVariableEdgeNode);
 			break;
 		case EDialogueTreeNodeTextType::FloatVariableDialogue:
 			// List the graph nodes for the dialogue that contains this float variable
 			AddGraphNodeBaseChildrenToItemFromProperty(Item,
-				ParticipantProperties->Floats.Find(Item->GetVariableName()),
+				ParticipantProperties->GetFloats().Find(Item->GetVariableName()),
 				EDialogueTreeNodeTextType::FloatVariableGraphNode, EDialogueTreeNodeTextType::FloatVariableEdgeNode);
 			break;
 		case EDialogueTreeNodeTextType::BoolVariableDialogue:
 			// List the graph nodes for the dialogue that contains this bool variable
 			AddGraphNodeBaseChildrenToItemFromProperty(Item,
-				ParticipantProperties->Bools.Find(Item->GetVariableName()),
+				ParticipantProperties->GetBools().Find(Item->GetVariableName()),
 				EDialogueTreeNodeTextType::BoolVariableGraphNode, EDialogueTreeNodeTextType::BoolVariableEdgeNode);
 			break;
 

@@ -76,9 +76,9 @@ public:
 	}
 
 	/** Gets all the actors from the provided World that implement the Dialogue Participant Interface */
-	static TArray<AActor*> GetAllActorsImplementingDialogueParticipantInterface(UWorld* World)
+	static TArray<TWeakObjectPtr<AActor>> GetAllActorsImplementingDialogueParticipantInterface(UWorld* World)
 	{
-		TArray<AActor*> Array;
+		TArray<TWeakObjectPtr<AActor>> Array;
 		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
 		{
 			AActor* Actor = *Itr;

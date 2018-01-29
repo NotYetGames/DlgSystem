@@ -76,18 +76,20 @@ void FFindInDialoguesResult::ExpandAllChildren(TSharedPtr<STreeView<TSharedPtr<S
 	}
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FFindInDialoguesRootNode
 FFindInDialoguesRootNode::FFindInDialoguesRootNode() :
-	FFindInDialoguesResult(FText::FromString(TEXT("Display Text should not be visible")), nullptr)
+	Super(FText::FromString(TEXT("Display Text should not be visible")), nullptr)
 {
 	Category = LOCTEXT("FFindInDialoguesRootNodeCategory", "ROOT NODE SHOULD NOT BE VISIBLE");
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FFindInDialoguesDialogueNode
 FFindInDialoguesDialogueNode::FFindInDialoguesDialogueNode(const FText& InDisplayText, FFindInDialoguesResultPtr InParent) :
-	FFindInDialoguesResult(InDisplayText, InParent)
+	Super(InDisplayText, InParent)
 {
 	Category = LOCTEXT("FFindInDialoguesDialogueNodeCategory", "Dialogue");
 }
@@ -123,10 +125,11 @@ TSharedRef<SWidget>	FFindInDialoguesDialogueNode::CreateIcon() const
 			.ToolTipText(GetCategory());
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FFindInDialoguesGraphNode
 FFindInDialoguesGraphNode::FFindInDialoguesGraphNode(const FText& InDisplayText, FFindInDialoguesResultPtr InParent) :
-	FFindInDialoguesResult(InDisplayText, InParent)
+	Super(InDisplayText, InParent)
 {
 }
 
@@ -154,6 +157,7 @@ TSharedRef<SWidget> FFindInDialoguesGraphNode::CreateIcon() const
 
 	return Super::CreateIcon();
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FFindInDialoguesEdgeNode

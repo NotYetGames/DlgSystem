@@ -1,19 +1,17 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
-
 #include "CoreMinimal.h"
 
 #include "VariableProperties_DialogueTree.h"
 
 class UDlgDialogue;
-struct FParticipantProperties_DialogueTree;
+class FParticipantProperties_DialogueTree;
 
 typedef TSharedPtr<FParticipantProperties_DialogueTree> FDlgTreeParticipantPropertiesPtr;
 
 /** Used as a key in the fast lookup table. */
-struct FParticipantProperties_DialogueTree
+class FParticipantProperties_DialogueTree
 {
-private:
 	typedef FParticipantProperties_DialogueTree Self;
 
 public:
@@ -29,6 +27,7 @@ public:
 	/** Sorts all the properties it can */
 	void Sort();
 
+	/** Add Dialogue to current set. */
 	void AddDialogue(TWeakObjectPtr<UDlgDialogue> Dialogue)
 	{
 		Dialogues.Add(Dialogue);
@@ -71,13 +70,7 @@ public:
 	const TMap<FName, FDlgTreeVariablePropertiesPtr>& GetFloats() const { return Floats; }
 	const TMap<FName, FDlgTreeVariablePropertiesPtr>& GetBools() const { return Bools; }
 
-	/** Helper methods. */
-	static FDlgTreeParticipantPropertiesPtr Make(const TSet<TWeakObjectPtr<UDlgDialogue>>&& InDialogues)
-	{
-		return MakeShareable(new Self(InDialogues));
-	}
-
-protected:
+private:
 	template<typename VariablePropertyType, typename VariablePropertyTypePtr>
 	VariablePropertyTypePtr AddDialogueToVariable(TMap<FName, VariablePropertyTypePtr>* VariableMap,
 												  const FName& VariableName,
@@ -88,7 +81,7 @@ protected:
 		if (VariablePropsPtr == nullptr)
 		{
 			// variable does not exist for participant, create it
-			VariableProps = VariablePropertyType::Make({Dialogue});
+			VariableProps = MakeShareable(new VariablePropertyType({Dialogue}));
 			VariableMap->Add(VariableName, VariableProps);
 		}
 		else
@@ -101,7 +94,7 @@ protected:
 		return VariableProps;
 	}
 
-public:
+private:
 	/**
 	 * Dialogues that contain this participant
 	 * NOTE: can't convert it into a map with the key as an FName becaus we can expect duplicate dialogues

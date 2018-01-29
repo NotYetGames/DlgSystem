@@ -75,18 +75,20 @@ public:
 	FString CommentString;
 };
 
+
 /** Root Node, should not be displayed. */
 class FFindInDialoguesRootNode : public FFindInDialoguesResult
 {
+	typedef FFindInDialoguesResult Super;
 public:
 	FFindInDialoguesRootNode();
 };
+
 
 /** Tree Node search results that represents the Dialogue. */
 class FFindInDialoguesDialogueNode : public FFindInDialoguesResult
 {
 	typedef FFindInDialoguesResult Super;
-
 public:
 	FFindInDialoguesDialogueNode(const FText& InDisplayText, FFindInDialoguesResultPtr InParent);
 
@@ -101,11 +103,11 @@ public:
 	TWeakObjectPtr<const UDlgDialogue> Dialogue;
 };
 
+
 /** Tree Node result that represents the GraphNode */
 class FFindInDialoguesGraphNode : public FFindInDialoguesResult
 {
 	typedef FFindInDialoguesResult Super;
-
 public:
 	FFindInDialoguesGraphNode(const FText& InDisplayText, FFindInDialoguesResultPtr InParent);
 
@@ -118,11 +120,11 @@ public:
 	TWeakObjectPtr<const UDialogueGraphNode> GraphNode;
 };
 
+
 /** Tree Node result that represents the EdgeNode */
 class FFindInDialoguesEdgeNode : public FFindInDialoguesResult
 {
 	typedef FFindInDialoguesResult Super;
-
 public:
 	FFindInDialoguesEdgeNode(const FText& InDisplayText, FFindInDialoguesResultPtr InParent);
 

@@ -65,7 +65,6 @@ enum class EDialogueTreeNodeTextType : uint8
 enum class EDialogueTreeNodeType : uint8
 {
 	Text = 0,
-	RootNode,
 	Separator,
 	Category,
 
@@ -167,7 +166,7 @@ public:
 	}
 	bool HasInlineChildren() const { return InlineChildren.Num() > 0; }
 	bool HasChildren() const { return Children.Num() > 0; }
-	bool IsLeafNode() const { return Children.Num() == 0; }
+
 	const TArray<TSharedPtr<Self>>& GetChildren() const { return Children; }
 	const TArray<TSharedPtr<Self>>& GetInlineChildren() const { return InlineChildren; }
 	void GetVisibleChildren(TArray<TSharedPtr<Self>>& OutChildren)
@@ -204,11 +203,16 @@ public:
 		InlineChildren.Empty();
 	}
 
+	/** Is this the root node? Aka no parent. */
+	bool IsRoot() const { return !Parent.IsValid();}
+
+	/** Is this the leaf node? Aka no children. */
+	bool IsLeaf() const { return Children.Num() == 0; }
+
 	/** Checks type of this Node. */
 	bool IsText() const { return Type == EDialogueTreeNodeType::Text; }
 	bool IsCategory() const { return Type == EDialogueTreeNodeType::Category; }
 	bool IsSeparator() const { return Type == EDialogueTreeNodeType::Separator; }
-	bool IsRoot() const { return Type == EDialogueTreeNodeType::RootNode; }
 	bool IsDialogueText() const
 	{
 		return IsText() && (TextType == EDialogueTreeNodeTextType::ParticipantDialogue ||

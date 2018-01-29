@@ -8,8 +8,7 @@
 class UDialogueGraphNode;
 class UDialogueGraphNode_Edge;
 class UDlgDialogue;
-struct FVariableProperties_DialogueTree;
-
+class FVariableProperties_DialogueTree;
 
 typedef TSharedPtr<FVariableProperties_DialogueTree> FDlgTreeVariablePropertiesPtr;
 
@@ -28,26 +27,19 @@ static bool PredicateSortDialogueWeakPtrAlphabeticallyAscending(const TWeakObjec
 	return PredicateSortFNameAlphabeticallyAscending(First->GetFName(), Second->GetFName());
 }
 
-struct FVariableProperties_DialogueTree
+class FVariableProperties_DialogueTree
 {
-private:
 	typedef FVariableProperties_DialogueTree Self;
 
 public:
 	FVariableProperties_DialogueTree(const TSet<TWeakObjectPtr<UDlgDialogue>>& InDialogues);
 	virtual ~FVariableProperties_DialogueTree() {}
 
-	/** Helper methods. */
-	static FDlgTreeVariablePropertiesPtr Make(const TSet<TWeakObjectPtr<UDlgDialogue>>& InDialogues)
-	{
-		return MakeShareable(new Self(InDialogues));
-	}
-
-	// Dialogues
-	virtual void AddDialogue(TWeakObjectPtr<UDlgDialogue> Dialogue);
+	// Dialogues:
+	void AddDialogue(TWeakObjectPtr<UDlgDialogue> Dialogue);
 	const TSet<TWeakObjectPtr<UDlgDialogue>>& GetDialogues() const { return Dialogues; }
 
-	// GraphNodes methods
+	// GraphNodes:
 	bool HasGraphNodeSet(const FGuid& DialogueGuid) { return GraphNodes.Find(DialogueGuid) != nullptr; }
 	TSet<TWeakObjectPtr<UDialogueGraphNode>>* GetMutableGraphNodeSet(const FGuid& DialogueGuid)
 	{
@@ -60,7 +52,7 @@ public:
 		return *SetPtr;
 	}
 
-	// EdgeNodes methods
+	// EdgeNodes:
 	bool HasEdgeNodeSet(const FGuid& DialogueGuid) { return EdgeNodes.Find(DialogueGuid) != nullptr; }
 	TSet<TWeakObjectPtr<UDialogueGraphNode_Edge>>* GetMutableEdgeNodeSet(const FGuid& DialogueGuid)
 	{
@@ -80,18 +72,18 @@ public:
 	}
 
 protected:
-	/** Dialogues that contain the event */
+	/** Dialogues that contain this variable property */
 	TSet<TWeakObjectPtr<UDlgDialogue>> Dialogues;
 
 	/**
-	 * All the nodes that contain this event
+	 * All the nodes that contain this variable property
 	 * Key: The unique identifier for the Dialogue
 	 * Value: All nodes in the Dialogue that contain this variable name.
 	 */
 	TMap<FGuid, TSet<TWeakObjectPtr<UDialogueGraphNode>>> GraphNodes;
 
 	/**
-	 * All the edge nodes that contain this event
+	 * All the edge nodes that contain this variable property
 	 * Key: The unique identifier for the Dialogue
 	 * Value: All edge in the Dialogue that contain this condition.
 	 */

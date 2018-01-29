@@ -6,6 +6,7 @@
 #include "Widgets/Input/SSearchBox.h"
 
 #include "DlgDataDisplayTreeNode.h"
+#include "DlgDataDisplayActorProperties.h"
 
 /**
  * Implements the Runtime Dialogue Data Display
@@ -18,7 +19,7 @@ public:
 	SLATE_BEGIN_ARGS(Self) {}
 	SLATE_END_ARGS()
 
-	void Construct(const FArguments& InArgs, AActor* InReferenceActor = nullptr);
+	void Construct(const FArguments& InArgs, TWeakObjectPtr<AActor> InReferenceActor = nullptr);
 
 	/** Updates the actors tree. */
 	void RefreshTree(bool bPreserveExpansion);
@@ -29,6 +30,9 @@ public:
 private:
 	/** Getters for widgets.  */
 	TSharedRef<SWidget> GetFilterTextBoxWidget();
+
+	/** Recursively build the view item. */
+	void BuildTreeViewItem(FDlgDataDisplayTreeNodePtr Item);
 
 	/** Text search changed */
 	void HandleSearchTextCommited(const FText& InText, ETextCommit::Type InCommitType);
@@ -71,6 +75,13 @@ private:
 	/** Tree view for showing all Actors that implement the , etc. */
 	TSharedPtr<STreeView<FDlgDataDisplayTreeNodePtr>> ActorsTreeView;
 
+	/**
+	 * Used for fast lookup of each actor
+	 * Key: Weak Pointer to the Actor
+	 * Value: Actor properties
+	 */
+	TMap<TWeakObjectPtr<const AActor>, FDlgDataDisplayActorPropertiesPtr> ActorsProperties;
+
 	/** Reference Actor used to get the UWorld. */
-	AActor* ReferenceActor = nullptr;
+	TWeakObjectPtr<AActor> ReferenceActor = nullptr;
 };

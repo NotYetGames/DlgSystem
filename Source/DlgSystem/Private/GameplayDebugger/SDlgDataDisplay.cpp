@@ -10,7 +10,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SDlgDataDisplay
-void SDlgDataDisplay::Construct(const FArguments& InArgs, AActor* InReferenceActor)
+void SDlgDataDisplay::Construct(const FArguments& InArgs, TWeakObjectPtr<AActor> InReferenceActor)
 {
 	ReferenceActor = InReferenceActor;
 	RootTreeItem = MakeShareable(new FDlgDataDisplayTreeRootNode);
@@ -89,21 +89,102 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 {
 	RootTreeItem->ClearChildren();
 	RootChildren.Empty();
+	ActorsProperties.Empty();
 
 	// No Actor :( can't get the World
-	if (ReferenceActor == nullptr || ReferenceActor->GetWorld() == nullptr)
+	if (!ReferenceActor.IsValid() || ReferenceActor->GetWorld() == nullptr)
 	{
 		return;
 	}
 
-	TArray<AActor*> Actors = UDlgManager::GetAllActorsImplementingDialogueParticipantInterface(ReferenceActor->GetWorld());
+	TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
+	TArray<TWeakObjectPtr<AActor>> Actors = UDlgManager::GetAllActorsImplementingDialogueParticipantInterface(ReferenceActor->GetWorld());
 
-	// Build the root Tree items
-	for (AActor* Actor : Actors)
+	// Build fast lookup for ParticipantNames
+	// Maps from ParticipantName => Array of Dialogues that have this Participant.
+	TMap<FName, TSet<TWeakObjectPtr<UDlgDialogue>>> ParticipantNamesDialoguesMap;
+	for (UDlgDialogue* Dialogue : Dialogues)
 	{
-		RootTreeItem->AddChild(
-			MakeShareable(new FDlgDataDisplayTreeNode(FText::FromString(Actor->GetName()), RootTreeItem)));
+		TSet<FName> ParticipantsNames;
+		Dialogue->GetAllParticipantNames(ParticipantsNames);
+
+		for (const FName& ParticipantName : ParticipantsNames)
+		{
+			TSet<TWeakObjectPtr<UDlgDialogue>>* ValuePtr = ParticipantNamesDialoguesMap.Find(ParticipantName);
+			if (ValuePtr == nullptr)
+			{
+				// does not exist
+				TSet<TWeakObjectPtr<UDlgDialogue>> ValueArray{Dialogue};
+				ParticipantNamesDialoguesMap.Add(ParticipantName, ValueArray);
+			}
+			else
+			{
+				// exists, add the Dialogue
+				ValuePtr->Add(Dialogue);
+			}
+		}
 	}
+
+	// Build the fast lookup structure for Actors (the ActorsProperties)
+	for (TWeakObjectPtr<AActor> Actor : Actors)
+	{
+		if (!Actor.IsValid())
+		{
+			return;
+		}
+
+		// Should never happen, the actor should always be unique in the Actors array.
+		ensure(ActorsProperties.Find(Actor) == nullptr);
+
+		// Find out the Dialogues that have the ParticipantName of this Actor.
+		const FName ParticipantName = IDlgDialogueParticipant::Execute_GetParticipantName(Actor.Get());
+		TSet<TWeakObjectPtr<UDlgDialogue>> ActorDialogues;
+	    TSet<TWeakObjectPtr<UDlgDialogue>>* ActorDialoguesPtr = ParticipantNamesDialoguesMap.Find(ParticipantName);
+		if (ActorDialoguesPtr != nullptr)
+		{
+			// Found some dialogues
+			ActorDialogues = *ActorDialoguesPtr;
+		}
+
+		// Create Key in the ActorsProperties for this Actor.
+		FDlgDataDisplayActorPropertiesPtr ActorsPropertiesValue =
+			MakeShareable(new FDlgDataDisplayActorProperties(ActorDialogues));
+		ActorsProperties.Add(Actor, ActorsPropertiesValue);
+
+		// Gather Data from the Dialogues
+		for (TWeakObjectPtr<UDlgDialogue> Dialogue : ActorDialogues)
+		{
+			if (!Dialogue.IsValid())
+			{
+				return;
+			}
+
+			// Populate Event Names
+			TSet<FName> EventsNames;
+			Dialogue->GetEvents(ParticipantName, EventsNames);
+			for (const FName& EventName : EventsNames)
+			{
+				// PopulateVariablePropertiesFromSearchResult(
+				// 	ParticipantProps->AddDialogueToEvent(EventName, Dialogue),
+				// 	FDialogueSearchUtilities::GetGraphNodesForEventEventName(EventName, Dialogue),
+				// 	DialogueGuid);
+			}
+		}
+	}
+
+	// Build the Actors Tree View (aka the actual tree)
+	for (const auto Elem : ActorsProperties)
+	{
+		if (!Elem.Key.IsValid())
+		{
+			continue;
+		}
+
+		const AActor* Actor = Elem.Key.Get();
+		RootTreeItem->AddChild(
+			MakeShareable(new FDlgDataDisplayTreeActorNode(FText::FromString(Actor->GetName()), RootTreeItem, Actor)));
+	}
+
 	RootChildren = RootTreeItem->GetChildren();
 
 	// Clear Previous states
@@ -130,6 +211,24 @@ TSharedRef<SWidget> SDlgDataDisplay::GetFilterTextBoxWidget()
 
 	// Should return a valid widget
 	return GetFilterTextBoxWidget();
+}
+
+void SDlgDataDisplay::BuildTreeViewItem(FDlgDataDisplayTreeNodePtr Item)
+{
+	TWeakObjectPtr<const AActor> Actor = Item->GetParentActor();
+	if (!Actor.IsValid())
+	{
+		return;
+	}
+
+	// Do we have the actor cached?
+	FDlgDataDisplayActorPropertiesPtr* ValuePtr = ActorsProperties.Find(Actor);
+	if (ValuePtr == nullptr)
+	{
+		return;
+	}
+
+	FDlgDataDisplayActorPropertiesPtr ActorProperties = *ValuePtr;
 }
 
 void SDlgDataDisplay::HandleSearchTextCommited(const FText& InText, ETextCommit::Type InCommitType)

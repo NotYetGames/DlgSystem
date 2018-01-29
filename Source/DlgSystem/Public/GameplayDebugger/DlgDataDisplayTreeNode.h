@@ -17,6 +17,9 @@ public:
 	FDlgDataDisplayTreeNode(const FText& InDisplayText, TSharedPtr<Self> InParent);
 	virtual ~FDlgDataDisplayTreeNode() {}
 
+	/** Gets the Actor that has this Node belongs to. */
+	virtual TWeakObjectPtr<const AActor> GetParentActor() const;
+
 	/** Returns the display string for the row */
 	FText GetDisplayText() const { return DisplayText; }
 
@@ -67,4 +70,21 @@ class FDlgDataDisplayTreeRootNode : public FDlgDataDisplayTreeNode
 	typedef FDlgDataDisplayTreeNode Super;
 public:
 	FDlgDataDisplayTreeRootNode();
+};
+
+
+class FDlgDataDisplayTreeActorNode : public FDlgDataDisplayTreeNode
+{
+	typedef FDlgDataDisplayTreeNode Super;
+public:
+	FDlgDataDisplayTreeActorNode(const FText& InDisplayText, FDlgDataDisplayTreeNodePtr InParent,
+		TWeakObjectPtr<const AActor> InActor);
+
+	/** FDlgDataDisplayTreeNode interface */
+	TWeakObjectPtr<const AActor> GetParentActor() const override;
+	/** End FDlgDataDisplayTreeNode interface */
+
+protected:
+	/** The Actor this represents. */
+	TWeakObjectPtr<const AActor> Actor;
 };

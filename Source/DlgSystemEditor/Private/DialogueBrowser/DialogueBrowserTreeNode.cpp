@@ -108,7 +108,7 @@ void FDialogueBrowserTreeNode::GetPathToChildThatContainsText(const TSharedPtr<S
 		GetPathToChildThatContainsText(ChildItem, InSearch, OutNodes);
 
 		ChildItem->SetIsVisible(bChildIsVisible && !ChildItem->IsSeparator() &&
-								!ChildItem->IsCategory() && ChildItem->IsLeafNode());
+								!ChildItem->IsCategory() && ChildItem->IsLeaf());
 	}
 }
 
@@ -179,13 +179,14 @@ FString FDialogueBrowserTreeNode::ToString() const
 	return Output + " }";
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeRootNode
 FDialogueBrowserTreeRootNode::FDialogueBrowserTreeRootNode() :
 	Super(TEXT("ROOT"), nullptr)
 {
-	Type = EDialogueTreeNodeType::RootNode;
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeSeparatorNode
@@ -194,6 +195,7 @@ FDialogueBrowserTreeSeparatorNode::FDialogueBrowserTreeSeparatorNode(FDialogueBr
 {
 	Type = EDialogueTreeNodeType::Separator;
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeCategoryNode
@@ -204,6 +206,7 @@ FDialogueBrowserTreeCategoryNode::FDialogueBrowserTreeCategoryNode(const FName& 
 	Type = EDialogueTreeNodeType::Category;
 	CategoryType = InCategoryType;
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeParticipantNode
@@ -223,6 +226,7 @@ const FName FDialogueBrowserTreeParticipantNode::GetParentParticipantName() cons
 	return Super::GetParentParticipantName();
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeCategoryParticipantNode
 FDialogueBrowserTreeCategoryParticipantNode::FDialogueBrowserTreeCategoryParticipantNode(const FName& InText,
@@ -231,6 +235,7 @@ FDialogueBrowserTreeCategoryParticipantNode::FDialogueBrowserTreeCategoryPartici
 {
 	Type = EDialogueTreeNodeType::Category;
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeDialogueNode
@@ -251,6 +256,7 @@ FReply FDialogueBrowserTreeDialogueNode::OnClick()
 	return FReply::Unhandled();
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeGraphNode
 FDialogueBrowserTreeGraphNode::FDialogueBrowserTreeGraphNode(const FName& InText, FDialogueBrowserTreeNodePtr InParent,
@@ -269,6 +275,7 @@ FReply FDialogueBrowserTreeGraphNode::OnClick()
 
 	return FReply::Unhandled();
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeEdgeNode
