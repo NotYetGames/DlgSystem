@@ -110,6 +110,12 @@ public:
 		ensure(!IsSeparator());
 		Super::AddChild(ChildNode);
 	}
+	void ClearChildren() override
+	{
+		Super::ClearChildren();
+		InlineChildren.Empty();
+	}
+
 	void AddInlineChild(const TSharedPtr<Self>& ChildNode, const bool bIsInline = false)
 	{
 		ensure(!ChildNode->IsRoot());
@@ -126,11 +132,6 @@ public:
 		{
 			Child->SetParent(this->AsShared());
 		}
-	}
-	void ClearChildren() override
-	{
-		Super::ClearChildren();
-		InlineChildren.Empty();
 	}
 
 	/** Checks type of this Node. */
@@ -261,11 +262,7 @@ public:
 
 	// ParticipantName:
 	const FName GetParentParticipantName() const override;
-	Self* SetParticipantName(const FName& InParticipantName)
-	{
-		ParticipantName = InParticipantName;
-		return this;
-	}
+	void SetParticipantName(const FName& InParticipantName) { ParticipantName = InParticipantName; }
 
 	bool operator==(const Self& Other)
 	{

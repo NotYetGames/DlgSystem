@@ -30,7 +30,7 @@ TSharedRef<SWidget>	FFindInDialoguesResult::CreateIcon() const
 			.ToolTipText(GetCategory());
 }
 
-const UDlgDialogue* FFindInDialoguesResult::GetParentDialogue() const
+TWeakObjectPtr<const UDlgDialogue> FFindInDialoguesResult::GetParentDialogue() const
 {
 	if (Parent.IsValid())
 	{
@@ -67,12 +67,12 @@ FReply FFindInDialoguesDialogueNode::OnClick()
 	return FReply::Unhandled();
 }
 
-const UDlgDialogue* FFindInDialoguesDialogueNode::GetParentDialogue() const
+TWeakObjectPtr<const UDlgDialogue> FFindInDialoguesDialogueNode::GetParentDialogue() const
 {
 	// Get the Dialogue from this.
 	if (Dialogue.IsValid())
 	{
-		return Dialogue.Get();
+		return Dialogue;
 	}
 
 	return Super::GetParentDialogue();

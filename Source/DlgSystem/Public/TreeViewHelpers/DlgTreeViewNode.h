@@ -39,6 +39,7 @@ public:
 	bool HasParent() const { return Parent.IsValid(); }
 	TWeakPtr<SelfType> GetParent() const { return Parent; }
 	void SetParent(TWeakPtr<SelfType> InParentNode) { Parent = InParentNode; }
+	void ClearParent() { Parent.Reset(); }
 
 	// Children:
 	bool HasChildren() const { return Children.Num() > 0; }
@@ -127,7 +128,7 @@ public:
 		}
 	}
 
-public:
+protected:
 	/** Any children listed under this node. */
 	TArray<TSharedPtr<SelfType>> Children;
 

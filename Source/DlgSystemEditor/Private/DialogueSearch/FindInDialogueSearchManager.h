@@ -111,12 +111,12 @@ private:
 										   const FString& CommentString = FString())
 	{
 		FFindInDialoguesResultPtr TextNode = MakeShareable(new FFindInDialoguesResult(DisplayName, ParentNode));
-		TextNode->Category = Category;
+		TextNode->SetCategory(Category);
 		if (!CommentString.IsEmpty())
 		{
-			TextNode->CommentString = CommentString;
+			TextNode->SetCommentString(CommentString);
 		}
-		ParentNode->Children.Add(TextNode);
+		ParentNode->AddChild(TextNode);
 		return TextNode;
 	}
 

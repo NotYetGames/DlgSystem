@@ -181,8 +181,8 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FString& InSearchString,
 	const FText DisplayText = FText::Format(LOCTEXT("TreeGraphNodeCategory", "{0} Node at index {1}"),
 										 FText::FromString(NodeType), FText::AsNumber(InGraphNode->GetDialogueNodeIndex()));
 	TSharedPtr<FFindInDialoguesGraphNode> TreeGraphNode = MakeShareable(new FFindInDialoguesGraphNode(DisplayText, OutParentNode));
-	TreeGraphNode->Category = FText::FromString(NodeType);
-	TreeGraphNode->GraphNode = InGraphNode;
+	TreeGraphNode->SetCategory(FText::FromString(NodeType));
+	TreeGraphNode->SetGraphNode(InGraphNode);
 
 	// Helper method to add children to the TreeGraphNode
 	auto AddTextNodeToGraphNode = [this, &bContainsSearchString, &TreeGraphNode](const FText& DisplayName, const FText& Category,
@@ -254,7 +254,7 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FString& InSearchString,
 
 	if (bContainsSearchString)
 	{
-		OutParentNode->Children.Add(TreeGraphNode);
+		OutParentNode->AddChild(TreeGraphNode);
 	}
 
 	return bContainsSearchString;
@@ -283,8 +283,8 @@ bool FFindInDialogueSearchManager::QueryEdgeNode(const FString& InSearchString, 
 	const FText DisplayText = FText::Format(LOCTEXT("EdgeNodeDisplaytext", "Edge between {0} -> {1}"),
 											FText::AsNumber(FromParent), FText::AsNumber(ToChild));
 	TSharedPtr<FFindInDialoguesEdgeNode> TreeEdgeNode = MakeShareable(new FFindInDialoguesEdgeNode(DisplayText, OutParentNode));
-	TreeEdgeNode->Category = DisplayText;
-	TreeEdgeNode->EdgeNode = InEdgeNode;
+	TreeEdgeNode->SetCategory(DisplayText);
+	TreeEdgeNode->SetEdgeNode(InEdgeNode);
 
 	// Search in the DlgEdge
 	const FDlgEdge& DialogueEdge = InEdgeNode->GetDialogueEdge();
@@ -292,7 +292,7 @@ bool FFindInDialogueSearchManager::QueryEdgeNode(const FString& InSearchString, 
 
 	if (bContainsSearchString)
 	{
-		OutParentNode->Children.Add(TreeEdgeNode);
+		OutParentNode->AddChild(TreeEdgeNode);
 	}
 
 	return bContainsSearchString;
@@ -310,7 +310,7 @@ bool FFindInDialogueSearchManager::QuerySingleDialogue(const FString& InSearchSt
 	TArray<UDialogueGraphNode_Base*> BaseNodes = Graph->GetAllBaseDialogueGraphNodes();
 	TSharedPtr<FFindInDialoguesDialogueNode> TreeDialogueNode = MakeShareable(
 			new FFindInDialoguesDialogueNode(FText::FromString(InDialogue->GetPathName()), OutParentNode));
-	TreeDialogueNode->Dialogue = InDialogue;
+	TreeDialogueNode->SetDialogue(InDialogue);
 
 	// TODO node comments
 	bool bFoundInDialogue = false;
@@ -336,7 +336,7 @@ bool FFindInDialogueSearchManager::QuerySingleDialogue(const FString& InSearchSt
 
 	if (bFoundInDialogue)
 	{
-		OutParentNode->Children.Add(TreeDialogueNode);
+		OutParentNode->AddChild(TreeDialogueNode);
 	}
 
 	return bFoundInDialogue;

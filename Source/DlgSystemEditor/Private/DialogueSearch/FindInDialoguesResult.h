@@ -27,15 +27,17 @@ public:
 	virtual TSharedRef<SWidget>	CreateIcon() const;
 
 	/** Gets the Dialogue housing all these search results. Aka the Dialogue this search result belongs to. */
-	virtual const UDlgDialogue* GetParentDialogue() const;
+	virtual TWeakObjectPtr<const UDlgDialogue> GetParentDialogue() const;
 
-	/* Get Category for this search result */
+	// Category:
 	FText GetCategory() const { return Category; }
+	void SetCategory(const FText& InCategory) { Category = InCategory; }
 
-	/* Gets the comment on this node if any */
+	// CommentString
 	FString GetCommentString() const { return CommentString; }
+	void SetCommentString(const FString& InCommentString) { CommentString = InCommentString; }
 
-public:
+protected:
 	/** The category of this node. */
 	FText Category;
 
@@ -60,13 +62,14 @@ class FFindInDialoguesDialogueNode : public FFindInDialoguesResult
 public:
 	FFindInDialoguesDialogueNode(const FText& InDisplayText, FFindInDialoguesResultPtr InParent);
 
-	/** FFindInDialoguesResult interface */
 	FReply OnClick() override;
-	const UDlgDialogue* GetParentDialogue() const override;
+	TWeakObjectPtr<const UDlgDialogue> GetParentDialogue() const override;
 	TSharedRef<SWidget>	CreateIcon() const override;
-	/** End FFindInDialoguesResult interface */
 
-public:
+	// Dialogue:
+	void SetDialogue(TWeakObjectPtr<const UDlgDialogue> InDialogue) { Dialogue = InDialogue; }
+
+protected:
 	/** The Dialogue this represents. */
 	TWeakObjectPtr<const UDlgDialogue> Dialogue;
 };
@@ -79,11 +82,13 @@ class FFindInDialoguesGraphNode : public FFindInDialoguesResult
 public:
 	FFindInDialoguesGraphNode(const FText& InDisplayText, FFindInDialoguesResultPtr InParent);
 
-	/** FFindInDialoguesResult interface */
 	FReply OnClick() override;
 	TSharedRef<SWidget> CreateIcon() const override;
-	/** End FFindInDialoguesResult interface */
-public:
+
+	// GraphNode:
+	void SetGraphNode(TWeakObjectPtr<const UDialogueGraphNode> InGraphNode) { GraphNode = InGraphNode; }
+
+protected:
 	/** The GraphNode this represents. */
 	TWeakObjectPtr<const UDialogueGraphNode> GraphNode;
 };
@@ -96,12 +101,13 @@ class FFindInDialoguesEdgeNode : public FFindInDialoguesResult
 public:
 	FFindInDialoguesEdgeNode(const FText& InDisplayText, FFindInDialoguesResultPtr InParent);
 
-	/** FFindInDialoguesResult interface */
 	FReply OnClick() override;
 	TSharedRef<SWidget> CreateIcon() const override;
-	/** End FFindInDialoguesResult interface */
 
-public:
+	// EdgeNode:
+	void SetEdgeNode(TWeakObjectPtr<const UDialogueGraphNode_Edge> InEdgeNode) { EdgeNode = InEdgeNode; }
+
+protected:
 	/** The EdgeNode this represents. */
 	TWeakObjectPtr<const UDialogueGraphNode_Edge> EdgeNode;
 };

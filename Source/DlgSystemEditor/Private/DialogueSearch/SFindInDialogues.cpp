@@ -138,9 +138,9 @@ void SFindInDialogues::FocusForUse(const bool bSetFindWithinDialogue, const FStr
 			auto ItemToFocusOn = ItemsFound[0];
 
 			// Focus the deepest child
-			while (ItemToFocusOn->Children.Num())
+			while (ItemToFocusOn->HasChildren())
 			{
-				ItemToFocusOn = ItemToFocusOn->Children[0];
+				ItemToFocusOn = ItemToFocusOn->GetChildren()[0];
 			}
 			TreeView->SetSelection(ItemToFocusOn);
 			ItemToFocusOn->OnClick();
@@ -179,13 +179,14 @@ void SFindInDialogues::MakeSearchQuery(const FString& InSearchString, const bool
 					->QuerySingleDialogue(InSearchString, DialogueEditorPtr.Pin()->GetDialogueBeingEdited(), RootSearchResult);
 
 			// Do now show the Dialogue in the search results.
-			if (RootSearchResult->Children.Num() == 1 && RootSearchResult->Children[0].IsValid())
+			const TArray<FFindInDialoguesResultPtr>& Children = RootSearchResult->GetChildren();
+			if (Children.Num() == 1 && Children[0].IsValid())
 			{
 				// Make the root be the first result (aka de dialogue).
 				// NOTE: we must keep a reference here otherwise it crashes inside the parent reset
-				FFindInDialoguesResultPtr TempChild = RootSearchResult->Children[0];
+				FFindInDialoguesResultPtr TempChild = Children[0];
 				RootSearchResult = TempChild;
-				RootSearchResult->Parent.Reset();
+				RootSearchResult->ClearParent();
 			}
 		}
 	}
@@ -195,7 +196,7 @@ void SFindInDialogues::MakeSearchQuery(const FString& InSearchString, const bool
 		FFindInDialogueSearchManager::Get()->QueryAllDialogues(InSearchString, RootSearchResult);
 	}
 
-	ItemsFound = RootSearchResult->Children;
+	ItemsFound = RootSearchResult->GetChildren();
 	if (ItemsFound.Num() == 0)
 	{
 		// Some Items found
@@ -264,7 +265,7 @@ FReply SFindInDialogues::HandleOpenGlobalFindResults()
 
 void SFindInDialogues::HandleGetChildren(FFindInDialoguesResultPtr InItem, TArray<FFindInDialoguesResultPtr>& OutChildren)
 {
-	OutChildren += InItem->Children;
+	OutChildren += InItem->GetChildren();
 }
 
 void SFindInDialogues::HandleTreeSelectionDoubleClicked(FFindInDialoguesResultPtr Item)
