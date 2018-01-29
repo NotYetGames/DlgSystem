@@ -1,7 +1,8 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgNode_Speech.h"
-#include "DlgContextInternal.h"
 
+#include "DlgContextInternal.h"
+#include "DlgSystemPrivatePCH.h"
 
 bool UDlgNode_Speech::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyEvaluated)
 {

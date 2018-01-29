@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
+#include "CoreMinimal.h"
 #include "EdGraph/EdGraph.h"
 
 #include "DlgDialogue.h"
@@ -69,7 +70,7 @@ public:
 	void RemoveAllNodes();
 
 	/** Helper method to get directly the Dialogue Graph Schema */
-	const UDialogueGraphSchema* GetDialogueGraphSchema() const { return GetDefault<UDialogueGraphSchema>(Schema); }
+	const UDialogueGraphSchema* GetDialogueGraphSchema() const;
 
 private:
 	UDialogueGraph(const FObjectInitializer& ObjectInitializer);

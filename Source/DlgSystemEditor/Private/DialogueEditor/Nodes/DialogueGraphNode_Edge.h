@@ -5,6 +5,7 @@
 #include "UObject/ObjectMacros.h"
 
 #include "DialogueGraphNode_Base.h"
+#include "DialogueGraphNode.h"
 
 #include "DialogueGraphNode_Edge.generated.h"
 

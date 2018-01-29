@@ -5,6 +5,7 @@
 
 #include "DialogueEditor/Nodes/DialogueGraphNode_Base.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode_Root.h"
 #include "DialogueEditor/Nodes/SGraphNode_Dialogue.h"
 #include "DialogueEditor/Nodes/SGraphNode_DialogueRoot.h"
 #include "DialogueEditor/Nodes/SGraphNode_DialogueEdge.h"

@@ -5,6 +5,7 @@
 #include "DetailLayoutBuilder.h"
 #include "IPropertyUtilities.h"
 #include "STextBlock.h"
+#include "DetailWidgetRow.h"
 
 #include "Nodes/DlgNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"

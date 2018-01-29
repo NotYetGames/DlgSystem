@@ -3,7 +3,9 @@
 
 #include "CoreMinimal.h"
 #include "Reply.h"
-
+#include "UObject/WeakObjectPtr.h"
+#include "Containers/Set.h"
+#include "GameFramework/Actor.h"
 
 class FDlgDataDisplayTreeNode;
 typedef TSharedPtr<FDlgDataDisplayTreeNode> FDlgDataDisplayTreeNodePtr;

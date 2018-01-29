@@ -9,6 +9,7 @@
 
 #include "DlgSystemEditorPrivatePCH.h"
 #include "DlgDialogue.h"
+#include "DialogueGraphNode_Edge.h"
 #include "DialogueEditor/DialogueEditorCommands.h"
 #include "DlgSystemSettings.h"
 

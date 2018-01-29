@@ -4,6 +4,8 @@
 #include "ScopedTransaction.h"
 #include "EdGraphNode_Comment.h"
 
+#include "DialogueEditor/DialogueEditorUtilities.h"
+
 #define LOCTEXT_NAMESPACE "NewComment_DialogueGraphSchemaAction"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

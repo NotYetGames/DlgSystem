@@ -4,6 +4,7 @@
 #include "CoreMinimal.h"
 
 #include "DlgIDialogueEditorModule.h"
+#include "DialogueEditor/DialogueEditorUtilities.h"
 
 /**
  * Implementation of the interface for dialogue graph interaction between DlgSystem module <-> DlgSystemEditor module.

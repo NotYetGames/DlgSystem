@@ -24,6 +24,7 @@
 #include "SDialogueActionMenu.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Root.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueEditor/Graph/DialogueGraphSchema.h"
 #include "DialogueEditor/DialogueEditorCommands.h"
 #include "Graph/SchemaActions/ConvertSpeechSequenceNodeToSpeechNodes_DialogueGraphSchemaAction.h"

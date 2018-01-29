@@ -4,7 +4,10 @@
 #include "STableRow.h"
 #include "Editor.h"
 #include "EditorStyle.h"
+#include "Widgets/Input/SSearchBox.h"
+#include "Framework/Commands/GenericCommands.h"
 
+#include "DialogueEditor/DialogueEditor.h"
 #include "FindInDialoguesResult.h"
 #include "FindInDialogueSearchManager.h"
 

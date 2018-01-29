@@ -15,6 +15,7 @@
 #include "DialogueStyle.h"
 #include "DialogueSearch/DialogueSearchUtilities.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueBrowserUtilities.h"
 
 #define LOCTEXT_NAMESPACE "SDialogueBrowser"

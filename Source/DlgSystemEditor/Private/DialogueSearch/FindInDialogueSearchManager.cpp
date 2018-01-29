@@ -6,10 +6,14 @@
 #include "WorkspaceMenuStructureModule.h"
 #include "WorkspaceMenuStructure.h"
 
+#include "DlgSystemEditorPrivatePCH.h"
 #include "DlgDialogue.h"
+#include "DlgManager.h"
 #include "SFindInDialogues.h"
 #include "DialogueEditor/Graph/DialogueGraph.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
+#include "DialogueStyle.h"
 
 #define LOCTEXT_NAMESPACE "SDialogueBrowser"
 

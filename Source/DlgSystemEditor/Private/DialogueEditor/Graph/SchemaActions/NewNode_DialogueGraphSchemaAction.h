@@ -4,6 +4,8 @@
 #include "EdGraph/EdGraphSchema.h"
 #include "SubclassOf.h"
 
+#include "Nodes/DlgNode.h"
+
 #include "NewNode_DialogueGraphSchemaAction.generated.h"
 
 class UDialogueGraphNode;

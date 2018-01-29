@@ -1,6 +1,9 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
+
 #include "CoreMinimal.h"
+#include "UObject/WeakObjectPtr.h"
+#include "Containers/Set.h"
 
 class UDlgDialogue;
 class FDlgDataDisplayActorProperties;

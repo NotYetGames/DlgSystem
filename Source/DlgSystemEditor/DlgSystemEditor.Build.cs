@@ -8,8 +8,11 @@ public class DlgSystemEditor : ModuleRules
     {
         // Enable IWYU
         // https://docs.unrealengine.com/latest/INT/Programming/UnrealBuildSystem/IWYUReferenceGuide/index.html
+		// https://docs.unrealengine.com/latest/INT/Programming/UnrealBuildSystem/Configuration/
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         bEnforceIWYU = true;
+		MinFilesUsingPrecompiledHeaderOverride = 1;
+		bFasterWithoutUnity = true;
         //PrivatePCHHeaderFile = "Private/DlgSystemEditorPrivatePCH.h";
 
 		//if ((Target.Platform == UnrealTargetPlatform.Win32 || Target.Platform == UnrealTargetPlatform.Win64)

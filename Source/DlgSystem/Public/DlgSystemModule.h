@@ -1,8 +1,9 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "ModuleInterface.h"
 #include "CoreMinimal.h"
+#include "ModuleInterface.h"
+#include "GameFramework/Actor.h"
 
 // The name of the Dialogue System plugin as defined in the .uplugin file
 const FName DIALOGUE_SYSTEM_PLUGIN_NAME(TEXT("DlgSystem"));

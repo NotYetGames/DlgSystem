@@ -9,6 +9,7 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "STextPropertyPickList.h"
 #include "CustomRowHelpers/TextPropertyPickList_CustomRowHelper.h"
+#include "CustomRowHelpers/MultiLineEditableTextBox_CustomRowHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueSpeechSequenceEntry_Details"
 

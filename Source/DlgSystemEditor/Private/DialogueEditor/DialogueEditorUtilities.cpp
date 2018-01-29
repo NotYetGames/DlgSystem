@@ -9,6 +9,7 @@
 #include "DlgSystemEditorPrivatePCH.h"
 #include "IDialogueEditor.h"
 #include "Nodes/DialogueGraphNode.h"
+#include "Nodes/DialogueGraphNode_Edge.h"
 
 /** Useful for auto positioning */
 struct NodeWithParentPosition

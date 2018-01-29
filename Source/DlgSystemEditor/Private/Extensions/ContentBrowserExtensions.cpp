@@ -4,6 +4,7 @@
 #include "ContentBrowserModule.h"
 #include "Engine/Blueprint.h"
 
+#include "DlgManager.h"
 #include "DlgDialogueParticipant.h"
 #include "DlgSystemEditorPrivatePCH.h"
 

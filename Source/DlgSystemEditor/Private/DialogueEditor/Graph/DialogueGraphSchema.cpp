@@ -9,6 +9,7 @@
 
 #include "DialogueGraph.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "SchemaActions/NewComment_DialogueGraphSchemaAction.h"
 #include "SchemaActions/NewNode_DialogueGraphSchemaAction.h"
 #include "SchemaActions/ConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction.h"

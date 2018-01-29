@@ -6,6 +6,8 @@
 #include "AssetEditorManager.h"
 
 #include "DialogueEditor/DialogueEditorUtilities.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueStyle.h"
 
 #define LOCTEXT_NAMESPACE "FFindInDialoguesResult"

@@ -9,11 +9,11 @@
 #include "Nodes/DlgNode_Selector.h"
 #include "Nodes/DlgNode_SpeechSequence.h"
 #include "DialogueGraphNode_Base.h"
-#include "DialogueGraphNode_Edge.h"
 
 #include "DialogueGraphNode.generated.h"
 
 class UEdGraphPin;
+class DialogueGraphNode_Edge;
 
 /** Result for a single difference between the Dialogue Node Edges and LinkedTo Array of the output pins */
 struct FDiffNodeEdgeLinkedToPinResult

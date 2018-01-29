@@ -4,6 +4,8 @@
 #include "STreeView.h"
 
 #include "DialogueEditor/DialogueEditorUtilities.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeNode

@@ -7,6 +7,7 @@
 #include "DialogueGraphSchema.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Root.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueEditor/DialogueCompiler.h"
 #include "DlgDialogueEditorModule.h"
 
@@ -213,4 +214,9 @@ void UDialogueGraph::RemoveAllNodes()
 	// Could have used RemoveNode on each node but that is unecessary as that is slow and notifies external objects
 	Nodes.Empty();
 	check(Nodes.Num() == 0);
+}
+
+const UDialogueGraphSchema* UDialogueGraph::GetDialogueGraphSchema() const
+{
+	return GetDefault<UDialogueGraphSchema>(Schema);
 }

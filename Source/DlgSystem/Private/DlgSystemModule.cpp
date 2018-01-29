@@ -7,6 +7,7 @@
 #include "TabManager.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "IConsoleManager.h"
+#include "HAL/FileManager.h"
 
 #include "DlgSystemPrivatePCH.h"
 #include "DlgManager.h"
