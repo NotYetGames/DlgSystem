@@ -26,6 +26,7 @@ enum class EDialogueTreeNodeCategoryType : uint8
 	VariableInt,
 	VariableFloat,
 	VariableBool,
+	VariableFName,
 
 	Max
 };
@@ -40,6 +41,7 @@ enum class EDialogueTreeNodeTextType : uint8
 	ParticipantVariableInt,
 	ParticipantVariableFloat,
 	ParticipantVariableBool,
+	ParticipantVariableFName,
 
 	EventDialogue,
 	EventGraphNode,
@@ -59,6 +61,10 @@ enum class EDialogueTreeNodeTextType : uint8
 	BoolVariableDialogue,
 	BoolVariableGraphNode,
 	BoolVariableEdgeNode,
+
+	FNameVariableDialogue,
+	FNameVariableGraphNode,
+	FNameVariableEdgeNode,
 
 	Max
 };
@@ -145,7 +151,8 @@ public:
 							TextType == EDialogueTreeNodeTextType::ConditionDialogue ||
 							TextType == EDialogueTreeNodeTextType::IntVariableDialogue ||
 							TextType == EDialogueTreeNodeTextType::FloatVariableDialogue ||
-							TextType == EDialogueTreeNodeTextType::BoolVariableDialogue);
+							TextType == EDialogueTreeNodeTextType::BoolVariableDialogue ||
+							TextType == EDialogueTreeNodeTextType::FNameVariableDialogue);
 	}
 	bool IsEventText() const
 	{
@@ -161,14 +168,16 @@ public:
 							TextType == EDialogueTreeNodeTextType::ConditionGraphNode ||
 							TextType == EDialogueTreeNodeTextType::IntVariableGraphNode ||
 							TextType == EDialogueTreeNodeTextType::FloatVariableGraphNode ||
-							TextType == EDialogueTreeNodeTextType::BoolVariableGraphNode);
+							TextType == EDialogueTreeNodeTextType::BoolVariableGraphNode ||
+							TextType == EDialogueTreeNodeTextType::FNameVariableGraphNode);
 	}
 	bool IsEdgeNodeText()
 	{
 		return IsText() && (TextType == EDialogueTreeNodeTextType::ConditionEdgeNode ||
 							TextType == EDialogueTreeNodeTextType::IntVariableEdgeNode ||
 							TextType == EDialogueTreeNodeTextType::FloatVariableEdgeNode ||
-							TextType == EDialogueTreeNodeTextType::BoolVariableEdgeNode);
+							TextType == EDialogueTreeNodeTextType::BoolVariableEdgeNode ||
+							TextType == EDialogueTreeNodeTextType::FNameVariableEdgeNode);
 	}
 
 	/**
@@ -246,8 +255,8 @@ class FDialogueBrowserTreeCategoryNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeNode Super;
 public:
-	FDialogueBrowserTreeCategoryNode(const FText& InDisplayText, const EDialogueTreeNodeCategoryType InCategoryType,
-									FDialogueBrowserTreeNodePtr InParent);
+	FDialogueBrowserTreeCategoryNode(const FText& InDisplayText, FDialogueBrowserTreeNodePtr InParent,
+									const EDialogueTreeNodeCategoryType InCategoryType);
 };
 
 
@@ -296,8 +305,6 @@ public:
 
 	// Dialogue:
 	const TWeakObjectPtr<const UDlgDialogue>& GetDialogue() const { return Dialogue; }
-
-	// FDialogueBrowserTreeNode Interface
 	FReply OnClick() override;
 
 protected:
@@ -316,8 +323,6 @@ public:
 
 	// GraphNode:
 	const TWeakObjectPtr<const UDialogueGraphNode>& GetGraphNode() const { return GraphNode; }
-
-	// FDialogueBrowserTreeNode Interface
 	FReply OnClick() override;
 
 protected:
@@ -336,8 +341,6 @@ public:
 
 	// EdgeNode:
 	const TWeakObjectPtr<const UDialogueGraphNode_Edge>& GetEdgeNode() const { return EdgeNode; }
-
-	// FDialogueBrowserTreeNode Interface
 	FReply OnClick() override;
 
 protected:

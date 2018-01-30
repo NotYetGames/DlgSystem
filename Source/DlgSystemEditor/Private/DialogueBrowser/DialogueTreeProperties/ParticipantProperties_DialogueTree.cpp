@@ -16,4 +16,5 @@ void FParticipantProperties_DialogueTree::Sort()
 	UDlgManager::SortDefault(Integers);
 	UDlgManager::SortDefault(Floats);
 	UDlgManager::SortDefault(Bools);
+	UDlgManager::SortDefault(FNames);
 }

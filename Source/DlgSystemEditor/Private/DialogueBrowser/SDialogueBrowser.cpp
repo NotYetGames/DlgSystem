@@ -307,6 +307,17 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 					FDialogueSearchUtilities::GetGraphNodesForBoolVariableName(BoolVariableName, Dialogue),
 					DialogueGuid);
 			}
+
+			// Populate bool variable names
+			TSet<FName> FNameVariableNames;
+			Dialogue->GetNameNames(ParticipantName, FNameVariableNames);
+			for (const FName& NameVariableName : FNameVariableNames)
+			{
+				PopulateVariablePropertiesFromSearchResult(
+					ParticipantProps->AddDialogueToFNameVariable(NameVariableName, Dialogue),
+					FDialogueSearchUtilities::GetGraphNodesForFNameVariableName(NameVariableName, Dialogue),
+					DialogueGuid);
+			}
 		}
 	}
 
@@ -341,7 +352,6 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 	{
 		const FDialogueBrowserTreeNodePtr Participant =
 			MakeShareable(new FDialogueBrowserTreeCategoryParticipantNode(FText::FromName(Name), RootTreeItem, Name));
-		Participant->SetCategoryType(EDialogueTreeNodeCategoryType::Participant);
 
 		BuildTreeViewItem(Participant);
 		RootTreeItem->AddChild(Participant);
@@ -636,6 +646,19 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueBrowserTreeNodePtr Item)
 			}
 			break;
 		}
+		case EDialogueTreeNodeCategoryType::VariableFName:
+		{
+			for (const auto& Pair : ParticipantProperties->GetFNames())
+			{
+				const FDialogueBrowserTreeNodePtr FNameItem =
+					MakeShareable(new FDialogueBrowserTreeNode(FText::FromName(Pair.Key), Item));
+				FNameItem->SetTextType(EDialogueTreeNodeTextType::ParticipantVariableFName);
+				FNameItem->SetVariableName(Pair.Key);
+				Item->AddChild(FNameItem);
+			}
+			break;
+		}
+
 		default:
 			break;
 		}
@@ -674,6 +697,13 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueBrowserTreeNodePtr Item)
 				ParticipantProperties->GetBools().Find(Item->GetVariableName()),
 				EDialogueTreeNodeTextType::BoolVariableDialogue);
 			break;
+		case EDialogueTreeNodeTextType::ParticipantVariableFName:
+			// List the dialogues that contain this Fname variable for this participant
+			AddDialogueChildrenToItemFromProperty(Item,
+				ParticipantProperties->GetFNames().Find(Item->GetVariableName()),
+				EDialogueTreeNodeTextType::FNameVariableDialogue);
+			break;
+
 
 		case EDialogueTreeNodeTextType::EventDialogue:
 			// List the graph nodes for the dialogue that contains this event
@@ -704,6 +734,12 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueBrowserTreeNodePtr Item)
 			AddGraphNodeBaseChildrenToItemFromProperty(Item,
 				ParticipantProperties->GetBools().Find(Item->GetVariableName()),
 				EDialogueTreeNodeTextType::BoolVariableGraphNode, EDialogueTreeNodeTextType::BoolVariableEdgeNode);
+			break;
+		case EDialogueTreeNodeTextType::FNameVariableDialogue:
+			// List the graph nodes for the dialogue that contains this FName variable
+			AddGraphNodeBaseChildrenToItemFromProperty(Item,
+				ParticipantProperties->GetFNames().Find(Item->GetVariableName()),
+				EDialogueTreeNodeTextType::FNameVariableGraphNode, EDialogueTreeNodeTextType::FNameVariableEdgeNode);
 			break;
 
 		default:
@@ -1129,23 +1165,23 @@ TArray<FDialogueBrowserTreeNodePtr> SDialogueBrowser::MakeParticipantCategoriesC
 {
 	TArray<FDialogueBrowserTreeNodePtr> Categories;
 	{
-		FDialogueBrowserTreeNodePtr Category = MakeShareable(
-			new FDialogueBrowserTreeCategoryNode(FText::FromString(TEXT("Dialogues")), EDialogueTreeNodeCategoryType::Dialogue, Parent));
+		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
+			FText::FromString(TEXT("Dialogues")), Parent, EDialogueTreeNodeCategoryType::Dialogue));
 		Categories.Add(Category);
 	}
 	{
-		FDialogueBrowserTreeNodePtr Category = MakeShareable(
-			new FDialogueBrowserTreeCategoryNode(FText::FromString(TEXT("Events")), EDialogueTreeNodeCategoryType::Event, Parent));
+		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
+			FText::FromString(TEXT("Events")), Parent, EDialogueTreeNodeCategoryType::Event));
 		Categories.Add(Category);
 	}
 	{
-		FDialogueBrowserTreeNodePtr Category = MakeShareable(
-			new FDialogueBrowserTreeCategoryNode(FText::FromString(TEXT("Conditions")), EDialogueTreeNodeCategoryType::Condition, Parent));
+		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
+			FText::FromString(TEXT("Conditions")), Parent, EDialogueTreeNodeCategoryType::Condition));
 		Categories.Add(Category);
 	}
 	{
-		FDialogueBrowserTreeNodePtr Category = MakeShareable(
-			new FDialogueBrowserTreeCategoryNode(FText::FromString(TEXT("Variables")), EDialogueTreeNodeCategoryType::Variable, Parent));
+		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
+			FText::FromString(TEXT("Variables")), Parent, EDialogueTreeNodeCategoryType::Variable));
 		Categories.Add(Category);
 	}
 	return Categories;
@@ -1155,20 +1191,26 @@ TArray<FDialogueBrowserTreeNodePtr> SDialogueBrowser::MakeVariableCategoriesChil
 {
 	TArray<FDialogueBrowserTreeNodePtr> Categories;
 	{
-		FDialogueBrowserTreeNodePtr Category = MakeShareable(
-			new FDialogueBrowserTreeCategoryNode(FText::FromString(TEXT("Integers")), EDialogueTreeNodeCategoryType::VariableInt, Parent));
+		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
+			FText::FromString(TEXT("Integers")), Parent, EDialogueTreeNodeCategoryType::VariableInt));
 		Categories.Add(Category);
 	}
 	{
-		FDialogueBrowserTreeNodePtr Category = MakeShareable(
-			new FDialogueBrowserTreeCategoryNode(FText::FromString(TEXT("Floats")), EDialogueTreeNodeCategoryType::VariableFloat, Parent));
+		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
+			FText::FromString(TEXT("Floats")), Parent, EDialogueTreeNodeCategoryType::VariableFloat));
 		Categories.Add(Category);
 	}
 	{
-		FDialogueBrowserTreeNodePtr Category = MakeShareable(
-			new FDialogueBrowserTreeCategoryNode(FText::FromString(TEXT("Bools")), EDialogueTreeNodeCategoryType::VariableBool, Parent));
+		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
+			FText::FromString(TEXT("Bools")), Parent, EDialogueTreeNodeCategoryType::VariableBool));
 		Categories.Add(Category);
 	}
+	{
+		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
+			FText::FromString(TEXT("Names")), Parent, EDialogueTreeNodeCategoryType::VariableFName));
+		Categories.Add(Category);
+	}
+
 	return Categories;
 }
 

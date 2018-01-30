@@ -158,7 +158,7 @@ FDialogueBrowserTreeSeparatorNode::FDialogueBrowserTreeSeparatorNode(FDialogueBr
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeCategoryNode
 FDialogueBrowserTreeCategoryNode::FDialogueBrowserTreeCategoryNode(const FText& InDisplayText,
-	const EDialogueTreeNodeCategoryType InCategoryType, FDialogueBrowserTreeNodePtr InParent) :
+	FDialogueBrowserTreeNodePtr InParent, const EDialogueTreeNodeCategoryType InCategoryType) :
 	Super(InDisplayText, InParent)
 {
 	Type = EDialogueTreeNodeType::Category;
@@ -192,6 +192,7 @@ FDialogueBrowserTreeCategoryParticipantNode::FDialogueBrowserTreeCategoryPartici
 	Super(InDisplayText, InParent, InParticipantName)
 {
 	Type = EDialogueTreeNodeType::Category;
+	CategoryType = EDialogueTreeNodeCategoryType::Participant;
 }
 
 

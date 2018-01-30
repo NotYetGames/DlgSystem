@@ -90,6 +90,17 @@ public:
 													  EDlgConditionType::DlgConditionBoolCall);
 	}
 
+	/**
+	 * Gets all the graph nodes that contain the specified FNameVariableName.
+	 * This contains both graph nodes and edges.
+	 */
+	static FDialogueSearchFoundResultPtr GetGraphNodesForFNameVariableName(const FName& FNameVariableName, const UDlgDialogue* Dialogue)
+	{
+		return GetGraphNodesForVariablesOfNameAndType(FNameVariableName, Dialogue,
+													  EDlgEventType::DlgEventModifyName,
+													  EDlgConditionType::DlgConditionNameCall);
+	}
+
 	/** Does Conditions contain the ConditionName (of type ConditionType)? */
 	static bool IsConditionInArray(const FName& ConditionName, const EDlgConditionType ConditionType,
 								   const TArray<FDlgCondition>& Conditions)
