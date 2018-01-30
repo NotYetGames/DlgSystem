@@ -194,7 +194,8 @@ public:
 	/** Is this equal with Other? */
 	virtual bool IsEqual(const Self& Other)
 	{
-		return 	DisplayText.EqualTo(Other.GetDisplayText()) &&
+		return 	GetParentParticipantName() == Other.GetParentParticipantName() &&
+				DisplayText.EqualTo(Other.GetDisplayText()) &&
 				VariableName == Other.GetVariableName() &&
 				Type == Other.GetType() &&
 				CategoryType == Other.GetCategoryType() &&
@@ -272,12 +273,6 @@ public:
 	// ParticipantName:
 	const FName GetParentParticipantName() const override;
 	void SetParticipantName(const FName& InParticipantName) { ParticipantName = InParticipantName; }
-
-	bool operator==(const Self& Other)
-	{
-		return ParticipantName == Other.GetParentParticipantName() &&
-			   IsEqual(Other);
-	 }
 
 protected:
 	/** The Participant Name it represents. */

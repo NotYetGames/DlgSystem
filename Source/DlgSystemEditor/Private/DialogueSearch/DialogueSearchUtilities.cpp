@@ -69,6 +69,12 @@ FDialogueSearchFoundResultPtr FDialogueSearchUtilities::GetGraphNodesForVariable
 	{
 		if (UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(GraphNodeBase))
 		{
+			// The root node does not have searchable info
+			if (GraphNode->IsRootNode())
+			{
+				continue;
+			}
+
 			// Node
 			const UDlgNode& Node = GraphNode->GetDialogueNode();
 

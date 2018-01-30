@@ -421,6 +421,70 @@ void UDlgDialogue::RefreshData()
 	UE_LOG(LogDlgSystem, Log, TEXT("Refreshing data for Dialogue = `%s`"), *GetPathName());
 	DlgData.Empty();
 
+	// Gets the map entry - creates it first if it is not yet there
+	auto GetParticipantDataEntry = [this](const FName& ParticipantName,
+										const FName& FallbackNodeOwnerName) -> FDlgParticipantData&
+	{
+		// If the Participant Name is not set, it adopts the Node Owner Name
+		const FName& Name = ParticipantName == NAME_None ? FallbackNodeOwnerName : ParticipantName;
+
+		FDlgParticipantData* ParticipantData = DlgData.Find(Name);
+		if (ParticipantData == nullptr)
+		{
+			ParticipantData = &DlgData.Add(Name);
+		}
+
+		return *ParticipantData;
+	};
+
+	// Adds condition to the appropriate ParticipantDataEntry
+	auto AddCondition = [this, &GetParticipantDataEntry](const FName& ParticipantName,
+														const FName& FallbackNodeOwnerName,
+														const EDlgConditionType& ConditionType,
+														const FName& ConditionName)
+	{
+		FDlgParticipantData& ParticipantData = GetParticipantDataEntry(ParticipantName, FallbackNodeOwnerName);
+		switch (ConditionType)
+		{
+			case EDlgConditionType::DlgConditionIntCall:
+				ParticipantData.IntVariableNames.Add(ConditionName);
+				break;
+			case EDlgConditionType::DlgConditionFloatCall:
+				ParticipantData.FloatVariableNames.Add(ConditionName);
+				break;
+			case EDlgConditionType::DlgConditionBoolCall:
+				ParticipantData.BoolVariableNames.Add(ConditionName);
+				break;
+			case EDlgConditionType::DlgConditionNameCall:
+				ParticipantData.NameVariableNames.Add(ConditionName);
+				break;
+			case EDlgConditionType::DlgConditionEventCall:
+				ParticipantData.Conditions.Add(ConditionName);
+				break;
+			default:
+				break;
+		}
+	};
+
+	// Adds conditions from the edges of this Node.
+	auto AddConditionsFromEdges = [this, &AddCondition](const UDlgNode* Node)
+	{
+		for (const FDlgEdge& Edge : Node->GetNodeChildren())
+		{
+			for (const FDlgCondition& Condition : Edge.Conditions)
+			{
+				AddCondition(Condition.ParticipantName, Node->GetNodeParticipantName(), Condition.ConditionType, Condition.CallbackName);
+			}
+		}
+	};
+
+	// do not forget about the edges of the Root/Start Node
+	if (StartNode != nullptr)
+	{
+		AddConditionsFromEdges(StartNode);
+	}
+
+	// Regular Nodes
 	for (UDlgNode* Node : Nodes)
 	{
 		TArray<FName> Participants;
@@ -433,64 +497,13 @@ void UDlgDialogue::RefreshData()
 			}
 		}
 
-		// TODO warn user about duplicate values in the FDlgParticipantData
-		// gets map entry - creates it first if it is not yet there
-		auto GetParticipantDataEntry = [this](const FName& ParticipantName,
-											  const FName& FallbackNodeOwnerName) -> FDlgParticipantData&
-		{
-			// If the Participant Name is not set, it adopts the Node Owner Name
-			const FName& Name = ParticipantName == NAME_None ? FallbackNodeOwnerName : ParticipantName;
-
-			FDlgParticipantData* ParticipantData = DlgData.Find(Name);
-			if (ParticipantData == nullptr)
-			{
-				ParticipantData = &DlgData.Add(Name);
-			}
-
-			return *ParticipantData;
-		};
-
-		auto AddCondition = [this, &GetParticipantDataEntry](const FName& ParticipantName,
-															 const FName& FallbackNodeOwnerName,
-															 const EDlgConditionType& ConditionType,
-															 const FName& ConditionName)
-		{
-			FDlgParticipantData& ParticipantData = GetParticipantDataEntry(ParticipantName, FallbackNodeOwnerName);
-			switch (ConditionType)
-			{
-				case EDlgConditionType::DlgConditionIntCall:
-					ParticipantData.IntVariableNames.Add(ConditionName);
-					break;
-				case EDlgConditionType::DlgConditionFloatCall:
-					ParticipantData.FloatVariableNames.Add(ConditionName);
-					break;
-				case EDlgConditionType::DlgConditionBoolCall:
-					ParticipantData.BoolVariableNames.Add(ConditionName);
-					break;
-				case EDlgConditionType::DlgConditionNameCall:
-					ParticipantData.NameVariableNames.Add(ConditionName);
-					break;
-				case EDlgConditionType::DlgConditionEventCall:
-					ParticipantData.Conditions.Add(ConditionName);
-					break;
-				default:
-					break;
-			}
-		};
-
 		// 1.1: Conditions from nodes
 		for (const FDlgCondition& Condition : Node->GetNodeEnterConditions())
 		{
 			AddCondition(Condition.ParticipantName, Node->GetNodeParticipantName(), Condition.ConditionType, Condition.CallbackName);
 		}
 		// 1.2: Conditions from edges
-		for (const FDlgEdge& Edge : Node->GetNodeChildren())
-		{
-			for (const FDlgCondition& Condition : Edge.Conditions)
-			{
-				AddCondition(Condition.ParticipantName, Node->GetNodeParticipantName(), Condition.ConditionType, Condition.CallbackName);
-			}
-		}
+		AddConditionsFromEdges(Node);
 
 		// 2: Events
 		for (const FDlgEvent& Event : Node->GetNodeEnterEvents())

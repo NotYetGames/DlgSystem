@@ -303,10 +303,10 @@ public:
 	/** Gets the child nodes that are connected from the output pin. This handles the proxy connection to the UDialogueGraphNode_Edge.  */
 	const TArray<UDialogueGraphNode*> GetChildNodes() const;
 
-	/** Gets the parent node edges that are connected from the input pin. This returns the proxy edge nodes. To surpasss the proxy connection use GetParentNodes. */
+	/** Gets the parent node edges that are connected from the input pin. This returns the proxy edge nodes. To surpass the proxy connection use GetParentNodes. */
 	const TArray<UDialogueGraphNode_Edge*> GetParentEdgeNodes() const;
 
-	/** Gets the child node edges that are connected from the output pin. This returns the proxy edge nodes. To surpasss the proxy connection use GetChildNodes. */
+	/** Gets the child node edges that are connected from the output pin. This returns the proxy edge nodes. To surpass the proxy connection use GetChildNodes. */
 	const TArray<UDialogueGraphNode_Edge*> GetChildEdgeNodes(const bool bCheckParent = true) const;
 
 	/** Rearranges the children (edges, output pin, connections) based on the X location on the graph. */
