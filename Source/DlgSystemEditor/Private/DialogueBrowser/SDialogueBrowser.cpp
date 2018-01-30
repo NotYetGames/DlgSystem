@@ -309,7 +309,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 					DialogueGuid);
 			}
 
-			// Populate bool variable names
+			// Populate FName variable names
 			TSet<FName> FNameVariableNames;
 			Dialogue->GetNameNames(ParticipantName, FNameVariableNames);
 			for (const FName& NameVariableName : FNameVariableNames)

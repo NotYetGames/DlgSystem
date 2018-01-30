@@ -34,6 +34,7 @@ public:
 };
 
 
+/** Bide result that Represents the Actor. */
 class FDlgDataDisplayTreeActorNode : public FDlgDataDisplayTreeNode
 {
 	typedef FDlgDataDisplayTreeNode Super;

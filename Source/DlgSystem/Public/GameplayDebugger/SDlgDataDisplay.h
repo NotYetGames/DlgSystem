@@ -80,8 +80,8 @@ private:
 	 * Key: Weak Pointer to the Actor
 	 * Value: Actor properties
 	 */
-	TMap<TWeakObjectPtr<const AActor>, FDlgDataDisplayActorPropertiesPtr> ActorsProperties;
+	TMap<TWeakObjectPtr<const AActor>, TSharedPtr<FDlgDataDisplayActorProperties>> ActorsProperties;
 
 	/** Reference Actor used to get the UWorld. */
-	TWeakObjectPtr<AActor> ReferenceActor = nullptr;
+	TWeakObjectPtr<const AActor> ReferenceActor = nullptr;
 };

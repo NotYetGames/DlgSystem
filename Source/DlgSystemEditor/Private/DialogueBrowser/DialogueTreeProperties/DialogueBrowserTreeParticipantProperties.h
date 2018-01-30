@@ -5,9 +5,6 @@
 #include "DialogueBrowserTreeVariableProperties.h"
 #include "TreeViewHelpers/DlgTreeViewParticipantProperties.h"
 
-class UDlgDialogue;
-class FDialogueBrowserTreeParticipantProperties;
-
 /** Used as a key in the fast lookup table. */
 class FDialogueBrowserTreeParticipantProperties : public FDlgTreeViewParticipantProperties<FDialogueBrowserTreeVariableProperties>
 {

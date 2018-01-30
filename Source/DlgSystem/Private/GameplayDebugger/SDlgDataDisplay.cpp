@@ -149,7 +149,7 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 		}
 
 		// Create Key in the ActorsProperties for this Actor.
-		FDlgDataDisplayActorPropertiesPtr ActorsPropertiesValue =
+		TSharedPtr<FDlgDataDisplayActorProperties> ActorsPropertiesValue =
 			MakeShareable(new FDlgDataDisplayActorProperties(ActorDialogues));
 		ActorsProperties.Add(Actor, ActorsPropertiesValue);
 
@@ -166,10 +166,47 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 			Dialogue->GetEvents(ParticipantName, EventsNames);
 			for (const FName& EventName : EventsNames)
 			{
-				// PopulateVariablePropertiesFromSearchResult(
-				// 	ParticipantProps->AddDialogueToEvent(EventName, Dialogue),
-				// 	FDialogueSearchUtilities::GetGraphNodesForEventEventName(EventName, Dialogue),
-				// 	DialogueGuid);
+				ActorsPropertiesValue->AddDialogueToEvent(EventName, Dialogue);
+			}
+
+			// Populate conditions
+			TSet<FName> ConditionNames;
+			Dialogue->GetConditions(ParticipantName, ConditionNames);
+			for (const FName& ConditionName : ConditionNames)
+			{
+				ActorsPropertiesValue->AddDialogueToCondition(ConditionName, Dialogue);
+			}
+
+			// Populate int variable names
+			TSet<FName> IntVariableNames;
+			Dialogue->GetIntNames(ParticipantName, IntVariableNames);
+			for (const FName& IntVariableName : IntVariableNames)
+			{
+				ActorsPropertiesValue->AddDialogueToIntVariable(IntVariableName, Dialogue);
+			}
+
+			// Populate float variable names
+			TSet<FName> FloatVariableNames;
+			Dialogue->GetFloatNames(ParticipantName, FloatVariableNames);
+			for (const FName& FloatVariableName : FloatVariableNames)
+			{
+				ActorsPropertiesValue->AddDialogueToFloatVariable(FloatVariableName, Dialogue);
+			}
+
+			// Populate bool variable names
+			TSet<FName> BoolVariableNames;
+			Dialogue->GetBoolNames(ParticipantName, BoolVariableNames);
+			for (const FName& BoolVariableName : BoolVariableNames)
+			{
+				ActorsPropertiesValue->AddDialogueToBoolVariable(BoolVariableName, Dialogue);
+			}
+
+			// Populate FName variable names
+			TSet<FName> FNameVariableNames;
+			Dialogue->GetNameNames(ParticipantName, FNameVariableNames);
+			for (const FName& NameVariableName : FNameVariableNames)
+			{
+				ActorsPropertiesValue->AddDialogueToFNameVariable(NameVariableName, Dialogue);
 			}
 		}
 	}
@@ -183,10 +220,11 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 		}
 
 		const AActor* Actor = Elem.Key.Get();
-		RootTreeItem->AddChild(
-			MakeShareable(new FDlgDataDisplayTreeActorNode(FText::FromString(Actor->GetName()), RootTreeItem, Actor)));
+		FDlgDataDisplayTreeNodePtr ActorItem =
+			MakeShareable(new FDlgDataDisplayTreeActorNode(FText::FromString(Actor->GetName()), RootTreeItem, Actor));
+		BuildTreeViewItem(ActorItem);
+		RootTreeItem->AddChild(ActorItem);
 	}
-
 	RootChildren = RootTreeItem->GetChildren();
 
 	// Clear Previous states
@@ -224,13 +262,48 @@ void SDlgDataDisplay::BuildTreeViewItem(FDlgDataDisplayTreeNodePtr Item)
 	}
 
 	// Do we have the actor cached?
-	FDlgDataDisplayActorPropertiesPtr* ValuePtr = ActorsProperties.Find(Actor);
+	TSharedPtr<FDlgDataDisplayActorProperties>* ValuePtr = ActorsProperties.Find(Actor);
 	if (ValuePtr == nullptr)
 	{
 		return;
 	}
+	TSharedPtr<FDlgDataDisplayActorProperties> ActorPropertiesValue = *ValuePtr;
 
-	FDlgDataDisplayActorPropertiesPtr ActorProperties = *ValuePtr;
+	TSharedPtr<FDlgDataDisplayTreeActorNode> ActorItem = StaticCastSharedPtr<FDlgDataDisplayTreeActorNode>(Item);
+	if (ActorItem.IsValid())
+	{
+		// Actor
+		for (const auto& Pair: ActorPropertiesValue->GetIntegers())
+		{
+			const FDlgDataDisplayTreeNodePtr IntItem = MakeShareable(
+				new FDlgDataDisplayTreeNode(FText::FromName(Pair.Key), Item));
+			Item->AddChild(IntItem);
+		}
+		for (const auto& Pair: ActorPropertiesValue->GetFloats())
+		{
+			const FDlgDataDisplayTreeNodePtr FloatItem = MakeShareable(
+				new FDlgDataDisplayTreeNode(FText::FromName(Pair.Key), Item));
+			Item->AddChild(FloatItem);
+		}
+		for (const auto& Pair: ActorPropertiesValue->GetBools())
+		{
+			const FDlgDataDisplayTreeNodePtr BoolItem = MakeShareable(
+				new FDlgDataDisplayTreeNode(FText::FromName(Pair.Key), Item));
+			Item->AddChild(BoolItem);
+		}
+		for (const auto& Pair: ActorPropertiesValue->GetFNames())
+		{
+			const FDlgDataDisplayTreeNodePtr FNameItem = MakeShareable(
+				new FDlgDataDisplayTreeNode(FText::FromName(Pair.Key), Item));
+			Item->AddChild(FNameItem);
+		}
+	}
+
+	// Recursively call on children
+	for (const FDlgDataDisplayTreeNodePtr& ChildItem : Item->GetChildren())
+	{
+		BuildTreeViewItem(ChildItem);
+	}
 }
 
 void SDlgDataDisplay::HandleSearchTextCommited(const FText& InText, ETextCommit::Type InCommitType)
