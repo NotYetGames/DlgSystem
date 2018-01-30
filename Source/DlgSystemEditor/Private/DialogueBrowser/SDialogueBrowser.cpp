@@ -212,8 +212,9 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 	RootChildren.Empty();
 	ParticipantsProperties.Empty();
 
-	auto PopulateVariablePropertiesFromSearchResult = []( const FDlgTreeVariablePropertiesPtr VariableProperties,
-			const FDialogueSearchFoundResultPtr SearchResult, const FGuid& DialogueGuid)
+	auto PopulateVariablePropertiesFromSearchResult = [](
+		const TSharedPtr<FDialogueBrowserTreeVariableProperties> VariableProperties,
+		const FDialogueSearchFoundResultPtr SearchResult, const FGuid& DialogueGuid)
 	{
 		if (VariableProperties->HasGraphNodeSet(DialogueGuid))
 		{
@@ -238,12 +239,12 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 		Dialogue->GetAllParticipantNames(ParticipantsNames);
 		for (const FName& ParticipantName : ParticipantsNames)
 		{
-			FDlgTreeParticipantPropertiesPtr* ParticipantPropsPtr = ParticipantsProperties.Find(ParticipantName);
-			FDlgTreeParticipantPropertiesPtr ParticipantProps;
+			TSharedPtr<FDialogueBrowserTreeParticipantProperties>* ParticipantPropsPtr = ParticipantsProperties.Find(ParticipantName);
+			TSharedPtr<FDialogueBrowserTreeParticipantProperties> ParticipantProps;
 			if (ParticipantPropsPtr == nullptr)
 			{
 				// participant does not exist, create it
-				ParticipantProps = MakeShareable(new FParticipantProperties_DialogueTree({Dialogue}));
+				ParticipantProps = MakeShareable(new FDialogueBrowserTreeParticipantProperties({Dialogue}));
 				ParticipantsProperties.Add(ParticipantName, ParticipantProps);
 			}
 			else
@@ -326,7 +327,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 	for (const auto Elem : ParticipantsProperties)
 	{
 		AllParticipants.Add(Elem.Key);
-		FDlgTreeParticipantPropertiesPtr Property = Elem.Value;
+		TSharedPtr<FDialogueBrowserTreeParticipantProperties> Property = Elem.Value;
 
 		// sort
 		Property->Sort();
@@ -430,7 +431,7 @@ TSharedRef<SWidget> SDialogueBrowser::GetFilterTextBoxWidget()
 }
 
 void SDialogueBrowser::AddDialogueChildrenToItemFromProperty(FDialogueBrowserTreeNodePtr InItem,
-	 const FDlgTreeVariablePropertiesPtr* PropertyPtr, const EDialogueTreeNodeTextType TextType)
+	 const TSharedPtr<FDialogueBrowserTreeVariableProperties>* PropertyPtr, const EDialogueTreeNodeTextType TextType)
 {
 	// List the dialogues that contain this event for this property
 	TSet<TWeakObjectPtr<UDlgDialogue>> Dialogues;
@@ -503,8 +504,8 @@ void SDialogueBrowser::AddEdgeNodeChildrenToItem(FDialogueBrowserTreeNodePtr InI
 }
 
 void SDialogueBrowser::AddGraphNodeBaseChildrenToItemFromProperty(FDialogueBrowserTreeNodePtr InItem,
-	const FDlgTreeVariablePropertiesPtr* PropertyPtr, const EDialogueTreeNodeTextType GraphNodeTextType,
-	const EDialogueTreeNodeTextType EdgeNodeTextType)
+	const TSharedPtr<FDialogueBrowserTreeVariableProperties>* PropertyPtr,
+	const EDialogueTreeNodeTextType GraphNodeTextType, const EDialogueTreeNodeTextType EdgeNodeTextType)
 {
 	TSharedPtr<FDialogueBrowserTreeDialogueNode> DialogueItem =
 		StaticCastSharedPtr<FDialogueBrowserTreeDialogueNode>(InItem);
@@ -517,7 +518,7 @@ void SDialogueBrowser::AddGraphNodeBaseChildrenToItemFromProperty(FDialogueBrows
 		return;
 	}
 
-	const FDlgTreeVariablePropertiesPtr Property = *PropertyPtr;
+	const TSharedPtr<FDialogueBrowserTreeVariableProperties> Property = *PropertyPtr;
 	const UDlgDialogue* Dialogue = DialogueItem->GetDialogue().Get();
 	const FGuid DialogueGuid = Dialogue->GetDlgGuid();
 
@@ -541,13 +542,13 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueBrowserTreeNodePtr Item)
 	}
 
 	// Do we have the Participant cached?
-	FDlgTreeParticipantPropertiesPtr* ParticipantPropertiesPtr = ParticipantsProperties.Find(ParticipantName);
+	TSharedPtr<FDialogueBrowserTreeParticipantProperties>* ParticipantPropertiesPtr = ParticipantsProperties.Find(ParticipantName);
 	if (ParticipantPropertiesPtr == nullptr)
 	{
 		return;
 	}
 
-	FDlgTreeParticipantPropertiesPtr ParticipantProperties = *ParticipantPropertiesPtr;
+	TSharedPtr<FDialogueBrowserTreeParticipantProperties> ParticipantProperties = *ParticipantPropertiesPtr;
 	if (Item->IsCategory())
 	{
 		switch (Item->GetCategoryType())
@@ -960,7 +961,8 @@ TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(FDialogueBrowserTreeNo
 		if (InItem->GetCategoryType() == EDialogueTreeNodeCategoryType::Participant)
 		{
 			int32 DialogueReferences = 0;
-			FDlgTreeParticipantPropertiesPtr* ParticipantPropertiesPtr = ParticipantsProperties.Find(InItem->GetParentParticipantName());
+			TSharedPtr<FDialogueBrowserTreeParticipantProperties>* ParticipantPropertiesPtr =
+				ParticipantsProperties.Find(InItem->GetParentParticipantName());
 			if (ParticipantPropertiesPtr)
 			{
 				DialogueReferences = (*ParticipantPropertiesPtr)->GetDialogues().Num();

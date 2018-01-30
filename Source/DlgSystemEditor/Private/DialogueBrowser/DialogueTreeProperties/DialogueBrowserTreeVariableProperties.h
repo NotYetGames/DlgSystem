@@ -4,40 +4,23 @@
 #include "CoreMinimal.h"
 
 #include "DlgManager.h"
+#include "TreeViewHelpers/DlgTreeViewVariableProperties.h"
 
 class UDialogueGraphNode;
 class UDialogueGraphNode_Edge;
 class UDlgDialogue;
-class FVariableProperties_DialogueTree;
+class FDialogueBrowserTreeVariableProperties;
 
-typedef TSharedPtr<FVariableProperties_DialogueTree> FDlgTreeVariablePropertiesPtr;
-
-static bool PredicateSortDialogueWeakPtrAlphabeticallyAscending(const TWeakObjectPtr<UDlgDialogue>& First,
-																const TWeakObjectPtr<UDlgDialogue>& Second)
+class FDialogueBrowserTreeVariableProperties : public FDlgTreeViewVariableProperties
 {
-	if (!First.IsValid())
-	{
-		return false;
-	}
-	if (!Second.IsValid())
-	{
-		return true;
-	}
-
-	return PredicateSortFNameAlphabeticallyAscending(First->GetFName(), Second->GetFName());
-}
-
-class FVariableProperties_DialogueTree
-{
-	typedef FVariableProperties_DialogueTree Self;
+	typedef FDialogueBrowserTreeVariableProperties Self;
+	typedef FDlgTreeViewVariableProperties Super;
 
 public:
-	FVariableProperties_DialogueTree(const TSet<TWeakObjectPtr<UDlgDialogue>>& InDialogues);
-	virtual ~FVariableProperties_DialogueTree() {}
+	FDialogueBrowserTreeVariableProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>& InDialogues);
 
 	// Dialogues:
-	void AddDialogue(TWeakObjectPtr<UDlgDialogue> Dialogue);
-	const TSet<TWeakObjectPtr<UDlgDialogue>>& GetDialogues() const { return Dialogues; }
+	void AddDialogue(TWeakObjectPtr<UDlgDialogue> Dialogue) override;
 
 	// GraphNodes:
 	bool HasGraphNodeSet(const FGuid& DialogueGuid) { return GraphNodes.Find(DialogueGuid) != nullptr; }
@@ -65,16 +48,7 @@ public:
 		return *SetPtr;
 	}
 
-	/** Sorts all the properties it can */
-	void Sort()
-	{
-		Dialogues.Sort(PredicateSortDialogueWeakPtrAlphabeticallyAscending);
-	}
-
 protected:
-	/** Dialogues that contain this variable property */
-	TSet<TWeakObjectPtr<UDlgDialogue>> Dialogues;
-
 	/**
 	 * All the nodes that contain this variable property
 	 * Key: The unique identifier for the Dialogue

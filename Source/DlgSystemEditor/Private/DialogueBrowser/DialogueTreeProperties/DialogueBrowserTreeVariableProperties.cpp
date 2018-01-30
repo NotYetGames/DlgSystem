@@ -1,10 +1,11 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "VariableProperties_DialogueTree.h"
+#include "DialogueBrowserTreeVariableProperties.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueTreeVariableProperties
-FVariableProperties_DialogueTree::FVariableProperties_DialogueTree(const TSet<TWeakObjectPtr<UDlgDialogue>>& InDialogues) : Dialogues(InDialogues)
+FDialogueBrowserTreeVariableProperties::FDialogueBrowserTreeVariableProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>& InDialogues)
+	: Super(InDialogues)
 {
 	// Empty initialize the graph nodes
 	for (const TWeakObjectPtr<UDlgDialogue>& Dialogue : InDialogues)
@@ -19,9 +20,9 @@ FVariableProperties_DialogueTree::FVariableProperties_DialogueTree(const TSet<TW
 	}
 }
 
-void FVariableProperties_DialogueTree::AddDialogue(TWeakObjectPtr<UDlgDialogue> Dialogue)
+void FDialogueBrowserTreeVariableProperties::AddDialogue(TWeakObjectPtr<UDlgDialogue> Dialogue)
 {
-	Dialogues.Add(Dialogue);
+	Super::AddDialogue(Dialogue);
 
 	// Initialize the graph nodes
 	{

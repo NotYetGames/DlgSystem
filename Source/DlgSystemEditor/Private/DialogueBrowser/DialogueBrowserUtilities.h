@@ -4,7 +4,7 @@
 #include "CoreMinimal.h"
 
 #include "DialogueBrowserTreeNode.h"
-#include "DialogueTreeProperties/ParticipantProperties_DialogueTree.h"
+#include "DialogueTreeProperties/DialogueBrowserTreeParticipantProperties.h"
 
 enum class EDialogueBrowserSortOption : uint8
 {
@@ -46,17 +46,19 @@ public:
 
 	/** Predicate that sorts participants by dialogue number references, in descending order. */
 	static bool PredicateSortByDialoguesNumDescending(const FName& FirstParticipant, const FName& SecondParticipant,
-		const TMap<FName, FDlgTreeParticipantPropertiesPtr>& ParticipantsProperties)
+		const TMap<FName, TSharedPtr<FDialogueBrowserTreeParticipantProperties>>& ParticipantsProperties)
 	{
 		int32 FirstNum = 0;
 		int32 SecondNum = 0;
 
-		const FDlgTreeParticipantPropertiesPtr* FirstPtr = ParticipantsProperties.Find(FirstParticipant);
+		const TSharedPtr<FDialogueBrowserTreeParticipantProperties>* FirstPtr =
+			ParticipantsProperties.Find(FirstParticipant);
 		if (FirstPtr)
 		{
 			FirstNum = (*FirstPtr)->GetDialogues().Num();
 		}
-		const FDlgTreeParticipantPropertiesPtr* SecondPtr = ParticipantsProperties.Find(SecondParticipant);
+		const TSharedPtr<FDialogueBrowserTreeParticipantProperties>* SecondPtr =
+			ParticipantsProperties.Find(SecondParticipant);
 		if (SecondPtr)
 		{
 			SecondNum = (*SecondPtr)->GetDialogues().Num();

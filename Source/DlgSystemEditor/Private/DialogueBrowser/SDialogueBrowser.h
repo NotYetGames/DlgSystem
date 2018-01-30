@@ -8,7 +8,7 @@
 #include "SSearchBox.h"
 
 #include "DialogueBrowserTreeNode.h"
-#include "DialogueTreeProperties/ParticipantProperties_DialogueTree.h"
+#include "DialogueTreeProperties/DialogueBrowserTreeParticipantProperties.h"
 #include "DialogueBrowserUtilities.h"
 
 class UDlgDialogue;
@@ -43,7 +43,7 @@ private:
 
 	/** Add Dialogue Children of type TextType to the InItem. */
 	void AddDialogueChildrenToItemFromProperty(FDialogueBrowserTreeNodePtr InItem,
-								   const FDlgTreeVariablePropertiesPtr* PropertyPtr,
+								   const TSharedPtr<FDialogueBrowserTreeVariableProperties>* PropertyPtr,
 								   const EDialogueTreeNodeTextType TextType);
 
 	/** Add GraphNode Children of type TextType to the InItem. */
@@ -58,7 +58,7 @@ private:
 
 	/** Add both GraphNode Children and EdgeNode Children to the InItem from The Property. */
 	void AddGraphNodeBaseChildrenToItemFromProperty(FDialogueBrowserTreeNodePtr InItem,
-													 const FDlgTreeVariablePropertiesPtr* PropertyPtr,
+													 const TSharedPtr<FDialogueBrowserTreeVariableProperties>* PropertyPtr,
 													 const EDialogueTreeNodeTextType GraphNodeTextType,
 													 const EDialogueTreeNodeTextType EdgeNodeTextType);
 
@@ -160,7 +160,7 @@ private:
 	 * Key: Participant Name
 	 * Value: participant properties
 	 */
-	TMap<FName, FDlgTreeParticipantPropertiesPtr> ParticipantsProperties;
+	TMap<FName, TSharedPtr<FDialogueBrowserTreeParticipantProperties>> ParticipantsProperties;
 
 	// Sort variables
 	/** The data sources */
