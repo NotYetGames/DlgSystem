@@ -24,6 +24,16 @@ const FName FDialogueBrowserTreeNode::GetParentParticipantName() const
 	return NAME_None;
 }
 
+const FName FDialogueBrowserTreeNode::GetParentVariableName() const
+{
+	if (Parent.IsValid())
+	{
+		return Parent.Pin()->GetParentVariableName();
+	}
+
+	return NAME_None;
+}
+
 void FDialogueBrowserTreeNode::GetPathToChildThatContainsText(const TSharedPtr<Self>& Child,
 	const FString& InSearch, TArray<TArray<TSharedPtr<Self>>>& OutNodes)
 {
@@ -126,7 +136,7 @@ FString FDialogueBrowserTreeNode::ToString() const
 
 	AddKeyValueField("Text", DisplayText.ToString(), false);
 	//AddFNameToOutput("ParticipantName", ParticipantName);
-	AddFNameToOutput("VariableName", VariableName);
+	//AddFNameToOutput("VariableName", VariableName);
 
 	// if (Object.IsValid())
 	// {
@@ -151,7 +161,6 @@ FDialogueBrowserTreeRootNode::FDialogueBrowserTreeRootNode() :
 FDialogueBrowserTreeSeparatorNode::FDialogueBrowserTreeSeparatorNode(FDialogueBrowserTreeNodePtr InParent) :
 	Super(FText::FromString(TEXT("SEPARATOR")), InParent)
 {
-	Type = EDialogueTreeNodeType::Separator;
 }
 
 
@@ -161,7 +170,6 @@ FDialogueBrowserTreeCategoryNode::FDialogueBrowserTreeCategoryNode(const FText& 
 	FDialogueBrowserTreeNodePtr InParent, const EDialogueTreeNodeCategoryType InCategoryType) :
 	Super(InDisplayText, InParent)
 {
-	Type = EDialogueTreeNodeType::Category;
 	CategoryType = InCategoryType;
 }
 
@@ -186,12 +194,30 @@ const FName FDialogueBrowserTreeParticipantNode::GetParentParticipantName() cons
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// FDialogueBrowserTreeVariableNode
+FDialogueBrowserTreeVariableNode::FDialogueBrowserTreeVariableNode(const FText& InDisplayText,
+	FDialogueBrowserTreeNodePtr InParent, const FName& InVariableName)
+	: Super(InDisplayText, InParent), VariableName(InVariableName)
+{
+}
+
+const FName FDialogueBrowserTreeVariableNode::GetParentVariableName() const
+{
+	if (VariableName.IsValid() && !VariableName.IsNone())
+	{
+		return VariableName;
+	}
+
+	return Super::GetParentVariableName();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeCategoryParticipantNode
 FDialogueBrowserTreeCategoryParticipantNode::FDialogueBrowserTreeCategoryParticipantNode(const FText& InDisplayText,
 	FDialogueBrowserTreeNodePtr InParent, const FName& InParticipantName) :
 	Super(InDisplayText, InParent, InParticipantName)
 {
-	Type = EDialogueTreeNodeType::Category;
 	CategoryType = EDialogueTreeNodeCategoryType::Participant;
 }
 
