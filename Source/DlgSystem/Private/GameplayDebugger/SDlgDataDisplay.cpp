@@ -356,7 +356,7 @@ void SDlgDataDisplay::BuildTreeViewItem(FDlgDataDisplayTreeNodePtr Item)
 				for (const auto& Pair: ActorPropertiesValue->GetBools())
 				{
 					const FName VariableName = Pair.Key;
-					const bool Value = IDlgDialogueParticipant::Execute_GetIntValue(Actor.Get(), VariableName);
+					const bool Value = IDlgDialogueParticipant::Execute_GetBoolValue(Actor.Get(), VariableName);
 					const FString ValueString = Value ? TEXT("true") : TEXT("false");
 
 					FFormatOrderedArguments Args;
