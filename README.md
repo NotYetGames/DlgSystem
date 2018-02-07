@@ -30,7 +30,7 @@ We have put significant effort into it and decided to make it open source in ord
 Contribution, feedback and constructive criticism are appreciated and we would be really happy to hear about your game using our tool. 
 Should it prove useful to you, the best way to say thanks is to mention us and our game to your own audience.
 
-Brought to you by NotYet:
+Brought to you by Not Yet:
 * Discord: https://discord.gg/5gH5tWR
 * Website: [notyet.eu](http://www.notyet.eu)
 * Twitter: https://twitter.com/NotYetDevs
