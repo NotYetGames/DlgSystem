@@ -120,6 +120,9 @@ public:
 	FDlgDataDisplayTreeVariableNode(const FText& InDisplayText, FDlgDataDisplayTreeNodePtr InParent,
 		const FName& InVariableName, const EDlgDataDisplayVariableTreeNodeType InVariableType);
 
+	// VariableName:
+	FName GetVariableName() const { return VariableName; }
+
 	// VariableValue:
 	void SetVariableValue(const FString& InVariableValue) { VariableValue = InVariableValue; }
 	FString GetVariableValue() const { return VariableValue; }

@@ -11,6 +11,94 @@
 #define LOCTEXT_NAMESPACE "SDlgDataDisplay"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SDlgDataProperty
+void SDlgDataPropertyValue::Construct(const FArguments& InArgs, TSharedPtr<FDlgDataDisplayTreeVariableNode> InVariableNode)
+{
+	VariableNode = InVariableNode;
+	UpdateVariableNodeFromActor();
+
+	ChildSlot
+	[
+		SNew(STextBlock)
+		.Text(this, &Self::GetTextValue)
+	];
+}
+
+void SDlgDataPropertyValue::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
+{
+	Super::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
+
+	// We only run this Tick only after TickUpdateTimeSeconds has passed
+	TickPassedDeltaTimeSeconds += InDeltaTime;
+	if (TickPassedDeltaTimeSeconds < TickUpdateTimeSeconds)
+	{
+		return;
+	}
+
+	// Update the value
+	TickPassedDeltaTimeSeconds = 0.f;
+	UpdateVariableNodeFromActor();
+}
+
+void SDlgDataPropertyValue::UpdateVariableNodeFromActor()
+{
+	if (!VariableNode.IsValid())
+	{
+		return;
+	}
+
+	TWeakObjectPtr<const AActor> Actor = VariableNode->GetParentActor();
+	if (!Actor.IsValid())
+	{
+		return;
+	}
+
+	const FName VariableName = VariableNode->GetVariableName();
+	const EDlgDataDisplayVariableTreeNodeType VariableType = VariableNode->GetVariableType();
+	switch (VariableType)
+	{
+		case EDlgDataDisplayVariableTreeNodeType::Integer:
+		{
+			const int32 Value = IDlgDialogueParticipant::Execute_GetIntValue(Actor.Get(), VariableName);
+			VariableNode->SetVariableValue(FString::FromInt(Value));
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::Float:
+		{
+			const float Value = IDlgDialogueParticipant::Execute_GetFloatValue(Actor.Get(), VariableName);
+			VariableNode->SetVariableValue(FString::SanitizeFloat(Value));
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::Bool:
+		{
+			const bool Value = IDlgDialogueParticipant::Execute_GetBoolValue(Actor.Get(), VariableName);
+			const FString ValueString = Value ? TEXT("true") : TEXT("false");
+			VariableNode->SetVariableValue(ValueString);
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::FName:
+		{
+			const FName Value = IDlgDialogueParticipant::Execute_GetNameValue(Actor.Get(), VariableName);
+			VariableNode->SetVariableValue(Value.ToString());
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::Event:
+		{
+			// TODO
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::Condition:
+		{
+			// TODO
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::Default:
+		default:
+			unimplemented();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SDlgDataDisplay
 void SDlgDataDisplay::Construct(const FArguments& InArgs, TWeakObjectPtr<AActor> InReferenceActor)
 {
@@ -324,66 +412,49 @@ void SDlgDataDisplay::BuildTreeViewItem(FDlgDataDisplayTreeNodePtr Item)
 				for (const auto& Pair: ActorPropertiesValue->GetIntegers())
 				{
 					const FName VariableName = Pair.Key;
-					const int32 Value = IDlgDialogueParticipant::Execute_GetIntValue(Actor.Get(), VariableName);
-
 					FFormatOrderedArguments Args;
 					Args.Add(FText::FromName(VariableName));
-					Args.Add(Value);
-					const FText DisplayText = FText::Format(LOCTEXT("VariableTextKey", "int {0} = {1}"), Args);
+					const FText DisplayText = FText::Format(LOCTEXT("VariableTextKey", "int {0} = "), Args);
 
 					// Create Node
 					const TSharedPtr<FDlgDataDisplayTreeVariableNode> IntItem = MakeShareable(new FDlgDataDisplayTreeVariableNode(
 						DisplayText, Item, VariableName, EDlgDataDisplayVariableTreeNodeType::Integer));
-					IntItem->SetVariableValue(FString::FromInt(Value));
 					Item->AddChild(IntItem);
 				}
 				for (const auto& Pair: ActorPropertiesValue->GetFloats())
 				{
 					const FName VariableName = Pair.Key;
-					const float Value = IDlgDialogueParticipant::Execute_GetFloatValue(Actor.Get(), VariableName);
-
 					FFormatOrderedArguments Args;
 					Args.Add(FText::FromName(VariableName));
-					Args.Add(Value);
-					const FText DisplayText = FText::Format(LOCTEXT("VariableTextKey", "float {0} = {1}"), Args);
+					const FText DisplayText = FText::Format(LOCTEXT("VariableTextKey", "float {0} = "), Args);
 
 					// Create Node
 					const TSharedPtr<FDlgDataDisplayTreeVariableNode> FloatItem = MakeShareable(new FDlgDataDisplayTreeVariableNode(
-						DisplayText, Item, Pair.Key, EDlgDataDisplayVariableTreeNodeType::Float));
-					FloatItem->SetVariableValue(FString::SanitizeFloat(Value));
+						DisplayText, Item, VariableName, EDlgDataDisplayVariableTreeNodeType::Float));
 					Item->AddChild(FloatItem);
 				}
 				for (const auto& Pair: ActorPropertiesValue->GetBools())
 				{
 					const FName VariableName = Pair.Key;
-					const bool Value = IDlgDialogueParticipant::Execute_GetBoolValue(Actor.Get(), VariableName);
-					const FString ValueString = Value ? TEXT("true") : TEXT("false");
-
 					FFormatOrderedArguments Args;
 					Args.Add(FText::FromName(VariableName));
-					Args.Add(FText::FromString(ValueString));
-					const FText DisplayText = FText::Format(LOCTEXT("VariableTextKey", "bool {0} = {1}"), Args);
+					const FText DisplayText = FText::Format(LOCTEXT("VariableTextKey", "bool {0} = "), Args);
 
 					// Create Node
 					const TSharedPtr<FDlgDataDisplayTreeVariableNode> BoolItem = MakeShareable(new FDlgDataDisplayTreeVariableNode(
-						DisplayText, Item, Pair.Key, EDlgDataDisplayVariableTreeNodeType::Bool));
-					BoolItem->SetVariableValue(ValueString);
+						DisplayText, Item, VariableName, EDlgDataDisplayVariableTreeNodeType::Bool));
 					Item->AddChild(BoolItem);
 				}
 				for (const auto& Pair: ActorPropertiesValue->GetFNames())
 				{
 					const FName VariableName = Pair.Key;
-					const FName Value = IDlgDialogueParticipant::Execute_GetNameValue(Actor.Get(), VariableName);
-
 					FFormatOrderedArguments Args;
 					Args.Add(FText::FromName(VariableName));
-					Args.Add(FText::FromName(Value));
-					const FText DisplayText = FText::Format(LOCTEXT("VariableTextKey", "FName {0} = {1}"), Args);
+					const FText DisplayText = FText::Format(LOCTEXT("VariableTextKey", "FName {0} = "), Args);
 
 					// Create Node
 					const TSharedPtr<FDlgDataDisplayTreeVariableNode> FNameItem = MakeShareable(new FDlgDataDisplayTreeVariableNode(
-						DisplayText, Item, Pair.Key, EDlgDataDisplayVariableTreeNodeType::FName));
-					FNameItem->SetVariableValue(Value.ToString());
+						DisplayText, Item, VariableName, EDlgDataDisplayVariableTreeNodeType::FName));
 					Item->AddChild(FNameItem);
 				}
 				break;
@@ -423,6 +494,29 @@ TSharedRef<ITableRow> SDlgDataDisplay::HandleGenerateRow(FDlgDataDisplayTreeNode
 	TSharedPtr<SWidget> RowContent = DefaultTextBlock;
 	TSharedPtr<SHorizontalBox> RowContainer;
 	TableRow->SetRowContent(SAssignNew(RowContainer, SHorizontalBox));
+
+	if (InItem->IsText())
+	{
+		// Add custom widget for variables
+		if (InItem->GetTextType() == EDlgDataDisplayTextTreeNodeType::Variable)
+		{
+			RowContent = SNew(SHorizontalBox)
+				// <variable type> <variable name> =
+				+SHorizontalBox::Slot()
+				.HAlign(HAlign_Left)
+				.VAlign(VAlign_Center)
+				[
+					DefaultTextBlock.ToSharedRef()
+				]
+
+				+SHorizontalBox::Slot()
+				.HAlign(HAlign_Left)
+				.VAlign(VAlign_Center)
+				[
+					SNew(SDlgDataPropertyValue, StaticCastSharedPtr<FDlgDataDisplayTreeVariableNode>(InItem))
+				];
+		}
+	}
 
 	RowContainer->AddSlot()
 		.AutoWidth()
