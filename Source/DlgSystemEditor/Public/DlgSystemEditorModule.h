@@ -1,15 +1,13 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "ModuleInterface.h"
+#include "IDlgSystemEditorModule.h"
 #include "SharedPointer.h"
 #include "AssetTypeCategories.h"
 #include "IAssetTypeActions.h"
 #include "Commands/UICommandList.h"
 #include "Docking/WorkspaceItem.h"
 
-// The name of the Dialogue System Editor plugin as defined in the .uplugin file
-const FName DIALOGUE_SYSTEM_EDITOR_PLUGIN_NAME(TEXT("DlgSystemEditor"));
 
 class FSpawnTabArgs;
 class UK2Node;
@@ -17,7 +15,10 @@ class UDlgDialogue;
 struct FGraphPanelNodeFactory;
 struct FGraphPanelPinFactory;
 
-class FDlgSystemEditorModule : public IModuleInterface
+/**
+ * Implementation of the DlgSystemEditor Module
+ */
+class FDlgSystemEditorModule : public IDlgSystemEditorModule
 {
 	typedef FDlgSystemEditorModule Self;
 public:

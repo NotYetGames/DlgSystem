@@ -1,13 +1,10 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "CoreMinimal.h"
-#include "ModuleInterface.h"
+#include "IDlgSystemModule.h"
 #include "GameFramework/Actor.h"
 
-// The name of the Dialogue System plugin as defined in the .uplugin file
-const FName DIALOGUE_SYSTEM_PLUGIN_NAME(TEXT("DlgSystem"));
-
+// DlgDataDisplay TabID
 const FName DIALOGUE_DATA_DISPLAY_TAB_ID(TEXT("DlgDataDisplayWindow"));
 
 class UDlgDialogue;
@@ -17,24 +14,22 @@ class SDlgDataDisplay;
 class SDockTab;
 struct IConsoleCommand;
 
-class DLGSYSTEM_API FDlgSystemModule : public IModuleInterface
+/**
+ * Implementation of the DlgSystem Module
+ */
+class DLGSYSTEM_API FDlgSystemModule : public IDlgSystemModule
 {
-private:
 	typedef FDlgSystemModule Self;
-
 public:
 	/** IModuleInterface implementation */
 	void StartupModule() override;
 	void ShutdownModule() override;
 
-	/** Sets the reference actor for the World. Without this the runtime module won't know how to get the UWorld. */
-	void SetReferenceActor(AActor* InReferenceActor) { ReferenceActor = InReferenceActor; }
-
-	/** Gets the debug Dialogue Data Display Window. */
-	TSharedRef<SWidget> GetDialogueDataDisplayWindow(const TSharedRef<SDockTab>& InParentTab);
-
-	/** Display the debug Dialogue Data Window on the screen */
-	void DisplayDialogueDataWindow();
+	/** IDlgSystemModule implementation */
+	void RegisterConsoleCommands(AActor* InReferenceActor = nullptr) override;
+	void UnregisterConsoleCommands() override;
+	TSharedRef<SWidget> GetDialogueDataDisplayWindow(const TSharedRef<SDockTab>& InParentTab) override;
+	void DisplayDialogueDataWindow() override;
 
 private:
 	/** Handle the event from the asset registry when an asset was deleted. */

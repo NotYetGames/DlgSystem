@@ -60,25 +60,13 @@ void FDlgSystemModule::StartupModule()
 				.SetTooltipText(LOCTEXT("DialogueDataDisplayTooltipText", "Open the Dialogue Data Display tab."));
 
 	// Register commands
-	IConsoleManager& ConsoleManager = IConsoleManager::Get();
-	ConsoleCommands.Add(ConsoleManager.RegisterConsoleCommand(TEXT("Dlg.DataDisplay"),
-		TEXT("Displays the Dialogue Data Window"),
-		FConsoleCommandDelegate::CreateRaw(this, &Self::DisplayDialogueDataWindow), ECVF_Default));
-	ConsoleCommands.Add(ConsoleManager.RegisterConsoleCommand(TEXT("Dlg.LoadAllDialogues"),
-		TEXT("Load All Dialogues into memory"),
-		FConsoleCommandDelegate::CreateLambda([]()
-		{
-			UDlgManager::LoadAllDialoguesIntoMemory();
-		}), ECVF_Default));
+	RegisterConsoleCommands();
 }
 
 void FDlgSystemModule::ShutdownModule()
 {
 	// Unregister the console commands
-	for (IConsoleCommand* Comand : ConsoleCommands)
-	{
-		IConsoleManager::Get().UnregisterConsoleObject(Comand);
-	}
+	UnregisterConsoleCommands();
 
 	// Unregister the tab spawners
 	bHasRegisteredTabSpawners = false;
@@ -120,6 +108,31 @@ TSharedRef<SWidget> FDlgSystemModule::GetDialogueDataDisplayWindow(const TShared
 	}
 
 	return DialogueData.ToSharedRef();
+}
+
+void FDlgSystemModule::RegisterConsoleCommands(AActor* InReferenceActor)
+{
+	ReferenceActor = InReferenceActor;
+	IConsoleManager& ConsoleManager = IConsoleManager::Get();
+	ConsoleCommands.Add(ConsoleManager.RegisterConsoleCommand(TEXT("Dlg.DataDisplay"),
+		TEXT("Displays the Dialogue Data Window"),
+		FConsoleCommandDelegate::CreateRaw(this, &Self::DisplayDialogueDataWindow), ECVF_Default));
+	ConsoleCommands.Add(ConsoleManager.RegisterConsoleCommand(TEXT("Dlg.LoadAllDialogues"),
+		TEXT("Load All Dialogues into memory"),
+		FConsoleCommandDelegate::CreateLambda([]()
+		{
+			UDlgManager::LoadAllDialoguesIntoMemory();
+		}), ECVF_Default));
+}
+
+void FDlgSystemModule::UnregisterConsoleCommands()
+{
+	ReferenceActor = nullptr;
+	for (IConsoleCommand* Comand : ConsoleCommands)
+	{
+		IConsoleManager::Get().UnregisterConsoleObject(Comand);
+	}
+	ConsoleCommands.Empty();
 }
 
 void FDlgSystemModule::DisplayDialogueDataWindow()
