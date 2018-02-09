@@ -74,7 +74,6 @@ public class DlgSystemEditor : ModuleRules
 
                 // graph stuff
                 "GraphEditor",
-                "GameplayDebugger",
 				"ContentBrowser",
 
                 // e.g. FPlatformApplicationMisc::ClipboardCopy

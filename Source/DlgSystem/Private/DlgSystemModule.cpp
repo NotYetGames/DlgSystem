@@ -3,11 +3,14 @@
 
 #include "ModuleManager.h"
 #include "AssetRegistryModule.h"
-#include "GameplayDebugger.h"
 #include "TabManager.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "IConsoleManager.h"
 #include "HAL/FileManager.h"
+
+#if WITH_GAMEPLAY_DEBUGGER
+#include "GameplayDebugger.h"
+#endif
 
 #include "DlgSystemPrivatePCH.h"
 #include "DlgManager.h"
