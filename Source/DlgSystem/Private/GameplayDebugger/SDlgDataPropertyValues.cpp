@@ -6,6 +6,8 @@
 #include "Widgets/Layout/SMissingWidget.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/SBoxPanel.h"
+#include "Widgets/Input/SCheckBox.h"
+#include "Widgets/Input/SEditableTextBox.h"
 
 #define LOCTEXT_NAMESPACE "SDlgDataPropertyValues"
 
@@ -19,6 +21,16 @@ static FText ValidateNameLength(const FText& Text)
 	}
 
 	return FText::GetEmpty();
+}
+
+static FString BoolToFString(const bool Value)
+{
+	return Value ? TEXT("True") : TEXT("False");
+}
+
+static bool FStringToBool(const FString& Value)
+{
+	return FCString::ToBool(*Value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,8 +99,7 @@ void SDlgDataPropertyValue::UpdateVariableNodeFromActor()
 		case EDlgDataDisplayVariableTreeNodeType::Bool:
 		{
 			const bool Value = IDlgDialogueParticipant::Execute_GetBoolValue(Actor.Get(), VariableName);
-			const FString ValueString = Value ? TEXT("True") : TEXT("False");
-			VariableNode->SetVariableValue(ValueString);
+			VariableNode->SetVariableValue(BoolToFString(Value));
 			break;
 		}
 		case EDlgDataDisplayVariableTreeNodeType::FName:
@@ -104,7 +115,8 @@ void SDlgDataPropertyValue::UpdateVariableNodeFromActor()
 		}
 		case EDlgDataDisplayVariableTreeNodeType::Condition:
 		{
-			// TODO
+			const bool Value = IDlgDialogueParticipant::Execute_CheckCondition(Actor.Get(), VariableName);
+			VariableNode->SetVariableValue(BoolToFString(Value));
 			break;
 		}
 		case EDlgDataDisplayVariableTreeNodeType::Default:
@@ -144,6 +156,7 @@ void SDlgDataTextPropertyValue::Construct(const FArguments& InArgs, TSharedPtr<F
 			.IsReadOnly(this, &Self::IsReadOnly)
 		]
 	];
+	PrimaryWidget = TextBoxWidget;
 }
 
 void SDlgDataTextPropertyValue::HandleTextCommitted(const FText& NewText, ETextCommit::Type CommitInfo)
@@ -179,7 +192,7 @@ void SDlgDataTextPropertyValue::HandleTextCommitted(const FText& NewText, ETextC
 		}
 		case EDlgDataDisplayVariableTreeNodeType::Bool:
 		{
-			const bool Value = FCString::ToBool(*NewString);
+			const bool Value = FStringToBool(NewString);
 			IDlgDialogueParticipant::Execute_ModifyBoolValue(Actor.Get(), VariableName, Value);
 			break;
 		}
@@ -228,7 +241,7 @@ void SDlgDataEventPropertyValue::Construct(const FArguments& InArgs, TSharedPtr<
 	{
 		ChildSlot
 		[
-			SNew(SButton)
+			SAssignNew(PrimaryWidget, SButton)
 			.ToolTipText(LOCTEXT("EventValueTooltipKey", "Triggers this event. Calls OnDialogueEvent on the Actor."))
 			.OnClicked(this, &Self::HandleTriggerEventClicked)
 			[
@@ -265,6 +278,81 @@ FReply SDlgDataEventPropertyValue::HandleTriggerEventClicked()
 	IDlgDialogueParticipant::Execute_OnDialogueEvent(Actor.Get(), EventName);
 
 	return FReply::Handled();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SDlgDataBoolPropertyValue
+void SDlgDataBoolPropertyValue::Construct(const FArguments& InArgs, TSharedPtr<FDlgDataDisplayTreeVariableNode> InVariableNode)
+{
+	VariableNode = InVariableNode;
+	if (!VariableNode.IsValid())
+	{
+		return;
+	}
+
+	UpdateVariableNodeFromActor();
+	ChildSlot
+	[
+		SAssignNew(CheckBoxWidget, SCheckBox)
+		.OnCheckStateChanged(this, &Self::HandleCheckStateChanged)
+		.IsChecked(this, &Self::IsChecked)
+		.Padding(0.0f)
+	];
+	PrimaryWidget = CheckBoxWidget;
+	SetEnabled(TAttribute<bool>(this, &Self::IsBoolProperty));
+}
+
+bool SDlgDataBoolPropertyValue::HasKeyboardFocus() const
+{
+	// The rest of the focus methods are handled in the parent class.
+	return CheckBoxWidget->HasKeyboardFocus();
+}
+
+FReply SDlgDataBoolPropertyValue::OnMouseButtonDoubleClick(const FGeometry& InMyGeometry, const FPointerEvent& InMouseEvent)
+{
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		// toggle the our checkbox
+		CheckBoxWidget->ToggleCheckedState();
+
+		// Set focus to this object, but don't capture the mouse
+		return FReply::Handled().SetUserFocus(AsShared(), EFocusCause::Mouse);
+	}
+
+	return FReply::Unhandled();
+}
+
+ECheckBoxState SDlgDataBoolPropertyValue::IsChecked() const
+{
+	if (!VariableNode.IsValid())
+	{
+		return ECheckBoxState::Undetermined;
+	}
+
+	const bool Value = FStringToBool(VariableNode->GetVariableValue());
+	return Value ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+}
+
+void SDlgDataBoolPropertyValue::HandleCheckStateChanged(ECheckBoxState InNewState)
+{
+	// Can only modify bool values
+	if (!IsBoolProperty())
+	{
+		return;
+	}
+
+	TWeakObjectPtr<AActor> Actor = VariableNode->GetParentActor();
+	if (!Actor.IsValid())
+	{
+		return;
+	}
+
+	// Set the bool value
+	const FName VariableName = VariableNode->GetVariableName();
+	const bool Value = InNewState == ECheckBoxState::Checked || InNewState == ECheckBoxState::Undetermined;
+	IDlgDialogueParticipant::Execute_ModifyBoolValue(Actor.Get(), VariableName, Value);
+	UpdateVariableNodeFromActor();
 }
 
 #undef LOCTEXT_NAMESPACE

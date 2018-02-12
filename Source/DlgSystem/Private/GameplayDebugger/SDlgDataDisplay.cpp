@@ -424,18 +424,25 @@ TSharedRef<ITableRow> SDlgDataDisplay::HandleGenerateRow(FDlgDataDisplayTreeNode
 			{
 				case EDlgDataDisplayVariableTreeNodeType::Integer:
 				case EDlgDataDisplayVariableTreeNodeType::Float:
-				case EDlgDataDisplayVariableTreeNodeType::Bool:
 				case EDlgDataDisplayVariableTreeNodeType::FName:
+					// Editable text box
 					SAssignNew(RightWidget, SDlgDataTextPropertyValue, VariableNode);
 					break;
 
 				case EDlgDataDisplayVariableTreeNodeType::Event:
+					// Trigger Event Button
 					SAssignNew(RightWidget, SDlgDataEventPropertyValue, VariableNode);
 					break;
 
+				case EDlgDataDisplayVariableTreeNodeType::Bool:
 				case EDlgDataDisplayVariableTreeNodeType::Condition:
+					// Checkbox
+					SAssignNew(RightWidget, SDlgDataBoolPropertyValue, VariableNode);
+					break;
+
 				case EDlgDataDisplayVariableTreeNodeType::Default:
 				default:
+					// Static text
 					SAssignNew(RightWidget, SDlgDataPropertyValue, VariableNode);
 					break;
 			}
