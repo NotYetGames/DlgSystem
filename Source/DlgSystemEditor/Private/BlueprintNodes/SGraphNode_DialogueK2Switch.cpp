@@ -5,12 +5,12 @@
 #include "Widgets/SBoxPanel.h"
 #include "SImage.h"
 #include "GraphEditorSettings.h"
-#include "NodeFactory.h"
 #include "SGraphPinExec.h"
 #include "BlueprintEditorUtils.h"
 #include "K2Node_Switch.h"
 
 #include "DialogueK2Node_SwitchDialogueCallback.h"
+#include "DialogueBlueprintUtilities.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ void SGraphNode_DialogueK2Switch::CreatePinWidgets()
 	{
 		if (!CurrentPin->bHidden && CurrentPin != DefaultPin)
 		{
-			TSharedPtr<SGraphPin> NewPin = FNodeFactory::CreatePinWidget(CurrentPin);
+			TSharedPtr<SGraphPin> NewPin = FDialogueBlueprintUtilities::CreatePinWidget(CurrentPin);
 			check(NewPin.IsValid());
 			AddPin(NewPin.ToSharedRef());
 		}

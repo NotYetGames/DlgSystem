@@ -48,12 +48,12 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 	IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 	// Add common ConditionStrength, ConditionType
-	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, Strength)).ToSharedRef());
-	StructBuilder.AddProperty(ConditionTypePropertyHandle.ToSharedRef());
+	StructBuilder.AddChildProperty(StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, Strength)).ToSharedRef());
+	StructBuilder.AddChildProperty(ConditionTypePropertyHandle.ToSharedRef());
 
 	// ParticipantName
 	{
-		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("ParticipantNameSearchKey", "Participant Name"));
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddChildContent(LOCTEXT("ParticipantNameSearchKey", "Participant Name"));
 
 		ParticipantNamePropertyRow = MakeShareable(new FTextPropertyPickList_CustomRowHelper(DetailWidgetRow, ParticipantNamePropertyHandle));
 		ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
@@ -72,7 +72,7 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 	{
 		const TSharedPtr<IPropertyHandle> CallbackNamePropertyHandle =
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, CallbackName));
-		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("CalllBackNameSearchKey", "Variable Name"));
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddChildContent(LOCTEXT("CalllBackNameSearchKey", "Variable Name"));
 
 		CallbackNamePropertyRow = MakeShareable(new FTextPropertyPickList_CustomRowHelper(DetailWidgetRow, CallbackNamePropertyHandle));
 		CallbackNamePropertyRow->SetTextPropertyPickListWidget(
@@ -89,41 +89,41 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 
 	// Operation
 	{
-		OperationPropertyRow = &StructBuilder.AddProperty(
+		OperationPropertyRow = &StructBuilder.AddChildProperty(
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, Operation)).ToSharedRef());
 		OperationPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetOperationVisibility));
 	}
 
 	// IntValue
 	{
-		IntValuePropertyRow = &StructBuilder.AddProperty(IntValuePropertyHandle.ToSharedRef());
+		IntValuePropertyRow = &StructBuilder.AddChildProperty(IntValuePropertyHandle.ToSharedRef());
 		IntValuePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetIntValueVisibility));
 	}
 
 	// FloatValue
 	{
-		FloatValuePropertyRow = &StructBuilder.AddProperty(
+		FloatValuePropertyRow = &StructBuilder.AddChildProperty(
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, FloatValue)).ToSharedRef());
 		FloatValuePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetFloatValueVisibility));
 	}
 
 	// NameValue
 	{
-		NameValuePropertyRow = &StructBuilder.AddProperty(
+		NameValuePropertyRow = &StructBuilder.AddChildProperty(
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, NameValue)).ToSharedRef());
 		NameValuePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetNameValueVisibility));
 	}
 
 	// bBoolValue
 	{
-		BoolValuePropertyRow = &StructBuilder.AddProperty(
+		BoolValuePropertyRow = &StructBuilder.AddChildProperty(
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, bBoolValue)).ToSharedRef());
 		BoolValuePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetBoolValueVisibility));
 	}
 
 	// bLongTermMemory
 	{
-		LongTermMemoryPropertyRow = &StructBuilder.AddProperty(
+		LongTermMemoryPropertyRow = &StructBuilder.AddChildProperty(
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, bLongTermMemory)).ToSharedRef());
 		LongTermMemoryPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetLongTermMemoryVisibility));
 	}

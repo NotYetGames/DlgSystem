@@ -38,7 +38,7 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 	{
 		const TSharedPtr<IPropertyHandle> ParticipantNamePropertyHandle =
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, Speaker));
-		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("ParticipantNameSearchKey", "Participant Name"));
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddChildContent(LOCTEXT("ParticipantNameSearchKey", "Participant Name"));
 
 		ParticipantNamePropertyRow = MakeShareable(new FTextPropertyPickList_CustomRowHelper(DetailWidgetRow, ParticipantNamePropertyHandle));
 		ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
@@ -55,7 +55,7 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 	// Text
 	{
 		TextPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, Text));
-		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddChildContent(LOCTEXT("TextSearchKey", "Text"));
 
 		TextPropertyRow = MakeShareable(new FMultiLineEditableTextBox_CustomRowHelper(DetailWidgetRow, TextPropertyHandle));
 		TextPropertyRow->SetMultiLineEditableTextBoxWidget(
@@ -73,18 +73,18 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 	}
 
 	// Voice
-	VoiceSoundWavePropertyRow = &StructBuilder.AddProperty(
+	VoiceSoundWavePropertyRow = &StructBuilder.AddChildProperty(
 		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, VoiceSoundWave)).ToSharedRef());
 	VoiceSoundWavePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetVoiceSoundWaveVisibility));
 
-	VoiceDialogueWavePropertyRow = &StructBuilder.AddProperty(
+	VoiceDialogueWavePropertyRow = &StructBuilder.AddChildProperty(
 		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, VoiceDialogueWave)).ToSharedRef());
 	VoiceDialogueWavePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetVoiceDialogueWaveVisibility));
 
 	// Edge Text
 	{
 		EdgeTextPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, EdgeText));
-		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("EdgeTextSearchKey", "Edge Text"));
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddChildContent(LOCTEXT("EdgeTextSearchKey", "Edge Text"));
 
 		EdgeTextPropertyRow = MakeShareable(new FMultiLineEditableTextBox_CustomRowHelper(DetailWidgetRow, EdgeTextPropertyHandle));
 		EdgeTextPropertyRow->SetMultiLineEditableTextBoxWidget(

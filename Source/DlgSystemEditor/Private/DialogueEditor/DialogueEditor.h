@@ -140,7 +140,7 @@ public:
 			}
 			else
 			{
-				DetailsView->ForceRefresh();
+				//DetailsView->ForceRefresh();
 			}
 			DetailsView->ClearSearch();
 		}

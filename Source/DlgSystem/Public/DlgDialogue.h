@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
+#include "CoreMinimal.h"
 #include "SubclassOf.h"
 
 #include "DlgIDialogueEditorModule.h"
@@ -248,7 +249,7 @@ public:
 	int32 GetParticipantNum() const { return DlgData.Num(); }
 
 	/** Gets all the keys (participant names) of the DlgData Map */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	//UFUNCTION(BlueprintPure, Category = DialogueData)
 	void GetAllParticipantNames(TSet<FName>& OutSet) const
 	{
 		for (const auto& Element : DlgData)
@@ -259,7 +260,7 @@ public:
 	}
 
 	/** Gets the Condition Names that correspond to the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	//UFUNCTION(BlueprintPure, Category = DialogueData)
 	void GetConditions(const FName& ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
@@ -269,7 +270,7 @@ public:
 	}
 
 	/** Gets the Event Names that correspond to the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	//UFUNCTION(BlueprintPure, Category = DialogueData)
 	void GetEvents(const FName& ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
@@ -279,7 +280,7 @@ public:
 	}
 
 	/** Gets the float variable Names that correspond to the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	//UFUNCTION(BlueprintPure, Category = DialogueData)
 	void GetFloatNames(const FName& ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
@@ -289,7 +290,7 @@ public:
 	}
 
 	/** Gets the int variable Names that correspond to the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	//UFUNCTION(BlueprintPure, Category = DialogueData)
 	void GetIntNames(const FName& ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
@@ -299,7 +300,7 @@ public:
 	}
 
 	/** Gets the bool variable Names that correspond to the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	//UFUNCTION(BlueprintPure, Category = DialogueData)
 	void GetBoolNames(const FName& ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
@@ -309,7 +310,7 @@ public:
 	}
 
 	/** Gets the name variable Names that correspond to the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	//UFUNCTION(BlueprintPure, Category = DialogueData)
 	void GetNameNames(const FName& ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))

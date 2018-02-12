@@ -47,7 +47,7 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 {
 	// Common ParticipantName
 	{
-		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("ParticipantNameSearchKey", "Participant Name"));
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddChildContent(LOCTEXT("ParticipantNameSearchKey", "Participant Name"));
 
 		ParticipantNamePropertyRow = MakeShareable(new FTextPropertyPickList_CustomRowHelper(DetailWidgetRow, ParticipantNamePropertyHandle));
 		ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
@@ -62,13 +62,13 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 	}
 
 	// EventType
-	StructBuilder.AddProperty(EventTypePropertyHandle.ToSharedRef());
+	StructBuilder.AddChildProperty(EventTypePropertyHandle.ToSharedRef());
 
 	// EventName
 	{
 		const TSharedPtr<IPropertyHandle> EventNamePropertyHandle =
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEvent, EventName));
-		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("EventNameSearchKey", "Event Name"));
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddChildContent(LOCTEXT("EventNameSearchKey", "Event Name"));
 
 		EventNamePropertyRow = MakeShareable(new FTextPropertyPickList_CustomRowHelper(DetailWidgetRow, EventNamePropertyHandle));
 		EventNamePropertyRow->SetTextPropertyPickListWidget(
@@ -84,35 +84,35 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 
 	// IntValue
 	{
-		IntValuePropertyRow = &StructBuilder.AddProperty(
+		IntValuePropertyRow = &StructBuilder.AddChildProperty(
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEvent, IntValue)).ToSharedRef());
 		IntValuePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetIntValueVisibility));
 	}
 
 	// FloatValue
 	{
-		FloatValuePropertyRow = &StructBuilder.AddProperty(
+		FloatValuePropertyRow = &StructBuilder.AddChildProperty(
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEvent, FloatValue)).ToSharedRef());
 		FloatValuePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetFloatValueVisibility));
 	}
 
 	// NameValue
 	{
-		NameValuePropertyRow = &StructBuilder.AddProperty(
+		NameValuePropertyRow = &StructBuilder.AddChildProperty(
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEvent, NameValue)).ToSharedRef());
 		NameValuePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetNameValueVisibility));
 	}
 
 	// bDelta
 	{
-		BoolDeltaPropertyRow = &StructBuilder.AddProperty(
+		BoolDeltaPropertyRow = &StructBuilder.AddChildProperty(
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEvent, bDelta)).ToSharedRef());
 		BoolDeltaPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetBoolDeltaVisibility));
 	}
 
 	// bValue
 	{
-		BoolValuePropertyRow = &StructBuilder.AddProperty(
+		BoolValuePropertyRow = &StructBuilder.AddChildProperty(
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEvent, bValue)).ToSharedRef());
 		BoolValuePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetBoolValueVisibility));
 	}

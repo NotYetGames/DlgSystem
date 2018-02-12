@@ -9,7 +9,7 @@ const FName DIALOGUE_DATA_DISPLAY_TAB_ID(TEXT("DlgDataDisplayWindow"));
 
 class UDlgDialogue;
 class SWidget;
-struct FAssetData;
+class FAssetData;
 class SDlgDataDisplay;
 class SDockTab;
 struct IConsoleCommand;

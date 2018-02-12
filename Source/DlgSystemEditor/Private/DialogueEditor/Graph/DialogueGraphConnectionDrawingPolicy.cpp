@@ -190,10 +190,16 @@ void FDialogueGraphConnectionDrawingPolicy::DrawConnection(int32 LayerId, const 
 		LayerId,
 		P0, P0Tangent,
 		P1, P1Tangent,
+		ClippingRect,
 		Params.WireThickness,
 		ESlateDrawEffect::None,
 		Params.WireColor
 	);
+
+	//  FSlateWindowElementList& ElementList,
+	// uint32 InLayer, const FVector2D& InStart, const FVector2D& InStartDir,
+	// const FVector2D& InEnd, const FVector2D& InEndDir,
+	// const FSlateRect InClippingRect, float InThickness, ESlateDrawEffect InDrawEffects, const FLinearColor& InTint
 
 	if (Params.bDrawBubbles || (MidpointImage != nullptr))
 	{
@@ -225,6 +231,7 @@ void FDialogueGraphConnectionDrawingPolicy::DrawConnection(int32 LayerId, const 
 						LayerId,
 						FPaintGeometry(BubblePos, BubbleSize, ZoomFactor),
 						BubbleImage,
+						ClippingRect,
 						ESlateDrawEffect::None,
 						Params.WireColor
 					);
@@ -253,6 +260,7 @@ void FDialogueGraphConnectionDrawingPolicy::DrawConnection(int32 LayerId, const 
 				LayerId,
 				FPaintGeometry(MidpointDrawPos, MidpointImage->ImageSize * ZoomFactor, ZoomFactor),
 				MidpointImage,
+				ClippingRect,
 				ESlateDrawEffect::None,
 				AngleInRadians,
 				TOptional<FVector2D>(),
@@ -335,6 +343,7 @@ void FDialogueGraphConnectionDrawingPolicy::Internal_DrawLineWithArrow(const FVe
 			ArrowLayerID,
 			FPaintGeometry(ArrowDrawPos, ArrowImage->ImageSize * ZoomFactor, ZoomFactor),
 			ArrowImage,
+			ClippingRect,
 			ESlateDrawEffect::None,
 			AngleInRadians,
 			TOptional<FVector2D>(),

@@ -114,7 +114,7 @@ public:
 	}
 
 	/** Sets the UDlgMemory Dialogue history. */
-	UFUNCTION(BlueprintCallable, Category = DialogueData)
+	//UFUNCTION(BlueprintCallable, Category = DialogueData)
 	static void SetDialogueHistory(const TMap<FGuid, FDlgHistory>& DlgHistory);
 
 	/** Gets the Dialogue History from the UDlgMemory. */

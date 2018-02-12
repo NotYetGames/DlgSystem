@@ -67,7 +67,7 @@ void FDlgDialogueEditorModule::UpdateDialogueToVersion_UseOnlyOneOutputAndInputP
 		GraphNode->AllocateDefaultPins();
 
 		// Clean comment if it is only a digit, from this version there is a nice widget overlay that shows the index ;)
-		if (GraphNode->NodeComment.TrimStartAndEnd().IsNumeric() || GraphNode->IsRootNode())
+		if (GraphNode->NodeComment.Trim().TrimTrailing().IsNumeric() || GraphNode->IsRootNode())
 		{
 			GraphNode->NodeComment.Empty();
 			GraphNode->bCommentBubbleVisible = false;

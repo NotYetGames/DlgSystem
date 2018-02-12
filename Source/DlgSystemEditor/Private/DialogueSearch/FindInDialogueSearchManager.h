@@ -14,7 +14,7 @@ class FAssetRegistryModule;
 class FWorkspaceItem;
 class UDialogueGraphNode;
 class UDialogueGraphNode_Edge;
-struct FAssetData;
+class FAssetData;
 struct FDlgCondition;
 struct FDlgEvent;
 struct FDlgEdge;

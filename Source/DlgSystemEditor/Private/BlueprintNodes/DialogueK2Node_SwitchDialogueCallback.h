@@ -52,7 +52,6 @@ public:
 	FString GetPinNameGivenIndex(int32 Index) override;
 	FEdGraphPinType GetPinType() const override;
 	void RemovePinFromSwitchNode(UEdGraphPin* TargetPin) override;
-	bool CanRemoveExecutionPin(UEdGraphPin* TargetPin) const override;
 	// End of UK2Node_Switch Interface
 
 protected:
