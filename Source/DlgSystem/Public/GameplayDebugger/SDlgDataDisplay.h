@@ -26,7 +26,7 @@ public:
 	 * @param  InCurrentTime  Current absolute real time
 	 * @param  InDeltaTime  Real time passed since last tick
 	 */
-	void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime);
+	void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override;
 
 	/** Gets the Value of this Property as an FText; */
 	FText GetTextValue() const { return FText::FromString(VariableNode->GetVariableValue()); }
@@ -44,6 +44,32 @@ protected:
 
 	static constexpr float TickUpdateTimeSeconds = 1.0f;
 };
+
+
+class SDlgDataTextPropertyValue : public SDlgDataPropertyValue
+{
+	typedef SDlgDataTextPropertyValue Self;
+	typedef SDlgDataPropertyValue Super;
+public:
+	SLATE_BEGIN_ARGS(Self) {}
+	SLATE_END_ARGS()
+
+	void Construct(const FArguments& InArgs, TSharedPtr<FDlgDataDisplayTreeVariableNode> InVariableNode);
+
+protected:
+	void HandleTextCommitted(const FText& NewText, ETextCommit::Type CommitInfo);
+	void HandleTextChanged(const FText& NewText);
+
+	bool IsReadOnly() const { return !VariableNode.IsValid(); }
+
+protected:
+	/** Widget used for the single line version of the text property */
+	TSharedPtr<SEditableTextBox> TextBoxWidget;
+
+	/** True if property is an FName property which causes us to run extra size validation checks */
+	bool bIsFNameProperty = false;
+};
+
 
 /**
  * Implements the Runtime Dialogue Data Display

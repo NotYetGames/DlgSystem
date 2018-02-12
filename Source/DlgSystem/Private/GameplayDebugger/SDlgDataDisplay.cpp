@@ -5,10 +5,23 @@
 #include "Widgets/Text/STextBlock.h"
 #include "Widgets/Layout/SMissingWidget.h"
 #include "Widgets/Input/SButton.h"
+#include "Widgets/SBoxPanel.h"
 
 #include "DlgManager.h"
 
 #define LOCTEXT_NAMESPACE "SDlgDataDisplay"
+
+static FText ValidateNameLength(const FText& Text)
+{
+	if (Text.ToString().Len() > NAME_SIZE)
+	{
+		static FText ErrorString = FText::Format(LOCTEXT("NamePropertySizeTooLongError", "Name properties may only be a maximum of {0} characters"),
+			FText::AsNumber(NAME_SIZE));
+		return ErrorString;
+	}
+
+	return FText::GetEmpty();
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SDlgDataProperty
@@ -72,7 +85,7 @@ void SDlgDataPropertyValue::UpdateVariableNodeFromActor()
 		case EDlgDataDisplayVariableTreeNodeType::Bool:
 		{
 			const bool Value = IDlgDialogueParticipant::Execute_GetBoolValue(Actor.Get(), VariableName);
-			const FString ValueString = Value ? TEXT("true") : TEXT("false");
+			const FString ValueString = Value ? TEXT("True") : TEXT("False");
 			VariableNode->SetVariableValue(ValueString);
 			break;
 		}
@@ -94,7 +107,108 @@ void SDlgDataPropertyValue::UpdateVariableNodeFromActor()
 		}
 		case EDlgDataDisplayVariableTreeNodeType::Default:
 		default:
-			unimplemented();
+			VariableNode->SetVariableValue(TEXT("UNIMPLEMENTED - SHOULD NEVER HAPPEN"));
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SDlgDataTextPropertyValue
+void SDlgDataTextPropertyValue::Construct(const FArguments& InArgs, TSharedPtr<FDlgDataDisplayTreeVariableNode> InVariableNode)
+{
+	VariableNode = InVariableNode;
+	UpdateVariableNodeFromActor();
+	bIsFNameProperty = VariableNode->GetVariableType() == EDlgDataDisplayVariableTreeNodeType::FName;
+
+	ChildSlot
+	[
+		SNew(SHorizontalBox)
+		+SHorizontalBox::Slot()
+		.FillWidth(1.0f)
+		[
+			SAssignNew(TextBoxWidget, SEditableTextBox)
+			.Text(this, &Self::GetTextValue)
+			.SelectAllTextWhenFocused(true)
+			.ClearKeyboardFocusOnCommit(false)
+			.SelectAllTextOnCommit(true)
+			.MinDesiredWidth(120.f)
+			.OnTextCommitted(this, &Self::HandleTextCommitted)
+			.OnTextChanged(this, &Self::HandleTextChanged)
+			.IsReadOnly(this, &Self::IsReadOnly)
+		]
+	];
+}
+
+void SDlgDataTextPropertyValue::HandleTextCommitted(const FText& NewText, ETextCommit::Type CommitInfo)
+{
+	static const FString MultipleValues(TEXT("Multiple Values"));
+	const FString NewString = NewText.ToString();
+	if (NewString == MultipleValues)
+	{
+		// can't set this :(
+		return;
+	}
+
+	TWeakObjectPtr<AActor> Actor = VariableNode->GetParentActor();
+	if (!Actor.IsValid())
+	{
+		return;
+	}
+
+	const FName VariableName = VariableNode->GetVariableName();
+	const EDlgDataDisplayVariableTreeNodeType VariableType = VariableNode->GetVariableType();
+	switch (VariableType)
+	{
+		case EDlgDataDisplayVariableTreeNodeType::Integer:
+		{
+			const int32 Value = NewString.IsNumeric() ? FCString::Atoi(*NewString) : 0;
+			IDlgDialogueParticipant::Execute_ModifyIntValue(Actor.Get(), VariableName, false, Value);
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::Float:
+		{
+			const float Value = NewString.IsNumeric() ? FCString::Atof(*NewString) : 0.f;
+			IDlgDialogueParticipant::Execute_ModifyFloatValue(Actor.Get(), VariableName, false, Value);
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::Bool:
+		{
+			const bool Value = FCString::ToBool(*NewString);
+			IDlgDialogueParticipant::Execute_ModifyBoolValue(Actor.Get(), VariableName, Value);
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::FName:
+		{
+			const FName Value(*NewString);
+			IDlgDialogueParticipant::Execute_ModifyNameValue(Actor.Get(), VariableName, Value);
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::Event:
+		{
+			// TODO
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::Condition:
+		{
+			// TODO
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::Default:
+		default:
+			break;
+	}
+
+	UpdateVariableNodeFromActor();
+}
+
+void SDlgDataTextPropertyValue::HandleTextChanged(const FText& NewText)
+{
+	if (bIsFNameProperty)
+	{
+		FText ErrorMessage = ValidateNameLength(NewText);
+		if (!ErrorMessage.IsEmpty())
+		{
+			VariableNode->SetVariableValue(ErrorMessage.ToString());
+		}
 	}
 }
 
@@ -348,7 +462,7 @@ void SDlgDataDisplay::BuildTreeViewItem(FDlgDataDisplayTreeNodePtr Item)
 	NumberCalls++;
 	// check(NumberCalls < 30);
 
-	TWeakObjectPtr<const AActor> Actor = Item->GetParentActor();
+	TWeakObjectPtr<AActor> Actor = Item->GetParentActor();
 	if (!Actor.IsValid())
 	{
 		return;
@@ -503,6 +617,7 @@ TSharedRef<ITableRow> SDlgDataDisplay::HandleGenerateRow(FDlgDataDisplayTreeNode
 			RowContent = SNew(SHorizontalBox)
 				// <variable type> <variable name> =
 				+SHorizontalBox::Slot()
+				.FillWidth(1.0f)
 				.HAlign(HAlign_Left)
 				.VAlign(VAlign_Center)
 				[
@@ -510,10 +625,11 @@ TSharedRef<ITableRow> SDlgDataDisplay::HandleGenerateRow(FDlgDataDisplayTreeNode
 				]
 
 				+SHorizontalBox::Slot()
+				.FillWidth(1.0f)
 				.HAlign(HAlign_Left)
 				.VAlign(VAlign_Center)
 				[
-					SNew(SDlgDataPropertyValue, StaticCastSharedPtr<FDlgDataDisplayTreeVariableNode>(InItem))
+					SNew(SDlgDataTextPropertyValue, StaticCastSharedPtr<FDlgDataDisplayTreeVariableNode>(InItem))
 				];
 		}
 	}
