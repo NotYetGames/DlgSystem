@@ -318,6 +318,16 @@ public:
 		}
 	}
 
+	/** Gets all the SpeakerStates used inside this dialogue */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	void GetAllSpeakerState(TSet<FName>& OutSet) const
+	{
+		OutSet.Append(DlgSpeakerStates);
+	}
+
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	const TSet<FName>& GetSpeakerStates() const { return DlgSpeakerStates; }
+
 	/** Gets/extracts the name (without extension) of the dialog from the uasset filename */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	FString GetDlgName() const
@@ -421,9 +431,12 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	FGuid DlgGuid;
 
-	/** On the long run this data structure is supposed to be filled automatically when the user edits the nodes/edges */
+	/** Gathered data about events/conditions for each participant (for bp nodes, suggestions, etc.) */
 	UPROPERTY(VisibleAnywhere, Meta = (DlgNoExport))
 	TMap<FName, FDlgParticipantData> DlgData;
+
+	UPROPERTY(VisibleAnywhere, Meta = (DlgNoExport))
+	TSet<FName> DlgSpeakerStates;
 
 	/** Root node, Dialogue is started from the first child with satisfied condition (like the SelectorFirst node) */
 	UPROPERTY(Instanced)

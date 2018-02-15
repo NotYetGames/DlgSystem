@@ -48,9 +48,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = DlgData)
 	const FText& GetOptionText(int32 OptionIndex) const;
 
+	/** Gets the SpeakerState of the edge with index OptionIndex */
+	UFUNCTION(BlueprintCallable, Category = DlgData)
+	FName GetOptionSpeakerState(int32 OptionIndex) const;
+
 	/** Gets the Text of the active node index */
 	UFUNCTION(BlueprintCallable, Category = DlgData)
 	const FText& GetActiveNodeText() const;
+
+	/** Gets the SpeakerState of the edge with index OptionIndex */
+	UFUNCTION(BlueprintCallable, Category = DlgData)
+	FName GetSpeakerState() const;
 
 	/** Gets the Voice as a Sound Wave of the active node index */
 	UFUNCTION(BlueprintCallable, Category = DlgDataSound)
@@ -59,6 +67,10 @@ public:
 	/** Gets the Voice as a Dialogue Wave of the active node index */
 	UFUNCTION(BlueprintCallable, Category = DlgDataSound)
 	UDialogueWave* GetActiveNodeVoiceDialogueWave() const;
+
+	/** Gets the Icon associated with the active node participant name (owner name). */
+	UFUNCTION(BlueprintCallable, Category = DlgData)
+	UTexture2D* GetActiveParticipantIcon() const;
 
 	/** Gets the Object associated with the active node participant name (owner name). */
 	UFUNCTION(BlueprintCallable, Category = DlgData)

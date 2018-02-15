@@ -30,8 +30,14 @@ class DLGSYSTEM_API IDlgDialogueParticipant
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = DialogueCallback)
 	FText GetParticipantDisplayName(FName ActiveSpeaker = NAME_None) const;
 
+	/**
+	* @param	ActiveSpeaker: name of the active speaker at the time of the call (might or might not this participant)
+	* @param	ActiveSpeakerState: state of the active participant (might or might not belong to this participant)
+	*			If it is not displayed in editor it has to be turned on in the dialogue settings
+	* @return	Participant icon to display
+	*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = DialogueCallback)
-	UTexture2D* GetParticipantIcon(FName ActiveSpeaker = NAME_None) const;
+	UTexture2D* GetParticipantIcon(FName ActiveSpeaker = NAME_None, FName ActiveSpeakerState = NAME_None) const;
 
 	// Conditions:
 

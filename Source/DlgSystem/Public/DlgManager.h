@@ -129,6 +129,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	static void GetAllDialoguesParticipantNames(TArray<FName>& OutArray);
 
+	/** Gets all the used speaker states sorted alphabetically from all the Dialogues loaded into memory. */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	static void GetAllDialoguesSpeakerStates(TArray<FName>& OutArray);
+
 	/** Gets all the unique int variable names sorted alphabetically for the specified ParticipantName from the loaded Dialogues */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	static void GetAllDialoguesIntNames(const FName& ParticipantName, TArray<FName>& OutArray);

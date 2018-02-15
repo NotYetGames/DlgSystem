@@ -82,6 +82,24 @@ UDialogueWave* UDlgNode_SpeechSequence::GetNodeVoiceDialogueWave() const
 	return nullptr;
 }
 
+FName UDlgNode_SpeechSequence::GetSpeakerState() const
+{
+	if (SpeechSequence.IsValidIndex(ActualIndex))
+	{
+		return SpeechSequence[ActualIndex].SpeakerState;
+	}
+
+	return NAME_None;
+}
+
+void UDlgNode_SpeechSequence::AddSpeakerStates(TSet<FName>& States) const
+{
+	for (const auto& SpeechEntry : SpeechSequence)
+	{
+		States.Add(SpeechEntry.SpeakerState);
+	}
+}
+
 FName UDlgNode_SpeechSequence::GetNodeParticipantName() const
 {
 	if (SpeechSequence.IsValidIndex(ActualIndex))

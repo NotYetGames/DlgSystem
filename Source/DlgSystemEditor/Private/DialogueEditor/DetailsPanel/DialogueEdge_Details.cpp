@@ -8,6 +8,8 @@
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "CustomRowHelpers/MultiLineEditableTextBox_CustomRowHelper.h"
+#include "STextPropertyPickList.h"
+#include "CustomRowHelpers/TextPropertyPickList_CustomRowHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueEdge_Details"
 
@@ -44,6 +46,24 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, TargetIndex)).ToSharedRef());
 	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, Conditions)).ToSharedRef());
 
+	// Speaker State
+	{
+		const TSharedPtr<IPropertyHandle> SpeakerStatePropertyHandle =
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, SpeakerState));
+
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("SpeakerStateSearchKey", "Speaker State"));
+
+		SpeakerStatePropertyRow = MakeShareable(new FTextPropertyPickList_CustomRowHelper(DetailWidgetRow, SpeakerStatePropertyHandle));
+		SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
+			SNew(STextPropertyPickList)
+			.AvailableSuggestions(this, &Self::GetAllDialoguesSpeakerStates)
+			.OnTextCommitted(this, &Self::HandleSpeakerStateCommitted)
+			.HasContextCheckbox(false)
+		)
+		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetSpeakerStateVisibility))
+		->Update();
+	}
+
 	// Text
 	TextPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, Text));
 	FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
@@ -62,6 +82,11 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 	)
 	->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility))
 	->Update();
+}
+
+void FDialogueEdge_Details::HandleSpeakerStateCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo)
+{
+	Dialogue->RefreshData();
 }
 
 #undef LOCTEXT_NAMESPACE

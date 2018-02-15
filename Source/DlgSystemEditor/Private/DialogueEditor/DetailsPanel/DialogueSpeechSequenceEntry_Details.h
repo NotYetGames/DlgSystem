@@ -56,6 +56,14 @@ private:
 		return OutArray;
 	}
 
+	/** Gets the Speaker States from all Dialogues. */
+	TArray<FName> GetAllDialoguesSpeakerStates() const
+	{
+		TArray<FName> OutArray;
+		UDlgManager::GetAllDialoguesSpeakerStates(OutArray);
+		return OutArray;
+	}
+
 	/** Gets the current Dialogue Participant Names. */
 	TArray<FName> GetCurrentDialogueParticipantNames() const
 	{
@@ -84,6 +92,14 @@ private:
 			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWaveAndDialogueWave
 			   ? EVisibility::Visible : EVisibility::Hidden;
 	}
+	
+	EVisibility GetSpeakerStateVisibility() const
+	{
+		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+		return Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnNode ||
+			   Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnNodeAndEdge
+			   ? EVisibility::Visible : EVisibility::Hidden;
+	}
 
 private:
 	/** The property handle of the entire struct. */
@@ -94,6 +110,7 @@ private:
 	TSharedPtr<IPropertyHandle> EdgeTextPropertyHandle;
 
 	TSharedPtr<FTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
+	TSharedPtr<FTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
 	IDetailPropertyRow* VoiceSoundWavePropertyRow = nullptr;
 	IDetailPropertyRow* VoiceDialogueWavePropertyRow = nullptr;
 	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;

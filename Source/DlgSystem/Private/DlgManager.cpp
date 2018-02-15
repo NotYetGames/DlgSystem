@@ -219,6 +219,17 @@ void UDlgManager::GetAllDialoguesParticipantNames(TArray<FName>& OutArray)
 	AppendSetToArray(UniqueNames, OutArray);
 }
 
+void UDlgManager::GetAllDialoguesSpeakerStates(TArray<FName>& OutArray)
+{
+	TSet<FName> UniqueNames;
+	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
+	{
+		Dialogue->GetAllSpeakerState(UniqueNames);
+	}
+
+	AppendSetToArray(UniqueNames, OutArray);
+}
+
 void UDlgManager::GetAllDialoguesIntNames(const FName& ParticipantName, TArray<FName>& OutArray)
 {
 	TSet<FName> UniqueNames;

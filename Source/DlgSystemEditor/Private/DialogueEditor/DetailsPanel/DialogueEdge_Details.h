@@ -3,9 +3,11 @@
 
 #include "IPropertyTypeCustomization.h"
 #include "Visibility.h"
+#include "DialogueDetailsPanelUtils.h"
 
 class UDlgDialogue;
 class FMultiLineEditableTextBox_CustomRowHelper;
+class FTextPropertyPickList_CustomRowHelper;
 
 /**
  * How the details customization panel looks for the FDlgEdge
@@ -42,9 +44,32 @@ public:
 		IDetailChildrenBuilder& StructBuilder,
 		IPropertyTypeCustomizationUtils& StructCustomizationUtils) override;
 
+
+	
+	/** Gets the Speaker States from all Dialogues. */
+	TArray<FName> GetAllDialoguesSpeakerStates() const
+	{
+		TArray<FName> OutArray;
+		UDlgManager::GetAllDialoguesSpeakerStates(OutArray);
+		return OutArray;
+	}
+
+	/** Handler for when the speaker state is changed */
+	void HandleSpeakerStateCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo);
+
 private:
 	// Getters for the visibility of some properties
 	EVisibility GetTextVisibility() const { return bShowTextProperty ? EVisibility::Visible : EVisibility::Hidden; }
+
+	EVisibility GetSpeakerStateVisibility() const
+	{
+		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+
+		return bShowTextProperty &&
+			  (Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnEdge ||
+			   Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnNodeAndEdge)
+			   ? EVisibility::Visible : EVisibility::Hidden;
+	}
 
 private:
 	/** The property handle of the entire struct. */
@@ -56,6 +81,7 @@ private:
 	/** Cache some properties */
 	TSharedPtr<IPropertyHandle> TextPropertyHandle;
 	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
+	TSharedPtr<FTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
 
 	/** Hold a reference to dialogue we are displaying. */
 	UDlgDialogue* Dialogue = nullptr;

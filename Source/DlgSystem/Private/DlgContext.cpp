@@ -2,6 +2,7 @@
 #include "DlgContext.h"
 #include "DlgSystemPrivatePCH.h"
 #include "DlgNode.h"
+#include "DlgDialogueParticipant.h"
 
 
 const FText& UDlgContext::GetOptionText(int32 OptionIndex) const
@@ -17,6 +18,19 @@ const FText& UDlgContext::GetOptionText(int32 OptionIndex) const
 	return AvailableChildren[OptionIndex]->Text;
 }
 
+FName UDlgContext::GetOptionSpeakerState(int32 OptionIndex) const
+{
+	check(Dialogue);
+
+	if (!AvailableChildren.IsValidIndex(OptionIndex))
+	{
+		UE_LOG(LogDlgSystem, Error, TEXT("Invalid option = %d in GetOptionSpeakerState!"), OptionIndex);
+		return NAME_None;
+	}
+
+	return AvailableChildren[OptionIndex]->SpeakerState;
+}
+
 const FText& UDlgContext::GetActiveNodeText() const
 {
 	const UDlgNode* Node = GetActiveNode();
@@ -27,6 +41,18 @@ const FText& UDlgContext::GetActiveNodeText() const
 	}
 
 	return Node->GetNodeText();
+}
+
+FName UDlgContext::GetSpeakerState() const
+{
+	const UDlgNode* Node = GetActiveNode();
+
+	if (Node == nullptr)
+	{
+		return NAME_None;
+	}
+
+	return Node->GetSpeakerState();
 }
 
 USoundWave* UDlgContext::GetActiveNodeVoiceSoundWave() const
@@ -49,6 +75,29 @@ UDialogueWave* UDlgContext::GetActiveNodeVoiceDialogueWave() const
 	}
 
 	return Node->GetNodeVoiceDialogueWave();
+}
+
+UTexture2D* UDlgContext::GetActiveParticipantIcon() const
+{
+	if (Dialogue == nullptr)
+	{
+		return nullptr;
+	}
+
+	const UDlgNode* Node = GetActiveNode();
+	if (Node == nullptr)
+	{
+		return nullptr;
+	}
+
+	FName SpeakerName = Node->GetNodeParticipantName();
+	UObject* const* Item = Participants.Find(SpeakerName);
+	if (Item == nullptr || *Item == nullptr)
+	{
+		return nullptr;
+	}
+
+	return IDlgDialogueParticipant::Execute_GetParticipantIcon(*Item, SpeakerName, Node->GetSpeakerState());
 }
 
 UObject* UDlgContext::GetActiveParticipant() const

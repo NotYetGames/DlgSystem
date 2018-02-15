@@ -71,6 +71,10 @@ public:
 	/** Text associated with the child, can be used for user choices */
 	UPROPERTY(EditAnywhere, Meta = (MultiLine = true))
 	FText Text;
+
+	/** player emotion/state attached to this player choice */
+	UPROPERTY(EditAnywhere, Meta = (MultiLine = true))
+	FName SpeakerState;
 };
 
 /**
@@ -200,6 +204,10 @@ public:
 
 	/** Gets the voice of this Node as a DialogueWave. Only the first Dialogue context in the wave should be used. */
 	virtual UDialogueWave* GetNodeVoiceDialogueWave() const { return nullptr; }
+
+	/** Gets the speaker state ordered to this node (can be used e.g. for icon selection) */
+	virtual FName GetSpeakerState() const { return NAME_None; }
+	virtual void AddSpeakerStates(TSet<FName>& States) const {};
 
 	/** Helper method to get directly the Dialogue */
 	class UDlgDialogue* GetDialogue() const;
