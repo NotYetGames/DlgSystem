@@ -22,6 +22,11 @@ public:
 
 	void Construct(const FArguments& InArgs, TWeakObjectPtr<AActor> InReferenceActor = nullptr);
 
+	void SetReferenceActor(TWeakObjectPtr<AActor> InReferenceActor)
+	{
+		ReferenceActor = InReferenceActor;
+	}
+
 	/** Updates the actors tree. */
 	void RefreshTree(bool bPreserveExpansion);
 

@@ -7,6 +7,10 @@
 #include "Widgets/Input/SButton.h"
 #include "Widgets/SBoxPanel.h"
 
+// #if WITH_EDITOR
+// #include "Editor.h"
+// #endif
+
 #include "DlgManager.h"
 #include "SDlgDataPropertyValues.h"
 
@@ -96,14 +100,25 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 	RootChildren.Empty();
 	ActorsProperties.Empty();
 
-	// No Actor :( can't get the World
-	if (!ReferenceActor.IsValid() || ReferenceActor->GetWorld() == nullptr)
+	// Try the actor World
+	UWorld* World = ReferenceActor.IsValid() ? ReferenceActor->GetWorld() : nullptr;
+
+// 	// Try The Editor World
+// #if WITH_EDITOR
+// 	if (World == nullptr && GEditor)
+// 	{
+// 		World = GEditor->GetEditorWorldContext().World();
+// 	}
+// #endif
+
+	// Can't do anything without the world
+	if (World == nullptr)
 	{
 		return;
 	}
 
-	TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
-	TArray<TWeakObjectPtr<AActor>> Actors = UDlgManager::GetAllActorsImplementingDialogueParticipantInterface(ReferenceActor->GetWorld());
+	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
+	const TArray<TWeakObjectPtr<AActor>> Actors = UDlgManager::GetAllActorsImplementingDialogueParticipantInterface(World);
 
 	// Build fast lookup for ParticipantNames
 	// Maps from ParticipantName => Array of Dialogues that have this Participant.

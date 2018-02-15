@@ -11,6 +11,10 @@
 #if WITH_GAMEPLAY_DEBUGGER
 #include "GameplayDebugger.h"
 #endif
+#if WITH_EDITOR
+#include "WorkspaceMenuStructureModule.h"
+#include "WorkspaceMenuStructure.h"
+#endif
 
 #include "DlgSystemPrivatePCH.h"
 #include "DlgManager.h"
@@ -51,16 +55,25 @@ void FDlgSystemModule::StartupModule()
 
 	// Register tab spawners
 	bHasRegisteredTabSpawners = true;
-	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(DIALOGUE_DATA_DISPLAY_TAB_ID,
-				FOnSpawnTab::CreateLambda([this](const FSpawnTabArgs& Args) -> TSharedRef<SDockTab>
-				{
-					TSharedRef<SDockTab> DialogueDataDisplayTab = SNew(SDockTab)
-						.TabRole(ETabRole::NomadTab);
-					DialogueDataDisplayTab->SetContent(GetDialogueDataDisplayWindow(DialogueDataDisplayTab));
-					return DialogueDataDisplayTab;
-				}))
-				.SetDisplayName(LOCTEXT("DialogueDataDisplayTitle", "Dialogue Data Display"))
-				.SetTooltipText(LOCTEXT("DialogueDataDisplayTooltipText", "Open the Dialogue Data Display tab."));
+
+	FTabSpawnerEntry& DialogueDataSpawnEntry =
+		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(DIALOGUE_DATA_DISPLAY_TAB_ID,
+			FOnSpawnTab::CreateLambda([this](const FSpawnTabArgs& Args) -> TSharedRef<SDockTab>
+			{
+				TSharedRef<SDockTab> DialogueDataDisplayTab = SNew(SDockTab)
+					.TabRole(ETabRole::NomadTab)
+					[
+						GetDialogueDataDisplayWindow(DialogueDataDisplayTab)
+					];
+				return DialogueDataDisplayTab;
+			}))
+			.SetDisplayName(LOCTEXT("DialogueDataDisplayTitle", "Dialogue Data Display"))
+			.SetTooltipText(LOCTEXT("DialogueDataDisplayTooltipText", "Open the Dialogue Data Display tab."));
+
+#if WITH_EDITOR
+	// TODO move DlgStyle to Runtime + Move DialogueToolsCategory to Runtime module
+	DialogueDataSpawnEntry.SetGroup(WorkspaceMenu::GetMenuStructure().GetToolsCategory());
+#endif
 
 	// Register commands
 	RegisterConsoleCommands();
@@ -120,12 +133,16 @@ void FDlgSystemModule::RegisterConsoleCommands(AActor* InReferenceActor)
 	ConsoleCommands.Add(ConsoleManager.RegisterConsoleCommand(TEXT("Dlg.DataDisplay"),
 		TEXT("Displays the Dialogue Data Window"),
 		FConsoleCommandDelegate::CreateRaw(this, &Self::DisplayDialogueDataWindow), ECVF_Default));
+
 	ConsoleCommands.Add(ConsoleManager.RegisterConsoleCommand(TEXT("Dlg.LoadAllDialogues"),
 		TEXT("Load All Dialogues into memory"),
 		FConsoleCommandDelegate::CreateLambda([]()
 		{
 			UDlgManager::LoadAllDialoguesIntoMemory();
 		}), ECVF_Default));
+
+	// In case the DlgDataDisplay is already opened, simply refresh the actor reference
+	RefreshDisplayDialogueDataWindow(false);
 }
 
 void FDlgSystemModule::UnregisterConsoleCommands()
@@ -140,8 +157,43 @@ void FDlgSystemModule::UnregisterConsoleCommands()
 
 void FDlgSystemModule::DisplayDialogueDataWindow()
 {
-	check(bHasRegisteredTabSpawners);
-	FGlobalTabmanager::Get()->InvokeTab(FTabId(DIALOGUE_DATA_DISPLAY_TAB_ID));
+	if (!bHasRegisteredTabSpawners)
+	{
+		UE_LOG(LogDlgSystem, Error, TEXT("Did not Initialize the tab spawner for the DisplayDialogueDataWindow"));
+		return;
+	}
+
+	if (!RefreshDisplayDialogueDataWindow())
+	{
+		// Create, because it does not exist yet
+		FGlobalTabmanager::Get()->InvokeTab(FTabId(DIALOGUE_DATA_DISPLAY_TAB_ID));
+	}
+}
+
+bool FDlgSystemModule::RefreshDisplayDialogueDataWindow(const bool bFocus)
+{
+	TSharedPtr<SDockTab> DlgDisplayDataTab =
+		FGlobalTabmanager::Get()->FindExistingLiveTab(FTabId(DIALOGUE_DATA_DISPLAY_TAB_ID));
+	if (DlgDisplayDataTab.IsValid())
+	{
+		// Set the new ReferenceActor.
+		TSharedRef<SDlgDataDisplay> Window = StaticCastSharedRef<SDlgDataDisplay>(DlgDisplayDataTab->GetContent());
+		if (ReferenceActor)
+		{
+			Window->SetReferenceActor(ReferenceActor);
+			Window->RefreshTree(false);
+		}
+
+		// Focus
+		if (bFocus)
+		{
+			FGlobalTabmanager::Get()->DrawAttention(DlgDisplayDataTab.ToSharedRef());
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 void FDlgSystemModule::HandleOnInMemoryAssetDeleted(UObject* DeletedObject)
