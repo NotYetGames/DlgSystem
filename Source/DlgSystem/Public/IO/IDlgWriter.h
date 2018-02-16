@@ -62,7 +62,7 @@ public:
 	}
 
 	/** Decides if the path to the object should be serialized, or the object itself */
-	static bool CanSaveAsReference(const UProperty* Property)
+	virtual bool CanSaveAsReference(const UProperty* Property)
 	{
 #if WITH_EDITOR
 		return Property->HasMetaData(TEXT("DlgSaveOnlyReference"));
