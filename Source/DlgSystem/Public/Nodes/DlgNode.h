@@ -73,7 +73,7 @@ public:
 	FText Text;
 
 	/** player emotion/state attached to this player choice */
-	UPROPERTY(EditAnywhere, Meta = (MultiLine = true))
+	UPROPERTY(EditAnywhere)
 	FName SpeakerState;
 };
 
