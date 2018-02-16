@@ -626,7 +626,8 @@ bool DlgConfigWriter::WouldWriteNonPrimitive(const UStruct* StructDefinition, co
 		else
 		{
 			// Struct or Object
-			if (Cast<UStructProperty>(Property) != nullptr || Cast<UObjectProperty>(Property) != nullptr)
+			if ((Cast<UStructProperty>(Property) != nullptr || Cast<UObjectProperty>(Property) != nullptr) &&
+				!CanSaveAsReference(Property))
 			{
 				return true;
 			}
