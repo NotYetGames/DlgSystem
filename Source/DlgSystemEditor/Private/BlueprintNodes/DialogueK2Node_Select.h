@@ -10,8 +10,10 @@
 UENUM()
 enum class EDlgVariableType : uint8
 {
-	DlgVariableTypeFloat UMETA(DisplayName = "Dialogue Float Variable"),
-	DlgVariableTypeInt UMETA(DisplayName = "Dialogue Int Variable")
+	DlgVariableTypeFloat		 UMETA(DisplayName = "Dialogue Float Variable"),
+	DlgVariableTypeInt			 UMETA(DisplayName = "Dialogue Int Variable"),
+	DlgVariableTypeName			 UMETA(DisplayName = "Dialogue Name Variable"),
+	DlgVariableTypeSpeakerState	 UMETA(DisplayName = "Dialogue Speaker State"),
 };
 
 /**
@@ -27,7 +29,9 @@ public:
 
 	//~ Begin UEdGraphNode Interface
 	void AllocateDefaultPins() override;
+	void PinTypeChanged(UEdGraphPin* Pin) override;
 	FText GetTooltipText() const override;
+	void NodeConnectionListChanged() override;
 	FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	FSlateIcon GetIconAndTint(FLinearColor& OutColor) const override;
 	//~ End UEdGraphNode Interface
@@ -37,9 +41,11 @@ public:
 	bool IsNodePure() const override { return true; }
 	class FNodeHandlingFunctor* CreateNodeHandler(class FKismetCompilerContext& CompilerContext) const override;
 	bool IsConnectionDisallowed(const UEdGraphPin* MyPin, const UEdGraphPin* OtherPin, FString& OutReason) const override;
+	virtual void NotifyPinConnectionListChanged(UEdGraphPin* Pin) override;
 	void GetMenuActions(FBlueprintActionDatabaseRegistrar& ActionRegistrar) const override;
 	FText GetMenuCategory() const override;
 	int32 GetNodeRefreshPriority() const override { return EBaseNodeRefreshPriority::Normal; }
+	void PostReconstructNode() override;
 	//~ End UK2Node Interface
 
 	// Begin own functions
@@ -72,7 +78,7 @@ public:
 		TArray<UEdGraphPin*> OptionPins;
 		for (int32 PinIndex = INDEX_PIN_OPTIONS_START, PinsNum = Pins.Num(); PinIndex < PinsNum; PinIndex++)
 		{
-			check(Pins[PinIndex]->PinType.PinCategory == VariablePinType);
+			// check(Pins[PinIndex]->PinType.PinCategory == VariablePinType);
 			OptionPins.Add(Pins[PinIndex]);
 		}
 
@@ -100,6 +106,12 @@ private:
 		case EDlgVariableType::DlgVariableTypeInt:
 			VariablePinType = UEdGraphSchema_K2::PC_Int;
 			break;
+		case EDlgVariableType::DlgVariableTypeName:
+			VariablePinType = UEdGraphSchema_K2::PC_Name;
+			break;
+		case EDlgVariableType::DlgVariableTypeSpeakerState:
+			VariablePinType = UEdGraphSchema_K2::PC_Wildcard;
+			break;
 		default:
 			unimplemented();
 		}
@@ -124,13 +136,18 @@ protected:
 	UPROPERTY()
 	FString VariablePinType;
 
+	/** Whether we need to reconstruct the node after the pins have changed */
+	UPROPERTY(Transient)
+	bool bReconstructNode;
+
 	// Constants.
 	static const FString PIN_VariableName; // index
 	static const FString PIN_DefaultValue;
 };
 
-// float variant
-// I hope I'll find forgiveness
+/**
+ *  Float variant
+ */
 UCLASS(MinimalAPI, Meta=(Keywords = "Ternary If"))
 class UDialogueK2Node_SelectFloat : public UDialogueK2Node_Select
 {
@@ -138,6 +155,38 @@ class UDialogueK2Node_SelectFloat : public UDialogueK2Node_Select
 
 public:
 	UDialogueK2Node_SelectFloat(const FObjectInitializer& ObjectInitializer);
+
+	//~ Begin UEdGraphNode Interface
+	FText GetTooltipText() const override;
+	FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+};
+
+/**
+ *  Name variant
+ */
+UCLASS(MinimalAPI, Meta=(Keywords = "Ternary If"))
+class UDialogueK2Node_SelectName : public UDialogueK2Node_Select
+{
+	GENERATED_BODY()
+
+public:
+	UDialogueK2Node_SelectName(const FObjectInitializer& ObjectInitializer);
+
+	//~ Begin UEdGraphNode Interface
+	FText GetTooltipText() const override;
+	FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+};
+
+/**
+ *  SpeakerState variant
+ */
+UCLASS(MinimalAPI, Meta=(Keywords = "Ternary If"))
+class UDialogueK2Node_SelectOnSpeakerState : public UDialogueK2Node_Select
+{
+	GENERATED_BODY()
+
+public:
+	UDialogueK2Node_SelectOnSpeakerState(const FObjectInitializer& ObjectInitializer);
 
 	//~ Begin UEdGraphNode Interface
 	FText GetTooltipText() const override;
