@@ -10,14 +10,17 @@ const FString DlgConfigWriter::EOL_String = EOL;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-DlgConfigWriter::DlgConfigWriter(const UStruct* StructDefinition,
-								 const void* Object,
-								 const FString& InComplexNamePrefix,
+DlgConfigWriter::DlgConfigWriter(const FString& InComplexNamePrefix,
 								 bool bInDontWriteEmptyContainer) :
-	TopLevelObjectPtr(Object),
 	ComplexNamePrefix(InComplexNamePrefix),
 	bDontWriteEmptyContainer(bInDontWriteEmptyContainer)
 {
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void DlgConfigWriter::Write(const UStruct* StructDefinition, const void* Object)
+{
+	TopLevelObjectPtr = Object;
 	WriteComplexMembersToString(StructDefinition, Object, "", EOL, ConfigText);
 }
 

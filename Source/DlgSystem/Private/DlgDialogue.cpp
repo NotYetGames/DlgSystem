@@ -402,14 +402,16 @@ void UDlgDialogue::ExportToFile() const
 	{
 		case EDlgDialogueTextFormat::DlgDialogueTextFormatJson:
 		{
-			DlgJsonWriter JsonWriter(GetClass(), this);
+			DlgJsonWriter JsonWriter;
+			JsonWriter.Write(GetClass(), this);
 			JsonWriter.ExportToFile(TextFileName);
 			break;
 		}
 		case EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue:
 		default:
 		{
-			DlgConfigWriter DlgWriter(GetClass(), this);
+			DlgConfigWriter DlgWriter;
+			DlgWriter.Write(GetClass(), this);
 			DlgWriter.ExportToFile(TextFileName);
 			break;
 		}

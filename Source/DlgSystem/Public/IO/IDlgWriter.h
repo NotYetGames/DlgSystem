@@ -22,6 +22,9 @@ class DLGSYSTEM_API IDlgWriter
 {
 public:
 	virtual ~IDlgWriter() {}
+
+	/** Has to be called before ExportToFile in order to have something to write */
+	virtual void Write(const UStruct* StructDefinition, const void* Object) = 0;
 	virtual bool ExportToFile(const FString& FileName) = 0;
 
 	/** Can we skip this property from exporting? */

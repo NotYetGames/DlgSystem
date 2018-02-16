@@ -39,12 +39,14 @@ public:
 								   can be used not to export it to have better readable config file
 	 * @param bInDontWriteEmptyContainer: if it is enabled empty TSet, TMap and TArray properties won't be written
 	 */
-	DlgConfigWriter(const UStruct* StructDefinition,
-					const void* Object,
-					const FString& InComplexNamePrefix = "Dlg",
+	DlgConfigWriter(const FString& InComplexNamePrefix = "Dlg",
 					bool bInDontWriteEmptyContainer = true);
 
 	// IDlgWriter Interface
+
+	/** Has to be called to prepare the text data */
+	void Write(const UStruct* StructDefinition, const void* Object) override;
+
 	/**
 	 * Save the config string to a text file
 	 * @param FullName: Full path + file name + extension
@@ -59,7 +61,7 @@ public:
 		return ConfigText;
 	}
 
-private:
+protected:
 
 	void WriteComplexToString(const UStruct* StructDefinition,
 							  const UProperty* Property,
@@ -258,7 +260,7 @@ private:
 
 	FString ConfigText = "";
 
-	const void* TopLevelObjectPtr;
+	const void* TopLevelObjectPtr = nullptr;
 	const FString ComplexNamePrefix;
 	const bool bDontWriteEmptyContainer;
 
