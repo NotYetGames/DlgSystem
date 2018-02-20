@@ -157,6 +157,21 @@ public:
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	static void GetAllDialoguesEventNames(const FName& ParticipantName, TArray<FName>& OutArray);
 
+	/**
+	 * Registers all the DlgSystem Module console commands.
+	 * @param InReferenceActor - The reference actor for the World. Without this the runtime module won't know how to get the UWorld.
+	 * @return true on success, false otherwise
+	 */
+	UFUNCTION(BlueprintCallable, Category = DialogueModule)
+	static bool RegisterDialogueModuleConsoleCommands(AActor* InReferenceActor);
+
+	/**
+	 * Unregister all the DlgSystem Module console commands.
+	 * @return true on success, false otherwise
+	 */
+	UFUNCTION(BlueprintCallable, Category = DialogueModule)
+	static bool UnRegisterDialogueModuleConsoleCommands();
+
 private:
 
 	/** Helper method, used to append a set to an array. Also sort. */
