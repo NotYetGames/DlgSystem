@@ -19,15 +19,18 @@ const FString UDialogueK2Node_Select::PIN_VariableName(TEXT("VariableName"));
 const FString UDialogueK2Node_Select::PIN_DefaultValue(TEXT("DefaultValue"));
 
 //////////////////////////////////////////////////////////////////////////
-// FKCHandler_Select
-class FKCHandler_Select : public FNodeHandlingFunctor
+// FKCHandler_DialogueSelect
+// TODO(leyyin): Figure out why having the same name for a handler crashes things on linux and only some times in Windows
+// For example if this is name FKCHandler_Select (like the normal K2Node_Select handler) the compiler confuses our node
+// for that node. The name should be irrelevant right? the handler is used as value in a TMap, right????
+class FKCHandler_DialogueSelect : public FNodeHandlingFunctor
 {
 protected:
 	// Mutiple nodes possible? isn't this called only on this node
 	TMap<UEdGraphNode*, FBPTerminal*> BoolTermMap;
 
 public:
-	FKCHandler_Select(FKismetCompilerContext& InCompilerContext) : FNodeHandlingFunctor(InCompilerContext)
+	FKCHandler_DialogueSelect(FKismetCompilerContext& InCompilerContext) : FNodeHandlingFunctor(InCompilerContext)
 	{
 	}
 
@@ -372,7 +375,7 @@ FSlateIcon UDialogueK2Node_Select::GetIconAndTint(FLinearColor& OutColor) const
 // Begin UK2Node Interface
 FNodeHandlingFunctor* UDialogueK2Node_Select::CreateNodeHandler(FKismetCompilerContext& CompilerContext) const
 {
-	return static_cast<FNodeHandlingFunctor*>(new FKCHandler_Select(CompilerContext));
+	return static_cast<FNodeHandlingFunctor*>(new FKCHandler_DialogueSelect(CompilerContext));
 }
 
 bool UDialogueK2Node_Select::IsConnectionDisallowed(const UEdGraphPin* MyPin, const UEdGraphPin* OtherPin, FString& OutReason) const
@@ -524,7 +527,7 @@ bool UDialogueK2Node_Select::RefreshPinNames()
 		case EDlgVariableType::DlgVariableTypeFloat:
 			UDlgManager::GetAllDialoguesFloatNames(ParticipantName, NewPinNames);
 			break;
-		
+
 		case EDlgVariableType::DlgVariableTypeInt:
 			UDlgManager::GetAllDialoguesIntNames(ParticipantName, NewPinNames);
 			break;
