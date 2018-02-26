@@ -18,12 +18,14 @@
 		{
 			"Name": "DlgSystem",
 			"Type": "Runtime",
-			"LoadingPhase": "PreDefault"
+			"LoadingPhase": "PreDefault",
+			"WhitelistPlatforms": ["Win64", "Win32", "Linux"]
 		},
 		{
 			"Name": "DlgSystemEditor",
 			"Type": "Editor",
-			"LoadingPhase": "PostEngineInit"
+			"LoadingPhase": "PostEngineInit",
+			"WhitelistPlatforms": ["Win64", "Win32", "Linux"]
 		}
 	],
 	"WhitelistPlatforms": ["Win64", "Win32", "Linux"]
