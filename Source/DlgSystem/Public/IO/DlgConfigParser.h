@@ -20,7 +20,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogDlgConfigParser, Log, All);
  * Default functionality can read a whole data structure from the proper config format
  * Supported Primitives: FString, FName, int32, bool, float
  * Supported complex types: Struct, Class
- * Supported containers: Array(*), Map (Key: Primitives, Value: Primitive + Struct), Set (Primitive)
+ * Supported containers: Array(*), Map (Key: Primitive + Struct, Value: Primitive + Struct), Set (Primitive)
  * Enum support: limited
  *		pure enum array is not supported (enum can be a member in a struct which is in an array, but it can't be in an array directly)
  *		enum set, enum in map: NOT IMPLEMENTED

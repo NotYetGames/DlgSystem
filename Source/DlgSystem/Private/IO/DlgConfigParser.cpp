@@ -563,43 +563,30 @@ bool DlgConfigParser::ReadMap(void* TargetObject, UMapProperty& Property, UObjec
 			else if (Cast<UStrProperty>(Props[i]))		{ *(FString*)Ptrs[i] = GetAsString();	bDone = true; }
 			else if (Cast<UTextProperty>(Props[i]))		{ *(FText*)Ptrs[i]   = GetAsText();		bDone = true; }
 			// else if (Cast<UByteProperty>(Props[i]))		{ *(uint8*)Ptrs[i]	 = OnGetAsEnum();	bDone = true; } // would not work, check enum above
-
-			if (i == 0)
-			{
-				if (!bDone)
-				{
-					UE_LOG(LogDlgConfigParser, Warning, TEXT("Invalid map key type %s in script %s(:%d)"),
-														*Helper.KeyProp->GetName(), *FileName, GetActiveLineNumber());
-					return false;
-				}
-				bDone = false;
-				if (!FindNextWord("Map Value"))
-				{
-					return false;
-				}
-
-			}
-			else
-			{
-				if (bDone && !FindNextWord("New map key or map end"))
-				{
-					return false;
-				}
-			}
-		}
-
-		if (!bDone)
-		{
-			UStructProperty* StructVal = Cast<UStructProperty>(Helper.ValueProp);
+			
+			UStructProperty* StructVal = Cast<UStructProperty>(Props[i]);
 			if (StructVal != nullptr)
 			{
 				if (!CompareToActiveWord("{"))
 				{
 					UE_LOG(LogDlgConfigParser, Warning, TEXT("Syntax error: missing struct block start '{' in script %s(:%d)"),
-														*FileName, GetActiveLineNumber());
+							*FileName, GetActiveLineNumber());
 					return false;
 				}
-				if (!ReadPurePropertyBlock(Helper.GetValuePtr(Index), StructVal->Struct, true, DefaultObjectOuter))
+				if (!ReadPurePropertyBlock(Ptrs[i], StructVal->Struct, true, DefaultObjectOuter))
+				{
+					return false;
+				}
+			}
+			else
+			{
+				if (!bDone)
+				{
+					UE_LOG(LogDlgConfigParser, Warning, TEXT("Invalid map type %s in script %s(:%d)"), *Helper.KeyProp->GetName(), *FileName, GetActiveLineNumber());
+					return false;
+				}
+				bDone = false;
+				if (!FindNextWord("Map Key or Value or End"))
 				{
 					return false;
 				}
