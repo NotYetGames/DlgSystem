@@ -27,6 +27,5 @@
 			"LoadingPhase": "PostEngineInit",
 			"WhitelistPlatforms": ["Win64", "Win32", "Linux"]
 		}
-	],
-	"WhitelistPlatforms": ["Win64", "Win32", "Linux"]
+	]
 }
