@@ -34,6 +34,9 @@ Brought to you by Not Yet:
 * Discord: https://discord.gg/5gH5tWR
 * Website: [notyet.eu](http://www.notyet.eu)
 * Twitter: https://twitter.com/NotYetDevs
+* [Plugin Forum post](https://forums.unrealengine.com/community/community-content-tools-and-tutorials/1424923-open-source-dialogue-system-plugin)
+* [Plugin Marketplace](https://www.unrealengine.com/marketplace/not-yet-dialogue-system)
+
 
 ## Conventions
 
