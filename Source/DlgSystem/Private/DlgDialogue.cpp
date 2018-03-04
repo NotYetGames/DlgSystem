@@ -614,9 +614,9 @@ FString UDlgDialogue::GetTextFilePathName(bool bAddExtension/* = true*/) const
 	// Extract filename from path
 	// Note: this is not a filesystem path, it is an unreal path 'Outermost.[Outer:]Name'
 	// Usually GetPathName works, but the path name might be weird.
-	// FSoftObjectPath(this).ToString(); which does call this function GetPathName() but it returns a legit clean path
+	// FStringAssetReference (this).ToString(); which does call this function GetPathName() but it returns a legit clean path
 	// if it is in the wrong format
-	FString TextFileName = GetTextFilePathNameFromAssetPathName(FSoftObjectPath(this).ToString());
+	FString TextFileName = GetTextFilePathNameFromAssetPathName(FStringAssetReference(this).ToString());
 	if (bAddExtension)
 	{
 		// Modify the extension of the base text file depending on the extension
@@ -635,7 +635,7 @@ FString UDlgDialogue::GetTextFilePathNameFromAssetPathName(const FString& AssetP
 
 	// Get rid of the first folder, Game/ or Name/ (if in the plugins dir) from the beginning of the path.
 	// Are we in the game directory?
-	FString ContentDir = FPaths::ProjectContentDir();
+	FString ContentDir = FPaths::GameContentDir();
 	if (!PathName.RemoveFromStart(TEXT("/Game/")))
 	{
 		// We are in the plugins dir
@@ -644,7 +644,7 @@ FString UDlgDialogue::GetTextFilePathNameFromAssetPathName(const FString& AssetP
 		if (PathParts.Num() > 0)
 		{
 			const FString PluginName = PathParts[0];
-			const FString PluginDir = FPaths::ProjectPluginsDir() / PluginName;
+			const FString PluginDir = FPaths::GamePluginsDir() / PluginName;
 
 			// Plugin exists
 			if (FPaths::DirectoryExists(PluginDir))

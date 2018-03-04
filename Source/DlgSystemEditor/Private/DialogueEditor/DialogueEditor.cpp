@@ -16,7 +16,6 @@
 #include "ModuleManager.h"
 #include "MultiBoxBuilder.h"
 #include "EdGraphUtilities.h"
-#include "HAL/PlatformApplicationMisc.h"
 
 #include "DlgSystemEditorPrivatePCH.h"
 #include "DlgDialogue.h"
@@ -834,7 +833,7 @@ void FDialogueEditor::OnCommandCopySelectedNodes() const
 	// Copy to clipboard
 	FString ExportedText;
 	FEdGraphUtilities::ExportNodesToText(SelectedNodes, /*out*/ ExportedText);
-	FPlatformApplicationMisc::ClipboardCopy(*ExportedText);
+	FPlatformMisc::ClipboardCopy(*ExportedText);
 
 	for (UObject* Object : SelectedNodes)
 	{
@@ -881,7 +880,7 @@ void FDialogueEditor::PasteNodesHere(const FVector2D& Location)
 
 	// Grab the text to paste from the clipboard.
 	FString TextToImport;
-	FPlatformApplicationMisc::ClipboardPaste(TextToImport);
+	FPlatformMisc::ClipboardPaste(TextToImport);
 
 	// Import the nodes
 	TSet<UEdGraphNode*> PastedNodes;
@@ -1004,7 +1003,7 @@ void FDialogueEditor::PasteNodesHere(const FVector2D& Location)
 bool FDialogueEditor::CanPasteNodes() const
 {
 	FString ClipboardContent;
-	FPlatformApplicationMisc::ClipboardPaste(ClipboardContent);
+	FPlatformMisc::ClipboardPaste(ClipboardContent);
 
 	return FEdGraphUtilities::CanImportNodesFromText(DialogueBeingEdited->GetGraph(), ClipboardContent);
 }
