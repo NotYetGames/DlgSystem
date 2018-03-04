@@ -320,7 +320,7 @@ public:
 	}
 
 	/** Gets all the SpeakerStates used inside this dialogue */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	//UFUNCTION(BlueprintPure, Category = DialogueData)
 	void GetAllSpeakerState(TSet<FName>& OutSet) const
 	{
 		OutSet.Append(DlgSpeakerStates);

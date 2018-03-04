@@ -51,7 +51,7 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 		const TSharedPtr<IPropertyHandle> SpeakerStatePropertyHandle =
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, SpeakerState));
 
-		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("SpeakerStateSearchKey", "Speaker State"));
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddChildContent(LOCTEXT("SpeakerStateSearchKey", "Speaker State"));
 
 		SpeakerStatePropertyRow = MakeShareable(new FTextPropertyPickList_CustomRowHelper(DetailWidgetRow, SpeakerStatePropertyHandle));
 		SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
