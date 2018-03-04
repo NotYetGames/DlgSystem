@@ -2,10 +2,11 @@
 
 Master branch Unreal version: `4.16`
 
-NOTE this branch was backported from the `4.18` version and it is not maintained.
+NOTE this branch was backported from the `4.18` version and it is NOT maintained.
 
-Main regression from the `4.18` (February 12 2018) is that you can't set dialogue 
-history from blueprints, otherwise things should work normal.
+Main regression from the `4.18` branch:
+- (February 12. 2018) - is that you can't set dialogue history from blueprints, otherwise things should work normal.
+- (March 4, 2018) - no SpeakerState and no DlgDataDisplay 
 
 ## Features:
 
