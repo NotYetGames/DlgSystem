@@ -41,42 +41,42 @@ public:
 	virtual void ReevaluateChildren() {}
 
 	/** Gets the number of children with satisfied conditions (number of options) */
-	UFUNCTION(BlueprintCallable, Category = DlgData)
+	UFUNCTION(BlueprintPure, Category = DlgData)
 	int32 GetOptionNum() const { return AvailableChildren.Num(); }
 
 	/** Gets the Text of the option with index OptionIndex  */
-	UFUNCTION(BlueprintCallable, Category = DlgData)
+	UFUNCTION(BlueprintPure, Category = DlgData)
 	const FText& GetOptionText(int32 OptionIndex) const;
 
 	/** Gets the SpeakerState of the edge with index OptionIndex */
-	UFUNCTION(BlueprintCallable, Category = DlgData)
+	UFUNCTION(BlueprintPure, Category = DlgData)
 	FName GetOptionSpeakerState(int32 OptionIndex) const;
 
 	/** Gets the Text of the active node index */
-	UFUNCTION(BlueprintCallable, Category = DlgData)
+	UFUNCTION(BlueprintPure, Category = DlgData)
 	const FText& GetActiveNodeText() const;
 
-	/** Gets the SpeakerState of the edge with index OptionIndex */
-	UFUNCTION(BlueprintCallable, Category = DlgData)
-	FName GetSpeakerState() const;
+	/** Gets the SpeakerState of the active node index */
+	UFUNCTION(BlueprintPure, Category = DlgData)
+	FName GetActiveSpeakerState() const;
 
 	/** Gets the Voice as a Sound Wave of the active node index */
-	UFUNCTION(BlueprintCallable, Category = DlgDataSound)
+	UFUNCTION(BlueprintPure, Category = DlgDataSound)
 	USoundWave* GetActiveNodeVoiceSoundWave() const;
 
 	/** Gets the Voice as a Dialogue Wave of the active node index */
-	UFUNCTION(BlueprintCallable, Category = DlgDataSound)
+	UFUNCTION(BlueprintPure, Category = DlgDataSound)
 	UDialogueWave* GetActiveNodeVoiceDialogueWave() const;
 
 	/** Gets the Icon associated with the active node participant name (owner name). */
-	UFUNCTION(BlueprintCallable, Category = DlgData)
+	UFUNCTION(BlueprintPure, Category = DlgData)
 	UTexture2D* GetActiveParticipantIcon() const;
 
 	/** Gets the Object associated with the active node participant name (owner name). */
-	UFUNCTION(BlueprintCallable, Category = DlgData)
+	UFUNCTION(BlueprintPure, Category = DlgData)
 	UObject* GetActiveParticipant() const;
 
-	UFUNCTION(BlueprintCallable, Category = DlgData)
+	UFUNCTION(BlueprintPure, Category = DlgData)
 	UObject* GetParticipant(FName DlgParticipantName);
 
 	/** Gets the current deepness. The amount of nodes already finished in the dialogue */

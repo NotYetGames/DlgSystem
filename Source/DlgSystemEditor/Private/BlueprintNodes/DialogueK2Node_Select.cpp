@@ -458,7 +458,7 @@ void UDialogueK2Node_Select::PostReconstructNode()
 
 	UEdGraphPin* ReturnPin = GetReturnValuePin();
 
-	// Wild card pin? set types depending on optoins
+	// Wild card pin? set types depending on options
 	const bool bFillTypeFromConnected = ReturnPin && (ReturnPin->PinType.PinCategory == UEdGraphSchema_K2::PC_Wildcard);
 	if (bFillTypeFromConnected)
 	{

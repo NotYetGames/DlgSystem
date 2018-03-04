@@ -34,7 +34,6 @@ FName UDlgContext::GetOptionSpeakerState(int32 OptionIndex) const
 const FText& UDlgContext::GetActiveNodeText() const
 {
 	const UDlgNode* Node = GetActiveNode();
-
 	if (Node == nullptr)
 	{
 		return FText::GetEmpty();
@@ -43,10 +42,9 @@ const FText& UDlgContext::GetActiveNodeText() const
 	return Node->GetNodeText();
 }
 
-FName UDlgContext::GetSpeakerState() const
+FName UDlgContext::GetActiveSpeakerState() const
 {
 	const UDlgNode* Node = GetActiveNode();
-
 	if (Node == nullptr)
 	{
 		return NAME_None;
