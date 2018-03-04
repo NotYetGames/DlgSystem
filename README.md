@@ -1,10 +1,13 @@
 # DlgSystem (Dialogue System) Plugin
 
-Branch Unreal version: 4.17
+Branch Unreal version: `4.17`
+
+Binary/Blueprint version of this plugin can be found [here](https://gitlab.com/NotYetGames/DlgSystem/tags/OLD_UE_4.17).
 
 NOTE this branch was backported from the `4.18` version and it is NOT maintained.
+Any new features added to the plugin won't be backported to this branch.
 
-This branch has the same features as the `4.18` branch as of 4 March, 2018. Any new features added to the plugin won't be backported to this branch.
+This branch has the same features as the `4.18` branch as of 4 March, 2018. 
 
 ## Features:
 
