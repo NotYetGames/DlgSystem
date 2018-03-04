@@ -8,7 +8,7 @@
 DEFINE_LOG_CATEGORY(LogDlgJsonWriter);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-DlgJsonWriter::DlgJsonWriter(const UStruct* StructDefinition, const void* Object)
+void DlgJsonWriter::Write(const UStruct* StructDefinition, const void* Object)
 {
 	DlgJsonWriterOptions WriterOptions;
 	WriterOptions.bPrettyPrint = true;

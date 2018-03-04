@@ -129,6 +129,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	static void GetAllDialoguesParticipantNames(TArray<FName>& OutArray);
 
+	/** Gets all the used speaker states sorted alphabetically from all the Dialogues loaded into memory. */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	static void GetAllDialoguesSpeakerStates(TArray<FName>& OutArray);
+
 	/** Gets all the unique int variable names sorted alphabetically for the specified ParticipantName from the loaded Dialogues */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	static void GetAllDialoguesIntNames(const FName& ParticipantName, TArray<FName>& OutArray);
@@ -152,6 +156,21 @@ public:
 	/** Gets all the unique event names sorted alphabetically for the specified ParticipantName from the loaded Dialogues */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	static void GetAllDialoguesEventNames(const FName& ParticipantName, TArray<FName>& OutArray);
+
+	/**
+	 * Registers all the DlgSystem Module console commands.
+	 * @param InReferenceActor - The reference actor for the World. Without this the runtime module won't know how to get the UWorld.
+	 * @return true on success, false otherwise
+	 */
+	UFUNCTION(BlueprintCallable, Category = DialogueModule)
+	static bool RegisterDialogueModuleConsoleCommands(AActor* InReferenceActor);
+
+	/**
+	 * Unregister all the DlgSystem Module console commands.
+	 * @return true on success, false otherwise
+	 */
+	UFUNCTION(BlueprintCallable, Category = DialogueModule)
+	static bool UnRegisterDialogueModuleConsoleCommands();
 
 private:
 

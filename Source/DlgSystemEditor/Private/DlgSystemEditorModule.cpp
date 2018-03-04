@@ -46,7 +46,7 @@ DEFINE_LOG_CATEGORY(LogDlgSystemEditor)
 //////////////////////////////////////////////////////////////////////////
 
 // Just some constants
-static const FName DialogueBrowserTabName("DialogueBrowser");
+static const FName DIALOGUE_BROWSER_TAB_ID("DialogueBrowser");
 
 
 FDlgSystemEditorModule::FDlgSystemEditorModule() : DlgSystemAssetCategoryBit(EAssetTypeCategories::UI)
@@ -155,7 +155,16 @@ void FDlgSystemEditorModule::StartupModule()
 					FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_DialogueClassIcon), false);
 
 		// Register the Dialogue Overview Browser
-		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(DialogueBrowserTabName, FOnSpawnTab::CreateStatic(&Self::HandleSpawnDialogueBrowser))
+		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(DIALOGUE_BROWSER_TAB_ID,
+			FOnSpawnTab::CreateLambda([this](const FSpawnTabArgs& Args) -> TSharedRef<SDockTab>
+			{
+				const TSharedRef<SDockTab> DockTab = SNew(SDockTab)
+					.TabRole(ETabRole::NomadTab)
+					[
+						SNew(SDialogueBrowser)
+					];
+				return DockTab;
+			}))
 			.SetDisplayName(LOCTEXT("DialogueBrowserTabTitle", "Dialogue Browser"))
 			.SetTooltipText(LOCTEXT("DialogueBrowserTooltipText", "Open the Dialogue Overview Browser tab."))
 			.SetIcon(FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_BrowseDialogueIcon))
@@ -239,7 +248,7 @@ void FDlgSystemEditorModule::ShutdownModule()
 	FDialogueStyle::Shutdown();
 
 	// Unregister the Dialogue Browser
-	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(DialogueBrowserTabName);
+	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(DIALOGUE_BROWSER_TAB_ID);
 
 	// Unregister the Dialogue Search
 	FFindInDialogueSearchManager::Get()->DisableGlobalFindResults();
@@ -260,17 +269,6 @@ bool FDlgSystemEditorModule::SaveAllDialogues()
 	static constexpr bool bCheckDirty = false;
 	static constexpr bool bPromptToSave = false;
 	return FEditorFileUtils::PromptForCheckoutAndSave(PackagesToSave, bCheckDirty, bPromptToSave) == FEditorFileUtils::EPromptReturnCode::PR_Success;
-}
-
-TSharedRef<SDockTab> FDlgSystemEditorModule::HandleSpawnDialogueBrowser(const FSpawnTabArgs& SpawnTabArgs)
-{
-	const TSharedRef<SDockTab> DockTab = SNew(SDockTab)
-		.TabRole(ETabRole::NomadTab)
-		[
-			SNew(SDialogueBrowser)
-		];
-
-	return DockTab;
 }
 
 void FDlgSystemEditorModule::HandleOnSaveAllDialogues()

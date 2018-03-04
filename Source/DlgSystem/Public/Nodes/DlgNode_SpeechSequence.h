@@ -29,6 +29,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = DlgNodeData, Meta = (DlgSaveOnlyReference))
 	UDialogueWave* VoiceDialogueWave;
 
+	/** State of the speaker attached to the entry. Passed to the GetParticipantIcon function. */
+	UPROPERTY(EditAnywhere, Category = DlgNodeData)
+	FName SpeakerState;
+
 	/** Text that will appear when you want to continue down this edge to the next conversation. Usually "Next". */
 	UPROPERTY(EditAnywhere, Meta = (MultiLine = true))
 	FText EdgeText = FText::FromString("Next");
@@ -64,6 +68,8 @@ public:
 	const FText& GetNodeText() const override;
 	USoundWave* GetNodeVoiceSoundWave() const override;
 	UDialogueWave* GetNodeVoiceDialogueWave() const override;
+	FName GetSpeakerState() const override;
+	void AddSpeakerStates(TSet<FName>& States) const override;
 	FName GetNodeParticipantName() const override;
 	void GetAssociatedParticipants(TArray<FName>& OutArray) const override;
 

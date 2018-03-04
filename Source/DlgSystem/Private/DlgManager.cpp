@@ -6,6 +6,7 @@
 #include "IPluginManager.h"
 #include "Engine/Blueprint.h"
 
+#include "IDlgSystemModule.h"
 #include "DlgSystemPrivatePCH.h"
 #include "DlgDialogueParticipant.h"
 #include "DlgDialogue.h"
@@ -219,6 +220,17 @@ void UDlgManager::GetAllDialoguesParticipantNames(TArray<FName>& OutArray)
 	AppendSetToArray(UniqueNames, OutArray);
 }
 
+void UDlgManager::GetAllDialoguesSpeakerStates(TArray<FName>& OutArray)
+{
+	TSet<FName> UniqueNames;
+	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
+	{
+		Dialogue->GetAllSpeakerState(UniqueNames);
+	}
+
+	AppendSetToArray(UniqueNames, OutArray);
+}
+
 void UDlgManager::GetAllDialoguesIntNames(const FName& ParticipantName, TArray<FName>& OutArray)
 {
 	TSet<FName> UniqueNames;
@@ -283,4 +295,26 @@ void UDlgManager::GetAllDialoguesEventNames(const FName& ParticipantName, TArray
 	}
 
 	AppendSetToArray(UniqueNames, OutArray);
+}
+
+bool UDlgManager::RegisterDialogueModuleConsoleCommands(AActor* InReferenceActor)
+{
+	if (!IDlgSystemModule::IsAvailable())
+	{
+		return false;
+	}
+
+	IDlgSystemModule::Get().RegisterConsoleCommands(InReferenceActor);
+	return true;
+}
+
+bool UDlgManager::UnRegisterDialogueModuleConsoleCommands()
+{
+	if (!IDlgSystemModule::IsAvailable())
+	{
+		return false;
+	}
+
+	IDlgSystemModule::Get().UnregisterConsoleCommands();
+	return true;
 }

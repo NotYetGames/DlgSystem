@@ -55,6 +55,8 @@ public class DlgSystem : ModuleRules
 		if (Target.bBuildEditor)
 		{
 			PrivateDependencyModuleNames.Add("UnrealEd");
+			// Accessing the menu
+			PrivateDependencyModuleNames.Add("WorkspaceMenuStructure");
 		}
 
 		// Add GameplayDebugger functionality if not 'Shipping' or 'Test' Target.

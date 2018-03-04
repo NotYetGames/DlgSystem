@@ -4,13 +4,14 @@ DlgGuid {  A -743047120 B 1156639802 C 1124860857 D 1676713096 }
 Node_Speech StartNode
 {
 	Text ""
+	SpeakerState "None"
 	bIsVirtualParent False
 	OwnerName "None"
 	bCheckChildrenOnEvaluation False
 	Children
 	{
-		{  TargetIndex 0 Text "Next" }
-		{  TargetIndex 1 Text "" }
+		{  TargetIndex 0 Text "Next" SpeakerState "None" }
+		{  TargetIndex 1 Text "" SpeakerState "None" }
 	}
 }
 Node Nodes
@@ -19,6 +20,7 @@ Node Nodes
 	Node_Speech 
 	{
 		Text "I can talk!"
+		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "TestOwner"
 		bCheckChildrenOnEvaluation False
@@ -29,6 +31,7 @@ Node Nodes
 			{
 				TargetIndex 2
 				Text "Next"
+				SpeakerState "None"
 				Conditions { {  Strength "EDlgConditionStrength::DlgConditionStrengthStrong" ConditionType "EDlgConditionType::DlgConditionIntCall" ParticipantName "None" CallbackName "EdgeVariable" Operation "EDlgOperation::DlgEqual" IntValue 100 FloatValue 0.0 NameValue "None" bBoolValue True bLongTermMemory True } }
 			}
 		}
@@ -37,15 +40,17 @@ Node Nodes
 	Node_Speech 
 	{
 		Text "Meow. Yeah I can speak too"
+		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Cat"
 		bCheckChildrenOnEvaluation False
-		Children { {  TargetIndex 2 Text "Next" } }
+		Children { {  TargetIndex 2 Text "Next" SpeakerState "None" } }
 	}
 	// 2
 	Node_Speech 
 	{
 		Text "You don't say?"
+		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "TestOwner"
 		bCheckChildrenOnEvaluation False
@@ -54,7 +59,7 @@ Node Nodes
 			{  ParticipantName "None" EventType "EDlgEventType::DlgEventModifyInt" EventName "DefaultValue" IntValue 0 FloatValue 0.0 NameValue "None" bDelta False bValue False }
 			{  ParticipantName "None" EventType "EDlgEventType::DlgEventModifyInt" EventName "Default" IntValue 0 FloatValue 0.0 NameValue "None" bDelta False bValue False }
 		}
-		Children { {  TargetIndex 3 Text "Finish" } }
+		Children { {  TargetIndex 3 Text "Finish" SpeakerState "None" } }
 	}
 	// 3
 	Node_End 

@@ -5,98 +5,17 @@
 #include "Widgets/Text/STextBlock.h"
 #include "Widgets/Layout/SMissingWidget.h"
 #include "Widgets/Input/SButton.h"
+#include "Widgets/SBoxPanel.h"
+
+// #if WITH_EDITOR
+// #include "Editor.h"
+// #endif
 
 #include "DlgManager.h"
+#include "SDlgDataPropertyValues.h"
 
 #define LOCTEXT_NAMESPACE "SDlgDataDisplay"
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// SDlgDataProperty
-void SDlgDataPropertyValue::Construct(const FArguments& InArgs, TSharedPtr<FDlgDataDisplayTreeVariableNode> InVariableNode)
-{
-	VariableNode = InVariableNode;
-	UpdateVariableNodeFromActor();
-
-	ChildSlot
-	[
-		SNew(STextBlock)
-		.Text(this, &Self::GetTextValue)
-	];
-}
-
-void SDlgDataPropertyValue::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
-{
-	Super::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
-
-	// We only run this Tick only after TickUpdateTimeSeconds has passed
-	TickPassedDeltaTimeSeconds += InDeltaTime;
-	if (TickPassedDeltaTimeSeconds < TickUpdateTimeSeconds)
-	{
-		return;
-	}
-
-	// Update the value
-	TickPassedDeltaTimeSeconds = 0.f;
-	UpdateVariableNodeFromActor();
-}
-
-void SDlgDataPropertyValue::UpdateVariableNodeFromActor()
-{
-	if (!VariableNode.IsValid())
-	{
-		return;
-	}
-
-	TWeakObjectPtr<const AActor> Actor = VariableNode->GetParentActor();
-	if (!Actor.IsValid())
-	{
-		return;
-	}
-
-	const FName VariableName = VariableNode->GetVariableName();
-	const EDlgDataDisplayVariableTreeNodeType VariableType = VariableNode->GetVariableType();
-	switch (VariableType)
-	{
-		case EDlgDataDisplayVariableTreeNodeType::Integer:
-		{
-			const int32 Value = IDlgDialogueParticipant::Execute_GetIntValue(Actor.Get(), VariableName);
-			VariableNode->SetVariableValue(FString::FromInt(Value));
-			break;
-		}
-		case EDlgDataDisplayVariableTreeNodeType::Float:
-		{
-			const float Value = IDlgDialogueParticipant::Execute_GetFloatValue(Actor.Get(), VariableName);
-			VariableNode->SetVariableValue(FString::SanitizeFloat(Value));
-			break;
-		}
-		case EDlgDataDisplayVariableTreeNodeType::Bool:
-		{
-			const bool Value = IDlgDialogueParticipant::Execute_GetBoolValue(Actor.Get(), VariableName);
-			const FString ValueString = Value ? TEXT("true") : TEXT("false");
-			VariableNode->SetVariableValue(ValueString);
-			break;
-		}
-		case EDlgDataDisplayVariableTreeNodeType::FName:
-		{
-			const FName Value = IDlgDialogueParticipant::Execute_GetNameValue(Actor.Get(), VariableName);
-			VariableNode->SetVariableValue(Value.ToString());
-			break;
-		}
-		case EDlgDataDisplayVariableTreeNodeType::Event:
-		{
-			// TODO
-			break;
-		}
-		case EDlgDataDisplayVariableTreeNodeType::Condition:
-		{
-			// TODO
-			break;
-		}
-		case EDlgDataDisplayVariableTreeNodeType::Default:
-		default:
-			unimplemented();
-	}
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SDlgDataDisplay
@@ -181,14 +100,25 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 	RootChildren.Empty();
 	ActorsProperties.Empty();
 
-	// No Actor :( can't get the World
-	if (!ReferenceActor.IsValid() || ReferenceActor->GetWorld() == nullptr)
+	// Try the actor World
+	UWorld* World = ReferenceActor.IsValid() ? ReferenceActor->GetWorld() : nullptr;
+
+// 	// Try The Editor World
+// #if WITH_EDITOR
+// 	if (World == nullptr && GEditor)
+// 	{
+// 		World = GEditor->GetEditorWorldContext().World();
+// 	}
+// #endif
+
+	// Can't do anything without the world
+	if (World == nullptr)
 	{
 		return;
 	}
 
-	TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
-	TArray<TWeakObjectPtr<AActor>> Actors = UDlgManager::GetAllActorsImplementingDialogueParticipantInterface(ReferenceActor->GetWorld());
+	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
+	const TArray<TWeakObjectPtr<AActor>> Actors = UDlgManager::GetAllActorsImplementingDialogueParticipantInterface(World);
 
 	// Build fast lookup for ParticipantNames
 	// Maps from ParticipantName => Array of Dialogues that have this Participant.
@@ -348,7 +278,7 @@ void SDlgDataDisplay::BuildTreeViewItem(FDlgDataDisplayTreeNodePtr Item)
 	NumberCalls++;
 	// check(NumberCalls < 30);
 
-	TWeakObjectPtr<const AActor> Actor = Item->GetParentActor();
+	TWeakObjectPtr<AActor> Actor = Item->GetParentActor();
 	if (!Actor.IsValid())
 	{
 		return;
@@ -497,12 +427,45 @@ TSharedRef<ITableRow> SDlgDataDisplay::HandleGenerateRow(FDlgDataDisplayTreeNode
 
 	if (InItem->IsText())
 	{
-		// Add custom widget for variables
+		// Add custom widget for variables/events/conditions
 		if (InItem->GetTextType() == EDlgDataDisplayTextTreeNodeType::Variable)
 		{
+			TSharedPtr<SDlgDataPropertyValue> RightWidget;
+			TSharedPtr<FDlgDataDisplayTreeVariableNode> VariableNode =
+				StaticCastSharedPtr<FDlgDataDisplayTreeVariableNode>(InItem);
+
+			// The widget on the right depends on the variable type.
+			switch (VariableNode->GetVariableType())
+			{
+				case EDlgDataDisplayVariableTreeNodeType::Integer:
+				case EDlgDataDisplayVariableTreeNodeType::Float:
+				case EDlgDataDisplayVariableTreeNodeType::FName:
+					// Editable text box
+					SAssignNew(RightWidget, SDlgDataTextPropertyValue, VariableNode);
+					break;
+
+				case EDlgDataDisplayVariableTreeNodeType::Event:
+					// Trigger Event Button
+					SAssignNew(RightWidget, SDlgDataEventPropertyValue, VariableNode);
+					break;
+
+				case EDlgDataDisplayVariableTreeNodeType::Bool:
+				case EDlgDataDisplayVariableTreeNodeType::Condition:
+					// Checkbox
+					SAssignNew(RightWidget, SDlgDataBoolPropertyValue, VariableNode);
+					break;
+
+				case EDlgDataDisplayVariableTreeNodeType::Default:
+				default:
+					// Static text
+					SAssignNew(RightWidget, SDlgDataPropertyValue, VariableNode);
+					break;
+			}
+
 			RowContent = SNew(SHorizontalBox)
 				// <variable type> <variable name> =
 				+SHorizontalBox::Slot()
+				.FillWidth(1.0f)
 				.HAlign(HAlign_Left)
 				.VAlign(VAlign_Center)
 				[
@@ -510,14 +473,16 @@ TSharedRef<ITableRow> SDlgDataDisplay::HandleGenerateRow(FDlgDataDisplayTreeNode
 				]
 
 				+SHorizontalBox::Slot()
+				.FillWidth(1.0f)
 				.HAlign(HAlign_Left)
 				.VAlign(VAlign_Center)
 				[
-					SNew(SDlgDataPropertyValue, StaticCastSharedPtr<FDlgDataDisplayTreeVariableNode>(InItem))
+					RightWidget.ToSharedRef()
 				];
 		}
 	}
 
+	// Add expand arrow
 	RowContainer->AddSlot()
 		.AutoWidth()
 		.VAlign(VAlign_Fill)
@@ -526,6 +491,7 @@ TSharedRef<ITableRow> SDlgDataDisplay::HandleGenerateRow(FDlgDataDisplayTreeNode
 			SNew(SExpanderArrow, TableRow)
 		];
 
+	// Add the row content
 	RowContainer->AddSlot()
 		.FillWidth(1.0)
 		.Padding(RowPadding)
@@ -549,7 +515,7 @@ void SDlgDataDisplay::HandleGetChildren(FDlgDataDisplayTreeNodePtr InItem,
 
 void SDlgDataDisplay::HandleTreeSelectionChanged(FDlgDataDisplayTreeNodePtr InItem, ESelectInfo::Type SelectInfo)
 {
-	// TODO
+	// Ignored
 }
 
 void SDlgDataDisplay::HandleDoubleClick(FDlgDataDisplayTreeNodePtr InItem)

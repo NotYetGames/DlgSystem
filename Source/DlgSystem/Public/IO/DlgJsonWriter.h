@@ -37,9 +37,11 @@ class DLGSYSTEM_API DlgJsonWriter : public IDlgWriter
 	 */
 public:
 
-	DlgJsonWriter(const UStruct* StructDefinition, const void* Object);
+	DlgJsonWriter() {};
 
 	// IDlgWriter Interface
+	void Write(const UStruct* StructDefinition, const void* Object) override;
+
 	/**
 	 * Save the config string to a text file
 	 * @param FullName: Full path + file name + extension

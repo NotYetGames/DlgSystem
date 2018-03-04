@@ -47,6 +47,25 @@ enum class EDlgVoiceDisplayedFields : uint8
 };
 
 /**
+ *  Defines the visibility of the SpeakerState values
+ */
+UENUM()
+enum class EDlgSpeakerStateVisibility : uint8
+{
+	/** No visibility fields are displayed. */
+	DlgHideAll					UMETA(DisplayName = "Hide All"),
+
+	/** Only display the SoundWave voice fields. */
+	DlgShowOnEdge				UMETA(DisplayName = "Show On Edge"),
+
+	/** Only display the DialogueWave voice fields. */
+	DlgShowOnNode				UMETA(DisplayName = "Show On Node"),
+
+	/** Display both SoundWave and DialogueWave fields. */
+	DlgShowOnNodeAndEdge		UMETA(DisplayName = "Show On Both")
+};
+
+/**
  * Defines what key combination to press to add a new line to an FText
  */
 UENUM()
@@ -151,7 +170,11 @@ public:
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Displayed Voice Fields")
 	EDlgVoiceDisplayedFields DialogueDisplayedVoiceFields = EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWave;
 
-	/** What key combination to press to add a new line fo FText fields in the Dialogue Editor. */
+	/** Where to display the SpeakerState FName property */
+	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "SpeakerState Visibility")
+	EDlgSpeakerStateVisibility DialogueSpeakerStateVisibility = EDlgSpeakerStateVisibility::DlgHideAll;
+
+	/** What key combination to press to add a new line for FText fields in the Dialogue Editor. */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Input Key for NewLine")
 	EDlgTextInputKeyForNewLine DialogueTextInputKeyForNewLine = EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineEnter;
 

@@ -402,14 +402,16 @@ void UDlgDialogue::ExportToFile() const
 	{
 		case EDlgDialogueTextFormat::DlgDialogueTextFormatJson:
 		{
-			DlgJsonWriter JsonWriter(GetClass(), this);
+			DlgJsonWriter JsonWriter;
+			JsonWriter.Write(GetClass(), this);
 			JsonWriter.ExportToFile(TextFileName);
 			break;
 		}
 		case EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue:
 		default:
 		{
-			DlgConfigWriter DlgWriter(GetClass(), this);
+			DlgConfigWriter DlgWriter;
+			DlgWriter.Write(GetClass(), this);
 			DlgWriter.ExportToFile(TextFileName);
 			break;
 		}
@@ -420,6 +422,7 @@ void UDlgDialogue::RefreshData()
 {
 	UE_LOG(LogDlgSystem, Log, TEXT("Refreshing data for Dialogue = `%s`"), *GetPathName());
 	DlgData.Empty();
+	DlgSpeakerStates.Empty();
 
 	// Gets the map entry - creates it first if it is not yet there
 	auto GetParticipantDataEntry = [this](const FName& ParticipantName,
@@ -497,6 +500,13 @@ void UDlgDialogue::RefreshData()
 			}
 		}
 
+		// gather SpeakerStates
+		Node->AddSpeakerStates(DlgSpeakerStates);
+		for (const FDlgEdge& Edge : Node->GetNodeChildren())
+		{
+			DlgSpeakerStates.Add(Edge.SpeakerState);
+		}
+
 		// 1.1: Conditions from nodes
 		for (const FDlgCondition& Condition : Node->GetNodeEnterConditions())
 		{
@@ -537,6 +547,8 @@ void UDlgDialogue::RefreshData()
 			}
 		}
 	}
+
+	DlgSpeakerStates.Remove(FName(NAME_None));
 }
 
 void UDlgDialogue::AutoFixGraph()

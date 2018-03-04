@@ -57,7 +57,7 @@ public:
 	EDlgDataDisplayCategoryTreeNodeType GetCategoryType() const { return CategoryType; }
 
 	/** Gets the Actor that has this Node belongs to. */
-	virtual TWeakObjectPtr<const AActor> GetParentActor() const;
+	virtual TWeakObjectPtr<AActor> GetParentActor() const;
 
 	virtual bool IsText() const { return TextType != EDlgDataDisplayTextTreeNodeType::Default; }
 	virtual bool IsCategory() const { return false; }
@@ -87,15 +87,15 @@ class FDlgDataDisplayTreeActorNode : public FDlgDataDisplayTreeNode
 	typedef FDlgDataDisplayTreeNode Super;
 public:
 	FDlgDataDisplayTreeActorNode(const FText& InDisplayText, FDlgDataDisplayTreeNodePtr InParent,
-		TWeakObjectPtr<const AActor> InActor);
+		TWeakObjectPtr<AActor> InActor);
 
 	/** FDlgDataDisplayTreeNode interface */
-	TWeakObjectPtr<const AActor> GetParentActor() const override;
+	TWeakObjectPtr<AActor> GetParentActor() const override;
 	/** End FDlgDataDisplayTreeNode interface */
 
 protected:
 	/** The Actor this represents. */
-	TWeakObjectPtr<const AActor> Actor;
+	TWeakObjectPtr<AActor> Actor;
 };
 
 

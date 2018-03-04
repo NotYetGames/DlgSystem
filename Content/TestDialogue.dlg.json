@@ -7,6 +7,7 @@
 	{
 		"__type__": "DlgNode_Speech",
 		"Text": "",
+		"SpeakerState": "None",
 		"bIsVirtualParent": false,
 		"OwnerName": "None",
 		"bCheckChildrenOnEvaluation": false,
@@ -16,12 +17,14 @@
 			{
 				"TargetIndex": 0,
 				"Conditions": [],
-				"Text": "Next"
+				"Text": "Next",
+				"SpeakerState": "None"
 			},
 			{
 				"TargetIndex": 1,
 				"Conditions": [],
-				"Text": ""
+				"Text": "",
+				"SpeakerState": "None"
 			}
 		]
 	},
@@ -30,7 +33,7 @@
 			"__index__": 0,
 			"__type__": "DlgNode_Speech",
 			"Text": "I can talk!",
-			"VoiceSoundWave": "/Game/StarterContent/Audio/Collapse01.Collapse01",
+			"SpeakerState": "None",
 			"bIsVirtualParent": false,
 			"OwnerName": "TestOwner",
 			"bCheckChildrenOnEvaluation": false,
@@ -77,7 +80,8 @@
 							"bLongTermMemory": true
 						}
 					],
-					"Text": "Next"
+					"Text": "Next",
+					"SpeakerState": "None"
 				}
 			]
 		},
@@ -85,6 +89,7 @@
 			"__index__": 1,
 			"__type__": "DlgNode_Speech",
 			"Text": "Meow. Yeah I can speak too",
+			"SpeakerState": "None",
 			"bIsVirtualParent": false,
 			"OwnerName": "Cat",
 			"bCheckChildrenOnEvaluation": false,
@@ -94,7 +99,8 @@
 				{
 					"TargetIndex": 2,
 					"Conditions": [],
-					"Text": "Next"
+					"Text": "Next",
+					"SpeakerState": "None"
 				}
 			]
 		},
@@ -102,6 +108,7 @@
 			"__index__": 2,
 			"__type__": "DlgNode_Speech",
 			"Text": "You don't say?",
+			"SpeakerState": "None",
 			"bIsVirtualParent": false,
 			"OwnerName": "TestOwner",
 			"bCheckChildrenOnEvaluation": false,
@@ -132,7 +139,8 @@
 				{
 					"TargetIndex": 3,
 					"Conditions": [],
-					"Text": "Finish"
+					"Text": "Finish",
+					"SpeakerState": "None"
 				}
 			]
 		},

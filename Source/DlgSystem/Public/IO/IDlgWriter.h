@@ -22,6 +22,9 @@ class DLGSYSTEM_API IDlgWriter
 {
 public:
 	virtual ~IDlgWriter() {}
+
+	/** Has to be called before ExportToFile in order to have something to write */
+	virtual void Write(const UStruct* StructDefinition, const void* Object) = 0;
 	virtual bool ExportToFile(const FString& FileName) = 0;
 
 	/** Can we skip this property from exporting? */
@@ -62,7 +65,7 @@ public:
 	}
 
 	/** Decides if the path to the object should be serialized, or the object itself */
-	static bool CanSaveAsReference(const UProperty* Property)
+	virtual bool CanSaveAsReference(const UProperty* Property)
 	{
 #if WITH_EDITOR
 		return Property->HasMetaData(TEXT("DlgSaveOnlyReference"));

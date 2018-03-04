@@ -10,7 +10,7 @@ FDlgDataDisplayTreeNode::FDlgDataDisplayTreeNode(const FText& InDisplayText, TSh
 {
 }
 
-TWeakObjectPtr<const AActor> FDlgDataDisplayTreeNode::GetParentActor() const
+TWeakObjectPtr<AActor> FDlgDataDisplayTreeNode::GetParentActor() const
 {
 	if (Parent.IsValid())
 	{
@@ -32,13 +32,13 @@ FDlgDataDisplayTreeRootNode::FDlgDataDisplayTreeRootNode() :
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgDataDisplayTreeActorNode
 FDlgDataDisplayTreeActorNode::FDlgDataDisplayTreeActorNode(const FText& InDisplayText,
-	FDlgDataDisplayTreeNodePtr InParent, TWeakObjectPtr<const AActor> InActor) :
+	FDlgDataDisplayTreeNodePtr InParent, TWeakObjectPtr<AActor> InActor) :
 	Super(InDisplayText, InParent), Actor(InActor)
 {
 	TextType = EDlgDataDisplayTextTreeNodeType::Actor;
 }
 
-TWeakObjectPtr<const AActor> FDlgDataDisplayTreeActorNode::GetParentActor() const
+TWeakObjectPtr<AActor> FDlgDataDisplayTreeActorNode::GetParentActor() const
 {
 	// Get the Actor from this.
 	if (Actor.IsValid())

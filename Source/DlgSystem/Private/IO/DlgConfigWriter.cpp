@@ -10,14 +10,17 @@ const FString DlgConfigWriter::EOL_String = EOL;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-DlgConfigWriter::DlgConfigWriter(const UStruct* StructDefinition,
-								 const void* Object,
-								 const FString& InComplexNamePrefix,
+DlgConfigWriter::DlgConfigWriter(const FString& InComplexNamePrefix,
 								 bool bInDontWriteEmptyContainer) :
-	TopLevelObjectPtr(Object),
 	ComplexNamePrefix(InComplexNamePrefix),
 	bDontWriteEmptyContainer(bInDontWriteEmptyContainer)
 {
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void DlgConfigWriter::Write(const UStruct* StructDefinition, const void* Object)
+{
+	TopLevelObjectPtr = Object;
 	WriteComplexMembersToString(StructDefinition, Object, "", EOL, ConfigText);
 }
 
@@ -623,7 +626,8 @@ bool DlgConfigWriter::WouldWriteNonPrimitive(const UStruct* StructDefinition, co
 		else
 		{
 			// Struct or Object
-			if (Cast<UStructProperty>(Property) != nullptr || Cast<UObjectProperty>(Property) != nullptr)
+			if ((Cast<UStructProperty>(Property) != nullptr || Cast<UObjectProperty>(Property) != nullptr) &&
+				!CanSaveAsReference(Property))
 			{
 				return true;
 			}

@@ -36,9 +36,6 @@ public:
 	static bool SaveAllDialogues();
 
 private:
-	/** Handle creating the Dialogue Overview Browser. */
-	static TSharedRef<SDockTab> HandleSpawnDialogueBrowser(const FSpawnTabArgs& SpawnTabArgs);
-
 	/** Handle clicking on save all dialogues. */
 	static void HandleOnSaveAllDialogues();
 

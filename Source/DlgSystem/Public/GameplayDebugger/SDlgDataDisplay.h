@@ -8,42 +8,6 @@
 #include "DlgDataDisplayTreeNode.h"
 #include "DlgDataDisplayActorProperties.h"
 
-class SDlgDataPropertyValue : public SCompoundWidget
-{
-	typedef SDlgDataPropertyValue Self;
-	typedef SCompoundWidget Super;
-public:
-	SLATE_BEGIN_ARGS(Self) {}
-	SLATE_END_ARGS()
-
-	void Construct(const FArguments& InArgs, TSharedPtr<FDlgDataDisplayTreeVariableNode> InVariableNode);
-
-	// SWidget Interface
-	/**
-	 * Ticks this widget with Geometry.  Override in derived classes, but always call the parent implementation.
-	 *
-	 * @param  AllottedGeometry The space allotted for this widget
-	 * @param  InCurrentTime  Current absolute real time
-	 * @param  InDeltaTime  Real time passed since last tick
-	 */
-	void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime);
-
-	/** Gets the Value of this Property as an FText; */
-	FText GetTextValue() const { return FText::FromString(VariableNode->GetVariableValue()); }
-
-protected:
-	/** Updates the VariableNode value from the Actor. */
-	void UpdateVariableNodeFromActor();
-
-protected:
-	/** The Node this widget value represents */
-	TSharedPtr<FDlgDataDisplayTreeVariableNode> VariableNode;
-
-	/** Number of seconds passed in the Tick */
-	float TickPassedDeltaTimeSeconds = 0.f;
-
-	static constexpr float TickUpdateTimeSeconds = 1.0f;
-};
 
 /**
  * Implements the Runtime Dialogue Data Display
@@ -57,6 +21,11 @@ public:
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs, TWeakObjectPtr<AActor> InReferenceActor = nullptr);
+
+	void SetReferenceActor(TWeakObjectPtr<AActor> InReferenceActor)
+	{
+		ReferenceActor = InReferenceActor;
+	}
 
 	/** Updates the actors tree. */
 	void RefreshTree(bool bPreserveExpansion);

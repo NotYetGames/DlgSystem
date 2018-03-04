@@ -106,6 +106,24 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 			IsVirtualParentPropertyHandle->SetOnPropertyValueChanged(FSimpleDelegate::CreateSP(this, &Self::OnIsVirtualParentChanged));
 			SpeechDataCategory.AddProperty(IsVirtualParentPropertyHandle);
 
+			// Speaker State
+			{
+				const TSharedPtr<IPropertyHandle> SpeakerStatePropertyHandle =
+					PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameSpeakerState());
+
+				FDetailWidgetRow* DetailWidgetRow = &SpeechDataCategory.AddCustomRow(LOCTEXT("SpeakerStateSearchKey", "Speaker State"));
+
+				SpeakerStatePropertyRow = MakeShareable(new FTextPropertyPickList_CustomRowHelper(DetailWidgetRow, SpeakerStatePropertyHandle));
+				SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
+					SNew(STextPropertyPickList)
+					.AvailableSuggestions(this, &Self::GetAllDialoguesSpeakerStates)
+					.OnTextCommitted(this, &Self::HandleSpeakerStateCommitted)
+					.HasContextCheckbox(false)
+				)
+				->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetSpeakerStateVisibility))
+				->Update();
+			}
+
 			// Text
 			{
 				TextPropertyHandle = PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameText());

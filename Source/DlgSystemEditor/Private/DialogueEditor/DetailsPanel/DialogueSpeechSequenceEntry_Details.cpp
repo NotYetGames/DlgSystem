@@ -52,6 +52,24 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 		->Update();
 	}
 
+	// Speaker State
+	{
+		const TSharedPtr<IPropertyHandle> SpeakerStatePropertyHandle =
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, SpeakerState));
+
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("SpeakerStateSearchKey", "Speaker State"));
+
+		SpeakerStatePropertyRow = MakeShareable(new FTextPropertyPickList_CustomRowHelper(DetailWidgetRow, SpeakerStatePropertyHandle));
+		SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
+			SNew(STextPropertyPickList)
+			.AvailableSuggestions(this, &Self::GetAllDialoguesSpeakerStates)
+			.OnTextCommitted(this, &Self::HandleTextCommitted)
+			.HasContextCheckbox(false)
+		)
+		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetSpeakerStateVisibility))
+		->Update();
+	}
+
 	// Text
 	{
 		TextPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, Text));

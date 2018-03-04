@@ -43,8 +43,22 @@ private:
 		return DetailsPanel::GetDialogueSortedParticipantNames(Dialogue);
 	}
 
+	/** Gets the Speaker States from all Dialogues. */
+	TArray<FName> GetAllDialoguesSpeakerStates() const
+	{
+		TArray<FName> OutArray;
+		UDlgManager::GetAllDialoguesSpeakerStates(OutArray);
+		return OutArray;
+	}
+
 	/** Handler for when text in the editable text box changed */
 	void HandleParticipantTextCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo)
+	{
+		Dialogue->RefreshData();
+	}
+
+	/** Handler for when the speaker state is changed */
+	void HandleSpeakerStateCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo)
 	{
 		Dialogue->RefreshData();
 	}
@@ -69,6 +83,14 @@ private:
 			   ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
+	EVisibility GetSpeakerStateVisibility() const
+	{
+		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+		return Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnNode ||
+			   Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnNodeAndEdge
+			   ? EVisibility::Visible : EVisibility::Hidden;
+	}
+
 private:
 	/** Hold the reference to the Graph Node this represents */
 	UDialogueGraphNode* GraphNode = nullptr;
@@ -80,6 +102,7 @@ private:
 
 	// Property rows
 	TSharedPtr<FTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
+	TSharedPtr<FTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
 	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
 	IDetailPropertyRow* VoiceSoundWavePropertyRow = nullptr;
 	IDetailPropertyRow* VoiceDialogueWavePropertyRow = nullptr;

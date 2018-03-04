@@ -32,6 +32,9 @@ public:
 	void DisplayDialogueDataWindow() override;
 
 private:
+	/** Refreshes the actor of the DlgDataDisplay if it is already opened. Return true if refresh was successful */
+	bool RefreshDisplayDialogueDataWindow(const bool bFocus = true);
+
 	/** Handle the event from the asset registry when an asset was deleted. */
 	void HandleOnInMemoryAssetDeleted(UObject* DeletedObject);
 
