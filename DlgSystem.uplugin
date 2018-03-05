@@ -23,7 +23,7 @@
 		},
 		{
 			"Name": "DlgSystemEditor",
-			"Type": "Editor",
+			"Type": "Developer",
 			"LoadingPhase": "PostEngineInit",
 			"WhitelistPlatforms": ["Win64", "Win32", "Linux"]
 		}
