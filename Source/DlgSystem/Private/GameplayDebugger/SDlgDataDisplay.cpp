@@ -12,7 +12,12 @@
 // #endif
 
 #include "DlgManager.h"
+#include "DlgContext.h"
 #include "SDlgDataPropertyValues.h"
+
+//////////////////////////////////////////////////////////////////////////
+DEFINE_LOG_CATEGORY(LogDlgSystemDataDisplay)
+//////////////////////////////////////////////////////////////////////////
 
 #define LOCTEXT_NAMESPACE "SDlgDataDisplay"
 
@@ -114,6 +119,11 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 	// Can't do anything without the world
 	if (World == nullptr)
 	{
+		UE_LOG(LogDlgSystemDataDisplay,
+			   Warning,
+			   TEXT("Failed to refresh SDlgDataDisplay tree. World is a null pointer. "
+			   		"Is the game running? "
+					"Did you setup the DlgSystem Console commands in your GameMode BeginPlay/StartPlay?"));
 		return;
 	}
 
@@ -274,10 +284,6 @@ TSharedRef<SWidget> SDlgDataDisplay::GetFilterTextBoxWidget()
 
 void SDlgDataDisplay::BuildTreeViewItem(FDlgDataDisplayTreeNodePtr Item)
 {
-	static int32 NumberCalls = 0;
-	NumberCalls++;
-	// check(NumberCalls < 30);
-
 	TWeakObjectPtr<AActor> Actor = Item->GetParentActor();
 	if (!Actor.IsValid())
 	{
@@ -291,7 +297,6 @@ void SDlgDataDisplay::BuildTreeViewItem(FDlgDataDisplayTreeNodePtr Item)
 		return;
 	}
 	TSharedPtr<FDlgDataDisplayActorProperties> ActorPropertiesValue = *ValuePtr;
-
 
 	if (Item->IsText())
 	{
@@ -418,8 +423,8 @@ TSharedRef<ITableRow> SDlgDataDisplay::HandleGenerateRow(FDlgDataDisplayTreeNode
 
 	// Default row content
 	TSharedPtr<STextBlock> DefaultTextBlock = SNew(STextBlock)
-			.Text(InItem->GetDisplayText())
-			.HighlightText(this, &Self::GetFilterText);
+		.Text(InItem->GetDisplayText())
+		.HighlightText(this, &Self::GetFilterText);
 
 	TSharedPtr<SWidget> RowContent = DefaultTextBlock;
 	TSharedPtr<SHorizontalBox> RowContainer;

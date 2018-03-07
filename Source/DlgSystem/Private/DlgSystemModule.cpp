@@ -74,14 +74,11 @@ void FDlgSystemModule::StartupModule()
 	// TODO move DlgStyle to Runtime + Move DialogueToolsCategory to Runtime module
 	DialogueDataSpawnEntry.SetGroup(WorkspaceMenu::GetMenuStructure().GetToolsCategory());
 #endif
-
-	// Register commands
-	RegisterConsoleCommands();
 }
 
 void FDlgSystemModule::ShutdownModule()
 {
-	// Unregister the console commands
+	// Unregister the console commands in case the user forgot to clear them
 	UnregisterConsoleCommands();
 
 	// Unregister the tab spawners
@@ -128,6 +125,9 @@ TSharedRef<SWidget> FDlgSystemModule::GetDialogueDataDisplayWindow(const TShared
 
 void FDlgSystemModule::RegisterConsoleCommands(AActor* InReferenceActor)
 {
+	// Unregister first to prevent double register of commands
+	UnregisterConsoleCommands();
+
 	ReferenceActor = InReferenceActor;
 	IConsoleManager& ConsoleManager = IConsoleManager::Get();
 	ConsoleCommands.Add(ConsoleManager.RegisterConsoleCommand(TEXT("Dlg.DataDisplay"),

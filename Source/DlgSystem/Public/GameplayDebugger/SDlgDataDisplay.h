@@ -8,6 +8,7 @@
 #include "DlgDataDisplayTreeNode.h"
 #include "DlgDataDisplayActorProperties.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogDlgSystemDataDisplay, Verbose, All);
 
 /**
  * Implements the Runtime Dialogue Data Display

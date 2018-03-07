@@ -75,7 +75,7 @@ namespace DetailsPanel
 		Property->SetMetaData(META_ClampMax, *MaxString);
 	}
 
-	/** Gets the Base GraphNode owner that belongs to this PropertyHandle. It could be an  Edge or a GraphNode */
+	/** Gets the Base GraphNode owner that belongs to this PropertyHandle. It could be an Edge or a GraphNode */
 	inline UDialogueGraphNode_Base* GetGraphNodeBaseFromPropertyHandle(const TSharedRef<IPropertyHandle> PropertyHandle)
 	{
 		TArray<UObject*> OuterObjects;
