@@ -98,6 +98,7 @@ public:
 	bool Modify(bool bAlwaysMarkDirty = true) override;
 
 	// Begin UEdGraphNode interface
+
 	/** Gets the name of this node, shown in title bar */
 	FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 
@@ -140,6 +141,7 @@ public:
 	void AutowireNewNode(UEdGraphPin* FromPin) override;
 
 	// Begin UDialogueGraphNode_Base interface
+
 	/** Checks whether an input connection can be added to this node */
 	bool CanHaveInputConnections() const override { return NodeIndex != INDEX_NONE && !IsRootNode(); }
 
@@ -166,9 +168,11 @@ public:
 #endif
 	}
 
-	// Begin own functions
 	/** Is this the undeletable root node */
 	virtual bool IsRootNode() const { return false; }
+
+
+	// Begin own functions
 
 	/** Is this an End Node? */
 	bool IsEndNode() const { return DialogueNode->IsA<UDlgNode_End>(); }
@@ -312,6 +316,15 @@ public:
 	/** Rearranges the children (edges, output pin, connections) based on the X location on the graph. */
 	void SortChildrenBasedOnXLocation();
 
+	/** Should we force hide this node? */
+	bool GetForceHideNode() const { return bForceHideNode; }
+
+	/** Forcefully hide/show this node and all edges that are coming into it. */
+	void SetForceHideNode(bool bHide) { bForceHideNode = bHide; }
+
+	/** Should this node be drawn? */
+	bool ShouldDrawNode() const { return !bForceHideNode; }
+
 	/** Helper constants to get the names of some properties. Used by the DlgSystemEditor module. */
 	static FName GetMemberNameDialogueNode() { return GET_MEMBER_NAME_CHECKED(UDialogueGraphNode, DialogueNode); }
 	static FName GetMemberNameNodeIndex() { return GET_MEMBER_NAME_CHECKED(UDialogueGraphNode, NodeIndex); }
@@ -363,4 +376,9 @@ protected:
 
 	/** Indicates the distance from the start node. This is only set after the graph is compiled. */
 	int32 NodeDepth = INDEX_NONE;
+
+	/**
+	 * Forcefully hide this node from the graph.
+	 */
+	bool bForceHideNode = false;
 };

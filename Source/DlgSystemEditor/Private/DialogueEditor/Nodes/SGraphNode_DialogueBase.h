@@ -39,6 +39,11 @@ public:
 	void SetOwner(const TSharedRef<SGraphPanel>& OwnerPanel) override;
 	// End SGraphNode Interface
 
+	// Begin own methods
+
+	/** Is the current node visible? */
+	virtual EVisibility GetNodeVisibility() const { return EVisibility::Visible; }
+
 protected:
 	// SGraphNode Interface
 	/**

@@ -336,13 +336,16 @@ void FDialogueEditor::InitDialogueEditor(const EToolkitMode::Type Mode,
 	ExtendMenu();
 	ExtendToolbar();
 	RegenerateMenusAndToolbars();
+
+	// Default show all nodes on editor open
+	OnCommandUnHideAllNodes();
 }
 
 void FDialogueEditor::CheckAll() const
 {
 #if DO_CHECK
 	check(DialogueBeingEdited);
-	UDialogueGraph* Graph = CastChecked<UDialogueGraph>(DialogueBeingEdited->GetGraph());
+	UDialogueGraph* Graph = GetDialogueGraph();
 	for (UEdGraphNode* GraphNode : Graph->Nodes)
 	{
 		check(GraphNode);
@@ -479,6 +482,13 @@ void FDialogueEditor::BindEditorCommands()
 	GraphEditorCommands->MapAction(FGenericCommands::Get().Paste,
 		FExecuteAction::CreateRaw(this, &Self::OnCommandPasteNodes),
 		FCanExecuteAction::CreateRaw(this, &Self::CanPasteNodes));
+
+	// Hide/Unhide nodes
+	GraphEditorCommands->MapAction(DialogueCommands.HideNodes,
+		FExecuteAction::CreateRaw(this, &Self::OnCommandHideSelectedNodes));
+
+	GraphEditorCommands->MapAction(DialogueCommands.UnHideAllNodes,
+		FExecuteAction::CreateRaw(this, &Self::OnCommandUnHideAllNodes));
 
 	// Toolikit/Toolbar commands/Menu Commands
 	// Undo Redo menu options
@@ -822,7 +832,6 @@ void FDialogueEditor::OnCommandCopySelectedNodes() const
 {
 	// Export the selected nodes and place the text on the clipboard
 	const TSet<UObject*>& SelectedNodes = GetSelectedNodes();
-
 	for (UObject* Object : SelectedNodes)
 	{
 		if (UEdGraphNode* Node = Cast<UEdGraphNode>(Object))
@@ -1007,6 +1016,30 @@ bool FDialogueEditor::CanPasteNodes() const
 	FPlatformApplicationMisc::ClipboardPaste(ClipboardContent);
 
 	return FEdGraphUtilities::CanImportNodesFromText(DialogueBeingEdited->GetGraph(), ClipboardContent);
+}
+
+void FDialogueEditor::OnCommandHideSelectedNodes()
+{
+	const TSet<UObject*>& SelectedNodes = GetSelectedNodes();
+	for (UObject* Object : SelectedNodes)
+	{
+		if (UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(Object))
+		{
+			if (!GraphNode->IsRootNode())
+			{
+				GraphNode->SetForceHideNode(true);
+			}
+		}
+	}
+}
+
+void FDialogueEditor::OnCommandUnHideAllNodes()
+{
+	UDialogueGraph* Graph = GetDialogueGraph();
+	for (UDialogueGraphNode* GraphNode : Graph->GetAllDialogueGraphNodes())
+	{
+		GraphNode->SetForceHideNode(false);
+	}
 }
 
 void FDialogueEditor::OnCommandDialogueReload() const

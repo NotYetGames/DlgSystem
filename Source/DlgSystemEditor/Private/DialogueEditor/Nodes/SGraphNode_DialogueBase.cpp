@@ -56,6 +56,9 @@ void SGraphNode_DialogueBase::UpdateGraphNode()
 	LeftNodeBox.Reset();
 	PinsNodeBox.Reset();
 	SAssignNew(PinsNodeBox, SVerticalBox);
+
+	// This Node visibility
+	SetVisibility(TAttribute<EVisibility>::Create(TAttribute<EVisibility>::FGetter::CreateSP(this, &Self::GetNodeVisibility)));
 }
 
 void SGraphNode_DialogueBase::SetOwner(const TSharedRef<SGraphPanel>& OwnerPanel)

@@ -54,6 +54,7 @@ public:
 	// End of SWidget interface
 
 	// Begin SNodePanel::SNode Interface
+
 	/** Populate the widgets array with any overlay widgets to render */
 	TArray<FOverlayWidgetInfo> GetOverlayWidgets(bool bSelected, const FVector2D& WidgetSize) const override;
 
@@ -62,9 +63,17 @@ public:
 	// End SNodePanel::SNode Interface
 
 	// Begin SGraphNode Interface
+
 	/** Update this GraphNode to match the data that it is observing */
 	void UpdateGraphNode() override;
 	// End SGraphNode Interface
+
+	// Begin SGraphNode_DialogueBase Interface
+	EVisibility GetNodeVisibility() const override
+	{
+		return DialogueGraphNode && DialogueGraphNode->ShouldDrawNode() ? EVisibility::Visible : EVisibility::Hidden;
+	}
+	// End SGraphNode_DialogueBase Interface
 
 protected:
 	// SGraphNode Interface

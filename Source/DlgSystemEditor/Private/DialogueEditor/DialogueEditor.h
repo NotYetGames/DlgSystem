@@ -247,6 +247,12 @@ private:
 	/** Whether we are able to paste from the clipboard */
 	bool CanPasteNodes() const;
 
+	/** Hide the selected nodes. */
+	void OnCommandHideSelectedNodes();
+
+	/** Unhide all nodes. */
+	void OnCommandUnHideAllNodes();
+
 	// Toolbar commands
 	/** Reloads the Dialogue from the file */
 	void OnCommandDialogueReload() const;

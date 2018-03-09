@@ -147,6 +147,15 @@ public:
 	/** Should this edge be drawn? */
 	bool ShouldDrawEdge() const
 	{
+		// If The parent or the child is hidden, we also hide this edge no matter the settings
+		if (HasInputPin() && HasOutputPin())
+		{
+			if (!GetParentNode()->ShouldDrawNode() || !GetChildNode()->ShouldDrawNode())
+			{
+				return false;
+			}
+		}
+
 		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 		if (Settings->bShowPrimarySecondaryEdges)
 		{
