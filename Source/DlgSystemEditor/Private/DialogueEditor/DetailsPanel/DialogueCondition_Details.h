@@ -55,17 +55,21 @@ private:
 	// Getters for the visibility of some properties
 	EVisibility GetParticipantNameVisibility() const
 	{
-		return ConditionType != EDlgConditionType::DlgConditionNodeVisited ? EVisibility::Visible : EVisibility::Hidden;
+		return (ConditionType != EDlgConditionType::DlgConditionNodeVisited && ConditionType != EDlgConditionType::DlgConditionHasSatisfiedChild)
+			   ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetCallbackNameVisibility() const
 	{
-		return ConditionType != EDlgConditionType::DlgConditionNodeVisited ? EVisibility::Visible : EVisibility::Hidden;
+		return (ConditionType != EDlgConditionType::DlgConditionNodeVisited && ConditionType != EDlgConditionType::DlgConditionHasSatisfiedChild)
+			   ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetIntValueVisibility() const
 	{
-		return ConditionType == EDlgConditionType::DlgConditionIntCall || ConditionType == EDlgConditionType::DlgConditionNodeVisited
+		return (ConditionType == EDlgConditionType::DlgConditionIntCall || 
+			    ConditionType == EDlgConditionType::DlgConditionNodeVisited ||
+			    ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild)
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
@@ -82,7 +86,8 @@ private:
 	EVisibility GetBoolValueVisibility() const
 	{
 		return ConditionType == EDlgConditionType::DlgConditionEventCall || ConditionType == EDlgConditionType::DlgConditionBoolCall
-			|| ConditionType == EDlgConditionType::DlgConditionNodeVisited || ConditionType == EDlgConditionType::DlgConditionNameCall ?
+			|| ConditionType == EDlgConditionType::DlgConditionNodeVisited || ConditionType == EDlgConditionType::DlgConditionNameCall
+			|| ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild ?
 			EVisibility::Visible : EVisibility::Hidden;
 	}
 

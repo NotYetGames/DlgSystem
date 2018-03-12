@@ -666,7 +666,8 @@ void FDialogueEditorUtilities::ReplaceReferencesToOldIndiciesWithNew(const TArra
 		for (int32 ConditionIndex = 0, ConditionNum = DialogueNode->GetNodeEnterConditions().Num(); ConditionIndex < ConditionNum; ConditionIndex++)
 		{
 			FDlgCondition* EnterCondition = DialogueNode->GetMutableEnterConditionAt(ConditionIndex);
-			if (EnterCondition->ConditionType == EDlgConditionType::DlgConditionNodeVisited)
+			if (EnterCondition->ConditionType == EDlgConditionType::DlgConditionNodeVisited || 
+				EnterCondition->ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild)
 			{
 				UpdateConditionIndex(EnterCondition);
 			}
@@ -680,7 +681,8 @@ void FDialogueEditorUtilities::ReplaceReferencesToOldIndiciesWithNew(const TArra
 
 			for (FDlgCondition& Condition : DialogueEdge->Conditions)
 			{
-				if (Condition.ConditionType == EDlgConditionType::DlgConditionNodeVisited)
+				if (Condition.ConditionType == EDlgConditionType::DlgConditionNodeVisited ||
+					Condition.ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild)
 				{
 					bModifiedConditions = bModifiedConditions || UpdateConditionIndex(&Condition);
 				}

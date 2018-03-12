@@ -148,6 +148,11 @@ bool UDlgNode::CheckNodeEnterConditions(UDlgContextInternal* DlgContext, TSet<UD
 	}
 
 	// Has a valid child?
+	return HasAnySatisfiedChild(DlgContext, AlreadyVisitedNodes);
+}
+
+bool UDlgNode::HasAnySatisfiedChild(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyVisitedNodes)
+{
 	for (const FDlgEdge& Edge : Children)
 	{
 		if (Edge.Evaluate(DlgContext, AlreadyVisitedNodes))

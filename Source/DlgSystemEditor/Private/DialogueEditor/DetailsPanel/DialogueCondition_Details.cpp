@@ -183,6 +183,15 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 		BoolValueToolTip = LOCTEXT("ConditionNodeVisited_BoolValueToolTip", "Should the node be visited? True/False.");
 		break;
 
+	case EDlgConditionType::DlgConditionHasSatisfiedChild:
+		DetailsPanel::SetNumericPropertyLimits<int32>(IntValuePropertyHandle, 0, Dialogue->GetNodes().Num() - 1);
+
+		IntValueDisplayName = LOCTEXT("ConditionHasSatisfiedChild_IntValueDisplayName", "Node Index");
+		IntValueToolTip = LOCTEXT("ConditionHasSatisfiedChild_IntValueToolTip", "Node index of the node we want to check");
+		BoolValueDisplayName = LOCTEXT("ConditionHasSatisfiedChild_BoolValueDisplayName", "Has?");
+		BoolValueToolTip = LOCTEXT("ConditionHasSatisfiedChild_BoolValueToolTip", "Should the node have satisfied child(ren)?");
+		break;
+
 	default:
 		checkNoEntry();
 	}

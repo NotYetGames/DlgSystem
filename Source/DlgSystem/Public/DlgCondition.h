@@ -31,7 +31,9 @@ enum class EDlgConditionType : uint8
 	/** A named condition call on the selected Participant */
 	DlgConditionEventCall	UMETA(DisplayName = "Check named condition"),
 	/** Status check of the selected node index */
-	DlgConditionNodeVisited UMETA(DisplayName = "Was node already visited")
+	DlgConditionNodeVisited UMETA(DisplayName = "Was node already visited"),
+	/** Checks if target node has any satisfied child */
+	DlgConditionHasSatisfiedChild UMETA(DisplayName = "Has satisfied child")
 };
 
 /**

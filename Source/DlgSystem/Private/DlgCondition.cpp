@@ -2,6 +2,7 @@
 #include "DlgCondition.h"
 #include "DlgSystemPrivatePCH.h"
 #include "DlgMemory.h"
+#include "DlgNode.h"
 #include "DlgContextInternal.h"
 
 #include "DlgDialogueParticipant.h"
@@ -74,6 +75,12 @@ bool FDlgCondition::Evaluate(UDlgContextInternal* DlgContext, UObject* DlgPartic
 			}
 
 			return DlgContext->WasNodeVisitedInThisContext(IntValue) == bBoolValue;
+		
+		case EDlgConditionType::DlgConditionHasSatisfiedChild:
+			{
+				UDlgNode* Node = DlgContext->GetNode(IntValue);
+				return Node != nullptr ? Node->HasAnySatisfiedChild(DlgContext, {}) == bBoolValue : false;
+			}
 
 		default:
 			checkNoEntry();

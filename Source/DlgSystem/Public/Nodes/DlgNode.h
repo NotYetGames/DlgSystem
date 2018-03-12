@@ -139,7 +139,8 @@ public:
 	virtual bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyEvaluated);
 
 	virtual bool CheckNodeEnterConditions(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyVisitedNodes);
-
+	virtual bool HasAnySatisfiedChild(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyVisitedNodes);
+	
 	virtual bool OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext);
 
 	// Getters/Setters:
