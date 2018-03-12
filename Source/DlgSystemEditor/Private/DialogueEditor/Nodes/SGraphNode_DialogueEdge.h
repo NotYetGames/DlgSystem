@@ -22,6 +22,7 @@ public:
 	void Construct(const FArguments& InArgs, UDialogueGraphNode_Edge* InNode);
 
 	// Begin SWidget interface
+
 	/**
 	 * The system will use this event to notify a widget that the cursor has entered it. This event is uses a custom bubble strategy.
 	 *
@@ -36,9 +37,11 @@ public:
 	 * @param MouseEvent Information about the input event
 	 */
 	void OnMouseLeave(const FPointerEvent& MouseEvent) override;
+
 	// End SWidget interface
 
 	// Begin SNodePanel::SNode Interface
+
 	/**
 	 * @param NewPosition	The Node should be relocated to this position in the graph panel
 	 * @param NodeFilter		Set of nodes to prevent movement on, after moving successfully a node is added to this set.
@@ -60,6 +63,13 @@ public:
 	void UpdateGraphNode() override;
 	// End SGraphNode Interface
 
+	// Begin SGraphNode_DialogueBase Interface
+	EVisibility GetNodeVisibility() const override
+	{
+		return DialogueGraphNode_Edge && DialogueGraphNode_Edge->ShouldDrawEdge() ? EVisibility::Visible : EVisibility::Hidden;
+	}
+	// End SGraphNode_DialogueBase Interface
+
 	// Begin own functions
 	/** Calculate position for multiple nodes to be placed between a start and end point, by providing this nodes index and max expected nodes */
 	void PositionBetweenTwoNodesWithOffset(const FGeometry& StartGeom, const FGeometry& EndGeom, int32 NodeIndex, int32 MaxNodes) const;
@@ -67,11 +77,6 @@ public:
 	/** Gets the transition color of this node and wire. */
 	FSlateColor GetTransitionColor() const { return DialogueGraphNode_Edge->GetEdgeColor(IsHovered()); }
 
-	/** Is the current node visible? */
-	EVisibility GetNodeVisibility() const
-	{
-		return DialogueGraphNode_Edge->ShouldDrawEdge() ? EVisibility::SelfHitTestInvisible : EVisibility::Collapsed;
-	}
 	// End own functions
 
 protected:

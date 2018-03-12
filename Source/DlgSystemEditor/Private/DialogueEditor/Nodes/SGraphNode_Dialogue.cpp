@@ -273,7 +273,7 @@ TSharedRef<SWidget> SGraphNode_DialogueNode::GetNodeBodyWidget()
 		.HAlign(HAlign_Center)
 		.VAlign(VAlign_Center)
 		.Padding(1.0f)
-		.Visibility(EVisibility::SelfHitTestInvisible)
+		.Visibility(EVisibility::Visible)
 		[
 			// Main Content
 			SNew(SVerticalBox)

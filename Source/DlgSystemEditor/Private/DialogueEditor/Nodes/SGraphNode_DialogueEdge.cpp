@@ -114,9 +114,6 @@ void SGraphNode_DialogueEdge::UpdateGraphNode()
 {
 	Super::UpdateGraphNode();
 
-	// This Node visibility
-	SetVisibility(TAttribute<EVisibility>::Create(TAttribute<EVisibility>::FGetter::CreateSP(this, &Self::GetNodeVisibility)));
-
 	// Fit to content
 	constexpr int WidthOverride = 16;
 	constexpr int HeightOverride = 16;

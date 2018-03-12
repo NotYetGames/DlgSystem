@@ -46,4 +46,10 @@ public:
 
 	/** Open find in current Dialogue tab. */
 	TSharedPtr<FUICommandInfo> FindInDialogue;
+
+	/** Hide Selected Node */
+	TSharedPtr<FUICommandInfo> HideNodes;
+
+	/** UnHide all nodes */
+	TSharedPtr<FUICommandInfo> UnHideAllNodes;
 };
