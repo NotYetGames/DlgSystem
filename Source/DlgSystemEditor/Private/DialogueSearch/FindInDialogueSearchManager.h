@@ -41,48 +41,48 @@ public:
 	 * Searches for InSearchString in the InDlgCondition. Adds the result as a child in OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QueryDlgCondition(const FString& InSearchString, const FDlgCondition& InDlgCondition,
+	bool QueryDlgCondition(const FDialogueSearchFilter& SearchFilter, const FDlgCondition& InDlgCondition,
 						FFindInDialoguesResultPtr OutParentNode);
 
 	/**
 	 * Searches for InSearchString in the InDlgEvent. Adds the result as a child in OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QueryDlgEvent(const FString& InSearchString, const FDlgEvent& InDlgEvent,
+	bool QueryDlgEvent(const FDialogueSearchFilter& SearchFilter, const FDlgEvent& InDlgEvent,
 						FFindInDialoguesResultPtr OutParentNode);
 
 	/**
 	 * Searches for InSearchString in the InDlgEdge. Adds the result as a child in OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QueryDlgEdge(const FString& InSearchString, const FDlgEdge& InDlgEdge,
+	bool QueryDlgEdge(const FDialogueSearchFilter& SearchFilter, const FDlgEdge& InDlgEdge,
 						FFindInDialoguesResultPtr OutParentNode);
 
 	/**
 	 * Searches for InSearchString in the InGraphNode. Adds the result as a child in OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QueryGraphNode(const FString& InSearchString, UDialogueGraphNode* InGraphNode,
+	bool QueryGraphNode(const FDialogueSearchFilter& SearchFilter, UDialogueGraphNode* InGraphNode,
 						FFindInDialoguesResultPtr OutParentNode);
 
 	/**
 	 * Searches for InSearchString in the InEdgeNode. Adds the result as a child in OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QueryEdgeNode(const FString& InSearchString, UDialogueGraphNode_Edge* InEdgeNode,
+	bool QueryEdgeNode(const FDialogueSearchFilter& SearchFilter, UDialogueGraphNode_Edge* InEdgeNode,
 						FFindInDialoguesResultPtr OutParentNode);
 
 	/**
 	 * Searches for InSearchString in the InDialogue. Adds the result as a child of OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QuerySingleDialogue(const FString& InSearchString,
+	bool QuerySingleDialogue(const FDialogueSearchFilter& SearchFilter,
 							const UDlgDialogue* InDialogue, FFindInDialoguesResultPtr OutParentNode);
 
 	/**
 	 * Searches for InSearchString in all Dialogues. Adds the result as children of OutParentNode.
 	 */
-	void QueryAllDialogues(const FString& InSearchString, FFindInDialoguesResultPtr OutParentNode);
+	void QueryAllDialogues(const FDialogueSearchFilter& SearchFilter, FFindInDialoguesResultPtr OutParentNode);
 
 	/** Determines the global find results tab label */
 	FText GetGlobalFindResultsTabLabel(const int32 TabIdx);

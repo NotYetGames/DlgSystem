@@ -13,6 +13,20 @@ class UDialogueGraphNode_Edge;
 
 typedef TSharedPtr<FFindInDialoguesResult> FFindInDialoguesResultPtr;
 
+// Filter used when searching for Dialogue Data
+struct FDialogueSearchFilter
+{
+public:
+	bool IsEmptyFilter() const { return SearchString.IsEmpty() && bIncludeIndicesInSearch == false; }
+
+public:
+	/** Search term that the search items must match*/
+	FString SearchString;
+
+	/** Should we include node indices in search results? */
+	bool bIncludeIndicesInSearch = false;
+};
+
 /* Base class that matched the search results. When used by itself it is a simple text node. */
 class FFindInDialoguesResult : public FDlgTreeViewNode<FFindInDialoguesResult>
 {

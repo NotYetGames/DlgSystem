@@ -32,15 +32,15 @@ public:
 	~SFindInDialogues();
 
 	/** Focuses this widget's search box, and changes the mode as well, and optionally the search terms */
-	void FocusForUse(const bool bSetFindWithinDialogue, const FString& NewSearchTerms = FString(), const bool bSelectFirstResult = false);
+	void FocusForUse(const bool bSetFindWithinDialogue, const FDialogueSearchFilter& CurrentFilter = FDialogueSearchFilter(), const bool bSelectFirstResult = false);
 
 	/**
 	 * Submits a search query
 	 *
-	 * @param InSearchString						String to search for
-	 * @param bInIsFindWithinDialogue				TRUE if searching within the current Dialogue only
+	 * @param SearchFilter						Filter for search
+	 * @param bInIsFindWithinDialogue			TRUE if searching within the current Dialogue only
 	 */
-	void MakeSearchQuery(const FString& InSearchString, const bool bInIsFindWithinDialogue);
+	void MakeSearchQuery(const FDialogueSearchFilter& SearchFilter, const bool bInIsFindWithinDialogue);
 
 	/** If this is a global find results widget, returns the host tab's unique ID. Otherwise, returns NAME_None. */
 	FName GetHostTabId() const;
@@ -85,6 +85,9 @@ private:
 	/** Callback to build the context menu when right clicking in the tree */
 	TSharedPtr<SWidget> HandleContextMenuOpening();
 
+	/** Fills in the filter menu. */
+	TSharedRef<SWidget> FillFilterEntries();
+
 private:
 	/** Pointer back to the Dialogue editor that owns us */
 	TWeakPtr<FDialogueEditor> DialogueEditorPtr;
@@ -107,8 +110,8 @@ private:
 	/* The string to highlight in the results */
 	FText HighlightText;
 
-	/* The string to search for */
-	FString	SearchValue;
+	/** The current searach filter */
+	FDialogueSearchFilter CurrentFilter;
 
 	/** Should we search within the current Dialogue only (rather than all Dialogues) */
 	bool bIsInFindWithinDialogueMode;

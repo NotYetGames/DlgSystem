@@ -55,6 +55,41 @@ void SFindInDialogues::Construct(const FArguments& InArgs, TSharedPtr<FDialogueE
 				.Visibility(InArgs._bHideSearchBar? EVisibility::Collapsed : EVisibility::Visible)
 			]
 
+			// Filter Options
+			+SHorizontalBox::Slot()
+			.AutoWidth()
+			.Padding(2.0f, 2.0f)
+			[
+				SNew(SComboButton)
+				.ComboButtonStyle(FEditorStyle::Get(), "GenericFilters.ComboButtonStyle")
+				.ForegroundColor(FLinearColor::White)
+				.ContentPadding(0)
+				.ToolTipText(LOCTEXT("Filters_Tooltip", "Filter options for the Dialogue Search."))
+				.OnGetMenuContent(this, &Self::FillFilterEntries)
+				.HasDownArrow(true)
+				.ContentPadding(FMargin(1, 0))
+				.ButtonContent()
+				[
+					SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					[
+						SNew(STextBlock)
+						.TextStyle(FEditorStyle::Get(), "GenericFilters.TextStyle")
+						.Font(FEditorStyle::Get().GetFontStyle("FontAwesome.9"))
+						.Text(FText::FromString(FString(TEXT("\xf0b0"))) /*fa-filter*/)
+					]
+					+SHorizontalBox::Slot()
+					.AutoWidth()
+					.Padding(2, 0, 0, 0)
+					[
+						SNew(STextBlock)
+						.TextStyle(FEditorStyle::Get(), "GenericFilters.TextStyle")
+						.Text(LOCTEXT("Filters", "Filters"))
+					]
+				]
+			]
+
 			// Change find mode to global
 			+SHorizontalBox::Slot()
 			.Padding(4.f, 0.f, 2.f, 0.f)
@@ -114,7 +149,7 @@ SFindInDialogues::~SFindInDialogues()
 	// TODO clear all cache for this
 }
 
-void SFindInDialogues::FocusForUse(const bool bSetFindWithinDialogue, const FString& NewSearchTerms, const bool bSelectFirstResult)
+void SFindInDialogues::FocusForUse(const bool bSetFindWithinDialogue, const FDialogueSearchFilter& CurrentFilter, const bool bSelectFirstResult)
 {
 	// NOTE: Careful, GeneratePathToWidget can be reentrant in that it can call visibility delegates and such
 	FWidgetPath FilterTextBoxWidgetPath;
@@ -127,10 +162,10 @@ void SFindInDialogues::FocusForUse(const bool bSetFindWithinDialogue, const FStr
 	bIsInFindWithinDialogueMode = bSetFindWithinDialogue;
 
 	// Set the new search terms
-	if (!NewSearchTerms.IsEmpty())
+	if (!CurrentFilter.SearchString.IsEmpty())
 	{
-		SearchTextBoxWidget->SetText(FText::FromString(NewSearchTerms));
-		MakeSearchQuery(SearchValue, bIsInFindWithinDialogueMode);
+		SearchTextBoxWidget->SetText(FText::FromString(CurrentFilter.SearchString));
+		MakeSearchQuery(CurrentFilter, bIsInFindWithinDialogueMode);
 
 		// Select the first result
 		if (bSelectFirstResult && ItemsFound.Num())
@@ -148,10 +183,9 @@ void SFindInDialogues::FocusForUse(const bool bSetFindWithinDialogue, const FStr
 	}
 }
 
-
-void SFindInDialogues::MakeSearchQuery(const FString& InSearchString, const bool bInIsFindWithinDialogue)
+void SFindInDialogues::MakeSearchQuery(const FDialogueSearchFilter& SearchFilter, const bool bInIsFindWithinDialogue)
 {
-	SearchTextBoxWidget->SetText(FText::FromString(InSearchString));
+	SearchTextBoxWidget->SetText(FText::FromString(SearchFilter.SearchString));
 
 	// Reset the scroll to the top
 	if (ItemsFound.Num())
@@ -161,12 +195,12 @@ void SFindInDialogues::MakeSearchQuery(const FString& InSearchString, const bool
 	ItemsFound.Empty();
 
 	// Nothing to search for :(
-	if (InSearchString.IsEmpty())
+	if (SearchFilter.SearchString.IsEmpty())
 	{
 		return;
 	}
 
-	HighlightText = FText::FromString(InSearchString);
+	HighlightText = FText::FromString(SearchFilter.SearchString);
 	RootSearchResult = MakeShareable(new FFindInDialoguesRootNode);
 
 	// TODO use threads extend FRunnable
@@ -176,7 +210,7 @@ void SFindInDialogues::MakeSearchQuery(const FString& InSearchString, const bool
 		if (DialogueEditorPtr.IsValid())
 		{
 			FFindInDialogueSearchManager::Get()
-					->QuerySingleDialogue(InSearchString, DialogueEditorPtr.Pin()->GetDialogueBeingEdited(), RootSearchResult);
+					->QuerySingleDialogue(SearchFilter, DialogueEditorPtr.Pin()->GetDialogueBeingEdited(), RootSearchResult);
 
 			// Do now show the Dialogue in the search results.
 			const TArray<FFindInDialoguesResultPtr>& Children = RootSearchResult->GetChildren();
@@ -193,7 +227,7 @@ void SFindInDialogues::MakeSearchQuery(const FString& InSearchString, const bool
 	else
 	{
 		// Global
-		FFindInDialogueSearchManager::Get()->QueryAllDialogues(InSearchString, RootSearchResult);
+		FFindInDialogueSearchManager::Get()->QueryAllDialogues(SearchFilter, RootSearchResult);
 	}
 
 	ItemsFound = RootSearchResult->GetChildren();
@@ -241,14 +275,15 @@ void SFindInDialogues::HandleHostTabClosed(TSharedRef<SDockTab> DockTab)
 
 void SFindInDialogues::HandleSearchTextChanged(const FText& Text)
 {
-	SearchValue = Text.ToString();
+	CurrentFilter.SearchString = Text.ToString();
 }
 
 void SFindInDialogues::HandleSearchTextCommitted(const FText& Text, ETextCommit::Type CommitType)
 {
 	if (CommitType == ETextCommit::OnEnter)
 	{
-		MakeSearchQuery(SearchValue, bIsInFindWithinDialogueMode);
+		CurrentFilter.SearchString = Text.ToString();
+		MakeSearchQuery(CurrentFilter, bIsInFindWithinDialogueMode);
 	}
 }
 
@@ -257,7 +292,7 @@ FReply SFindInDialogues::HandleOpenGlobalFindResults()
 	TSharedPtr<SFindInDialogues> GlobalFindResults = FFindInDialogueSearchManager::Get()->GetGlobalFindResults();
 	if (GlobalFindResults.IsValid())
 	{
-		GlobalFindResults->FocusForUse(false, SearchValue, true);
+		GlobalFindResults->FocusForUse(false, CurrentFilter, true);
 	}
 
 	return FReply::Handled();
@@ -366,7 +401,6 @@ TSharedRef<ITableRow> SFindInDialogues::HandleGenerateRow(FFindInDialoguesResult
 				SNew(STextBlock)
 				.Text(CommentText)
 				.ColorAndOpacity(FLinearColor::Yellow)
-				.HighlightText(HighlightText)
 			]
 		];
 }
@@ -381,6 +415,32 @@ TSharedPtr<SWidget> SFindInDialogues::HandleContextMenuOpening()
 		MenuBuilder.AddMenuEntry(FGenericCommands::Get().SelectAll);
 		MenuBuilder.AddMenuEntry(FGenericCommands::Get().Copy);
 	}
+
+	return MenuBuilder.MakeWidget();
+}
+
+TSharedRef<SWidget> SFindInDialogues::FillFilterEntries()
+{
+	FMenuBuilder MenuBuilder(true, nullptr);
+	MenuBuilder.AddMenuEntry(
+		LOCTEXT("IncludeIndices", "Include Indices in search"),
+		LOCTEXT("IncludeIndices_ToolTip", "Include indices of nodes in the search result"),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]()
+			{
+				CurrentFilter.bIncludeIndicesInSearch = !CurrentFilter.bIncludeIndicesInSearch;
+				MakeSearchQuery(CurrentFilter, bIsInFindWithinDialogueMode);
+			}),
+			FCanExecuteAction(),
+			FIsActionChecked::CreateLambda([this]() -> bool
+			{
+				return CurrentFilter.bIncludeIndicesInSearch;
+			})
+		),
+		NAME_None,
+		EUserInterfaceActionType::ToggleButton
+	);
 
 	return MenuBuilder.MakeWidget();
 }

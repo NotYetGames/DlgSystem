@@ -229,7 +229,9 @@ void FDialogueEditor::SummonSearchUI(bool bSetFindWithinDialogue, FString NewSea
 
 	if (FindResultsToUse.IsValid())
 	{
-		FindResultsToUse->FocusForUse(bSetFindWithinDialogue, NewSearchTerms, bSelectFirstResult);
+		FDialogueSearchFilter Filter;
+		Filter.SearchString = NewSearchTerms;
+		FindResultsToUse->FocusForUse(bSetFindWithinDialogue, Filter, bSelectFirstResult);
 	}
 }
 
