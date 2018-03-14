@@ -57,8 +57,9 @@ public:
 
 	/**
 	 * Loads all dialogues from the filesystem into memory
+	 * @return number of loaded dialogues
 	 */
-	static void LoadAllDialoguesIntoMemory();
+	static int32 LoadAllDialoguesIntoMemory();
 
 	/** Gets all loaded dialogues from memory. LoadAllDialoguesIntoMemory must be called before this */
 	static TArray<UDlgDialogue*> GetAllDialoguesFromMemory()

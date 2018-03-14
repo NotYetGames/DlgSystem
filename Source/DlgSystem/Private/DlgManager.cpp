@@ -114,7 +114,7 @@ UDlgContext* UDlgManager::StartDialogue4(UDlgDialogue* Dialogue, UObject* Partic
 	return StartDialogue(Dialogue, Participants);
 }
 
-void UDlgManager::LoadAllDialoguesIntoMemory()
+int32 UDlgManager::LoadAllDialoguesIntoMemory()
 {
 	// NOTE: All paths must NOT have the forward slash "/" at the end.
 	// If they do, then this won't load Dialogues that are located in the Content root directory
@@ -134,8 +134,9 @@ void UDlgManager::LoadAllDialoguesIntoMemory()
 	}
 
 	ObjectLibrary->LoadAssetDataFromPaths(PathsToSeach);
-	ObjectLibrary->LoadAssetsFromAssetData();
+	const int32 Count = ObjectLibrary->LoadAssetsFromAssetData();
 	ObjectLibrary->RemoveFromRoot();
+	return Count;
 }
 
 TArray<UDlgDialogue*> UDlgManager::GetDialoguesWithDuplicateGuid()

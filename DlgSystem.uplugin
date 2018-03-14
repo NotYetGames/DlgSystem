@@ -24,7 +24,7 @@
 		{
 			"Name": "DlgSystemEditor",
 			"Type": "Developer",
-			"LoadingPhase": "PostEngineInit",
+			"LoadingPhase": "PostDefault",
 			"WhitelistPlatforms": ["Win64", "Win32", "Linux"]
 		}
 	]

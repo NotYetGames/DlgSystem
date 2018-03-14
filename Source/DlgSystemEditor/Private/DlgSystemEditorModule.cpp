@@ -56,7 +56,8 @@ FDlgSystemEditorModule::FDlgSystemEditorModule() : DlgSystemAssetCategoryBit(EAs
 void FDlgSystemEditorModule::StartupModule()
 {
 	UE_LOG(LogDlgSystemEditor, Verbose, TEXT("Started DlgSystemEditorModule"));
-	UDlgManager::LoadAllDialoguesIntoMemory();
+	const int32 NumLoadedDialogues = UDlgManager::LoadAllDialoguesIntoMemory();
+	UE_LOG(LogDlgSystemEditor, Verbose, TEXT("UDlgManager::LoadAllDialoguesIntoMemory loaded %d Dialogues into Memory"), NumLoadedDialogues);
 
 	// Try to fix duplicate GUID
 	// Can happen for one of the following reasons:
@@ -289,6 +290,12 @@ void FDlgSystemEditorModule::HandleOnSaveAllDialogues()
 
 void FDlgSystemEditorModule::ExtendMenu()
 {
+	// Running in game mode (standalone game) exit as we can't get the LevelEditorModule.
+	if (IsRunningGame())
+	{
+		return;
+	}
+
 	TSharedRef<FExtender> FileMenuExtender(new FExtender);
 
 	// Fill after the File->FileLoadAndSave
