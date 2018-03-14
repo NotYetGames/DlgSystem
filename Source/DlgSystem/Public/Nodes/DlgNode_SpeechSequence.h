@@ -51,7 +51,7 @@ class DLGSYSTEM_API UDlgNode_SpeechSequence : public UDlgNode
 public:
 	// Begin UObject Interface.
 	/** @return a one line description of an object. */
-	FString GetDesc()
+	FString GetDesc() override
 	{
 		return TEXT("Sequence of speeches - each can have a different speaker independently from the node owner.\nThe node stays active and proceeds one step in the SpeechSequence (internal) array until everyone said everything.");
 	}

@@ -30,7 +30,7 @@ public:
 	UDlgNode_Selector() { bCheckChildrenOnEvaluation = true; }
 
 	/** @return a one line description of an object. */
-	FString GetDesc()
+	FString GetDesc() override
 	{
 		switch (SelectorType)
 		{

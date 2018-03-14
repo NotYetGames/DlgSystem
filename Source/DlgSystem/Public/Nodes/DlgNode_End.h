@@ -20,11 +20,9 @@ class DLGSYSTEM_API UDlgNode_End : public UDlgNode
 
 public:
 	// Begin UObject Interface.
+
 	/** @return a one line description of an object. */
-	FString GetDesc()
-	{
-		return TEXT("Node ending the Dialogue.\nDoes not have text, if it is entered the Dialogue is over.\nEvents and enter conditions are taken into account.");
-	}
+	FString GetDesc() override;
 
 	// Begin UDlgNode Interface.
 	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyEvaluated) override { return false; }

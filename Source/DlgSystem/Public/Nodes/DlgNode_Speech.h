@@ -17,7 +17,7 @@ class DLGSYSTEM_API UDlgNode_Speech : public UDlgNode
 
 public:
 	// Begin UObject Interface.
-	FString GetDesc()
+	FString GetDesc() override
 	{
 		if (bIsVirtualParent)
 			return TEXT("Virtual Parent Node. Acts like a fake parent (proxy) to other child nodes. (aka makes it get the grandchildren)\nOn revaluate children, it does not get the direct children but the children of the first satisfied direct child node (grandchildren).\nIt should have at least one satisified child otherwise the Dialogue is terminated.");
