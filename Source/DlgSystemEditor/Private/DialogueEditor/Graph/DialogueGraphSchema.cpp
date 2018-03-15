@@ -17,8 +17,8 @@
 #define LOCTEXT_NAMESPACE "DlgDialogueGraphSchema"
 
 // Initialize static properties
-const FString UDialogueGraphSchema::PIN_CATEGORY_Input(TEXT("ParentInputs"));
-const FString UDialogueGraphSchema::PIN_CATEGORY_Output(TEXT("ChildOutputs"));
+const FName UDialogueGraphSchema::PIN_CATEGORY_Input(TEXT("ParentInputs"));
+const FName UDialogueGraphSchema::PIN_CATEGORY_Output(TEXT("ChildOutputs"));
 
 const FText UDialogueGraphSchema::NODE_CATEGORY_Dialogue(LOCTEXT("DialogueNodeAction", "Dialogue Node"));
 const FText UDialogueGraphSchema::NODE_CATEGORY_Graph(LOCTEXT("GraphAction", "Graph"));
@@ -319,7 +319,7 @@ void UDialogueGraphSchema::BreakPinLinks(UEdGraphPin& TargetPin, bool bSendsNode
 	}
 }
 
-void UDialogueGraphSchema::BreakSinglePinLink(UEdGraphPin* SourcePin, UEdGraphPin* TargetPin)
+void UDialogueGraphSchema::BreakSinglePinLink(UEdGraphPin* SourcePin, UEdGraphPin* TargetPin) const
 {
 	const FScopedTransaction Transaction(LOCTEXT("GraphEd_BreakSinglePinLink", "Dialogue Editor: Break Pin Link"));
 	// Modify() is called in BreakLinkTo

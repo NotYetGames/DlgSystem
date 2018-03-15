@@ -1,6 +1,6 @@
 # DlgSystem (Dialogue System) Plugin
 
-Branch Unreal version: `4.18`
+Branch Unreal version: `4.19`
 
 ## Features:
 

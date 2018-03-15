@@ -65,7 +65,7 @@ private:
 			*GraphNode->GetNodeTitle(ENodeTitleType::ListView).ToString(),
 			*GraphNode->GetPathName(),
 			Pin->Direction == EEdGraphPinDirection::EGPD_Input ? TEXT("input") : TEXT("output"),
-			Pin->PinFriendlyName.IsEmpty() ? *Pin->PinName : *Pin->PinFriendlyName.ToString(),
+			Pin->PinFriendlyName.IsEmpty() ? *Pin->PinName.ToString() : *Pin->PinFriendlyName.ToString(),
 			Pin->GetOuter() ? *Pin->GetOuter()->GetClass()->GetName() : TEXT("UNKNOWN"),
 			Pin->GetOuter() ? *Pin->GetOuter()->GetPathName() : TEXT("NULL"));
 	}

@@ -48,8 +48,8 @@ public:
 
 	// UK2Node_Switch Interface
 	void AddPinToSwitchNode() override;
-	FString GetUniquePinName() override;
-	FString GetPinNameGivenIndex(int32 Index) override;
+	FName GetUniquePinName() override;
+	FName GetPinNameGivenIndex(int32 Index) const override;
 	FEdGraphPinType GetPinType() const override;
 	void RemovePinFromSwitchNode(UEdGraphPin* TargetPin) override;
 	bool CanRemoveExecutionPin(UEdGraphPin* TargetPin) const override;
