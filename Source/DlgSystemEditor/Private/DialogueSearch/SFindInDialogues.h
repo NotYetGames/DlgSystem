@@ -32,7 +32,7 @@ public:
 	~SFindInDialogues();
 
 	/** Focuses this widget's search box, and changes the mode as well, and optionally the search terms */
-	void FocusForUse(const bool bSetFindWithinDialogue, const FDialogueSearchFilter& CurrentFilter = FDialogueSearchFilter(), const bool bSelectFirstResult = false);
+	void FocusForUse(const bool bSetFindWithinDialogue, const FDialogueSearchFilter& SearchFilter = FDialogueSearchFilter(), const bool bSelectFirstResult = false);
 
 	/**
 	 * Submits a search query

@@ -149,7 +149,7 @@ SFindInDialogues::~SFindInDialogues()
 	// TODO clear all cache for this
 }
 
-void SFindInDialogues::FocusForUse(const bool bSetFindWithinDialogue, const FDialogueSearchFilter& CurrentFilter, const bool bSelectFirstResult)
+void SFindInDialogues::FocusForUse(const bool bSetFindWithinDialogue, const FDialogueSearchFilter& SearchFilter, const bool bSelectFirstResult)
 {
 	// NOTE: Careful, GeneratePathToWidget can be reentrant in that it can call visibility delegates and such
 	FWidgetPath FilterTextBoxWidgetPath;
@@ -162,10 +162,10 @@ void SFindInDialogues::FocusForUse(const bool bSetFindWithinDialogue, const FDia
 	bIsInFindWithinDialogueMode = bSetFindWithinDialogue;
 
 	// Set the new search terms
-	if (!CurrentFilter.SearchString.IsEmpty())
+	if (!SearchFilter.SearchString.IsEmpty())
 	{
-		SearchTextBoxWidget->SetText(FText::FromString(CurrentFilter.SearchString));
-		MakeSearchQuery(CurrentFilter, bIsInFindWithinDialogueMode);
+		SearchTextBoxWidget->SetText(FText::FromString(SearchFilter.SearchString));
+		MakeSearchQuery(SearchFilter, bIsInFindWithinDialogueMode);
 
 		// Select the first result
 		if (bSelectFirstResult && ItemsFound.Num())
