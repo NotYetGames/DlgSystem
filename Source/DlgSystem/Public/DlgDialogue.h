@@ -44,27 +44,27 @@ struct FDlgParticipantData
 	GENERATED_USTRUCT_BODY()
 
 	/** FName based conditions (aka conditions of type DlgConditionEventCall). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
 	TSet<FName> Conditions;
 
 	/** FName based events (aka events of type EDlgEventType) */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
 	TSet<FName> Events;
 
 	/** Floats both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
 	TSet<FName> FloatVariableNames;
 
 	/** Integers both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
 	TSet<FName> IntVariableNames;
 
 	/** Booleans both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
 	TSet<FName> BoolVariableNames;
 
 	/** Names both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
 	TSet<FName> NameVariableNames;
 };
 
@@ -424,18 +424,18 @@ private:
 	int32 DlgVersion = FDlgDialogueObjectVersion::LatestVersion;
 
 	/** The name of the dialog, only used for reference in the text file, as this must always match the .uasset file name and .dlg file name */
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = DlgData)
 	FName DlgName;
 
 	/** The Unique identifier for each dialogue. This is used to uniquely identify a Dialogue, instead of it's name or path. Much more safer. */
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = DlgData)
 	FGuid DlgGuid;
 
 	/** Gathered data about events/conditions for each participant (for bp nodes, suggestions, etc.) */
-	UPROPERTY(VisibleAnywhere, Meta = (DlgNoExport))
+	UPROPERTY(VisibleAnywhere, Category = DlgData, Meta = (DlgNoExport))
 	TMap<FName, FDlgParticipantData> DlgData;
 
-	UPROPERTY(VisibleAnywhere, Meta = (DlgNoExport))
+	UPROPERTY(VisibleAnywhere, Category = DlgData, Meta = (DlgNoExport))
 	TSet<FName> DlgSpeakerStates;
 
 	/** Root node, Dialogue is started from the first child with satisfied condition (like the SelectorFirst node) */
@@ -446,7 +446,7 @@ private:
 	 * The new list of all nodes that belong to this Dialogue. Each nodes has children (edges) that have indices that point
 	 * to other nodes in this array.
 	 */
-	UPROPERTY(VisibleAnywhere, EditFixedSize, Instanced, Meta = (DlgWriteIndex))
+	UPROPERTY(VisibleAnywhere, EditFixedSize, Instanced, Category = DlgData, Meta = (DlgWriteIndex))
 	TArray<UDlgNode*> Nodes;
 
 	// Useful for syncing on the first run with the text file.

@@ -14,11 +14,11 @@ struct FDlgSpeechSequenceEntry
 
 public:
 	/** The Participant Name (speaker) associated with this speech entry. */
-	UPROPERTY(EditAnywhere, Meta = (DisplayName = "Participant Name"))
+	UPROPERTY(EditAnywhere, Category = DlgNodeData, Meta = (DisplayName = "Participant Name"))
 	FName Speaker;
 
 	/** Text that will appear when this node participant name speaks to someone else. */
-	UPROPERTY(EditAnywhere, Meta = (MultiLine = true))
+	UPROPERTY(EditAnywhere, Category = DlgNodeData, Meta = (MultiLine = true))
 	FText Text;
 
 	/** Voice attached to the entry. The Sound Wave variant. */
@@ -34,7 +34,7 @@ public:
 	FName SpeakerState;
 
 	/** Text that will appear when you want to continue down this edge to the next conversation. Usually "Next". */
-	UPROPERTY(EditAnywhere, Meta = (MultiLine = true))
+	UPROPERTY(EditAnywhere, Category = DlgNodeData, Meta = (MultiLine = true))
 	FText EdgeText = FText::FromString("Next");
 };
 

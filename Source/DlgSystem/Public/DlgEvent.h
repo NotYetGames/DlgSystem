@@ -39,35 +39,35 @@ public:
 public:
 
 	/** Name of the participant (speaker) the event is called on. */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgEventData)
 	FName ParticipantName;
 
 	/** Type of the event, can be a simple event or a call to modify a bool/int/float variable */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgEventData)
 	EDlgEventType EventType;
 
 	/** Name of the relevant variable or event */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgEventData)
 	FName EventName;
 
 	/** The value the participant gets */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgEventData)
 	int32 IntValue;
 
 	/** The value the participant gets */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgEventData)
 	float FloatValue;
 
 	/** The value the participant gets */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgEventData)
 	FName NameValue;
 
 	/** Weather to add the value to the existing one, or simply override it  */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgEventData)
 	bool bDelta;
 
 	/** The value the participant gets */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgEventData)
 	bool bValue;
 
 public:
