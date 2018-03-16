@@ -16,6 +16,7 @@ Branch Unreal version: `4.18`
     - Customized blueprint nodes to handle certain events and conditions in Blueprint easily
     - Settings panel in Editor Preferences to modify the layout
     - Option to import from and export to plain text formats (e.g. json)
+    - Real time display/edit functionality of the Dialogue runtime data.
 
 Not yet convinced? Have you seen our [`showcase page`](https://gitlab.com/NotYetGames/DlgSystem/wikis/Feature-Showcase)?
 
@@ -23,7 +24,7 @@ Not yet convinced? Have you seen our [`showcase page`](https://gitlab.com/NotYet
 
 See the [Wiki](https://gitlab.com/NotYetGames/DlgSystem/wikis/home) for the manual and tutorials.
 
-[DlgSystemExample project](https://gitlab.com/NotYetGames/DlgSystemExample) is also provided.
+[DlgSystemExample project](https://gitlab.com/NotYetGames/DlgSystemExample/tree/4.18) is also provided.
 
 This plugin is primary developed and used for our own [game](http://www.warriorb.com).
 We have put significant effort into it and decided to make it open source in order to help out other teams facing similar challenges.
