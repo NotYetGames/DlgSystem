@@ -62,6 +62,6 @@ public:
 
 private:
 	/** Defines the type of selector this node represents */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgNodeData)
 	EDlgNodeSelectorType SelectorType = EDlgNodeSelectorType::DlgNodeSelectorFirst;
 };

@@ -61,19 +61,19 @@ public:
 
 public:
 	/** Index of the node in the Nodes TArray of the dialogue this edge is leading to */
-	UPROPERTY(VisibleAnywhere, Meta = (ClampMin = -1))
+	UPROPERTY(VisibleAnywhere, Category = DlgEdgeData, Meta = (ClampMin = -1))
 	int32 TargetIndex = INDEX_NONE;
 
 	/** Required but not sufficient conditions - target node's enter conditions are checked too */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgEdgeData)
 	TArray<FDlgCondition> Conditions;
 
 	/** Text associated with the child, can be used for user choices */
-	UPROPERTY(EditAnywhere, Meta = (MultiLine = true))
+	UPROPERTY(EditAnywhere, Category = DlgEdgeData, Meta = (MultiLine = true))
 	FText Text;
 
 	/** player emotion/state attached to this player choice */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgEdgeData)
 	FName SpeakerState;
 };
 
@@ -140,7 +140,7 @@ public:
 
 	virtual bool CheckNodeEnterConditions(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyVisitedNodes);
 	virtual bool HasAnySatisfiedChild(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyVisitedNodes);
-	
+
 	virtual bool OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext);
 
 	// Getters/Setters:

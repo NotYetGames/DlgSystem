@@ -73,43 +73,43 @@ public:
 public:
 
 	/** Defines the way the condition is interpreted inside the condition array */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgConditionData)
 	EDlgConditionStrength Strength;
 
 	/** Type of the condition, defines the behavior */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgConditionData)
 	EDlgConditionType ConditionType;
 
 	/** Name of the participant (speaker) the event is called on. */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgConditionData)
 	FName ParticipantName;
 
 	/** Name of the variable or event, passed in the function call to the participant */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgConditionData)
 	FName CallbackName;
 
 	/** The desired operation on the selected variable */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgConditionData)
 	EDlgOperation Operation;
 
 	/** Node index for "node already visited" condition, the value the participant's int is checked against otherwise */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgConditionData)
 	int32 IntValue;
 
 	/** Float the particpant's float is checked against */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgConditionData)
 	float FloatValue;
 
 	/** FName the particpant's name is checked against */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgConditionData)
 	FName NameValue;
 
 	/** Weather the result defined by the other params has to be true or false in order for this condition to be satisfied */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgConditionData)
 	bool bBoolValue = true;
 
 	/** Weather to check if the node was visited at all (in the long term), set it to false to check if it was visited in the actual dialogue context */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = DlgConditionData)
 	bool bLongTermMemory = true;
 
 public:

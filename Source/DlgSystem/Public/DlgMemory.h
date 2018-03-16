@@ -12,7 +12,7 @@ struct FDlgHistory
 	GENERATED_USTRUCT_BODY()
 
 	/** list of already visited node indices */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DlgHistoryData)
 	TSet<int32> VisitedNodeIndices;
 };
 
