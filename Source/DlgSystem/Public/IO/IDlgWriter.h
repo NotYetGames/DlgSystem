@@ -16,7 +16,7 @@
  * 		- DlgLinePerItem: used to force primitive container to write each element into a new line (TODO: MAP SUPPORT)
  *		- DlgSaveOnlyReference: UObject path is serialized instead of UObject (can be used for DataAsset like objects stored in content browser)
  *			ATM IT ONLY WORKS IF IT IS NOT INSIDE A CONTAINER DIRECTLY (can be e.g. inside a struct inside a container tho)
- *			DlgConfigParser/DlgConfigWriter also supports TArray-s
+ *			FDlgConfigParser/FDlgConfigWriter also supports TArray-s
  */
 class DLGSYSTEM_API IDlgWriter
 {

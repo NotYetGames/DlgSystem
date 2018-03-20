@@ -27,7 +27,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogDlgConfigParser, Log, All);
  *
  * Heterogenous Collections are also supported (e.g. TArray<UObject*>)
  */
-class DLGSYSTEM_API DlgConfigParser : public IDlgParser
+class DLGSYSTEM_API FDlgConfigParser : public IDlgParser
 {
 public:
 	/**
@@ -36,7 +36,7 @@ public:
 	 *  It is better to use a single parser for more files from the same type if those contain dynamic arrays,
 	 *  because it has to check all class names for the first time for each class
 	 */
-	DlgConfigParser(const FString& InPreTag = "Dlg");
+	FDlgConfigParser(const FString& InPreTag = "Dlg");
 
 	/**
 	 * Creates the parser and finds the first word
@@ -44,7 +44,7 @@ public:
 	 * @param FilePath: path to the text file the parser will parse
 	 * @param InPreTag: Optional pretag added at the front of structs and classes
 	 */
-	DlgConfigParser(const FString& FilePath, const FString& InPreTag);
+	FDlgConfigParser(const FString& FilePath, const FString& InPreTag);
 
 	// IDlgParser Interface
 	void InitializeParser(const FString& FilePath) override;
@@ -263,11 +263,11 @@ private:
 
 
 template <typename Type, typename PropertyType>
-bool DlgConfigParser::ReadPrimitiveProperty(void* Target,
-											UProperty* PropertyBase,
-											std::function<Type()> OnGetAsValue,
-											const FString& TypeName,
-											bool bCanBeEmpty)
+bool FDlgConfigParser::ReadPrimitiveProperty(void* Target,
+											 UProperty* PropertyBase,
+											 std::function<Type()> OnGetAsValue,
+											 const FString& TypeName,
+											 bool bCanBeEmpty)
 {
 	// try to find a member variable with the name
 	PropertyType* Property = Cast<PropertyType>(PropertyBase);
@@ -321,11 +321,11 @@ bool DlgConfigParser::ReadPrimitiveProperty(void* Target,
 
 
 template <typename PropertyType>
-bool DlgConfigParser::ReadComplexProperty(void* Target,
-										  UProperty* Property,
-										  const UStruct* ReferenceType,
-										  std::function<void*(void*, const UClass*, UObject*)> OnInitValue,
-										  UObject* Outer)
+bool FDlgConfigParser::ReadComplexProperty(void* Target,
+										   UProperty* Property,
+										   const UStruct* ReferenceType,
+										   std::function<void*(void*, const UClass*, UObject*)> OnInitValue,
+										   UObject* Outer)
 {
 	PropertyType* ElementProp = Cast<PropertyType>(Property);
 	if (ElementProp == nullptr)
