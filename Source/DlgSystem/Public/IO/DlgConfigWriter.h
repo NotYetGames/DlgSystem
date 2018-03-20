@@ -18,7 +18,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogDlgConfigWriter, Log, All);
  * And there is always a copy-pasted comment.
  * See IDlgWriter for properties and METADATA specifiers.
  */
-class DLGSYSTEM_API DlgConfigWriter : public IDlgWriter
+class DLGSYSTEM_API FDlgConfigWriter : public IDlgWriter
 {
 
 public:
@@ -29,7 +29,7 @@ public:
 	 * defined in SkipFlags.
 	 * Call ExportToFile() to save it
 	 *
-	 * Check DlgConfigParser for the list of supported constructions (some container is limited in some ways)
+	 * Check FDlgConfigParser for the list of supported constructions (some container is limited in some ways)
 	 * If there is a nullptr in the middle of an array it is skipped, the array num will be different after parsing it back,
 	 * unless it is written by reference
 	 *
@@ -39,8 +39,8 @@ public:
 								   can be used not to export it to have better readable config file
 	 * @param bInDontWriteEmptyContainer: if it is enabled empty TSet, TMap and TArray properties won't be written
 	 */
-	DlgConfigWriter(const FString& InComplexNamePrefix = "Dlg",
-					bool bInDontWriteEmptyContainer = true);
+	FDlgConfigWriter(const FString& InComplexNamePrefix = "Dlg",
+					 bool bInDontWriteEmptyContainer = true);
 
 	// IDlgWriter Interface
 

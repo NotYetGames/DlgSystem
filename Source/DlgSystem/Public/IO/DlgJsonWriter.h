@@ -22,7 +22,7 @@ struct DlgJsonWriterOptions
  * @brief The DlgJsonWriter class mostly adapted for Dialogues, copied from FJsonObjectConverter
  * See IDlgWriter for properties and METADATA specifiers.
  */
-class DLGSYSTEM_API DlgJsonWriter : public IDlgWriter
+class DLGSYSTEM_API FDlgJsonWriter : public IDlgWriter
 {
 	/**
 	 * Call Order and possible calls:
@@ -37,7 +37,7 @@ class DLGSYSTEM_API DlgJsonWriter : public IDlgWriter
 	 */
 public:
 
-	DlgJsonWriter() {};
+	FDlgJsonWriter() {};
 
 	// IDlgWriter Interface
 	void Write(const UStruct* StructDefinition, const void* Object) override;

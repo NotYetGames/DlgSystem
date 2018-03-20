@@ -35,7 +35,7 @@ bool GetTextFromObject(const TSharedRef<FJsonObject>& Obj, FText& TextOut)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void DlgJsonParser::InitializeParser(const FString& FilePath)
+void FDlgJsonParser::InitializeParser(const FString& FilePath)
 {
 	if (!FFileHelper::LoadFileToString(JsonString, *FilePath))
 	{
@@ -52,7 +52,7 @@ void DlgJsonParser::InitializeParser(const FString& FilePath)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void DlgJsonParser::ReadAllProperty( const UStruct* ReferenceClass, void* TargetObject, UObject* InDefaultObjectOuter)
+void FDlgJsonParser::ReadAllProperty( const UStruct* ReferenceClass, void* TargetObject, UObject* InDefaultObjectOuter)
 {
 	if (!IsValidFile())
 	{
@@ -65,7 +65,7 @@ void DlgJsonParser::ReadAllProperty( const UStruct* ReferenceClass, void* Target
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> JsonValue, UProperty* Property, void* OutValue)
+bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> JsonValue, UProperty* Property, void* OutValue)
 {
 	check(Property);
 	check(OutValue);
@@ -531,7 +531,7 @@ bool DlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Jso
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgJsonParser::JsonValueToUProperty(const TSharedPtr<FJsonValue> JsonValue, UProperty* Property, void* OutValue)
+bool FDlgJsonParser::JsonValueToUProperty(const TSharedPtr<FJsonValue> JsonValue, UProperty* Property, void* OutValue)
 {
 	check(Property);
 	UE_LOG(LogDlgJsonParser, Verbose, TEXT("JsonValueToUProperty, PropertyName = `%s`"), *Property->GetName());
@@ -593,7 +593,7 @@ bool DlgJsonParser::JsonValueToUProperty(const TSharedPtr<FJsonValue> JsonValue,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgJsonParser::JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJsonValue>>& JsonAttributes,
+bool FDlgJsonParser::JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJsonValue>>& JsonAttributes,
 											const UStruct* StructDefinition, void* OutStruct)
 {
 	check(StructDefinition);
@@ -677,7 +677,7 @@ bool DlgJsonParser::JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJson
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgJsonParser::JsonObjectStringToUStruct(const UStruct* StructDefinition, void* TargetPtr)
+bool FDlgJsonParser::JsonObjectStringToUStruct(const UStruct* StructDefinition, void* TargetPtr)
 {
 	TSharedPtr<FJsonObject> JsonObject;
 	TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(JsonString);

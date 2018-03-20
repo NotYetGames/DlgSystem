@@ -10,20 +10,20 @@
 DEFINE_LOG_CATEGORY(LogDlgConfigParser);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-DlgConfigParser::DlgConfigParser(const FString& InPreTag) :
+FDlgConfigParser::FDlgConfigParser(const FString& InPreTag) :
 	PreTag(InPreTag)
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-DlgConfigParser::DlgConfigParser(const FString& FilePath, const FString& InPreTag) :
+FDlgConfigParser::FDlgConfigParser(const FString& FilePath, const FString& InPreTag) :
 	PreTag(InPreTag)
 {
 	InitializeParser(FilePath);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void DlgConfigParser::InitializeParser(const FString& FilePath)
+void FDlgConfigParser::InitializeParser(const FString& FilePath)
 {
 	FileName = "";
 	String = "";
@@ -45,7 +45,7 @@ void DlgConfigParser::InitializeParser(const FString& FilePath)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void DlgConfigParser::InitializeParserFromString(const FString& Text)
+void FDlgConfigParser::InitializeParserFromString(const FString& Text)
 {
 	FileName = "";
 	String = Text;
@@ -56,13 +56,13 @@ void DlgConfigParser::InitializeParserFromString(const FString& Text)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void DlgConfigParser::ReadAllProperty(const UStruct* ReferenceClass, void* TargetObject, UObject* DefaultObjectOuter)
+void FDlgConfigParser::ReadAllProperty(const UStruct* ReferenceClass, void* TargetObject, UObject* DefaultObjectOuter)
 {
 	while (ReadProperty(ReferenceClass, TargetObject, DefaultObjectOuter));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::ReadProperty(const UStruct* ReferenceClass, void* TargetObject, UObject* DefaultObjectOuter)
+bool FDlgConfigParser::ReadProperty(const UStruct* ReferenceClass, void* TargetObject, UObject* DefaultObjectOuter)
 {
 	if (!bHasValidWord)
 	{
@@ -145,7 +145,7 @@ bool DlgConfigParser::ReadProperty(const UStruct* ReferenceClass, void* TargetOb
 		{
 			return false;
 		}
-		auto ObjectInitializer = std::bind(&DlgConfigParser::OnInitObject, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		auto ObjectInitializer = std::bind(&FDlgConfigParser::OnInitObject, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		return ReadComplexProperty<UObjectProperty>(TargetObject, ComplexPropBase, Class, ObjectInitializer, DefaultObjectOuter);
 	}
 
@@ -156,7 +156,7 @@ bool DlgConfigParser::ReadProperty(const UStruct* ReferenceClass, void* TargetOb
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::ReadPurePropertyBlock(void* TargetObject, const UStruct* ReferenceClass, bool bBlockStartAlreadyRead, UObject* Outer)
+bool FDlgConfigParser::ReadPurePropertyBlock(void* TargetObject, const UStruct* ReferenceClass, bool bBlockStartAlreadyRead, UObject* Outer)
 {
 	if (!bBlockStartAlreadyRead && !FindNextWordAndCheckIfBlockStart(ReferenceClass->GetName()))
 	{
@@ -180,7 +180,7 @@ bool DlgConfigParser::ReadPurePropertyBlock(void* TargetObject, const UStruct* R
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::GetActiveWordAsFloat(float& FloatValue) const
+bool FDlgConfigParser::GetActiveWordAsFloat(float& FloatValue) const
 {
 	if (!HasValidWord())
 	{
@@ -198,7 +198,7 @@ bool DlgConfigParser::GetActiveWordAsFloat(float& FloatValue) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-FString DlgConfigParser::ConstructConfigFile(const UStruct* ReferenceType, void* SourceObject)
+FString FDlgConfigParser::ConstructConfigFile(const UStruct* ReferenceType, void* SourceObject)
 {
 	FString String;
 	ConstructConfigFileInternal(ReferenceType, 0, SourceObject, String);
@@ -206,7 +206,7 @@ FString DlgConfigParser::ConstructConfigFile(const UStruct* ReferenceType, void*
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::IsNextWordString() const
+bool FDlgConfigParser::IsNextWordString() const
 {
 	int32 Index = From + Len;
 	// Skip whitespaces
@@ -219,14 +219,14 @@ bool DlgConfigParser::IsNextWordString() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::IsActualWordString() const
+bool FDlgConfigParser::IsActualWordString() const
 {
 	int32 Index = From - 1;
 	return (String.IsValidIndex(Index) && String[Index] == '"');
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::FindNextWord()
+bool FDlgConfigParser::FindNextWord()
 {
 	From += Len;
 
@@ -311,7 +311,7 @@ bool DlgConfigParser::FindNextWord()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::FindNextWord(const FString& ExpectedStuff)
+bool FDlgConfigParser::FindNextWord(const FString& ExpectedStuff)
 {
 	const bool bNotEof = FindNextWord();
 	if (!bNotEof)
@@ -323,7 +323,7 @@ bool DlgConfigParser::FindNextWord(const FString& ExpectedStuff)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::FindNextWordAndCheckIfBlockStart(const FString& BlockName)
+bool FDlgConfigParser::FindNextWordAndCheckIfBlockStart(const FString& BlockName)
 {
 	if (!FindNextWord() || !CompareToActiveWord("{"))
 	{
@@ -335,7 +335,7 @@ bool DlgConfigParser::FindNextWordAndCheckIfBlockStart(const FString& BlockName)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::FindNextWordAndCheckIfBlockEnd(const FString& BlockName)
+bool FDlgConfigParser::FindNextWordAndCheckIfBlockEnd(const FString& BlockName)
 {
 	if (!FindNextWord())
 	{
@@ -347,7 +347,7 @@ bool DlgConfigParser::FindNextWordAndCheckIfBlockEnd(const FString& BlockName)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::CheckIfBlockEnd(const FString& BlockName)
+bool FDlgConfigParser::CheckIfBlockEnd(const FString& BlockName)
 {
 	if (!bHasValidWord)
 	{
@@ -359,7 +359,7 @@ bool DlgConfigParser::CheckIfBlockEnd(const FString& BlockName)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::CompareToActiveWord(const FString& StringToCompare) const
+bool FDlgConfigParser::CompareToActiveWord(const FString& StringToCompare) const
 {
 	// Length differs?
 	if (!bHasValidWord || StringToCompare.Len() != Len)
@@ -381,7 +381,7 @@ bool DlgConfigParser::CompareToActiveWord(const FString& StringToCompare) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int32 DlgConfigParser::GetActiveLineNumber() const
+int32 FDlgConfigParser::GetActiveLineNumber() const
 {
 	if (!bHasValidWord)
 	{
@@ -410,7 +410,7 @@ int32 DlgConfigParser::GetActiveLineNumber() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void DlgConfigParser::ConstructConfigFileInternal(const UStruct* ReferenceType, const int32 TabCount, void* SourceObject, FString& OutString)
+void FDlgConfigParser::ConstructConfigFileInternal(const UStruct* ReferenceType, const int32 TabCount, void* SourceObject, FString& OutString)
 {
 	for (UField* Field = ReferenceType->Children; Field != nullptr; Field = Field->Next)
 	{
@@ -423,29 +423,29 @@ void DlgConfigParser::ConstructConfigFileInternal(const UStruct* ReferenceType, 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::TryToReadPrimitiveProperty(void* TargetObject, UProperty* PropertyBase)
+bool FDlgConfigParser::TryToReadPrimitiveProperty(void* TargetObject, UProperty* PropertyBase)
 {
-	if (ReadPrimitiveProperty<bool, UBoolProperty>(TargetObject, PropertyBase, std::bind(&DlgConfigParser::GetAsBool, this), "Bool", false))
+	if (ReadPrimitiveProperty<bool, UBoolProperty>(TargetObject, PropertyBase, std::bind(&FDlgConfigParser::GetAsBool, this), "Bool", false))
 	{
 		return true;
 	}
-	if (ReadPrimitiveProperty<float, UFloatProperty>(TargetObject, PropertyBase, std::bind(&DlgConfigParser::GetAsFloat, this), "float", false))
+	if (ReadPrimitiveProperty<float, UFloatProperty>(TargetObject, PropertyBase, std::bind(&FDlgConfigParser::GetAsFloat, this), "float", false))
 	{
 		return true;
 	}
-	if (ReadPrimitiveProperty<int32, UIntProperty>(TargetObject, PropertyBase, std::bind(&DlgConfigParser::GetAsInt, this), "int32", false))
+	if (ReadPrimitiveProperty<int32, UIntProperty>(TargetObject, PropertyBase, std::bind(&FDlgConfigParser::GetAsInt, this), "int32", false))
 	{
 		return true;
 	}
-	if (ReadPrimitiveProperty<FName, UNameProperty>(TargetObject, PropertyBase, std::bind(&DlgConfigParser::GetAsName, this), "FName", false))
+	if (ReadPrimitiveProperty<FName, UNameProperty>(TargetObject, PropertyBase, std::bind(&FDlgConfigParser::GetAsName, this), "FName", false))
 	{
 		return true;
 	}
-	if (ReadPrimitiveProperty<FString, UStrProperty>(TargetObject, PropertyBase, std::bind(&DlgConfigParser::GetAsString, this), "FString", true))
+	if (ReadPrimitiveProperty<FString, UStrProperty>(TargetObject, PropertyBase, std::bind(&FDlgConfigParser::GetAsString, this), "FString", true))
 	{
 		return true;
 	}
-	if (ReadPrimitiveProperty<FText, UTextProperty>(TargetObject, PropertyBase, std::bind(&DlgConfigParser::GetAsText, this), "FText", true))
+	if (ReadPrimitiveProperty<FText, UTextProperty>(TargetObject, PropertyBase, std::bind(&FDlgConfigParser::GetAsText, this), "FText", true))
 	{
 		return true;
 	}
@@ -454,7 +454,7 @@ bool DlgConfigParser::TryToReadPrimitiveProperty(void* TargetObject, UProperty* 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::TryToReadEnum(void* Target, UProperty* PropertyBase)
+bool FDlgConfigParser::TryToReadEnum(void* Target, UProperty* PropertyBase)
 {
 	auto OnGetAsEnum = [this, &PropertyBase]() -> uint8
 	{
@@ -501,7 +501,7 @@ bool DlgConfigParser::TryToReadEnum(void* Target, UProperty* PropertyBase)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::ReadSet(void* TargetObject, USetProperty& Property, UObject* DefaultObjectOuter)
+bool FDlgConfigParser::ReadSet(void* TargetObject, USetProperty& Property, UObject* DefaultObjectOuter)
 {
 	FScriptSetHelper Helper(&Property, Property.ContainerPtrToValuePtr<uint8>(TargetObject));
 	Helper.EmptyElements();
@@ -537,7 +537,7 @@ bool DlgConfigParser::ReadSet(void* TargetObject, USetProperty& Property, UObjec
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::ReadMap(void* TargetObject, UMapProperty& Property, UObject* DefaultObjectOuter)
+bool FDlgConfigParser::ReadMap(void* TargetObject, UMapProperty& Property, UObject* DefaultObjectOuter)
 {
 	FScriptMapHelper Helper(&Property, Property.ContainerPtrToValuePtr<uint8>(TargetObject));
 	Helper.EmptyValues();
@@ -599,7 +599,7 @@ bool DlgConfigParser::ReadMap(void* TargetObject, UMapProperty& Property, UObjec
 	return true;
 }
 
-void* DlgConfigParser::OnInitObject(void* ValuePtr, const UClass* ChildClass, UObject* OuterInit)
+void* FDlgConfigParser::OnInitObject(void* ValuePtr, const UClass* ChildClass, UObject* OuterInit)
 {
 	if (ChildClass != nullptr)
 	{
@@ -612,7 +612,7 @@ void* DlgConfigParser::OnInitObject(void* ValuePtr, const UClass* ChildClass, UO
 }
 
 /** gets the UClass from an UObject or from an array of UObjects */
-const UClass* DlgConfigParser::SmartGetPropertyClass(UProperty* Property, const FString& TypeName)
+const UClass* FDlgConfigParser::SmartGetPropertyClass(UProperty* Property, const FString& TypeName)
 {
 	UObjectProperty* ObjectProperty = SmartCastProperty<UObjectProperty>(Property);
 	check(ObjectProperty != nullptr);
@@ -637,7 +637,7 @@ const UClass* DlgConfigParser::SmartGetPropertyClass(UProperty* Property, const 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void DlgConfigParser::OnInvalidValue(const FString& PropType) const
+void FDlgConfigParser::OnInvalidValue(const FString& PropType) const
 {
 	if (bHasValidWord)
 	{
@@ -650,7 +650,7 @@ void DlgConfigParser::OnInvalidValue(const FString& PropType) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigParser::GetAsBool() const
+bool FDlgConfigParser::GetAsBool() const
 {
 	bool bValue = false;
 	if (CompareToActiveWord("True"))
@@ -661,7 +661,7 @@ bool DlgConfigParser::GetAsBool() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-float DlgConfigParser::GetAsFloat() const
+float FDlgConfigParser::GetAsFloat() const
 {
 	float Value = 0.0f;
 	if (!GetActiveWordAsFloat(Value))
@@ -669,7 +669,7 @@ float DlgConfigParser::GetAsFloat() const
 	return Value;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int32 DlgConfigParser::GetAsInt() const
+int32 FDlgConfigParser::GetAsInt() const
 {
 	int32 Value = 0;
 	const FString IntString = String.Mid(From, Len);
@@ -680,7 +680,7 @@ int32 DlgConfigParser::GetAsInt() const
 	return Value;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-FName DlgConfigParser::GetAsName() const
+FName FDlgConfigParser::GetAsName() const
 {
 	FName Value = NAME_None;
 	if (Len <= 0)
@@ -690,7 +690,7 @@ FName DlgConfigParser::GetAsName() const
 	return Value;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-FString DlgConfigParser::GetAsString() const
+FString FDlgConfigParser::GetAsString() const
 {
 	if (Len > 0)
 		return String.Mid(From, Len);
@@ -698,7 +698,7 @@ FString DlgConfigParser::GetAsString() const
 	return "";
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-FText DlgConfigParser::GetAsText() const
+FText FDlgConfigParser::GetAsText() const
 {
 	FString Input;
 	if (Len > 0)

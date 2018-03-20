@@ -6,30 +6,30 @@
 
 DEFINE_LOG_CATEGORY(LogDlgConfigWriter);
 
-const FString DlgConfigWriter::EOL_String = EOL;
+const FString FDlgConfigWriter::EOL_String = EOL;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-DlgConfigWriter::DlgConfigWriter(const FString& InComplexNamePrefix,
-								 bool bInDontWriteEmptyContainer) :
+FDlgConfigWriter::FDlgConfigWriter(const FString& InComplexNamePrefix,
+								   bool bInDontWriteEmptyContainer) :
 	ComplexNamePrefix(InComplexNamePrefix),
 	bDontWriteEmptyContainer(bInDontWriteEmptyContainer)
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void DlgConfigWriter::Write(const UStruct* StructDefinition, const void* Object)
+void FDlgConfigWriter::Write(const UStruct* StructDefinition, const void* Object)
 {
 	TopLevelObjectPtr = Object;
 	WriteComplexMembersToString(StructDefinition, Object, "", EOL, ConfigText);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void DlgConfigWriter::WriteComplexMembersToString(const UStruct* StructDefinition,
-												  const void* Object,
-												  const FString& PreString,
-												  const FString& PostString,
-												  FString& Target)
+void FDlgConfigWriter::WriteComplexMembersToString(const UStruct* StructDefinition,
+												   const void* Object,
+												   const FString& PreString,
+												   const FString& PostString,
+												   FString& Target)
 {
 	// order
 	TArray<const UProperty*> Primitives;
@@ -83,13 +83,13 @@ void DlgConfigWriter::WriteComplexMembersToString(const UStruct* StructDefinitio
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigWriter::WritePropertyToString(const UProperty* Property,
-											const void* Object,
-											bool bContainerElement,
-											const FString& PreString,
-											const FString& PostString,
-											bool bPointerAsRef,
-											FString& Target)
+bool FDlgConfigWriter::WritePropertyToString(const UProperty* Property,
+											 const void* Object,
+											 bool bContainerElement,
+											 const FString& PreString,
+											 const FString& PostString,
+											 bool bPointerAsRef,
+											 FString& Target)
 {
 	if (CanSkipProperty(Property))
 	{
@@ -136,12 +136,12 @@ bool DlgConfigWriter::WritePropertyToString(const UProperty* Property,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigWriter::WritePrimitiveElementToString(const UProperty* Prop,
-													const void* Object,
-													bool bInContainer,
-													const FString& PreS,
-													const FString& PostS,
-													FString& Target)
+bool FDlgConfigWriter::WritePrimitiveElementToString(const UProperty* Prop,
+													 const void* Object,
+													 bool bInContainer,
+													 const FString& PreS,
+													 const FString& PostS,
+													 FString& Target)
 {
 	// Try every possible primitive type
 	if (WritePrimitiveElementToStringTemplated<UBoolProperty, bool>(Prop, Object, bInContainer, BoolToString, PreS, PostS, Target))
@@ -186,11 +186,11 @@ bool DlgConfigWriter::WritePrimitiveElementToString(const UProperty* Prop,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigWriter::WritePrimitiveArrayToString(const UProperty* Property,
-												  const void* Object,
-												  const FString& PreString,
-												  const FString& PostString,
-												  FString& Target)
+bool FDlgConfigWriter::WritePrimitiveArrayToString(const UProperty* Property,
+												   const void* Object,
+												   const FString& PreString,
+												   const FString& PostString,
+												   FString& Target)
 {
 	const UArrayProperty* ArrayProp = Cast<UArrayProperty>(Property);
 	if (ArrayProp == nullptr)
@@ -228,13 +228,13 @@ bool DlgConfigWriter::WritePrimitiveArrayToString(const UProperty* Property,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigWriter::WriteComplexElementToString(const UProperty* Property,
-												  const void* Object,
-												  bool bContainerElement,
-												  const FString& PreString,
-												  const FString& PostString,
-												  bool bPointerAsRef,
-												  FString& Target)
+bool FDlgConfigWriter::WriteComplexElementToString(const UProperty* Property,
+												   const void* Object,
+												   bool bContainerElement,
+												   const FString& PreString,
+												   const FString& PostString,
+												   bool bPointerAsRef,
+												   FString& Target)
 {
 	// UStruct
 	const UStructProperty* StructProp = Cast<UStructProperty>(Property);
@@ -296,14 +296,14 @@ bool DlgConfigWriter::WriteComplexElementToString(const UProperty* Property,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void DlgConfigWriter::WriteComplexToString(const UStruct* StructDefinition,
-										   const UProperty* Property,
-										   const void* Object,
-										   const FString& PreString,
-										   const FString& PostString,
-										   bool bContainerElement,
-										   bool bWriteType,
-										   FString& Target)
+void FDlgConfigWriter::WriteComplexToString(const UStruct* StructDefinition,
+											const UProperty* Property,
+											const void* Object,
+											const FString& PreString,
+											const FString& PostString,
+											bool bContainerElement,
+											bool bWriteType,
+											FString& Target)
 {
 	if (CanSkipProperty(Property))
 	{
@@ -344,11 +344,11 @@ void DlgConfigWriter::WriteComplexToString(const UStruct* StructDefinition,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigWriter::WriteComplexArrayToString(const UProperty* Property,
-												const void* Object,
-												const FString& PreString,
-												const FString& PostString,
-												FString& Target)
+bool FDlgConfigWriter::WriteComplexArrayToString(const UProperty* Property,
+												 const void* Object,
+												 const FString& PreString,
+												 const FString& PostString,
+												 FString& Target)
 {
 	const UArrayProperty* ArrayProp = Cast<UArrayProperty>(Property);
 	if (ArrayProp == nullptr)
@@ -403,11 +403,11 @@ bool DlgConfigWriter::WriteComplexArrayToString(const UProperty* Property,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigWriter::WriteMapToString(const UProperty* Property,
-									   const void* Object,
-									   const FString& PreString,
-									   const FString& PostString,
-									   FString& Target)
+bool FDlgConfigWriter::WriteMapToString(const UProperty* Property,
+									    const void* Object,
+									    const FString& PreString,
+									    const FString& PostString,
+									    FString& Target)
 {
 	const UMapProperty* MapProp = Cast<UMapProperty>(Property);
 	if (MapProp == nullptr)
@@ -450,11 +450,11 @@ bool DlgConfigWriter::WriteMapToString(const UProperty* Property,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigWriter::WriteSetToString(const UProperty* Property,
-									   const void* Object,
-									   const FString& PreString,
-									   const FString& PostString,
-									   FString& Target)
+bool FDlgConfigWriter::WriteSetToString(const UProperty* Property,
+										const void* Object,
+										const FString& PreString,
+										const FString& PostString,
+										FString& Target)
 {
 	const USetProperty* SetProp = Cast<USetProperty>(Property);
 	if (SetProp == nullptr)
@@ -514,7 +514,7 @@ bool DlgConfigWriter::WriteSetToString(const UProperty* Property,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigWriter::IsPrimitive(const UProperty* Property)
+bool FDlgConfigWriter::IsPrimitive(const UProperty* Property)
 {
 	return Cast<UBoolProperty>(Property) != nullptr ||
 		   Cast<UIntProperty>(Property) != nullptr ||
@@ -525,14 +525,14 @@ bool DlgConfigWriter::IsPrimitive(const UProperty* Property)
 		   Cast<UEnumProperty>(Property) != nullptr;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigWriter::IsContainer(const UProperty* Property)
+bool FDlgConfigWriter::IsContainer(const UProperty* Property)
 {
 	return Cast<UArrayProperty>(Property) != nullptr ||
 		   Cast<UMapProperty>(Property) != nullptr ||
 		   Cast<USetProperty>(Property) != nullptr;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigWriter::IsPrimitiveContainer(const UProperty* Property)
+bool FDlgConfigWriter::IsPrimitiveContainer(const UProperty* Property)
 {
 	// Array
 	if (Cast<UArrayProperty>(Property) != nullptr && IsPrimitive(Cast<UArrayProperty>(Property)->Inner))
@@ -557,7 +557,7 @@ bool DlgConfigWriter::IsPrimitiveContainer(const UProperty* Property)
 	return false;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const UStruct* DlgConfigWriter::GetComplexType(const UProperty* Property)
+const UStruct* FDlgConfigWriter::GetComplexType(const UProperty* Property)
 {
 	const UStructProperty* StructProp = Cast<UStructProperty>(Property);
 	if (StructProp != nullptr)
@@ -574,7 +574,7 @@ const UStruct* DlgConfigWriter::GetComplexType(const UProperty* Property)
 	return nullptr;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgConfigWriter::WouldWriteNonPrimitive(const UStruct* StructDefinition, const void* Owner)
+bool FDlgConfigWriter::WouldWriteNonPrimitive(const UStruct* StructDefinition, const void* Owner)
 {
 	if (StructDefinition == nullptr)
 	{
@@ -638,7 +638,7 @@ bool DlgConfigWriter::WouldWriteNonPrimitive(const UStruct* StructDefinition, co
 	return false;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-FString DlgConfigWriter::GetNameWithoutPrefix(const UProperty* Property, const UObject* ObjectPtr)
+FString FDlgConfigWriter::GetNameWithoutPrefix(const UProperty* Property, const UObject* ObjectPtr)
 {
 	const UStructProperty* StructProp = Cast<UStructProperty>(Property);
 	if (StructProp != nullptr)
@@ -660,7 +660,7 @@ FString DlgConfigWriter::GetNameWithoutPrefix(const UProperty* Property, const U
 	return "";
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-FString DlgConfigWriter::GetStringWithoutPrefix(const FString& String)
+FString FDlgConfigWriter::GetStringWithoutPrefix(const FString& String)
 {
 	int32 Count = String.Len();
 	for (int32 i = 0; i < ComplexNamePrefix.Len() && i < String.Len() && ComplexNamePrefix[i] == String[i]; ++i)
