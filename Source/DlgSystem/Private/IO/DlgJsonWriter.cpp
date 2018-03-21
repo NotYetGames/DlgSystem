@@ -8,7 +8,7 @@
 DEFINE_LOG_CATEGORY(LogDlgJsonWriter);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void DlgJsonWriter::Write(const UStruct* StructDefinition, const void* Object)
+void FDlgJsonWriter::Write(const UStruct* StructDefinition, const void* Object)
 {
 	DlgJsonWriterOptions WriterOptions;
 	WriterOptions.bPrettyPrint = true;
@@ -17,7 +17,7 @@ void DlgJsonWriter::Write(const UStruct* StructDefinition, const void* Object)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-TSharedPtr<FJsonValue> DlgJsonWriter::ConvertScalarUPropertyToJsonValue(UProperty* Property, const void* Value, int32 IndexInArray)
+TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(UProperty* Property, const void* Value, int32 IndexInArray)
 {
 	check(Property);
 	check(Value);
@@ -251,7 +251,7 @@ TSharedPtr<FJsonValue> DlgJsonWriter::ConvertScalarUPropertyToJsonValue(UPropert
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-TSharedPtr<FJsonValue> DlgJsonWriter::UPropertyToJsonValue(UProperty* Property, const void* Value, int32 IndexInArray)
+TSharedPtr<FJsonValue> FDlgJsonWriter::UPropertyToJsonValue(UProperty* Property, const void* Value, int32 IndexInArray)
 {
 	check(Property);
 	UE_LOG(LogDlgJsonWriter, Verbose, TEXT("UPropertyToJsonValue, PropertyName = `%s`"), *Property->GetName());
@@ -291,7 +291,7 @@ TSharedPtr<FJsonValue> DlgJsonWriter::UPropertyToJsonValue(UProperty* Property, 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, const void* Object,
+bool FDlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, const void* Object,
 	TMap<FString, TSharedPtr<FJsonValue>>& OutJsonAttributes)
 {
 	check(StructDefinition);
@@ -391,7 +391,7 @@ bool UStructToJsonStringInternal(const TSharedRef<FJsonObject>& JsonObject, cons
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool DlgJsonWriter::UStructToJsonString(const UStruct* StructDefinition, const void* Object,
+bool FDlgJsonWriter::UStructToJsonString(const UStruct* StructDefinition, const void* Object,
 	 const DlgJsonWriterOptions& Options, FString& OutJsonString)
 {
 	TSharedRef<FJsonObject> JsonObject = MakeShareable(new FJsonObject);

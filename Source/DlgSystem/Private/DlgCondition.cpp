@@ -71,7 +71,7 @@ bool FDlgCondition::Evaluate(UDlgContextInternal* DlgContext, UObject* DlgPartic
 		case EDlgConditionType::DlgConditionNodeVisited:
 			if (bLongTermMemory)
 			{
-				return DlgMemory::GetInstance()->IsNodeVisited(DlgContext->GetDialogueGuid(), IntValue) == bBoolValue;
+				return FDlgMemory::GetInstance()->IsNodeVisited(DlgContext->GetDialogueGuid(), IntValue) == bBoolValue;
 			}
 
 			return DlgContext->WasNodeVisitedInThisContext(IntValue) == bBoolValue;

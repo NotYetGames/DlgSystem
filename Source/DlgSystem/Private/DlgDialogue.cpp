@@ -323,7 +323,7 @@ void UDlgDialogue::ReloadFromFile()
 	{
 		case EDlgDialogueTextFormat::DlgDialogueTextFormatJson:
 		{
-			DlgJsonParser JsonParser;
+			FDlgJsonParser JsonParser;
 			JsonParser.InitializeParser(TextFileName);
 			JsonParser.ReadAllProperty(GetClass(), this, this);
 			break;
@@ -331,7 +331,7 @@ void UDlgDialogue::ReloadFromFile()
 		case EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue:
 		default:
 		{
-			DlgConfigParser Parser;
+			FDlgConfigParser Parser;
 			Parser.InitializeParser(TextFileName);
 			Parser.ReadAllProperty(GetClass(), this, this);
 			break;
@@ -402,7 +402,7 @@ void UDlgDialogue::ExportToFile() const
 	{
 		case EDlgDialogueTextFormat::DlgDialogueTextFormatJson:
 		{
-			DlgJsonWriter JsonWriter;
+			FDlgJsonWriter JsonWriter;
 			JsonWriter.Write(GetClass(), this);
 			JsonWriter.ExportToFile(TextFileName);
 			break;
@@ -410,7 +410,7 @@ void UDlgDialogue::ExportToFile() const
 		case EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue:
 		default:
 		{
-			DlgConfigWriter DlgWriter;
+			FDlgConfigWriter DlgWriter;
 			DlgWriter.Write(GetClass(), this);
 			DlgWriter.ExportToFile(TextFileName);
 			break;

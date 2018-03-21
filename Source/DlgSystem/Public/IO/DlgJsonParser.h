@@ -15,7 +15,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogDlgJsonParser, Log, All);
  * @brief The DlgJsonParser class mostly adapted for Dialogues, copied from FJsonObjectConverter
  * See IDlgParser for properties and METADATA specifiers.
  */
-class DLGSYSTEM_API DlgJsonParser : public IDlgParser
+class DLGSYSTEM_API FDlgJsonParser : public IDlgParser
 {
 	/**
 	 * Call Order and possible calls:
@@ -31,9 +31,9 @@ class DLGSYSTEM_API DlgJsonParser : public IDlgParser
 	 */
 
 public:
-	DlgJsonParser() {}
+	FDlgJsonParser() {}
 
-	DlgJsonParser(const FString& FilePath)
+	FDlgJsonParser(const FString& FilePath)
 	{
 		InitializeParser(FilePath);
 	}

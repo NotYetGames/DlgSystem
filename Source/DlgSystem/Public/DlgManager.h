@@ -114,11 +114,11 @@ public:
 		Map.KeySort(PredicateSortFNameAlphabeticallyAscending);
 	}
 
-	/** Sets the UDlgMemory Dialogue history. */
+	/** Sets the FDlgMemory Dialogue history. */
 	UFUNCTION(BlueprintCallable, Category = DialogueData)
 	static void SetDialogueHistory(const TMap<FGuid, FDlgHistory>& DlgHistory);
 
-	/** Gets the Dialogue History from the UDlgMemory. */
+	/** Gets the Dialogue History from the FDlgMemory. */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	static const TMap<FGuid, FDlgHistory>& GetDialogueHistory();
 

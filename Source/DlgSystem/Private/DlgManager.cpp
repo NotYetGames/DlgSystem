@@ -165,12 +165,12 @@ TArray<UDlgDialogue*> UDlgManager::GetDialoguesWithDuplicateGuid()
 
 const TMap<FGuid, FDlgHistory>& UDlgManager::GetDialogueHistory()
 {
-	return DlgMemory::GetInstance()->GetHistoryMaps();
+	return FDlgMemory::GetInstance()->GetHistoryMaps();
 }
 
 void UDlgManager::SetDialogueHistory(const TMap<FGuid, FDlgHistory>& DlgHistory)
 {
-	DlgMemory::GetInstance()->SetHistoryMap(DlgHistory);
+	FDlgMemory::GetInstance()->SetHistoryMap(DlgHistory);
 }
 
 bool UDlgManager::DoesObjectImplementDialogueParticipantInterface(UObject* Object)

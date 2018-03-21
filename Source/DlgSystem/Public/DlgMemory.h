@@ -19,12 +19,12 @@ struct FDlgHistory
 /**
  *  Singleton to store Dialogue history
  */
-class DLGSYSTEM_API DlgMemory
+class DLGSYSTEM_API FDlgMemory
 {
 public:
-	static DlgMemory* GetInstance()
+	static FDlgMemory* GetInstance()
 	{
-		static DlgMemory Instance;
+		static FDlgMemory Instance;
 		return &Instance;
 	}
 

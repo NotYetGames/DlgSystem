@@ -39,7 +39,7 @@ bool UDlgContextInternal::EnterNode(int32 NodeIndex, TSet<UDlgNode*> NodesEntere
 	}
 
 	ActiveNodeIndex = NodeIndex;
-	DlgMemory::GetInstance()->SetNodeVisited(Dialogue->GetDlgGuid(), ActiveNodeIndex);
+	FDlgMemory::GetInstance()->SetNodeVisited(Dialogue->GetDlgGuid(), ActiveNodeIndex);
 	VisitedNodeIndices.Add(ActiveNodeIndex);
 
 	return Node->HandleNodeEnter(this, NodesEnteredWithThisStep);
