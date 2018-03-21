@@ -16,6 +16,16 @@ void UDialogueGraphNode_Edge::PostEditChangeProperty(FPropertyChangedEvent& Prop
 	{
 		// Always keep in sync with the Edge of the Dialogue Node
 		FDlgEdge* ParentNodeDialogueEdge = GetMutableDialogueEdgeFromParentNode();
+
+		// This happens when we copy and paste sometimes, the parent/child nodes does not have this edge
+		// Most likely caused by duplicate PinIds
+		if ((ParentNodeDialogueEdge == nullptr || DialogueEdge.TargetIndex != ParentNodeDialogueEdge->TargetIndex) &&
+			(!GetParentNode()->HasChildEdgeNode(this) || !GetChildNode()->HasParentEdgeNode(this)))
+		{
+			return;
+		}
+
+		// Node is correct but the data isn't? :O
 		check(ParentNodeDialogueEdge);
 		check(DialogueEdge.TargetIndex == ParentNodeDialogueEdge->TargetIndex);
 		*ParentNodeDialogueEdge = DialogueEdge;
