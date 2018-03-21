@@ -497,14 +497,21 @@ const TArray<UDialogueGraphNode*> UDialogueGraphNode::GetChildNodes() const
 	return ChildNodes;
 }
 
-const TArray<UDialogueGraphNode_Edge*> UDialogueGraphNode::GetParentEdgeNodes() const
+const TArray<UDialogueGraphNode_Edge*> UDialogueGraphNode::GetParentEdgeNodes(const bool bCheckChild /*= true*/) const
 {
 	// (input pin) ParentNode (output pin) -> (input pin) EdgeNode aka ParentEdgeConnection (EdgeOutputPin) -> (input pin) ThisNode (output pin)
 	TArray<UDialogueGraphNode_Edge*> ParentEdgeNodes;
 	for (const UEdGraphPin* EdgeOutputPin : GetInputPin()->LinkedTo)
 	{
 		UDialogueGraphNode_Edge* ParentEdgeConnection = CastChecked<UDialogueGraphNode_Edge>(EdgeOutputPin->GetOwningNode());
-		check(ParentEdgeConnection->GetChildNode() == this);
+
+#if DO_CHECK
+		if (bCheckChild)
+		{
+			check(ParentEdgeConnection->GetChildNode() == this);
+		}
+#endif
+		
 		ParentEdgeNodes.Add(ParentEdgeConnection);
 	}
 
@@ -530,6 +537,50 @@ const TArray<UDialogueGraphNode_Edge*> UDialogueGraphNode::GetChildEdgeNodes(con
 	}
 
 	return ChildEdgeNodes;
+}
+
+bool UDialogueGraphNode::HasChildEdgeNode(const UDialogueGraphNode_Edge* ChildEdgeToFind) const
+{
+	if (!HasOutputPin())
+	{
+		return false;
+	}
+
+	// (input pin) ThisNode (output pin) -> (EdgeInputPin) EdgeNode aka ChildEdgeConnection (output pin) -> (input pin) ChildNode (output pin)
+	for (const UEdGraphPin* EdgeInputPin : GetOutputPin()->LinkedTo)
+	{
+		if (const UDialogueGraphNode_Edge* ChildEdgeConnection = Cast<UDialogueGraphNode_Edge>(EdgeInputPin->GetOwningNodeUnchecked()))
+		{
+			if (ChildEdgeToFind == ChildEdgeConnection)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool UDialogueGraphNode::HasParentEdgeNode(const UDialogueGraphNode_Edge* ParentEdgeToFind) const
+{
+	if (!HasInputPin())
+	{
+		return false;
+	}
+
+	// (input pin) ParentNode (output pin) -> (input pin) EdgeNode aka ParentEdgeConnection (EdgeOutputPin) -> (input pin) ThisNode (output pin)
+	for (const UEdGraphPin* EdgeOutputPin : GetInputPin()->LinkedTo)
+	{
+		if (const UDialogueGraphNode_Edge* ParentEdgeConnection = Cast<UDialogueGraphNode_Edge>(EdgeOutputPin->GetOwningNodeUnchecked()))
+		{
+			if (ParentEdgeToFind == ParentEdgeConnection)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 struct FCompareNodeXLocation

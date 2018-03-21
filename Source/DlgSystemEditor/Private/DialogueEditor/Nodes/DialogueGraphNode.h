@@ -308,10 +308,16 @@ public:
 	const TArray<UDialogueGraphNode*> GetChildNodes() const;
 
 	/** Gets the parent node edges that are connected from the input pin. This returns the proxy edge nodes. To surpass the proxy connection use GetParentNodes. */
-	const TArray<UDialogueGraphNode_Edge*> GetParentEdgeNodes() const;
+	const TArray<UDialogueGraphNode_Edge*> GetParentEdgeNodes(const bool bCheckChild = true) const;
 
 	/** Gets the child node edges that are connected from the output pin. This returns the proxy edge nodes. To surpass the proxy connection use GetChildNodes. */
 	const TArray<UDialogueGraphNode_Edge*> GetChildEdgeNodes(const bool bCheckParent = true) const;
+
+	/** Does this node have the child edge ChildEdgeToFind? */
+	bool HasChildEdgeNode(const UDialogueGraphNode_Edge* ChildEdgeToFind) const;
+		
+	/** Does this node has the  parent edge ParentEdgeToFind?  */
+	bool HasParentEdgeNode(const UDialogueGraphNode_Edge* ParentEdgeToFind) const;
 
 	/** Rearranges the children (edges, output pin, connections) based on the X location on the graph. */
 	void SortChildrenBasedOnXLocation();
