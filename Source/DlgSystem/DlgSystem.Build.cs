@@ -11,8 +11,8 @@ public class DlgSystem : ModuleRules
 		// https://docs.unrealengine.com/latest/INT/Programming/UnrealBuildSystem/Configuration/
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		bEnforceIWYU = true;
-		MinFilesUsingPrecompiledHeaderOverride = 1;
-		bFasterWithoutUnity = true;
+		//MinFilesUsingPrecompiledHeaderOverride = 1;
+		//bFasterWithoutUnity = true;
 		//PrivatePCHHeaderFile = "Private/DlgSystemPrivatePCH.h";
 
 		PublicIncludePaths.AddRange(
@@ -47,7 +47,7 @@ public class DlgSystem : ModuleRules
 				// UI
 				"SlateCore",
 				"Slate",
-                "InputCore"
+				"InputCore"
 				// ... add private dependencies that you statically link with here ...
 			});
 

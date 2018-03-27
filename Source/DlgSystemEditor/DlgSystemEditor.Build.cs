@@ -5,90 +5,90 @@ using UnrealBuildTool;
 public class DlgSystemEditor : ModuleRules
 {
 	public DlgSystemEditor(ReadOnlyTargetRules Target) : base(Target)
-    {
-        // Enable IWYU
-        // https://docs.unrealengine.com/latest/INT/Programming/UnrealBuildSystem/IWYUReferenceGuide/index.html
+	{
+		// Enable IWYU
+		// https://docs.unrealengine.com/latest/INT/Programming/UnrealBuildSystem/IWYUReferenceGuide/index.html
 		// https://docs.unrealengine.com/latest/INT/Programming/UnrealBuildSystem/Configuration/
-        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-        bEnforceIWYU = true;
-		MinFilesUsingPrecompiledHeaderOverride = 1;
-		bFasterWithoutUnity = true;
-        //PrivatePCHHeaderFile = "Private/DlgSystemEditorPrivatePCH.h";
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+		bEnforceIWYU = true;
+		//MinFilesUsingPrecompiledHeaderOverride = 1;
+		//bFasterWithoutUnity = true;
+		//PrivatePCHHeaderFile = "Private/DlgSystemEditorPrivatePCH.h";
 
 		//if ((Target.Platform == UnrealTargetPlatform.Win32 || Target.Platform == UnrealTargetPlatform.Win64)
 		//	&& WindowsPlatform.Compiler >= WindowsCompiler.VisualStudio2015)
-        //{
-            //Definitions.Add("/Wall");
-        //}
+		//{
+			//Definitions.Add("/Wall");
+		//}
 
-        // Docs see https://docs.unrealengine.com/latest/INT/Programming/UnrealBuildSystem/ModuleFiles/
+		// Docs see https://docs.unrealengine.com/latest/INT/Programming/UnrealBuildSystem/ModuleFiles/
 
-        PublicIncludePaths.AddRange(
+		PublicIncludePaths.AddRange(
 			new string[] {
-                "DlgSystemEditor/Public"
+				"DlgSystemEditor/Public"
 				// ... add public include paths required here ...
-		    });
+			});
 
 
 		PrivateIncludePaths.AddRange(
 			new string[] {
-                "DlgSystemEditor/Private",
+				"DlgSystemEditor/Private",
 				// ... add other private include paths required here ...
-		    });
+			});
 
 
 		PublicDependencyModuleNames.AddRange(
 			new string[] {
 				"Core",
-                "DlgSystem",
+				"DlgSystem",
 				// ... add other public dependencies that you statically link with here ...
-		    });
+			});
 
 
 		PrivateDependencyModuleNames.AddRange(
 			new string[] {
 				// Core modules
-                "Engine",
-                "CoreUObject",
-                "Projects", // IPluginManager
-                "UnrealEd", // for FAssetEditorManager
-                "RenderCore",
-                "InputCore",
-                "SlateCore",
-                "Slate",
-                "EditorStyle",
-                "MessageLog",
+				"Engine",
+				"CoreUObject",
+				"Projects", // IPluginManager
+				"UnrealEd", // for FAssetEditorManager
+				"RenderCore",
+				"InputCore",
+				"SlateCore",
+				"Slate",
+				"EditorStyle",
+				"MessageLog",
 
 				// Accessing the menu
-                "WorkspaceMenuStructure",
+				"WorkspaceMenuStructure",
 
 				// Details/Property editor
-                "DetailCustomizations",
-                "PropertyEditor",
+				"DetailCustomizations",
+				"PropertyEditor",
 
 				// Used for the Blueprint Nodes
-                "BlueprintGraph",
-                "Kismet",
-                "KismetCompiler",
-                "KismetWidgets",
+				"BlueprintGraph",
+				"Kismet",
+				"KismetCompiler",
+				"KismetWidgets",
 
-                // graph stuff
-                "GraphEditor",
+				// graph stuff
+				"GraphEditor",
 				"ContentBrowser",
 
-                // e.g. FPlatformApplicationMisc::ClipboardCopy
-                "ApplicationCore",
-            });
+				// e.g. FPlatformApplicationMisc::ClipboardCopy
+				"ApplicationCore",
+			});
 
 		PrivateIncludePathModuleNames.AddRange(
-            new string[] {
-                "AssetRegistry",
-                "AssetTools",
-            });
+			new string[] {
+				"AssetRegistry",
+				"AssetTools",
+			});
 
-        DynamicallyLoadedModuleNames.AddRange(
+		DynamicallyLoadedModuleNames.AddRange(
 			new string[] {
 				// ... add any modules that your module loads dynamically here ...
-            });
+			});
 	}
 }
