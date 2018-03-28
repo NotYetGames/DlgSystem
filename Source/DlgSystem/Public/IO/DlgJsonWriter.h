@@ -52,6 +52,11 @@ public:
 		return FFileHelper::SaveStringToFile(JsonString, *FileName, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
 	}
 
+	const FString& GetAsString() const override
+	{
+		return JsonString;
+	}
+
 private: // UStruct -> JSON
 	/**
 	 * Convert property to JSON, assuming either the property is not an array or the value is an individual array element

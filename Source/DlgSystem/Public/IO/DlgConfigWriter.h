@@ -56,7 +56,7 @@ public:
 		return FFileHelper::SaveStringToFile(ConfigText, *FileName, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
 	}
 
-	const FString& GetAsString() const
+	const FString& GetAsString() const override
 	{
 		return ConfigText;
 	}

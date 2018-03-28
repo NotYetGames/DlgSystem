@@ -54,13 +54,13 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(UProper
 		}
 
 		// We want to export numbers as numbers
+		if (NumericProperty->IsInteger())
+		{
+			return MakeShareable(new FJsonValueNumber(NumericProperty->GetSignedIntPropertyValue(Value)));
+		}
 		if (NumericProperty->IsFloatingPoint())
 		{
 			return MakeShareable(new FJsonValueNumber(NumericProperty->GetFloatingPointPropertyValue(Value)));
-		}
-		else if (NumericProperty->IsInteger())
-		{
-			return MakeShareable(new FJsonValueNumber(NumericProperty->GetSignedIntPropertyValue(Value)));
 		}
 
 		// Invalid
@@ -126,7 +126,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(UProper
 	// TSet
 	if (const USetProperty* SetProperty = Cast<USetProperty>(Property))
 	{
-		TArray<TSharedPtr<FJsonValue>> Out;
+		TArray<TSharedPtr<FJsonValue>> Array;
 		FScriptSetHelper Helper(SetProperty, Value);
 		for (int32 Index = 0, Num = Helper.Num(); Index < Num; Index++)
 		{
@@ -134,11 +134,11 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(UProper
 			if (Elem.IsValid())
 			{
 				// add to the array
-				Out.Push(Elem);
+				Array.Push(Elem);
 			}
 		}
 
-		return MakeShareable(new FJsonValueArray(Out));
+		return MakeShareable(new FJsonValueArray(Array));
 	}
 
 	// TMap

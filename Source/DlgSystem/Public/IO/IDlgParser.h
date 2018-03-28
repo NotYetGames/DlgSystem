@@ -13,6 +13,7 @@ public:
 
 	/** Initializes the parser with the specified FilePath. */
 	virtual void InitializeParser(const FString& FilePath) = 0;
+
 	/** Initializes the parser with the speficied input string */
 	virtual void InitializeParserFromString(const FString& Text) {};
 

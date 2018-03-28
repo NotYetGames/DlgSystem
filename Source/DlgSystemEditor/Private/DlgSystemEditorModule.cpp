@@ -37,7 +37,6 @@
 
 #include "IO/DlgConfigWriter.h"
 #include "IO/DlgConfigParser.h"
-#include "IO/DlgIOTester.h"
 
 #define LOCTEXT_NAMESPACE "DlgSystemEditor"
 
