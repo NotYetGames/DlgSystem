@@ -1,33 +1,6 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgIOTesterTypes.h"
 
-// May the macro gods have mercy on me
-#define TEST_ARRAY_IS_EQUAL_TO_OTHER(_PropertyArrayName, _DifferenceElements)                                  \
-	if (_PropertyArrayName != Other._PropertyArrayName)                                                        \
-	{                                                                                                          \
-		bIsEqual = false;                                                                                      \
-		if (_PropertyArrayName.Num() != Other._PropertyArrayName.Num())                                        \
-		{                                                                                                      \
-			OutError += FString::Printf(                                                                       \
-				TEXT("\tThis." #_PropertyArrayName ".Num (%d) != Other." #_PropertyArrayName ".Num (%d)\n"),   \
-				_PropertyArrayName.Num(), Other._PropertyArrayName.Num());                                     \
-		}                                                                                                      \
-		_DifferenceElements                                                                                    \
-	}
-
-#define TEST_SET_IS_EQUAL_TO_OTHER(_PropertySetName, _DifferenceElements)                                  \
-	if (SetEqualsSet(_PropertySetName, Other._PropertySetName) == false)                                   \
-	{                                                                                                      \
-		bIsEqual = false;                                                                                  \
-		if (_PropertySetName.Num() != Other._PropertySetName.Num())                                        \
-		{                                                                                                  \
-			OutError += FString::Printf(                                                                   \
-				TEXT("\tThis." #_PropertySetName ".Num (%d) != Other." #_PropertySetName ".Num (%d)\n"),   \
-				_PropertySetName.Num(), Other._PropertySetName.Num());                                     \
-		}                                                                                                  \
-		_DifferenceElements                                                                                \
-	}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgTestStructPrimitives
 void FDlgTestStructPrimitives::GenerateRandomData()
@@ -110,6 +83,12 @@ bool FDlgTestStructPrimitives::operator==(const FDlgTestStructPrimitives& Other)
 // FDlgTestArrayPrimitive
 void FDlgTestArrayPrimitive::GenerateRandomData()
 {
+	IntArray.Empty();
+	BoolArray.Empty();
+	EnumArray.Empty();
+	NameArray.Empty();
+	StringArray.Empty();
+
 	const int32 Num = FMath::RandHelper(10) + 2;
 	IntArray.SetNum(Num);
 	BoolArray.SetNum(Num);
@@ -117,8 +96,8 @@ void FDlgTestArrayPrimitive::GenerateRandomData()
 	{
 		EnumArray.SetNum(Num);
 	}
-	StringArray.SetNum(Num);
 	NameArray.SetNum(Num);
+	StringArray.SetNum(Num);
 
 	for (int32 i = 0; i < Num; ++i)
 	{
@@ -135,74 +114,70 @@ void FDlgTestArrayPrimitive::GenerateRandomData()
 
 bool FDlgTestArrayPrimitive::IsEqual(const FDlgTestArrayPrimitive& Other, FString& OutError) const
 {
+	FString PropertyName;
 	bool bIsEqual = true;
 	OutError += TEXT("FDlgTestArrayPrimitive::IsEqual:\n");
 
-	TEST_ARRAY_IS_EQUAL_TO_OTHER(IntArray,
-	{
-		// Some element is not equal
-		for (int32 i = 0; i < IntArray.Num(); i++)
+	PropertyName = TEXT("IntArray");
+	bIsEqual = bIsEqual && TestArrayIsEqualToOther<int32>(IntArray, Other.IntArray, PropertyName, OutError,
+		[&PropertyName](const int32 Index, const int32& ThisValue, const int32& OtherValue) -> FString
 		{
-			if (IntArray[i] != Other.IntArray[i])
+			if (ThisValue != OtherValue)
 			{
-				OutError += FString::Printf(TEXT("\tThis.IntArray[%d] (%d) != Other.IntArray[%d] (%d)\n"),
-					i, IntArray[i], i, Other.IntArray[i]);
+				return FString::Printf(TEXT("\tThis.%s[%d] (%d) != Other.%s[%d] (%d)\n"),
+					*PropertyName, Index, ThisValue, *PropertyName, Index, OtherValue);
 			}
-		}
-	});
-
-	TEST_ARRAY_IS_EQUAL_TO_OTHER(BoolArray,
-	{
-		// Some element is not equal
-		for (int32 i = 0; i < BoolArray.Num(); i++)
-		{
-			if (BoolArray[i] != Other.BoolArray[i])
-			{
-				OutError += FString::Printf(TEXT("\tThis.BoolArray[%d] (%d) != Other.BoolArray[%d] (%d)\n"),
-					i, BoolArray[i], i, Other.BoolArray[i]);
-			}
-		}
-	});
-
-	TEST_ARRAY_IS_EQUAL_TO_OTHER(EnumArray,
-	{
-		// Some element is not equal
-		for (int32 i = 0; i < EnumArray.Num(); i++)
-		{
-			if (EnumArray[i] != Other.EnumArray[i])
-			{
-				OutError += FString::Printf(TEXT("\tThis.EnumArray[%d] (%d) != Other.EnumArray[%d] (%d)\n"),
-					i, static_cast<int32>(EnumArray[i]), i, static_cast<int32>(Other.EnumArray[i]));
-			}
-		}
-	});
-
-	TEST_ARRAY_IS_EQUAL_TO_OTHER(NameArray,
-	{
-		// Some element is not equal
-		for (int32 i = 0; i < NameArray.Num(); i++)
-		{
-			if (NameArray[i] != Other.NameArray[i])
-			{
-				OutError += FString::Printf(TEXT("\tThis.NameArray[%d] (%s) != Other.NameArray[%d] (%s)\n"),
-					i, *NameArray[i].ToString(), i, *Other.NameArray[i].ToString());
-			}
-		}
-	});
+			return FString();
+		});
 
 
-	TEST_ARRAY_IS_EQUAL_TO_OTHER(StringArray,
-	{
-		// Some element is not equal
-		for (int32 i = 0; i < StringArray.Num(); i++)
+	PropertyName = TEXT("BoolArray");
+	bIsEqual = bIsEqual && TestArrayIsEqualToOther<bool>(BoolArray, Other.BoolArray, PropertyName, OutError,
+		[&PropertyName](const int32 Index, const bool& ThisValue, const bool& OtherValue) -> FString
 		{
-			if (StringArray[i] != Other.StringArray[i])
+			if (ThisValue != OtherValue)
 			{
-				OutError += FString::Printf(TEXT("\tThis.StringArray[%d] (%s) != Other.StringArray[%d] (%s)\n"),
-					i, *StringArray[i], i, *Other.StringArray[i]);
+				return FString::Printf(TEXT("\tThis.%s[%d] (%d) != Other.%s[%d] (%d)\n"),
+					*PropertyName, Index, ThisValue, *PropertyName, Index, OtherValue);
 			}
-		}
-	});
+			return FString();
+		});
+
+	PropertyName = TEXT("EnumArray");
+	bIsEqual = bIsEqual && TestArrayIsEqualToOther<EDlgTestEnum>(EnumArray, Other.EnumArray, PropertyName, OutError,
+		[&PropertyName](const int32 Index, const EDlgTestEnum& ThisValue, const EDlgTestEnum& OtherValue) -> FString
+		{
+			if (ThisValue != OtherValue)
+			{
+				return FString::Printf(TEXT("\tThis.%s[%d] (%d) != Other.%s[%d] (%d)\n"),
+					*PropertyName, Index, static_cast<int32>(ThisValue), *PropertyName, Index, static_cast<int32>(OtherValue));
+			}
+			return FString();
+		});
+
+	PropertyName = TEXT("NameArray");
+	bIsEqual = bIsEqual && TestArrayIsEqualToOther<FName>(NameArray, Other.NameArray, PropertyName, OutError,
+		[&PropertyName](const int32 Index, const FName& ThisValue, const FName& OtherValue) -> FString
+		{
+			if (ThisValue != OtherValue)
+			{
+				return FString::Printf(TEXT("\tThis.%s[%d] (%s) != Other.%s[%d] (%s)\n"),
+					*PropertyName, Index, *ThisValue.ToString(), *PropertyName, Index, *OtherValue.ToString());
+			}
+			return FString();
+		});
+
+	PropertyName = TEXT("StringArray");
+	bIsEqual = bIsEqual && TestArrayIsEqualToOther<FString>(StringArray, Other.StringArray, PropertyName, OutError,
+		[&PropertyName](const int32 Index, const FString& ThisValue, const FString& OtherValue) -> FString
+		{
+			if (ThisValue != OtherValue)
+			{
+				return FString::Printf(TEXT("\tThis.%s[%d] (%s) != Other.%s[%d] (%s)\n"),
+					*PropertyName, Index, *ThisValue, *PropertyName, Index, *OtherValue);
+			}
+			return FString();
+		});
 
 	// Clear error message
 	if (bIsEqual)
@@ -225,27 +200,28 @@ bool FDlgTestArrayPrimitive::operator==(const FDlgTestArrayPrimitive& Other) con
 // FDlgTestArrayStruct
 void FDlgTestArrayStruct::GenerateRandomData()
 {
+	StructArrayPrimitives.Empty();
 	StructArrayPrimitives.SetNum(FMath::RandHelper(10) + 2);
 }
 
 bool FDlgTestArrayStruct::IsEqual(const FDlgTestArrayStruct& Other, FString& OutError) const
 {
+	FString PropertyName;
 	bool bIsEqual = true;
 	OutError += TEXT("FDlgTestArrayStruct::IsEqual:\n");
 
-	TEST_ARRAY_IS_EQUAL_TO_OTHER(StructArrayPrimitives,
-	{
-		// Some element is not equal
-		for (int32 i = 0; i < StructArrayPrimitives.Num(); i++)
+	PropertyName = TEXT("StructArrayPrimitives");
+	bIsEqual = bIsEqual && TestArrayIsEqualToOther<FDlgTestStructPrimitives>(StructArrayPrimitives, Other.StructArrayPrimitives, PropertyName, OutError,
+		[&PropertyName](const int32 Index, const FDlgTestStructPrimitives& ThisValue, const FDlgTestStructPrimitives& OtherValue) -> FString
 		{
 			FString ErrorMessage;
-			if (!StructArrayPrimitives[i].IsEqual(Other.StructArrayPrimitives[i], ErrorMessage))
+			if (!ThisValue.IsEqual(OtherValue, ErrorMessage))
 			{
-				OutError += FString::Printf(TEXT("\tThis.StructArrayPrimitives[%d] != Other.StructArrayPrimitives[%d] |message = %s|\n"),
-					i, i, *ErrorMessage);
+				return FString::Printf(TEXT("\tThis.%s[%d] != Other.%s[%d] |message = %s|\n"),
+					*PropertyName, Index, *PropertyName, Index, *ErrorMessage);
 			}
-		}
-	});
+			return FString();
+		});
 
 	// Clear error message
 	if (bIsEqual)
@@ -264,11 +240,15 @@ bool FDlgTestArrayStruct::operator==(const FDlgTestArrayStruct& Other) const
 // FDlgTestSetPrimitive
 void FDlgTestSetPrimitive::GenerateRandomData()
 {
+	IntSet.Empty();
+	EnumSet.Empty();
+	NameSet.Empty();
+	StringSet.Empty();
+
 	const int32 Num = FMath::RandHelper(10) + 2;
 	for (int32 i = 0; i < Num; ++i)
 	{
 		IntSet.Add(FMath::Rand());
-		BoolSet.Add(FMath::RandBool());
 		if (Options.bSupportsPureEnumContainer)
 		{
 			EnumSet.Add(static_cast<EDlgTestEnum>(FMath::RandHelper(static_cast<int32>(EDlgTestEnum::ETE_NumOf))));
@@ -281,68 +261,37 @@ void FDlgTestSetPrimitive::GenerateRandomData()
 
 bool FDlgTestSetPrimitive::IsEqual(const FDlgTestSetPrimitive& Other, FString& OutError) const
 {
+	FString PropertyName;
 	bool bIsEqual = true;
 	OutError += TEXT("FDlgTestSetPrimitive::IsEqual:\n");
 
-	TEST_SET_IS_EQUAL_TO_OTHER(IntSet,
-	{
-		const TSet<int32> NotInOther = IntSet.Difference(Other.IntSet);
-		OutError += FString::Printf(TEXT("\tNotInOther = This.IntSet - Other.IntSet is of length = %d\n"), NotInOther.Num());
-		FString NotInOtherString;
-		for (const int32 Number : NotInOther)
+	PropertyName = TEXT("IntSet");
+	bIsEqual = bIsEqual && TestSetIsEqualToOther<int32>(IntSet, Other.IntSet, PropertyName, OutError,
+		[](const int32& Value) -> FString
 		{
-			NotInOtherString += FString::Printf(TEXT("%d,"), Number);
-		}
-		OutError += FString::Printf(TEXT("\tNotInOther = {%s}\n"), *NotInOtherString);
-	});
+			return FString::FromInt(Value);
+		});
 
-	TEST_SET_IS_EQUAL_TO_OTHER(BoolSet,
-	{
-		const TSet<bool> NotInOther = BoolSet.Difference(Other.BoolSet);
-		OutError += FString::Printf(TEXT("\tNotInOther = This.BoolSet - Other.BoolSet is of length = %d\n"), NotInOther.Num());
-		FString NotInOtherString;
-		for (const bool Boolean : NotInOther)
+	PropertyName = TEXT("EnumSet");
+	bIsEqual = bIsEqual && TestSetIsEqualToOther<EDlgTestEnum>(EnumSet, Other.EnumSet, PropertyName, OutError,
+		[](const EDlgTestEnum& Value) -> FString
 		{
-			NotInOtherString += FString::Printf(TEXT("%d,"), Boolean);
-		}
-		OutError += FString::Printf(TEXT("\tNotInOther = {%s}\n"), *NotInOtherString);
-	});
+			return FString::FromInt(static_cast<int32>(Value));
+		});
 
-	TEST_SET_IS_EQUAL_TO_OTHER(EnumSet,
-	{
-		const TSet<EDlgTestEnum> NotInOther = EnumSet.Difference(Other.EnumSet);
-		OutError += FString::Printf(TEXT("\tNotInOther = This.EnumSet - Other.EnumSet is of length = %d\n"), NotInOther.Num());
-		FString NotInOtherString;
-		for (const EDlgTestEnum Enum : NotInOther)
+	PropertyName = TEXT("NameSet");
+	bIsEqual = bIsEqual && TestSetIsEqualToOther<FName>(NameSet, Other.NameSet, PropertyName, OutError,
+		[](const FName& Value) -> FString
 		{
-			NotInOtherString += FString::Printf(TEXT("%d,"), static_cast<int32>(Enum));
-		}
-		OutError += FString::Printf(TEXT("\tNotInOther = {%s}\n"), *NotInOtherString);
-	});
+			return Value.ToString();
+		});
 
-	TEST_SET_IS_EQUAL_TO_OTHER(NameSet,
-	{
-		const TSet<FName> NotInOther = NameSet.Difference(Other.NameSet);
-		OutError += FString::Printf(TEXT("\tNotInOther = This.NameSet - Other.NameSet is of length = %d\n"), NotInOther.Num());
-		FString NotInOtherString;
-		for (const FName Name : NotInOther)
+	PropertyName = TEXT("StringSet");
+	bIsEqual = bIsEqual && TestSetIsEqualToOther<FString>(StringSet, Other.StringSet, PropertyName, OutError,
+		[](const FString& Value) -> FString
 		{
-			NotInOtherString += FString::Printf(TEXT("`%s`,"), *Name.ToString());
-		}
-		OutError += FString::Printf(TEXT("\tNotInOther = {%s}\n"), *NotInOtherString);
-	});
-
-	TEST_SET_IS_EQUAL_TO_OTHER(StringSet,
-	{
-		const TSet<FString> NotInOther = StringSet.Difference(Other.StringSet);
-		OutError += FString::Printf(TEXT("\tNotInOther = This.StringSet - Other.StringSet is of length = %d\n"), NotInOther.Num());
-		FString NotInOtherString;
-		for (const FString& String : NotInOther)
-		{
-			NotInOtherString += FString::Printf(TEXT("`%s`,"), *String);
-		}
-		OutError += FString::Printf(TEXT("\tNotInOther = {%s}\n"), *NotInOtherString);
-	});
+			return Value;
+		});
 
 	if (bIsEqual)
 	{
@@ -354,7 +303,6 @@ bool FDlgTestSetPrimitive::IsEqual(const FDlgTestSetPrimitive& Other, FString& O
 bool FDlgTestSetPrimitive::operator==(const FDlgTestSetPrimitive& Other) const
 {
 	return SetEqualsSet(IntSet, Other.IntSet) &&
-		   SetEqualsSet(BoolSet, Other.BoolSet) &&
 		   SetEqualsSet(EnumSet, Other.EnumSet) &&
 		   SetEqualsSet(NameSet, Other.NameSet) &&
 		   SetEqualsSet(StringSet, Other.StringSet);
@@ -364,29 +312,27 @@ bool FDlgTestSetPrimitive::operator==(const FDlgTestSetPrimitive& Other) const
 // FDlgTestSetStruct
 void FDlgTestSetStruct::GenerateRandomData()
 {
+	StructSetPrimitives.Empty();
+
 	const int32 Num = FMath::RandHelper(10) + 2;
 	for (int32 i = 0; i < Num; ++i)
 	{
-		StructSetPrimitives.Add({});
+		StructSetPrimitives.Add(FDlgTestStructPrimitives(Options));
 	}
 }
 
 bool FDlgTestSetStruct::IsEqual(const FDlgTestSetStruct& Other, FString& OutError) const
 {
+	FString PropertyName;
 	bool bIsEqual = true;
 	OutError += TEXT("FDlgTestSetStruct::IsEqual:\n");
 
-	TEST_SET_IS_EQUAL_TO_OTHER(StructSetPrimitives,
-	{
-		const TSet<FDlgTestStructPrimitives> NotInOther = StructSetPrimitives.Difference(Other.StructSetPrimitives);
-		OutError += FString::Printf(TEXT("\tNotInOther = This.StructSetPrimitives - Other.StructSetPrimitives is of length = %d\n"), NotInOther.Num());
-		FString NotInOtherString;
-		for (const FDlgTestStructPrimitives& Struct : NotInOther)
+	PropertyName = TEXT("StructSetPrimitives");
+	bIsEqual = bIsEqual && TestSetIsEqualToOther<FDlgTestStructPrimitives>(StructSetPrimitives, Other.StructSetPrimitives, PropertyName, OutError,
+		[](const FDlgTestStructPrimitives& Value) -> FString
 		{
-			NotInOtherString += FString::Printf(TEXT("Struct(%s),\n"), *Struct.ToString());
-		}
-		OutError += FString::Printf(TEXT("\tNotInOther = {%s}\n"), *NotInOtherString);
-	});
+			return FString::Printf(TEXT("Struct(%s)"), *Value.ToString());
+		});
 
 	// Clear error message
 	if (bIsEqual)
@@ -401,6 +347,151 @@ bool FDlgTestSetStruct::operator==(const FDlgTestSetStruct& Other) const
 	return SetEqualsSet(StructSetPrimitives, Other.StructSetPrimitives);
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// FDlgTestMapPrimitive
+void FDlgTestMapPrimitive::GenerateRandomData()
+{
+	IntToIntMap.Empty();
+	IntToStringMap.Empty();
+	IntToNameMap.Empty();
+	StringToIntMap.Empty();
+	StringToStringMap.Empty();
+	NameToIntMap.Empty();
+	NameToNameMap.Empty();
 
-#undef TEST_ARRAY_IS_EQUAL
-#undef TEST_SET_IS_EQUAL_TO_OTHER
+	const int32 Num = FMath::RandHelper(10) + 2;
+	for (int32 i = 0; i < Num; ++i)
+	{
+		IntToIntMap.Add(FMath::Rand(), FMath::Rand());
+		IntToStringMap.Add(FMath::Rand(), FString::SanitizeFloat(FMath::SRand()));
+		IntToNameMap.Add(FMath::Rand(), FName(*FString::SanitizeFloat(FMath::SRand())));
+
+		const FString StringKey = FString::SanitizeFloat(FMath::SRand());
+		const FString StringValue = FString::SanitizeFloat(FMath::SRand());
+
+		StringToIntMap.Add(StringKey, FMath::Rand());
+		StringToStringMap.Add(StringKey, StringValue);
+		NameToIntMap.Add(FName(*StringKey), FMath::Rand());
+		NameToNameMap.Add(FName(*StringKey), FName(*StringValue));
+	}
+}
+
+bool FDlgTestMapPrimitive::IsEqual(const FDlgTestMapPrimitive& Other, FString& OutError) const
+{
+	FString PropertyName;
+	bool bIsEqual = true;
+	OutError += TEXT("FDlgTestMapPrimitive::IsEqual:\n");
+
+	auto IntToString = [](const int32& Value) -> FString
+	{
+		return FString::FromInt(Value);
+	};
+	auto NameToString = [](const FName& Value) -> FString
+	{
+		return Value.ToString();
+	};
+	auto StringToString = [](const FString& Value) -> FString
+	{
+		return Value;
+	};
+
+	PropertyName = TEXT("IntToIntMap");
+	bIsEqual = bIsEqual && TestMapIsEqualToOther<int32, int32>(IntToIntMap, Other.IntToIntMap, PropertyName, OutError,
+		IntToString, IntToString);
+
+	PropertyName = TEXT("IntToStringMap");
+	bIsEqual = bIsEqual && TestMapIsEqualToOther<int32, FString>(IntToStringMap, Other.IntToStringMap, PropertyName, OutError,
+		IntToString, StringToString);
+
+	PropertyName = TEXT("IntToNameMap");
+	bIsEqual = bIsEqual && TestMapIsEqualToOther<int32, FName>(IntToNameMap, Other.IntToNameMap, PropertyName, OutError,
+		IntToString, NameToString);
+
+	PropertyName = TEXT("NameToIntMap");
+	bIsEqual = bIsEqual && TestMapIsEqualToOther<FName, int32>(NameToIntMap, Other.NameToIntMap, PropertyName, OutError,
+		NameToString, IntToString);
+
+	PropertyName = TEXT("NameToNameMap");
+	bIsEqual = bIsEqual && TestMapIsEqualToOther<FName, FName>(NameToNameMap, Other.NameToNameMap, PropertyName, OutError,
+		NameToString, NameToString);
+
+	PropertyName = TEXT("StringToIntMap");
+	bIsEqual = bIsEqual && TestMapIsEqualToOther<FString, int32>(StringToIntMap, Other.StringToIntMap, PropertyName, OutError,
+		StringToString, IntToString);
+
+	PropertyName = TEXT("StringToStringMap");
+	bIsEqual = bIsEqual && TestMapIsEqualToOther<FString, FString>(StringToStringMap, Other.StringToStringMap, PropertyName, OutError,
+		StringToString, StringToString);
+
+	// Clear error message
+	if (bIsEqual)
+	{
+		OutError.Empty();
+	}
+	return bIsEqual;
+}
+
+bool FDlgTestMapPrimitive::operator==(const FDlgTestMapPrimitive& Other) const
+{
+	return MapEqualsMap(IntToIntMap, Other.IntToIntMap) &&
+		   MapEqualsMap(IntToStringMap, Other.IntToStringMap) &&
+		   MapEqualsMap(IntToNameMap, Other.IntToNameMap) &&
+		   MapEqualsMap(StringToIntMap, Other.StringToIntMap) &&
+		   MapEqualsMap(StringToStringMap, Other.StringToStringMap) &&
+		   MapEqualsMap(NameToIntMap, Other.NameToIntMap) &&
+		   MapEqualsMap(NameToNameMap, Other.NameToNameMap);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// FDlgTestMapStruct
+void FDlgTestMapStruct::GenerateRandomData()
+{
+	IntToStructPrimitiveMap.Empty();
+	StructPrimitiveToIntMap.Empty();
+
+	const int32 Num = FMath::RandHelper(10) + 2;
+	for (int32 i = 0; i < Num; ++i)
+	{
+		IntToStructPrimitiveMap.Add(FMath::Rand(), FDlgTestStructPrimitives(Options));
+		StructPrimitiveToIntMap.Add(FDlgTestStructPrimitives(Options), FMath::Rand());
+	}
+}
+
+bool FDlgTestMapStruct::IsEqual(const FDlgTestMapStruct& Other, FString& OutError) const
+{
+	FString PropertyName;
+	bool bIsEqual = true;
+	OutError += TEXT("FDlgTestMapStruct::IsEqual:\n");
+
+	auto IntToString = [](const int32& Value) -> FString
+	{
+		return FString::FromInt(Value);
+	};
+	auto StructPrimitiveToString = [](const FDlgTestStructPrimitives& Value) -> FString
+	{
+		return FString::Printf(TEXT("Struct(%s)"), *Value.ToString());
+	};
+
+	PropertyName = TEXT("IntToStructPrimitiveMap");
+	bIsEqual = bIsEqual && TestMapIsEqualToOther<int32, FDlgTestStructPrimitives>(IntToStructPrimitiveMap, Other.IntToStructPrimitiveMap, PropertyName, OutError,
+		IntToString, StructPrimitiveToString);
+
+	PropertyName = TEXT("StructPrimitiveToIntMap");
+	bIsEqual = bIsEqual && TestMapIsEqualToOther<FDlgTestStructPrimitives, int32>(StructPrimitiveToIntMap, Other.StructPrimitiveToIntMap, PropertyName, OutError,
+		StructPrimitiveToString, IntToString);
+
+	// Clear error message
+	if (bIsEqual)
+	{
+		OutError.Empty();
+	}
+	return bIsEqual;
+}
+
+
+bool FDlgTestMapStruct::operator==(const FDlgTestMapStruct& Other) const
+{
+	return MapEqualsMap(IntToStructPrimitiveMap, Other.IntToStructPrimitiveMap) &&
+		   MapEqualsMap(StructPrimitiveToIntMap, Other.StructPrimitiveToIntMap);
+}
+

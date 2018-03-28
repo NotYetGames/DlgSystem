@@ -11,8 +11,8 @@ DECLARE_LOG_CATEGORY_EXTERN(LogDlgIOTester, All, All);
 
 
 /**
- *		WIP test class for parsers
- *		TODO: TMap tests, UObject* tests
+ *	WIP test class for parsers
+ *	TODO: UObject* tests
  */
 class DLGSYSTEM_API FDlgIOTester
 {
@@ -54,6 +54,11 @@ bool FDlgIOTester::TestParser(const FDlgIOTesterOptions& Options, const FString 
 			&& bAllSucceeded;
 	}
 
+	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestMapPrimitive>("Map with Primitives", Options, NameWriterType, NameParserType)
+		&& bAllSucceeded;
+	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestMapStruct>("Map with Structs", Options, NameWriterType, NameParserType)
+		&& bAllSucceeded;
+
 	return bAllSucceeded;
 }
 
@@ -87,10 +92,16 @@ bool FDlgIOTester::TestStruct(const FString& StructDescription, const FDlgIOTest
 	}
 	else
 	{
+		// Used only for debugging
+		ConfigWriterType DebugParser;
+		DebugParser.Write(StructType::StaticStruct(), &ImportedStruct);
+		const FString ParserString = DebugParser.GetAsString();
+
 		UE_LOG(LogDlgIOTester, Warning, TEXT("This = ExportedStruct, Other = ImportedStruct"));
 		UE_LOG(LogDlgIOTester, Warning, TEXT("Writer = %s, Parser = %s. Test Failed = %s"), *NameWriterType, *NameParserType, *StructDescription);
 		UE_LOG(LogDlgIOTester, Warning, TEXT("ErrorMessage = %s"), *ErrorMessage);
-		UE_LOG(LogDlgIOTester, Warning, TEXT("ExportedStruct.GetAsString() = |%s|"), *WriterString);
+		UE_LOG(LogDlgIOTester, Warning, TEXT("ExportedStruct.GetAsString() = |%s|\n"), *WriterString);
+		UE_LOG(LogDlgIOTester, Warning, TEXT("ImportedStruct.GetAsString() = |%s|\n"), *ParserString);
 		UE_LOG(LogDlgIOTester, Warning, TEXT(""));
 	}
 

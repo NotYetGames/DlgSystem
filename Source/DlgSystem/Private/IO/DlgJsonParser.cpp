@@ -1,5 +1,6 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "IO/DlgJsonParser.h"
+
 #include "LogMacros.h"
 #include "Object.h"
 #include "FileHelper.h"
@@ -10,6 +11,7 @@
 #include "JsonUtilities.h"
 #include "TextProperty.h"
 #include "PropertyPortFlags.h"
+#include "Misc/TextBuffer.h"
 
 DEFINE_LOG_CATEGORY(LogDlgJsonParser);
 
@@ -333,10 +335,13 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 				if (Entry.Value.IsValid() && !Entry.Value->IsNull())
 				{
 					const int32 NewIndex = Helper.AddDefaultValue_Invalid_NeedsRehash();
-					const TSharedPtr<FJsonValueString> TempKeyValue = MakeShareable(new FJsonValueString(Entry.Key));
 
-					// Add Key and Value
-					const bool bKeySuccess = JsonValueToUProperty(TempKeyValue, MapProperty->KeyProp, Helper.GetKeyPtr(NewIndex));
+					// NOTE if key is a UStructProperty no need to Import the text item here as it will do that below in UStruct
+					// Add key
+					const TSharedPtr<FJsonValueString> KeyAsString = MakeShareable(new FJsonValueString(Entry.Key));
+					const bool bKeySuccess = JsonValueToUProperty(KeyAsString, MapProperty->KeyProp, Helper.GetKeyPtr(NewIndex));
+
+					// Add value
 					const bool bValueSuccess = JsonValueToUProperty(Entry.Value, MapProperty->ValueProp, Helper.GetValuePtr(NewIndex));
 
 					if (!bKeySuccess || !bValueSuccess)
@@ -439,6 +444,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 				 StructProperty->Struct->GetCppStructOps() &&
 				 StructProperty->Struct->GetCppStructOps()->HasImportTextItem())
 		{
+			// Import as simple native string
 			UScriptStruct::ICppStructOps* TheCppStructOps = StructProperty->Struct->GetCppStructOps();
 
 			const FString ImportTextString = JsonValue->AsString();
@@ -451,6 +457,8 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 		}
 		else if (JsonValue->Type == EJson::String)
 		{
+			// Import as simple string
+			// UTextBuffer* ImportErrors = NewObject<UTextBuffer>();
 			const FString ImportTextString = JsonValue->AsString();
 			const TCHAR* ImportTextPtr = *ImportTextString;
 			Property->ImportText(ImportTextPtr, OutValue, PPF_None, nullptr);

@@ -62,7 +62,7 @@ private: // UStruct -> JSON
 	 * Convert property to JSON, assuming either the property is not an array or the value is an individual array element
 	 * Used by UPropertyToJsonValue
 	 */
-	TSharedPtr<FJsonValue> ConvertScalarUPropertyToJsonValue(UProperty* Property, const void* Value, int32 IndexInArray = INDEX_NONE);
+	TSharedPtr<FJsonValue> ConvertScalarUPropertyToJsonValue(UProperty* Property, const void* Value);
 
 	/**
 	 * Converts from a UProperty to a Json Value using exportText
@@ -72,7 +72,7 @@ private: // UStruct -> JSON
 	 *
 	 * @return					The constructed JsonValue from the property
 	 */
-	TSharedPtr<FJsonValue> UPropertyToJsonValue(UProperty* Property, const void* Value, int32 IndexInArray = INDEX_NONE);
+	TSharedPtr<FJsonValue> UPropertyToJsonValue(UProperty* Property, const void* Value);
 
 	/**
 	 * Converts from a UStruct to a set of json attributes (possibly from within a JsonObject)
@@ -112,9 +112,24 @@ private: // UStruct -> JSON
 	bool UStructToJsonString(const UStruct* StructDefinition, const void* Object, const DlgJsonWriterOptions& Options,
 							 FString& OutJsonString);
 
+	void ResetState()
+	{
+		IndexInArray = INDEX_NONE;
+		bIsPropertyMapKey = false;
+	}
+
 private:
+	// Final output string
 	FString JsonString;
 
 	/** Only properties that have these flags will be written. */
 	static constexpr int64 CheckFlags = ~CPF_ParmFlags; // all properties except those who have these flags? TODO is this ok?
+
+	// Used when parsing
+
+	// If it is in an array this is != INDEX_NONE
+	int32 IndexInArray = INDEX_NONE;
+
+	// Is the current property used as a map key?
+	bool bIsPropertyMapKey = false;
 };

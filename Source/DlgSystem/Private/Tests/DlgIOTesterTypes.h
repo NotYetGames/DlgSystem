@@ -3,6 +3,8 @@
 
 #include "CoreTypes.h"
 
+#include <functional>
+
 #include "DlgIOTesterTypes.generated.h"
 
 
@@ -35,9 +37,15 @@ public:
 	FDlgTestStructPrimitives(const FDlgIOTesterOptions InOptions = {}) : Options(InOptions) { GenerateRandomData(); }
 	bool IsEqual(const FDlgTestStructPrimitives& Other, FString& OutError) const;
 	bool operator==(const FDlgTestStructPrimitives& Other) const;
+	bool operator!=(const FDlgTestStructPrimitives& Other) const { return !(*this == Other); }
 	friend uint32 GetTypeHash(const FDlgTestStructPrimitives& This)
 	{
-		return GetTypeHash(This.Integer) + GetTypeHash(This.String) + GetTypeHash(This.bBoolean);
+		uint32 KeyHash = GetTypeHash(This.Integer);
+		KeyHash = HashCombine(KeyHash, GetTypeHash(This.String));
+		KeyHash = HashCombine(KeyHash, GetTypeHash(This.Name));
+		KeyHash = HashCombine(KeyHash, GetTypeHash(This.bBoolean));
+		KeyHash = HashCombine(KeyHash, GetTypeHash(This.Enum));
+		return KeyHash;
 	}
 	void GenerateRandomData();
 
@@ -147,9 +155,6 @@ public:
 	TSet<int32> IntSet;
 
 	UPROPERTY()
-	TSet<bool> BoolSet;
-
-	UPROPERTY()
 	TSet<EDlgTestEnum> EnumSet;
 
 	UPROPERTY()
@@ -177,6 +182,66 @@ public:
 	TSet<FDlgTestStructPrimitives> StructSetPrimitives;
 };
 
+
+// Map
+USTRUCT()
+struct DLGSYSTEM_API FDlgTestMapPrimitive
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	FDlgTestMapPrimitive(const FDlgIOTesterOptions InOptions = {}) : Options(InOptions) { GenerateRandomData(); }
+	bool IsEqual(const FDlgTestMapPrimitive& Other, FString& OutError) const;
+	bool operator==(const FDlgTestMapPrimitive& Other) const;
+	void GenerateRandomData();
+
+public:
+	// Tester Options
+	FDlgIOTesterOptions Options;
+
+	UPROPERTY()
+	TMap<int32, int32> IntToIntMap;
+
+	UPROPERTY()
+	TMap<int32, FString> IntToStringMap;
+
+	UPROPERTY()
+	TMap<int32, FName> IntToNameMap;
+
+	UPROPERTY()
+	TMap<FString, int32> StringToIntMap;
+
+	UPROPERTY()
+	TMap<FString, FString> StringToStringMap;
+
+	UPROPERTY()
+	TMap<FName, int32> NameToIntMap;
+
+	UPROPERTY()
+	TMap<FName, FName> NameToNameMap;
+};
+
+USTRUCT()
+struct DLGSYSTEM_API FDlgTestMapStruct
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	FDlgTestMapStruct(const FDlgIOTesterOptions InOptions = {}) : Options(InOptions) { GenerateRandomData(); };
+	bool operator==(const FDlgTestMapStruct& Other) const;
+	bool IsEqual(const FDlgTestMapStruct& Other, FString& OutError) const;
+	void GenerateRandomData();
+
+public:
+	// Tester Options
+	FDlgIOTesterOptions Options;
+
+	UPROPERTY()
+	TMap<int32, FDlgTestStructPrimitives> IntToStructPrimitiveMap;
+
+	UPROPERTY()
+	TMap<FDlgTestStructPrimitives, int32> StructPrimitiveToIntMap;
+};
+
+
 template <typename Type>
 bool SetEqualsSet(const TSet<Type>& FirstSet, const TSet<Type>& SecondSet)
 {
@@ -191,3 +256,150 @@ bool SetEqualsSet(const TSet<Type>& FirstSet, const TSet<Type>& SecondSet)
 
 	return false;
 }
+
+
+template <typename KeyType, typename ValueType>
+bool MapEqualsMap(const TMap<KeyType, ValueType>& FirstMap, const TMap<KeyType, ValueType>& SecondMap)
+{
+	if (FirstMap.Num() == SecondMap.Num())
+	{
+		for (const auto& ElemFirstMap : FirstMap)
+		{
+			const ValueType* FoundValueSecondMap = SecondMap.Find(ElemFirstMap.Key);
+			if (FoundValueSecondMap != nullptr)
+			{
+				// Key exists in second map
+				if (*FoundValueSecondMap != ElemFirstMap.Value)
+				{
+					// Value differs
+					return false;
+				}
+			}
+			else
+			{
+				// Key does not even exist
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	// Length differs
+	return false;
+}
+
+template <typename ArrayType>
+bool TestArrayIsEqualToOther(const TArray<ArrayType>& ThisArray, const TArray<ArrayType>& OtherArray,
+	const FString& PropertyName, FString& OutError,
+	std::function<FString(const int32 Index, const ArrayType&, const ArrayType&)> CompareEveryElement)
+{
+	bool bIsEqual = true;
+	if (ThisArray != OtherArray)
+	{
+		bIsEqual = false;
+		if (ThisArray.Num() != OtherArray.Num())
+		{
+			OutError += FString::Printf(
+				TEXT("\tThis.%s.Num (%d) != Other.%s.Num (%d)\n"),
+				*PropertyName, ThisArray.Num(), *PropertyName, OtherArray.Num());
+		}
+
+		// Find which element is different
+		for (int32 i = 0; i < ThisArray.Num(); i++)
+		{
+			OutError += CompareEveryElement(i, ThisArray[i], OtherArray[i]);
+		}
+	}
+
+	return bIsEqual;
+}
+
+template <typename SetType>
+bool TestSetIsEqualToOther(const TSet<SetType>& ThisSet, const TSet<SetType>& OtherSet,
+	const FString& PropertyName, FString& OutError,
+	std::function<FString(const SetType&)> GetSetTypeAsString)
+{
+	bool bIsEqual = true;
+	if (SetEqualsSet(ThisSet, OtherSet) == false)
+	{
+		bIsEqual = false;
+		if (ThisSet.Num() != OtherSet.Num())
+		{
+			OutError += FString::Printf(
+				TEXT("\tThis.%s.Num (%d) != Other.%s.Num (%d)\n"),
+				*PropertyName, ThisSet.Num(), *PropertyName, OtherSet.Num());
+		}
+
+		// Find The set that is different from the other
+		const TSet<SetType> NotInOther = ThisSet.Difference(OtherSet);
+		OutError += FString::Printf(
+			TEXT("\tNotInOther = This.%s - Other.%s is of length = %d\n"),
+			*PropertyName, *PropertyName, NotInOther.Num());
+
+		FString NotInOtherString;
+		for (const SetType& ValueInOther : NotInOther)
+		{
+			NotInOtherString += FString::Printf(TEXT("%s,"), *GetSetTypeAsString(ValueInOther));
+		}
+		OutError += FString::Printf(TEXT("\tNotInOther = {%s}\n"), *NotInOtherString);
+	}
+
+	return bIsEqual;
+}
+
+template <typename KeyType, typename ValueType>
+bool TestMapIsEqualToOther(const TMap<KeyType, ValueType>& ThisMap, const TMap<KeyType, ValueType>& OtherMap,
+	const FString& PropertyName, FString& OutError,
+	std::function<FString(const KeyType&)> GetKeyTypeAsString,
+	std::function<FString(const ValueType&)> GetValueTypeAsString)
+{
+	bool bIsEqual = true;
+	if (MapEqualsMap(ThisMap, OtherMap) == false)
+	{
+		bIsEqual = false;
+		if (ThisMap.Num() != OtherMap.Num())
+		{
+			OutError += FString::Printf(
+				TEXT("\tThis.%s.Num (%d) != Other.%s.Num (%d)\n"),
+				*PropertyName, ThisMap.Num(), *PropertyName, OtherMap.Num());
+		}
+
+		// Find values in ThisMap that do not exist in OtherMap
+		int32 NumKeysNotInOther = 0;
+		FString KeysNotInOtherString;
+		FString ValuesThatDifferString;
+		const bool OtherMapIsEmpty = OtherMap.Num() == 0;
+		for (const auto& ThisElem : ThisMap)
+		{
+			const ValueType* OtherMapValue = OtherMap.Find(ThisElem.Key);
+			if (OtherMapValue != nullptr)
+			{
+				if (*OtherMapValue != ThisElem.Value)
+				{
+					ValuesThatDifferString += FString::Printf(
+						TEXT("\tThis.%s[key] (%s) != Other.%s[key] (%s). Key = (%s)\n"),
+						*PropertyName, *GetValueTypeAsString(ThisElem.Value),
+						*PropertyName, *GetValueTypeAsString(*OtherMapValue),
+						*GetKeyTypeAsString(ThisElem.Key));
+				}
+			}
+			else
+			{
+				KeysNotInOtherString += FString::Printf(TEXT("%s,"), *GetKeyTypeAsString(ThisElem.Key));
+				NumKeysNotInOther++;
+			}
+		}
+
+		if (OtherMapIsEmpty)
+		{
+			OutError += FString::Printf(TEXT("\tOther.%s IS EMPTY\n"), *PropertyName);
+		}
+		OutError += FString::Printf(TEXT("\tKeys that ONLY exist in This.%s (Num = %d) = {%s}\n"),
+			*PropertyName, NumKeysNotInOther, *KeysNotInOtherString);
+		OutError += FString::Printf(TEXT("\tValues that differ:\n%s\n"), *ValuesThatDifferString);
+	}
+
+	return bIsEqual;
+}
+
