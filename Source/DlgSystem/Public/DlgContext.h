@@ -79,6 +79,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = DlgData)
 	UObject* GetParticipant(FName DlgParticipantName);
 
+	const TMap<FName, UObject*>& GetParticipantMap() { return Participants; }
+
 	/** Gets the current deepness. The amount of nodes already finished in the dialogue */
 	int32 GetCurrentDeepness() const { return CurrentDeepness; }
 
