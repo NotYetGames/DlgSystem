@@ -9,7 +9,7 @@
 
 #include "IDlgWriter.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogDlgJsonWriter, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogDlgJsonWriter, All, All);
 
 
 struct DlgJsonWriterOptions

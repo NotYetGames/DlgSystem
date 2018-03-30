@@ -21,6 +21,10 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(UProper
 {
 	check(Property);
 	check(Value);
+	if (bLogVerbose)
+	{
+		UE_LOG(LogDlgJsonWriter, Verbose, TEXT("ConvertScalarUPropertyToJsonValue, PropertyName = `%s`"), *Property->GetNameCPP());
+	}
 
 	//
 	// NOTE: UProperty::ExportTextItem has the following arguments
@@ -103,14 +107,14 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(UProper
 		if (NamePtr == nullptr)
 		{
 			UE_LOG(LogDlgJsonWriter,
-				   Warning,
+				   Error,
 				   TEXT("Got Property = `%s` of type UNameProperty but the Value it not an FName"),
 				   *NameProperty->GetName())
 			return TSharedPtr<FJsonValue>();
 		}
 		if (!NamePtr->IsValidIndexFast() || !NamePtr->IsValid())
 		{
-			UE_LOG(LogDlgJsonWriter, Warning, TEXT("Got Property = `%s` of type FName but it is not valid :("), *NameProperty->GetName())
+			UE_LOG(LogDlgJsonWriter, Error, TEXT("Got Property = `%s` of type FName but it is not valid :("), *NameProperty->GetNameCPP())
 			return TSharedPtr<FJsonValue>();
 		}
 		//check(NamePtr == NameProperty->GetPropertyValuePtr(Value));
@@ -202,7 +206,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(UProper
 
 					if (KeyString.IsEmpty())
 					{
-						UE_LOG(LogDlgJsonWriter, Warning, TEXT("Unable to convert key to string for property %s."), *MapProperty->GetName())
+						UE_LOG(LogDlgJsonWriter, Error, TEXT("Unable to convert key to string for property `%s`."), *MapProperty->GetNameCPP())
 						KeyString = FString::Printf(TEXT("Unparsed Key %d"), Index);
 					}
 				}
@@ -247,16 +251,16 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(UProper
 		if (static_cast<const UObject*>(Value) == nullptr)
 		{
 			UE_LOG(LogDlgJsonWriter, Error, TEXT("PropertyName = `%s` Is a UObjectProperty but can't convert Value to an UObject..."),
-				   *Property->GetName());
+				   *Property->GetNameCPP());
 			return TSharedPtr<FJsonValue>();
 		}
 
 		// Because the UObjects are pointers, we must deference it. So instead of it being a void** we want it to be a void*
 		auto* ObjectPtrPtr = static_cast<const UObject* const*>(ObjectProperty->ContainerPtrToValuePtr<void>(Value, 0));
-		if (ObjectPtrPtr == nullptr || *ObjectPtrPtr == nullptr)
+		if (ObjectPtrPtr == nullptr || !IsValid(*ObjectPtrPtr))
 		{
-			UE_LOG(LogDlgJsonWriter, Verbose, TEXT("PropertyName = `%s` Is a UObjectProperty but got null from ContainerPtrToValuePtr from it's StructObject"),
-				   *Property->GetName());
+			UE_LOG(LogDlgJsonWriter, Error, TEXT("PropertyName = `%s` Is a UObjectProperty but got null from ContainerPtrToValuePtr from it's StructObject"),
+				   *Property->GetNameCPP());
 			return TSharedPtr<FJsonValue>();
 		}
 		const UObject* ObjectPtr = *ObjectPtrPtr;
@@ -294,13 +298,16 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(UProper
 TSharedPtr<FJsonValue> FDlgJsonWriter::UPropertyToJsonValue(UProperty* Property, const void* Value)
 {
 	check(Property);
-	UE_LOG(LogDlgJsonWriter, Verbose, TEXT("UPropertyToJsonValue, PropertyName = `%s`"), *Property->GetName());
+	if (bLogVerbose)
+	{
+		UE_LOG(LogDlgJsonWriter, Verbose, TEXT("UPropertyToJsonValue, PropertyName = `%s`"), *Property->GetNameCPP());
+	}
 
 	if (Value == nullptr)
 	{
 		const UClass* PropClass = Property->GetClass();
 		UE_LOG(LogDlgJsonWriter,
-			   Warning,
+			   Error,
 			   TEXT("UStructToJsonObject - Unhandled property type '%s': %s"),
 			   *PropClass->GetName(), *Property->GetPathName());
 		return nullptr;
@@ -339,7 +346,10 @@ bool FDlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, co
 {
 	check(StructDefinition);
 	check(Object);
-	UE_LOG(LogDlgJsonWriter, Verbose, TEXT("UStructToJsonAttributes, StructDefinition = `%s`"), *StructDefinition->GetName());
+	if (bLogVerbose)
+	{
+		UE_LOG(LogDlgJsonWriter, Verbose, TEXT("UStructToJsonAttributes, StructDefinition = `%s`"), *StructDefinition->GetName());
+	}
 
 	// Json Wrapper, already have an Object
 	if (StructDefinition == FJsonObjectWrapper::StaticStruct())
@@ -377,13 +387,19 @@ bool FDlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, co
 		if (CheckFlags != 0 && !Property->HasAnyPropertyFlags(CheckFlags))
 		{
 			// Property does not have the required Flags
-			UE_LOG(LogDlgJsonWriter, Verbose, TEXT("PropertyName = `%s` Does not have the required CheckFlags"), *Property->GetName());
+			if (bLogVerbose)
+			{
+				UE_LOG(LogDlgJsonWriter, Verbose, TEXT("PropertyName = `%s` Does not have the required CheckFlags"), *Property->GetName());
+			}
 			continue;
 		}
 		if (CanSkipProperty(Property))
 		{
 			// Markes as skiped.
-			UE_LOG(LogDlgJsonWriter, Verbose, TEXT("PropertyName = `%s` Marked as skiped"), *Property->GetName());
+			if (bLogVerbose)
+			{
+				UE_LOG(LogDlgJsonWriter, Verbose, TEXT("PropertyName = `%s` Marked as skiped"), *Property->GetName());
+			}
 			continue;
 		}
 
@@ -407,7 +423,7 @@ bool FDlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, co
 		{
 			UClass* PropClass = Property->GetClass();
 			UE_LOG(LogDlgJsonWriter,
-				   Verbose,
+				   Warning,
 				   TEXT("UStructToJsonObject - Unhandled property type '%s': %s inside Struct = `%s`"),
 				   *PropClass->GetName(), *Property->GetPathName(), *StructDefinition->GetName());
 			continue;

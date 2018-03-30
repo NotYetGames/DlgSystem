@@ -75,8 +75,14 @@ public:
 #endif
 	}
 
+	// bLogVerbose:
+	bool IsLogVerbose() const { return bLogVerbose; }
+	void SetLogVerbose(bool bValue) { bLogVerbose = bValue; }
 
 protected:
 	/** The properties with these flags set will be ignored from writing. */
 	static constexpr int64 SkipFlags = CPF_Deprecated | CPF_Transient;
+
+	// Should this class verbose log?
+	bool bLogVerbose = false;
 };

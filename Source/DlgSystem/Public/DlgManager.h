@@ -68,7 +68,7 @@ public:
 		for (TObjectIterator<UDlgDialogue> Itr; Itr; ++Itr)
 		{
 			UDlgDialogue* Dialogue = *Itr;
-			if (Dialogue != nullptr && !Dialogue->IsPendingKill())
+			if (IsValid(Dialogue))
 			{
 				Array.Add(Dialogue);
 			}
@@ -83,7 +83,7 @@ public:
 		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
 		{
 			AActor* Actor = *Itr;
-			if (Actor != nullptr && !Actor->IsPendingKill() &&
+			if (IsValid(Actor) &&
 				Actor->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
 			{
 				Array.Add(Actor);

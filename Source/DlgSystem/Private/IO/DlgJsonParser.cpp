@@ -102,6 +102,10 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 {
 	check(Property);
 	check(OutValue);
+	if (bLogVerbose)
+	{
+		UE_LOG(LogDlgJsonParser, Verbose, TEXT("ConvertScalarJsonValueToUProperty, PropertyName = `%s`"), *Property->GetNameCPP());
+	}
 
 	// Enum
 	if (UEnumProperty* EnumProperty = Cast<UEnumProperty>(Property))
@@ -116,8 +120,8 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 			if (IntValue == INDEX_NONE)
 			{
 				UE_LOG(LogDlgJsonParser,
-					   Warning,
-					   TEXT("ConvertScalarJsonValueToUProperty - Unable import enum %s from string value %s for property %s"),
+					   Error,
+					   TEXT("ConvertScalarJsonValueToUProperty - Unable import enum %s from string value %s for property `%s`"),
 					   *Enum->CppType, *StrValue, *Property->GetNameCPP());
 				return false;
 			}
@@ -146,7 +150,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 			if (IntValue == INDEX_NONE)
 			{
 				UE_LOG(LogDlgJsonParser,
-					   Warning,
+					   Error,
 					   TEXT("ConvertScalarJsonValueToUProperty - Unable import enum %s from string value %s for property %s"),
 					   *Enum->CppType, *StrValue, *Property->GetNameCPP());
 				return false;
@@ -174,7 +178,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 		else
 		{
 			UE_LOG(LogDlgJsonParser,
-				   Warning,
+				   Error,
 				   TEXT("ConvertScalarJsonValueToUProperty - Unable to set numeric property type %s for property %s"),
 				   *Property->GetClass()->GetName(), *Property->GetNameCPP());
 			return false;
@@ -217,7 +221,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 			if (!GetTextFromObject(Obj.ToSharedRef(), Text))
 			{
 				UE_LOG(LogDlgJsonParser,
-					   Warning,
+					   Error,
 					   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import FText from JSON object with invalid keys for property %s"),
 					   *Property->GetNameCPP());
 				return false;
@@ -227,7 +231,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 		else
 		{
 			UE_LOG(LogDlgJsonParser,
-				   Warning,
+				   Error,
 				   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import FText from JSON that was neither string nor object for property %s"),
 				   *Property->GetNameCPP());
 			return false;
@@ -257,7 +261,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 					if (!JsonValueToUProperty(ArrayValueItem, ArrayProperty->Inner, Helper.GetRawPtr(Index)))
 					{
 						UE_LOG(LogDlgJsonParser,
-							   Warning,
+							   Error,
 							   TEXT("ConvertScalarJsonValueToUProperty - Unable to deserialize array element [%d] for property %s"),
 							   Index, *Property->GetNameCPP());
 						return false;
@@ -270,7 +274,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 		else
 		{
 			UE_LOG(LogDlgJsonParser,
-				   Warning,
+				   Error,
 				   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import TArray from non-array JSON key for property %s"),
 				   *Property->GetNameCPP());
 			return false;
@@ -482,9 +486,9 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 		if (static_cast<UObject*>(OutValue) == nullptr)
 		{
 			UE_LOG(LogDlgJsonParser,
-				   Warning,
+				   Error,
 				   TEXT("PropertyName = `%s` Is a UObjectProperty but can't convert Value to an UObject..."),
-				   *Property->GetName());
+				   *Property->GetNameCPP());
 			return false;
 		}
 
@@ -493,9 +497,9 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 		if (ObjectPtrPtr == nullptr)
 		{
 			UE_LOG(LogDlgJsonParser,
-				   Warning,
+				   Error,
 				   TEXT("PropertyName = `%s` Is a UObjectProperty but can't get non null ContainerPtrToValuePtr from it's StructObject"),
-				   *Property->GetName());
+				   *Property->GetNameCPP());
 			return false;
 		}
 		const UClass* ObjectClass = ObjectProperty->PropertyClass;
@@ -519,9 +523,9 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 		if (!JsonObject->HasField(SpecialKeyType))
 		{
 			UE_LOG(LogDlgJsonParser,
-				   Warning,
+				   Error,
 				   TEXT("PropertyName = `%s` JSON does not have the __type__ special property."),
-				   *Property->GetName());
+				   *Property->GetNameCPP());
 			return false;
 		}
 
@@ -535,9 +539,9 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 			if (ChildClass == nullptr)
 			{
 				UE_LOG(LogDlgJsonParser,
-					   Warning,
+					   Error,
 					   TEXT("Could not find class `%s` for UObjectProperty = `%s`. Ignored."),
-					   *JsonObjectType, *Property->GetName());
+					   *JsonObjectType, *Property->GetNameCPP());
 				return false;
 			}
 
@@ -549,7 +553,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 		if (!JsonObjectToUStruct(JsonObject.ToSharedRef(), ObjectClass, *ObjectPtrPtr))
 		{
 			UE_LOG(LogDlgJsonParser,
-				   Warning,
+				   Error,
 				   TEXT("JsonValueToUProperty - JsonObjectToUStruct failed for property %s"),
 				   *Property->GetNameCPP());
 			return false;
@@ -563,7 +567,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 	if (Property->ImportText(*JsonValue->AsString(), OutValue, 0, nullptr) == nullptr)
 	{
 		UE_LOG(LogDlgJsonParser,
-			   Warning,
+			   Error,
 			   TEXT("JsonValueToUProperty - Unable import property type %s from string value for property %s"),
 			   *Property->GetClass()->GetName(), *Property->GetNameCPP());
 		return false;
@@ -575,7 +579,10 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 bool FDlgJsonParser::JsonValueToUProperty(const TSharedPtr<FJsonValue> JsonValue, UProperty* Property, void* OutValue)
 {
 	check(Property);
-	UE_LOG(LogDlgJsonParser, Verbose, TEXT("JsonValueToUProperty, PropertyName = `%s`"), *Property->GetName());
+	if (bLogVerbose)
+	{
+		UE_LOG(LogDlgJsonParser, Verbose, TEXT("JsonValueToUProperty, PropertyName = `%s`"), *Property->GetNameCPP());
+	}
 
 	if (!JsonValue.IsValid())
 	{
@@ -609,7 +616,7 @@ bool FDlgJsonParser::JsonValueToUProperty(const TSharedPtr<FJsonValue> JsonValue
 
 		if (Property->ArrayDim != 1)
 		{
-			UE_LOG(LogDlgJsonParser, Warning, TEXT("[Property->ArrayDim != 1] Ignoring excess properties when deserializing %s"), *Property->GetName());
+			UE_LOG(LogDlgJsonParser, Warning, TEXT("[Property->ArrayDim != 1] Ignoring excess properties when deserializing %s"), *Property->GetNameCPP());
 		}
 
 		return ConvertScalarJsonValueToUProperty(JsonValue, Property, OutValue);
@@ -627,7 +634,7 @@ bool FDlgJsonParser::JsonValueToUProperty(const TSharedPtr<FJsonValue> JsonValue
 	const auto& ArrayValue = JsonValue->AsArray();
 	if (Property->ArrayDim < ArrayValue.Num())
 	{
-		UE_LOG(LogDlgJsonParser, Warning, TEXT("[Property->ArrayDim < ArrayValue.Num()] Ignoring excess properties when deserializing %s"), *Property->GetName());
+		UE_LOG(LogDlgJsonParser, Warning, TEXT("[Property->ArrayDim < ArrayValue.Num()] Ignoring excess properties when deserializing %s"), *Property->GetNameCPP());
 	}
 
 	// Read into Array/Set
@@ -651,7 +658,10 @@ bool FDlgJsonParser::JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJso
 {
 	check(StructDefinition);
 	check(OutStruct);
-	UE_LOG(LogDlgJsonParser, Verbose, TEXT("JsonAttributesToUStruct, StructDefinition = `%s`"), *StructDefinition->GetName());
+	if (bLogVerbose)
+	{
+		UE_LOG(LogDlgJsonParser, Verbose, TEXT("JsonAttributesToUStruct, StructDefinition = `%s`"), *StructDefinition->GetName());
+	}
 
 	// Json Wrapper, already have an Object
 	if (StructDefinition == FJsonObjectWrapper::StaticStruct())
@@ -719,7 +729,7 @@ bool FDlgJsonParser::JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJso
 		if (!JsonValueToUProperty(JsonValue, Property, ValuePtr))
 		{
 			UE_LOG(LogDlgJsonParser,
-				   Warning,
+				   Error,
 				   TEXT("JsonObjectToUStruct - Unable to parse %s.%s from JSON"),
 				   *StructDefinition->GetName(), *PropertyName);
 			continue;
