@@ -36,7 +36,7 @@ FFindInDialogueSearchManager::FFindInDialogueSearchManager()
 	// Create the Tab Ids
 	for (int32 TabIdx = 0; TabIdx < ARRAY_COUNT(GlobalFindResultsTabIDs); TabIdx++)
 	{
-		const FName TabID = FName(*FString::Printf(TEXT("GlobalDialogueFindResults_%02d"), TabIdx + 1));
+		const FName TabID = FName(*FString::Printf(TEXT("GlobalNotYetDialogueFindResults_%02d"), TabIdx + 1));
 		GlobalFindResultsTabIDs[TabIdx] = TabID;
 	}
 }

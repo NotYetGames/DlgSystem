@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Widgets/Docking/SDockTab.h"
 
 #include "FindInDialoguesResult.h"
 
