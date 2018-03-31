@@ -104,7 +104,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 	check(OutValue);
 	if (bLogVerbose)
 	{
-		UE_LOG(LogDlgJsonParser, Verbose, TEXT("ConvertScalarJsonValueToUProperty, PropertyName = `%s`"), *Property->GetNameCPP());
+		UE_LOG(LogDlgJsonParser, Verbose, TEXT("ConvertScalarJsonValueToUProperty, Property = `%s`"), *Property->GetPathName());
 	}
 
 	// Enum
@@ -581,7 +581,7 @@ bool FDlgJsonParser::JsonValueToUProperty(const TSharedPtr<FJsonValue> JsonValue
 	check(Property);
 	if (bLogVerbose)
 	{
-		UE_LOG(LogDlgJsonParser, Verbose, TEXT("JsonValueToUProperty, PropertyName = `%s`"), *Property->GetNameCPP());
+		UE_LOG(LogDlgJsonParser, Verbose, TEXT("JsonValueToUProperty, Property = `%s`"), *Property->GetPathName());
 	}
 
 	if (!JsonValue.IsValid())
@@ -660,7 +660,7 @@ bool FDlgJsonParser::JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJso
 	check(OutStruct);
 	if (bLogVerbose)
 	{
-		UE_LOG(LogDlgJsonParser, Verbose, TEXT("JsonAttributesToUStruct, StructDefinition = `%s`"), *StructDefinition->GetName());
+		UE_LOG(LogDlgJsonParser, Verbose, TEXT("JsonAttributesToUStruct, StructDefinition = `%s`"), *StructDefinition->GetPathName());
 	}
 
 	// Json Wrapper, already have an Object

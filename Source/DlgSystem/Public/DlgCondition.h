@@ -125,7 +125,7 @@ FORCEINLINE bool FDlgCondition::operator==(const FDlgCondition& Other) const
 			ParticipantName == Other.ParticipantName &&
 			CallbackName == Other.CallbackName &&
 			IntValue == Other.IntValue &&
-			FMath::IsNearlyEqual(FloatValue, Other.FloatValue) &&
+			FMath::IsNearlyEqual(FloatValue, Other.FloatValue, KINDA_SMALL_NUMBER) &&
 			NameValue == Other.NameValue &&
 			bBoolValue == Other.bBoolValue &&
 			bLongTermMemory == Other.bLongTermMemory &&

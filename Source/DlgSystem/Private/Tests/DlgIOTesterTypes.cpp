@@ -302,10 +302,10 @@ bool FDlgTestSetPrimitive::IsEqual(const FDlgTestSetPrimitive& Other, FString& O
 
 bool FDlgTestSetPrimitive::operator==(const FDlgTestSetPrimitive& Other) const
 {
-	return SetEqualsSet(IntSet, Other.IntSet) &&
-		   SetEqualsSet(EnumSet, Other.EnumSet) &&
-		   SetEqualsSet(NameSet, Other.NameSet) &&
-		   SetEqualsSet(StringSet, Other.StringSet);
+	return FDlgHelper::AreSetsEqual(IntSet, Other.IntSet) &&
+		   FDlgHelper::AreSetsEqual(EnumSet, Other.EnumSet) &&
+		   FDlgHelper::AreSetsEqual(NameSet, Other.NameSet) &&
+		   FDlgHelper::AreSetsEqual(StringSet, Other.StringSet);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -344,7 +344,7 @@ bool FDlgTestSetStruct::IsEqual(const FDlgTestSetStruct& Other, FString& OutErro
 
 bool FDlgTestSetStruct::operator==(const FDlgTestSetStruct& Other) const
 {
-	return SetEqualsSet(StructSetPrimitives, Other.StructSetPrimitives);
+	return FDlgHelper::AreSetsEqual(StructSetPrimitives, Other.StructSetPrimitives);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -433,13 +433,13 @@ bool FDlgTestMapPrimitive::IsEqual(const FDlgTestMapPrimitive& Other, FString& O
 
 bool FDlgTestMapPrimitive::operator==(const FDlgTestMapPrimitive& Other) const
 {
-	return MapEqualsMap(IntToIntMap, Other.IntToIntMap) &&
-		   MapEqualsMap(IntToStringMap, Other.IntToStringMap) &&
-		   MapEqualsMap(IntToNameMap, Other.IntToNameMap) &&
-		   MapEqualsMap(StringToIntMap, Other.StringToIntMap) &&
-		   MapEqualsMap(StringToStringMap, Other.StringToStringMap) &&
-		   MapEqualsMap(NameToIntMap, Other.NameToIntMap) &&
-		   MapEqualsMap(NameToNameMap, Other.NameToNameMap);
+	return FDlgHelper::AreMapsEqual(IntToIntMap, Other.IntToIntMap) &&
+		   FDlgHelper::AreMapsEqual(IntToStringMap, Other.IntToStringMap) &&
+		   FDlgHelper::AreMapsEqual(IntToNameMap, Other.IntToNameMap) &&
+		   FDlgHelper::AreMapsEqual(StringToIntMap, Other.StringToIntMap) &&
+		   FDlgHelper::AreMapsEqual(StringToStringMap, Other.StringToStringMap) &&
+		   FDlgHelper::AreMapsEqual(NameToIntMap, Other.NameToIntMap) &&
+		   FDlgHelper::AreMapsEqual(NameToNameMap, Other.NameToNameMap);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -491,7 +491,7 @@ bool FDlgTestMapStruct::IsEqual(const FDlgTestMapStruct& Other, FString& OutErro
 
 bool FDlgTestMapStruct::operator==(const FDlgTestMapStruct& Other) const
 {
-	return MapEqualsMap(IntToStructPrimitiveMap, Other.IntToStructPrimitiveMap) &&
-		   MapEqualsMap(StructPrimitiveToIntMap, Other.StructPrimitiveToIntMap);
+	return FDlgHelper::AreMapsEqual(IntToStructPrimitiveMap, Other.IntToStructPrimitiveMap) &&
+		   FDlgHelper::AreMapsEqual(StructPrimitiveToIntMap, Other.StructPrimitiveToIntMap);
 }
 

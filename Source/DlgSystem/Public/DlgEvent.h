@@ -82,7 +82,7 @@ FORCEINLINE bool FDlgEvent::operator==(const FDlgEvent& Other) const
 	return ParticipantName == Other.ParticipantName &&
 		   EventName == Other.EventName &&
 		   IntValue == Other.IntValue &&
-		   FMath::IsNearlyEqual(FloatValue, Other.FloatValue) &&
+		   FMath::IsNearlyEqual(FloatValue, Other.FloatValue, KINDA_SMALL_NUMBER) &&
 		   bDelta == Other.bDelta &&
 		   bValue == Other.bValue &&
 		   EventType == Other.EventType;

@@ -3,7 +3,7 @@
 
 #include "CoreTypes.h"
 
-#include <functional>
+#include "DlgHelper.h"
 
 #include "DlgIOTesterTypes.generated.h"
 
@@ -242,53 +242,6 @@ public:
 };
 
 
-template <typename Type>
-bool SetEqualsSet(const TSet<Type>& FirstSet, const TSet<Type>& SecondSet)
-{
-	if (FirstSet.Num() == SecondSet.Num())
-	{
-		// No duplicates should be found
-		TSet<Type> Set = FirstSet;
-		Set.Append(SecondSet);
-
-		return Set.Num() == FirstSet.Num();
-	}
-
-	return false;
-}
-
-
-template <typename KeyType, typename ValueType>
-bool MapEqualsMap(const TMap<KeyType, ValueType>& FirstMap, const TMap<KeyType, ValueType>& SecondMap)
-{
-	if (FirstMap.Num() == SecondMap.Num())
-	{
-		for (const auto& ElemFirstMap : FirstMap)
-		{
-			const ValueType* FoundValueSecondMap = SecondMap.Find(ElemFirstMap.Key);
-			if (FoundValueSecondMap != nullptr)
-			{
-				// Key exists in second map
-				if (*FoundValueSecondMap != ElemFirstMap.Value)
-				{
-					// Value differs
-					return false;
-				}
-			}
-			else
-			{
-				// Key does not even exist
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	// Length differs
-	return false;
-}
-
 template <typename ArrayType>
 bool TestArrayIsEqualToOther(const TArray<ArrayType>& ThisArray, const TArray<ArrayType>& OtherArray,
 	const FString& PropertyName, FString& OutError,
@@ -321,7 +274,7 @@ bool TestSetIsEqualToOther(const TSet<SetType>& ThisSet, const TSet<SetType>& Ot
 	std::function<FString(const SetType&)> GetSetTypeAsString)
 {
 	bool bIsEqual = true;
-	if (SetEqualsSet(ThisSet, OtherSet) == false)
+	if (FDlgHelper::AreSetsEqual(ThisSet, OtherSet) == false)
 	{
 		bIsEqual = false;
 		if (ThisSet.Num() != OtherSet.Num())
@@ -355,7 +308,7 @@ bool TestMapIsEqualToOther(const TMap<KeyType, ValueType>& ThisMap, const TMap<K
 	std::function<FString(const ValueType&)> GetValueTypeAsString)
 {
 	bool bIsEqual = true;
-	if (MapEqualsMap(ThisMap, OtherMap) == false)
+	if (FDlgHelper::AreMapsEqual(ThisMap, OtherMap) == false)
 	{
 		bIsEqual = false;
 		if (ThisMap.Num() != OtherMap.Num())
