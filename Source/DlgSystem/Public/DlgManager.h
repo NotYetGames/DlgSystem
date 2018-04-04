@@ -41,6 +41,28 @@ public:
 	static UDlgContext* StartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants);
 
 	/**
+	 * Starts a Dialogue with the provided Dialogue and Participants array, at the given entry point
+	 * This method can fail in the following situations:
+	 *  - The Participants number does not match the number of participants from the Dialogue.
+	 *  - Any UObject in the Participant array does not implement the Participant Interface
+	 *  - Participant->GetParticipantName() does not exist in the Dialogue
+	 *  - The given node index is invalid
+	 *  - The starter node does not have any valid child
+	 *
+	 * @param Dialogue				- The dialogue asset to start
+	 * @param Participants			- Array of participants, has to match with the expected input for the Dialogue
+	 * @param StartIndex			- Index of the node the dialogue is resumed at
+	 * @param AlreadyVisitedNodes	- Set of nodes already visited in the context the last time this Dialogue was going on.
+	 *								  Can be aquired via GetVisitedNodeIndices() on the context
+	 * @param bFireEnterEvents		- decides if the enter events should be fired on the resumed node or not
+	 * @returns The dialogue context object or nullptr if something wrong happened
+	 */
+	UFUNCTION(BlueprintCallable, Category = DialogueLaunch)
+	static UDlgContext* ResumeDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants, int32 StartIndex, const TSet<int32>& AlreadyVisitedNodes, bool bFireEnterEvents);
+
+
+
+	/**
 	 * Helper methods, same as StartDialogue but with fixed amount of participant(s)
 	 */
 	UFUNCTION(BlueprintCallable, Category = DialogueLaunch)
@@ -174,6 +196,8 @@ public:
 	static bool UnRegisterDialogueModuleConsoleCommands();
 
 private:
+
+	static bool ConstructParticipantMap(UDlgDialogue* Dialogue, const TArray<UObject*>& Participants, TMap<FName, UObject*>& OutMap);
 
 	/** Helper method, used to append a set to an array. Also sort. */
 	static void AppendSetToArray(const TSet<FName>& InSet, TArray<FName>& OutArray)

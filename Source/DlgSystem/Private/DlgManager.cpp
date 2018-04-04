@@ -15,60 +15,11 @@
 
 UDlgContext* UDlgManager::StartDialogue(UDlgDialogue* Dialogue, const TArray<UObject*>& Participants)
 {
-	if (Dialogue == nullptr || Dialogue->GetParticipantData().Num() == 0)
-	{
-		UE_LOG(LogDlgSystem,
-			   Error,
-			   TEXT("Failed to start dialogue - Invalid dialogue! (Either nullptr or a dialogue without any participants)"));
-		return nullptr;
-	}
-
-	// check participant data:
-	const TMap<FName, FDlgParticipantData>& DialogueParticipants = Dialogue->GetParticipantData();
-	if (DialogueParticipants.Num() != Participants.Num())
-	{
-		UE_LOG(LogDlgSystem,
-			   Error,
-			   TEXT("Failed to start dialogue - the amount of participants does not match the dialogue's "
-					"expectation! Dialogue Participants Num %d != Participants Num %d"),
-			   DialogueParticipants.Num(), Participants.Num());
-		return nullptr;
-	}
-
 	TMap<FName, UObject*> ParticipantBinding;
-	const int32 ParticipantsNum = Participants.Num();
-	for (int32 ParticipantIndex = 0; ParticipantIndex < ParticipantsNum; ParticipantIndex++)
+
+	if (!ConstructParticipantMap(Dialogue, Participants, ParticipantBinding))
 	{
-		UObject* Participant = Participants[ParticipantIndex];
-		if (Participant == nullptr)
-		{
-			UE_LOG(LogDlgSystem, Error, TEXT("Failed to start dialogue - Participant at index %d is null"), ParticipantIndex);
-			return nullptr;
-		}
-
-		// Be sure it is a participant
-		if (!Participant->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
-		{
-			UE_LOG(LogDlgSystem,
-				   Error,
-				   TEXT("Failed to start dialogue - Participant object at index = %d with ObjectName = `%s`"
-						"does not implement the IDlgDialogueParticipant interface!"),
-				   ParticipantIndex, *Participant->GetName());
-			return nullptr;
-		}
-
-		// Does the participant name exist in the Dialogue?
-		const FName ParticipantName = IDlgDialogueParticipant::Execute_GetParticipantName(Participant);
-		if (!DialogueParticipants.Find(ParticipantName))
-		{
-			UE_LOG(LogDlgSystem,
-				   Error,
-				   TEXT("Failed to start dialogue - Input Participant at index = %d "
-						"does not have a participant with name = `%s` in the Dialogue"),
-				   ParticipantIndex, *ParticipantName.ToString());
-			return nullptr;
-		}
-		ParticipantBinding.Add(ParticipantName, Participant);
+		return nullptr;
 	}
 
 	UDlgContextInternal* Context = NewObject<UDlgContextInternal>(Participants[0], UDlgContextInternal::StaticClass());
@@ -79,6 +30,26 @@ UDlgContext* UDlgManager::StartDialogue(UDlgDialogue* Dialogue, const TArray<UOb
 
 	return nullptr;
 }
+
+
+UDlgContext* UDlgManager::ResumeDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants, int32 StartIndex, const TSet<int32>& AlreadyVisitedNodes, bool bFireEnterEvents)
+{
+	TMap<FName, UObject*> ParticipantBinding;
+
+	if (!ConstructParticipantMap(Dialogue, Participants, ParticipantBinding))
+	{
+		return nullptr;
+	}
+
+	UDlgContextInternal* Context = NewObject<UDlgContextInternal>(Participants[0], UDlgContextInternal::StaticClass());
+	if (Context->Initialize(Dialogue, ParticipantBinding, StartIndex, AlreadyVisitedNodes, bFireEnterEvents))
+	{
+		return Context;
+	}
+
+	return nullptr;
+}
+
 
 UDlgContext* UDlgManager::StartMonologue(UDlgDialogue* Dialogue, UObject* Participant)
 {
@@ -317,5 +288,65 @@ bool UDlgManager::UnRegisterDialogueModuleConsoleCommands()
 	}
 
 	IDlgSystemModule::Get().UnregisterConsoleCommands();
+	return true;
+}
+
+bool UDlgManager::ConstructParticipantMap(UDlgDialogue* Dialogue, const TArray<UObject*>& Participants, TMap<FName, UObject*>& OutMap)
+{
+	if (Dialogue == nullptr || Dialogue->GetParticipantData().Num() == 0)
+	{
+		UE_LOG(LogDlgSystem,
+			   Error,
+			   TEXT("Failed to start dialogue - Invalid dialogue! (Either nullptr or a dialogue without any participants)"));
+		return false;
+	}
+
+	// check participant data:
+	const TMap<FName, FDlgParticipantData>& DialogueParticipants = Dialogue->GetParticipantData();
+	if (DialogueParticipants.Num() != Participants.Num())
+	{
+		UE_LOG(LogDlgSystem,
+			   Error,
+			   TEXT("Failed to start dialogue - the amount of participants does not match the dialogue's "
+					"expectation! Dialogue Participants Num %d != Participants Num %d"),
+			   DialogueParticipants.Num(), Participants.Num());
+		return false;
+	}
+
+	const int32 ParticipantsNum = Participants.Num();
+	for (int32 ParticipantIndex = 0; ParticipantIndex < ParticipantsNum; ParticipantIndex++)
+	{
+		UObject* Participant = Participants[ParticipantIndex];
+		if (Participant == nullptr)
+		{
+			UE_LOG(LogDlgSystem, Error, TEXT("Failed to start dialogue - Participant at index %d is null"), ParticipantIndex);
+			return false;
+		}
+
+		// Be sure it is a participant
+		if (!Participant->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
+		{
+			UE_LOG(LogDlgSystem,
+				   Error,
+				   TEXT("Failed to start dialogue - Participant object at index = %d with ObjectName = `%s`"
+						"does not implement the IDlgDialogueParticipant interface!"),
+				   ParticipantIndex, *Participant->GetName());
+			return false;
+		}
+
+		// Does the participant name exist in the Dialogue?
+		const FName ParticipantName = IDlgDialogueParticipant::Execute_GetParticipantName(Participant);
+		if (!DialogueParticipants.Find(ParticipantName))
+		{
+			UE_LOG(LogDlgSystem,
+				   Error,
+				   TEXT("Failed to start dialogue - Input Participant at index = %d "
+						"does not have a participant with name = `%s` in the Dialogue"),
+				   ParticipantIndex, *ParticipantName.ToString());
+			return false;
+		}
+		OutMap.Add(ParticipantName, Participant);
+	}
+
 	return true;
 }
