@@ -27,6 +27,35 @@ bool UDlgContextInternal::Initialize(UDlgDialogue* InDialogue, const TMap<FName,
 }
 
 
+bool UDlgContextInternal::Initialize(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants, int32 StartIndex, const TSet<int32>& VisitedNodes, bool bFireEnterEvents)
+{
+	Dialogue = InDialogue;
+	Participants = InParticipants;
+	VisitedNodeIndices = VisitedNodes;
+
+	
+	UDlgNode* Node = GetNode(StartIndex);
+	if (Node == nullptr)
+	{
+		UE_LOG(LogDlgSystem, Warning, TEXT("Failed to start dialogue at index %d - is it invalid index?!"), StartIndex);
+		return false;
+	}
+
+	if (bFireEnterEvents)
+	{
+		return EnterNode(StartIndex, {});
+	}
+	else
+	{
+		ActiveNodeIndex = StartIndex;
+		FDlgMemory::GetInstance()->SetNodeVisited(Dialogue->GetDlgGuid(), ActiveNodeIndex);
+		VisitedNodeIndices.Add(ActiveNodeIndex);
+
+		return Node->ReevaluateChildren(this, {});
+	}
+}
+
+
 bool UDlgContextInternal::EnterNode(int32 NodeIndex, TSet<UDlgNode*> NodesEnteredWithThisStep)
 {
 	check(Dialogue);

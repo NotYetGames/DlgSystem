@@ -1,6 +1,9 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
+#include "CoreMinimal.h"
+#include "DlgHelper.h"
+
 #include "DlgMemory.generated.h"
 
 /**
@@ -10,10 +13,16 @@ USTRUCT(Blueprintable, BlueprintType)
 struct FDlgHistory
 {
 	GENERATED_USTRUCT_BODY()
-
+public:
 	/** list of already visited node indices */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DlgHistoryData)
 	TSet<int32> VisitedNodeIndices;
+
+public:
+	bool operator==(const FDlgHistory& Other) const
+	{
+		return FDlgHelper::AreSetsEqual(VisitedNodeIndices, Other.VisitedNodeIndices);
+	}
 };
 
 /**

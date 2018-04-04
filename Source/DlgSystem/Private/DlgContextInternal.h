@@ -52,6 +52,13 @@ public:
 	 */
 	bool Initialize(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
 
+	/**
+	 * Initializes the context using the given node as entry point
+	 *
+	 * @return true on success or false otherwise.
+	 */
+	bool Initialize(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants, int32 StartIndex, const TSet<int32>& VisitedNodes, bool bFireEnterEvents);
+
 
 	/** Checks the enter conditions of the node, return false if they are not satisfied or if the index is invalid */
 	bool IsNodeEnterable(int32 NodeIndex, TSet<UDlgNode*> AlreadyVisitedNodes);
@@ -69,8 +76,4 @@ public:
 
 	// Was node with NodeIndex visited?
 	bool WasNodeVisitedInThisContext(const int32 NodeIndex) const { return VisitedNodeIndices.Contains(NodeIndex); }
-
-protected:
-	/** Node indices visited in this specific Dialogue instance (isn't serialized) */
-	TSet<int32> VisitedNodeIndices;
 };

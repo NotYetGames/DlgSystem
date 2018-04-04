@@ -99,7 +99,7 @@ void SFindInDialogues::Construct(const FArguments& InArgs, TSharedPtr<FDialogueE
 				.OnClicked(this, &Self::HandleOpenGlobalFindResults)
 				// Show button if we are in a DialogueEditor
 				.Visibility(DialogueEditorPtr.IsValid() && bHostFindInDialoguesInGlobalTab ? EVisibility::Visible : EVisibility::Collapsed)
-				.ToolTipText(LOCTEXT("OpenInGlobalFindResultsButtonTooltip", "Find in all Blueprints"))
+				.ToolTipText(LOCTEXT("OpenInGlobalFindResultsButtonTooltip", "Find in all Dialogues"))
 				[
 					SNew(STextBlock)
 					.TextStyle(FEditorStyle::Get(), "FindResults.FindInBlueprints")

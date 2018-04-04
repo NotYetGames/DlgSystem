@@ -169,11 +169,7 @@ void FDialogueEditor::Refresh()
 void FDialogueEditor::JumpToObject(const UObject* Object)
 {
 	// Ignore invalid objects
-	if (Object == nullptr || !GraphEditorView.IsValid())
-	{
-		return;
-	}
-	if (Object->IsPendingKill())
+	if (!IsValid(Object) || !GraphEditorView.IsValid())
 	{
 		return;
 	}

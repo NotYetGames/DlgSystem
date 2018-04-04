@@ -37,7 +37,6 @@
 
 #include "IO/DlgConfigWriter.h"
 #include "IO/DlgConfigParser.h"
-#include "IO/DlgIOTester.h"
 
 #define LOCTEXT_NAMESPACE "DlgSystemEditor"
 
@@ -149,35 +148,6 @@ void FDlgSystemEditorModule::StartupModule()
 	// Register the thumbnail renderers
 //	UThumbnailManager::Get().RegisterCustomRenderer(UDlgDialogue::StaticClass(), UDlgDialogueThumbnailRenderer::StaticClass());
 
-	if (GEditor && GIsEditor && !IsRunningCommandlet())
-	{
-		ToolsDialogueCategory = WorkspaceMenu::GetMenuStructure().GetStructureRoot()
-			->AddGroup(LOCTEXT("WorkspaceMenu_DialogueCategory", "Dialogue" ),
-					FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_DialogueClassIcon), false);
-
-		// Register the Dialogue Overview Browser
-		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(DIALOGUE_BROWSER_TAB_ID,
-			FOnSpawnTab::CreateLambda([this](const FSpawnTabArgs& Args) -> TSharedRef<SDockTab>
-			{
-				const TSharedRef<SDockTab> DockTab = SNew(SDockTab)
-					.TabRole(ETabRole::NomadTab)
-					[
-						SNew(SDialogueBrowser)
-					];
-				return DockTab;
-			}))
-			.SetDisplayName(LOCTEXT("DialogueBrowserTabTitle", "Dialogue Browser"))
-			.SetTooltipText(LOCTEXT("DialogueBrowserTooltipText", "Open the Dialogue Overview Browser tab."))
-			.SetIcon(FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_BrowseDialogueIcon))
-			.SetGroup(ToolsDialogueCategory.ToSharedRef());
-
-		// Register the Dialogue Search
-		FFindInDialogueSearchManager::Get()->Initialize(ToolsDialogueCategory);
-
-		// Content Browser extension
-		FDlgContentBrowserExtensions::InstallHooks();
-	}
-
 	// Create factories
 	DialogueGraphNodeFactory = MakeShareable(new FDialogueGraphNodeFactory());
 	FEdGraphUtilities::RegisterVisualNodeFactory(DialogueGraphNodeFactory);
@@ -189,6 +159,9 @@ void FDlgSystemEditorModule::StartupModule()
 	GlobalEditorCommands =  MakeShareable(new FUICommandList);
 	GlobalEditorCommands->MapAction(FDialogueEditorCommands::Get().SaveAllDialogues,
 		FExecuteAction::CreateStatic(&Self::HandleOnSaveAllDialogues));
+
+	// Content Browser extension
+	FDlgContentBrowserExtensions::InstallHooks();
 
 	// Extend menu/toolbar
 	ExtendMenu();
@@ -291,31 +264,60 @@ void FDlgSystemEditorModule::HandleOnSaveAllDialogues()
 void FDlgSystemEditorModule::ExtendMenu()
 {
 	// Running in game mode (standalone game) exit as we can't get the LevelEditorModule.
-	if (IsRunningGame())
+	if (IsRunningGame() || IsRunningCommandlet())
 	{
 		return;
 	}
 
-	TSharedRef<FExtender> FileMenuExtender(new FExtender);
+	// File -> Save all Dialogues
+	{
+		TSharedRef<FExtender> FileMenuExtender(new FExtender);
 
-	// Fill after the File->FileLoadAndSave
-	FileMenuExtender->AddMenuExtension(
-		"FileLoadAndSave",
-		EExtensionHook::After,
-		GlobalEditorCommands.ToSharedRef(),
-		FMenuExtensionDelegate::CreateLambda([this](FMenuBuilder& MenuBuilder)
-		{
-			// Save Dialogues
-			MenuBuilder.BeginSection("DialogueFileLoadAndSave", LOCTEXT("DialogueKeyFileAndSearch", "Dialogue"));
+		// Fill after the File->FileLoadAndSave
+		FileMenuExtender->AddMenuExtension(
+			"FileLoadAndSave",
+			EExtensionHook::After,
+			GlobalEditorCommands.ToSharedRef(),
+			FMenuExtensionDelegate::CreateLambda([this](FMenuBuilder& MenuBuilder)
 			{
-				MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().SaveAllDialogues);
-			}
-			MenuBuilder.EndSection();
-		}));
+				// Save Dialogues
+				MenuBuilder.BeginSection("DialogueFileLoadAndSave", LOCTEXT("DialogueKeyFileAndSearch", "Dialogue"));
+				{
+					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().SaveAllDialogues);
+				}
+				MenuBuilder.EndSection();
+			}));
 
-	// Add to the level editor
-	FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>(NAME_MODULE_LevelEditor);
-	LevelEditorModule.GetMenuExtensibilityManager()->AddExtender(FileMenuExtender);
+		// Add to the level editor
+		FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>(NAME_MODULE_LevelEditor);
+		LevelEditorModule.GetMenuExtensibilityManager()->AddExtender(FileMenuExtender);
+	}
+
+	// Window -> Dialogue search and browse
+	{
+		ToolsDialogueCategory = WorkspaceMenu::GetMenuStructure().GetStructureRoot()
+			->AddGroup(LOCTEXT("WorkspaceMenu_DialogueCategory", "Dialogue" ),
+					FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_DialogueClassIcon), false);
+
+		// Register the Dialogue Overview Browser
+		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(DIALOGUE_BROWSER_TAB_ID,
+			FOnSpawnTab::CreateLambda([this](const FSpawnTabArgs& Args) -> TSharedRef<SDockTab>
+			{
+				const TSharedRef<SDockTab> DockTab = SNew(SDockTab)
+					.TabRole(ETabRole::NomadTab)
+					[
+						SNew(SDialogueBrowser)
+					];
+				return DockTab;
+			}))
+			.SetDisplayName(LOCTEXT("DialogueBrowserTabTitle", "Dialogue Browser"))
+			.SetTooltipText(LOCTEXT("DialogueBrowserTooltipText", "Open the Dialogue Overview Browser tab."))
+			.SetIcon(FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_BrowseDialogueIcon))
+			.SetGroup(ToolsDialogueCategory.ToSharedRef());
+
+		// Register the Dialogue Search
+		FFindInDialogueSearchManager::Get()->Initialize(ToolsDialogueCategory);
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

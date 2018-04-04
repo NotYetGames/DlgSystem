@@ -26,6 +26,7 @@ public:
 	/** Has to be called before ExportToFile in order to have something to write */
 	virtual void Write(const UStruct* StructDefinition, const void* Object) = 0;
 	virtual bool ExportToFile(const FString& FileName) = 0;
+	virtual const FString& GetAsString() const = 0;
 
 	/** Can we skip this property from exporting? */
 	static bool CanSkipProperty(const UProperty* Property)
@@ -74,8 +75,14 @@ public:
 #endif
 	}
 
+	// bLogVerbose:
+	bool IsLogVerbose() const { return bLogVerbose; }
+	void SetLogVerbose(bool bValue) { bLogVerbose = bValue; }
 
 protected:
 	/** The properties with these flags set will be ignored from writing. */
 	static constexpr int64 SkipFlags = CPF_Deprecated | CPF_Transient;
+
+	// Should this class verbose log?
+	bool bLogVerbose = false;
 };

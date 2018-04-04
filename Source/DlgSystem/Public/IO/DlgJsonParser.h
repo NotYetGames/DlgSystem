@@ -8,7 +8,7 @@
 
 #include "IDlgParser.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogDlgJsonParser, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogDlgJsonParser, All, All);
 
 
 /**
@@ -40,8 +40,10 @@ public:
 
 	// IDlgParser Interface
 	void InitializeParser(const FString& FilePath) override;
+	void InitializeParserFromString(const FString& Text) override;
 	bool IsValidFile() const override { return bIsValidFile; }
 	void ReadAllProperty(const UStruct* ReferenceClass, void* TargetObject, UObject* DefaultObjectOuter = nullptr) override;
+
 
 private: // JSON -> UStruct
 

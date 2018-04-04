@@ -79,8 +79,14 @@ public:
 	UFUNCTION(BlueprintPure, Category = DlgData)
 	UObject* GetParticipant(FName DlgParticipantName);
 
-	/** Gets the current deepness. The amount of nodes already finished in the dialogue */
-	int32 GetCurrentDeepness() const { return CurrentDeepness; }
+	const TMap<FName, UObject*>& GetParticipantMap() { return Participants; }
+
+	UFUNCTION(BlueprintPure, Category = DlgData)
+	int32 GetActiveNodeIndex() const { return ActiveNodeIndex; }
+	
+	/** Returns the indices which were visited inside this single context. For global data check DlgMemory */
+	UFUNCTION(BlueprintPure, Category = DlgData)
+	const TSet<int32>& GetVisitedNodeIndices() const { return VisitedNodeIndices; }
 
 	/**
 	 *  TODO: functions to get data from not satisfied edges - maybe sometimes some of those should be displayed as well (with different color?!)
@@ -116,6 +122,6 @@ protected:
 	/** Children of the active node with satisfied conditions - the options the player can choose from */
 	TArray<const FDlgEdge*> AvailableChildren;
 
-	/** Amount of nodes already finished in this dialogue, only real text nodes matters */
-	int32 CurrentDeepness = -1;
+	/** Node indices visited in this specific Dialogue instance (isn't serialized) */
+	TSet<int32> VisitedNodeIndices;
 };

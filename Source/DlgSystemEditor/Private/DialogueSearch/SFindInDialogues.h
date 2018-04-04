@@ -4,6 +4,7 @@
 #include "Widgets/DeclarativeSyntaxSupport.h"
 #include "SCompoundWidget.h"
 #include "STreeView.h"
+#include "Framework/Commands/UICommandList.h"
 
 #include "FindInDialoguesResult.h"
 

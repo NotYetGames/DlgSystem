@@ -13,6 +13,7 @@ public:
 
 	/** Initializes the parser with the specified FilePath. */
 	virtual void InitializeParser(const FString& FilePath) = 0;
+
 	/** Initializes the parser with the speficied input string */
 	virtual void InitializeParserFromString(const FString& Text) {};
 
@@ -27,6 +28,10 @@ public:
 	 * @param DefaultObjectOuter: Outer used for UObject construction if necessary
 	 */
 	virtual void ReadAllProperty(const UStruct* ReferenceClass, void* TargetObject, UObject* DefaultObjectOuter = nullptr) = 0;
+
+	// bLogVerbose:
+	bool IsLogVerbose() const { return bLogVerbose; }
+	void SetLogVerbose(bool bValue) { bLogVerbose = bValue; }
 
 protected:
 	// the old removed engine function this code still uses a lot:
@@ -87,4 +92,7 @@ protected:
 protected:
 	/** each time a class is read it also cached here, so next time when it has to be found based on name it can be found faster */
 	TArray<UClass*> StructCache;
+
+	// Should this class verbose log?
+	bool bLogVerbose = false;
 };
