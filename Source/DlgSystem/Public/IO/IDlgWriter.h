@@ -68,6 +68,11 @@ public:
 	/** Decides if the path to the object should be serialized, or the object itself */
 	virtual bool CanSaveAsReference(const UProperty* Property)
 	{
+		if (Cast<UClassProperty>(Property) != nullptr)
+		{
+			return true;
+		}
+
 #if WITH_EDITOR
 		return Property->HasMetaData(TEXT("DlgSaveOnlyReference"));
 #else

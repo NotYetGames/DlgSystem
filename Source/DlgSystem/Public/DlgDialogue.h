@@ -69,6 +69,22 @@ struct FDlgParticipantData
 };
 
 
+/** Structure useful to cache all the names used by a participant */
+USTRUCT(BlueprintType)
+struct FDlgParticipantClass
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** FName based conditions (aka conditions of type DlgConditionEventCall). */
+	UPROPERTY(VisibleAnywhere, Category = DlgParticipantData)
+	FName ParticipantName;
+
+	/** FName based events (aka events of type EDlgEventType) */
+	UPROPERTY(EditAnywhere, Category = DlgParticipantData)
+	UClass* ParticipantClass;
+};
+
+
 /**
  *  Dialogue asset containing the static data of a dialogue
  *  Instances can be created in content browser
@@ -257,6 +273,21 @@ public:
 			OutSet.Add(Element.Key);
 		}
 	}
+	
+	/** EDITOR function, it only works if the participant class is setup in the DlgParticipantClasses array */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UClass* GetParticipantClass(FName ParticipantName) const
+	{
+		for (const FDlgParticipantClass& Pair : DlgParticipantClasses)
+		{
+			if (Pair.ParticipantName == ParticipantName)
+			{
+				return Pair.ParticipantClass;
+			}
+		}
+		return nullptr;
+	}
+
 
 	/** Gets the Condition Names that correspond to the provided ParticipantName. */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
@@ -430,6 +461,9 @@ private:
 	/** The Unique identifier for each dialogue. This is used to uniquely identify a Dialogue, instead of it's name or path. Much more safer. */
 	UPROPERTY(VisibleAnywhere, Category = DlgData)
 	FGuid DlgGuid;
+
+	UPROPERTY(EditAnywhere, EditFixedSize, Category = DlgData)
+	TArray<FDlgParticipantClass> DlgParticipantClasses;
 
 	/** Gathered data about events/conditions for each participant (for bp nodes, suggestions, etc.) */
 	UPROPERTY(VisibleAnywhere, Category = DlgData, Meta = (DlgNoExport))
