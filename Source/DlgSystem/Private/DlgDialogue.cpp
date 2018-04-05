@@ -549,6 +549,23 @@ void UDlgDialogue::RefreshData()
 	}
 
 	DlgSpeakerStates.Remove(FName(NAME_None));
+
+	TSet<FName> Participants;
+	GetAllParticipantNames(Participants);
+	
+	// 1. remove outdated entries
+	for (int32 i = DlgParticipantClasses.Num() - 1; i >= 0; --i)
+	{
+		FName ExaminedName = DlgParticipantClasses[i].ParticipantName;
+		if (!Participants.Contains(ExaminedName))
+			DlgParticipantClasses.RemoveAtSwap(i);
+		
+		Participants.Remove(ExaminedName);
+	}
+
+	// 2. add new entries
+	for (FName Participant : Participants)
+		DlgParticipantClasses.Add({ Participant, nullptr });
 }
 
 void UDlgDialogue::AutoFixGraph()
