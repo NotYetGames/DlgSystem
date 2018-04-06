@@ -39,16 +39,13 @@ public:
 template <typename PropertyType, typename VariableType>
 VariableType UDlgReflectionHelper::GetVariable(UObject* ParticipantObject, FName VariableName)
 {
-	UProperty* Property = ParticipantObject->GetClass()->PropertyLink;
-	while (Property != nullptr)
+	for (UProperty* Property = ParticipantObject->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 	{
 		const PropertyType* CastedProperty = Cast<PropertyType>(Property);
 		if (CastedProperty != nullptr && CastedProperty->GetFName() == VariableName)
 		{
 			return CastedProperty->GetPropertyValue_InContainer(ParticipantObject, 0);
 		}
-
-		Property = Property->PropertyLinkNext;
 	}
 
 	UE_LOG(LogDlgSystem, Warning, TEXT("Failed to get %s %s from %s - property not found!"), 
@@ -68,8 +65,7 @@ void UDlgReflectionHelper::ModifyVariable(UObject* ParticipantObject, FName Vari
 		return;
 	}
 
-	UProperty* Property = ParticipantObject->GetClass()->PropertyLink;
-	while (Property != nullptr)
+	for (UProperty* Property = ParticipantObject->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 	{
 		const PropertyType* CastedProperty = Cast<PropertyType>(Property);
 		if (CastedProperty != nullptr && CastedProperty->GetFName() == VariableName)
@@ -78,22 +74,20 @@ void UDlgReflectionHelper::ModifyVariable(UObject* ParticipantObject, FName Vari
 			CastedProperty->SetPropertyValue_InContainer(ParticipantObject, OldValue + Value);
 			return;
 		}
-
-		Property = Property->PropertyLinkNext;
 	}
 
 	UE_LOG(LogDlgSystem, Warning, TEXT("Failed to modify %s %s from %s - property not found!"), 
 									   *PropertyType::StaticClass()->GetName(), 
 									   *VariableName.ToString(), 
 									   *ParticipantObject->GetName());
+
 }
 
 
 template <typename PropertyType, typename VariableType>
 void UDlgReflectionHelper::SetVariable(UObject* ParticipantObject, FName VariableName, VariableType NewValue)
 {
-	UProperty* Property = ParticipantObject->GetClass()->PropertyLink;
-	while (Property != nullptr)
+	for (UProperty* Property = ParticipantObject->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 	{
 		const PropertyType* CastedProperty = Cast<PropertyType>(Property);
 		if (CastedProperty != nullptr && CastedProperty->GetFName() == VariableName)
@@ -101,8 +95,6 @@ void UDlgReflectionHelper::SetVariable(UObject* ParticipantObject, FName Variabl
 			CastedProperty->SetPropertyValue_InContainer(ParticipantObject, NewValue);
 			return;
 		}
-
-		Property = Property->PropertyLinkNext;
 	}
 
 	UE_LOG(LogDlgSystem, Warning, TEXT("Failed to set %s %s from %s - property not found!"), 
