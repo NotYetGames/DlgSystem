@@ -2,6 +2,9 @@
 #pragma once
 
 #include "GameFramework/Character.h"
+
+#include "Private/DlgSystemPrivatePCH.h"
+
 #include "DlgReflectionHelper.generated.h"
 
 
@@ -17,17 +20,17 @@ public:
 
 	/** Attempts to get the property VariableName from ParticipantObject*/
 	template <typename PropertyType, typename VariableType>
-	static VariableType GetVariable(UObject* ParticipantObject, FName VariableName);
+	static VariableType GetVariable(const UObject* ParticipantObject, const FName VariableName);
 
 
 	/** Attempts to modify the property VariableName from ParticipantObject */
 	template <typename PropertyType, typename VariableType>
-	static void ModifyVariable(UObject* ParticipantObject, FName VariableName, VariableType Value, bool bDelta);
+	static void ModifyVariable(UObject* ParticipantObject, const FName VariableName, VariableType Value, bool bDelta);
 
 
 	/** Attempts to set the property VariableName from ParticipantObject */
 	template <typename PropertyType, typename VariableType>
-	static void SetVariable(UObject* ParticipantObject, FName VariableName, VariableType NewValue);
+	static void SetVariable(UObject* ParticipantObject, const FName VariableName, VariableType NewValue);
 
 
 	/** Gathers the name of all variables in ParticipantClass from the type defined by PropertyClass */
@@ -37,7 +40,7 @@ public:
 
 
 template <typename PropertyType, typename VariableType>
-VariableType UDlgReflectionHelper::GetVariable(UObject* ParticipantObject, FName VariableName)
+VariableType UDlgReflectionHelper::GetVariable(const UObject* ParticipantObject, const FName VariableName)
 {
 	for (UProperty* Property = ParticipantObject->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 	{
@@ -57,7 +60,7 @@ VariableType UDlgReflectionHelper::GetVariable(UObject* ParticipantObject, FName
 
 
 template <typename PropertyType, typename VariableType>
-void UDlgReflectionHelper::ModifyVariable(UObject* ParticipantObject, FName VariableName, VariableType Value, bool bDelta)
+void UDlgReflectionHelper::ModifyVariable(UObject* ParticipantObject, const FName VariableName, VariableType Value, bool bDelta)
 {
 	// Set the variable
 	if (!bDelta)
@@ -87,7 +90,7 @@ void UDlgReflectionHelper::ModifyVariable(UObject* ParticipantObject, FName Vari
 
 
 template <typename PropertyType, typename VariableType>
-void UDlgReflectionHelper::SetVariable(UObject* ParticipantObject, FName VariableName, VariableType NewValue)
+void UDlgReflectionHelper::SetVariable(UObject* ParticipantObject, const FName VariableName, VariableType NewValue)
 {
 	for (UProperty* Property = ParticipantObject->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 	{

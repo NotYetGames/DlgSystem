@@ -9,6 +9,8 @@
 #include "Widgets/Input/SCheckBox.h"
 #include "Widgets/Input/SEditableTextBox.h"
 
+#include "DlgReflectionHelper.h"
+
 #define LOCTEXT_NAMESPACE "SDlgDataPropertyValues"
 
 static FText ValidateNameLength(const FText& Text)
@@ -108,6 +110,32 @@ void SDlgDataPropertyValue::UpdateVariableNodeFromActor()
 			VariableNode->SetVariableValue(Value.ToString());
 			break;
 		}
+
+		case EDlgDataDisplayVariableTreeNodeType::ClassInteger:
+		{
+			const int32 Value = UDlgReflectionHelper::GetVariable<UIntProperty, int32>(Actor.Get(), VariableName);
+			VariableNode->SetVariableValue(FString::FromInt(Value));
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::ClassFloat:
+		{
+			const float Value = UDlgReflectionHelper::GetVariable<UFloatProperty, float>(Actor.Get(), VariableName);
+			VariableNode->SetVariableValue(FString::SanitizeFloat(Value));
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::ClassBool:
+		{
+			const bool Value = UDlgReflectionHelper::GetVariable<UBoolProperty, bool>(Actor.Get(), VariableName);
+			VariableNode->SetVariableValue(BoolToFString(Value));
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::ClassFName:
+		{
+			const FName Value = UDlgReflectionHelper::GetVariable<UNameProperty, FName>(Actor.Get(), VariableName);
+			VariableNode->SetVariableValue(Value.ToString());
+			break;
+		}
+
 		case EDlgDataDisplayVariableTreeNodeType::Event:
 		{
 			// Event does not have any state value, ignore
@@ -200,6 +228,31 @@ void SDlgDataTextPropertyValue::HandleTextCommitted(const FText& NewText, ETextC
 		{
 			const FName Value(*NewString);
 			IDlgDialogueParticipant::Execute_ModifyNameValue(Actor.Get(), VariableName, Value);
+			break;
+		}
+
+		case EDlgDataDisplayVariableTreeNodeType::ClassInteger:
+		{
+			const int32 Value = NewString.IsNumeric() ? FCString::Atoi(*NewString) : 0;
+			UDlgReflectionHelper::SetVariable<UIntProperty>(Actor.Get(), VariableName, Value);
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::ClassFloat:
+		{
+			const float Value = NewString.IsNumeric() ? FCString::Atof(*NewString) : 0.f;
+			UDlgReflectionHelper::SetVariable<UFloatProperty>(Actor.Get(), VariableName, Value);
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::ClassBool:
+		{
+			const bool Value = FStringToBool(NewString);
+			UDlgReflectionHelper::SetVariable<UBoolProperty>(Actor.Get(), VariableName, Value);
+			break;
+		}
+		case EDlgDataDisplayVariableTreeNodeType::ClassFName:
+		{
+			const FName Value(*NewString);
+			UDlgReflectionHelper::SetVariable<UNameProperty>(Actor.Get(), VariableName, Value);
 			break;
 		}
 

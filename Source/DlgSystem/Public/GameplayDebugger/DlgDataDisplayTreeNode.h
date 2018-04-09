@@ -16,10 +16,16 @@ enum class EDlgDataDisplayVariableTreeNodeType : uint8
 
 	Event,
 	Condition,
+
 	Integer,
 	Float,
 	Bool,
-	FName
+	FName,
+
+	ClassInteger,
+	ClassFloat,
+	ClassBool,
+	ClassFName
 };
 
 // Type of Text
@@ -42,7 +48,6 @@ enum class EDlgDataDisplayCategoryTreeNodeType : uint8
 };
 
 class FDlgDataDisplayTreeNode;
-typedef TSharedPtr<FDlgDataDisplayTreeNode> FDlgDataDisplayTreeNodePtr;
 
 /* Base class node for all Nodes in the DlgDataDisplayWindow  */
 class FDlgDataDisplayTreeNode : public FDlgTreeViewNode<FDlgDataDisplayTreeNode>
@@ -86,7 +91,7 @@ class FDlgDataDisplayTreeActorNode : public FDlgDataDisplayTreeNode
 {
 	typedef FDlgDataDisplayTreeNode Super;
 public:
-	FDlgDataDisplayTreeActorNode(const FText& InDisplayText, FDlgDataDisplayTreeNodePtr InParent,
+	FDlgDataDisplayTreeActorNode(const FText& InDisplayText, TSharedPtr<FDlgDataDisplayTreeNode> InParent,
 		TWeakObjectPtr<AActor> InActor);
 
 	/** FDlgDataDisplayTreeNode interface */
@@ -104,7 +109,7 @@ class FDlgDataDisplayTreeCategoryNode : public FDlgDataDisplayTreeNode
 {
 	typedef FDlgDataDisplayTreeNode Super;
 public:
-	FDlgDataDisplayTreeCategoryNode(const FText& InDisplayText, FDlgDataDisplayTreeNodePtr InParent,
+	FDlgDataDisplayTreeCategoryNode(const FText& InDisplayText, TSharedPtr<FDlgDataDisplayTreeNode> InParent,
 		const EDlgDataDisplayCategoryTreeNodeType InCategoryType);
 
 	bool IsText() const override { return false; }
@@ -117,7 +122,7 @@ class FDlgDataDisplayTreeVariableNode : public FDlgDataDisplayTreeNode
 {
 	typedef FDlgDataDisplayTreeNode Super;
 public:
-	FDlgDataDisplayTreeVariableNode(const FText& InDisplayText, FDlgDataDisplayTreeNodePtr InParent,
+	FDlgDataDisplayTreeVariableNode(const FText& InDisplayText, TSharedPtr<FDlgDataDisplayTreeNode> InParent,
 		const FName& InVariableName, const EDlgDataDisplayVariableTreeNodeType InVariableType);
 
 	// VariableName:
