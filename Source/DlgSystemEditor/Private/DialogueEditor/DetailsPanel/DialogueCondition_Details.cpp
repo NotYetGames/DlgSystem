@@ -278,53 +278,53 @@ TArray<FName> FDialogueCondition_Details::GetAllDialoguesCallbackNames() const
 TArray<FName> FDialogueCondition_Details::GetCurrentDialogueCallbackNames() const
 {
 	const FName ParticipantName = DetailsPanel::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
-	TSet<FName> Names;
+	TSet<FName> Suggestions;
 
 	switch (ConditionType)
 	{
 	case EDlgConditionType::DlgConditionBoolCall:
-		Dialogue->GetBoolNames(ParticipantName, Names);
+		Dialogue->GetBoolNames(ParticipantName, Suggestions);
 		break;
 
 	case EDlgConditionType::DlgConditionNameCall:
-		Dialogue->GetNameNames(ParticipantName, Names);
+		Dialogue->GetNameNames(ParticipantName, Suggestions);
 		break;
 
 	case EDlgConditionType::DlgConditionFloatCall:
-		Dialogue->GetFloatNames(ParticipantName, Names);
+		Dialogue->GetFloatNames(ParticipantName, Suggestions);
 		break;
 
 	case EDlgConditionType::DlgConditionIntCall:
-		Dialogue->GetIntNames(ParticipantName, Names);
+		Dialogue->GetIntNames(ParticipantName, Suggestions);
 		break;
 
 
 	case EDlgConditionType::DlgConditionClassIntVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Names);
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
 		break;
 
 	case EDlgConditionType::DlgConditionClassBoolVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Names);
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
 		break;
 
 	case EDlgConditionType::DlgConditionClassFloatVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Names);
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
 		break;
 
 	case EDlgConditionType::DlgConditionClassNameVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Names);
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
 		break;
 
 
 	case EDlgConditionType::DlgConditionEventCall:
 	case EDlgConditionType::DlgConditionNodeVisited:
 	default:
-		Dialogue->GetConditions(ParticipantName, Names);
+		Dialogue->GetConditions(ParticipantName, Suggestions);
 		break;
 	}
 
-	UDlgManager::SortDefault(Names);
-	return Names.Array();
+	UDlgManager::SortDefault(Suggestions);
+	return Suggestions.Array();
 }
 
 #undef LOCTEXT_NAMESPACE

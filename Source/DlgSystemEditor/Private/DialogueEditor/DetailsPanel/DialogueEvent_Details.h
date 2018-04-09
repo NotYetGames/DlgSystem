@@ -54,22 +54,28 @@ private:
 	// Getters for the visibility of some properties
 	EVisibility GetIntValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyInt || EventType == EDlgEventType::DlgEventModifyClassIntVariable ? EVisibility::Visible : EVisibility::Hidden;
+		return EventType == EDlgEventType::DlgEventModifyInt
+			|| EventType == EDlgEventType::DlgEventModifyClassIntVariable
+			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetFloatValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyFloat || EventType == EDlgEventType::DlgEventModifyClassFloatVariable ? EVisibility::Visible : EVisibility::Hidden;
+		return EventType == EDlgEventType::DlgEventModifyFloat
+			|| EventType == EDlgEventType::DlgEventModifyClassFloatVariable
+			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetNameValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyName || EventType == EDlgEventType::DlgEventModifyClassNameVariable ? EVisibility::Visible : EVisibility::Hidden;
+		return EventType == EDlgEventType::DlgEventModifyName
+			|| EventType == EDlgEventType::DlgEventModifyClassNameVariable
+			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetBoolDeltaVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyInt 
+		return EventType == EDlgEventType::DlgEventModifyInt
 			|| EventType == EDlgEventType::DlgEventModifyFloat
 			|| EventType == EDlgEventType::DlgEventModifyClassIntVariable
 			|| EventType == EDlgEventType::DlgEventModifyClassFloatVariable
@@ -78,7 +84,9 @@ private:
 
 	EVisibility GetBoolValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyBool || EventType == EDlgEventType::DlgEventModifyClassBoolVariable ? EVisibility::Visible : EVisibility::Hidden;
+		return EventType == EDlgEventType::DlgEventModifyBool
+			|| EventType == EDlgEventType::DlgEventModifyClassBoolVariable
+			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	/** Gets all the event name suggestions depending on EventType from all Dialogues. */

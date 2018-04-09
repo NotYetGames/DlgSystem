@@ -44,28 +44,44 @@ struct FDlgParticipantData
 	GENERATED_USTRUCT_BODY()
 
 	/** FName based conditions (aka conditions of type DlgConditionEventCall). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
 	TSet<FName> Conditions;
 
 	/** FName based events (aka events of type EDlgEventType) */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
 	TSet<FName> Events;
 
-	/** Floats both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
-	TSet<FName> FloatVariableNames;
-
 	/** Integers both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
 	TSet<FName> IntVariableNames;
 
+	/** Floats both from conditions and from events */
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	TSet<FName> FloatVariableNames;
+
 	/** Booleans both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
 	TSet<FName> BoolVariableNames;
 
 	/** Names both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
 	TSet<FName> NameVariableNames;
+
+	/** Class Integers both from conditions and from events */
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	TSet<FName> ClassIntVariableNames;
+
+	/** Class Floats both from conditions and from events */
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	TSet<FName> ClassFloatVariableNames;
+
+	/** Class Booleans both from conditions and from events */
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	TSet<FName> ClassBoolVariableNames;
+
+	/** Class Names both from conditions and from events */
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	TSet<FName> ClassNameVariableNames;
 };
 
 
@@ -273,7 +289,7 @@ public:
 			OutSet.Add(Element.Key);
 		}
 	}
-	
+
 	/** EDITOR function, it only works if the participant class is setup in the DlgParticipantClasses array */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	UClass* GetParticipantClass(FName ParticipantName) const
@@ -309,16 +325,6 @@ public:
 		}
 	}
 
-	/** Gets the float variable Names that correspond to the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	void GetFloatNames(const FName& ParticipantName, TSet<FName>& OutSet) const
-	{
-		if (DlgData.Contains(ParticipantName))
-		{
-			OutSet.Append(DlgData[ParticipantName].FloatVariableNames);
-		}
-	}
-
 	/** Gets the int variable Names that correspond to the provided ParticipantName. */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	void GetIntNames(const FName& ParticipantName, TSet<FName>& OutSet) const
@@ -326,6 +332,16 @@ public:
 		if (DlgData.Contains(ParticipantName))
 		{
 			OutSet.Append(DlgData[ParticipantName].IntVariableNames);
+		}
+	}
+
+	/** Gets the float variable Names that correspond to the provided ParticipantName. */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	void GetFloatNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	{
+		if (DlgData.Contains(ParticipantName))
+		{
+			OutSet.Append(DlgData[ParticipantName].FloatVariableNames);
 		}
 	}
 
@@ -346,6 +362,47 @@ public:
 		if (DlgData.Contains(ParticipantName))
 		{
 			OutSet.Append(DlgData[ParticipantName].NameVariableNames);
+		}
+	}
+
+
+	/** Gets the int variable Names that correspond to the UClass of the provided ParticipantName. */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	void GetClassIntNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	{
+		if (DlgData.Contains(ParticipantName))
+		{
+			OutSet.Append(DlgData[ParticipantName].ClassIntVariableNames);
+		}
+	}
+
+	/** Gets the float variable Names that correspond to the UClass of the provided ParticipantName. */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	void GetClassFloatNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	{
+		if (DlgData.Contains(ParticipantName))
+		{
+			OutSet.Append(DlgData[ParticipantName].ClassFloatVariableNames);
+		}
+	}
+
+	/** Gets the bool variable Names that correspond to the UClass of the provided ParticipantName. */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	void GetClassBoolNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	{
+		if (DlgData.Contains(ParticipantName))
+		{
+			OutSet.Append(DlgData[ParticipantName].ClassBoolVariableNames);
+		}
+	}
+
+	/** Gets the name variable Names that correspond to the UClass of the provided ParticipantName. */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	void GetClassNameNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	{
+		if (DlgData.Contains(ParticipantName))
+		{
+			OutSet.Append(DlgData[ParticipantName].ClassNameVariableNames);
 		}
 	}
 
@@ -462,13 +519,15 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = DlgData)
 	FGuid DlgGuid;
 
+	/** All the Participants that require for you to define its UClass otherwise the auto completion/suggestion won't work in case you want to modify/check Class variables.  */
 	UPROPERTY(EditAnywhere, EditFixedSize, Category = DlgData)
 	TArray<FDlgParticipantClass> DlgParticipantClasses;
 
 	/** Gathered data about events/conditions for each participant (for bp nodes, suggestions, etc.) */
-	UPROPERTY(VisibleAnywhere, Category = DlgData, Meta = (DlgNoExport))
+	UPROPERTY(VisibleAnywhere, AdvancedDisplay, Category = DlgData, Meta = (DlgNoExport))
 	TMap<FName, FDlgParticipantData> DlgData;
 
+	/** All the speaker states used inside this Dialogue. */
 	UPROPERTY(VisibleAnywhere, Category = DlgData, Meta = (DlgNoExport))
 	TSet<FName> DlgSpeakerStates;
 

@@ -33,7 +33,7 @@ enum class EDlgConditionType : uint8
 	DlgConditionEventCall	UMETA(DisplayName = "Check named condition"),
 
 
-	/** A logical operation on an int variable acquired from the object using the UClass */
+	/** A logical operation on an variables acquired from the object using the UClass */
 	DlgConditionClassIntVariable	UMETA(DisplayName = "Check class int variable"),
 	DlgConditionClassFloatVariable	UMETA(DisplayName = "Check class float variable"),
 	DlgConditionClassBoolVariable	UMETA(DisplayName = "Check class bool variable"),

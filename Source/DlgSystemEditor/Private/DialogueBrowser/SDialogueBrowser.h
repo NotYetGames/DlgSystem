@@ -111,6 +111,9 @@ private:
 	/** Makes Variable categories. */
 	TArray<FDialogueBrowserTreeNodePtr> MakeVariableCategoriesChildren(FDialogueBrowserTreeNodePtr Parent) const;
 
+	/** Makes Class Variable categories. */
+	TArray<FDialogueBrowserTreeNodePtr> MakeClassVariableCategoriesChildren(FDialogueBrowserTreeNodePtr Parent) const;
+
 	template<typename ItemType, typename ComparisonType>
 	void RestoreExpansionState(TSharedPtr<STreeView<ItemType>> InTree, const TArray<ItemType>& ItemSource,
 							   const TSet<ItemType>& OldExpansionState, ComparisonType ComparisonFunction)

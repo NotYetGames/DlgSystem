@@ -32,7 +32,7 @@ public:
 
 	/** Gathers the name of all variables in ParticipantClass from the type defined by PropertyClass */
 	template <typename ContainerType>
-	static void GetVariableNames(UClass* ParticipantClass, UClass* PropertyClass, ContainerType& OutContainer);
+	static void GetVariableNames(const UClass* ParticipantClass, const UClass* PropertyClass, ContainerType& OutContainer);
 };
 
 
@@ -48,10 +48,10 @@ VariableType UDlgReflectionHelper::GetVariable(UObject* ParticipantObject, FName
 		}
 	}
 
-	UE_LOG(LogDlgSystem, Warning, TEXT("Failed to get %s %s from %s - property not found!"), 
-									   *PropertyType::StaticClass()->GetName(), 
-									   *VariableName.ToString(), 
-									   *ParticipantObject->GetName());
+	UE_LOG(LogDlgSystem,
+		   Warning,
+		   TEXT("Failed to get %s %s from %s - property not found!"),
+		   *PropertyType::StaticClass()->GetName(), *VariableName.ToString(), *ParticipantObject->GetName());
 	return VariableType{};
 }
 
@@ -59,12 +59,14 @@ VariableType UDlgReflectionHelper::GetVariable(UObject* ParticipantObject, FName
 template <typename PropertyType, typename VariableType>
 void UDlgReflectionHelper::ModifyVariable(UObject* ParticipantObject, FName VariableName, VariableType Value, bool bDelta)
 {
+	// Set the variable
 	if (!bDelta)
 	{
 		SetVariable<PropertyType>(ParticipantObject, VariableName, Value);
 		return;
 	}
 
+	// Modify the current variable
 	for (UProperty* Property = ParticipantObject->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 	{
 		const PropertyType* CastedProperty = Cast<PropertyType>(Property);
@@ -76,10 +78,10 @@ void UDlgReflectionHelper::ModifyVariable(UObject* ParticipantObject, FName Vari
 		}
 	}
 
-	UE_LOG(LogDlgSystem, Warning, TEXT("Failed to modify %s %s from %s - property not found!"), 
-									   *PropertyType::StaticClass()->GetName(), 
-									   *VariableName.ToString(), 
-									   *ParticipantObject->GetName());
+	UE_LOG(LogDlgSystem,
+		   Warning,
+		   TEXT("Failed to modify %s %s from %s - property not found!"),
+		   *PropertyType::StaticClass()->GetName(), *VariableName.ToString(), *ParticipantObject->GetName());
 
 }
 
@@ -97,15 +99,14 @@ void UDlgReflectionHelper::SetVariable(UObject* ParticipantObject, FName Variabl
 		}
 	}
 
-	UE_LOG(LogDlgSystem, Warning, TEXT("Failed to set %s %s from %s - property not found!"), 
-									   *PropertyType::StaticClass()->GetName(), 
-									   *VariableName.ToString(), 
-									   *ParticipantObject->GetName());
+	UE_LOG(LogDlgSystem, Warning,
+		   TEXT("Failed to set %s %s from %s - property not found!"),
+		   *PropertyType::StaticClass()->GetName(), *VariableName.ToString(), *ParticipantObject->GetName());
 }
 
 
 template <typename ContainerType>
-void UDlgReflectionHelper::GetVariableNames(UClass* ParticipantClass, UClass* PropertyClass, ContainerType& OutContainer)
+void UDlgReflectionHelper::GetVariableNames(const UClass* ParticipantClass, const UClass* PropertyClass, ContainerType& OutContainer)
 {
 	if (ParticipantClass == nullptr)
 	{
@@ -114,6 +115,7 @@ void UDlgReflectionHelper::GetVariableNames(UClass* ParticipantClass, UClass* Pr
 
 	UProperty* Property = ParticipantClass->PropertyLink;
 
+	// Blacklisted classes, TODO add these to the dialogue settings
 	UProperty* ActorPropertyBegin = AActor::StaticClass()->PropertyLink;
 	UProperty* PawnPropertyBegin = APawn::StaticClass()->PropertyLink;
 	UProperty* CharacterPropertyBegin = ACharacter::StaticClass()->PropertyLink;

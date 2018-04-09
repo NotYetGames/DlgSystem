@@ -449,6 +449,10 @@ void UDlgDialogue::RefreshData()
 		FDlgParticipantData& ParticipantData = GetParticipantDataEntry(ParticipantName, FallbackNodeOwnerName);
 		switch (ConditionType)
 		{
+			case EDlgConditionType::DlgConditionEventCall:
+				ParticipantData.Conditions.Add(ConditionName);
+				break;
+
 			case EDlgConditionType::DlgConditionIntCall:
 				ParticipantData.IntVariableNames.Add(ConditionName);
 				break;
@@ -461,9 +465,20 @@ void UDlgDialogue::RefreshData()
 			case EDlgConditionType::DlgConditionNameCall:
 				ParticipantData.NameVariableNames.Add(ConditionName);
 				break;
-			case EDlgConditionType::DlgConditionEventCall:
-				ParticipantData.Conditions.Add(ConditionName);
+
+			case EDlgConditionType::DlgConditionClassIntVariable:
+				ParticipantData.ClassIntVariableNames.Add(ConditionName);
 				break;
+			case EDlgConditionType::DlgConditionClassFloatVariable:
+				ParticipantData.ClassFloatVariableNames.Add(ConditionName);
+				break;
+			case EDlgConditionType::DlgConditionClassBoolVariable:
+				ParticipantData.ClassBoolVariableNames.Add(ConditionName);
+				break;
+			case EDlgConditionType::DlgConditionClassNameVariable:
+				ParticipantData.ClassNameVariableNames.Add(ConditionName);
+				break;
+
 			default:
 				break;
 		}
@@ -529,17 +544,27 @@ void UDlgDialogue::RefreshData()
 				case EDlgEventType::DlgEventModifyInt:
 					ParticipantData.IntVariableNames.Add(Event.EventName);
 					break;
-
 				case EDlgEventType::DlgEventModifyFloat:
 					ParticipantData.FloatVariableNames.Add(Event.EventName);
 					break;
-
 				case EDlgEventType::DlgEventModifyBool:
 					ParticipantData.BoolVariableNames.Add(Event.EventName);
 					break;
-
 				case EDlgEventType::DlgEventModifyName:
 					ParticipantData.NameVariableNames.Add(Event.EventName);
+					break;
+
+				case EDlgEventType::DlgEventModifyClassIntVariable:
+					ParticipantData.ClassIntVariableNames.Add(Event.EventName);
+					break;
+				case EDlgEventType::DlgEventModifyClassFloatVariable:
+					ParticipantData.ClassFloatVariableNames.Add(Event.EventName);
+					break;
+				case EDlgEventType::DlgEventModifyClassBoolVariable:
+					ParticipantData.ClassBoolVariableNames.Add(Event.EventName);
+					break;
+				case EDlgEventType::DlgEventModifyClassNameVariable:
+					ParticipantData.ClassNameVariableNames.Add(Event.EventName);
 					break;
 
 				default:
@@ -548,18 +573,19 @@ void UDlgDialogue::RefreshData()
 		}
 	}
 
+	// Remove default values
 	DlgSpeakerStates.Remove(FName(NAME_None));
 
 	TSet<FName> Participants;
 	GetAllParticipantNames(Participants);
-	
+
 	// 1. remove outdated entries
 	for (int32 i = DlgParticipantClasses.Num() - 1; i >= 0; --i)
 	{
 		FName ExaminedName = DlgParticipantClasses[i].ParticipantName;
 		if (!Participants.Contains(ExaminedName))
 			DlgParticipantClasses.RemoveAtSwap(i);
-		
+
 		Participants.Remove(ExaminedName);
 	}
 

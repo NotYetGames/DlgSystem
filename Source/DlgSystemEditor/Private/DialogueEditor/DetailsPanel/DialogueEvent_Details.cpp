@@ -203,50 +203,50 @@ TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
 TArray<FName> FDialogueEvent_Details::GetCurrentDialogueEventNames() const
 {
 	const FName ParticipantName = DetailsPanel::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
-	TSet<FName> Names;
+	TSet<FName> Suggestions;
 
 	switch (EventType)
 	{
 	case EDlgEventType::DlgEventModifyBool:
-		Dialogue->GetBoolNames(ParticipantName, Names);
+		Dialogue->GetBoolNames(ParticipantName, Suggestions);
 		break;
 
 	case EDlgEventType::DlgEventModifyName:
-		Dialogue->GetNameNames(ParticipantName, Names);
+		Dialogue->GetNameNames(ParticipantName, Suggestions);
 		break;
 
 	case EDlgEventType::DlgEventModifyFloat:
-		Dialogue->GetFloatNames(ParticipantName, Names);
+		Dialogue->GetFloatNames(ParticipantName, Suggestions);
 		break;
 
 	case EDlgEventType::DlgEventModifyInt:
-		Dialogue->GetIntNames(ParticipantName, Names);
+		Dialogue->GetIntNames(ParticipantName, Suggestions);
 		break;
 
 	case EDlgEventType::DlgEventModifyClassIntVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Names);
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
 		break;
 
 	case EDlgEventType::DlgEventModifyClassFloatVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Names);
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
 		break;
 
 	case EDlgEventType::DlgEventModifyClassBoolVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Names);
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
 		break;
 
 	case EDlgEventType::DlgEventModifyClassNameVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Names);
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
 		break;
 
 	case EDlgEventType::DlgEventEvent:
 	default:
-		Dialogue->GetEvents(ParticipantName, Names);
+		Dialogue->GetEvents(ParticipantName, Suggestions);
 		break;
 	}
 
-	UDlgManager::SortDefault(Names);
-	return Names.Array();
+	UDlgManager::SortDefault(Suggestions);
+	return Suggestions.Array();
 }
 
 #undef LOCTEXT_NAMESPACE

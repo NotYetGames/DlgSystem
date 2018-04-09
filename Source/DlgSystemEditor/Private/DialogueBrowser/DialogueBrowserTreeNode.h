@@ -22,11 +22,18 @@ enum class EDialogueTreeNodeCategoryType : uint8
 	Dialogue,
 	Event,
 	Condition,
+
 	Variable,
 	VariableInt,
 	VariableFloat,
 	VariableBool,
 	VariableFName,
+
+	ClassVariable,
+	ClassVariableInt,
+	ClassVariableFloat,
+	ClassVariableBool,
+	ClassVariableFName,
 
 	Max
 };
@@ -42,6 +49,10 @@ enum class EDialogueTreeNodeTextType : uint8
 	ParticipantVariableFloat,
 	ParticipantVariableBool,
 	ParticipantVariableFName,
+	ParticipantClassVariableInt,
+	ParticipantClassVariableFloat,
+	ParticipantClassVariableBool,
+	ParticipantClassVariableFName,
 
 	EventDialogue,
 	EventGraphNode,
@@ -51,18 +62,22 @@ enum class EDialogueTreeNodeTextType : uint8
 	ConditionEdgeNode,
 
 	IntVariableDialogue,
+	IntClassVariableDialogue,
 	IntVariableGraphNode,
 	IntVariableEdgeNode,
 
 	FloatVariableDialogue,
+	FloatClassVariableDialogue,
 	FloatVariableGraphNode,
 	FloatVariableEdgeNode,
 
 	BoolVariableDialogue,
+	BoolClassVariableDialogue,
 	BoolVariableGraphNode,
 	BoolVariableEdgeNode,
 
 	FNameVariableDialogue,
+	FNameClassVariableDialogue,
 	FNameVariableGraphNode,
 	FNameVariableEdgeNode,
 
@@ -133,13 +148,18 @@ public:
 	virtual bool IsSeparator() const { return false; }
 	bool IsDialogueText() const
 	{
-		return IsText() && (TextType == EDialogueTreeNodeTextType::ParticipantDialogue ||
-							TextType == EDialogueTreeNodeTextType::EventDialogue ||
-							TextType == EDialogueTreeNodeTextType::ConditionDialogue ||
-							TextType == EDialogueTreeNodeTextType::IntVariableDialogue ||
-							TextType == EDialogueTreeNodeTextType::FloatVariableDialogue ||
-							TextType == EDialogueTreeNodeTextType::BoolVariableDialogue ||
-							TextType == EDialogueTreeNodeTextType::FNameVariableDialogue);
+		return IsText() &&
+		      (TextType == EDialogueTreeNodeTextType::ParticipantDialogue
+			|| TextType == EDialogueTreeNodeTextType::EventDialogue
+			|| TextType == EDialogueTreeNodeTextType::ConditionDialogue
+			|| TextType == EDialogueTreeNodeTextType::IntVariableDialogue
+			|| TextType == EDialogueTreeNodeTextType::FloatVariableDialogue
+			|| TextType == EDialogueTreeNodeTextType::BoolVariableDialogue
+			|| TextType == EDialogueTreeNodeTextType::FNameVariableDialogue
+			|| TextType == EDialogueTreeNodeTextType::IntClassVariableDialogue
+			|| TextType == EDialogueTreeNodeTextType::FloatClassVariableDialogue
+			|| TextType == EDialogueTreeNodeTextType::BoolClassVariableDialogue
+			|| TextType == EDialogueTreeNodeTextType::FNameClassVariableDialogue);
 	}
 	bool IsEventText() const
 	{
