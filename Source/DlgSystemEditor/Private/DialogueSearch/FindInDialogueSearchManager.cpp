@@ -47,7 +47,7 @@ FFindInDialogueSearchManager::~FFindInDialogueSearchManager()
 }
 
 bool FFindInDialogueSearchManager::QueryDlgCondition(const FDialogueSearchFilter& SearchFilter, const FDlgCondition& InDlgCondition,
-													FFindInDialoguesResultPtr OutParentNode)
+													TSharedPtr<FFindInDialoguesResult> OutParentNode)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid())
 	{
@@ -92,7 +92,7 @@ bool FFindInDialogueSearchManager::QueryDlgCondition(const FDialogueSearchFilter
 }
 
 bool FFindInDialogueSearchManager::QueryDlgEvent(const FDialogueSearchFilter& SearchFilter, const FDlgEvent& InDlgEvent,
-												FFindInDialoguesResultPtr OutParentNode)
+												TSharedPtr<FFindInDialoguesResult> OutParentNode)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid())
 	{
@@ -137,7 +137,7 @@ bool FFindInDialogueSearchManager::QueryDlgEvent(const FDialogueSearchFilter& Se
 }
 
 bool FFindInDialogueSearchManager::QueryDlgEdge(const FDialogueSearchFilter& SearchFilter, const FDlgEdge& InDlgEdge,
-												FFindInDialoguesResultPtr OutParentNode)
+												TSharedPtr<FFindInDialoguesResult> OutParentNode)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid())
 	{
@@ -159,14 +159,14 @@ bool FFindInDialogueSearchManager::QueryDlgEdge(const FDialogueSearchFilter& Sea
 	// Test Condition
 	for (const FDlgCondition& Condition : InDlgEdge.Conditions)
 	{
-		bContainsSearchString = bContainsSearchString || QueryDlgCondition(SearchFilter, Condition, OutParentNode);
+		bContainsSearchString = QueryDlgCondition(SearchFilter, Condition, OutParentNode) || bContainsSearchString;
 	}
 
 	return bContainsSearchString;
 }
 
 bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& SearchFilter, UDialogueGraphNode* InGraphNode,
-												FFindInDialoguesResultPtr OutParentNode)
+												TSharedPtr<FFindInDialoguesResult> OutParentNode)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || InGraphNode == nullptr)
 	{
@@ -220,13 +220,13 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& S
 	// Test the EnterConditions
 	for (const FDlgCondition& Condition : Node->GetNodeEnterConditions())
 	{
-		bContainsSearchString = bContainsSearchString || QueryDlgCondition(SearchFilter, Condition, TreeGraphNode);
+		bContainsSearchString = QueryDlgCondition(SearchFilter, Condition, TreeGraphNode) || bContainsSearchString ;
 	}
 
 	// Test the EnterEvents
 	for (const FDlgEvent& Event : Node->GetNodeEnterEvents())
 	{
-		bContainsSearchString = bContainsSearchString || QueryDlgEvent(SearchFilter, Event, TreeGraphNode);
+		bContainsSearchString = QueryDlgEvent(SearchFilter, Event, TreeGraphNode) || bContainsSearchString;
 	}
 
 	// Handle Speech sequences
@@ -272,7 +272,7 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& S
 }
 
 bool FFindInDialogueSearchManager::QueryEdgeNode(const FDialogueSearchFilter& SearchFilter, UDialogueGraphNode_Edge* InEdgeNode,
-												FFindInDialoguesResultPtr OutParentNode)
+												TSharedPtr<FFindInDialoguesResult> OutParentNode)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || InEdgeNode == nullptr)
 	{
@@ -299,7 +299,7 @@ bool FFindInDialogueSearchManager::QueryEdgeNode(const FDialogueSearchFilter& Se
 
 	// Search in the DlgEdge
 	const FDlgEdge& DialogueEdge = InEdgeNode->GetDialogueEdge();
-	bContainsSearchString = bContainsSearchString || QueryDlgEdge(SearchFilter, DialogueEdge, TreeEdgeNode);
+	bContainsSearchString = QueryDlgEdge(SearchFilter, DialogueEdge, TreeEdgeNode) || bContainsSearchString;
 
 	if (bContainsSearchString)
 	{
@@ -310,7 +310,7 @@ bool FFindInDialogueSearchManager::QueryEdgeNode(const FDialogueSearchFilter& Se
 }
 
 bool FFindInDialogueSearchManager::QuerySingleDialogue(const FDialogueSearchFilter& SearchFilter,
-							const UDlgDialogue* InDialogue, FFindInDialoguesResultPtr OutParentNode)
+							const UDlgDialogue* InDialogue, TSharedPtr<FFindInDialoguesResult> OutParentNode)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || InDialogue == nullptr)
 	{
@@ -354,7 +354,7 @@ bool FFindInDialogueSearchManager::QuerySingleDialogue(const FDialogueSearchFilt
 }
 
 void FFindInDialogueSearchManager::QueryAllDialogues(const FDialogueSearchFilter& SearchFilter,
-	FFindInDialoguesResultPtr OutParentNode)
+	TSharedPtr<FFindInDialoguesResult> OutParentNode)
 {
 	// Iterate over all cached dialogues
 	for (auto& Elem : SearchMap)

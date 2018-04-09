@@ -11,8 +11,6 @@ class FFindInDialoguesResult;
 class UDialogueGraphNode;
 class UDialogueGraphNode_Edge;
 
-typedef TSharedPtr<FFindInDialoguesResult> FFindInDialoguesResultPtr;
-
 // Filter used when searching for Dialogue Data
 struct FDialogueSearchFilter
 {
@@ -74,7 +72,7 @@ class FFindInDialoguesDialogueNode : public FFindInDialoguesResult
 {
 	typedef FFindInDialoguesResult Super;
 public:
-	FFindInDialoguesDialogueNode(const FText& InDisplayText, FFindInDialoguesResultPtr InParent);
+	FFindInDialoguesDialogueNode(const FText& InDisplayText, TSharedPtr<FFindInDialoguesResult> InParent);
 
 	FReply OnClick() override;
 	TWeakObjectPtr<const UDlgDialogue> GetParentDialogue() const override;
@@ -94,7 +92,7 @@ class FFindInDialoguesGraphNode : public FFindInDialoguesResult
 {
 	typedef FFindInDialoguesResult Super;
 public:
-	FFindInDialoguesGraphNode(const FText& InDisplayText, FFindInDialoguesResultPtr InParent);
+	FFindInDialoguesGraphNode(const FText& InDisplayText, TSharedPtr<FFindInDialoguesResult> InParent);
 
 	FReply OnClick() override;
 	TSharedRef<SWidget> CreateIcon() const override;
@@ -113,7 +111,7 @@ class FFindInDialoguesEdgeNode : public FFindInDialoguesResult
 {
 	typedef FFindInDialoguesResult Super;
 public:
-	FFindInDialoguesEdgeNode(const FText& InDisplayText, FFindInDialoguesResultPtr InParent);
+	FFindInDialoguesEdgeNode(const FText& InDisplayText, TSharedPtr<FFindInDialoguesResult> InParent);
 
 	FReply OnClick() override;
 	TSharedRef<SWidget> CreateIcon() const override;

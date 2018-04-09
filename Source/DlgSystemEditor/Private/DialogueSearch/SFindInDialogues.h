@@ -75,13 +75,13 @@ private:
 	}
 
 	/* Get the children of a row */
-	void HandleGetChildren(FFindInDialoguesResultPtr InItem, TArray<FFindInDialoguesResultPtr>& OutChildren);
+	void HandleGetChildren(TSharedPtr<FFindInDialoguesResult> InItem, TArray<TSharedPtr<FFindInDialoguesResult>>& OutChildren);
 
 	/* Called when user double clicks on a new result */
-	void HandleTreeSelectionDoubleClicked(FFindInDialoguesResultPtr Item);
+	void HandleTreeSelectionDoubleClicked(TSharedPtr<FFindInDialoguesResult> Item);
 
 	/* Called when a new row is being generated */
-	TSharedRef<ITableRow> HandleGenerateRow(FFindInDialoguesResultPtr InItem, const TSharedRef<STableViewBase>& OwnerTable);
+	TSharedRef<ITableRow> HandleGenerateRow(TSharedPtr<FFindInDialoguesResult> InItem, const TSharedRef<STableViewBase>& OwnerTable);
 
 	/** Callback to build the context menu when right clicking in the tree */
 	TSharedPtr<SWidget> HandleContextMenuOpening();
@@ -94,7 +94,7 @@ private:
 	TWeakPtr<FDialogueEditor> DialogueEditorPtr;
 
 	/* The tree view displays the results */
-	TSharedPtr<STreeView<FFindInDialoguesResultPtr>> TreeView;
+	TSharedPtr<STreeView<TSharedPtr<FFindInDialoguesResult>>> TreeView;
 
 	/** The search text box */
 	TSharedPtr<SSearchBox> SearchTextBoxWidget;
@@ -103,10 +103,10 @@ private:
 	TWeakPtr<SVerticalBox> MainVerticalBoxWidget;
 
 	/** In Find Within Dialogue mode, we need to keep a handle on the root result, because it won't show up in the tree. */
-	FFindInDialoguesResultPtr RootSearchResult;
+	TSharedPtr<FFindInDialoguesResult> RootSearchResult;
 
 	/* This buffer stores the currently displayed results */
-	TArray<FFindInDialoguesResultPtr> ItemsFound;
+	TArray<TSharedPtr<FFindInDialoguesResult>> ItemsFound;
 
 	/* The string to highlight in the results */
 	FText HighlightText;
