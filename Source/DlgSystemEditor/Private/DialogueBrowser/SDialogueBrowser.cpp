@@ -147,6 +147,41 @@ void SDialogueBrowser::Construct(const FArguments& InArgs)
 					GetFilterTextBoxWidget()
 				]
 
+				// View Options
+				+SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(2.0f, 2.0f)
+				[
+					SNew(SComboButton)
+					.ComboButtonStyle(FEditorStyle::Get(), "GenericFilters.ComboButtonStyle")
+					.ForegroundColor(FLinearColor::White)
+					.ContentPadding(0)
+					.ToolTipText(LOCTEXT("View_Tooltip", "View Options for the Dialogue Browser"))
+					.OnGetMenuContent(this, &Self::FillViewOptionsEntries)
+					.HasDownArrow(true)
+					.ContentPadding(FMargin(1, 0))
+					.ButtonContent()
+					[
+						SNew(SHorizontalBox)
+						+SHorizontalBox::Slot()
+						.AutoWidth()
+						[
+							SNew(STextBlock)
+							.TextStyle(FEditorStyle::Get(), "GenericFilters.TextStyle")
+							.Font(FEditorStyle::Get().GetFontStyle("FontAwesome.9"))
+							.Text(FText::FromString(FString(TEXT("\xf0b0"))) /*fa-filter*/)
+						]
+						+SHorizontalBox::Slot()
+						.AutoWidth()
+						.Padding(2, 0, 0, 0)
+						[
+							SNew(STextBlock)
+							.TextStyle(FEditorStyle::Get(), "GenericFilters.TextStyle")
+							.Text(LOCTEXT("View_Key", "View Options"))
+						]
+					]
+				]
+
 				// Sort menu
 				+SHorizontalBox::Slot()
 				.AutoWidth()
@@ -599,7 +634,8 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueBrowserTreeNodePtr Item)
 		case EDialogueTreeNodeCategoryType::Participant:
 		{
 			// Display the categories for the participant
-			Item->SetChildren(MakeParticipantCategoriesChildren(Item));
+			const bool bHideEmptyCategories = GetDefault<UDlgSystemSettings>()->bHideEmptyDialogueBrowserCategories;
+			Item->SetChildren(MakeParticipantCategoriesChildren(Item, ParticipantProperties, bHideEmptyCategories));
 			break;
 		}
 		case EDialogueTreeNodeCategoryType::Dialogue:
@@ -649,7 +685,8 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueBrowserTreeNodePtr Item)
 			// Only display the categories if the Participant has at least one variable.
 			if (ParticipantProperties->HasVariables())
 			{
-				Item->SetChildren(MakeVariableCategoriesChildren(Item));
+				const bool bHideEmptyCategories = GetDefault<UDlgSystemSettings>()->bHideEmptyDialogueBrowserCategories;
+				Item->SetChildren(MakeVariableCategoriesChildren(Item, ParticipantProperties, bHideEmptyCategories));
 			}
 			break;
 		}
@@ -703,7 +740,8 @@ void SDialogueBrowser::BuildTreeViewItem(FDialogueBrowserTreeNodePtr Item)
 			// Only display the categories if the Participant has at least one class variable.
 			if (ParticipantProperties->HasClassVariables())
 			{
-				Item->SetChildren(MakeClassVariableCategoriesChildren(Item));
+				const bool bHideEmptyCategories = GetDefault<UDlgSystemSettings>()->bHideEmptyDialogueBrowserCategories;
+				Item->SetChildren(MakeClassVariableCategoriesChildren(Item, ParticipantProperties, bHideEmptyCategories));
 			}
 			break;
 		}
@@ -1306,29 +1344,40 @@ FReply SDialogueBrowser::FindInContentBrowserForItem(const FDialogueBrowserTreeN
 	return FReply::Unhandled();
 }
 
-TArray<FDialogueBrowserTreeNodePtr> SDialogueBrowser::MakeParticipantCategoriesChildren(FDialogueBrowserTreeNodePtr Parent) const
+TArray<FDialogueBrowserTreeNodePtr> SDialogueBrowser::MakeParticipantCategoriesChildren(
+	FDialogueBrowserTreeNodePtr Parent, TSharedPtr<FDialogueBrowserTreeParticipantProperties> ParticipantProperties,
+	const bool bHideEmptyCategories) const
 {
 	TArray<FDialogueBrowserTreeNodePtr> Categories;
+	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasDialogues()))
 	{
 		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
 			FText::FromString(TEXT("Dialogues")), Parent, EDialogueTreeNodeCategoryType::Dialogue));
 		Categories.Add(Category);
 	}
+
+	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasEvents()))
 	{
 		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
 			FText::FromString(TEXT("Events")), Parent, EDialogueTreeNodeCategoryType::Event));
 		Categories.Add(Category);
 	}
+
+	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasConditions()))
 	{
 		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
 			FText::FromString(TEXT("Conditions")), Parent, EDialogueTreeNodeCategoryType::Condition));
 		Categories.Add(Category);
 	}
+
+	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasVariables()))
 	{
 		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
 			FText::FromString(TEXT("Variables")), Parent, EDialogueTreeNodeCategoryType::Variable));
 		Categories.Add(Category);
 	}
+
+	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassVariables()))
 	{
 		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
 			FText::FromString(TEXT("Class Variables")), Parent, EDialogueTreeNodeCategoryType::ClassVariable));
@@ -1337,24 +1386,33 @@ TArray<FDialogueBrowserTreeNodePtr> SDialogueBrowser::MakeParticipantCategoriesC
 	return Categories;
 }
 
-TArray<FDialogueBrowserTreeNodePtr> SDialogueBrowser::MakeVariableCategoriesChildren(FDialogueBrowserTreeNodePtr Parent) const
+TArray<FDialogueBrowserTreeNodePtr> SDialogueBrowser::MakeVariableCategoriesChildren(
+	FDialogueBrowserTreeNodePtr Parent, TSharedPtr<FDialogueBrowserTreeParticipantProperties> ParticipantProperties,
+	const bool bHideEmptyCategories) const
 {
 	TArray<FDialogueBrowserTreeNodePtr> Categories;
+	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasIntegers()))
 	{
 		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
 			FText::FromString(TEXT("Integers")), Parent, EDialogueTreeNodeCategoryType::VariableInt));
 		Categories.Add(Category);
 	}
+
+	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasFloats()))
 	{
 		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
 			FText::FromString(TEXT("Floats")), Parent, EDialogueTreeNodeCategoryType::VariableFloat));
 		Categories.Add(Category);
 	}
+
+	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasBools()))
 	{
 		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
 			FText::FromString(TEXT("Bools")), Parent, EDialogueTreeNodeCategoryType::VariableBool));
 		Categories.Add(Category);
 	}
+
+	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasFNames()))
 	{
 		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
 			FText::FromString(TEXT("Names")), Parent, EDialogueTreeNodeCategoryType::VariableFName));
@@ -1364,24 +1422,34 @@ TArray<FDialogueBrowserTreeNodePtr> SDialogueBrowser::MakeVariableCategoriesChil
 	return Categories;
 }
 
-TArray<FDialogueBrowserTreeNodePtr> SDialogueBrowser::MakeClassVariableCategoriesChildren(FDialogueBrowserTreeNodePtr Parent) const
+TArray<FDialogueBrowserTreeNodePtr> SDialogueBrowser::MakeClassVariableCategoriesChildren(
+	FDialogueBrowserTreeNodePtr Parent, TSharedPtr<FDialogueBrowserTreeParticipantProperties> ParticipantProperties,
+	const bool bHideEmptyCategories) const
 {
 	TArray<FDialogueBrowserTreeNodePtr> Categories;
+
+	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassIntegers()))
 	{
 		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
 			FText::FromString(TEXT("Class Integers")), Parent, EDialogueTreeNodeCategoryType::ClassVariableInt));
 		Categories.Add(Category);
 	}
+
+	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassFloats()))
 	{
 		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
 			FText::FromString(TEXT("Class Floats")), Parent, EDialogueTreeNodeCategoryType::ClassVariableFloat));
 		Categories.Add(Category);
 	}
+
+	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassBools()))
 	{
 		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
 			FText::FromString(TEXT("Class Bools")), Parent, EDialogueTreeNodeCategoryType::ClassVariableBool));
 		Categories.Add(Category);
 	}
+
+	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassFNames()))
 	{
 		FDialogueBrowserTreeNodePtr Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
 			FText::FromString(TEXT("Class Names")), Parent, EDialogueTreeNodeCategoryType::ClassVariableFName));
@@ -1419,6 +1487,33 @@ TSharedRef<SHorizontalBox> SDialogueBrowser::MakeIconAndTextWidget(const FText& 
 			.Text(InText)
 			.HighlightText(this, &Self::GetFilterText)
 		];
+}
+
+TSharedRef<SWidget> SDialogueBrowser::FillViewOptionsEntries()
+{
+	FMenuBuilder MenuBuilder(true, nullptr);
+	MenuBuilder.AddMenuEntry(
+		LOCTEXT("HideEmptyCategories", "Hide empty categories"),
+		LOCTEXT("HideEmptyCategories_ToolTip", "Hides categories that do not have any children"),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]()
+			{
+				UDlgSystemSettings* Settings = GetMutableDefault<UDlgSystemSettings>();
+				Settings->SetHideEmptyDialogueBrowserCategories(!Settings->bHideEmptyDialogueBrowserCategories);
+				RefreshTree(true);
+			}),
+			FCanExecuteAction(),
+			FIsActionChecked::CreateLambda([]() -> bool
+			{
+				return GetDefault<UDlgSystemSettings>()->bHideEmptyDialogueBrowserCategories;
+			})
+		),
+		NAME_None,
+		EUserInterfaceActionType::ToggleButton
+	);
+
+	return MenuBuilder.MakeWidget();
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -106,13 +106,22 @@ private:
 	FReply FindInContentBrowserForItem(const FDialogueBrowserTreeNodePtr InItem);
 
 	/** Makes Participant categories. */
-	TArray<FDialogueBrowserTreeNodePtr> MakeParticipantCategoriesChildren(FDialogueBrowserTreeNodePtr Parent) const;
+	TArray<FDialogueBrowserTreeNodePtr> MakeParticipantCategoriesChildren(
+		FDialogueBrowserTreeNodePtr Parent,
+		TSharedPtr<FDialogueBrowserTreeParticipantProperties> ParticipantProperties,
+		const bool bHideEmptyCategories) const;
 
 	/** Makes Variable categories. */
-	TArray<FDialogueBrowserTreeNodePtr> MakeVariableCategoriesChildren(FDialogueBrowserTreeNodePtr Parent) const;
+	TArray<FDialogueBrowserTreeNodePtr> MakeVariableCategoriesChildren(
+		FDialogueBrowserTreeNodePtr Parent,
+		TSharedPtr<FDialogueBrowserTreeParticipantProperties> ParticipantProperties,
+		const bool bHideEmptyCategories) const;
 
 	/** Makes Class Variable categories. */
-	TArray<FDialogueBrowserTreeNodePtr> MakeClassVariableCategoriesChildren(FDialogueBrowserTreeNodePtr Parent) const;
+	TArray<FDialogueBrowserTreeNodePtr> MakeClassVariableCategoriesChildren(
+		FDialogueBrowserTreeNodePtr Parent,
+		TSharedPtr<FDialogueBrowserTreeParticipantProperties> ParticipantProperties,
+		const bool bHideEmptyCategories) const;
 
 	template<typename ItemType, typename ComparisonType>
 	void RestoreExpansionState(TSharedPtr<STreeView<ItemType>> InTree, const TArray<ItemType>& ItemSource,
@@ -141,6 +150,9 @@ private:
 	/** Makes a widget that has IconName. Text of item. */
 	TSharedRef<SHorizontalBox> MakeIconAndTextWidget(const FText& InText,
 		const FSlateBrush* IconBrush, const int32 IconSize = 24);
+
+	/** Fills the menu of the View Options */
+	TSharedRef<SWidget>	FillViewOptionsEntries();
 
 private:
 	/** The search box */

@@ -39,18 +39,6 @@ public:
 		UDlgManager::SortDefault(ClassFNames);
 	}
 
-	/** Does this participant has any variables of the basic type */
-	bool HasVariables() const
-	{
-		return Integers.Num() > 0 || Floats.Num() > 0 || Bools.Num() > 0 || FNames.Num() > 0;
-	}
-
-	/** Does this participant has any variables that belong to the UClass of the participant */
-	bool HasClassVariables() const
-	{
-		return ClassIntegers.Num() > 0 || ClassFloats.Num() > 0 || ClassBools.Num() > 0 || ClassFNames.Num() > 0;
-	}
-
 	// Setters
 
 	/** Add Dialogue that containt this participant. */
@@ -128,6 +116,30 @@ public:
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetClassFloats() const { return ClassFloats; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetClassBools() const { return ClassBools; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetClassFNames() const { return ClassFNames; }
+
+	/** Does this participant has any variables of the basic type */
+	bool HasVariables() const
+	{
+		return Integers.Num() > 0 || Floats.Num() > 0 || Bools.Num() > 0 || FNames.Num() > 0;
+	}
+
+	/** Does this participant has any variables that belong to the UClass of the participant */
+	bool HasClassVariables() const
+	{
+		return ClassIntegers.Num() > 0 || ClassFloats.Num() > 0 || ClassBools.Num() > 0 || ClassFNames.Num() > 0;
+	}
+
+	bool HasDialogues() const { return Dialogues.Num() > 0; }
+	bool HasEvents() const { return Events.Num() > 0; }
+	bool HasConditions() const { return Conditions.Num() > 0; }
+	bool HasIntegers() const { return Integers.Num() > 0; }
+	bool HasFloats() const { return Floats.Num() > 0; }
+	bool HasBools() const { return Bools.Num() > 0; }
+	bool HasFNames() const { return FNames.Num() > 0; }
+	bool HasClassIntegers() const { return ClassIntegers.Num() > 0; }
+	bool HasClassFloats() const { return ClassFloats.Num() > 0; }
+	bool HasClassBools() const { return ClassBools.Num() > 0; }
+	bool HasClassFNames() const { return ClassFNames.Num() > 0; }
 
 protected:
 	TSharedPtr<VariablePropertyType> AddDialogueToVariable(TMap<FName, TSharedPtr<VariablePropertyType>>* VariableMap,

@@ -512,26 +512,26 @@ private:
 	int32 DlgVersion = FDlgDialogueObjectVersion::LatestVersion;
 
 	/** The name of the dialog, only used for reference in the text file, as this must always match the .uasset file name and .dlg file name */
-	UPROPERTY(VisibleAnywhere, Category = DlgData)
+	UPROPERTY(VisibleAnywhere, Category = DialogueData)
 	FName DlgName;
 
 	/** The Unique identifier for each dialogue. This is used to uniquely identify a Dialogue, instead of it's name or path. Much more safer. */
-	UPROPERTY(VisibleAnywhere, Category = DlgData)
+	UPROPERTY(VisibleAnywhere, Category = DialogueData)
 	FGuid DlgGuid;
 
 	/** All the Participants that require for you to define its UClass otherwise the auto completion/suggestion won't work in case you want to modify/check Class variables.  */
-	UPROPERTY(EditAnywhere, EditFixedSize, Category = DlgData)
+	UPROPERTY(EditAnywhere, EditFixedSize, Category = DialogueData)
 	TArray<FDlgParticipantClass> DlgParticipantClasses;
 
 	/** Gathered data about events/conditions for each participant (for bp nodes, suggestions, etc.) */
-	UPROPERTY(VisibleAnywhere, AdvancedDisplay, Category = DlgData, Meta = (DlgNoExport))
+	UPROPERTY(VisibleAnywhere, AdvancedDisplay, Category = DialogueData, Meta = (DlgNoExport))
 	TMap<FName, FDlgParticipantData> DlgData;
 
 	/** All the speaker states used inside this Dialogue. */
-	UPROPERTY(VisibleAnywhere, Category = DlgData, Meta = (DlgNoExport))
+	UPROPERTY(VisibleAnywhere, AdvancedDisplay, Category = DialogueData, Meta = (DlgNoExport))
 	TSet<FName> DlgSpeakerStates;
 
-	/** Root node, Dialogue is started from the first child with satisfied condition (like the SelectorFirst node) */
+	/** Root node, Dialogue is started from the first child withf satisfied condition (like the SelectorFirst node) */
 	UPROPERTY(Instanced)
 	UDlgNode* StartNode;
 
@@ -539,7 +539,7 @@ private:
 	 * The new list of all nodes that belong to this Dialogue. Each nodes has children (edges) that have indices that point
 	 * to other nodes in this array.
 	 */
-	UPROPERTY(VisibleAnywhere, EditFixedSize, Instanced, Category = DlgData, Meta = (DlgWriteIndex))
+	UPROPERTY(VisibleAnywhere, AdvancedDisplay, EditFixedSize, Instanced, Category = DialogueData, Meta = (DlgWriteIndex))
 	TArray<UDlgNode*> Nodes;
 
 	// Useful for syncing on the first run with the text file.
