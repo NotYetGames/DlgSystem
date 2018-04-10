@@ -96,7 +96,7 @@ struct FDlgParticipantClass
 	FName ParticipantName;
 
 	/** FName based events (aka events of type EDlgEventType) */
-	UPROPERTY(EditAnywhere, Category = DlgParticipantData)
+	UPROPERTY(EditAnywhere, Category = DlgParticipantData, meta = (MustImplement = "DlgDialogueParticipant"))
 	UClass* ParticipantClass;
 };
 
@@ -110,7 +110,7 @@ UCLASS(BlueprintType, Meta = (DisplayThumbnail = "true"))
 class DLGSYSTEM_API UDlgDialogue : public UObject
 {
 	GENERATED_BODY()
-
+	typedef UDlgDialogue Self;
 public:
 
 	// Begin UObject Interface.
@@ -187,6 +187,12 @@ public:
 	 * @param PropertyChangedEvent the property that was modified
 	 */
 	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
+	/**
+	 * This alternate version of PostEditChange is called when properties inside structs are modified.  The property that was actually modified
+	 * is located at the tail of the list.  The head of the list of the UStructProperty member variable that contains the property that was modified.
+	 */
+	void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent) override;
 
 	/**
 	 * Callback used to allow object register its direct object references that are not already covered by
@@ -292,7 +298,7 @@ public:
 
 	/** EDITOR function, it only works if the participant class is setup in the DlgParticipantClasses array */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
-	UClass* GetParticipantClass(FName ParticipantName) const
+	UClass* GetParticipantClass(const FName ParticipantName) const
 	{
 		for (const FDlgParticipantClass& Pair : DlgParticipantClasses)
 		{

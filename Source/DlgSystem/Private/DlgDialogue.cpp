@@ -232,11 +232,43 @@ bool UDlgDialogue::CanEditChange(const UProperty* InProperty) const
 void UDlgDialogue::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	RefreshData();
 
 	// Signal to the listeners
 	check(OnDialoguePropertyChanged.IsBound());
 	OnDialoguePropertyChanged.Broadcast(PropertyChangedEvent);
+}
+
+void UDlgDialogue::PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent)
+{
+	RefreshData();
+
+	const auto* ActiveMemberNode = PropertyChangedEvent.PropertyChain.GetActiveMemberNode();
+	const auto* ActivePropertyNode = PropertyChangedEvent.PropertyChain.GetActiveNode();
+	const FName MemberPropertyName = ActiveMemberNode && ActiveMemberNode->GetValue() ? ActiveMemberNode->GetValue()->GetFName() : NAME_None;
+	const FName PropertyName = ActivePropertyNode && ActivePropertyNode->GetValue() ? ActivePropertyNode->GetValue()->GetFName() : NAME_None;
+
+	// Check if the participant UClass implements our interface
+	if (MemberPropertyName == GET_MEMBER_NAME_CHECKED(Self, DlgParticipantClasses))
+	{
+		if (PropertyName == GET_MEMBER_NAME_CHECKED(FDlgParticipantClass, ParticipantClass))
+		{
+			//const int32 ArrayIndex = PropertyChangedEvent.GetArrayIndex(MemberPropertyName.ToString());
+			for (FDlgParticipantClass& Participant : DlgParticipantClasses)
+			{
+				if (!IsValid(Participant.ParticipantClass))
+				{
+					continue;
+				}
+
+				if (!Participant.ParticipantClass->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
+				{
+					Participant.ParticipantClass = nullptr;
+				}
+			}
+		}
+	}
+
+	Super::PostEditChangeChainProperty(PropertyChangedEvent);
 }
 
 void UDlgDialogue::AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector)
