@@ -76,6 +76,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = DlgData)
 	UObject* GetActiveParticipant() const;
 
+	/** Gets the active node participant name (owner name). */
+	UFUNCTION(BlueprintPure, Category = DlgData)
+	FName GetActiveParticipantName() const;
+
 	UFUNCTION(BlueprintPure, Category = DlgData)
 	UObject* GetParticipant(FName DlgParticipantName);
 

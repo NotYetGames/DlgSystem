@@ -115,6 +115,22 @@ UObject* UDlgContext::GetActiveParticipant() const
 	return Item == nullptr ? nullptr : *Item;
 }
 
+FName UDlgContext::GetActiveParticipantName() const
+{
+	if (Dialogue == nullptr)
+	{
+		return NAME_None;
+	}
+
+	const UDlgNode* Node = GetActiveNode();
+	if (Node == nullptr)
+	{
+		return NAME_None;
+	}
+
+	return Node->GetNodeParticipantName();
+}
+
 
 UObject* UDlgContext::GetParticipant(FName DlgParticipantName)
 {
