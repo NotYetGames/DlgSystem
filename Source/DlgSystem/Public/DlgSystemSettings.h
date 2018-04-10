@@ -165,6 +165,10 @@ public:
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Input Key for NewLine")
 	EDlgTextInputKeyForNewLine DialogueTextInputKeyForNewLine = EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineEnter;
 
+	/** Any properties that belong to these classes wont't be shown in the suggestion list when you use the reflection system (class variables). */
+	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
+	TArray<UClass*> BlacklistedReflectionClasses;
+
 	/** Whether the description text wraps onto a new line when it's length exceeds this width; if this value is zero or negative, no wrapping occurs. */
 	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
 	float DescriptionWrapTextAt = 256.f;
@@ -284,7 +288,7 @@ public:
 	FLinearColor WireSecondaryEdgeColor = FLinearColor{0.101961f, 0.137255f, 0.494118f, 1.f}; // blueish
 
 	/** Should we hide the categories in the Dialogue browser that do not have any children? */
-	UPROPERTY(Category = "Dialogue Browser", Config, EditAnywhere)
+	UPROPERTY(Category = "Browser", Config, EditAnywhere)
 	bool bHideEmptyDialogueBrowserCategories = true;
 
 	// Advanced Section

@@ -1,12 +1,13 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "GameFramework/Character.h"
+#include "CoreMinimal.h"
 
-#include "Private/DlgSystemPrivatePCH.h"
+#include "DlgSystemSettings.h"
 
 #include "DlgReflectionHelper.generated.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogDlgSystemReflectionHelper, All, All)
 
 UCLASS()
 class DLGSYSTEM_API UDlgReflectionHelper : public UObject
@@ -25,23 +26,36 @@ public:
 
 	/** Attempts to modify the property VariableName from ParticipantObject */
 	template <typename PropertyType, typename VariableType>
-	static void ModifyVariable(UObject* ParticipantObject, const FName VariableName, VariableType Value, bool bDelta);
+	static void ModifyVariable(UObject* ParticipantObject, const FName VariableName, const VariableType Value, const bool bDelta);
 
 
 	/** Attempts to set the property VariableName from ParticipantObject */
 	template <typename PropertyType, typename VariableType>
-	static void SetVariable(UObject* ParticipantObject, const FName VariableName, VariableType NewValue);
+	static void SetVariable(UObject* ParticipantObject, const FName VariableName, const VariableType NewValue);
 
 
-	/** Gathers the name of all variables in ParticipantClass from the type defined by PropertyClass */
+	/**
+	 * Gathers the name of all variables in ParticipantClass (except those properties that belong to the black listed classes) from the type defined by PropertyClass
+	 * If the BlacklistedClasses is empty it will get the default ones from the settings
+	 */
 	template <typename ContainerType>
-	static void GetVariableNames(const UClass* ParticipantClass, const UClass* PropertyClass, ContainerType& OutContainer);
+	static void GetVariableNames(const UClass* ParticipantClass, const UClass* PropertyClass,
+								 ContainerType& OutContainer, TArray<UClass*> BlacklistedClasses = {});
 };
 
 
 template <typename PropertyType, typename VariableType>
 VariableType UDlgReflectionHelper::GetVariable(const UObject* ParticipantObject, const FName VariableName)
 {
+	if (!IsValid(ParticipantObject))
+	{
+		UE_LOG(LogDlgSystemReflectionHelper,
+			   Error,
+		       TEXT("Failed to get %s %s from ParticipantObject that is null (not valid)"),
+		      *PropertyType::StaticClass()->GetName(), *VariableName.ToString());
+		return VariableType{};
+	}
+
 	for (UProperty* Property = ParticipantObject->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 	{
 		const PropertyType* CastedProperty = Cast<PropertyType>(Property);
@@ -51,7 +65,7 @@ VariableType UDlgReflectionHelper::GetVariable(const UObject* ParticipantObject,
 		}
 	}
 
-	UE_LOG(LogDlgSystem,
+	UE_LOG(LogDlgSystemReflectionHelper,
 		   Warning,
 		   TEXT("Failed to get %s %s from %s - property not found!"),
 		   *PropertyType::StaticClass()->GetName(), *VariableName.ToString(), *ParticipantObject->GetName());
@@ -60,8 +74,17 @@ VariableType UDlgReflectionHelper::GetVariable(const UObject* ParticipantObject,
 
 
 template <typename PropertyType, typename VariableType>
-void UDlgReflectionHelper::ModifyVariable(UObject* ParticipantObject, const FName VariableName, VariableType Value, bool bDelta)
+void UDlgReflectionHelper::ModifyVariable(UObject* ParticipantObject, const FName VariableName, const VariableType Value, const bool bDelta)
 {
+	if (!IsValid(ParticipantObject))
+	{
+		UE_LOG(LogDlgSystemReflectionHelper,
+			   Error,
+		       TEXT("Failed to modify %s %s of ParticipantObject that is null (not valid)"),
+		      *PropertyType::StaticClass()->GetName(), *VariableName.ToString());
+		return;
+	}
+
 	// Set the variable
 	if (!bDelta)
 	{
@@ -81,7 +104,7 @@ void UDlgReflectionHelper::ModifyVariable(UObject* ParticipantObject, const FNam
 		}
 	}
 
-	UE_LOG(LogDlgSystem,
+	UE_LOG(LogDlgSystemReflectionHelper,
 		   Warning,
 		   TEXT("Failed to modify %s %s from %s - property not found!"),
 		   *PropertyType::StaticClass()->GetName(), *VariableName.ToString(), *ParticipantObject->GetName());
@@ -90,8 +113,17 @@ void UDlgReflectionHelper::ModifyVariable(UObject* ParticipantObject, const FNam
 
 
 template <typename PropertyType, typename VariableType>
-void UDlgReflectionHelper::SetVariable(UObject* ParticipantObject, const FName VariableName, VariableType NewValue)
+void UDlgReflectionHelper::SetVariable(UObject* ParticipantObject, const FName VariableName, const VariableType NewValue)
 {
+	if (!IsValid(ParticipantObject))
+	{
+		UE_LOG(LogDlgSystemReflectionHelper,
+			   Error,
+		       TEXT("Failed to set %s %s of ParticipantObject that is null (not valid)"),
+		      *PropertyType::StaticClass()->GetName(), *VariableName.ToString());
+		return;
+	}
+
 	for (UProperty* Property = ParticipantObject->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 	{
 		const PropertyType* CastedProperty = Cast<PropertyType>(Property);
@@ -102,28 +134,50 @@ void UDlgReflectionHelper::SetVariable(UObject* ParticipantObject, const FName V
 		}
 	}
 
-	UE_LOG(LogDlgSystem, Warning,
+	UE_LOG(LogDlgSystemReflectionHelper,
+		   Warning,
 		   TEXT("Failed to set %s %s from %s - property not found!"),
 		   *PropertyType::StaticClass()->GetName(), *VariableName.ToString(), *ParticipantObject->GetName());
 }
 
 
 template <typename ContainerType>
-void UDlgReflectionHelper::GetVariableNames(const UClass* ParticipantClass, const UClass* PropertyClass, ContainerType& OutContainer)
+void UDlgReflectionHelper::GetVariableNames(const UClass* ParticipantClass, const UClass* PropertyClass,
+	ContainerType& OutContainer, TArray<UClass*> BlacklistedClasses)
 {
-	if (ParticipantClass == nullptr)
+	if (!IsValid(ParticipantClass) || !IsValid(PropertyClass))
 	{
 		return;
 	}
 
+	// Use the system settings
+	if (BlacklistedClasses.Num() == 0)
+	{
+		BlacklistedClasses = GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses;
+	}
+
+	auto IsPropertyAtStartOfBlacklistedClass = [&BlacklistedClasses](UProperty* CheckProperty) -> bool
+	{
+		for (UClass* Class : BlacklistedClasses)
+		{
+			if (!IsValid(Class))
+			{
+				continue;
+			}
+
+			// CheckProperty is at the start of the blacklisted class
+			if (Class->PropertyLink == CheckProperty)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	};
+
+	// Property link goes from the left to right where on the left there are the most inner child properties and at the right ther are the top most parents.
 	UProperty* Property = ParticipantClass->PropertyLink;
-
-	// Blacklisted classes, TODO add these to the dialogue settings
-	UProperty* ActorPropertyBegin = AActor::StaticClass()->PropertyLink;
-	UProperty* PawnPropertyBegin = APawn::StaticClass()->PropertyLink;
-	UProperty* CharacterPropertyBegin = ACharacter::StaticClass()->PropertyLink;
-
-	while (Property != nullptr && Property != ActorPropertyBegin && Property != PawnPropertyBegin && Property != CharacterPropertyBegin)
+	while (Property != nullptr && !IsPropertyAtStartOfBlacklistedClass(Property))
 	{
 		if (Property->GetClass() == PropertyClass)
 		{
