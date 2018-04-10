@@ -144,21 +144,21 @@ void UDlgManager::SetDialogueHistory(const TMap<FGuid, FDlgHistory>& DlgHistory)
 	FDlgMemory::GetInstance()->SetHistoryMap(DlgHistory);
 }
 
-bool UDlgManager::DoesObjectImplementDialogueParticipantInterface(UObject* Object)
+bool UDlgManager::DoesObjectImplementDialogueParticipantInterface(const UObject* Object)
 {
 	static const UClass* DialogueParticipantClass = UDlgDialogueParticipant::StaticClass();
 
 	// Apparently blueprints only work this way
-	if (UBlueprint* Blueprint = Cast<UBlueprint>(Object))
+	if (const UBlueprint* Blueprint = Cast<UBlueprint>(Object))
 	{
-		if (UClass* GeneratedClass = Cast<UClass>(Blueprint->GeneratedClass))
+		if (const UClass* GeneratedClass = Cast<UClass>(Blueprint->GeneratedClass))
 		{
 			return GeneratedClass->ImplementsInterface(DialogueParticipantClass);
 		}
 	}
 
 	// A class object, does this ever happen?
-	if (UClass* Class = Cast<UClass>(Object))
+	if (const UClass* Class = Cast<UClass>(Object))
 	{
 		return Class->ImplementsInterface(DialogueParticipantClass);
 	}

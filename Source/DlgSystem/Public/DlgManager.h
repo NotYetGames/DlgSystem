@@ -146,7 +146,7 @@ public:
 
 	/** Does the Object implement the Dialogue Participant Interface? */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
-	static bool DoesObjectImplementDialogueParticipantInterface(UObject* Object);
+	static bool DoesObjectImplementDialogueParticipantInterface(const UObject* Object);
 
 	/** Gets all the unique participant names sorted alphabetically from all the Dialogues loaded into memory. */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
