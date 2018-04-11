@@ -8,21 +8,17 @@
 
 
 /** Used as a key for the variable property */
-class FDlgDataDisplayVariableProperties : public FDlgTreeViewVariableProperties
+class DLGSYSTEM_API FDlgDataDisplayVariableProperties : public FDlgTreeViewVariableProperties
 {
 	typedef FDlgTreeViewVariableProperties Super;
 
 public:
 	FDlgDataDisplayVariableProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>& InDialogues) : Super(InDialogues) {}
 	FDlgDataDisplayVariableProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>&& InDialogues) : Super(InDialogues) {}
-
-protected:
-	// TODO Value template
-	int a = 32;
 };
 
 /** Used as a key for the Actor in the fast lookup table. */
-class FDlgDataDisplayActorProperties : public FDlgTreeViewParticipantProperties<FDlgDataDisplayVariableProperties>
+class DLGSYSTEM_API FDlgDataDisplayActorProperties : public FDlgTreeViewParticipantProperties<FDlgDataDisplayVariableProperties>
 {
 	typedef FDlgTreeViewParticipantProperties Super;
 

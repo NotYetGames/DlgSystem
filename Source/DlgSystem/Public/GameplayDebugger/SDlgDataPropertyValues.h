@@ -11,7 +11,7 @@ class SCheckBox;
 
 
 /** The base type PropertyValue Widget. If just used by itself it displays the VariableValue as a static text. */
-class SDlgDataPropertyValue : public SCompoundWidget
+class DLGSYSTEM_API SDlgDataPropertyValue : public SCompoundWidget
 {
 	typedef SDlgDataPropertyValue Self;
 	typedef SCompoundWidget Super;

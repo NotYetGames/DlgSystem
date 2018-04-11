@@ -172,22 +172,22 @@ TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
 
 	case EDlgEventType::DlgEventModifyClassIntVariable:
 		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
-		UDlgManager::SortDefault(Suggestions);
+		FDlgHelper::SortDefault(Suggestions);
 		break;
 
 	case EDlgEventType::DlgEventModifyClassFloatVariable:
 		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
-		UDlgManager::SortDefault(Suggestions);
+		FDlgHelper::SortDefault(Suggestions);
 		break;
 
 	case EDlgEventType::DlgEventModifyClassBoolVariable:
 		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
-		UDlgManager::SortDefault(Suggestions);
+		FDlgHelper::SortDefault(Suggestions);
 		break;
 
 	case EDlgEventType::DlgEventModifyClassNameVariable:
 		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
-		UDlgManager::SortDefault(Suggestions);
+		FDlgHelper::SortDefault(Suggestions);
 		break;
 
 
@@ -245,7 +245,7 @@ TArray<FName> FDialogueEvent_Details::GetCurrentDialogueEventNames() const
 		break;
 	}
 
-	UDlgManager::SortDefault(Suggestions);
+	FDlgHelper::SortDefault(Suggestions);
 	return Suggestions.Array();
 }
 

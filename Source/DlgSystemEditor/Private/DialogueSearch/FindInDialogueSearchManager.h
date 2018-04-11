@@ -63,14 +63,14 @@ public:
 	 * Searches for InSearchString in the InGraphNode. Adds the result as a child in OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QueryGraphNode(const FDialogueSearchFilter& SearchFilter, UDialogueGraphNode* InGraphNode,
+	bool QueryGraphNode(const FDialogueSearchFilter& SearchFilter, const UDialogueGraphNode* InGraphNode,
 						TSharedPtr<FFindInDialoguesResult> OutParentNode);
 
 	/**
 	 * Searches for InSearchString in the InEdgeNode. Adds the result as a child in OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QueryEdgeNode(const FDialogueSearchFilter& SearchFilter, UDialogueGraphNode_Edge* InEdgeNode,
+	bool QueryEdgeNode(const FDialogueSearchFilter& SearchFilter, const UDialogueGraphNode_Edge* InEdgeNode,
 						TSharedPtr<FFindInDialoguesResult> OutParentNode);
 
 	/**

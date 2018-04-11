@@ -10,7 +10,7 @@
  *  Data per dialogue asset
  */
 USTRUCT(Blueprintable, BlueprintType)
-struct FDlgHistory
+struct DLGSYSTEM_API FDlgHistory
 {
 	GENERATED_USTRUCT_BODY()
 public:

@@ -21,7 +21,7 @@ class UDialogueWave;
  * The representation of a child in a node. Defined by a TargetIndex which points to the index array in the Dialogue.Nodes
  */
 USTRUCT()
-struct FDlgEdge
+struct DLGSYSTEM_API FDlgEdge
 {
 	GENERATED_USTRUCT_BODY()
 

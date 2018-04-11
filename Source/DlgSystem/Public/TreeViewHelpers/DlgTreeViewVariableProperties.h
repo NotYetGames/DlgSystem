@@ -8,10 +8,8 @@
 
 class UDlgDialogue;
 
-
-
 /** Structure that holds the common properties of a Variable. */
-class FDlgTreeViewVariableProperties
+class DLGSYSTEM_API FDlgTreeViewVariableProperties
 {
 public:
 	FDlgTreeViewVariableProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>& InDialogues) : Dialogues(InDialogues) {}

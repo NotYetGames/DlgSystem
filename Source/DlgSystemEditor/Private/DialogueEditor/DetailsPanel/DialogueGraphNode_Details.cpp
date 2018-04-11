@@ -34,7 +34,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 	}
 
 	UDialogueGraphNode* TempGraphNode = WeakGraphNode.Get();
-	if (TempGraphNode == nullptr)
+	if (!IsValid(TempGraphNode))
 	{
 		return;
 	}

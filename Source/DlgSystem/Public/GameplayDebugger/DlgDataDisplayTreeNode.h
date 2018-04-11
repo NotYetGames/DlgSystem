@@ -50,7 +50,7 @@ enum class EDlgDataDisplayCategoryTreeNodeType : uint8
 class FDlgDataDisplayTreeNode;
 
 /* Base class node for all Nodes in the DlgDataDisplayWindow  */
-class FDlgDataDisplayTreeNode : public FDlgTreeViewNode<FDlgDataDisplayTreeNode>
+class DLGSYSTEM_API FDlgDataDisplayTreeNode : public FDlgTreeViewNode<FDlgDataDisplayTreeNode>
 {
 	typedef FDlgDataDisplayTreeNode Self;
 	typedef FDlgTreeViewNode Super;
@@ -118,7 +118,7 @@ protected:
 
 
 /** Root node of the Dialogue Data Display */
-class FDlgDataDisplayTreeRootNode : public FDlgDataDisplayTreeNode
+class DLGSYSTEM_API FDlgDataDisplayTreeRootNode : public FDlgDataDisplayTreeNode
 {
 	typedef FDlgDataDisplayTreeNode Super;
 public:
@@ -127,7 +127,7 @@ public:
 
 
 /** Node result that Represents the Actor. */
-class FDlgDataDisplayTreeActorNode : public FDlgDataDisplayTreeNode
+class DLGSYSTEM_API FDlgDataDisplayTreeActorNode : public FDlgDataDisplayTreeNode
 {
 	typedef FDlgDataDisplayTreeNode Super;
 public:
@@ -145,7 +145,7 @@ protected:
 
 
 /** Node Representing a Category. */
-class FDlgDataDisplayTreeCategoryNode : public FDlgDataDisplayTreeNode
+class DLGSYSTEM_API FDlgDataDisplayTreeCategoryNode : public FDlgDataDisplayTreeNode
 {
 	typedef FDlgDataDisplayTreeNode Super;
 public:
@@ -158,7 +158,7 @@ public:
 
 
 /** Node result that Represents the Variable (Int/Float/Condition). */
-class FDlgDataDisplayTreeVariableNode : public FDlgDataDisplayTreeNode
+class DLGSYSTEM_API FDlgDataDisplayTreeVariableNode : public FDlgDataDisplayTreeNode
 {
 	typedef FDlgDataDisplayTreeVariableNode Self;
 	typedef FDlgDataDisplayTreeNode Super;

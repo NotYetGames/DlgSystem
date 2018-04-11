@@ -12,7 +12,7 @@
 class UDlgNode;
 
 // Custom serialization version for changes made in Dev-Dialogues stream
-struct FDlgDialogueObjectVersion
+struct DLGSYSTEM_API FDlgDialogueObjectVersion
 {
 	enum Type
 	{
@@ -39,7 +39,7 @@ private:
 
 /** Structure useful to cache all the names used by a participant */
 USTRUCT(BlueprintType)
-struct FDlgParticipantData
+struct DLGSYSTEM_API FDlgParticipantData
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -87,7 +87,7 @@ struct FDlgParticipantData
 
 /** Structure useful to cache all the names used by a participant */
 USTRUCT(BlueprintType)
-struct FDlgParticipantClass
+struct DLGSYSTEM_API FDlgParticipantClass
 {
 	GENERATED_USTRUCT_BODY()
 

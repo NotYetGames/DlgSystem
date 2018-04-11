@@ -94,13 +94,13 @@ TSharedPtr<class IDialogueEditor> FDialogueEditorUtilities::GetDialogueEditorFor
 
 bool FDialogueEditorUtilities::RemoveNode(UEdGraphNode* NodeToRemove)
 {
-	if (NodeToRemove == nullptr)
+	if (!IsValid(NodeToRemove))
 	{
 		return false;
 	}
 
 	UDialogueGraph* Graph = CastChecked<UDialogueGraph>(NodeToRemove->GetGraph());
-	if (Graph == nullptr)
+	if (!IsValid(Graph))
 	{
 		return false;
 	}
@@ -168,7 +168,7 @@ bool FDialogueEditorUtilities::CheckAndTryToFixDialogue(UDlgDialogue* Dialogue, 
 	// Do some additional checks to ensure the data is safe, useful in development
 	auto checkIfMultipleEdgesToSameNode = [DialogueNodes, bDisplayWarning](UDlgNode* Node)
 	{
-		if (Node == nullptr)
+		if (!IsValid(Node))
 		{
 			return true;
 		}
@@ -283,7 +283,7 @@ void FDialogueEditorUtilities::TryToCreateDefaultGraph(UDlgDialogue* Dialogue, b
 	}
 }
 
-bool FDialogueEditorUtilities::AreDialogueNodesInSyncWithGraphNodes(UDlgDialogue* Dialogue)
+bool FDialogueEditorUtilities::AreDialogueNodesInSyncWithGraphNodes(const UDlgDialogue* Dialogue)
 {
 	const int32 NumGraphNodes = CastChecked<UDialogueGraph>(Dialogue->GetGraph())->GetAllDialogueGraphNodes().Num();
 	const int32 NumDialogueNodes = Dialogue->GetNodes().Num() + 1; // (plus the start node)
@@ -472,7 +472,7 @@ bool FDialogueEditorUtilities::CanConvertSpeechNodesToSpeechSequence(const TSet<
 
 		// Not a graph node, can't convert
 		UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(Node);
-		if (GraphNode == nullptr)
+		if (!IsValid(GraphNode))
 		{
 			return returnFailure();
 		}
@@ -571,7 +571,7 @@ bool FDialogueEditorUtilities::CanConvertSpeechSequenceNodeToSpeechNodes(const T
 bool FDialogueEditorUtilities::OpenEditorAndJumpToGraphNode(const UDialogueGraphNode_Base* GraphNodeBase,
 															const bool bFocusIfOpen /*= false*/)
 {
-	if (GraphNodeBase == nullptr)
+	if (!IsValid(GraphNodeBase))
 	{
 		return false;
 	}
@@ -666,7 +666,7 @@ void FDialogueEditorUtilities::ReplaceReferencesToOldIndiciesWithNew(const TArra
 		for (int32 ConditionIndex = 0, ConditionNum = DialogueNode->GetNodeEnterConditions().Num(); ConditionIndex < ConditionNum; ConditionIndex++)
 		{
 			FDlgCondition* EnterCondition = DialogueNode->GetMutableEnterConditionAt(ConditionIndex);
-			if (EnterCondition->ConditionType == EDlgConditionType::DlgConditionNodeVisited || 
+			if (EnterCondition->ConditionType == EDlgConditionType::DlgConditionNodeVisited ||
 				EnterCondition->ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild)
 			{
 				UpdateConditionIndex(EnterCondition);

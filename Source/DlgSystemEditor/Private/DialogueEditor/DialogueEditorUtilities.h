@@ -95,7 +95,7 @@ public:
 	static void TryToCreateDefaultGraph(UDlgDialogue* Dialogue, bool bPrompt = true);
 
 	/** Tells us if the number of dialogue nodes matches with the number of graph nodes (corresponding to dialogues). */
-	static bool AreDialogueNodesInSyncWithGraphNodes(UDlgDialogue* Dialogue);
+	static bool AreDialogueNodesInSyncWithGraphNodes(const UDlgDialogue* Dialogue);
 
 	/** Gets the Dialogue from the Graph */
 	static UDlgDialogue* GetDialogueForGraph(const UEdGraph* Graph)

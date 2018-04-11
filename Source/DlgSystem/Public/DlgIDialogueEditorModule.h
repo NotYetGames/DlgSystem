@@ -11,7 +11,7 @@ class UDlgDialogue;
  * Interface for dialogue graph interaction with the DlgSystemEditor module.
  * See DlgDialogueEditorModule.h (in the DlgSystemEditor) for the implementation of this interface.
  */
-class IDlgDialogueEditorModule
+class DLGSYSTEM_API IDlgDialogueEditorModule
 {
 public:
 	virtual ~IDlgDialogueEditorModule() {}

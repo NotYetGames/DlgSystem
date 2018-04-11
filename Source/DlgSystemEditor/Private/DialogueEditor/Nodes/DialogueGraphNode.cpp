@@ -41,7 +41,7 @@ void UDialogueGraphNode::PostEditImport()
 void UDialogueGraphNode::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	if (PropertyChangedEvent.Property == nullptr)
+	if (!IsValid(PropertyChangedEvent.Property))
 	{
 		return;
 	}
@@ -309,7 +309,7 @@ void UDialogueGraphNode::RegisterListeners()
 // Begin own functions
 bool UDialogueGraphNode::HasVoicePropertiesSet() const
 {
-	if (DialogueNode == nullptr)
+	if (!IsValid(DialogueNode))
 	{
 		return false;
 	}
@@ -511,7 +511,7 @@ const TArray<UDialogueGraphNode_Edge*> UDialogueGraphNode::GetParentEdgeNodes(co
 			check(ParentEdgeConnection->GetChildNode() == this);
 		}
 #endif
-		
+
 		ParentEdgeNodes.Add(ParentEdgeConnection);
 	}
 
@@ -624,7 +624,7 @@ void UDialogueGraphNode::SortChildrenBasedOnXLocation()
 
 void UDialogueGraphNode::OnDialogueNodePropertyChanged(const FPropertyChangedEvent& PropertyChangedEvent, int32 EdgeIndexChanged)
 {
-	if (PropertyChangedEvent.Property == nullptr)
+	if (!IsValid(PropertyChangedEvent.Property))
 	{
 		return;
 	}

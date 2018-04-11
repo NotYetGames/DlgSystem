@@ -8,7 +8,7 @@ class USoundWave;
 class UDialogueWave;
 
 USTRUCT(BlueprintType)
-struct FDlgSpeechSequenceEntry
+struct DLGSYSTEM_API FDlgSpeechSequenceEntry
 {
 	GENERATED_USTRUCT_BODY()
 

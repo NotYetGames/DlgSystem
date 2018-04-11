@@ -18,7 +18,7 @@ struct FGraphPanelPinFactory;
 /**
  * Implementation of the DlgSystemEditor Module
  */
-class FDlgSystemEditorModule : public IDlgSystemEditorModule
+class DLGSYSTEMEDITOR_API FDlgSystemEditorModule : public IDlgSystemEditorModule
 {
 	typedef FDlgSystemEditorModule Self;
 public:

@@ -31,7 +31,7 @@ void UDialogueGraphNode_Root::PinConnectionListChanged(UEdGraphPin* Pin)
 // Begin UDialogueGraphNode_Base interface
 void UDialogueGraphNode_Root::OnDialoguePropertyChanged(const FPropertyChangedEvent& PropertyChangedEvent)
 {
-	if (PropertyChangedEvent.Property == nullptr || PropertyChangedEvent.MemberProperty == nullptr)
+	if (!IsValid(PropertyChangedEvent.Property) || !IsValid(PropertyChangedEvent.MemberProperty))
 	{
 		return;
 	}

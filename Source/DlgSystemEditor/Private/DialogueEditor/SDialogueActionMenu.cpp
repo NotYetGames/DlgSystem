@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "SDialogueActionMenu.h"
 
+#include "EdGraph/EdGraph.h"
 #include "EditorStyle.h"
 
 
@@ -59,7 +60,7 @@ void SDialogueActionMenu::CollectAllActions(FGraphActionListBuilderBase& OutAllA
 
 void SDialogueActionMenu::OnActionSelected(const TArray<TSharedPtr<FEdGraphSchemaAction>>& SelectedAction, ESelectInfo::Type InSelectionType)
 {
-	if (Graph == nullptr)
+	if (!IsValid(Graph))
 	{
 		return;
 	}

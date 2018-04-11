@@ -33,9 +33,9 @@ bool UDlgContextInternal::Initialize(UDlgDialogue* InDialogue, const TMap<FName,
 	Participants = InParticipants;
 	VisitedNodeIndices = VisitedNodes;
 
-	
+
 	UDlgNode* Node = GetNode(StartIndex);
-	if (Node == nullptr)
+	if (!IsValid(Node))
 	{
 		UE_LOG(LogDlgSystem, Warning, TEXT("Failed to start dialogue at index %d - is it invalid index?!"), StartIndex);
 		return false;
@@ -61,7 +61,7 @@ bool UDlgContextInternal::EnterNode(int32 NodeIndex, TSet<UDlgNode*> NodesEntere
 	check(Dialogue);
 
 	UDlgNode* Node = GetNode(NodeIndex);
-	if (Node == nullptr)
+	if (!IsValid(Node))
 	{
 		UE_LOG(LogDlgSystem, Warning, TEXT("Failed to enter dialouge node - invalid node index %d"), NodeIndex);
 		return false;
@@ -106,7 +106,7 @@ void UDlgContextInternal::ReevaluateChildren()
 {
 	check(Dialogue);
 	UDlgNode* Node = GetActiveNode();
-	if (Node == nullptr)
+	if (!IsValid(Node))
 	{
 		UE_LOG(LogDlgSystem, Warning, TEXT("Failed to update dialogue options - invalid ActiveNodeIndex %d"), ActiveNodeIndex);
 		return;

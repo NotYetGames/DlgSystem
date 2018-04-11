@@ -246,22 +246,22 @@ TArray<FName> FDialogueCondition_Details::GetAllDialoguesCallbackNames() const
 
 	case EDlgConditionType::DlgConditionClassBoolVariable:
 		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
-		UDlgManager::SortDefault(Suggestions);
+		FDlgHelper::SortDefault(Suggestions);
 		break;
 
 	case EDlgConditionType::DlgConditionClassFloatVariable:
 		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
-		UDlgManager::SortDefault(Suggestions);
+		FDlgHelper::SortDefault(Suggestions);
 		break;
 
 	case EDlgConditionType::DlgConditionClassIntVariable:
 		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
-		UDlgManager::SortDefault(Suggestions);
+		FDlgHelper::SortDefault(Suggestions);
 		break;
 
 	case EDlgConditionType::DlgConditionClassNameVariable:
 		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
-		UDlgManager::SortDefault(Suggestions);
+		FDlgHelper::SortDefault(Suggestions);
 		break;
 
 	case EDlgConditionType::DlgConditionEventCall:
@@ -323,7 +323,7 @@ TArray<FName> FDialogueCondition_Details::GetCurrentDialogueCallbackNames() cons
 		break;
 	}
 
-	UDlgManager::SortDefault(Suggestions);
+	FDlgHelper::SortDefault(Suggestions);
 	return Suggestions.Array();
 }
 

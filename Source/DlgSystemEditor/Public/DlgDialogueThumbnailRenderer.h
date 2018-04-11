@@ -7,7 +7,7 @@
 
 // Useful if you want to have fancy thumbnail previews.
 UCLASS()
-class UDlgDialogueThumbnailRenderer : public UDefaultSizedThumbnailRenderer
+class DLGSYSTEMEDITOR_API UDlgDialogueThumbnailRenderer : public UDefaultSizedThumbnailRenderer
 {
 	GENERATED_BODY()
 

@@ -175,7 +175,7 @@ void FDialogueEditor::JumpToObject(const UObject* Object)
 	}
 
 	const UDialogueGraphNode_Base* GraphNodeBase = Cast<UDialogueGraphNode_Base>(Object);
-	if (GraphNodeBase == nullptr)
+	if (!IsValid(GraphNodeBase))
 	{
 		return;
 	}
@@ -362,7 +362,7 @@ void FDialogueEditor::SetDialogueBeingEdited(UDlgDialogue* NewDialogue)
 	// TODO do we need this method?
 
 	// not different or a null poointer, do not set anything
-	if (NewDialogue == DialogueBeingEdited || NewDialogue == nullptr)
+	if (NewDialogue == DialogueBeingEdited || !IsValid(NewDialogue))
 		return;
 
 	// set to the new dialogue
@@ -1117,7 +1117,7 @@ void FDialogueEditor::OnGraphActionMenuClosed(bool bActionExecuted, bool bGraphP
 
 void FDialogueEditor::OnNodeTitleCommitted(const FText& NewText, ETextCommit::Type CommitInfo, UEdGraphNode* NodeBeingChanged) const
 {
-	if (NodeBeingChanged == nullptr)
+	if (!IsValid(NodeBeingChanged))
 	{
 		return;
 	}

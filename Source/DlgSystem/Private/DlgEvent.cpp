@@ -5,7 +5,7 @@
 
 void FDlgEvent::Call(UObject* TargetParticipant) const
 {
-	if (TargetParticipant == nullptr)
+	if (!IsValid(TargetParticipant))
 		return;
 
 	switch (EventType)

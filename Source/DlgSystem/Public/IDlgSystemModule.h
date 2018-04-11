@@ -14,7 +14,7 @@ class SDockTab;
 /**
  * Interface for the DlgSystem module.
  */
-class IDlgSystemModule : public IModuleInterface
+class DLGSYSTEM_API IDlgSystemModule : public IModuleInterface
 {
 public:
 

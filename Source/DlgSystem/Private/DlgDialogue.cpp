@@ -292,7 +292,7 @@ void UDlgDialogue::CreateGraph()
 		return;
 	}
 
-	if (StartNode == nullptr)
+	if (!IsValid(StartNode))
 	{
 		StartNode = ConstructDialogueNode<UDlgNode_Speech>();
 	}
@@ -307,7 +307,7 @@ void UDlgDialogue::CreateGraph()
 
 void UDlgDialogue::ClearGraph()
 {
-	if (DlgGraph == nullptr)
+	if (!IsValid(DlgGraph))
 	{
 		return;
 	}
@@ -370,7 +370,7 @@ void UDlgDialogue::ReloadFromFile()
 		}
 	}
 
-	if (StartNode == nullptr)
+	if (!IsValid(StartNode))
 	{
 		StartNode = ConstructDialogueNode<UDlgNode_Speech>();
 	}

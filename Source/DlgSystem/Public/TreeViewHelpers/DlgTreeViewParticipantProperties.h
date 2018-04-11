@@ -28,16 +28,16 @@ public:
 			Pair.Value->Sort();
 		}
 
-		UDlgManager::SortDefault(Events);
-		UDlgManager::SortDefault(Conditions);
-		UDlgManager::SortDefault(Integers);
-		UDlgManager::SortDefault(Floats);
-		UDlgManager::SortDefault(Bools);
-		UDlgManager::SortDefault(FNames);
-		UDlgManager::SortDefault(ClassIntegers);
-		UDlgManager::SortDefault(ClassFloats);
-		UDlgManager::SortDefault(ClassBools);
-		UDlgManager::SortDefault(ClassFNames);
+		FDlgHelper::SortDefault(Events);
+		FDlgHelper::SortDefault(Conditions);
+		FDlgHelper::SortDefault(Integers);
+		FDlgHelper::SortDefault(Floats);
+		FDlgHelper::SortDefault(Bools);
+		FDlgHelper::SortDefault(FNames);
+		FDlgHelper::SortDefault(ClassIntegers);
+		FDlgHelper::SortDefault(ClassFloats);
+		FDlgHelper::SortDefault(ClassBools);
+		FDlgHelper::SortDefault(ClassFNames);
 	}
 
 	// Setters

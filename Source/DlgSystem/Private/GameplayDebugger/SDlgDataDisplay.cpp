@@ -124,7 +124,7 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 // #endif
 
 	// Can't do anything without the world
-	if (World == nullptr)
+	if (!IsValid(World))
 	{
 		UE_LOG(LogDlgSystemDataDisplay,
 			   Warning,

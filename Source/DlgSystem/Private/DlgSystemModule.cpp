@@ -225,7 +225,7 @@ void FDlgSystemModule::HandleAssetRenamed(const FAssetData& AssetRenamed, const 
 
 void FDlgSystemModule::HandleDialogueDeleted(UDlgDialogue* DeletedDialogue)
 {
-	if (DeletedDialogue == nullptr)
+	if (!IsValid(DeletedDialogue))
 	{
 		return;
 	}
@@ -274,7 +274,7 @@ void FDlgSystemModule::HandleDialogueDeleted(UDlgDialogue* DeletedDialogue)
 
 void FDlgSystemModule::HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, const FString& OldObjectPath)
 {
-	if (RenamedDialogue == nullptr)
+	if (!IsValid(RenamedDialogue))
 	{
 		return;
 	}

@@ -165,18 +165,18 @@ bool FFindInDialogueSearchManager::QueryDlgEdge(const FDialogueSearchFilter& Sea
 	return bContainsSearchString;
 }
 
-bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& SearchFilter, UDialogueGraphNode* InGraphNode,
+bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& SearchFilter, const UDialogueGraphNode* InGraphNode,
 												TSharedPtr<FFindInDialoguesResult> OutParentNode)
 {
-	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || InGraphNode == nullptr)
+	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || !IsValid(InGraphNode))
 	{
 		return false;
 	}
 
 	bool bContainsSearchString = false;
-	UDlgNode* Node = InGraphNode->GetMutableDialogueNode();
+	const UDlgNode& Node = InGraphNode->GetDialogueNode();
 	const int32 NodeIndex = InGraphNode->GetDialogueNodeIndex();
-	const FString NodeType = Node->GetNodeTypeString();
+	const FString NodeType = Node.GetNodeTypeString();
 
 	// Create the GraphNode Node
 	const FText DisplayText = FText::Format(LOCTEXT("TreeGraphNodeCategory", "{0} Node at index {1}"),
@@ -204,33 +204,33 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& S
 	}
 
 	// Test the ParticipantName
-	if (Node->GetNodeParticipantName().ToString().Contains(SearchFilter.SearchString))
+	if (Node.GetNodeParticipantName().ToString().Contains(SearchFilter.SearchString))
 	{
-		AddTextNodeToGraphNode(FText::FromName(Node->GetNodeParticipantName()),
+		AddTextNodeToGraphNode(FText::FromName(Node.GetNodeParticipantName()),
 							   LOCTEXT("ParticipantNameKey", "Participant Name"),
 							   TEXT("Participant Name"));
 	}
 
 	// Test the Node text
-	if (Node->GetNodeText().ToString().Contains(SearchFilter.SearchString))
+	if (Node.GetNodeText().ToString().Contains(SearchFilter.SearchString))
 	{
-		AddTextNodeToGraphNode(Node->GetNodeText(), LOCTEXT("DescriptionKey", "Description"), TEXT("Description"));
+		AddTextNodeToGraphNode(Node.GetNodeText(), LOCTEXT("DescriptionKey", "Description"), TEXT("Description"));
 	}
 
 	// Test the EnterConditions
-	for (const FDlgCondition& Condition : Node->GetNodeEnterConditions())
+	for (const FDlgCondition& Condition : Node.GetNodeEnterConditions())
 	{
 		bContainsSearchString = QueryDlgCondition(SearchFilter, Condition, TreeGraphNode) || bContainsSearchString ;
 	}
 
 	// Test the EnterEvents
-	for (const FDlgEvent& Event : Node->GetNodeEnterEvents())
+	for (const FDlgEvent& Event : Node.GetNodeEnterEvents())
 	{
 		bContainsSearchString = QueryDlgEvent(SearchFilter, Event, TreeGraphNode) || bContainsSearchString;
 	}
 
 	// Handle Speech sequences
-	if (UDlgNode_SpeechSequence* SpeechSequence = Cast<UDlgNode_SpeechSequence>(Node))
+	if (const UDlgNode_SpeechSequence* SpeechSequence = Cast<UDlgNode_SpeechSequence>(&Node))
 	{
 		const TArray<FDlgSpeechSequenceEntry>& SpeechSequenceArray = SpeechSequence->GetNodeSpeechSequence();
 		for (int32 Index = 0, Num = SpeechSequenceArray.Num(); Index < Num; Index++)
@@ -271,10 +271,10 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& S
 	return bContainsSearchString;
 }
 
-bool FFindInDialogueSearchManager::QueryEdgeNode(const FDialogueSearchFilter& SearchFilter, UDialogueGraphNode_Edge* InEdgeNode,
+bool FFindInDialogueSearchManager::QueryEdgeNode(const FDialogueSearchFilter& SearchFilter, const UDialogueGraphNode_Edge* InEdgeNode,
 												TSharedPtr<FFindInDialoguesResult> OutParentNode)
 {
-	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || InEdgeNode == nullptr)
+	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || !IsValid(InEdgeNode))
 	{
 		return false;
 	}
@@ -312,7 +312,7 @@ bool FFindInDialogueSearchManager::QueryEdgeNode(const FDialogueSearchFilter& Se
 bool FFindInDialogueSearchManager::QuerySingleDialogue(const FDialogueSearchFilter& SearchFilter,
 							const UDlgDialogue* InDialogue, TSharedPtr<FFindInDialoguesResult> OutParentNode)
 {
-	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || InDialogue == nullptr)
+	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || !IsValid(InDialogue))
 	{
 		return false;
 	}
@@ -648,7 +648,7 @@ void FFindInDialogueSearchManager::HandleAssetAdded(const FAssetData& InAssetDat
 
 	// Load the Dialogue
 	UDlgDialogue* Dialogue = Cast<UDlgDialogue>(InAssetData.GetAsset());
-	if (Dialogue == nullptr)
+	if (!IsValid(Dialogue))
 	{
 		return;
 	}

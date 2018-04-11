@@ -22,7 +22,6 @@ class DLGSYSTEM_API UDlgManager : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-
 	/**
 	 * Starts a Dialogue with the provided Dialogue and Participants array
 	 * This method can fail in the following situations:
@@ -53,8 +52,8 @@ public:
 	 * @returns The dialogue context object or nullptr if something wrong happened
 	 */
 	UFUNCTION(BlueprintCallable, Category = DialogueLaunch)
-	static UDlgContext* ResumeDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants, int32 StartIndex, const TSet<int32>& AlreadyVisitedNodes, bool bFireEnterEvents);
-
+	static UDlgContext* ResumeDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants,
+									   int32 StartIndex, const TSet<int32>& AlreadyVisitedNodes, bool bFireEnterEvents);
 
 
 	/**
@@ -114,22 +113,6 @@ public:
 
 	/** Gets all the loaded dialogues from memory that have the ParticipantName included insided them. */
 	static TArray<UDlgDialogue*> GetAllDialoguesForParticipantName(const FName& ParticipantName);
-
-	/** Default sorting function used by all the Dialogue related methods. Sorts alphabetically ascending. */
-	static void SortDefault(TArray<FName>& OutArray)
-    {
-		OutArray.Sort(FDlgHelper::PredicateSortFNameAlphabeticallyAscending);
-    }
-	static void SortDefault(TSet<FName>& OutSet)
-	{
-		OutSet.Sort(FDlgHelper::PredicateSortFNameAlphabeticallyAscending);
-	}
-
-	template<typename ValueType>
-	static void SortDefault(TMap<FName, ValueType>& Map)
-	{
-		Map.KeySort(FDlgHelper::PredicateSortFNameAlphabeticallyAscending);
-	}
 
 	/** Sets the FDlgMemory Dialogue history. */
 	UFUNCTION(BlueprintCallable, Category = DialogueData)
@@ -191,14 +174,5 @@ public:
 	static bool UnRegisterDialogueModuleConsoleCommands();
 
 private:
-
-	static bool ConstructParticipantMap(UDlgDialogue* Dialogue, const TArray<UObject*>& Participants, TMap<FName, UObject*>& OutMap);
-
-	/** Helper method, used to append a set to an array. Also sort. */
-	static void AppendSetToArray(const TSet<FName>& InSet, TArray<FName>& OutArray)
-	{
-		TArray<FName> UniqueNamesArray = InSet.Array();
-		SortDefault(UniqueNamesArray);
-		OutArray.Append(UniqueNamesArray);
-	}
+	static bool ConstructParticipantMap(const UDlgDialogue* Dialogue, const TArray<UObject*>& Participants, TMap<FName, UObject*>& OutMap);
 };

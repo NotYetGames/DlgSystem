@@ -418,7 +418,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 	if (SelectedSortOption->IsByName())
 	{
 		// Sort by name
-		UDlgManager::SortDefault(AllParticipants);
+		FDlgHelper::SortDefault(AllParticipants);
 	}
 	else
 	{

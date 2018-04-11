@@ -10,7 +10,7 @@ const FName DIALOGUE_SYSTEM_EDITOR_PLUGIN_NAME(TEXT("DlgSystemEditor"));
 /**
  * Interface for the DlgSystemEditor module.
  */
-class IDlgSystemEditorModule : public IModuleInterface
+class DLGSYSTEMEDITOR_API IDlgSystemEditorModule : public IModuleInterface
 {
 public:
 

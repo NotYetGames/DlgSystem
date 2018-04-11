@@ -292,7 +292,7 @@ void FDialogueCompilerContext::PruneIsolatedNodes()
 			}
 		}
 		// Cyclic orphan subgraph found, choose first node
-		if (RootOrphan == nullptr)
+		if (!IsValid(RootOrphan))
 		{
 			RootOrphan = CastChecked<UDialogueGraphNode>(*GetFirstSetElement(OrphanedNodes));
 		}

@@ -36,7 +36,7 @@ bool FDlgCondition::EvaluateArray(const TArray<FDlgCondition>& DlgConditionArray
 
 bool FDlgCondition::Evaluate(UDlgContextInternal* DlgContext, UObject* DlgParticipant) const
 {
-	if (DlgContext == nullptr)
+	if (!IsValid(DlgContext))
 	{
 		return false;
 	}
@@ -91,7 +91,7 @@ bool FDlgCondition::Evaluate(UDlgContextInternal* DlgContext, UObject* DlgPartic
 			}
 
 			return DlgContext->WasNodeVisitedInThisContext(IntValue) == bBoolValue;
-		
+
 		case EDlgConditionType::DlgConditionHasSatisfiedChild:
 			{
 				UDlgNode* Node = DlgContext->GetNode(IntValue);

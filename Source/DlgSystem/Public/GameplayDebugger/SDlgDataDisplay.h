@@ -13,7 +13,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogDlgSystemDataDisplay, Verbose, All);
 /**
  * Implements the Runtime Dialogue Data Display
  */
-class SDlgDataDisplay : public SCompoundWidget
+class DLGSYSTEM_API SDlgDataDisplay : public SCompoundWidget
 {
 	typedef SDlgDataDisplay Self;
 

@@ -29,7 +29,7 @@ enum class EDlgEventType : uint8
  *  They must be handled in game side, can be used to modify game state based on dialogue
  */
 USTRUCT()
-struct FDlgEvent
+struct DLGSYSTEM_API FDlgEvent
 {
 	GENERATED_USTRUCT_BODY()
 

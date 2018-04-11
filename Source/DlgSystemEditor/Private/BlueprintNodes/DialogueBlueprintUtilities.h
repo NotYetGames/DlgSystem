@@ -43,9 +43,9 @@ public:
 	 * Tries to get the dialogue name... it expects the owner of the node to implement IDlgDialogueParticipant interface
 	 * @return		the participant name on success or NAME_None on failure.
 	 */
-	static FName GetParticipantNameFromNode(UK2Node* Node)
+	static FName GetParticipantNameFromNode(const UK2Node* Node)
 	{
-		if (UBlueprint* Blueprint = GetBlueprintForGraphNode(Node))
+		if (const UBlueprint* Blueprint = GetBlueprintForGraphNode(Node))
 		{
 			if (UDlgManager::DoesObjectImplementDialogueParticipantInterface(Blueprint))
 			{

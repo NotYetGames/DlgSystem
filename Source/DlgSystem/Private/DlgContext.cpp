@@ -34,7 +34,7 @@ FName UDlgContext::GetOptionSpeakerState(int32 OptionIndex) const
 const FText& UDlgContext::GetActiveNodeText() const
 {
 	const UDlgNode* Node = GetActiveNode();
-	if (Node == nullptr)
+	if (!IsValid(Node))
 	{
 		return FText::GetEmpty();
 	}
@@ -45,7 +45,7 @@ const FText& UDlgContext::GetActiveNodeText() const
 FName UDlgContext::GetActiveSpeakerState() const
 {
 	const UDlgNode* Node = GetActiveNode();
-	if (Node == nullptr)
+	if (!IsValid(Node))
 	{
 		return NAME_None;
 	}
@@ -56,7 +56,7 @@ FName UDlgContext::GetActiveSpeakerState() const
 USoundWave* UDlgContext::GetActiveNodeVoiceSoundWave() const
 {
 	const UDlgNode* Node = GetActiveNode();
-	if (Node == nullptr)
+	if (!IsValid(Node))
 	{
 		return nullptr;
 	}
@@ -67,7 +67,7 @@ USoundWave* UDlgContext::GetActiveNodeVoiceSoundWave() const
 UDialogueWave* UDlgContext::GetActiveNodeVoiceDialogueWave() const
 {
 	const UDlgNode* Node = GetActiveNode();
-	if (Node == nullptr)
+	if (!IsValid(Node))
 	{
 		return nullptr;
 	}
@@ -77,20 +77,20 @@ UDialogueWave* UDlgContext::GetActiveNodeVoiceDialogueWave() const
 
 UTexture2D* UDlgContext::GetActiveParticipantIcon() const
 {
-	if (Dialogue == nullptr)
+	if (!IsValid(Dialogue))
 	{
 		return nullptr;
 	}
 
 	const UDlgNode* Node = GetActiveNode();
-	if (Node == nullptr)
+	if (!IsValid(Node))
 	{
 		return nullptr;
 	}
 
 	FName SpeakerName = Node->GetNodeParticipantName();
 	UObject* const* Item = Participants.Find(SpeakerName);
-	if (Item == nullptr || *Item == nullptr)
+	if (Item == nullptr || !IsValid(*Item))
 	{
 		return nullptr;
 	}
@@ -100,13 +100,13 @@ UTexture2D* UDlgContext::GetActiveParticipantIcon() const
 
 UObject* UDlgContext::GetActiveParticipant() const
 {
-	if (Dialogue == nullptr)
+	if (!IsValid(Dialogue))
 	{
 		return nullptr;
 	}
 
 	const UDlgNode* Node = GetActiveNode();
-	if (Node == nullptr)
+	if (!IsValid(Node))
 	{
 		return nullptr;
 	}
@@ -117,13 +117,13 @@ UObject* UDlgContext::GetActiveParticipant() const
 
 FName UDlgContext::GetActiveParticipantName() const
 {
-	if (Dialogue == nullptr)
+	if (!IsValid(Dialogue))
 	{
 		return NAME_None;
 	}
 
 	const UDlgNode* Node = GetActiveNode();
-	if (Node == nullptr)
+	if (!IsValid(Node))
 	{
 		return NAME_None;
 	}

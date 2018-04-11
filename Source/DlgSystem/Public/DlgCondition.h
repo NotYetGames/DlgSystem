@@ -66,7 +66,7 @@ enum class EDlgOperation : uint8
  *  if the condition array is satisfied
  */
 USTRUCT()
-struct FDlgCondition
+struct DLGSYSTEM_API FDlgCondition
 {
 	GENERATED_USTRUCT_BODY()
 
