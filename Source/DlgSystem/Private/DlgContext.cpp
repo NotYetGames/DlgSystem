@@ -4,6 +4,31 @@
 #include "DlgNode.h"
 #include "DlgDialogueParticipant.h"
 
+bool UDlgContext::ChooseChildBasedOnAllOptionIndex(int32 Index)
+{
+	if (!AllChildren.IsValidIndex(Index))
+	{
+		UE_LOG(LogDlgSystem, Error, TEXT("Invalid index %d in UDlgContext::ChooseChildBasedOnAllOptionIndex!"), Index);
+		return false;
+	}
+
+	if (!AllChildren[Index].bSatisfied)
+	{
+		UE_LOG(LogDlgSystem, Error, TEXT("Index %d is an unsatisfied edge! (UDlgContext::ChooseChildBasedOnAllOptionIndex!) Call failed!"), Index);
+		return false;
+	}
+
+	for (int32 i = 0; i < AvailableChildren.Num(); ++i)
+	{
+		if (AvailableChildren[i] == AllChildren[Index].EdgePtr)
+		{
+			return ChooseChild(i);
+		}
+	}
+
+	ensure(false);
+	return false;
+}
 
 const FText& UDlgContext::GetOptionText(int32 OptionIndex) const
 {
@@ -30,6 +55,72 @@ FName UDlgContext::GetOptionSpeakerState(int32 OptionIndex) const
 
 	return AvailableChildren[OptionIndex]->SpeakerState;
 }
+
+const FDlgEdge& UDlgContext::GetOption(int32 OptionIndex) const
+{
+	check(Dialogue);
+
+	if (!AvailableChildren.IsValidIndex(OptionIndex))
+	{
+		UE_LOG(LogDlgSystem, Error, TEXT("Invalid option index %d in GetOption!"), OptionIndex);
+		return FDlgEdge::GetInvalidEdge();
+	}
+
+	return *AvailableChildren[OptionIndex];
+}
+
+const FText& UDlgContext::GetOptionTextFromAll(int32 Index) const
+{
+	check(Dialogue);
+
+	if (!AllChildren.IsValidIndex(Index))
+	{
+		UE_LOG(LogDlgSystem, Error, TEXT("Invalid option = %d in GetOptionTextFromAll!"), Index);
+		return FText::GetEmpty();
+	}
+
+	return AllChildren[Index].EdgePtr->Text;
+}
+
+bool UDlgContext::IsOptionSatisfied(int32 Index) const
+{
+	check(Dialogue);
+
+	if (!AllChildren.IsValidIndex(Index))
+	{
+		UE_LOG(LogDlgSystem, Error, TEXT("Invalid option index %d in IsOptionSatisfied!"), Index);
+		return false;
+	}
+
+	return AllChildren[Index].bSatisfied;
+}
+
+FName UDlgContext::GetOptionSpeakerStateFromAll(int32 Index) const
+{
+	check(Dialogue);
+
+	if (!AllChildren.IsValidIndex(Index))
+	{
+		UE_LOG(LogDlgSystem, Error, TEXT("Invalid option = %d in GetOptionSpeakerStateFromAll!"), Index);
+		return NAME_None;
+	}
+
+	return AllChildren[Index].EdgePtr->SpeakerState;
+}
+
+const FDlgEdge& UDlgContext::GetOptionFromAll(int32 Index) const
+{
+	check(Dialogue);
+
+	if (!AvailableChildren.IsValidIndex(Index))
+	{
+		UE_LOG(LogDlgSystem, Error, TEXT("Invalid option index %d in GetOptionFromAll!"), Index);
+		return FDlgEdge::GetInvalidEdge();
+	}
+
+	return *AllChildren[Index].EdgePtr;
+}
+
 
 const FText& UDlgContext::GetActiveNodeText() const
 {

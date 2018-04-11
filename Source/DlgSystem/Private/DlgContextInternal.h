@@ -68,6 +68,7 @@ public:
 	FGuid GetDialogueGuid() const { check(Dialogue); return Dialogue->GetDlgGuid();  }
 
 	TArray<const FDlgEdge*>& GetOptionArray() { return AvailableChildren; }
+	TArray<FDlgEdgeData>& GetAllOptionsArray() { return AllChildren; }
 	const TMap<FName, UObject*>& GetParticipants() const { return Participants; }
 
 	// Gets the Node at the NodeIndex index

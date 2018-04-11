@@ -21,7 +21,9 @@ bool UDlgNode_SpeechSequence::HandleNodeEnter(UDlgContextInternal* DlgContext, T
 bool UDlgNode_SpeechSequence::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyEvaluated)
 {
 	TArray<const FDlgEdge*>& Options = DlgContext->GetOptionArray();
+	TArray<FDlgEdgeData>& AllOptions = DlgContext->GetAllOptionsArray();
 	Options.Empty();
+	AllOptions.Empty();
 
 	// If the last entry is active the real edges are used
 	if (ActualIndex == SpeechSequence.Num() - 1)
@@ -31,6 +33,7 @@ bool UDlgNode_SpeechSequence::ReevaluateChildren(UDlgContextInternal* DlgContext
 	if (InnerEdges.IsValidIndex(ActualIndex))
 	{
 		Options.Add(&InnerEdges[ActualIndex]);
+		AllOptions.Add({ true, &InnerEdges[ActualIndex] });
 		return true;
 	}
 

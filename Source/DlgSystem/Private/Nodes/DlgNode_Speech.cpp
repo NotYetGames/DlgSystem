@@ -10,6 +10,7 @@ bool UDlgNode_Speech::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<U
 	{
 		check(DlgContext != nullptr);
 		DlgContext->GetOptionArray().Empty();
+		DlgContext->GetAllOptionsArray().Empty();
 
 		// stop endless loop
 		if (AlreadyEvaluated.Contains(this))
