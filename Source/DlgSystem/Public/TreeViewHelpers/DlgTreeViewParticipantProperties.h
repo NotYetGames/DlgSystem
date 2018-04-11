@@ -6,6 +6,7 @@
 
 #include "DlgManager.h"
 #include "DlgTreeViewVariableProperties.h"
+#include "DlgTreeViewHelper.h"
 
 /** Structure that holds the common properties of a Participant (where it appears and stuff like this) in the STreeView. */
 template <class VariablePropertyType>
@@ -21,7 +22,7 @@ public:
 	/** Sorts all the properties it can */
 	void Sort()
 	{
-		Dialogues.Sort(PredicateSortDialogueWeakPtrAlphabeticallyAscending);
+		Dialogues.Sort(FDlgTreeViewHelper::PredicateSortDialogueWeakPtrAlphabeticallyAscending);
 		for (const auto& Pair : Events)
 		{
 			Pair.Value->Sort();

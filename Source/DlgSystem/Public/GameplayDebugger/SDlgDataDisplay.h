@@ -35,6 +35,9 @@ public:
 	FText GetFilterText() const { return FilterTextBoxWidget->GetText(); }
 
 private:
+	/** Handle filtering. */
+	void GenerateFilteredItems();
+
 	/** Getters for widgets.  */
 	TSharedRef<SWidget> GetFilterTextBoxWidget();
 
@@ -70,6 +73,16 @@ private:
 	/** Callback for expanding tree items recursively */
 	void HandleSetExpansionRecursive(TSharedPtr<FDlgDataDisplayTreeNode> InItem, bool bInIsItemExpanded);
 
+	/** Compare two FDlgDataDisplayTreeNode */
+	static bool PredicateCompareDlgDataDisplayTreeNode(TSharedPtr<FDlgDataDisplayTreeNode> FirstNode, TSharedPtr<FDlgDataDisplayTreeNode> SecondNode)
+	{
+		if (!FirstNode.IsValid() || !SecondNode.IsValid())
+		{
+			return false;
+		}
+		return *FirstNode == *SecondNode;
+	}
+
 private:
 	/** The search box */
 	TSharedPtr<SSearchBox> FilterTextBoxWidget;
@@ -80,7 +93,7 @@ private:
 	/** The root data source */
 	TSharedPtr<FDlgDataDisplayTreeNode> RootTreeItem;
 
-	/** The root children. Kept seperate so that we do not corrupt the data. */
+	/** The root children. Kept separate so that we do not corrupt the data. */
 	TArray<TSharedPtr<FDlgDataDisplayTreeNode>> RootChildren;
 
 	/** Tree view for showing all Actors that implement the , etc. */

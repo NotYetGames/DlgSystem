@@ -101,6 +101,13 @@ void SDlgDataDisplay::Construct(const FArguments& InArgs, TWeakObjectPtr<AActor>
 
 void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 {
+	// First, save off current expansion state
+	TSet<TSharedPtr<FDlgDataDisplayTreeNode>> OldExpansionState;
+	if (bPreserveExpansion)
+	{
+		ActorsTreeView->GetExpandedItems(OldExpansionState);
+	}
+
 	RootTreeItem->ClearChildren();
 	RootChildren.Empty();
 	ActorsProperties.Empty();
@@ -172,7 +179,7 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 	    TSet<TWeakObjectPtr<UDlgDialogue>>* ActorDialoguesPtr = ParticipantNamesDialoguesMap.Find(ParticipantName);
 		if (ActorDialoguesPtr != nullptr)
 		{
-			// Found some dialogues
+			// Found some dialogue
 			ActorDialogues = *ActorDialoguesPtr;
 		}
 
@@ -292,6 +299,48 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 	ActorsTreeView->ClearSelection();
 	// Triggers RequestTreeRefresh
 	ActorsTreeView->ClearExpandedItems();
+
+	// Restore old Expansion
+	if (bPreserveExpansion && OldExpansionState.Num() > 0)
+	{
+		// Flattened tree
+		TArray<TSharedPtr<FDlgDataDisplayTreeNode>> AllNodes;
+		RootTreeItem->GetAllNodes(AllNodes);
+
+		// Expand to match the old state
+		FDlgTreeViewHelper::RestoreTreeExpansionState<TSharedPtr<FDlgDataDisplayTreeNode>>(ActorsTreeView,
+			AllNodes, OldExpansionState, Self::PredicateCompareDlgDataDisplayTreeNode);
+	}
+}
+
+void SDlgDataDisplay::GenerateFilteredItems()
+{
+	if (FilterString.IsEmpty())
+	{
+		// No filtering, empty filter, restore original
+		RefreshTree(false);
+		return;
+	}
+
+	// Get all valid paths
+	TArray<TArray<TSharedPtr<FDlgDataDisplayTreeNode>>> OutPaths;
+	RootTreeItem->FilterPathsToNodesThatContainText(FilterString, OutPaths);
+	RootChildren.Empty();
+	RootTreeItem->GetVisibleChildren(RootChildren);
+
+	// Refresh, clear expansion
+	ActorsTreeView->ClearExpandedItems(); // Triggers RequestTreeRefresh
+
+	// Mark paths as expanded
+	for (const TArray<TSharedPtr<FDlgDataDisplayTreeNode>>& Path : OutPaths)
+	{
+		const int32 PathNum = Path.Num();
+		for (int32 PathIndex = 0; PathIndex < PathNum; PathIndex++)
+		{
+			Path[PathIndex]->SetIsVisible(true);
+			ActorsTreeView->SetItemExpansion(Path[PathIndex], true);
+		}
+	}
 }
 
 TSharedRef<SWidget> SDlgDataDisplay::GetFilterTextBoxWidget()
@@ -304,7 +353,7 @@ TSharedRef<SWidget> SDlgDataDisplay::GetFilterTextBoxWidget()
 
 	// Cache it
 	FilterTextBoxWidget = SNew(SSearchBox)
-		.HintText(LOCTEXT("SearchBoxHintText", "TODO Search by Name TODO"))
+		.HintText(LOCTEXT("SearchBoxHintText", "Search by Name"))
 		.OnTextChanged(this, &Self::HandleSearchTextCommited, ETextCommit::Default)
 		.OnTextCommitted(this, &Self::HandleSearchTextCommited)
 		.SelectAllTextWhenFocused(false)
@@ -433,6 +482,7 @@ void SDlgDataDisplay::HandleSearchTextCommited(const FText& InText, ETextCommit:
 {
 	// Trim and sanitized the filter text (so that it more likely matches)
 	FilterString = FText::TrimPrecedingAndTrailing(InText).ToString();
+	GenerateFilteredItems();
 }
 
 TSharedRef<ITableRow> SDlgDataDisplay::HandleGenerateRow(TSharedPtr<FDlgDataDisplayTreeNode> InItem,
@@ -556,12 +606,24 @@ void SDlgDataDisplay::HandleDoubleClick(TSharedPtr<FDlgDataDisplayTreeNode> InIt
 	{
 		return;
 	}
-	// Ignore
+
+	// Expand on double click
+	if (InItem->HasChildren())
+	{
+		ActorsTreeView->SetItemExpansion(InItem, !ActorsTreeView->IsItemExpanded(InItem));
+	}
 }
 
 void SDlgDataDisplay::HandleSetExpansionRecursive(TSharedPtr<FDlgDataDisplayTreeNode> InItem, bool bInIsItemExpanded)
 {
-	// TODO
+	if (InItem.IsValid() && InItem->HasChildren())
+	{
+		ActorsTreeView->SetItemExpansion(InItem, bInIsItemExpanded);
+		for (const TSharedPtr<FDlgDataDisplayTreeNode> Child : InItem->GetChildren())
+		{
+			HandleSetExpansionRecursive(Child, bInIsItemExpanded);
+		}
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

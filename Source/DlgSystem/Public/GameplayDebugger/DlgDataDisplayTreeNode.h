@@ -68,6 +68,46 @@ public:
 	virtual bool IsCategory() const { return false; }
 	virtual bool IsSeparator() const { return false; }
 
+	/** Is this equal with Other? */
+	virtual bool IsEqual(const Self& Other)
+	{
+		return TextType == Other.GetTextType() &&
+			CategoryType == Other.GetCategoryType() &&
+			DisplayText.EqualTo(Other.GetDisplayText()) &&
+			GetParentActor() == Other.GetParentActor();
+	}
+
+	bool operator==(const Self& Other)
+	{
+		return IsEqual(Other);
+	}
+
+protected:
+	// FDlgTreeViewNode Interface
+	void PostFilterPathsToNodes(TSharedPtr<Self> Child) override
+	{
+		Super::PostFilterPathsToNodes(Child);
+
+		// Hide separators
+		if (Child->IsSeparator())
+		{
+			Child->SetIsVisible(false);
+		}
+	}
+	void PostBuildPathToTopMostParent(TSharedPtr<Self> CurrentParentNode) override
+	{
+		Super::PostBuildPathToTopMostParent(CurrentParentNode);
+		check(!CurrentParentNode->IsSeparator());
+	}
+	bool FilterIsChildVisible(TSharedPtr<Self> GrandChild) override
+	{
+		return !GrandChild->IsSeparator() && !GrandChild->IsCategory() && Super::FilterIsChildVisible(GrandChild);
+	}
+	bool FilterDoesChildContainText(const TSharedPtr<Self>& Child, const FString& InSearch) override
+	{
+		return !Child->IsSeparator() && Super::FilterDoesChildContainText(Child, InSearch);
+	}
+
 protected:
 	// Specific category type, only used if Type is Category.
 	EDlgDataDisplayCategoryTreeNodeType CategoryType;
@@ -120,6 +160,7 @@ public:
 /** Node result that Represents the Variable (Int/Float/Condition). */
 class FDlgDataDisplayTreeVariableNode : public FDlgDataDisplayTreeNode
 {
+	typedef FDlgDataDisplayTreeVariableNode Self;
 	typedef FDlgDataDisplayTreeNode Super;
 public:
 	FDlgDataDisplayTreeVariableNode(const FText& InDisplayText, TSharedPtr<FDlgDataDisplayTreeNode> InParent,
@@ -134,6 +175,18 @@ public:
 
 	// VariableType:
 	EDlgDataDisplayVariableTreeNodeType GetVariableType() const { return VariableType; }
+
+	bool IsEqual(const Super& Other) override
+	{
+		if (const Self* OtherSelf = static_cast<const Self*>(&Other))
+		{
+			return VariableName == OtherSelf->GetVariableName() &&
+				VariableType == OtherSelf->GetVariableType() &&
+				VariableValue == OtherSelf->GetVariableValue() &&
+				Super::IsEqual(Other);
+		}
+		return false;
+	}
 
 protected:
 	/** Used to store the name Event, Condition, IntName, etc */

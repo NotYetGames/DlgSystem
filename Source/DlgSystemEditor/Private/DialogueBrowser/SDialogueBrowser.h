@@ -127,30 +127,6 @@ private:
 		TSharedPtr<FDialogueBrowserTreeParticipantProperties> ParticipantProperties,
 		const bool bHideEmptyCategories) const;
 
-	template<typename ItemType, typename ComparisonType>
-	void RestoreExpansionState(TSharedPtr<STreeView<ItemType>> InTree, const TArray<ItemType>& ItemSource,
-							   const TSet<ItemType>& OldExpansionState, ComparisonType ComparisonFunction)
-	{
-		check(InTree.IsValid());
-
-		// Iterate over new tree items
-		for(int32 ItemIdx = 0; ItemIdx < ItemSource.Num(); ItemIdx++)
-		{
-			ItemType NewItem = ItemSource[ItemIdx];
-
-			// Look through old expansion state
-			for (const ItemType OldItem : OldExpansionState)
-			{
-				// See if this matches this new item
-				if (ComparisonFunction(OldItem, NewItem))
-				{
-					// It does, so expand it
-					InTree->SetItemExpansion(NewItem, true);
-				}
-			}
-		}
-	}
-
 	/** Makes a widget that has IconName. Text of item. */
 	TSharedRef<SHorizontalBox> MakeIconAndTextWidget(const FText& InText,
 		const FSlateBrush* IconBrush, const int32 IconSize = 24);

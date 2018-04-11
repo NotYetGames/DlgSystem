@@ -17,6 +17,7 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueBrowserUtilities.h"
+#include "DlgTreeViewHelper.h"
 
 #define LOCTEXT_NAMESPACE "SDialogueBrowser"
 
@@ -243,6 +244,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 	{
 		ParticipantsTreeView->GetExpandedItems(OldExpansionState);
 	}
+
 	RootTreeItem->ClearChildren();
 	RootChildren.Empty();
 	ParticipantsProperties.Empty();
@@ -452,7 +454,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 		RootTreeItem->GetAllNodes(AllNodes);
 
 		// Expand to match the old state
-		RestoreExpansionState<TSharedPtr<FDialogueBrowserTreeNode>>(ParticipantsTreeView,
+		FDlgTreeViewHelper::RestoreTreeExpansionState<TSharedPtr<FDialogueBrowserTreeNode>>(ParticipantsTreeView,
 			AllNodes, OldExpansionState, FDialogueBrowserUtilities::PredicateCompareDialogueTreeNode);
 	}
 }
@@ -1230,7 +1232,7 @@ void SDialogueBrowser::HandleGetChildren(TSharedPtr<FDialogueBrowserTreeNode> In
 
 void SDialogueBrowser::HandleTreeSelectionChanged(TSharedPtr<FDialogueBrowserTreeNode> NewValue, ESelectInfo::Type SelectInfo)
 {
-
+	// Ignore
 }
 
 void SDialogueBrowser::HandleDoubleClick(TSharedPtr<FDialogueBrowserTreeNode> InItem)

@@ -6,17 +6,12 @@
 
 #include "DlgDialogue.h"
 #include "DlgDialogueParticipant.h"
+#include "DlgHelper.h"
 
 #include "DlgManager.generated.h"
 
 class UDlgContext;
 class UDlgDialogue;
-
-// Default comparison function
-static bool PredicateSortFNameAlphabeticallyAscending(const FName& A, const FName& B)
-{
-	return A.Compare(B) < 0;
-}
 
 /**
  *  Class providing a collection of static functions to start a conversation and work with Dialogues.
@@ -123,17 +118,17 @@ public:
 	/** Default sorting function used by all the Dialogue related methods. Sorts alphabetically ascending. */
 	static void SortDefault(TArray<FName>& OutArray)
     {
-		OutArray.Sort(PredicateSortFNameAlphabeticallyAscending);
+		OutArray.Sort(FDlgHelper::PredicateSortFNameAlphabeticallyAscending);
     }
 	static void SortDefault(TSet<FName>& OutSet)
 	{
-		OutSet.Sort(PredicateSortFNameAlphabeticallyAscending);
+		OutSet.Sort(FDlgHelper::PredicateSortFNameAlphabeticallyAscending);
 	}
 
 	template<typename ValueType>
 	static void SortDefault(TMap<FName, ValueType>& Map)
 	{
-		Map.KeySort(PredicateSortFNameAlphabeticallyAscending);
+		Map.KeySort(FDlgHelper::PredicateSortFNameAlphabeticallyAscending);
 	}
 
 	/** Sets the FDlgMemory Dialogue history. */

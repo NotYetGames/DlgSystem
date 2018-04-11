@@ -185,13 +185,6 @@ public:
 							TextType == EDialogueTreeNodeTextType::FNameVariableEdgeNode);
 	}
 
-	/**
-	 * Filters the node so that it will only containt paths to nodes that contains the specified string.
-	 * @param OutNodes	Array of arrays, each array inside represents a node path that remains to the Node that contains the InSearch
-	 * @param InSearch The string to search by
-	 */
-	void FilterPathsToNodesThatContainText(const FString& InSearch, TArray<TArray<TSharedPtr<Self>>>& OutNodes);
-
 	/** Gets the textual representation of this item */
 	FString ToString() const;
 
@@ -199,11 +192,12 @@ public:
 	/** Is this equal with Other? */
 	virtual bool IsEqual(const Self& Other)
 	{
-		return 	GetParentParticipantName() == Other.GetParentParticipantName() &&
-				GetParentVariableName() == Other.GetParentVariableName() &&
-				DisplayText.EqualTo(Other.GetDisplayText()) &&
-				CategoryType == Other.GetCategoryType() &&
-				TextType == Other.GetTextType();
+		return TextType == Other.GetTextType() &&
+			CategoryType == Other.GetCategoryType() &&
+			DisplayText.EqualTo(Other.GetDisplayText()) &&
+			GetParentParticipantName() == Other.GetParentParticipantName() &&
+			GetParentVariableName() == Other.GetParentVariableName() &&
+			DisplayText.EqualTo(Other.GetDisplayText());
 	}
 
 	bool operator==(const Self& Other)
@@ -211,10 +205,36 @@ public:
 		return IsEqual(Other);
 	}
 
-private:
-	void GetPathToChildThatContainsText(const TSharedPtr<Self>& Child,
-										const FString& InSearch,
-										TArray<TArray<TSharedPtr<Self>>>& OutNodes);
+protected:
+	// FDlgTreeViewNode Interface
+	void PostFilterPathsToNodes(TSharedPtr<Self> Child) override
+	{
+		Super::PostFilterPathsToNodes(Child);
+
+		// Hide separators
+		if (Child->IsSeparator())
+		{
+			Child->SetIsVisible(false);
+		}
+		// Some child has the InSearch or this Node has the text
+		//Children[Index]->SetIsVisible(NumBefore != OutNodes.Num() || Children[Index]->TextContains(InSearch));
+	}
+
+	void PostBuildPathToTopMostParent(TSharedPtr<Self> CurrentParentNode) override
+	{
+		Super::PostBuildPathToTopMostParent(CurrentParentNode);
+		check(!CurrentParentNode->IsSeparator());
+	}
+
+	bool FilterIsChildVisible(TSharedPtr<Self> GrandChild) override
+	{
+		return !GrandChild->IsSeparator() && !GrandChild->IsCategory() && Super::FilterIsChildVisible(GrandChild);
+	}
+
+	bool FilterDoesChildContainText(const TSharedPtr<Self>& Child, const FString& InSearch) override
+	{
+		return !Child->IsSeparator() && Super::FilterDoesChildContainText(Child, InSearch);
+	}
 
 protected:
 	// Specific category type, only used if Type is Category.

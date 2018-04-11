@@ -113,4 +113,10 @@ public:
 	{
 		return FDlgHelper_MapVariantImpl<KeyType, ValueType>::AreMapsEqual(FirstMap, SecondMap);
 	}
+
+	// Default comparison function
+	static bool PredicateSortFNameAlphabeticallyAscending(const FName& A, const FName& B)
+	{
+		return A.Compare(B) < 0;
+	}
 };
