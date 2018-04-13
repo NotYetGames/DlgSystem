@@ -1,6 +1,8 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgSystemSettings.h"
 
+#include "GameFramework/Character.h"
+
 #include "DlgManager.h"
 
 #define LOCTEXT_NAMESPACE "DlgSystemSettings"
@@ -9,6 +11,7 @@
 // UDlgSystemSettings
 UDlgSystemSettings::UDlgSystemSettings()
 {
+	BlacklistedReflectionClasses = {AActor::StaticClass(), APawn::StaticClass(),  ACharacter::StaticClass()};
 }
 
 #if WITH_EDITOR

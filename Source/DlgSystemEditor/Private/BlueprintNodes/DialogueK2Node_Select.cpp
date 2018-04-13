@@ -7,6 +7,7 @@
 #include "BlueprintActionDatabaseRegistrar.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "EditorStyleSet.h"
 
 #include "DlgSystemEditorPrivatePCH.h"
 #include "DlgDialogue.h"
@@ -512,9 +513,17 @@ void UDialogueK2Node_Select::GetPrintStringFunction(FName& FunctionName, UClass*
 
 bool UDialogueK2Node_Select::RefreshPinNames()
 {
+	// Stop anything if the blueprint is loading, this can happen because we now have reference to blueprint UClasses (reflection system) from the UDlgDialogue
+	if (!FDialogueBlueprintUtilities::IsBlueprintLoadedForGraphNode(this))
+	{
+		return false;
+	}
+
 	const FName ParticipantName = FDialogueBlueprintUtilities::GetParticipantNameFromNode(this);
 	if (ParticipantName == NAME_None && VariableType != EDlgVariableType::DlgVariableTypeSpeakerState)
+	{
 		return false;
+	}
 
 	TArray<FName> NewPinNames;
 	switch (VariableType)

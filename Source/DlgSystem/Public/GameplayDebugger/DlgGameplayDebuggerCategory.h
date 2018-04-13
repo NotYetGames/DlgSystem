@@ -10,12 +10,12 @@ class APlayerController;
 class FGameplayDebuggerCanvasContext;
 
 // The data we're going to print inside the viewport
-struct FDlgDataToPrint
+struct DLGSYSTEM_API FDlgDataToPrint
 {
 	int32 NumLoadedDialogues = 0;
 };
 
-class FDlgGameplayDebuggerCategory : public FGameplayDebuggerCategory
+class DLGSYSTEM_API FDlgGameplayDebuggerCategory : public FGameplayDebuggerCategory
 {
 private:
 	typedef FDlgGameplayDebuggerCategory Self;

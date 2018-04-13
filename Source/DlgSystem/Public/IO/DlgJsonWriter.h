@@ -12,7 +12,7 @@
 DECLARE_LOG_CATEGORY_EXTERN(LogDlgJsonWriter, All, All);
 
 
-struct DlgJsonWriterOptions
+struct DLGSYSTEM_API DlgJsonWriterOptions
 {
 	int32 InitialIndent = 0;
 	bool bPrettyPrint = true;

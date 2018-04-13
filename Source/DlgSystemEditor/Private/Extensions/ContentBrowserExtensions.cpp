@@ -75,7 +75,7 @@ public:
 			return false;
 		}
 
-		if (UObject* Object = InItem.GetAsset())
+		if (const UObject* Object = InItem.GetAsset())
 		{
 			return UDlgManager::DoesObjectImplementDialogueParticipantInterface(Object);
 		}

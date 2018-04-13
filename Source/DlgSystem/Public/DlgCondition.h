@@ -20,16 +20,26 @@ enum class EDlgConditionStrength : uint8
 UENUM()
 enum class EDlgConditionType : uint8
 {
-	/** A logical operation on a requested int variable of the selected Participant */
+	/** A logical operation on a requested int variable acquired via the IDlgParticipant getter function */
 	DlgConditionIntCall		UMETA(DisplayName = "Check int call"),
-	/** A logical operation on a requested float variable of the selected Participant */
+	/** A logical operation on a requested float variable acquired via the IDlgParticipant getter function */
 	DlgConditionFloatCall	UMETA(DisplayName = "Check float call"),
-	/** A logical operation on a requested bool variable of the selected Participant */
+	/** A logical operation on a requested bool variable acquired via the IDlgParticipant getter function */
 	DlgConditionBoolCall	UMETA(DisplayName = "Check bool call"),
-	/** A logical operation on a requested name variable of the selected Participant */
+	/** A logical operation on a requested name variable acquired via the IDlgParticipant getter function */
 	DlgConditionNameCall	UMETA(DisplayName = "Check name call"),
+
 	/** A named condition call on the selected Participant */
 	DlgConditionEventCall	UMETA(DisplayName = "Check named condition"),
+
+
+	/** A logical operation on an variables acquired from the object using the UClass */
+	DlgConditionClassIntVariable	UMETA(DisplayName = "Check class int variable"),
+	DlgConditionClassFloatVariable	UMETA(DisplayName = "Check class float variable"),
+	DlgConditionClassBoolVariable	UMETA(DisplayName = "Check class bool variable"),
+	DlgConditionClassNameVariable	UMETA(DisplayName = "Check class name variable"),
+
+
 	/** Status check of the selected node index */
 	DlgConditionNodeVisited UMETA(DisplayName = "Was node already visited"),
 	/** Checks if target node has any satisfied child */
@@ -56,7 +66,7 @@ enum class EDlgOperation : uint8
  *  if the condition array is satisfied
  */
 USTRUCT()
-struct FDlgCondition
+struct DLGSYSTEM_API FDlgCondition
 {
 	GENERATED_USTRUCT_BODY()
 

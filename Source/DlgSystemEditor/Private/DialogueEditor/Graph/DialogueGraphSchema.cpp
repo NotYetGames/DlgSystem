@@ -406,7 +406,7 @@ void UDialogueGraphSchema::GetCommentAction(FGraphActionMenuBuilder& ActionMenuB
 
 void UDialogueGraphSchema::GetConvertActions(FGraphActionMenuBuilder& ActionMenuBuilder, const UEdGraph* CurrentGraph) const
 {
-	if (ActionMenuBuilder.FromPin || CurrentGraph == nullptr)
+	if (ActionMenuBuilder.FromPin || !IsValid(CurrentGraph))
 	{
 		return;
 	}

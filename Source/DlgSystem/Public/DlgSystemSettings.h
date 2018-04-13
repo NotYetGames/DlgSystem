@@ -113,35 +113,22 @@ public:
 #endif // WITH_EDITOR
 
 	// Own functions
-	// Set the primary secondary edges bool, also save the config.
-	void SetShowPrimarySecondaryEdges(bool InbShowPrimarySecondaryEdges)
-	{
-		if (bShowPrimarySecondaryEdges != InbShowPrimarySecondaryEdges)
-		{
-			bShowPrimarySecondaryEdges = InbShowPrimarySecondaryEdges;
-			SaveSettings();
-		}
+#define CREATE_SETTER(_NameMethod, _VariableType, _VariableName)  \
+	void _NameMethod(_VariableType InVariableValue)               \
+	{                                                             \
+		if (_VariableName != InVariableValue)                     \
+		{                                                         \
+			_VariableName = InVariableValue;                      \
+			SaveSettings();                                       \
+		}                                                         \
 	}
 
-	// Sets the draw primary edges bool, also saves to config
-	void SetDrawPrimaryEdges(bool InbDrawPrimaryEdges)
-	{
-		if (bDrawPrimaryEdges != InbDrawPrimaryEdges)
-		{
-			bDrawPrimaryEdges = InbDrawPrimaryEdges;
-			SaveSettings();
-		}
-	}
+	CREATE_SETTER(SetShowPrimarySecondaryEdges, bool, bShowPrimarySecondaryEdges)
+	CREATE_SETTER(SetDrawPrimaryEdges, bool, bDrawPrimaryEdges)
+	CREATE_SETTER(SetDrawSecondaryEdges, bool, bDrawSecondaryEdges)
+	CREATE_SETTER(SetHideEmptyDialogueBrowserCategories, bool, bHideEmptyDialogueBrowserCategories)
 
-	// Sets the draw secondary edges bool, also saves to config
-	void SetDrawSecondaryEdges(bool InbDrawSecondaryEdges)
-	{
-		if (bDrawSecondaryEdges != InbDrawSecondaryEdges)
-		{
-			bDrawSecondaryEdges = InbDrawSecondaryEdges;
-			SaveSettings();
-		}
-	}
+#undef CREATE_SETTER
 
 	/** Saves the settings to the config file depending on the settings of this class. */
 	void SaveSettings()
@@ -177,6 +164,10 @@ public:
 	/** What key combination to press to add a new line for FText fields in the Dialogue Editor. */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Input Key for NewLine")
 	EDlgTextInputKeyForNewLine DialogueTextInputKeyForNewLine = EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineEnter;
+
+	/** Any properties that belong to these classes wont't be shown in the suggestion list when you use the reflection system (class variables). */
+	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
+	TArray<UClass*> BlacklistedReflectionClasses;
 
 	/** Whether the description text wraps onto a new line when it's length exceeds this width; if this value is zero or negative, no wrapping occurs. */
 	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
@@ -295,6 +286,10 @@ public:
 	 /** The Color of the wire when the edge is secondary. */
 	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
 	FLinearColor WireSecondaryEdgeColor = FLinearColor{0.101961f, 0.137255f, 0.494118f, 1.f}; // blueish
+
+	/** Should we hide the categories in the Dialogue browser that do not have any children? */
+	UPROPERTY(Category = "Browser", Config, EditAnywhere)
+	bool bHideEmptyDialogueBrowserCategories = true;
 
 	// Advanced Section
 	/**  The offset on the X axis (left/right) to use when automatically positioning nodes. */

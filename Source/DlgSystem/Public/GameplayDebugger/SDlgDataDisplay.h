@@ -13,7 +13,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogDlgSystemDataDisplay, Verbose, All);
 /**
  * Implements the Runtime Dialogue Data Display
  */
-class SDlgDataDisplay : public SCompoundWidget
+class DLGSYSTEM_API SDlgDataDisplay : public SCompoundWidget
 {
 	typedef SDlgDataDisplay Self;
 
@@ -35,11 +35,18 @@ public:
 	FText GetFilterText() const { return FilterTextBoxWidget->GetText(); }
 
 private:
+	/** Handle filtering. */
+	void GenerateFilteredItems();
+
 	/** Getters for widgets.  */
 	TSharedRef<SWidget> GetFilterTextBoxWidget();
 
+	/** Add the Variables as children to the Item */
+	void AddVariableChildrenToItem(TSharedPtr<FDlgDataDisplayTreeNode> Item, const TMap<FName, TSharedPtr<FDlgDataDisplayVariableProperties>>& Variables,
+		const FText& DisplayTextFormat, const EDlgDataDisplayVariableTreeNodeType VariableType);
+
 	/** Recursively build the view item. */
-	void BuildTreeViewItem(FDlgDataDisplayTreeNodePtr Item);
+	void BuildTreeViewItem(TSharedPtr<FDlgDataDisplayTreeNode> Item);
 
 	/** Text search changed */
 	void HandleSearchTextCommited(const FText& InText, ETextCommit::Type InCommitType);
@@ -52,19 +59,29 @@ private:
 	}
 
 	/** Make the row */
-	TSharedRef<ITableRow> HandleGenerateRow(FDlgDataDisplayTreeNodePtr InItem, const TSharedRef<STableViewBase>& OwnerTable);
+	TSharedRef<ITableRow> HandleGenerateRow(TSharedPtr<FDlgDataDisplayTreeNode> InItem, const TSharedRef<STableViewBase>& OwnerTable);
 
 	/** General Get children  */
-	void HandleGetChildren(FDlgDataDisplayTreeNodePtr InItem, TArray<FDlgDataDisplayTreeNodePtr>& OutChildren);
+	void HandleGetChildren(TSharedPtr<FDlgDataDisplayTreeNode> InItem, TArray<TSharedPtr<FDlgDataDisplayTreeNode>>& OutChildren);
 
 	/** Handles changes in the Tree View. */
-	void HandleTreeSelectionChanged(FDlgDataDisplayTreeNodePtr InItem, ESelectInfo::Type SelectInfo);
+	void HandleTreeSelectionChanged(TSharedPtr<FDlgDataDisplayTreeNode> InItem, ESelectInfo::Type SelectInfo);
 
 	/** User clicked on item. */
-	void HandleDoubleClick(FDlgDataDisplayTreeNodePtr InItem);
+	void HandleDoubleClick(TSharedPtr<FDlgDataDisplayTreeNode> InItem);
 
 	/** Callback for expanding tree items recursively */
-	void HandleSetExpansionRecursive(FDlgDataDisplayTreeNodePtr InItem, bool bInIsItemExpanded);
+	void HandleSetExpansionRecursive(TSharedPtr<FDlgDataDisplayTreeNode> InItem, bool bInIsItemExpanded);
+
+	/** Compare two FDlgDataDisplayTreeNode */
+	static bool PredicateCompareDlgDataDisplayTreeNode(TSharedPtr<FDlgDataDisplayTreeNode> FirstNode, TSharedPtr<FDlgDataDisplayTreeNode> SecondNode)
+	{
+		if (!FirstNode.IsValid() || !SecondNode.IsValid())
+		{
+			return false;
+		}
+		return *FirstNode == *SecondNode;
+	}
 
 private:
 	/** The search box */
@@ -74,13 +91,13 @@ private:
 	FString FilterString;
 
 	/** The root data source */
-	FDlgDataDisplayTreeNodePtr RootTreeItem;
+	TSharedPtr<FDlgDataDisplayTreeNode> RootTreeItem;
 
-	/** The root children. Kept seperate so that we do not corrupt the data. */
-	TArray<FDlgDataDisplayTreeNodePtr> RootChildren;
+	/** The root children. Kept separate so that we do not corrupt the data. */
+	TArray<TSharedPtr<FDlgDataDisplayTreeNode>> RootChildren;
 
 	/** Tree view for showing all Actors that implement the , etc. */
-	TSharedPtr<STreeView<FDlgDataDisplayTreeNodePtr>> ActorsTreeView;
+	TSharedPtr<STreeView<TSharedPtr<FDlgDataDisplayTreeNode>>> ActorsTreeView;
 
 	/**
 	 * Used for fast lookup of each actor

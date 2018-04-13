@@ -5,6 +5,13 @@
 #include "EngineUtils.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const FDlgEdge& FDlgEdge::GetInvalidEdge()
+{
+	static FDlgEdge DlgEdge;
+	return DlgEdge;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgEdge
 bool FDlgEdge::Evaluate(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyVisitedNodes) const
 {
@@ -94,7 +101,7 @@ void UDlgNode::FireNodeEnterEvents(UDlgContextInternal* DlgContext)
 	for (const FDlgEvent& Event : EnterEvents)
 	{
 		UObject* Particpant = DlgContext->GetParticipant(Event.ParticipantName);
-		if (Particpant == nullptr)
+		if (!IsValid(Particpant))
 		{
 			Particpant = DlgContext->GetParticipant(OwnerName);
 		}
@@ -107,16 +114,23 @@ bool UDlgNode::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<UDlgNode
 	check(DlgContext != nullptr);
 
 	TArray<const FDlgEdge*>& AvailableChildren = DlgContext->GetOptionArray();
+	TArray<FDlgEdgeData>& AllChildren = DlgContext->GetAllOptionsArray();
 	AvailableChildren.Empty();
+	AllChildren.Empty();
 
 	for (const FDlgEdge& Edge : Children)
 	{
-		if (Edge.Evaluate(DlgContext, { this }))
+		const bool bSatisfied = Edge.Evaluate(DlgContext, { this });
+
+		if (bSatisfied || Edge.bIncludeInAllOptionListIfUnsatisfied)
+		{
+			AllChildren.Add(FDlgEdgeData{ bSatisfied, &Edge });
+		}
+		if (bSatisfied)
 		{
 			AvailableChildren.Add(&Edge);
 		}
 	}
-
 
 	// no child, but no end node?
 	if (AvailableChildren.Num() == 0)

@@ -6,17 +6,12 @@
 
 #include "DlgDialogue.h"
 #include "DlgDialogueParticipant.h"
+#include "DlgHelper.h"
 
 #include "DlgManager.generated.h"
 
 class UDlgContext;
 class UDlgDialogue;
-
-// Default comparison function
-static bool PredicateSortFNameAlphabeticallyAscending(const FName& A, const FName& B)
-{
-	return A.Compare(B) < 0;
-}
 
 /**
  *  Class providing a collection of static functions to start a conversation and work with Dialogues.
@@ -27,7 +22,6 @@ class DLGSYSTEM_API UDlgManager : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-
 	/**
 	 * Starts a Dialogue with the provided Dialogue and Participants array
 	 * This method can fail in the following situations:
@@ -58,8 +52,8 @@ public:
 	 * @returns The dialogue context object or nullptr if something wrong happened
 	 */
 	UFUNCTION(BlueprintCallable, Category = DialogueLaunch)
-	static UDlgContext* ResumeDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants, int32 StartIndex, const TSet<int32>& AlreadyVisitedNodes, bool bFireEnterEvents);
-
+	static UDlgContext* ResumeDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants,
+									   int32 StartIndex, const TSet<int32>& AlreadyVisitedNodes, bool bFireEnterEvents);
 
 
 	/**
@@ -120,22 +114,6 @@ public:
 	/** Gets all the loaded dialogues from memory that have the ParticipantName included insided them. */
 	static TArray<UDlgDialogue*> GetAllDialoguesForParticipantName(const FName& ParticipantName);
 
-	/** Default sorting function used by all the Dialogue related methods. Sorts alphabetically ascending. */
-	static void SortDefault(TArray<FName>& OutArray)
-    {
-		OutArray.Sort(PredicateSortFNameAlphabeticallyAscending);
-    }
-	static void SortDefault(TSet<FName>& OutSet)
-	{
-		OutSet.Sort(PredicateSortFNameAlphabeticallyAscending);
-	}
-
-	template<typename ValueType>
-	static void SortDefault(TMap<FName, ValueType>& Map)
-	{
-		Map.KeySort(PredicateSortFNameAlphabeticallyAscending);
-	}
-
 	/** Sets the FDlgMemory Dialogue history. */
 	UFUNCTION(BlueprintCallable, Category = DialogueData)
 	static void SetDialogueHistory(const TMap<FGuid, FDlgHistory>& DlgHistory);
@@ -146,7 +124,7 @@ public:
 
 	/** Does the Object implement the Dialogue Participant Interface? */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
-	static bool DoesObjectImplementDialogueParticipantInterface(UObject* Object);
+	static bool DoesObjectImplementDialogueParticipantInterface(const UObject* Object);
 
 	/** Gets all the unique participant names sorted alphabetically from all the Dialogues loaded into memory. */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
@@ -196,14 +174,5 @@ public:
 	static bool UnRegisterDialogueModuleConsoleCommands();
 
 private:
-
-	static bool ConstructParticipantMap(UDlgDialogue* Dialogue, const TArray<UObject*>& Participants, TMap<FName, UObject*>& OutMap);
-
-	/** Helper method, used to append a set to an array. Also sort. */
-	static void AppendSetToArray(const TSet<FName>& InSet, TArray<FName>& OutArray)
-	{
-		TArray<FName> UniqueNamesArray = InSet.Array();
-		SortDefault(UniqueNamesArray);
-		OutArray.Append(UniqueNamesArray);
-	}
+	static bool ConstructParticipantMap(const UDlgDialogue* Dialogue, const TArray<UObject*>& Participants, TMap<FName, UObject*>& OutMap);
 };

@@ -54,96 +54,46 @@ private:
 	// Getters for the visibility of some properties
 	EVisibility GetIntValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyInt ? EVisibility::Visible : EVisibility::Hidden;
+		return EventType == EDlgEventType::DlgEventModifyInt
+			|| EventType == EDlgEventType::DlgEventModifyClassIntVariable
+			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetFloatValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyFloat ? EVisibility::Visible : EVisibility::Hidden;
+		return EventType == EDlgEventType::DlgEventModifyFloat
+			|| EventType == EDlgEventType::DlgEventModifyClassFloatVariable
+			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetNameValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyName ? EVisibility::Visible : EVisibility::Hidden;
+		return EventType == EDlgEventType::DlgEventModifyName
+			|| EventType == EDlgEventType::DlgEventModifyClassNameVariable
+			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetBoolDeltaVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyInt || EventType == EDlgEventType::DlgEventModifyFloat
+		return EventType == EDlgEventType::DlgEventModifyInt
+			|| EventType == EDlgEventType::DlgEventModifyFloat
+			|| EventType == EDlgEventType::DlgEventModifyClassIntVariable
+			|| EventType == EDlgEventType::DlgEventModifyClassFloatVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetBoolValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyBool ? EVisibility::Visible : EVisibility::Hidden;
+		return EventType == EDlgEventType::DlgEventModifyBool
+			|| EventType == EDlgEventType::DlgEventModifyClassBoolVariable
+			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	/** Gets all the event name suggestions depending on EventType from all Dialogues. */
-	TArray<FName> GetAllDialoguesEventNames() const
-	{
-		TArray<FName> Suggestions;
-		const FName ParticipantName = DetailsPanel::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
-
-		switch (EventType)
-		{
-		case EDlgEventType::DlgEventModifyBool:
-			UDlgManager::GetAllDialoguesBoolNames(ParticipantName, Suggestions);
-			break;
-
-		case EDlgEventType::DlgEventModifyFloat:
-			UDlgManager::GetAllDialoguesFloatNames(ParticipantName, Suggestions);
-			break;
-
-		case EDlgEventType::DlgEventModifyInt:
-			UDlgManager::GetAllDialoguesIntNames(ParticipantName, Suggestions);
-			break;
-
-		case EDlgEventType::DlgEventModifyName:
-			UDlgManager::GetAllDialoguesNameNames(ParticipantName, Suggestions);
-			break;
-
-		case EDlgEventType::DlgEventEvent:
-		default:
-			UDlgManager::GetAllDialoguesEventNames(ParticipantName, Suggestions);
-			break;
-		}
-
-		return Suggestions;
-	}
+	TArray<FName> GetAllDialoguesEventNames() const;
 
 	/** Gets all the event name suggestions depending on EventType from the current Dialogue */
-	TArray<FName> GetCurrentDialogueEventNames() const
-	{
-		const FName ParticipantName = DetailsPanel::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
-		TSet<FName> Names;
-
-		switch (EventType)
-		{
-		case EDlgEventType::DlgEventModifyBool:
-			Dialogue->GetBoolNames(ParticipantName, Names);
-			break;
-
-		case EDlgEventType::DlgEventModifyName:
-			Dialogue->GetNameNames(ParticipantName, Names);
-			break;
-
-		case EDlgEventType::DlgEventModifyFloat:
-			Dialogue->GetFloatNames(ParticipantName, Names);
-			break;
-
-		case EDlgEventType::DlgEventModifyInt:
-			Dialogue->GetIntNames(ParticipantName, Names);
-			break;
-
-		case EDlgEventType::DlgEventEvent:
-		default:
-			Dialogue->GetEvents(ParticipantName, Names);
-			break;
-		}
-
-		UDlgManager::SortDefault(Names);
-		return Names.Array();
-	}
+	TArray<FName> GetCurrentDialogueEventNames() const;
 
 	/** Gets the ParticipantNames from all Dialogues. */
 	TArray<FName> GetAllDialoguesParticipantNames() const

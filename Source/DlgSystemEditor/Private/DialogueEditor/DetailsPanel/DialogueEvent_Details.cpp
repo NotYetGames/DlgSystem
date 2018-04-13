@@ -6,6 +6,7 @@
 #include "IPropertyUtilities.h"
 
 #include "DlgNode.h"
+#include "DlgReflectionHelper.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "STextPropertyPickList.h"
@@ -144,6 +145,108 @@ void FDialogueEvent_Details::OnEventTypeChanged(bool bForceRefresh)
 	// Refresh the view, without this some names/tooltips won't get refreshed
 	if (bForceRefresh && PropertyUtils.IsValid())
 		PropertyUtils->ForceRefresh();
+}
+
+TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
+{
+	TArray<FName> Suggestions;
+	const FName ParticipantName = DetailsPanel::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
+
+	switch (EventType)
+	{
+	case EDlgEventType::DlgEventModifyBool:
+		UDlgManager::GetAllDialoguesBoolNames(ParticipantName, Suggestions);
+		break;
+
+	case EDlgEventType::DlgEventModifyFloat:
+		UDlgManager::GetAllDialoguesFloatNames(ParticipantName, Suggestions);
+		break;
+
+	case EDlgEventType::DlgEventModifyInt:
+		UDlgManager::GetAllDialoguesIntNames(ParticipantName, Suggestions);
+		break;
+
+	case EDlgEventType::DlgEventModifyName:
+		UDlgManager::GetAllDialoguesNameNames(ParticipantName, Suggestions);
+		break;
+
+	case EDlgEventType::DlgEventModifyClassIntVariable:
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
+		FDlgHelper::SortDefault(Suggestions);
+		break;
+
+	case EDlgEventType::DlgEventModifyClassFloatVariable:
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
+		FDlgHelper::SortDefault(Suggestions);
+		break;
+
+	case EDlgEventType::DlgEventModifyClassBoolVariable:
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
+		FDlgHelper::SortDefault(Suggestions);
+		break;
+
+	case EDlgEventType::DlgEventModifyClassNameVariable:
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
+		FDlgHelper::SortDefault(Suggestions);
+		break;
+
+
+	case EDlgEventType::DlgEventEvent:
+	default:
+		UDlgManager::GetAllDialoguesEventNames(ParticipantName, Suggestions);
+		break;
+	}
+
+	return Suggestions;
+}
+
+TArray<FName> FDialogueEvent_Details::GetCurrentDialogueEventNames() const
+{
+	const FName ParticipantName = DetailsPanel::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
+	TSet<FName> Suggestions;
+
+	switch (EventType)
+	{
+	case EDlgEventType::DlgEventModifyBool:
+		Dialogue->GetBoolNames(ParticipantName, Suggestions);
+		break;
+
+	case EDlgEventType::DlgEventModifyName:
+		Dialogue->GetNameNames(ParticipantName, Suggestions);
+		break;
+
+	case EDlgEventType::DlgEventModifyFloat:
+		Dialogue->GetFloatNames(ParticipantName, Suggestions);
+		break;
+
+	case EDlgEventType::DlgEventModifyInt:
+		Dialogue->GetIntNames(ParticipantName, Suggestions);
+		break;
+
+	case EDlgEventType::DlgEventModifyClassIntVariable:
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
+		break;
+
+	case EDlgEventType::DlgEventModifyClassFloatVariable:
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
+		break;
+
+	case EDlgEventType::DlgEventModifyClassBoolVariable:
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
+		break;
+
+	case EDlgEventType::DlgEventModifyClassNameVariable:
+		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
+		break;
+
+	case EDlgEventType::DlgEventEvent:
+	default:
+		Dialogue->GetEvents(ParticipantName, Suggestions);
+		break;
+	}
+
+	FDlgHelper::SortDefault(Suggestions);
+	return Suggestions.Array();
 }
 
 #undef LOCTEXT_NAMESPACE

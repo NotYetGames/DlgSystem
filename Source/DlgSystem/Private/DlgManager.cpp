@@ -144,21 +144,21 @@ void UDlgManager::SetDialogueHistory(const TMap<FGuid, FDlgHistory>& DlgHistory)
 	FDlgMemory::GetInstance()->SetHistoryMap(DlgHistory);
 }
 
-bool UDlgManager::DoesObjectImplementDialogueParticipantInterface(UObject* Object)
+bool UDlgManager::DoesObjectImplementDialogueParticipantInterface(const UObject* Object)
 {
 	static const UClass* DialogueParticipantClass = UDlgDialogueParticipant::StaticClass();
 
 	// Apparently blueprints only work this way
-	if (UBlueprint* Blueprint = Cast<UBlueprint>(Object))
+	if (const UBlueprint* Blueprint = Cast<UBlueprint>(Object))
 	{
-		if (UClass* GeneratedClass = Cast<UClass>(Blueprint->GeneratedClass))
+		if (const UClass* GeneratedClass = Cast<UClass>(Blueprint->GeneratedClass))
 		{
 			return GeneratedClass->ImplementsInterface(DialogueParticipantClass);
 		}
 	}
 
 	// A class object, does this ever happen?
-	if (UClass* Class = Cast<UClass>(Object))
+	if (const UClass* Class = Cast<UClass>(Object))
 	{
 		return Class->ImplementsInterface(DialogueParticipantClass);
 	}
@@ -189,7 +189,7 @@ void UDlgManager::GetAllDialoguesParticipantNames(TArray<FName>& OutArray)
 		Dialogue->GetAllParticipantNames(UniqueNames);
 	}
 
-	AppendSetToArray(UniqueNames, OutArray);
+	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
 }
 
 void UDlgManager::GetAllDialoguesSpeakerStates(TArray<FName>& OutArray)
@@ -200,7 +200,7 @@ void UDlgManager::GetAllDialoguesSpeakerStates(TArray<FName>& OutArray)
 		Dialogue->GetAllSpeakerState(UniqueNames);
 	}
 
-	AppendSetToArray(UniqueNames, OutArray);
+	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
 }
 
 void UDlgManager::GetAllDialoguesIntNames(const FName& ParticipantName, TArray<FName>& OutArray)
@@ -211,7 +211,7 @@ void UDlgManager::GetAllDialoguesIntNames(const FName& ParticipantName, TArray<F
 		Dialogue->GetIntNames(ParticipantName, UniqueNames);
 	}
 
-	AppendSetToArray(UniqueNames, OutArray);
+	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
 }
 
 void UDlgManager::GetAllDialoguesFloatNames(const FName& ParticipantName, TArray<FName>& OutArray)
@@ -222,7 +222,7 @@ void UDlgManager::GetAllDialoguesFloatNames(const FName& ParticipantName, TArray
 		Dialogue->GetFloatNames(ParticipantName, UniqueNames);
 	}
 
-	AppendSetToArray(UniqueNames, OutArray);
+	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
 }
 
 void UDlgManager::GetAllDialoguesBoolNames(const FName& ParticipantName, TArray<FName>& OutArray)
@@ -233,7 +233,7 @@ void UDlgManager::GetAllDialoguesBoolNames(const FName& ParticipantName, TArray<
 		Dialogue->GetBoolNames(ParticipantName, UniqueNames);
 	}
 
-	AppendSetToArray(UniqueNames, OutArray);
+	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
 }
 
 void UDlgManager::GetAllDialoguesNameNames(const FName& ParticipantName, TArray<FName>& OutArray)
@@ -244,7 +244,7 @@ void UDlgManager::GetAllDialoguesNameNames(const FName& ParticipantName, TArray<
 		Dialogue->GetNameNames(ParticipantName, UniqueNames);
 	}
 
-	AppendSetToArray(UniqueNames, OutArray);
+	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
 }
 
 void UDlgManager::GetAllDialoguesConditionNames(const FName& ParticipantName, TArray<FName>& OutArray)
@@ -255,7 +255,7 @@ void UDlgManager::GetAllDialoguesConditionNames(const FName& ParticipantName, TA
 		Dialogue->GetConditions(ParticipantName, UniqueNames);
 	}
 
-	AppendSetToArray(UniqueNames, OutArray);
+	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
 }
 
 void UDlgManager::GetAllDialoguesEventNames(const FName& ParticipantName, TArray<FName>& OutArray)
@@ -266,7 +266,7 @@ void UDlgManager::GetAllDialoguesEventNames(const FName& ParticipantName, TArray
 		Dialogue->GetEvents(ParticipantName, UniqueNames);
 	}
 
-	AppendSetToArray(UniqueNames, OutArray);
+	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
 }
 
 bool UDlgManager::RegisterDialogueModuleConsoleCommands(AActor* InReferenceActor)
@@ -291,9 +291,9 @@ bool UDlgManager::UnRegisterDialogueModuleConsoleCommands()
 	return true;
 }
 
-bool UDlgManager::ConstructParticipantMap(UDlgDialogue* Dialogue, const TArray<UObject*>& Participants, TMap<FName, UObject*>& OutMap)
+bool UDlgManager::ConstructParticipantMap(const UDlgDialogue* Dialogue, const TArray<UObject*>& Participants, TMap<FName, UObject*>& OutMap)
 {
-	if (Dialogue == nullptr || Dialogue->GetParticipantData().Num() == 0)
+	if (!IsValid(Dialogue) || Dialogue->GetParticipantData().Num() == 0)
 	{
 		UE_LOG(LogDlgSystem,
 			   Error,
@@ -317,7 +317,7 @@ bool UDlgManager::ConstructParticipantMap(UDlgDialogue* Dialogue, const TArray<U
 	for (int32 ParticipantIndex = 0; ParticipantIndex < ParticipantsNum; ParticipantIndex++)
 	{
 		UObject* Participant = Participants[ParticipantIndex];
-		if (Participant == nullptr)
+		if (!IsValid(Participant))
 		{
 			UE_LOG(LogDlgSystem, Error, TEXT("Failed to start dialogue - Participant at index %d is null"), ParticipantIndex);
 			return false;

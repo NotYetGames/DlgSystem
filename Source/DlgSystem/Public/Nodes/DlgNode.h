@@ -20,8 +20,8 @@ class UDialogueWave;
 /**
  * The representation of a child in a node. Defined by a TargetIndex which points to the index array in the Dialogue.Nodes
  */
-USTRUCT()
-struct FDlgEdge
+USTRUCT(BlueprintType)
+struct DLGSYSTEM_API FDlgEdge
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -59,6 +59,8 @@ public:
 		return TargetIndex > INDEX_NONE;
 	}
 
+	static const FDlgEdge& GetInvalidEdge();
+
 public:
 	/** Index of the node in the Nodes TArray of the dialogue this edge is leading to */
 	UPROPERTY(VisibleAnywhere, Category = DlgEdgeData, Meta = (ClampMin = -1))
@@ -75,6 +77,10 @@ public:
 	/** player emotion/state attached to this player choice */
 	UPROPERTY(EditAnywhere, Category = DlgEdgeData)
 	FName SpeakerState;
+
+	/** Set this to false in order to skip this edge in the AllChildren array (which lists both satisfied and not satisfied player choices */
+	UPROPERTY(EditAnywhere, Category = DlgEdgeData)
+	bool bIncludeInAllOptionListIfUnsatisfied = true;
 };
 
 /**

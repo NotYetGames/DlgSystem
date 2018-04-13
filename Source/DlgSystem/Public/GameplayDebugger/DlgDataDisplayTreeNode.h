@@ -16,10 +16,16 @@ enum class EDlgDataDisplayVariableTreeNodeType : uint8
 
 	Event,
 	Condition,
+
 	Integer,
 	Float,
 	Bool,
-	FName
+	FName,
+
+	ClassInteger,
+	ClassFloat,
+	ClassBool,
+	ClassFName
 };
 
 // Type of Text
@@ -42,10 +48,9 @@ enum class EDlgDataDisplayCategoryTreeNodeType : uint8
 };
 
 class FDlgDataDisplayTreeNode;
-typedef TSharedPtr<FDlgDataDisplayTreeNode> FDlgDataDisplayTreeNodePtr;
 
 /* Base class node for all Nodes in the DlgDataDisplayWindow  */
-class FDlgDataDisplayTreeNode : public FDlgTreeViewNode<FDlgDataDisplayTreeNode>
+class DLGSYSTEM_API FDlgDataDisplayTreeNode : public FDlgTreeViewNode<FDlgDataDisplayTreeNode>
 {
 	typedef FDlgDataDisplayTreeNode Self;
 	typedef FDlgTreeViewNode Super;
@@ -63,6 +68,46 @@ public:
 	virtual bool IsCategory() const { return false; }
 	virtual bool IsSeparator() const { return false; }
 
+	/** Is this equal with Other? */
+	virtual bool IsEqual(const Self& Other)
+	{
+		return TextType == Other.GetTextType() &&
+			CategoryType == Other.GetCategoryType() &&
+			DisplayText.EqualTo(Other.GetDisplayText()) &&
+			GetParentActor() == Other.GetParentActor();
+	}
+
+	bool operator==(const Self& Other)
+	{
+		return IsEqual(Other);
+	}
+
+protected:
+	// FDlgTreeViewNode Interface
+	void PostFilterPathsToNodes(TSharedPtr<Self> Child) override
+	{
+		Super::PostFilterPathsToNodes(Child);
+
+		// Hide separators
+		if (Child->IsSeparator())
+		{
+			Child->SetIsVisible(false);
+		}
+	}
+	void PostBuildPathToTopMostParent(TSharedPtr<Self> CurrentParentNode) override
+	{
+		Super::PostBuildPathToTopMostParent(CurrentParentNode);
+		check(!CurrentParentNode->IsSeparator());
+	}
+	bool FilterIsChildVisible(TSharedPtr<Self> GrandChild) override
+	{
+		return !GrandChild->IsSeparator() && !GrandChild->IsCategory() && Super::FilterIsChildVisible(GrandChild);
+	}
+	bool FilterDoesChildContainText(const TSharedPtr<Self>& Child, const FString& InSearch) override
+	{
+		return !Child->IsSeparator() && Super::FilterDoesChildContainText(Child, InSearch);
+	}
+
 protected:
 	// Specific category type, only used if Type is Category.
 	EDlgDataDisplayCategoryTreeNodeType CategoryType;
@@ -73,7 +118,7 @@ protected:
 
 
 /** Root node of the Dialogue Data Display */
-class FDlgDataDisplayTreeRootNode : public FDlgDataDisplayTreeNode
+class DLGSYSTEM_API FDlgDataDisplayTreeRootNode : public FDlgDataDisplayTreeNode
 {
 	typedef FDlgDataDisplayTreeNode Super;
 public:
@@ -82,11 +127,11 @@ public:
 
 
 /** Node result that Represents the Actor. */
-class FDlgDataDisplayTreeActorNode : public FDlgDataDisplayTreeNode
+class DLGSYSTEM_API FDlgDataDisplayTreeActorNode : public FDlgDataDisplayTreeNode
 {
 	typedef FDlgDataDisplayTreeNode Super;
 public:
-	FDlgDataDisplayTreeActorNode(const FText& InDisplayText, FDlgDataDisplayTreeNodePtr InParent,
+	FDlgDataDisplayTreeActorNode(const FText& InDisplayText, TSharedPtr<FDlgDataDisplayTreeNode> InParent,
 		TWeakObjectPtr<AActor> InActor);
 
 	/** FDlgDataDisplayTreeNode interface */
@@ -100,11 +145,11 @@ protected:
 
 
 /** Node Representing a Category. */
-class FDlgDataDisplayTreeCategoryNode : public FDlgDataDisplayTreeNode
+class DLGSYSTEM_API FDlgDataDisplayTreeCategoryNode : public FDlgDataDisplayTreeNode
 {
 	typedef FDlgDataDisplayTreeNode Super;
 public:
-	FDlgDataDisplayTreeCategoryNode(const FText& InDisplayText, FDlgDataDisplayTreeNodePtr InParent,
+	FDlgDataDisplayTreeCategoryNode(const FText& InDisplayText, TSharedPtr<FDlgDataDisplayTreeNode> InParent,
 		const EDlgDataDisplayCategoryTreeNodeType InCategoryType);
 
 	bool IsText() const override { return false; }
@@ -113,11 +158,12 @@ public:
 
 
 /** Node result that Represents the Variable (Int/Float/Condition). */
-class FDlgDataDisplayTreeVariableNode : public FDlgDataDisplayTreeNode
+class DLGSYSTEM_API FDlgDataDisplayTreeVariableNode : public FDlgDataDisplayTreeNode
 {
+	typedef FDlgDataDisplayTreeVariableNode Self;
 	typedef FDlgDataDisplayTreeNode Super;
 public:
-	FDlgDataDisplayTreeVariableNode(const FText& InDisplayText, FDlgDataDisplayTreeNodePtr InParent,
+	FDlgDataDisplayTreeVariableNode(const FText& InDisplayText, TSharedPtr<FDlgDataDisplayTreeNode> InParent,
 		const FName& InVariableName, const EDlgDataDisplayVariableTreeNodeType InVariableType);
 
 	// VariableName:
@@ -129,6 +175,18 @@ public:
 
 	// VariableType:
 	EDlgDataDisplayVariableTreeNodeType GetVariableType() const { return VariableType; }
+
+	bool IsEqual(const Super& Other) override
+	{
+		if (const Self* OtherSelf = static_cast<const Self*>(&Other))
+		{
+			return VariableName == OtherSelf->GetVariableName() &&
+				VariableType == OtherSelf->GetVariableType() &&
+				VariableValue == OtherSelf->GetVariableValue() &&
+				Super::IsEqual(Other);
+		}
+		return false;
+	}
 
 protected:
 	/** Used to store the name Event, Condition, IntName, etc */

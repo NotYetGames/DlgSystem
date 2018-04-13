@@ -58,7 +58,7 @@ public:
 																				const UDlgDialogue* Dialogue);
 
 	/**
-	 * Gets all the graph nodes that contain the specified IntVariableName.
+	 * Gets all the graph nodes that contain the specified IntVariableName basic type.
 	 * This contains both graph nodes and edges.
 	 */
 	static FDialogueSearchFoundResultPtr GetGraphNodesForIntVariableName(const FName& IntVariableName, const UDlgDialogue* Dialogue)
@@ -69,7 +69,7 @@ public:
 	}
 
 	/**
-	 * Gets all the graph nodes that contain the specified FloatVariableName.
+	 * Gets all the graph nodes that contain the specified FloatVariableName basic type.
 	 * This contains both graph nodes and edges.
 	 */
 	static FDialogueSearchFoundResultPtr GetGraphNodesForFloatVariableName(const FName& FloatVariableName, const UDlgDialogue* Dialogue)
@@ -80,7 +80,7 @@ public:
 	}
 
 	/**
-	 * Gets all the graph nodes that contain the specified BoolVariableName.
+	 * Gets all the graph nodes that contain the specified BoolVariableName basic type.
 	 * This contains both graph nodes and edges.
 	 */
 	static FDialogueSearchFoundResultPtr GetGraphNodesForBoolVariableName(const FName& BoolVariableName, const UDlgDialogue* Dialogue)
@@ -91,7 +91,7 @@ public:
 	}
 
 	/**
-	 * Gets all the graph nodes that contain the specified FNameVariableName.
+	 * Gets all the graph nodes that contain the specified FNameVariableName basic type.
 	 * This contains both graph nodes and edges.
 	 */
 	static FDialogueSearchFoundResultPtr GetGraphNodesForFNameVariableName(const FName& FNameVariableName, const UDlgDialogue* Dialogue)
@@ -99,6 +99,50 @@ public:
 		return GetGraphNodesForVariablesOfNameAndType(FNameVariableName, Dialogue,
 													  EDlgEventType::DlgEventModifyName,
 													  EDlgConditionType::DlgConditionNameCall);
+	}
+
+	/**
+	 * Gets all the graph nodes that contain the specified IntVariableName from the UClass.
+	 * This contains both graph nodes and edges.
+	 */
+	static FDialogueSearchFoundResultPtr GetGraphNodesForClassIntVariableName(const FName& IntVariableName, const UDlgDialogue* Dialogue)
+	{
+		return GetGraphNodesForVariablesOfNameAndType(IntVariableName, Dialogue,
+													  EDlgEventType::DlgEventModifyClassIntVariable,
+													  EDlgConditionType::DlgConditionClassIntVariable);
+	}
+
+	/**
+	 * Gets all the graph nodes that contain the specified FloatVariableName from the UClass.
+	 * This contains both graph nodes and edges.
+	 */
+	static FDialogueSearchFoundResultPtr GetGraphNodesForClassFloatVariableName(const FName& FloatVariableName, const UDlgDialogue* Dialogue)
+	{
+		return GetGraphNodesForVariablesOfNameAndType(FloatVariableName, Dialogue,
+													  EDlgEventType::DlgEventModifyClassFloatVariable,
+													  EDlgConditionType::DlgConditionClassFloatVariable);
+	}
+
+	/**
+	 * Gets all the graph nodes that contain the specified BoolVariableName from the UClass.
+	 * This contains both graph nodes and edges.
+	 */
+	static FDialogueSearchFoundResultPtr GetGraphNodesForClassBoolVariableName(const FName& BoolVariableName, const UDlgDialogue* Dialogue)
+	{
+		return GetGraphNodesForVariablesOfNameAndType(BoolVariableName, Dialogue,
+													  EDlgEventType::DlgEventModifyClassBoolVariable,
+													  EDlgConditionType::DlgConditionClassBoolVariable);
+	}
+
+	/**
+	 * Gets all the graph nodes that contain the specified FNameVariableName from the UClass.
+	 * This contains both graph nodes and edges.
+	 */
+	static FDialogueSearchFoundResultPtr GetGraphNodesForClassFNameVariableName(const FName& FNameVariableName, const UDlgDialogue* Dialogue)
+	{
+		return GetGraphNodesForVariablesOfNameAndType(FNameVariableName, Dialogue,
+													  EDlgEventType::DlgEventModifyClassNameVariable,
+													  EDlgConditionType::DlgConditionClassNameVariable);
 	}
 
 	/** Does Conditions contain the ConditionName (of type ConditionType)? */

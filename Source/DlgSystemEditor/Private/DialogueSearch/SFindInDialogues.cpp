@@ -131,7 +131,7 @@ void SFindInDialogues::Construct(const FArguments& InArgs, TSharedPtr<FDialogueE
 			SNew(SBorder)
 			.BorderImage(FEditorStyle::GetBrush("Menu.Background"))
 			[
-				SAssignNew(TreeView, STreeView<FFindInDialoguesResultPtr>)
+				SAssignNew(TreeView, STreeView<TSharedPtr<FFindInDialoguesResult>>)
 				.ItemHeight(24)
 				.TreeItemsSource(&ItemsFound)
 				.OnGenerateRow(this, &Self::HandleGenerateRow)
@@ -213,12 +213,12 @@ void SFindInDialogues::MakeSearchQuery(const FDialogueSearchFilter& SearchFilter
 					->QuerySingleDialogue(SearchFilter, DialogueEditorPtr.Pin()->GetDialogueBeingEdited(), RootSearchResult);
 
 			// Do now show the Dialogue in the search results.
-			const TArray<FFindInDialoguesResultPtr>& Children = RootSearchResult->GetChildren();
+			const TArray<TSharedPtr<FFindInDialoguesResult>>& Children = RootSearchResult->GetChildren();
 			if (Children.Num() == 1 && Children[0].IsValid())
 			{
 				// Make the root be the first result (aka de dialogue).
 				// NOTE: we must keep a reference here otherwise it crashes inside the parent reset
-				FFindInDialoguesResultPtr TempChild = Children[0];
+				TSharedPtr<FFindInDialoguesResult> TempChild = Children[0];
 				RootSearchResult = TempChild;
 				RootSearchResult->ClearParent();
 			}
@@ -298,12 +298,12 @@ FReply SFindInDialogues::HandleOpenGlobalFindResults()
 	return FReply::Handled();
 }
 
-void SFindInDialogues::HandleGetChildren(FFindInDialoguesResultPtr InItem, TArray<FFindInDialoguesResultPtr>& OutChildren)
+void SFindInDialogues::HandleGetChildren(TSharedPtr<FFindInDialoguesResult> InItem, TArray<TSharedPtr<FFindInDialoguesResult>>& OutChildren)
 {
 	OutChildren += InItem->GetChildren();
 }
 
-void SFindInDialogues::HandleTreeSelectionDoubleClicked(FFindInDialoguesResultPtr Item)
+void SFindInDialogues::HandleTreeSelectionDoubleClicked(TSharedPtr<FFindInDialoguesResult> Item)
 {
 	if (Item.IsValid())
 	{
@@ -311,7 +311,7 @@ void SFindInDialogues::HandleTreeSelectionDoubleClicked(FFindInDialoguesResultPt
 	}
 }
 
-TSharedRef<ITableRow> SFindInDialogues::HandleGenerateRow(FFindInDialoguesResultPtr InItem, const TSharedRef<STableViewBase>& OwnerTable)
+TSharedRef<ITableRow> SFindInDialogues::HandleGenerateRow(TSharedPtr<FFindInDialoguesResult> InItem, const TSharedRef<STableViewBase>& OwnerTable)
 {
 	// We have categories if we are searching in multiple Dialogues
 	// OR the grandparent of this item is not valid (aka root node)
@@ -321,7 +321,7 @@ TSharedRef<ITableRow> SFindInDialogues::HandleGenerateRow(FFindInDialoguesResult
 	// Category entry
 	if (bIsCategoryWidget)
 	{
-		return SNew(STableRow<FFindInDialoguesResultPtr>, OwnerTable)
+		return SNew(STableRow<TSharedPtr<FFindInDialoguesResult>>, OwnerTable)
 			[
 				SNew(SBorder)
 				.VAlign(VAlign_Center)
@@ -367,7 +367,7 @@ TSharedRef<ITableRow> SFindInDialogues::HandleGenerateRow(FFindInDialoguesResult
 	Args.Add(TEXT("DisplayTitle"), InItem->GetDisplayText());
 	FText Tooltip = FText::Format(LOCTEXT("DialogueResultSearchToolTip", "{Category} : {DisplayTitle}"), Args);
 
-	return SNew(STableRow<FFindInDialoguesResultPtr>, OwnerTable)
+	return SNew(STableRow<TSharedPtr<FFindInDialoguesResult>>, OwnerTable)
 		[
 			SNew(SHorizontalBox)
 

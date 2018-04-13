@@ -12,7 +12,7 @@
 class UDlgNode;
 
 // Custom serialization version for changes made in Dev-Dialogues stream
-struct FDlgDialogueObjectVersion
+struct DLGSYSTEM_API FDlgDialogueObjectVersion
 {
 	enum Type
 	{
@@ -39,33 +39,65 @@ private:
 
 /** Structure useful to cache all the names used by a participant */
 USTRUCT(BlueprintType)
-struct FDlgParticipantData
+struct DLGSYSTEM_API FDlgParticipantData
 {
 	GENERATED_USTRUCT_BODY()
 
 	/** FName based conditions (aka conditions of type DlgConditionEventCall). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
 	TSet<FName> Conditions;
 
 	/** FName based events (aka events of type EDlgEventType) */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
 	TSet<FName> Events;
 
-	/** Floats both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
-	TSet<FName> FloatVariableNames;
-
 	/** Integers both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
 	TSet<FName> IntVariableNames;
 
+	/** Floats both from conditions and from events */
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	TSet<FName> FloatVariableNames;
+
 	/** Booleans both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
 	TSet<FName> BoolVariableNames;
 
 	/** Names both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
 	TSet<FName> NameVariableNames;
+
+	/** Class Integers both from conditions and from events */
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	TSet<FName> ClassIntVariableNames;
+
+	/** Class Floats both from conditions and from events */
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	TSet<FName> ClassFloatVariableNames;
+
+	/** Class Booleans both from conditions and from events */
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	TSet<FName> ClassBoolVariableNames;
+
+	/** Class Names both from conditions and from events */
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	TSet<FName> ClassNameVariableNames;
+};
+
+
+/** Structure useful to cache all the names used by a participant */
+USTRUCT(BlueprintType)
+struct DLGSYSTEM_API FDlgParticipantClass
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** FName based conditions (aka conditions of type DlgConditionEventCall). */
+	UPROPERTY(VisibleAnywhere, Category = DlgParticipantData)
+	FName ParticipantName;
+
+	/** FName based events (aka events of type EDlgEventType) */
+	UPROPERTY(EditAnywhere, Category = DlgParticipantData, meta = (MustImplement = "DlgDialogueParticipant"))
+	UClass* ParticipantClass;
 };
 
 
@@ -78,7 +110,7 @@ UCLASS(BlueprintType, Meta = (DisplayThumbnail = "true"))
 class DLGSYSTEM_API UDlgDialogue : public UObject
 {
 	GENERATED_BODY()
-
+	typedef UDlgDialogue Self;
 public:
 
 	// Begin UObject Interface.
@@ -155,6 +187,12 @@ public:
 	 * @param PropertyChangedEvent the property that was modified
 	 */
 	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
+	/**
+	 * This alternate version of PostEditChange is called when properties inside structs are modified.  The property that was actually modified
+	 * is located at the tail of the list.  The head of the list of the UStructProperty member variable that contains the property that was modified.
+	 */
+	void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent) override;
 
 	/**
 	 * Callback used to allow object register its direct object references that are not already covered by
@@ -258,6 +296,21 @@ public:
 		}
 	}
 
+	/** EDITOR function, it only works if the participant class is setup in the DlgParticipantClasses array */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UClass* GetParticipantClass(const FName ParticipantName) const
+	{
+		for (const FDlgParticipantClass& Pair : DlgParticipantClasses)
+		{
+			if (Pair.ParticipantName == ParticipantName)
+			{
+				return Pair.ParticipantClass;
+			}
+		}
+		return nullptr;
+	}
+
+
 	/** Gets the Condition Names that correspond to the provided ParticipantName. */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	void GetConditions(const FName& ParticipantName, TSet<FName>& OutSet) const
@@ -278,16 +331,6 @@ public:
 		}
 	}
 
-	/** Gets the float variable Names that correspond to the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	void GetFloatNames(const FName& ParticipantName, TSet<FName>& OutSet) const
-	{
-		if (DlgData.Contains(ParticipantName))
-		{
-			OutSet.Append(DlgData[ParticipantName].FloatVariableNames);
-		}
-	}
-
 	/** Gets the int variable Names that correspond to the provided ParticipantName. */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	void GetIntNames(const FName& ParticipantName, TSet<FName>& OutSet) const
@@ -295,6 +338,16 @@ public:
 		if (DlgData.Contains(ParticipantName))
 		{
 			OutSet.Append(DlgData[ParticipantName].IntVariableNames);
+		}
+	}
+
+	/** Gets the float variable Names that correspond to the provided ParticipantName. */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	void GetFloatNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	{
+		if (DlgData.Contains(ParticipantName))
+		{
+			OutSet.Append(DlgData[ParticipantName].FloatVariableNames);
 		}
 	}
 
@@ -315,6 +368,47 @@ public:
 		if (DlgData.Contains(ParticipantName))
 		{
 			OutSet.Append(DlgData[ParticipantName].NameVariableNames);
+		}
+	}
+
+
+	/** Gets the int variable Names that correspond to the UClass of the provided ParticipantName. */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	void GetClassIntNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	{
+		if (DlgData.Contains(ParticipantName))
+		{
+			OutSet.Append(DlgData[ParticipantName].ClassIntVariableNames);
+		}
+	}
+
+	/** Gets the float variable Names that correspond to the UClass of the provided ParticipantName. */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	void GetClassFloatNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	{
+		if (DlgData.Contains(ParticipantName))
+		{
+			OutSet.Append(DlgData[ParticipantName].ClassFloatVariableNames);
+		}
+	}
+
+	/** Gets the bool variable Names that correspond to the UClass of the provided ParticipantName. */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	void GetClassBoolNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	{
+		if (DlgData.Contains(ParticipantName))
+		{
+			OutSet.Append(DlgData[ParticipantName].ClassBoolVariableNames);
+		}
+	}
+
+	/** Gets the name variable Names that correspond to the UClass of the provided ParticipantName. */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	void GetClassNameNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	{
+		if (DlgData.Contains(ParticipantName))
+		{
+			OutSet.Append(DlgData[ParticipantName].ClassNameVariableNames);
 		}
 	}
 
@@ -424,21 +518,26 @@ private:
 	int32 DlgVersion = FDlgDialogueObjectVersion::LatestVersion;
 
 	/** The name of the dialog, only used for reference in the text file, as this must always match the .uasset file name and .dlg file name */
-	UPROPERTY(VisibleAnywhere, Category = DlgData)
+	UPROPERTY(VisibleAnywhere, Category = DialogueData)
 	FName DlgName;
 
 	/** The Unique identifier for each dialogue. This is used to uniquely identify a Dialogue, instead of it's name or path. Much more safer. */
-	UPROPERTY(VisibleAnywhere, Category = DlgData)
+	UPROPERTY(VisibleAnywhere, Category = DialogueData)
 	FGuid DlgGuid;
 
+	/** All the Participants that require for you to define its UClass otherwise the auto completion/suggestion won't work in case you want to modify/check Class variables.  */
+	UPROPERTY(EditAnywhere, EditFixedSize, Category = DialogueData)
+	TArray<FDlgParticipantClass> DlgParticipantClasses;
+
 	/** Gathered data about events/conditions for each participant (for bp nodes, suggestions, etc.) */
-	UPROPERTY(VisibleAnywhere, Category = DlgData, Meta = (DlgNoExport))
+	UPROPERTY(VisibleAnywhere, AdvancedDisplay, Category = DialogueData, Meta = (DlgNoExport))
 	TMap<FName, FDlgParticipantData> DlgData;
 
-	UPROPERTY(VisibleAnywhere, Category = DlgData, Meta = (DlgNoExport))
+	/** All the speaker states used inside this Dialogue. */
+	UPROPERTY(VisibleAnywhere, AdvancedDisplay, Category = DialogueData, Meta = (DlgNoExport))
 	TSet<FName> DlgSpeakerStates;
 
-	/** Root node, Dialogue is started from the first child with satisfied condition (like the SelectorFirst node) */
+	/** Root node, Dialogue is started from the first child withf satisfied condition (like the SelectorFirst node) */
 	UPROPERTY(Instanced)
 	UDlgNode* StartNode;
 
@@ -446,7 +545,7 @@ private:
 	 * The new list of all nodes that belong to this Dialogue. Each nodes has children (edges) that have indices that point
 	 * to other nodes in this array.
 	 */
-	UPROPERTY(VisibleAnywhere, EditFixedSize, Instanced, Category = DlgData, Meta = (DlgWriteIndex))
+	UPROPERTY(VisibleAnywhere, AdvancedDisplay, EditFixedSize, Instanced, Category = DialogueData, Meta = (DlgWriteIndex))
 	TArray<UDlgNode*> Nodes;
 
 	// Useful for syncing on the first run with the text file.

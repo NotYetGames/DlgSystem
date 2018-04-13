@@ -232,11 +232,43 @@ bool UDlgDialogue::CanEditChange(const UProperty* InProperty) const
 void UDlgDialogue::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	RefreshData();
 
 	// Signal to the listeners
 	check(OnDialoguePropertyChanged.IsBound());
 	OnDialoguePropertyChanged.Broadcast(PropertyChangedEvent);
+}
+
+void UDlgDialogue::PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent)
+{
+	RefreshData();
+
+	const auto* ActiveMemberNode = PropertyChangedEvent.PropertyChain.GetActiveMemberNode();
+	const auto* ActivePropertyNode = PropertyChangedEvent.PropertyChain.GetActiveNode();
+	const FName MemberPropertyName = ActiveMemberNode && ActiveMemberNode->GetValue() ? ActiveMemberNode->GetValue()->GetFName() : NAME_None;
+	const FName PropertyName = ActivePropertyNode && ActivePropertyNode->GetValue() ? ActivePropertyNode->GetValue()->GetFName() : NAME_None;
+
+	// Check if the participant UClass implements our interface
+	if (MemberPropertyName == GET_MEMBER_NAME_CHECKED(Self, DlgParticipantClasses))
+	{
+		if (PropertyName == GET_MEMBER_NAME_CHECKED(FDlgParticipantClass, ParticipantClass))
+		{
+			//const int32 ArrayIndex = PropertyChangedEvent.GetArrayIndex(MemberPropertyName.ToString());
+			for (FDlgParticipantClass& Participant : DlgParticipantClasses)
+			{
+				if (!IsValid(Participant.ParticipantClass))
+				{
+					continue;
+				}
+
+				if (!Participant.ParticipantClass->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
+				{
+					Participant.ParticipantClass = nullptr;
+				}
+			}
+		}
+	}
+
+	Super::PostEditChangeChainProperty(PropertyChangedEvent);
 }
 
 void UDlgDialogue::AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector)
@@ -260,7 +292,7 @@ void UDlgDialogue::CreateGraph()
 		return;
 	}
 
-	if (StartNode == nullptr)
+	if (!IsValid(StartNode))
 	{
 		StartNode = ConstructDialogueNode<UDlgNode_Speech>();
 	}
@@ -275,7 +307,7 @@ void UDlgDialogue::CreateGraph()
 
 void UDlgDialogue::ClearGraph()
 {
-	if (DlgGraph == nullptr)
+	if (!IsValid(DlgGraph))
 	{
 		return;
 	}
@@ -338,7 +370,7 @@ void UDlgDialogue::ReloadFromFile()
 		}
 	}
 
-	if (StartNode == nullptr)
+	if (!IsValid(StartNode))
 	{
 		StartNode = ConstructDialogueNode<UDlgNode_Speech>();
 	}
@@ -449,6 +481,10 @@ void UDlgDialogue::RefreshData()
 		FDlgParticipantData& ParticipantData = GetParticipantDataEntry(ParticipantName, FallbackNodeOwnerName);
 		switch (ConditionType)
 		{
+			case EDlgConditionType::DlgConditionEventCall:
+				ParticipantData.Conditions.Add(ConditionName);
+				break;
+
 			case EDlgConditionType::DlgConditionIntCall:
 				ParticipantData.IntVariableNames.Add(ConditionName);
 				break;
@@ -461,9 +497,20 @@ void UDlgDialogue::RefreshData()
 			case EDlgConditionType::DlgConditionNameCall:
 				ParticipantData.NameVariableNames.Add(ConditionName);
 				break;
-			case EDlgConditionType::DlgConditionEventCall:
-				ParticipantData.Conditions.Add(ConditionName);
+
+			case EDlgConditionType::DlgConditionClassIntVariable:
+				ParticipantData.ClassIntVariableNames.Add(ConditionName);
 				break;
+			case EDlgConditionType::DlgConditionClassFloatVariable:
+				ParticipantData.ClassFloatVariableNames.Add(ConditionName);
+				break;
+			case EDlgConditionType::DlgConditionClassBoolVariable:
+				ParticipantData.ClassBoolVariableNames.Add(ConditionName);
+				break;
+			case EDlgConditionType::DlgConditionClassNameVariable:
+				ParticipantData.ClassNameVariableNames.Add(ConditionName);
+				break;
+
 			default:
 				break;
 		}
@@ -529,17 +576,27 @@ void UDlgDialogue::RefreshData()
 				case EDlgEventType::DlgEventModifyInt:
 					ParticipantData.IntVariableNames.Add(Event.EventName);
 					break;
-
 				case EDlgEventType::DlgEventModifyFloat:
 					ParticipantData.FloatVariableNames.Add(Event.EventName);
 					break;
-
 				case EDlgEventType::DlgEventModifyBool:
 					ParticipantData.BoolVariableNames.Add(Event.EventName);
 					break;
-
 				case EDlgEventType::DlgEventModifyName:
 					ParticipantData.NameVariableNames.Add(Event.EventName);
+					break;
+
+				case EDlgEventType::DlgEventModifyClassIntVariable:
+					ParticipantData.ClassIntVariableNames.Add(Event.EventName);
+					break;
+				case EDlgEventType::DlgEventModifyClassFloatVariable:
+					ParticipantData.ClassFloatVariableNames.Add(Event.EventName);
+					break;
+				case EDlgEventType::DlgEventModifyClassBoolVariable:
+					ParticipantData.ClassBoolVariableNames.Add(Event.EventName);
+					break;
+				case EDlgEventType::DlgEventModifyClassNameVariable:
+					ParticipantData.ClassNameVariableNames.Add(Event.EventName);
 					break;
 
 				default:
@@ -548,7 +605,25 @@ void UDlgDialogue::RefreshData()
 		}
 	}
 
+	// Remove default values
 	DlgSpeakerStates.Remove(FName(NAME_None));
+
+	TSet<FName> Participants;
+	GetAllParticipantNames(Participants);
+
+	// 1. remove outdated entries
+	for (int32 i = DlgParticipantClasses.Num() - 1; i >= 0; --i)
+	{
+		FName ExaminedName = DlgParticipantClasses[i].ParticipantName;
+		if (!Participants.Contains(ExaminedName))
+			DlgParticipantClasses.RemoveAtSwap(i);
+
+		Participants.Remove(ExaminedName);
+	}
+
+	// 2. add new entries
+	for (FName Participant : Participants)
+		DlgParticipantClasses.Add({ Participant, nullptr });
 }
 
 void UDlgDialogue::AutoFixGraph()

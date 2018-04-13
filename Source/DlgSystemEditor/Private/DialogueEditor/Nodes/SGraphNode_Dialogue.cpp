@@ -336,11 +336,13 @@ TSharedRef<SWidget> SGraphNode_DialogueNode::GetTitleWidget()
 		+SHorizontalBox::Slot()
 		.HAlign(Settings->TitleHorizontalAlignment)
 		.VAlign(VAlign_Top)
+		.AutoWidth()
 		[
 			SNew(SHorizontalBox)
 
 			// Error message
 			+SHorizontalBox::Slot()
+			.AutoWidth()
 			[
 				// POPUP ERROR MESSAGE
 				ErrorReporting->AsWidget()
@@ -348,6 +350,7 @@ TSharedRef<SWidget> SGraphNode_DialogueNode::GetTitleWidget()
 
 			// Title
 			+SHorizontalBox::Slot()
+			.AutoWidth()
 			[
 				SNew(SLevelOfDetailBranchNode)
 				.UseLowDetailSlot(this, &Self::UseLowDetailNodeTitles)

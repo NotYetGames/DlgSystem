@@ -55,40 +55,51 @@ private:
 	// Getters for the visibility of some properties
 	EVisibility GetParticipantNameVisibility() const
 	{
-		return (ConditionType != EDlgConditionType::DlgConditionNodeVisited && ConditionType != EDlgConditionType::DlgConditionHasSatisfiedChild)
-			   ? EVisibility::Visible : EVisibility::Hidden;
+		return ConditionType != EDlgConditionType::DlgConditionNodeVisited
+			&& ConditionType != EDlgConditionType::DlgConditionHasSatisfiedChild
+			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetCallbackNameVisibility() const
 	{
-		return (ConditionType != EDlgConditionType::DlgConditionNodeVisited && ConditionType != EDlgConditionType::DlgConditionHasSatisfiedChild)
-			   ? EVisibility::Visible : EVisibility::Hidden;
+		return ConditionType != EDlgConditionType::DlgConditionNodeVisited
+			&& ConditionType != EDlgConditionType::DlgConditionHasSatisfiedChild
+			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetIntValueVisibility() const
 	{
-		return (ConditionType == EDlgConditionType::DlgConditionIntCall || 
-			    ConditionType == EDlgConditionType::DlgConditionNodeVisited ||
-			    ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild)
+		return ConditionType == EDlgConditionType::DlgConditionIntCall
+			|| ConditionType == EDlgConditionType::DlgConditionClassIntVariable
+			|| ConditionType == EDlgConditionType::DlgConditionNodeVisited
+			|| ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetFloatValueVisibility() const
 	{
-		return ConditionType == EDlgConditionType::DlgConditionFloatCall ? EVisibility::Visible : EVisibility::Hidden;
+		return ConditionType == EDlgConditionType::DlgConditionFloatCall
+			|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
+			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetNameValueVisibility() const
 	{
-		return ConditionType == EDlgConditionType::DlgConditionNameCall ? EVisibility::Visible : EVisibility::Hidden;
+		return ConditionType == EDlgConditionType::DlgConditionNameCall
+			|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable
+			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetBoolValueVisibility() const
 	{
-		return ConditionType == EDlgConditionType::DlgConditionEventCall || ConditionType == EDlgConditionType::DlgConditionBoolCall
-			|| ConditionType == EDlgConditionType::DlgConditionNodeVisited || ConditionType == EDlgConditionType::DlgConditionNameCall
-			|| ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild ?
-			EVisibility::Visible : EVisibility::Hidden;
+		return ConditionType == EDlgConditionType::DlgConditionEventCall
+			|| ConditionType == EDlgConditionType::DlgConditionBoolCall
+			|| ConditionType == EDlgConditionType::DlgConditionClassBoolVariable
+			|| ConditionType == EDlgConditionType::DlgConditionNodeVisited
+			|| ConditionType == EDlgConditionType::DlgConditionNameCall
+			|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable
+			|| ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild
+			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetLongTermMemoryVisibility() const
@@ -98,78 +109,18 @@ private:
 
 	EVisibility GetOperationVisibility() const
 	{
-		return ConditionType == EDlgConditionType::DlgConditionFloatCall || ConditionType == EDlgConditionType::DlgConditionIntCall
+		return ConditionType == EDlgConditionType::DlgConditionFloatCall
+			|| ConditionType == EDlgConditionType::DlgConditionIntCall
+			|| ConditionType == EDlgConditionType::DlgConditionClassIntVariable
+			|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	/** Gets all the condition name suggestions depending on ConditionType from all Dialogues. */
-	TArray<FName> GetAllDialoguesCallbackNames() const
-	{
-		TArray<FName> Suggestions;
-		const FName ParticipantName = DetailsPanel::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
-
-		switch (ConditionType)
-		{
-		case EDlgConditionType::DlgConditionBoolCall:
-			UDlgManager::GetAllDialoguesBoolNames(ParticipantName, Suggestions);
-			break;
-
-		case EDlgConditionType::DlgConditionFloatCall:
-			UDlgManager::GetAllDialoguesFloatNames(ParticipantName, Suggestions);
-			break;
-
-		case EDlgConditionType::DlgConditionIntCall:
-			UDlgManager::GetAllDialoguesIntNames(ParticipantName, Suggestions);
-			break;
-
-		case EDlgConditionType::DlgConditionNameCall:
-			UDlgManager::GetAllDialoguesNameNames(ParticipantName, Suggestions);
-			break;
-
-		case EDlgConditionType::DlgConditionEventCall:
-		case EDlgConditionType::DlgConditionNodeVisited:
-		default:
-			UDlgManager::GetAllDialoguesConditionNames(ParticipantName, Suggestions);
-			break;
-		}
-
-		return Suggestions;
-	}
+	TArray<FName> GetAllDialoguesCallbackNames() const;
 
 	/** Gets all the condition name suggestions depending on EventType from the current Dialogue */
-	TArray<FName> GetCurrentDialogueCallbackNames() const
-	{
-		const FName ParticipantName = DetailsPanel::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
-		TSet<FName> Names;
-
-		switch (ConditionType)
-		{
-		case EDlgConditionType::DlgConditionBoolCall:
-			Dialogue->GetBoolNames(ParticipantName, Names);
-			break;
-
-		case EDlgConditionType::DlgConditionNameCall:
-			Dialogue->GetNameNames(ParticipantName, Names);
-			break;
-
-		case EDlgConditionType::DlgConditionFloatCall:
-			Dialogue->GetFloatNames(ParticipantName, Names);
-			break;
-
-		case EDlgConditionType::DlgConditionIntCall:
-			Dialogue->GetIntNames(ParticipantName, Names);
-			break;
-
-		case EDlgConditionType::DlgConditionEventCall:
-		case EDlgConditionType::DlgConditionNodeVisited:
-		default:
-			Dialogue->GetConditions(ParticipantName, Names);
-			break;
-		}
-
-		UDlgManager::SortDefault(Names);
-		return Names.Array();
-	}
+	TArray<FName> GetCurrentDialogueCallbackNames() const;
 
 	/** Gets the ParticipantNames from all Dialogues. */
 	TArray<FName> GetAllDialoguesParticipantNames() const

@@ -1,10 +1,11 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgEvent.h"
+#include "DlgReflectionHelper.h"
 #include "DlgDialogueParticipant.h"
 
 void FDlgEvent::Call(UObject* TargetParticipant) const
 {
-	if (TargetParticipant == nullptr)
+	if (!IsValid(TargetParticipant))
 		return;
 
 	switch (EventType)
@@ -12,6 +13,7 @@ void FDlgEvent::Call(UObject* TargetParticipant) const
 	case EDlgEventType::DlgEventEvent:
 		IDlgDialogueParticipant::Execute_OnDialogueEvent(TargetParticipant, EventName);
 		break;
+
 	case EDlgEventType::DlgEventModifyInt:
 		IDlgDialogueParticipant::Execute_ModifyIntValue(TargetParticipant, EventName, bDelta, IntValue);
 		break;
@@ -24,6 +26,20 @@ void FDlgEvent::Call(UObject* TargetParticipant) const
 	case EDlgEventType::DlgEventModifyName:
 		IDlgDialogueParticipant::Execute_ModifyNameValue(TargetParticipant, EventName, NameValue);
 		break;
+
+	case EDlgEventType::DlgEventModifyClassIntVariable:
+		UDlgReflectionHelper::ModifyVariable<UIntProperty>(TargetParticipant, EventName, IntValue, bDelta);
+		break;
+	case EDlgEventType::DlgEventModifyClassFloatVariable:
+		UDlgReflectionHelper::ModifyVariable<UFloatProperty>(TargetParticipant, EventName, FloatValue, bDelta);
+		break;
+	case EDlgEventType::DlgEventModifyClassBoolVariable:
+		UDlgReflectionHelper::SetVariable<UBoolProperty>(TargetParticipant, EventName, bValue);
+		break;
+	case EDlgEventType::DlgEventModifyClassNameVariable:
+		UDlgReflectionHelper::SetVariable<UNameProperty>(TargetParticipant, EventName, NameValue);
+		break;
+
 	default:
 		checkNoEntry();
 	}

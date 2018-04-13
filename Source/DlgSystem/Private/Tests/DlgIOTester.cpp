@@ -33,7 +33,13 @@ bool FDlgIOTester::TestAllParsers()
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDlgIOAutomationTest, "DlgSystem.IO.Tests", EAutomationTestFlags::Disabled | EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter)
+// NOTE: to run this test, first remove the EAutomationTestFlags::Disabled flag
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDlgIOAutomationTest, "DlgSystem.IO.Tests", EAutomationTestFlags::Disabled |
+																			 EAutomationTestFlags::RequiresUser | 
+																			 EAutomationTestFlags::EditorContext | 
+																			 EAutomationTestFlags::ClientContext |
+																			 EAutomationTestFlags::CommandletContext | 
+																			 EAutomationTestFlags::SmokeFilter)
 
 bool FDlgIOAutomationTest::RunTest(const FString& Parameters)
 {

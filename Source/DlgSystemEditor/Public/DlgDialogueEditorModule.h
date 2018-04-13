@@ -10,7 +10,7 @@
  * Implementation of the interface for dialogue graph interaction between DlgSystem module <-> DlgSystemEditor module.
  * Set in UDialogueGraph constructor for Each Dialogue
  */
-class FDlgDialogueEditorModule : public IDlgDialogueEditorModule
+class DLGSYSTEMEDITOR_API FDlgDialogueEditorModule : public IDlgDialogueEditorModule
 {
 public:
 	FDlgDialogueEditorModule() {}

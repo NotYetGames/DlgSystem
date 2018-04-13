@@ -4,6 +4,7 @@
 #include "DlgMemory.h"
 #include "DlgNode.h"
 #include "DlgContextInternal.h"
+#include "DlgReflectionHelper.h"
 
 #include "DlgDialogueParticipant.h"
 
@@ -35,7 +36,7 @@ bool FDlgCondition::EvaluateArray(const TArray<FDlgCondition>& DlgConditionArray
 
 bool FDlgCondition::Evaluate(UDlgContextInternal* DlgContext, UObject* DlgParticipant) const
 {
-	if (DlgContext == nullptr)
+	if (!IsValid(DlgContext))
 	{
 		return false;
 	}
@@ -56,6 +57,7 @@ bool FDlgCondition::Evaluate(UDlgContextInternal* DlgContext, UObject* DlgPartic
 		case EDlgConditionType::DlgConditionEventCall:
 			return CheckParticipant(DlgParticipant) && IDlgDialogueParticipant::Execute_CheckCondition(DlgParticipant, CallbackName) == bBoolValue;
 
+
 		case EDlgConditionType::DlgConditionBoolCall:
 			return CheckParticipant(DlgParticipant) && IDlgDialogueParticipant::Execute_GetBoolValue(DlgParticipant, CallbackName) == bBoolValue;
 
@@ -66,7 +68,21 @@ bool FDlgCondition::Evaluate(UDlgContextInternal* DlgContext, UObject* DlgPartic
 			return CheckParticipant(DlgParticipant) && CheckInt(IDlgDialogueParticipant::Execute_GetIntValue(DlgParticipant, CallbackName));
 
 		case EDlgConditionType::DlgConditionNameCall:
-			return CheckParticipant(DlgParticipant) && (IDlgDialogueParticipant::Execute_GetNameValue(DlgParticipant, CallbackName) == NameValue) == bBoolValue;
+			return CheckParticipant(DlgParticipant) && ((IDlgDialogueParticipant::Execute_GetNameValue(DlgParticipant, CallbackName) == NameValue) == bBoolValue);
+
+
+		case EDlgConditionType::DlgConditionClassBoolVariable:
+			return CheckParticipant(DlgParticipant) && UDlgReflectionHelper::GetVariable<UBoolProperty, bool>(DlgParticipant, CallbackName) == bBoolValue;
+
+		case EDlgConditionType::DlgConditionClassFloatVariable:
+			return CheckParticipant(DlgParticipant) && CheckFloat(UDlgReflectionHelper::GetVariable<UFloatProperty, float>(DlgParticipant, CallbackName));
+
+		case EDlgConditionType::DlgConditionClassIntVariable:
+			return CheckParticipant(DlgParticipant) && CheckInt(UDlgReflectionHelper::GetVariable<UIntProperty, int32>(DlgParticipant, CallbackName));
+
+		case EDlgConditionType::DlgConditionClassNameVariable:
+			return CheckParticipant(DlgParticipant) && ((UDlgReflectionHelper::GetVariable<UNameProperty, FName>(DlgParticipant, CallbackName) == NameValue) == bBoolValue);
+
 
 		case EDlgConditionType::DlgConditionNodeVisited:
 			if (bLongTermMemory)
@@ -75,7 +91,7 @@ bool FDlgCondition::Evaluate(UDlgContextInternal* DlgContext, UObject* DlgPartic
 			}
 
 			return DlgContext->WasNodeVisitedInThisContext(IntValue) == bBoolValue;
-		
+
 		case EDlgConditionType::DlgConditionHasSatisfiedChild:
 			{
 				UDlgNode* Node = DlgContext->GetNode(IntValue);

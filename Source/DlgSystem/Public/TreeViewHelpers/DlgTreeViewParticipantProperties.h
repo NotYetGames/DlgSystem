@@ -6,6 +6,7 @@
 
 #include "DlgManager.h"
 #include "DlgTreeViewVariableProperties.h"
+#include "DlgTreeViewHelper.h"
 
 /** Structure that holds the common properties of a Participant (where it appears and stuff like this) in the STreeView. */
 template <class VariablePropertyType>
@@ -21,24 +22,22 @@ public:
 	/** Sorts all the properties it can */
 	void Sort()
 	{
-		Dialogues.Sort(PredicateSortDialogueWeakPtrAlphabeticallyAscending);
+		Dialogues.Sort(FDlgTreeViewHelper::PredicateSortDialogueWeakPtrAlphabeticallyAscending);
 		for (const auto& Pair : Events)
 		{
 			Pair.Value->Sort();
 		}
 
-		UDlgManager::SortDefault(Events);
-		UDlgManager::SortDefault(Conditions);
-		UDlgManager::SortDefault(Integers);
-		UDlgManager::SortDefault(Floats);
-		UDlgManager::SortDefault(Bools);
-		UDlgManager::SortDefault(FNames);
-	}
-
-	/** Does this participant has any int/float/bool variables */
-	bool HasVariables() const
-	{
-		return Integers.Num() > 0 || Floats.Num() > 0 || Bools.Num() > 0 || FNames.Num() > 0;
+		FDlgHelper::SortDefault(Events);
+		FDlgHelper::SortDefault(Conditions);
+		FDlgHelper::SortDefault(Integers);
+		FDlgHelper::SortDefault(Floats);
+		FDlgHelper::SortDefault(Bools);
+		FDlgHelper::SortDefault(FNames);
+		FDlgHelper::SortDefault(ClassIntegers);
+		FDlgHelper::SortDefault(ClassFloats);
+		FDlgHelper::SortDefault(ClassBools);
+		FDlgHelper::SortDefault(ClassFNames);
 	}
 
 	// Setters
@@ -82,6 +81,30 @@ public:
 		return AddDialogueToVariable(&FNames, FNameVariableName, Dialogue);
 	}
 
+	/** Returns the IntName Property */
+	TSharedPtr<VariablePropertyType> AddDialogueToClassIntVariable(const FName& IntVariableName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	{
+		return AddDialogueToVariable(&ClassIntegers, IntVariableName, Dialogue);
+	}
+
+	/** Returns the FloatName Property */
+	TSharedPtr<VariablePropertyType> AddDialogueToClassFloatVariable(const FName& FloatVariableName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	{
+		return AddDialogueToVariable(&ClassFloats, FloatVariableName, Dialogue);
+	}
+
+	/** Returns the BoolName Property */
+	TSharedPtr<VariablePropertyType> AddDialogueToClassBoolVariable(const FName& BoolVariableName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	{
+		return AddDialogueToVariable(&ClassBools, BoolVariableName, Dialogue);
+	}
+
+	/** Returns the FName Property */
+	TSharedPtr<VariablePropertyType> AddDialogueToClassFNameVariable(const FName& FNameVariableName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	{
+		return AddDialogueToVariable(&ClassFNames, FNameVariableName, Dialogue);
+	}
+
 	// Getters
 	const TSet<TWeakObjectPtr<UDlgDialogue>>& GetDialogues() const { return Dialogues; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetEvents() const { return Events; }
@@ -90,6 +113,34 @@ public:
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetFloats() const { return Floats; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetBools() const { return Bools; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetFNames() const { return FNames; }
+	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetClassIntegers() const { return ClassIntegers; }
+	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetClassFloats() const { return ClassFloats; }
+	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetClassBools() const { return ClassBools; }
+	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetClassFNames() const { return ClassFNames; }
+
+	/** Does this participant has any variables of the basic type */
+	bool HasVariables() const
+	{
+		return Integers.Num() > 0 || Floats.Num() > 0 || Bools.Num() > 0 || FNames.Num() > 0;
+	}
+
+	/** Does this participant has any variables that belong to the UClass of the participant */
+	bool HasClassVariables() const
+	{
+		return ClassIntegers.Num() > 0 || ClassFloats.Num() > 0 || ClassBools.Num() > 0 || ClassFNames.Num() > 0;
+	}
+
+	bool HasDialogues() const { return Dialogues.Num() > 0; }
+	bool HasEvents() const { return Events.Num() > 0; }
+	bool HasConditions() const { return Conditions.Num() > 0; }
+	bool HasIntegers() const { return Integers.Num() > 0; }
+	bool HasFloats() const { return Floats.Num() > 0; }
+	bool HasBools() const { return Bools.Num() > 0; }
+	bool HasFNames() const { return FNames.Num() > 0; }
+	bool HasClassIntegers() const { return ClassIntegers.Num() > 0; }
+	bool HasClassFloats() const { return ClassFloats.Num() > 0; }
+	bool HasClassBools() const { return ClassBools.Num() > 0; }
+	bool HasClassFNames() const { return ClassFNames.Num() > 0; }
 
 protected:
 	TSharedPtr<VariablePropertyType> AddDialogueToVariable(TMap<FName, TSharedPtr<VariablePropertyType>>* VariableMap,
@@ -161,4 +212,32 @@ protected:
 	 * Value: The properties of this FName variable
 	 */
 	TMap<FName, TSharedPtr<VariablePropertyType>> FNames;
+
+	/**
+	 * Int variables that belong to the UClass of this participant
+	 * Key: Int Variable Name
+	 * Value: The properties of this int variable
+	 */
+	TMap<FName, TSharedPtr<VariablePropertyType>> ClassIntegers;
+
+	/**
+	 * Float variables that belong to the UClass of this participant
+	 * Key: Float Variable Name
+	 * Value: The properties of this float variable
+	 */
+	TMap<FName, TSharedPtr<VariablePropertyType>> ClassFloats;
+
+	/**
+	 * Bool variables that belong to the UClass of this participant
+	 * Key: Bool Variable Name
+	 * Value: The properties of this bool variable
+	 */
+	TMap<FName, TSharedPtr<VariablePropertyType>> ClassBools;
+
+	/**
+	 * FNames variables that belong to the UClass of this participant
+	 * Key: FName Variable Name
+	 * Value: The properties of this FName variable
+	 */
+	TMap<FName, TSharedPtr<VariablePropertyType>> ClassFNames;
 };

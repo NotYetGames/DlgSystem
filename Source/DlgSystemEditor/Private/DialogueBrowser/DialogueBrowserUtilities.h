@@ -37,7 +37,9 @@ public:
 class FDialogueBrowserUtilities
 {
 public:
-	static bool PredicateCompareDialogueTreeNode(FDialogueBrowserTreeNodePtr FirstNode, FDialogueBrowserTreeNodePtr SecondNode)
+	/** Compare two FDialogueBrowserTreeNode */
+	static bool PredicateCompareDialogueTreeNode(const TSharedPtr<FDialogueBrowserTreeNode> FirstNode,
+		const TSharedPtr<FDialogueBrowserTreeNode> SecondNode)
 	{
 		check(FirstNode.IsValid());
 		check(SecondNode.IsValid());

@@ -81,6 +81,7 @@ public:
  */
 class DLGSYSTEM_API FDlgHelper
 {
+	typedef FDlgHelper Self;
 public:
 	// Is FirstSet == SecondSet
 	template <typename Type>
@@ -112,5 +113,35 @@ public:
 	static bool AreMapsEqual(const TMap<KeyType, ValueType>& FirstMap, const TMap<KeyType, ValueType>& SecondMap)
 	{
 		return FDlgHelper_MapVariantImpl<KeyType, ValueType>::AreMapsEqual(FirstMap, SecondMap);
+	}
+
+	// Default comparison function
+	static bool PredicateSortFNameAlphabeticallyAscending(const FName& A, const FName& B)
+	{
+		return A.Compare(B) < 0;
+	}
+
+	/** Default sorting function used by all the Dialogue related methods. Sorts alphabetically ascending. */
+	static void SortDefault(TArray<FName>& OutArray)
+    {
+		OutArray.Sort(Self::PredicateSortFNameAlphabeticallyAscending);
+    }
+	static void SortDefault(TSet<FName>& OutSet)
+	{
+		OutSet.Sort(Self::PredicateSortFNameAlphabeticallyAscending);
+	}
+
+	template<typename ValueType>
+	static void SortDefault(TMap<FName, ValueType>& Map)
+	{
+		Map.KeySort(Self::PredicateSortFNameAlphabeticallyAscending);
+	}
+
+	/** Helper method, used to append a set to an array. Also sort. */
+	static void AppendSortedSetToArray(const TSet<FName>& InSet, TArray<FName>& OutArray)
+	{
+		TArray<FName> UniqueNamesArray = InSet.Array();
+		SortDefault(UniqueNamesArray);
+		OutArray.Append(UniqueNamesArray);
 	}
 };

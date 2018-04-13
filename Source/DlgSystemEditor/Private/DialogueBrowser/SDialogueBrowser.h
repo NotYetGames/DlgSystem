@@ -42,52 +42,56 @@ private:
 	TSharedRef<SWidget> GetFilterTextBoxWidget();
 
 	/** Add Dialogue Children of type TextType to the InItem. */
-	void AddDialogueChildrenToItemFromProperty(FDialogueBrowserTreeNodePtr InItem,
+	void AddDialogueChildrenToItemFromProperty(TSharedPtr<FDialogueBrowserTreeNode> InItem,
 								   const TSharedPtr<FDialogueBrowserTreeVariableProperties>* PropertyPtr,
 								   const EDialogueTreeNodeTextType TextType);
 
 	/** Add GraphNode Children of type TextType to the InItem. */
-	void AddGraphNodeChildrenToItem(FDialogueBrowserTreeNodePtr InItem,
+	void AddGraphNodeChildrenToItem(TSharedPtr<FDialogueBrowserTreeNode> InItem,
 									const TSet<TWeakObjectPtr<UDialogueGraphNode>>& GraphNodes,
 									const EDialogueTreeNodeTextType TextType);
 
 	/** Add EdgeNode Children of type TextType to the InItem. */
-	void AddEdgeNodeChildrenToItem(FDialogueBrowserTreeNodePtr InItem,
+	void AddEdgeNodeChildrenToItem(TSharedPtr<FDialogueBrowserTreeNode> InItem,
 									const TSet<TWeakObjectPtr<UDialogueGraphNode_Edge>>& EdgeNodes,
 									const EDialogueTreeNodeTextType TextType);
 
 	/** Add both GraphNode Children and EdgeNode Children to the InItem from The Property. */
-	void AddGraphNodeBaseChildrenToItemFromProperty(FDialogueBrowserTreeNodePtr InItem,
+	void AddGraphNodeBaseChildrenToItemFromProperty(TSharedPtr<FDialogueBrowserTreeNode> InItem,
 													 const TSharedPtr<FDialogueBrowserTreeVariableProperties>* PropertyPtr,
 													 const EDialogueTreeNodeTextType GraphNodeTextType,
 													 const EDialogueTreeNodeTextType EdgeNodeTextType);
+	
+	/** Adds the Variables to the Item */
+	void AddVariableChildrenToItem(TSharedPtr<FDialogueBrowserTreeNode> Item, const TMap<FName, TSharedPtr<FDialogueBrowserTreeVariableProperties>>& Variables,
+		const EDialogueTreeNodeTextType VariableType);
 
 	/** Recursively build the view item. */
-	void BuildTreeViewItem(FDialogueBrowserTreeNodePtr Item);
+	void BuildTreeViewItem(TSharedPtr<FDialogueBrowserTreeNode> Item);
 
 	// helper function to generate inline widgets for item.
-	TSharedRef<SWidget> MakeInlineWidget(const FDialogueBrowserTreeNodePtr InItem);
+	TSharedRef<SWidget> MakeInlineWidget(const TSharedPtr<FDialogueBrowserTreeNode> InItem);
 
 	/** Make the row of buttons for the graph nodes. */
-	TSharedRef<SWidget> MakeButtonWidgetForGraphNodes(const TArray<FDialogueBrowserTreeNodePtr>& InChildren);
+	TSharedRef<SWidget> MakeButtonWidgetForGraphNodes(const TArray<TSharedPtr<FDialogueBrowserTreeNode>>& InChildren);
 
 	/** Make the buttons to open the dialogue. */
-	TSharedRef<SWidget> MakeButtonsWidgetForDialogue(const FDialogueBrowserTreeNodePtr InItem);
+	TSharedRef<SWidget> MakeButtonsWidgetForDialogue(const TSharedPtr<FDialogueBrowserTreeNode> InItem);
 
 	/** Text search changed */
 	void HandleSearchTextCommited(const FText& InText, ETextCommit::Type InCommitType);
 
 	/** Make the row */
-	TSharedRef<ITableRow> HandleGenerateRow(FDialogueBrowserTreeNodePtr InItem, const TSharedRef<STableViewBase>& OwnerTable);
+	TSharedRef<ITableRow> HandleGenerateRow(TSharedPtr<FDialogueBrowserTreeNode> InItem, const TSharedRef<STableViewBase>& OwnerTable);
 
 	/** General Get children  */
-	void HandleGetChildren(FDialogueBrowserTreeNodePtr InItem, TArray<FDialogueBrowserTreeNodePtr>& OutChildren);
+	void HandleGetChildren(TSharedPtr<FDialogueBrowserTreeNode> InItem, TArray<TSharedPtr<FDialogueBrowserTreeNode>>& OutChildren);
 
 	/** Handles changes in the Tree View. */
-	void HandleTreeSelectionChanged(FDialogueBrowserTreeNodePtr NewValue, ESelectInfo::Type SelectInfo);
+	void HandleTreeSelectionChanged(TSharedPtr<FDialogueBrowserTreeNode> NewValue, ESelectInfo::Type SelectInfo);
 
 	/** User clicked on item. */
-	void HandleDoubleClick(FDialogueBrowserTreeNodePtr InItem);
+	void HandleDoubleClick(TSharedPtr<FDialogueBrowserTreeNode> InItem);
 
 	/** Refresh button clicked. */
 	FReply HandleOnRefresh()
@@ -97,47 +101,38 @@ private:
 	}
 
 	/** Callback for expanding tree items recursively */
-	void HandleSetExpansionRecursive(FDialogueBrowserTreeNodePtr InItem, bool bInIsItemExpanded);
+	void HandleSetExpansionRecursive(TSharedPtr<FDialogueBrowserTreeNode> InItem, bool bInIsItemExpanded);
 
 	/** When the sort option selection changes. */
 	void HandleSortSelectionChanged(SortOptionType Selection, ESelectInfo::Type SelectInfo);
 
 	/** Finds the object of the item inside the Content browser. */
-	FReply FindInContentBrowserForItem(const FDialogueBrowserTreeNodePtr InItem);
+	FReply FindInContentBrowserForItem(const TSharedPtr<FDialogueBrowserTreeNode> InItem);
 
 	/** Makes Participant categories. */
-	TArray<FDialogueBrowserTreeNodePtr> MakeParticipantCategoriesChildren(FDialogueBrowserTreeNodePtr Parent) const;
+	TArray<TSharedPtr<FDialogueBrowserTreeNode>> MakeParticipantCategoriesChildren(
+		TSharedPtr<FDialogueBrowserTreeNode> Parent,
+		TSharedPtr<FDialogueBrowserTreeParticipantProperties> ParticipantProperties,
+		const bool bHideEmptyCategories) const;
 
 	/** Makes Variable categories. */
-	TArray<FDialogueBrowserTreeNodePtr> MakeVariableCategoriesChildren(FDialogueBrowserTreeNodePtr Parent) const;
+	TArray<TSharedPtr<FDialogueBrowserTreeNode>> MakeVariableCategoriesChildren(
+		TSharedPtr<FDialogueBrowserTreeNode> Parent,
+		TSharedPtr<FDialogueBrowserTreeParticipantProperties> ParticipantProperties,
+		const bool bHideEmptyCategories) const;
 
-	template<typename ItemType, typename ComparisonType>
-	void RestoreExpansionState(TSharedPtr<STreeView<ItemType>> InTree, const TArray<ItemType>& ItemSource,
-							   const TSet<ItemType>& OldExpansionState, ComparisonType ComparisonFunction)
-	{
-		check(InTree.IsValid());
-
-		// Iterate over new tree items
-		for(int32 ItemIdx = 0; ItemIdx < ItemSource.Num(); ItemIdx++)
-		{
-			ItemType NewItem = ItemSource[ItemIdx];
-
-			// Look through old expansion state
-			for (const ItemType OldItem : OldExpansionState)
-			{
-				// See if this matches this new item
-				if (ComparisonFunction(OldItem, NewItem))
-				{
-					// It does, so expand it
-					InTree->SetItemExpansion(NewItem, true);
-				}
-			}
-		}
-	}
+	/** Makes Class Variable categories. */
+	TArray<TSharedPtr<FDialogueBrowserTreeNode>> MakeClassVariableCategoriesChildren(
+		TSharedPtr<FDialogueBrowserTreeNode> Parent,
+		TSharedPtr<FDialogueBrowserTreeParticipantProperties> ParticipantProperties,
+		const bool bHideEmptyCategories) const;
 
 	/** Makes a widget that has IconName. Text of item. */
 	TSharedRef<SHorizontalBox> MakeIconAndTextWidget(const FText& InText,
 		const FSlateBrush* IconBrush, const int32 IconSize = 24);
+
+	/** Fills the menu of the View Options */
+	TSharedRef<SWidget>	FillViewOptionsEntries();
 
 private:
 	/** The search box */
@@ -147,13 +142,13 @@ private:
 	FString FilterString;
 
 	/** The root data source */
-	FDialogueBrowserTreeNodePtr RootTreeItem;
+	TSharedPtr<FDialogueBrowserTreeNode> RootTreeItem;
 
 	/** The root children. Kept seperate so that we do not corrupt the data. */
-	TArray<FDialogueBrowserTreeNodePtr> RootChildren;
+	TArray<TSharedPtr<FDialogueBrowserTreeNode>> RootChildren;
 
 	/** Tree view for showing all participants, etc. */
-	TSharedPtr<STreeView<FDialogueBrowserTreeNodePtr>> ParticipantsTreeView;
+	TSharedPtr<STreeView<TSharedPtr<FDialogueBrowserTreeNode>>> ParticipantsTreeView;
 
 	/**
 	 * Used for fast lookup of each participants

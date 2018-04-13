@@ -134,7 +134,7 @@ namespace DetailsPanel
 		}
 
 		// One last try, get to the root of the problem ;)
-		if (Dialogue == nullptr)
+		if (!IsValid(Dialogue))
 		{
 			TSharedPtr<IPropertyHandle> ParentHandle = PropertyHandle->GetParentHandle();
 			// Find the root property handle
@@ -191,7 +191,7 @@ namespace DetailsPanel
 	{
 		TSet<FName> ParticipantNames;
 		Dialogue->GetAllParticipantNames(ParticipantNames);
-		UDlgManager::SortDefault(ParticipantNames);
+		FDlgHelper::SortDefault(ParticipantNames);
 		return ParticipantNames.Array();
 	}
 }

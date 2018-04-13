@@ -115,9 +115,9 @@ public:
 	}
 
 	/**
-	 * Recursively collects all child/grandchild/decendent nodes.
+	 * Recursively collects all child/grandchild/descendant nodes.
 	 * Aka Flattened tree.
-	 * @param  OutNodeArray	The array to fill out with decendent nodes.
+	 * @param  OutNodeArray	The array to fill out with descendant nodes.
 	 */
 	void GetAllNodes(TArray<TSharedPtr<SelfType>>& OutNodeArray) const
 	{
@@ -125,6 +125,87 @@ public:
 		{
 			OutNodeArray.Add(ChildNode);
 			ChildNode->GetAllNodes(OutNodeArray);
+		}
+	}
+
+	/**
+	 * Searches the node so that the OutNodes will only contains paths to nodes that contains the specified string.
+	 * @param InSearch		The string to search by
+	 * @param OutNodes		Array of arrays, each array inside represents a node path that points to the Node that contains the InSearch
+	 */
+	virtual void FilterPathsToNodesThatContainText(const FString& InSearch, TArray<TArray<TSharedPtr<SelfType>>>& OutNodes)
+	{
+		for (int32 Index = 0, Num = Children.Num(); Index < Num; Index++)
+		{
+			TSharedPtr<SelfType> CurrentChild = Children[Index];
+			CurrentChild->SetIsVisible(false);
+			GetPathToChildThatContainsText(Children[Index], InSearch, OutNodes);
+
+			// Let child classes handle this themselves
+			PostFilterPathsToNodes(CurrentChild);
+		}
+	}
+
+protected:
+	/** Called inside FilterPathsToNodesThatContainText after we got the path for the current Child.  */
+	virtual void PostFilterPathsToNodes(TSharedPtr<SelfType> Child) {}
+
+	/** Called inside GetPathToChildThatContainsText after we advanced one parent in the path */
+	virtual void PostBuildPathToTopMostParent(TSharedPtr<SelfType> CurrentParentNode) {}
+
+	/** Called inside GetPathToChildThatContainsText after we got the path of the GrandChild  */
+	virtual bool FilterIsChildVisible(TSharedPtr<SelfType> GrandChild)
+	{
+		return GrandChild->IsLeaf();
+	}
+
+	/** Called inside GetPathToChildThatContainsText to determine if the child has the text  */
+	virtual bool FilterDoesChildContainText(const TSharedPtr<SelfType>& Child, const FString& InSearch)
+	{
+		return Child->DoesDisplayTextContains(InSearch);
+	}
+
+	virtual void GetPathToChildThatContainsText(const TSharedPtr<SelfType>& Child, const FString& InSearch,
+		TArray<TArray<TSharedPtr<SelfType>>>& OutNodes)
+	{
+		// Child has text, build path to it
+		bool bChildIsVisible;
+		if (FilterDoesChildContainText(Child, InSearch))
+		{
+			bChildIsVisible = true;
+
+			// Build path to top most parent
+			TSharedPtr<SelfType> CurrentNode = Child;
+			TArray<TSharedPtr<SelfType>> ChildOutNodes;
+			while (CurrentNode->HasParent())
+			{
+				ChildOutNodes.Add(CurrentNode);
+
+				// Parents are visible too
+				TSharedPtr<SelfType> CurrentParentNode = CurrentNode->GetParent().Pin();
+				CurrentParentNode->SetIsVisible(bChildIsVisible);
+
+				// Advance up the tree
+				CurrentNode = CurrentParentNode;
+
+				PostBuildPathToTopMostParent(CurrentParentNode);
+			}
+
+			// reverse
+			Algo::Reverse(ChildOutNodes);
+			OutNodes.Emplace(ChildOutNodes);
+		}
+		else
+		{
+			bChildIsVisible = false;
+		}
+		Child->SetIsVisible(bChildIsVisible);
+
+		// Check children
+		for (const TSharedPtr<SelfType>& GrandChild : Child->GetChildren())
+		{
+			GetPathToChildThatContainsText(GrandChild, InSearch, OutNodes);
+			GrandChild->SetIsVisible(bChildIsVisible && FilterIsChildVisible(GrandChild));
 		}
 	}
 

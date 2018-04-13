@@ -8,13 +8,19 @@ UENUM()
 enum class EDlgEventType : uint8
 {
 	/** just a notification with an FName parameter */
-	DlgEventEvent		UMETA(DisplayName = "Event"),
+	DlgEventEvent						UMETA(DisplayName = "Event"),
 
-	/** events to modify basic variable types */
-	DlgEventModifyInt	UMETA(DisplayName = "Modify Int"),
-	DlgEventModifyFloat UMETA(DisplayName = "Modify Float"),
-	DlgEventModifyBool  UMETA(DisplayName = "Modify Bool"),
-	DlgEventModifyName  UMETA(DisplayName = "Modify Name")
+	/** events to modify basic variable types. Calls the interface methods */
+	DlgEventModifyInt					UMETA(DisplayName = "Modify Int"),
+	DlgEventModifyFloat					UMETA(DisplayName = "Modify Float"),
+	DlgEventModifyBool					UMETA(DisplayName = "Modify Bool"),
+	DlgEventModifyName					UMETA(DisplayName = "Modify Name"),
+
+	/** events to modify the variable of the participant UObject by using its UClass */
+	DlgEventModifyClassIntVariable		UMETA(DisplayName = "Modify class int variable"),
+	DlgEventModifyClassFloatVariable	UMETA(DisplayName = "Modify class float variable"),
+	DlgEventModifyClassBoolVariable		UMETA(DisplayName = "Modify class bool variable"),
+	DlgEventModifyClassNameVariable		UMETA(DisplayName = "Modify class name variable")
 };
 
 
@@ -23,7 +29,7 @@ enum class EDlgEventType : uint8
  *  They must be handled in game side, can be used to modify game state based on dialogue
  */
 USTRUCT()
-struct FDlgEvent
+struct DLGSYSTEM_API FDlgEvent
 {
 	GENERATED_USTRUCT_BODY()
 
