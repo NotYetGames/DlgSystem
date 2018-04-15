@@ -20,7 +20,7 @@ class UDialogueWave;
 /**
  * The representation of a child in a node. Defined by a TargetIndex which points to the index array in the Dialogue.Nodes
  */
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType, Blueprintable)
 struct DLGSYSTEM_API FDlgEdge
 {
 	GENERATED_USTRUCT_BODY()
@@ -63,23 +63,23 @@ public:
 
 public:
 	/** Index of the node in the Nodes TArray of the dialogue this edge is leading to */
-	UPROPERTY(VisibleAnywhere, Category = DlgEdgeData, Meta = (ClampMin = -1))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = DlgEdgeData, Meta = (ClampMin = -1))
 	int32 TargetIndex = INDEX_NONE;
 
 	/** Required but not sufficient conditions - target node's enter conditions are checked too */
-	UPROPERTY(EditAnywhere, Category = DlgEdgeData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData)
 	TArray<FDlgCondition> Conditions;
 
 	/** Text associated with the child, can be used for user choices */
-	UPROPERTY(EditAnywhere, Category = DlgEdgeData, Meta = (MultiLine = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData, Meta = (MultiLine = true))
 	FText Text;
 
 	/** player emotion/state attached to this player choice */
-	UPROPERTY(EditAnywhere, Category = DlgEdgeData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData)
 	FName SpeakerState;
 
 	/** Set this to false in order to skip this edge in the AllChildren array (which lists both satisfied and not satisfied player choices */
-	UPROPERTY(EditAnywhere, Category = DlgEdgeData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData)
 	bool bIncludeInAllOptionListIfUnsatisfied = true;
 };
 

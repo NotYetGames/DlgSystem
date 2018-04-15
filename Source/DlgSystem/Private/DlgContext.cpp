@@ -3,6 +3,7 @@
 #include "DlgSystemPrivatePCH.h"
 #include "DlgNode.h"
 #include "DlgDialogueParticipant.h"
+#include "DlgMemory.h"
 
 bool UDlgContext::ChooseChildBasedOnAllOptionIndex(int32 Index)
 {
@@ -232,4 +233,44 @@ UObject* UDlgContext::GetParticipant(FName DlgParticipantName)
 	}
 
 	return nullptr;
+}
+
+
+bool UDlgContext::IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory, bool bIndexSkipsUnsatisfiedEdges) const
+{
+	int32 TargetIndex = INDEX_NONE;
+
+	if (bIndexSkipsUnsatisfiedEdges)
+	{
+		if (!AvailableChildren.IsValidIndex(Index))
+		{
+			UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToVisitedNode failed - invalid index %d"), Index);
+			return false;
+		}
+		TargetIndex = AvailableChildren[Index]->TargetIndex;
+	}
+	else
+	{
+		if (!AllChildren.IsValidIndex(Index))
+		{
+			UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToVisitedNode failed - invalid index %d"), Index);
+			return false;
+		}
+		TargetIndex = AllChildren[Index].EdgePtr->TargetIndex;
+	}
+
+	if (bLocalHistory)
+	{
+		return VisitedNodeIndices.Contains(TargetIndex);
+	}
+	else
+	{
+		if (Dialogue == nullptr)
+		{
+			UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToVisitedNode called, but the context does not have a valid dialogue!"));
+			return false;
+		}
+
+		return FDlgMemory::GetInstance()->IsNodeVisited(Dialogue->GetDlgGuid(), TargetIndex);
+	}
 }

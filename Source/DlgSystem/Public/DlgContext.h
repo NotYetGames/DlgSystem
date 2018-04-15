@@ -143,6 +143,19 @@ public:
 	UFUNCTION(BlueprintPure, Category = DlgData)
 	const TSet<int32>& GetVisitedNodeIndices() const { return VisitedNodeIndices; }
 
+	/**
+	 *  Checks if the node connected directly to one of the active player choices was already visited or not
+	 *  Does not handle complicated logic - if the said node is a logical one it will still check that node, and not one
+	 *  of its children
+	 *
+	 * @param Index  Index of the edge/player choice to test
+	 * @param bLocalHistory If true, only the history of this dialogue context is checked. If false, it is a global check
+	 * @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionNum()[ interval (if true), or in the [0, GetAllOptionNum()[ (if false)
+	 * @return true if the node was already visited
+	 */
+	UFUNCTION(BlueprintPure, Category = DlgData)
+	bool IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory = false, bool bIndexSkipsUnsatisfiedEdges = true) const;
+
 
 protected:
 	// Methods implemented by UDlgContextInternal
