@@ -21,7 +21,7 @@ public:
 public:
 	bool operator==(const FDlgHistory& Other) const
 	{
-		return FDlgHelper::AreSetsEqual(VisitedNodeIndices, Other.VisitedNodeIndices);
+		return FDlgHelper::IsSetEqual(VisitedNodeIndices, Other.VisitedNodeIndices);
 	}
 };
 

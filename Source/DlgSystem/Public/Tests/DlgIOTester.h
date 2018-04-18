@@ -66,8 +66,10 @@ bool FDlgIOTester::TestParser(const FDlgIOTesterOptions& Options, const FString 
 template <typename ConfigWriterType, typename ConfigParserType, typename StructType>
 bool FDlgIOTester::TestStruct(const FString& StructDescription, const FDlgIOTesterOptions& Options, const FString NameWriterType, const FString NameParserType)
 {
-	StructType ExportedStruct(Options);
-	StructType ImportedStruct(Options);
+	StructType ExportedStruct;
+	StructType ImportedStruct;
+	ExportedStruct.GenerateRandomData(Options);
+	ImportedStruct.GenerateRandomData(Options);
 
 	// Write struct
 	ConfigWriterType Writer;
@@ -75,7 +77,7 @@ bool FDlgIOTester::TestStruct(const FString& StructDescription, const FDlgIOTest
 	Writer.Write(StructType::StaticStruct(), &ExportedStruct);
 	const FString WriterString = Writer.GetAsString();
 
-	// Read strusct
+	// Read struct
 	ConfigParserType Parser;
 	Parser.SetLogVerbose(true);
 	Parser.InitializeParserFromString(WriterString);
@@ -90,7 +92,7 @@ bool FDlgIOTester::TestStruct(const FString& StructDescription, const FDlgIOTest
 
 	if (NameWriterType.IsEmpty() || NameParserType.IsEmpty())
 	{
-		UE_LOG(LogDlgIOTester, Warning, TEXT("TestStruct: Test Failed: %s"), *StructDescription);
+		UE_LOG(LogDlgIOTester, Warning, TEXT("TestStruct: Test Failed (both empty) = %s"), *StructDescription);
 	}
 	else
 	{

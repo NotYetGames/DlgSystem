@@ -6,6 +6,10 @@
 /**
  * The writer will ignore properties by default that are marked DEPRECATED or TRANSIENT, see SkipFlags variable.
  *
+ * Limitations:
+ * - TSet or TMap with the KeyType as float or structures that have floats, this is very bad you should not do this anyways
+ * - limitation for each type you can see inside DlgIoTester.cpp in the Options.
+ *
  * MetaData specifiers:
  *		Unfortunately they only work in editor build
  *		The class can be used in exported game too, but the MetaData specifiers are ignored
@@ -16,7 +20,7 @@
  * 		- DlgLinePerItem: used to force primitive container to write each element into a new line (TODO: MAP SUPPORT)
  *		- DlgSaveOnlyReference: UObject path is serialized instead of UObject (can be used for DataAsset like objects stored in content browser)
  *			ATM IT ONLY WORKS IF IT IS NOT INSIDE A CONTAINER DIRECTLY (can be e.g. inside a struct inside a container tho)
- *			FDlgConfigParser/FDlgConfigWriter also supports TArray-s
+ *
  */
 class DLGSYSTEM_API IDlgWriter
 {

@@ -438,7 +438,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 			else
 			{
 				UE_LOG(LogDlgJsonParser,
-					   Error,
+					   Warning,
 					   TEXT("ConvertScalarJsonValueToUProperty - Unable to import FDateTime for property %s"),
 					   *Property->GetNameCPP());
 				return false;
@@ -644,6 +644,7 @@ bool FDlgJsonParser::JsonValueToUProperty(const TSharedPtr<FJsonValue> JsonValue
 	for (int32 Index = 0; Index < ItemsToRead; ++Index)
 	{
 		// ValuePtr + Index * Property->ElementSize is literally FScriptArrayHelper::GetRawPtr
+		// TODO allow to set all items in the array? do not stop at the first failure
 		if (!ConvertScalarJsonValueToUProperty(ArrayValue[Index], Property, ValuePtr + Index * Property->ElementSize))
 		{
 			return false;
