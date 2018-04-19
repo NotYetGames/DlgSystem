@@ -4,6 +4,7 @@
 #include "Policies/CondensedJsonPrintPolicy.h"
 #include "TextProperty.h"
 #include "PropertyPortFlags.h"
+#include "DlgHelper.h"
 
 DEFINE_LOG_CATEGORY(LogDlgJsonWriter);
 
@@ -17,7 +18,7 @@ void FDlgJsonWriter::Write(const UStruct* StructDefinition, const void* Object)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(UProperty* Property, const void* Value)
+TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const UProperty* Property, const void* Value)
 {
 	check(Property);
 	check(Value);
@@ -248,7 +249,8 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(UProper
 	if (const UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
 	{
 		// NOTE: The Value here should be a pointer to a pointer
-		if (static_cast<const UObject*>(Value) == nullptr)
+		const UObject* UnrealObject = static_cast<const UObject*>(Value);
+		if (UnrealObject == nullptr)
 		{
 			if (bLogVerbose)
 			{
@@ -257,12 +259,18 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(UProper
 					TEXT("Property = `%s` Is a UObjectProperty but can't convert Value to an UObject (NOTE: UObjects can be nullptrs)"),
 					*Property->GetPathName());
 			}
+			// Save reference as empty string
+			if (CanSaveAsReference(ObjectProperty))
+			{
+				return MakeShareable(new FJsonValueString(TEXT("")));
+			}
+
 			return TSharedPtr<FJsonValueNull>();
 		}
 
 		// Because the UObjects are pointers, we must deference it. So instead of it being a void** we want it to be a void*
 		auto* ObjectPtrPtr = static_cast<const UObject* const*>(ObjectProperty->ContainerPtrToValuePtr<void>(Value, 0));
-		if (ObjectPtrPtr == nullptr || !IsValid(*ObjectPtrPtr))
+		if (ObjectPtrPtr == nullptr || !FDlgHelper::IsValidLowLevel(*ObjectPtrPtr))
 		{
 			if (bLogVerbose)
 			{
@@ -270,6 +278,11 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(UProper
 					Verbose,
 					TEXT("Property = `%s` Is a UObjectProperty but got null from ContainerPtrToValuePtr from it's StructObject (NOTE: UObjects can be nullptrs)"),
 					*Property->GetPathName());
+			}
+			// Save reference as empty string
+			if (CanSaveAsReference(ObjectProperty))
+			{
+				return MakeShareable(new FJsonValueString(TEXT("")));
 			}
 
 			return TSharedPtr<FJsonValueNull>();
@@ -306,7 +319,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(UProper
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-TSharedPtr<FJsonValue> FDlgJsonWriter::UPropertyToJsonValue(UProperty* Property, const void* Value)
+TSharedPtr<FJsonValue> FDlgJsonWriter::UPropertyToJsonValue(const UProperty* Property, const void* Value)
 {
 	check(Property);
 	if (bLogVerbose)

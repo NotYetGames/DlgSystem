@@ -18,7 +18,13 @@ public:
 		std::function<bool(const ArrayType& FirstValue, const ArrayType& SecondValue, FString& ComparisonErrorMessage)> AreValuesEqual)
 	{
 		bool bIsEqual = true;
-		if (FDlgHelper::IsArrayEqual(ThisArray, OtherArray) == false)
+		auto AreValuesEqualWithoutMessage = [&AreValuesEqual](const ArrayType& FirstValue, const ArrayType& SecondValue) -> bool
+		{
+			FString DiscardMessage;
+			return AreValuesEqual(FirstValue, SecondValue, DiscardMessage);
+		};
+
+		if (FDlgHelper::IsArrayEqual<ArrayType>(ThisArray, OtherArray, AreValuesEqualWithoutMessage) == false)
 		{
 			bIsEqual = false;
 			if (ThisArray.Num() != OtherArray.Num())
@@ -68,6 +74,24 @@ public:
 			[](const ArrayType& FirstValue, const ArrayType& SecondValue, FString& ComparisonErrorMessage) -> bool
 		{
 			return FirstValue == SecondValue;
+		});
+	}
+};
+
+// Pointers variant
+template <typename ArrayType>
+class FDlgTestHelper_ArrayPointersVariantImpl
+{
+public:
+	static bool IsEqual(const TArray<ArrayType>& ThisArray, const TArray<ArrayType>& OtherArray,
+		const FString& PropertyName, FString& OutError,
+		const bool bIsPrimitive,
+		std::function<FString(const ArrayType&)> GetArrayTypeAsString)
+	{
+		return FDlgTestHelper_ArrayEqualImpl<ArrayType>::IsEqual(ThisArray, OtherArray, PropertyName, OutError, bIsPrimitive, GetArrayTypeAsString,
+			[](const ArrayType& FirstValue, const ArrayType& SecondValue, FString& ComparisonErrorMessage) -> bool
+		{
+			return FirstValue->IsEqual(SecondValue, ComparisonErrorMessage);
 		});
 	}
 };
@@ -140,7 +164,7 @@ public:
 		std::function<bool(const ValueType& FirstValue, const ValueType& SecondValue)> AreValuesEqual)
 	{
 		bool bIsEqual = true;
-		if (FDlgHelper::IsMapEqual(ThisMap, OtherMap) == false)
+		if (FDlgHelper::IsMapEqual(ThisMap, OtherMap, AreValuesEqual) == false)
 		{
 			bIsEqual = false;
 			if (ThisMap.Num() != OtherMap.Num())
@@ -294,6 +318,17 @@ public:
 			[](const ArrayType& FirstValue, const ArrayType& SecondValue, FString& ComparisonErrorMessage) -> bool
 			{
 				return FirstValue.IsEqual(SecondValue, ComparisonErrorMessage);
+			});
+	}
+
+	template <typename ArrayType>
+	static bool IsComplexPointerArrayEqual(const TArray<ArrayType*>& ThisArray, const TArray<ArrayType*>& OtherArray,
+		const FString& PropertyName, FString& OutError)
+	{
+		return FDlgTestHelper_ArrayPointersVariantImpl<ArrayType*>::IsEqual(ThisArray, OtherArray, PropertyName, OutError, false,
+			[](const auto* Value) -> FString
+			{
+				return Value->ToString();
 			});
 	}
 

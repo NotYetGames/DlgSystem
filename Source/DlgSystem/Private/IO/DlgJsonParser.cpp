@@ -502,14 +502,19 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 				   *Property->GetNameCPP());
 			return false;
 		}
+		// Reset first
+		*ObjectPtrPtr = nullptr;
 		const UClass* ObjectClass = ObjectProperty->PropertyClass;
 
 		// Special case, load by reference, See CanSaveAsReference
 		// Handle some objects that are exported to string in a special way. Similar to the UStruct above.
 		if (JsonValue->Type == EJson::String)
 		{
-			const FString ObjectReferenceName = JsonValue->AsString();
-			*ObjectPtrPtr = StaticLoadObject(UObject::StaticClass(), DefaultObjectOuter, *ObjectReferenceName);
+			const FString Path = JsonValue->AsString();
+			if (!Path.TrimStartAndEnd().IsEmpty()) // null reference?
+			{
+				*ObjectPtrPtr = StaticLoadObject(UObject::StaticClass(), DefaultObjectOuter, *Path);
+			}
 			return true;
 		}
 
@@ -545,7 +550,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 				return false;
 			}
 
-			*ObjectPtrPtr = NewObject<UObject>(DefaultObjectOuter, const_cast<UClass*>(ChildClass), NAME_None, RF_Transactional);
+			*ObjectPtrPtr = CreateNewUObject(ChildClass, DefaultObjectOuter);
 			check(*ObjectPtrPtr);
 		}
 

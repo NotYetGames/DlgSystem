@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "Math/UnrealMathUtility.h"
+#include "Object.h"
 #include <functional>
 
 /**
@@ -113,6 +114,20 @@ public:
 	}
 };
 
+template <typename ArrayType>
+class FDlgHelper_ArrayEqualVariantPointersImpl
+{
+public:
+	static bool IsEqual(const TArray<ArrayType>& FirstArray, const TArray<ArrayType>& SecondArray)
+	{
+		return FDlgHelper_ArrayEqualImpl<ArrayType>::IsEqual(FirstArray, SecondArray,
+			[](const ArrayType& FirstValue, const ArrayType& SecondValue) -> bool
+		{
+			return *FirstValue == *SecondValue;
+		});
+	}
+};
+
 // Variant with Specialization for float ArrayType
 template <>
 class FDlgHelper_ArrayEqualVariantImpl<float>
@@ -168,6 +183,13 @@ public:
 		return FDlgHelper_ArrayEqualVariantImpl<ArrayType>::IsEqual(FirstArray, SecondArray);
 	}
 
+	// Variant with pointer value comparison
+	template <typename ArrayType>
+	static bool IsArrayOfPointersEqual(const TArray<ArrayType*>& FirstArray, const TArray<ArrayType*>& SecondArray)
+	{
+		return FDlgHelper_ArrayEqualVariantPointersImpl<ArrayType*>::IsEqual(FirstArray, SecondArray);
+	}
+
 	// Is FirstMap == SecondMap ?
 	template <typename KeyType, typename ValueType>
 	static bool IsMapEqual(const TMap<KeyType, ValueType>& FirstMap, const TMap<KeyType, ValueType>& SecondMap,
@@ -211,5 +233,68 @@ public:
 		TArray<FName> UniqueNamesArray = InSet.Array();
 		SortDefault(UniqueNamesArray);
 		OutArray.Append(UniqueNamesArray);
+	}
+
+	FORCEINLINE static bool IsPossiblyAllocatedUObjectPointer(const void* Ptr)
+	{
+		auto CountByteValues = [](UPTRINT Val, UPTRINT ByteVal) -> int32
+		{
+			int32 Result = 0;
+
+			for (int32 I = 0; I != sizeof(UPTRINT); ++I)
+			{
+				if ((Val & 0xFF) == ByteVal)
+				{
+					++Result;
+				}
+				Val >>= 8;
+			}
+
+			return Result;
+		};
+
+		UPTRINT PtrVal = (UPTRINT)Ptr;
+		// (void*) - 1 Is technically a valid address 0xffffffff, but is it?
+		return Ptr != nullptr && Ptr != ((void*) - 1) && PtrVal >= 0x1000 && CountByteValues(PtrVal, 0xCD) < sizeof(UPTRINT) / 2;
+	}
+
+	/** Very low level and safe way to check if the object is valid. Kinda slow but safe. */
+	static bool IsValidLowLevel(const UObject* Object)
+	{
+		if (Object == nullptr)
+		{
+			return false;
+		}
+
+		// From IsValidLowLevelFast
+		// Check pointer range, may the gods have mercy
+		if (!::IsPossiblyAllocatedUObjectPointer(const_cast<UObject*>(Object)))
+		{
+			return false;
+		}
+
+		// As DEFAULT_ALIGNMENT is defined to 0 now, I changed that to the original numerical value here
+		static const int32 AlignmentCheck = MIN_ALIGNMENT - 1;
+		if ((UPTRINT)Object & AlignmentCheck)
+		{
+			return false;
+		}
+		//if (!FDlgHelper::IsPossiblyAllocatedUObjectPointer((void**)Object) || !FDlgHelper::IsPossiblyAllocatedUObjectPointer(*(void**)Object))
+		//{
+		//	return false;
+		//}
+
+		// Virtual functions table is invalid.
+		if ((void**)Object == nullptr || *(void**)Object == nullptr)
+		{
+			return false;
+		}
+
+		if (!Object->IsValidLowLevelFast())
+		{
+			return false;
+		}
+
+		return !Object->IsPendingKillOrUnreachable();
 	}
 };

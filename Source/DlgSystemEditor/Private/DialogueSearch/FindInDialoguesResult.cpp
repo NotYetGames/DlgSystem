@@ -154,4 +154,35 @@ TSharedRef<SWidget>	FFindInDialoguesEdgeNode::CreateIcon() const
 	return Super::CreateIcon();
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// FFindInDialoguesCommentNode
+FFindInDialoguesCommentNode::FFindInDialoguesCommentNode(const FText& InDisplayText, TSharedPtr<FFindInDialoguesResult> InParent) :
+	FFindInDialoguesResult(InDisplayText, InParent)
+{
+}
+
+FReply FFindInDialoguesCommentNode::OnClick()
+{
+	if (CommentNode.IsValid())
+	{
+		return FDialogueEditorUtilities::OpenEditorAndJumpToGraphNode(CommentNode.Get()) ? FReply::Handled() : FReply::Unhandled();
+	}
+
+	return FReply::Unhandled();
+}
+
+TSharedRef<SWidget>	FFindInDialoguesCommentNode::CreateIcon() const
+{
+	if (CommentNode.IsValid())
+	{
+		const FSlateIcon Icon = FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_CommentBubbleOn);
+		return SNew(SImage)
+			.Image(Icon.GetIcon())
+			.ColorAndOpacity(FColorList::White)
+			.ToolTipText(GetCategory());
+	}
+
+	return Super::CreateIcon();
+}
+
 #undef LOCTEXT_NAMESPACE

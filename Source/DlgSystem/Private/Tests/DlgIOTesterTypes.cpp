@@ -1,7 +1,57 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgIOTesterTypes.h"
 
+#include "Engine/Engine.h"
+
 #include "DlgTesterHelper.h"
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// UDlgTestObjectPrimitives
+void UDlgTestObjectPrimitives::GenerateRandomData(const FDlgIOTesterOptions& InOptions)
+{
+	Options = InOptions;
+	SetToDefaults();
+
+	Integer = FMath::Rand();
+	String = FString::SanitizeFloat(FMath::SRand());
+}
+
+void UDlgTestObjectPrimitives::SetToDefaults()
+{
+	Integer = 0;
+	String.Empty();
+}
+
+bool UDlgTestObjectPrimitives::IsEqual(const UDlgTestObjectPrimitives* Other, FString& OutError) const
+{
+	if (Other == nullptr)
+	{
+		OutError += FString::Printf(TEXT("\tOther is nullptr.\n"));
+		return false;
+	}
+
+	bool bIsEqual = true;
+	if (Integer != Other->Integer)
+	{
+		bIsEqual = false;
+		OutError += FString::Printf(TEXT("\tThis.Integer (%d) != Other.Integer (%d)\n"), Integer, Other->Integer);
+	}
+
+	if (String != Other->String)
+	{
+		bIsEqual = false;
+		OutError += FString::Printf(TEXT("\tThis.String (%s) != Other.String (%s)\n"), *String, *Other->String);
+	}
+
+	return bIsEqual;
+}
+
+bool UDlgTestObjectPrimitives::operator==(const UDlgTestObjectPrimitives& Other) const
+{
+	return Integer == Other.Integer &&
+		   String == Other.String;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgTestStructPrimitives
@@ -34,18 +84,33 @@ void FDlgTestStructPrimitives::GenerateRandomData(const FDlgIOTesterOptions& InO
 	Rotator = FRotator(FMath::SRand(), FMath::SRand(), FMath::SRand());
 	Matrix = FMatrix(Vector3, FVector(IntPoint), FVector(Vector4), Vector3);
 	Transform = FTransform(Vector3);
+	Guid = FGuid::NewGuid();
 
-	const TArray<UClass*> ClassesPool = { UField::StaticClass(), UStruct::StaticClass(), UObject::StaticClass(), UBoolProperty::StaticClass(), UIntProperty::StaticClass() };
+	const TArray<UClass*> ClassesPool = {
+		UField::StaticClass(), UStruct::StaticClass(), nullptr, UObject::StaticClass(), UBoolProperty::StaticClass(), UIntProperty::StaticClass(),
+		UStructProperty::StaticClass(), UStrProperty::StaticClass(), nullptr
+	};
 	Class = ClassesPool[FMath::RandHelper(ClassesPool.Num())];
+
+	check(GEngine);
+	const TArray<UTexture2D*> TexturesPool = {
+		GEngine->DefaultTexture, nullptr, GEngine->DefaultBokehTexture, GEngine->DefaultBloomKernelTexture, GEngine->LightMapDensityTexture,
+		GEngine->HighFrequencyNoiseTexture, GEngine->MiniFontTexture, GEngine->PreIntegratedSkinBRDFTexture, nullptr
+	};
+	Texture2DReference = TexturesPool[FMath::RandHelper(TexturesPool.Num())];
+	ConstTexture2D = GEngine->DefaultTexture;
+
+	ObjectPrimitives = UDlgTestObjectPrimitives::New();
+	ObjectPrimitives->GenerateRandomData(Options);
 }
 
 bool FDlgTestStructPrimitives::IsEqual(const FDlgTestStructPrimitives& Other, FString& OutError) const
 {
-	if (Options != Other.Options)
-	{
-		OutError += FString::Printf(TEXT("This.Options(%s) != Other.Options(%s) This will make the test fail most likely:\n"), *Options.ToString(), *Other.Options.ToString());
-		return false;
-	}
+	//if (Options != Other.Options)
+	//{
+	//	OutError += FString::Printf(TEXT("This.Options(%s) != Other.Options(%s) This will make the test fail most likely:\n"), *Options.ToString(), *Other.Options.ToString());
+	//	return false;
+	//}
 
 	bool bIsEqual = true;
 	OutError += TEXT("FDlgTestStructPrimitives::IsEqual:\n");
@@ -151,10 +216,39 @@ bool FDlgTestStructPrimitives::IsEqual(const FDlgTestStructPrimitives& Other, FS
 		OutError += FString::Printf(TEXT("\tThis.Transform (%s) != Other.Transform (%s)\n"), *Transform.ToString(), *Other.Transform.ToString());
 	}
 
+	if (Guid != Other.Guid)
+	{
+		bIsEqual = false;
+		OutError += FString::Printf(TEXT("\tThis.Guid (%s) != Other.Guid (%s)\n"), *Guid.ToString(), *Other.Guid.ToString());
+	}
+
 	if (Class != Other.Class)
 	{
 		bIsEqual = false;
 		OutError += FString::Printf(TEXT("\tThis.Class (%s) != Other.Class (%s)\n"), *FDlgTestHelper::GetFullNameFromObject(Class), *FDlgTestHelper::GetFullNameFromObject(Other.Class));
+	}
+
+	if (EmptyObjectInitialized != Other.EmptyObjectInitialized || EmptyObjectInitialized != nullptr || Other.EmptyObjectInitialized != nullptr)
+	{
+		bIsEqual = false;
+		OutError += FString::Printf(TEXT("\tThis.EmptyObjectInitialized OR Other.EmptyObjectInitialized are not empty :O\n"));
+	}
+
+	if (EmptyObjectInitializedReference != Other.EmptyObjectInitializedReference || EmptyObjectInitializedReference != nullptr || Other.EmptyObjectInitializedReference != nullptr)
+	{
+		bIsEqual = false;
+		OutError += FString::Printf(TEXT("\tThis.EmptyObjectInitializedReference OR Other.EmptyObjectInitializedReference are not empty :O\n"));
+	}
+
+	if (Texture2DReference != Other.Texture2DReference)
+	{
+		bIsEqual = false;
+		OutError += FString::Printf(TEXT("\tThis.Texture2D (%s) != Other.Texture2D (%s)\n"), *FDlgTestHelper::GetFullNameFromObject(Texture2DReference), *FDlgTestHelper::GetFullNameFromObject(Other.Texture2DReference));
+	}
+
+	if (!ObjectPrimitives->IsEqual(Other.ObjectPrimitives, OutError))
+	{
+		OutError += FString::Printf(TEXT("\tThis.ObjectPrimitives (%s) != Other.ObjectPrimitives (%s)\n"), *FDlgTestHelper::GetFullNameFromObject(ObjectPrimitives), *FDlgTestHelper::GetFullNameFromObject(Other.ObjectPrimitives));
 	}
 
 	// Clear error message
@@ -173,6 +267,7 @@ void FDlgTestStructPrimitives::SetToDefaults()
 	Float = -23.549f;
 	Name = NAME_None;
 	String.Empty();
+	EmptyString.Empty();
 	Text = FText::GetEmpty();
 	LinearColor = FLinearColor(ForceInitToZero);
 	Color = FColor(ForceInitToZero);
@@ -184,8 +279,13 @@ void FDlgTestStructPrimitives::SetToDefaults()
 	Rotator = FRotator(ForceInitToZero);
 	Matrix = FMatrix(ForceInitToZero);
 	Transform = FTransform();
+	Guid = FGuid();
 	Class = nullptr;
-	Texture2D = nullptr;
+	EmptyObjectInitialized = nullptr;
+	EmptyObjectInitializedReference = nullptr;
+	Texture2DReference = nullptr;
+	ConstTexture2D = nullptr;
+	ObjectPrimitives = nullptr;
 }
 
 bool FDlgTestStructPrimitives::operator==(const FDlgTestStructPrimitives& Other) const
@@ -194,6 +294,7 @@ bool FDlgTestStructPrimitives::operator==(const FDlgTestStructPrimitives& Other)
 		   Integer == Other.Integer &&
 		   FDlgTestHelper::IsFloatEqual(Float, Other.Float) &&
 		   String == Other.String &&
+		   EmptyString == Other.EmptyString &&
 		   Name == Other.Name &&
 		   Text.EqualTo(Other.Text) &&
 		   Enum == Other.Enum &&
@@ -207,8 +308,12 @@ bool FDlgTestStructPrimitives::operator==(const FDlgTestStructPrimitives& Other)
 		   Rotator.Equals(Other.Rotator) &&
 		   Matrix.Equals(Other.Matrix) &&
 		   Transform.Equals(Other.Transform) &&
+		   Guid == Other.Guid &&
 		   Class == Other.Class &&
-		   Texture2D == Other.Texture2D;
+		   EmptyObjectInitialized == Other.EmptyObjectInitialized &&
+		   EmptyObjectInitializedReference == Other.EmptyObjectInitializedReference &&
+		   Texture2DReference == Other.Texture2DReference &&
+		   *ObjectPrimitives == *Other.ObjectPrimitives;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -298,20 +403,26 @@ bool FDlgTestArrayPrimitive::operator==(const FDlgTestArrayPrimitive& Other) con
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgTestArrayStruct
-void FDlgTestArrayStruct::GenerateRandomData(const FDlgIOTesterOptions& InOptions)
+void FDlgTestArrayComplex::GenerateRandomData(const FDlgIOTesterOptions& InOptions)
 {
 	Options = InOptions;
 	StructArrayPrimitives.Empty();
+	ObjectArrayPrimitives.Empty();
+
 	const int32 Num = FMath::RandHelper(10) + 2;
 	for (int32 Index = 0; Index < Num; Index++)
 	{
 		FDlgTestStructPrimitives StructPrimitives;
 		StructPrimitives.GenerateRandomData(Options);
 		StructArrayPrimitives.Add(StructPrimitives);
+
+		UDlgTestObjectPrimitives* ObjectPrimitives = UDlgTestObjectPrimitives::New();
+		ObjectPrimitives->GenerateRandomData(Options);
+		ObjectArrayPrimitives.Add(ObjectPrimitives);
 	}
 }
 
-bool FDlgTestArrayStruct::IsEqual(const FDlgTestArrayStruct& Other, FString& OutError) const
+bool FDlgTestArrayComplex::IsEqual(const FDlgTestArrayComplex& Other, FString& OutError) const
 {
 	FString PropertyName;
 	bool bIsEqual = true;
@@ -319,6 +430,7 @@ bool FDlgTestArrayStruct::IsEqual(const FDlgTestArrayStruct& Other, FString& Out
 
 	PropertyName = TEXT("StructArrayPrimitives");
 	bIsEqual = bIsEqual && FDlgTestHelper::IsComplexArrayEqual<FDlgTestStructPrimitives>(StructArrayPrimitives, Other.StructArrayPrimitives, PropertyName, OutError);
+	bIsEqual = bIsEqual && FDlgTestHelper::IsComplexPointerArrayEqual<UDlgTestObjectPrimitives>(ObjectArrayPrimitives, Other.ObjectArrayPrimitives, PropertyName, OutError);
 
 	// Clear error message
 	if (bIsEqual)
@@ -328,9 +440,10 @@ bool FDlgTestArrayStruct::IsEqual(const FDlgTestArrayStruct& Other, FString& Out
 	return bIsEqual;
 }
 
-bool FDlgTestArrayStruct::operator==(const FDlgTestArrayStruct& Other) const
+bool FDlgTestArrayComplex::operator==(const FDlgTestArrayComplex& Other) const
 {
-	return StructArrayPrimitives == Other.StructArrayPrimitives;
+	return StructArrayPrimitives == Other.StructArrayPrimitives &&
+		   FDlgHelper::IsArrayOfPointersEqual<UDlgTestObjectPrimitives>(ObjectArrayPrimitives, Other.ObjectArrayPrimitives);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -397,7 +510,7 @@ bool FDlgTestSetPrimitive::operator==(const FDlgTestSetPrimitive& Other) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgTestSetStruct
-void FDlgTestSetStruct::GenerateRandomData(const FDlgIOTesterOptions& InOptions)
+void FDlgTestSetComplex::GenerateRandomData(const FDlgIOTesterOptions& InOptions)
 {
 	Options = InOptions;
 	StructSetPrimitives.Empty();
@@ -411,7 +524,7 @@ void FDlgTestSetStruct::GenerateRandomData(const FDlgIOTesterOptions& InOptions)
 	}
 }
 
-bool FDlgTestSetStruct::IsEqual(const FDlgTestSetStruct& Other, FString& OutError) const
+bool FDlgTestSetComplex::IsEqual(const FDlgTestSetComplex& Other, FString& OutError) const
 {
 	FString PropertyName;
 	bool bIsEqual = true;
@@ -432,7 +545,7 @@ bool FDlgTestSetStruct::IsEqual(const FDlgTestSetStruct& Other, FString& OutErro
 	return bIsEqual;
 }
 
-bool FDlgTestSetStruct::operator==(const FDlgTestSetStruct& Other) const
+bool FDlgTestSetComplex::operator==(const FDlgTestSetComplex& Other) const
 {
 	return FDlgHelper::IsSetEqual(StructSetPrimitives, Other.StructSetPrimitives);
 }
@@ -548,7 +661,7 @@ bool FDlgTestMapPrimitive::operator==(const FDlgTestMapPrimitive& Other) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgTestMapStruct
-void FDlgTestMapStruct::GenerateRandomData(const FDlgIOTesterOptions& InOptions)
+void FDlgTestMapComplex::GenerateRandomData(const FDlgIOTesterOptions& InOptions)
 {
 	Options = InOptions;
 	IntToStructPrimitiveMap.Empty();
@@ -566,7 +679,7 @@ void FDlgTestMapStruct::GenerateRandomData(const FDlgIOTesterOptions& InOptions)
 	}
 }
 
-bool FDlgTestMapStruct::IsEqual(const FDlgTestMapStruct& Other, FString& OutError) const
+bool FDlgTestMapComplex::IsEqual(const FDlgTestMapComplex& Other, FString& OutError) const
 {
 	FString PropertyName;
 	bool bIsEqual = true;
@@ -594,7 +707,7 @@ bool FDlgTestMapStruct::IsEqual(const FDlgTestMapStruct& Other, FString& OutErro
 }
 
 
-bool FDlgTestMapStruct::operator==(const FDlgTestMapStruct& Other) const
+bool FDlgTestMapComplex::operator==(const FDlgTestMapComplex& Other) const
 {
 	return FDlgHelper::IsMapEqual(IntToStructPrimitiveMap, Other.IntToStructPrimitiveMap) &&
 		FDlgHelper::IsMapEqual(StructPrimitiveToIntMap, Other.StructPrimitiveToIntMap);

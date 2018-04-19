@@ -6,11 +6,12 @@
 #include "UnrealType.h"
 #include "EnumProperty.h"
 #include "UObjectIterator.h"
+#include "ObjectMacros.h"
 
 DEFINE_LOG_CATEGORY(LogDlgConfigParser);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-FDlgConfigParser::FDlgConfigParser(const FString& InPreTag) :
+FDlgConfigParser::FDlgConfigParser(const FString InPreTag) :
 	PreTag(InPreTag)
 {
 }
@@ -128,8 +129,12 @@ bool FDlgConfigParser::ReadProperty(const UStruct* ReferenceClass, void* TargetO
 			return false;
 		}
 
-		void* TargetPtr = ComplexPropBase->template ContainerPtrToValuePtr<void>(TargetObject);
-		*reinterpret_cast<UObject**>(TargetPtr) = StaticLoadObject(UObject::StaticClass(), NULL, *VariableName);
+		auto* ObjectPtrPtr = static_cast<UObject**>(ComplexPropBase->template ContainerPtrToValuePtr<void>(TargetObject));
+		*ObjectPtrPtr = nullptr; // reset first
+		if (!VariableName.TrimStartAndEnd().IsEmpty()) // null reference?
+		{
+			*ObjectPtrPtr = StaticLoadObject(UObject::StaticClass(), DefaultObjectOuter, *VariableName);
+		}
 		FindNextWord();
 		return true;
 	}
@@ -249,6 +254,8 @@ bool FDlgConfigParser::FindNextWord()
 		bHasValidWord = false;
 		return false;
 	}
+
+	// TODO could handle "" as special empty string
 
 	// Handle special string case - read everything between two "
 	if (String[From] == '"')
@@ -604,8 +611,9 @@ void* FDlgConfigParser::OnInitObject(void* ValuePtr, const UClass* ChildClass, U
 	if (ChildClass != nullptr)
 	{
 		UObject** Value = (UObject**)ValuePtr;
-		(*Value) = CreateDefaultUObject(ChildClass, OuterInit);
-		return (*Value);
+		*Value = nullptr;
+		*Value = CreateNewUObject(ChildClass, OuterInit);
+		return *Value;
 	}
 	UE_LOG(LogDlgConfigParser, Warning, TEXT("OnInitValue called without class!"));
 	return nullptr;

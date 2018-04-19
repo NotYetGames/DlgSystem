@@ -4,6 +4,7 @@
 #include "ConnectionDrawingPolicy.h"
 #include "PropertyHandle.h"
 #include "AssetEditorManager.h"
+#include "EdGraphNode_Comment.h"
 
 #include "DialogueEditor/Graph/DialogueGraph.h"
 #include "DlgNode.h"
@@ -141,14 +142,19 @@ public:
 	 */
 	static bool OpenEditorForAsset(const UObject* Asset)
 	{
+		if (!IsValid(Asset))
+		{
+			return false;
+		}
+
 		return FAssetEditorManager::Get().OpenEditorForAsset(const_cast<UObject*>(Asset));
 	}
 
 	/**
-	 * Tries to open an Dialogue editor for the GraphNodeBase and jumps to it. Returns true if the asset is opened in an editor.
+	 * Tries to open an Dialogue editor for the GraphNode and jumps to it. Returns true if the asset is opened in an editor.
 	 * If the file is already open in an editor, it will not create another editor window but instead bring it to front
 	 */
-	static bool OpenEditorAndJumpToGraphNode(const UDialogueGraphNode_Base* GraphNodeBase, const bool bFocusIfOpen = false);
+	static bool OpenEditorAndJumpToGraphNode(const UEdGraphNode* GraphNode, const bool bFocusIfOpen = false);
 
 	/**
 	 * Copy all children of the FromNode to be also the children of ToNode.
@@ -189,6 +195,22 @@ public:
 	 */
 	static void ReplaceReferencesToOldIndiciesWithNew(const TArray<UDialogueGraphNode*>& GraphNodes,
 													  const TMap<int32, int32>& OldToNewIndexMap);
+
+	/** Gets the Dialogue for the provided UEdGraphNode_Comment  */
+	static UDlgDialogue* GetDialogueFromGraphNodeComment(const UEdGraphNode_Comment* CommentNode)
+	{
+		if (!IsValid(CommentNode))
+		{
+			return nullptr;
+		}
+
+		if (const UDialogueGraph* DialogueGraph = Cast<UDialogueGraph>(CommentNode->GetGraph()))
+		{
+			return DialogueGraph->GetDialogue();
+		}
+
+		return nullptr;
+	}
 
 private:
 	/** Get the DialogueEditor for given object, if it exists */

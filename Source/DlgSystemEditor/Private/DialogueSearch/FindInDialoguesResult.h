@@ -10,19 +10,29 @@
 class FFindInDialoguesResult;
 class UDialogueGraphNode;
 class UDialogueGraphNode_Edge;
+class UEdGraphNode_Comment;
 
 // Filter used when searching for Dialogue Data
 struct FDialogueSearchFilter
 {
 public:
-	bool IsEmptyFilter() const { return SearchString.IsEmpty() && bIncludeIndicesInSearch == false; }
+	bool IsEmptyFilter() const 
+	{ 
+		return SearchString.IsEmpty() && bIncludeIndices == false && bIncludeDialogueGUID == false && bIncludeComments == true;
+	}
 
 public:
 	/** Search term that the search items must match*/
 	FString SearchString;
 
-	/** Should we include node indices in search results? */
-	bool bIncludeIndicesInSearch = false;
+	/** Include node/edge indices in search results? */
+	bool bIncludeIndices = false;
+
+	/** Include the Dialogue GUID in search results */
+	bool bIncludeDialogueGUID = false;
+
+	/** Include node comments in search results? */
+	bool bIncludeComments = true;
 };
 
 /* Base class that matched the search results. When used by itself it is a simple text node. */
@@ -122,4 +132,22 @@ public:
 protected:
 	/** The EdgeNode this represents. */
 	TWeakObjectPtr<const UDialogueGraphNode_Edge> EdgeNode;
+};
+
+/** Tree Node result that represents the CommentNode */
+class FFindInDialoguesCommentNode : public FFindInDialoguesResult
+{
+	typedef FFindInDialoguesResult Super;
+public:
+	FFindInDialoguesCommentNode(const FText& InDisplayText, TSharedPtr<FFindInDialoguesResult> InParent);
+
+	FReply OnClick() override;
+	TSharedRef<SWidget> CreateIcon() const override;
+
+	// CommentNode:
+	void SetCommentNode(TWeakObjectPtr<const UEdGraphNode_Comment> InCommentNode) { CommentNode = InCommentNode; }
+
+protected:
+	/** The EdgeNode this represents. */
+	TWeakObjectPtr<const UEdGraphNode_Comment> CommentNode;
 };

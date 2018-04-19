@@ -363,7 +363,7 @@ void UDlgDialogue::ReloadFromFile()
 		case EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue:
 		default:
 		{
-			FDlgConfigParser Parser;
+			FDlgConfigParser Parser(TEXT("Dlg"));
 			Parser.InitializeParser(TextFileName);
 			Parser.ReadAllProperty(GetClass(), this, this);
 			break;
@@ -442,7 +442,7 @@ void UDlgDialogue::ExportToFile() const
 		case EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue:
 		default:
 		{
-			FDlgConfigWriter DlgWriter;
+			FDlgConfigWriter DlgWriter(TEXT("Dlg"));
 			DlgWriter.Write(GetClass(), this);
 			DlgWriter.ExportToFile(TextFileName);
 			break;

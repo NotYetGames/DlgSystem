@@ -51,6 +51,7 @@ public:
 
 };
 
+
 UENUM()
 enum class EDlgTestEnum : uint8
 {
@@ -58,6 +59,39 @@ enum class EDlgTestEnum : uint8
 	ETE_Second,
 	ETE_Third,
 	ETE_NumOf
+};
+
+UCLASS()
+class UDlgTestObjectPrimitives : public UObject
+{
+	GENERATED_BODY()
+public:
+	static UDlgTestObjectPrimitives* New() { return NewObject<UDlgTestObjectPrimitives>(); }
+	UDlgTestObjectPrimitives() { SetToDefaults(); }
+	void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
+	void SetToDefaults();
+	bool IsEqual(const UDlgTestObjectPrimitives* Other) const
+	{
+		FString DiscardError;
+		return IsEqual(Other, DiscardError);
+	}
+	bool IsEqual(const UDlgTestObjectPrimitives* Other, FString& OutError) const;
+	bool operator==(const UDlgTestObjectPrimitives& Other) const;
+
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("Integer=%d, String=%s"), Integer, *String);
+	}
+
+public:
+	// Tester Options
+	FDlgIOTesterOptions Options;
+
+	UPROPERTY()
+	int32 Integer;
+
+	UPROPERTY()
+	FString String;
 };
 
 USTRUCT()
@@ -80,6 +114,8 @@ public:
 		KeyHash = HashCombine(KeyHash, GetTypeHash(This.Color));
 		KeyHash = HashCombine(KeyHash, GetTypeHash(This.DateTime));
 		KeyHash = HashCombine(KeyHash, GetTypeHash(This.IntPoint));
+		KeyHash = HashCombine(KeyHash, GetTypeHash(This.Guid));
+		KeyHash = HashCombine(KeyHash, GetTypeHash(This.Texture2DReference));
 		return KeyHash;
 	}
 	void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
@@ -112,6 +148,9 @@ public:
 
 	UPROPERTY()
 	FString String;
+
+	UPROPERTY()
+	FString EmptyString;
 
 	UPROPERTY()
 	FText Text;
@@ -147,10 +186,30 @@ public:
 	FTransform Transform;
 
 	UPROPERTY()
+	FGuid Guid;
+
+	UPROPERTY()
 	UClass* Class;
 
 	UPROPERTY()
-	UTexture2D* Texture2D;
+	UObject* EmptyObjectInitialized = nullptr;
+
+	UPROPERTY(meta = (DlgSaveOnlyReference))
+	UObject* EmptyObjectInitializedReference = nullptr;
+
+	// Not initialized, check if any writer crashes. It does sadly. Can't know in C++ if a variable is initialized
+	//UPROPERTY()
+	//UObject* EmptyObject;
+
+	// Check if anything crashes
+	UPROPERTY()
+	UTexture2D* ConstTexture2D;
+
+	UPROPERTY(meta=(DlgSaveOnlyReference))
+	UTexture2D* Texture2DReference;
+
+	UPROPERTY()
+	UDlgTestObjectPrimitives* ObjectPrimitives;
 };
 
 
@@ -189,13 +248,13 @@ public:
 };
 
 USTRUCT()
-struct DLGSYSTEM_API FDlgTestArrayStruct
+struct DLGSYSTEM_API FDlgTestArrayComplex
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	FDlgTestArrayStruct() {}
-	bool IsEqual(const FDlgTestArrayStruct& Other, FString& OutError) const;
-	bool operator==(const FDlgTestArrayStruct& Other) const;
+	FDlgTestArrayComplex() {}
+	bool IsEqual(const FDlgTestArrayComplex& Other, FString& OutError) const;
+	bool operator==(const FDlgTestArrayComplex& Other) const;
 	void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
 
 public:
@@ -204,6 +263,9 @@ public:
 
 	UPROPERTY()
 	TArray<FDlgTestStructPrimitives> StructArrayPrimitives;
+
+	UPROPERTY()
+	TArray<UDlgTestObjectPrimitives*> ObjectArrayPrimitives;
 };
 
 
@@ -236,13 +298,13 @@ public:
 };
 
 USTRUCT()
-struct DLGSYSTEM_API FDlgTestSetStruct
+struct DLGSYSTEM_API FDlgTestSetComplex
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	FDlgTestSetStruct() {}
-	bool operator==(const FDlgTestSetStruct& Other) const;
-	bool IsEqual(const FDlgTestSetStruct& Other, FString& OutError) const;
+	FDlgTestSetComplex() {}
+	bool operator==(const FDlgTestSetComplex& Other) const;
+	bool IsEqual(const FDlgTestSetComplex& Other, FString& OutError) const;
 	void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
 
 public:
@@ -301,13 +363,13 @@ public:
 };
 
 USTRUCT()
-struct DLGSYSTEM_API FDlgTestMapStruct
+struct DLGSYSTEM_API FDlgTestMapComplex
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	FDlgTestMapStruct() {}
-	bool operator==(const FDlgTestMapStruct& Other) const;
-	bool IsEqual(const FDlgTestMapStruct& Other, FString& OutError) const;
+	FDlgTestMapComplex() {}
+	bool operator==(const FDlgTestMapComplex& Other) const;
+	bool IsEqual(const FDlgTestMapComplex& Other, FString& OutError) const;
 	void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
 
 public:

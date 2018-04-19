@@ -56,6 +56,8 @@ public:
 	static const FName PROPERTY_FindInDialogueEditorIcon;
 	static const FName PROPERTY_FindInAllDialogueEditorIcon;
 
+	static const FName PROPERTY_CommentBubbleOn;
+
 private:
 	/** Singleton instance. */
 	static TSharedPtr<FSlateStyleSet> StyleSet;
