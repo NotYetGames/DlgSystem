@@ -257,6 +257,9 @@ private:
 
 	bool bHasValidWord = false;
 
+	// Nullptr value?
+	bool bHasNullptr = false;
+
 	/** used to skip the closing '"' */
 	bool bActiveIsString = false;
 };

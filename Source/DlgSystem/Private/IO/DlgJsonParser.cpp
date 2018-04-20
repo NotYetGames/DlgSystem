@@ -250,13 +250,14 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 
 			// make the output array size match
 			FScriptArrayHelper Helper(ArrayProperty, OutValue);
+			Helper.EmptyValues();
 			Helper.Resize(ArrayNum);
 
 			// set the property values
 			for (int32 Index = 0; Index < ArrayNum; Index++)
 			{
 				const TSharedPtr<FJsonValue>& ArrayValueItem = ArrayValue[Index];
-				if (ArrayValueItem.IsValid() && !ArrayValueItem->IsNull())
+				if (ArrayValueItem.IsValid())
 				{
 					if (!JsonValueToUProperty(ArrayValueItem, ArrayProperty->Inner, Helper.GetRawPtr(Index)))
 					{
@@ -296,7 +297,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 			for (int32 Index = 0; Index < ArrayNum; ++Index)
 			{
 				const TSharedPtr<FJsonValue>& ArrayValueItem = ArrayValue[Index];
-				if (ArrayValueItem.IsValid() && !ArrayValueItem->IsNull())
+				if (ArrayValueItem.IsValid())
 				{
 					const int32 NewIndex = Helper.AddDefaultValue_Invalid_NeedsRehash();
 					if (!JsonValueToUProperty(ArrayValueItem, SetProperty->ElementProp, Helper.GetElementPtr(NewIndex)))
@@ -336,7 +337,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 			// set the property values
 			for (const auto& Entry : ObjectValue->Values)
 			{
-				if (Entry.Value.IsValid() && !Entry.Value->IsNull())
+				if (Entry.Value.IsValid())
 				{
 					const int32 NewIndex = Helper.AddDefaultValue_Invalid_NeedsRehash();
 
@@ -502,8 +503,15 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 				   *Property->GetNameCPP());
 			return false;
 		}
+
 		// Reset first
 		*ObjectPtrPtr = nullptr;
+		if (JsonValue->IsNull())
+		{
+			// Nothing else to do
+			return true;
+		}
+
 		const UClass* ObjectClass = ObjectProperty->PropertyClass;
 
 		// Special case, load by reference, See CanSaveAsReference
@@ -712,7 +720,7 @@ bool FDlgJsonParser::JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJso
 				break;
 			}
 		}
-		if (!JsonValue.IsValid() || JsonValue->IsNull())
+		if (!JsonValue.IsValid())
 		{
 			// we allow values to not be found since this mirrors the typical UObject mantra that all the fields are optional when deserializing
 			continue;

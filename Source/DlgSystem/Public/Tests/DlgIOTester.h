@@ -73,13 +73,13 @@ bool FDlgIOTester::TestStruct(const FString& StructDescription, const FDlgIOTest
 
 	// Write struct
 	ConfigWriterType Writer;
-	Writer.SetLogVerbose(true);
+	//Writer.SetLogVerbose(true);
 	Writer.Write(StructType::StaticStruct(), &ExportedStruct);
 	const FString WriterString = Writer.GetAsString();
 
 	// Read struct
 	ConfigParserType Parser;
-	Parser.SetLogVerbose(true);
+	//Parser.SetLogVerbose(true);
 	Parser.InitializeParserFromString(WriterString);
 	Parser.ReadAllProperty(StructType::StaticStruct(), &ImportedStruct);
 

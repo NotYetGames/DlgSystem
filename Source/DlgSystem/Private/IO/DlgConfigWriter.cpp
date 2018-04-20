@@ -33,7 +33,7 @@ void FDlgConfigWriter::WriteComplexMembersToString(const UStruct* StructDefiniti
 												   const FString& PostString,
 												   FString& Target)
 {
-	if (!IsValid(StructDefinition) || !IsValid(StructDefinition) || Object == nullptr)
+	if (StructDefinition == nullptr)
 	{
 		return;
 	}
@@ -58,7 +58,7 @@ void FDlgConfigWriter::WriteComplexMembersToString(const UStruct* StructDefiniti
 
 		StructDefinition = UnrealObject->GetClass();
 	}
-	if (!IsValid(StructDefinition))
+	if (StructDefinition == nullptr)
 	{
 		return;
 	}
@@ -108,7 +108,7 @@ bool FDlgConfigWriter::WritePropertyToString(const UProperty* Property,
 											 bool bPointerAsRef,
 											 FString& Target)
 {
-	if (CanSkipProperty(Property) || Object == nullptr)
+	if (CanSkipProperty(Property))
 	{
 		return true;
 	}
@@ -253,27 +253,21 @@ bool FDlgConfigWriter::WriteComplexElementToString(const UProperty* Property,
 												   bool bPointerAsRef,
 												   FString& Target)
 {
-	if (!IsValid(Property) || Object == nullptr)
+	if (Property == nullptr)
 	{
 		return false;
 	}
 
 	// UStruct
-	const UStructProperty* StructProp = Cast<UStructProperty>(Property);
-	if (IsValid(StructProp))
+	if (const UStructProperty* StructProperty = Cast<UStructProperty>(Property))
 	{
-		if (StructProp->Struct == nullptr || !IsValid(StructProp->Struct))
-		{
-			return true;
-		}
-
-		const void* StructObject = StructProp->ContainerPtrToValuePtr<void>(Object, 0);
+		const void* StructObject = StructProperty->ContainerPtrToValuePtr<void>(Object, 0);
 		if (StructObject == nullptr)
 		{
 			return true;
 		}
 
-		WriteComplexToString(StructProp->Struct,
+		WriteComplexToString(StructProperty->Struct,
 							 Property,
 							 StructObject,
 							 PreString,
@@ -285,11 +279,10 @@ bool FDlgConfigWriter::WriteComplexElementToString(const UProperty* Property,
 	}
 
 	// UObject
-	const UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property);
-	if (IsValid(ObjectProperty))
+	if (const UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
 	{
 		UObject** ObjPtrPtr = ((UObject**)ObjectProperty->ContainerPtrToValuePtr<void>(Object, 0));
-		const FString Path = *ObjPtrPtr != nullptr ? (*ObjPtrPtr)->GetPathName() : " ";
+		const FString Path = *ObjPtrPtr != nullptr ? (*ObjPtrPtr)->GetPathName() : "";
 		auto WritePathName = [&]()
 		{
 			if (bContainerElement)
@@ -309,7 +302,7 @@ bool FDlgConfigWriter::WriteComplexElementToString(const UProperty* Property,
 		else
 		{
 			// Write nullptr as empty string
-			if (*ObjPtrPtr == nullptr || !IsValid(ObjectProperty->PropertyClass))
+			if (*ObjPtrPtr == nullptr || ObjectProperty->PropertyClass == nullptr)
 			{
 				WritePathName();
 				return true;
@@ -340,12 +333,13 @@ void FDlgConfigWriter::WriteComplexToString(const UStruct* StructDefinition,
 											bool bWriteType,
 											FString& Target)
 {
-	if (CanSkipProperty(Property) || Object == nullptr || !IsValid(StructDefinition))
+	if (CanSkipProperty(Property) || StructDefinition == nullptr)
 	{
 		return;
 	}
+
 	const UObject* UnrealObject = static_cast<const UObject*>(Object);
-	if (bWriteType && (UnrealObject == nullptr || !FDlgHelper::IsValidLowLevel(UnrealObject)))
+	if (bWriteType && UnrealObject == nullptr)
 	{
 		return;
 	}
@@ -599,16 +593,14 @@ bool FDlgConfigWriter::IsPrimitiveContainer(const UProperty* Property)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const UStruct* FDlgConfigWriter::GetComplexType(const UProperty* Property)
 {
-	const UStructProperty* StructProp = Cast<UStructProperty>(Property);
-	if (StructProp != nullptr)
+	if (const UStructProperty* StructProperty = Cast<UStructProperty>(Property))
 	{
-		return StructProp->Struct;
+		return StructProperty->Struct;
 	}
 
-	const UObjectProperty* ObjectProp = Cast<UObjectProperty>(Property);
-	if (ObjectProp != nullptr)
+	if (const UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
 	{
-		return ObjectProp->PropertyClass;
+		return ObjectProperty->PropertyClass;
 	}
 
 	return nullptr;
@@ -616,7 +608,7 @@ const UStruct* FDlgConfigWriter::GetComplexType(const UProperty* Property)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool FDlgConfigWriter::WouldWriteNonPrimitive(const UStruct* StructDefinition, const void* Owner)
 {
-	if (!IsValid(StructDefinition) || Owner == nullptr)
+	if (StructDefinition == nullptr || Owner == nullptr)
 	{
 		return false;
 	}
@@ -680,25 +672,20 @@ bool FDlgConfigWriter::WouldWriteNonPrimitive(const UStruct* StructDefinition, c
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 FString FDlgConfigWriter::GetNameWithoutPrefix(const UProperty* Property, const UObject* ObjectPtr)
 {
-	if (!IsValid(Property) || ObjectPtr == nullptr || !IsValid(ObjectPtr))
+	if (const UStructProperty* StructProperty = Cast<UStructProperty>(Property))
 	{
-		return "";
+		return GetStringWithoutPrefix(StructProperty->Struct->GetName());
 	}
 
-	const UStructProperty* StructProp = Cast<UStructProperty>(Property);
-	if (IsValid(StructProp) && IsValid(StructProp->Struct))
+	if (const UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
 	{
-		return GetStringWithoutPrefix(StructProp->Struct->GetName());
-	}
-
-	const UObjectProperty* ObjectProp = Cast<UObjectProperty>(Property);
-	if (IsValid(ObjectProp))
-	{
-		if (IsValid(ObjectProp->PropertyClass))
+		// Get the Class from the ObjectProperty
+		if (ObjectPtr == nullptr)
 		{
-			return GetStringWithoutPrefix(ObjectProp->PropertyClass->GetName());
+			return GetStringWithoutPrefix(ObjectProperty->PropertyClass->GetName());
 		}
-		if (IsValid(ObjectPtr->GetClass()))
+
+		if (ObjectPtr->GetClass())
 		{
 			return GetStringWithoutPrefix(ObjectPtr->GetClass()->GetName());
 		}

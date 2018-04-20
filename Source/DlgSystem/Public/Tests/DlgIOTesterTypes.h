@@ -62,21 +62,20 @@ enum class EDlgTestEnum : uint8
 };
 
 UCLASS()
-class UDlgTestObjectPrimitives : public UObject
+class UDlgTestObjectPrimitivesBase : public UObject
 {
 	GENERATED_BODY()
+	typedef UDlgTestObjectPrimitivesBase Self;
 public:
-	static UDlgTestObjectPrimitives* New() { return NewObject<UDlgTestObjectPrimitives>(); }
-	UDlgTestObjectPrimitives() { SetToDefaults(); }
-	void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
-	void SetToDefaults();
-	bool IsEqual(const UDlgTestObjectPrimitives* Other) const
+	UDlgTestObjectPrimitivesBase() { SetToDefaults(); }
+	virtual void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
+	virtual void SetToDefaults();
+	virtual bool IsEqual(const Self* Other, FString& OutError) const;
+	bool operator==(const Self& Other) const
 	{
 		FString DiscardError;
-		return IsEqual(Other, DiscardError);
+		return IsEqual(&Other, DiscardError);
 	}
-	bool IsEqual(const UDlgTestObjectPrimitives* Other, FString& OutError) const;
-	bool operator==(const UDlgTestObjectPrimitives& Other) const;
 
 	FString ToString() const
 	{
@@ -94,16 +93,94 @@ public:
 	FString String;
 };
 
+UCLASS()
+class UDlgTestObjectPrimitives_ChildA : public UDlgTestObjectPrimitivesBase
+{
+	GENERATED_BODY()
+	typedef UDlgTestObjectPrimitives_ChildA Self;
+public:
+	UDlgTestObjectPrimitives_ChildA() { SetToDefaults(); }
+	void GenerateRandomData(const FDlgIOTesterOptions& InOptions) override;
+	void SetToDefaults() override;
+	bool IsEqual(const Super* Other, FString& OutError) const override;
+	bool operator==(const Self& Other) const
+	{
+		FString DiscardError;
+		return IsEqual(&Other, DiscardError);
+	}
+
+public:
+	// Tester Options
+	FDlgIOTesterOptions Options;
+
+	UPROPERTY()
+	int32 IntegerChildA;
+};
+
+UCLASS()
+class UDlgTestObjectPrimitives_ChildB : public UDlgTestObjectPrimitivesBase
+{
+	GENERATED_BODY()
+	typedef UDlgTestObjectPrimitives_ChildB Self;
+public:
+	UDlgTestObjectPrimitives_ChildB() { SetToDefaults(); }
+	void GenerateRandomData(const FDlgIOTesterOptions& InOptions) override;
+	void SetToDefaults() override;
+	bool IsEqual(const Super* Other, FString& OutError) const override;
+	bool operator==(const Self& Other) const
+	{
+		FString DiscardError;
+		return IsEqual(&Other, DiscardError);
+	}
+
+public:
+	// Tester Options
+	FDlgIOTesterOptions Options;
+
+	UPROPERTY()
+	FString StringChildB;
+};
+
+UCLASS()
+class UDlgTestObjectPrimitives_GrandChildA_Of_ChildA : public UDlgTestObjectPrimitives_ChildA
+{
+	GENERATED_BODY()
+	typedef UDlgTestObjectPrimitives_GrandChildA_Of_ChildA Self;
+	typedef UDlgTestObjectPrimitivesBase SuperBase;
+public:
+	UDlgTestObjectPrimitives_GrandChildA_Of_ChildA() { SetToDefaults(); }
+	void GenerateRandomData(const FDlgIOTesterOptions& InOptions) override;
+	void SetToDefaults() override;
+	bool IsEqual(const SuperBase* Other, FString& OutError) const override;
+	bool operator==(const Self& Other) const
+	{
+		FString DiscardError;
+		return IsEqual(&Other, DiscardError);
+	}
+
+public:
+	// Tester Options
+	FDlgIOTesterOptions Options;
+
+	UPROPERTY()
+	int32 IntegerGrandChildA_Of_ChildA;
+};
+
 USTRUCT()
 struct DLGSYSTEM_API FDlgTestStructPrimitives
 {
 	GENERATED_USTRUCT_BODY()
+	typedef FDlgTestStructPrimitives Self;
 public:
 	FDlgTestStructPrimitives() { SetToDefaults(); }
-	bool IsEqual(const FDlgTestStructPrimitives& Other, FString& OutError) const;
-	bool operator==(const FDlgTestStructPrimitives& Other) const;
-	bool operator!=(const FDlgTestStructPrimitives& Other) const { return !(*this == Other); }
-	friend uint32 GetTypeHash(const FDlgTestStructPrimitives& This)
+	bool IsEqual(const Self& Other, FString& OutError) const;
+	bool operator==(const Self& Other) const
+	{
+		FString DiscardError;
+		return IsEqual(Other, DiscardError);
+	}
+	bool operator!=(const Self& Other) const { return !(*this == Other); }
+	friend uint32 GetTypeHash(const Self& This)
 	{
 		// NOTE not floats in the hash, these should be enough
 		uint32 KeyHash = GetTypeHash(This.Integer);
@@ -209,7 +286,30 @@ public:
 	UTexture2D* Texture2DReference;
 
 	UPROPERTY()
-	UDlgTestObjectPrimitives* ObjectPrimitives;
+	UDlgTestObjectPrimitivesBase* ObjectPrimitivesBase;
+
+	UPROPERTY()
+	UDlgTestObjectPrimitives_ChildA* ObjectPrimitivesChildA;
+
+	// Can be nullptr or not
+	UPROPERTY()
+	UDlgTestObjectPrimitivesBase* ObjectSwitch;
+
+	// Object is defined as base but actually assigned to Child A
+	UPROPERTY()
+	UDlgTestObjectPrimitivesBase* ObjectPrimitivesPolymorphismChildA;
+
+	UPROPERTY()
+	UDlgTestObjectPrimitivesBase* ObjectPrimitivesPolymorphismChildB;
+
+	UPROPERTY()
+	UDlgTestObjectPrimitives_GrandChildA_Of_ChildA* ObjectPrimitivesGrandChildA;
+
+	UPROPERTY()
+	UDlgTestObjectPrimitivesBase* ObjectPrimitivesPolymorphismBaseGrandChildA;
+
+	UPROPERTY()
+	UDlgTestObjectPrimitives_ChildA* ObjectPrimitivesPolymorphismChildGrandChildA;
 };
 
 
@@ -218,10 +318,15 @@ USTRUCT()
 struct DLGSYSTEM_API FDlgTestArrayPrimitive
 {
 	GENERATED_USTRUCT_BODY()
+	typedef FDlgTestArrayPrimitive Self;
 public:
 	FDlgTestArrayPrimitive() {}
-	bool IsEqual(const FDlgTestArrayPrimitive& Other, FString& OutError) const;
-	bool operator==(const FDlgTestArrayPrimitive& Other) const;
+	bool IsEqual(const Self& Other, FString& OutError) const;
+	bool operator==(const Self& Other) const
+	{
+		FString DiscardError;
+		return IsEqual(Other, DiscardError);
+	}
 	void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
 
 public:
@@ -245,17 +350,26 @@ public:
 
 	UPROPERTY()
 	TArray<FString> StringArray;
+
+	// Filled with only nulls, check if the writers support it
+	UPROPERTY()
+	TArray<UObject*> ObjectArrayConstantNulls;
 };
 
 USTRUCT()
 struct DLGSYSTEM_API FDlgTestArrayComplex
 {
 	GENERATED_USTRUCT_BODY()
+	typedef FDlgTestArrayComplex Self;
 public:
 	FDlgTestArrayComplex() {}
-	bool IsEqual(const FDlgTestArrayComplex& Other, FString& OutError) const;
-	bool operator==(const FDlgTestArrayComplex& Other) const;
+	bool IsEqual(const Self& Other, FString& OutError) const;
 	void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
+	bool operator==(const Self& Other) const
+	{
+		FString DiscardError;
+		return IsEqual(Other, DiscardError);
+	}
 
 public:
 	// Tester Options
@@ -265,7 +379,16 @@ public:
 	TArray<FDlgTestStructPrimitives> StructArrayPrimitives;
 
 	UPROPERTY()
-	TArray<UDlgTestObjectPrimitives*> ObjectArrayPrimitives;
+	TArray<FDlgTestArrayPrimitive> StructArrayOfArrayPrimitives;
+
+	UPROPERTY()
+	TArray<UDlgTestObjectPrimitivesBase*> ObjectArrayFrequentsNulls;
+
+	UPROPERTY()
+	TArray<UDlgTestObjectPrimitivesBase*> ObjectArrayPrimitivesBase;
+
+	UPROPERTY()
+	TArray<UDlgTestObjectPrimitivesBase*> ObjectArrayPrimitivesAll;
 };
 
 
@@ -274,11 +397,16 @@ USTRUCT()
 struct DLGSYSTEM_API FDlgTestSetPrimitive
 {
 	GENERATED_USTRUCT_BODY()
+	typedef FDlgTestSetPrimitive Self;
 public:
 	FDlgTestSetPrimitive() {}
-	bool IsEqual(const FDlgTestSetPrimitive& Other, FString& OutError) const;
-	bool operator==(const FDlgTestSetPrimitive& Other) const;
+	bool IsEqual(const Self& Other, FString& OutError) const;
 	void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
+	bool operator==(const Self& Other) const
+	{
+		FString DiscardError;
+		return IsEqual(Other, DiscardError);
+	}
 
 public:
 	// Tester Options
@@ -301,11 +429,16 @@ USTRUCT()
 struct DLGSYSTEM_API FDlgTestSetComplex
 {
 	GENERATED_USTRUCT_BODY()
+	typedef FDlgTestSetComplex Self;
 public:
 	FDlgTestSetComplex() {}
-	bool operator==(const FDlgTestSetComplex& Other) const;
-	bool IsEqual(const FDlgTestSetComplex& Other, FString& OutError) const;
+	bool IsEqual(const Self& Other, FString& OutError) const;
 	void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
+	bool operator==(const Self& Other) const
+	{
+		FString DiscardError;
+		return IsEqual(Other, DiscardError);
+	}
 
 public:
 	// Tester Options
@@ -321,11 +454,16 @@ USTRUCT()
 struct DLGSYSTEM_API FDlgTestMapPrimitive
 {
 	GENERATED_USTRUCT_BODY()
+	typedef FDlgTestMapPrimitive Self;
 public:
 	FDlgTestMapPrimitive() {}
-	bool IsEqual(const FDlgTestMapPrimitive& Other, FString& OutError) const;
-	bool operator==(const FDlgTestMapPrimitive& Other) const;
+	bool IsEqual(const Self& Other, FString& OutError) const;
 	void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
+	bool operator==(const Self& Other) const
+	{
+		FString DiscardError;
+		return IsEqual(Other, DiscardError);
+	}
 
 public:
 	// Tester Options
@@ -360,17 +498,26 @@ public:
 
 	UPROPERTY()
 	TMap<FName, FColor> NameToColorMap;
+
+	// Filled with only nulls, check if the writers support it
+	UPROPERTY()
+	TMap<FName, UDlgTestObjectPrimitivesBase*> ObjectConstantNullMap;
 };
 
 USTRUCT()
 struct DLGSYSTEM_API FDlgTestMapComplex
 {
 	GENERATED_USTRUCT_BODY()
+	typedef FDlgTestMapComplex Self;
 public:
 	FDlgTestMapComplex() {}
-	bool operator==(const FDlgTestMapComplex& Other) const;
-	bool IsEqual(const FDlgTestMapComplex& Other, FString& OutError) const;
+	bool IsEqual(const Self& Other, FString& OutError) const;
 	void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
+	bool operator==(const Self& Other) const
+	{
+		FString DiscardError;
+		return IsEqual(Other, DiscardError);
+	}
 
 public:
 	// Tester Options
@@ -378,6 +525,9 @@ public:
 
 	UPROPERTY()
 	TMap<int32, FDlgTestStructPrimitives> IntToStructPrimitiveMap;
+
+	UPROPERTY()
+	TMap<FName, FDlgTestStructPrimitives> NameToStructPrimitiveMap;
 
 	UPROPERTY()
 	TMap<FDlgTestStructPrimitives, int32> StructPrimitiveToIntMap;

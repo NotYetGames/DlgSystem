@@ -9,8 +9,8 @@
  * Limitations:
  * - TSet or TMap with the KeyType as float or structures that have floats, this is very bad you should not do this anyways
  * - limitation for each type you can see inside DlgIoTester.cpp in the Options.
- * - Having an uninitialized UObject property inside a USTRUCt (https://answers.unrealengine.com/questions/566684/editor-crashes-on-startup-if-uninitialized-uproper.html)
- *   THIS CRASHES THE WRITERS
+ * - Having an uninitialized UObject property inside a USTRUCT (https://answers.unrealengine.com/questions/566684/editor-crashes-on-startup-if-uninitialized-uproper.html)
+ *   THIS CRASHES THE WRITERS so initialize them with nullptr
  *
  * MetaData specifiers:
  *		Unfortunately they only work in editor build
