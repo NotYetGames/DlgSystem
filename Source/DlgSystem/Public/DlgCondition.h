@@ -61,6 +61,17 @@ enum class EDlgOperation : uint8
 };
 
 /**
+ *  Type of value the participant's value is checked against
+ */
+UENUM()
+enum class EDlgCompareType : uint8
+{
+	DlgCompareToConst				UMETA(DisplayName = "Compare to Constant"),
+	DlgCompareToVariable			UMETA(DisplayName = "Compare to Variable"),
+	DlgCompareToClassVariable		UMETA(DisplayName = "Compare to Class Variable")
+};
+
+/**
  *  A condition is a logical operation which is evaluated based on a participant or on the local (context based) or global dialogue memory.
  *  More conditions are stored together in condition arrays in FDlgEdge and in UDlgNode, the node (or the edge's target node) is only visitable
  *  if the condition array is satisfied
@@ -77,8 +88,20 @@ public:
 
 	bool Evaluate(class UDlgContextInternal* DlgContext, UObject* DlgParticipant) const;
 
-	bool CheckFloat(float Value) const;
-	bool CheckInt(int32 Value) const;
+protected:
+
+	/** Helper functions doing the check on the primary value based on EDlgCompareType */
+
+	bool CheckFloat(float Value, UDlgContextInternal* DlgContext) const;
+	bool CheckInt(int32 Value, UDlgContextInternal* DlgContext) const;
+	bool CheckBool(bool bValue, UDlgContextInternal* DlgContext) const;
+	bool CheckName(FName Value, UDlgContextInternal* DlgContext) const;
+
+	/** Checks Participant, prints warning if it is nullptr */
+	bool IsParticipantValid(UObject* Participant) const;
+
+	/** returns true if ParticipantName has to belong to match with a valid Participant in order for the condition type to work */
+	bool IsParticipantInvolved() const;
 
 public:
 
@@ -98,9 +121,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
 	FName CallbackName;
 
+
 	/** The desired operation on the selected variable */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
 	EDlgOperation Operation;
+
+	/** Type of value to check against  */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	EDlgCompareType CompareType;
+
+
+	/** Name of the other participant (speaker) the check is performed against (with some compare types) */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	FName OtherParticipantName;
+
+	/** Name of the variable of the other participant the value is checked against (with some compare types) */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	FName OtherVariableName;
+
 
 	/** Node index for "node already visited" condition, the value the participant's int is checked against otherwise */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)

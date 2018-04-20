@@ -26,14 +26,20 @@ void FDialogueCondition_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InS
 
 	// Cache the Property Handle for some properties
 	ParticipantNamePropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, ParticipantName));
+	OtherParticipantNamePropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, OtherParticipantName));
 	ConditionTypePropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, ConditionType));
+	CompareTypePropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, CompareType));
 	IntValuePropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, IntValue));
 	check(ParticipantNamePropertyHandle.IsValid());
+	check(OtherParticipantNamePropertyHandle.IsValid());
 	check(ConditionTypePropertyHandle.IsValid());
+	check(CompareTypePropertyHandle.IsValid());
 	check(IntValuePropertyHandle.IsValid());
 
 	// Register handler propeties changes
 	ConditionTypePropertyHandle->SetOnPropertyValueChanged(FSimpleDelegate::CreateSP(this, &Self::OnConditionTypeChanged, true));
+
+	CompareTypePropertyHandle->SetOnPropertyValueChanged(FSimpleDelegate::CreateSP(this, &Self::OnCompareTypeChanged, true));
 
 	const bool bShowOnlyInnerProperties = StructPropertyHandle->GetProperty()->HasMetaData(META_ShowOnlyInnerProperties);
 	if (!bShowOnlyInnerProperties)
@@ -73,7 +79,7 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 	{
 		const TSharedPtr<IPropertyHandle> CallbackNamePropertyHandle =
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, CallbackName));
-		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("CalllBackNameSearchKey", "Variable Name"));
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("CallBackNameSearchKey", "Variable Name"));
 
 		CallbackNamePropertyRow = MakeShareable(new FTextPropertyPickList_CustomRowHelper(DetailWidgetRow, CallbackNamePropertyHandle));
 		CallbackNamePropertyRow->SetTextPropertyPickListWidget(
@@ -94,6 +100,51 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, Operation)).ToSharedRef());
 		OperationPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetOperationVisibility));
 	}
+
+	// CompareType
+	{
+		CompareTypePropertyRow = &StructBuilder.AddProperty(
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, CompareType)).ToSharedRef());
+		CompareTypePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCompareTypeVisibility));
+	}
+
+
+	// OtherParticipantName
+	{
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("ParticipantNameSearchKey", "Participant Name"));
+
+		ParticipantNamePropertyRow = MakeShareable(new FTextPropertyPickList_CustomRowHelper(DetailWidgetRow, OtherParticipantNamePropertyHandle));
+		ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
+			SNew(STextPropertyPickList)
+			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
+			.OnTextCommitted(this, &Self::HandleTextCommitted)
+			.HasContextCheckbox(true)
+			.IsContextCheckBoxChecked(true)
+			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueParticipantNames)
+		)
+		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetOtherParticipantNameAndVariableVisibility))
+		->Update();
+	}
+
+	// Other variable name
+	{
+		const TSharedPtr<IPropertyHandle> CallbackNamePropertyHandle =
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, OtherVariableName));
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("CallBackNameSearchKey", "Variable Name"));
+
+		OtherVariableNamePropertyRow = MakeShareable(new FTextPropertyPickList_CustomRowHelper(DetailWidgetRow, CallbackNamePropertyHandle));
+		OtherVariableNamePropertyRow->SetTextPropertyPickListWidget(
+			SNew(STextPropertyPickList)
+			.AvailableSuggestions(this, &Self::GetAllDialoguesOtherVariableNames)
+			.OnTextCommitted(this, &Self::HandleTextCommitted)
+			.HasContextCheckbox(true)
+			.IsContextCheckBoxChecked(false)
+			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueOtherVariableNames)
+		)
+		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetOtherParticipantNameAndVariableVisibility))
+		->Update();
+	}
+
 
 	// IntValue
 	{
@@ -129,7 +180,8 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 		LongTermMemoryPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetLongTermMemoryVisibility));
 	}
 
-	// Cache the initial condition type
+	// Cache the initial values
+	OnCompareTypeChanged(false);
 	OnConditionTypeChanged(false);
 }
 
@@ -220,111 +272,142 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 	}
 }
 
+void FDialogueCondition_Details::OnCompareTypeChanged(bool bForceRefresh)
+{
+	uint8 value;
+	verify(CompareTypePropertyHandle->GetValue(value) == FPropertyAccess::Success);
+	CompareType = static_cast<EDlgCompareType>(value);
+
+	// Refresh the view, without this some names/tooltips won't get refreshed
+	if (bForceRefresh && PropertyUtils.IsValid())
+	{
+		PropertyUtils->ForceRefresh();
+	}
+}
+
 /** Gets all the condition name suggestions depending on ConditionType from all Dialogues. */
-TArray<FName> FDialogueCondition_Details::GetAllDialoguesCallbackNames() const
+TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bCurrentOnly, bool bOtherValue) const
 {
 	TArray<FName> Suggestions;
-	const FName ParticipantName = DetailsPanel::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
+	TSet<FName> SuggestionSet;
+	const TSharedPtr<IPropertyHandle>& ParticipantHandle = bOtherValue ? OtherParticipantNamePropertyHandle : ParticipantNamePropertyHandle;
+	const FName ParticipantName = DetailsPanel::GetParticipantNameFromPropertyHandle(ParticipantHandle.ToSharedRef());
 
+	bool bReflectionBased = false;
+	if (bOtherValue)
+	{
+		bReflectionBased = CompareType == EDlgCompareType::DlgCompareToClassVariable;
+	}
+	else
+	{
+		bReflectionBased = ConditionType == EDlgConditionType::DlgConditionClassBoolVariable
+						|| ConditionType == EDlgConditionType::DlgConditionClassIntVariable
+						|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
+						|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable;
+	}
+	
+	
 	switch (ConditionType)
 	{
-	case EDlgConditionType::DlgConditionBoolCall:
-		UDlgManager::GetAllDialoguesBoolNames(ParticipantName, Suggestions);
-		break;
-
-	case EDlgConditionType::DlgConditionFloatCall:
-		UDlgManager::GetAllDialoguesFloatNames(ParticipantName, Suggestions);
-		break;
-
-	case EDlgConditionType::DlgConditionIntCall:
-		UDlgManager::GetAllDialoguesIntNames(ParticipantName, Suggestions);
-		break;
-
-	case EDlgConditionType::DlgConditionNameCall:
-		UDlgManager::GetAllDialoguesNameNames(ParticipantName, Suggestions);
-		break;
-
 	case EDlgConditionType::DlgConditionClassBoolVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
-		FDlgHelper::SortDefault(Suggestions);
+	case EDlgConditionType::DlgConditionBoolCall:
+		if (bReflectionBased)
+		{
+			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
+		}
+		else
+		{
+			if (bCurrentOnly)
+			{
+				Dialogue->GetBoolNames(ParticipantName, SuggestionSet);
+				Suggestions = SuggestionSet.Array();
+			}
+			else
+			{
+				UDlgManager::GetAllDialoguesBoolNames(ParticipantName, Suggestions);
+			}
+		}
 		break;
 
 	case EDlgConditionType::DlgConditionClassFloatVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
-		FDlgHelper::SortDefault(Suggestions);
+	case EDlgConditionType::DlgConditionFloatCall:
+		if (bReflectionBased)
+		{
+			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
+		}
+		else
+		{
+			if (bCurrentOnly)
+			{
+				Dialogue->GetFloatNames(ParticipantName, SuggestionSet);
+			}
+			else
+			{
+				UDlgManager::GetAllDialoguesFloatNames(ParticipantName, Suggestions);
+			}
+		}
 		break;
 
 	case EDlgConditionType::DlgConditionClassIntVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
-		FDlgHelper::SortDefault(Suggestions);
+	case EDlgConditionType::DlgConditionIntCall:
+		if (bReflectionBased)
+		{
+			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
+		}
+		else
+		{
+			if (bCurrentOnly)
+			{
+				Dialogue->GetIntNames(ParticipantName, SuggestionSet);
+			}
+			else
+			{
+				UDlgManager::GetAllDialoguesIntNames(ParticipantName, Suggestions);
+			}
+		}
 		break;
 
+	case EDlgConditionType::DlgConditionNameCall:
 	case EDlgConditionType::DlgConditionClassNameVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
-		FDlgHelper::SortDefault(Suggestions);
+		if (bReflectionBased)
+		{
+			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
+		}
+		else
+		{
+			if (bCurrentOnly)
+			{
+				Dialogue->GetNameNames(ParticipantName, SuggestionSet);
+			}
+			else
+			{
+				UDlgManager::GetAllDialoguesNameNames(ParticipantName, Suggestions);
+			}
+		}
 		break;
 
 	case EDlgConditionType::DlgConditionEventCall:
 	case EDlgConditionType::DlgConditionNodeVisited:
 	default:
-		UDlgManager::GetAllDialoguesConditionNames(ParticipantName, Suggestions);
+		if (bCurrentOnly)
+		{
+			Dialogue->GetConditions(ParticipantName, SuggestionSet);
+		}
+		else
+		{
+			UDlgManager::GetAllDialoguesConditionNames(ParticipantName, Suggestions);
+		}
 		break;
 	}
 
-	return Suggestions;
-}
-
-/** Gets all the condition name suggestions depending on EventType from the current Dialogue */
-TArray<FName> FDialogueCondition_Details::GetCurrentDialogueCallbackNames() const
-{
-	const FName ParticipantName = DetailsPanel::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
-	TSet<FName> Suggestions;
-
-	switch (ConditionType)
+	if (SuggestionSet.Num() > Suggestions.Num())
 	{
-	case EDlgConditionType::DlgConditionBoolCall:
-		Dialogue->GetBoolNames(ParticipantName, Suggestions);
-		break;
-
-	case EDlgConditionType::DlgConditionNameCall:
-		Dialogue->GetNameNames(ParticipantName, Suggestions);
-		break;
-
-	case EDlgConditionType::DlgConditionFloatCall:
-		Dialogue->GetFloatNames(ParticipantName, Suggestions);
-		break;
-
-	case EDlgConditionType::DlgConditionIntCall:
-		Dialogue->GetIntNames(ParticipantName, Suggestions);
-		break;
-
-
-	case EDlgConditionType::DlgConditionClassIntVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
-		break;
-
-	case EDlgConditionType::DlgConditionClassBoolVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
-		break;
-
-	case EDlgConditionType::DlgConditionClassFloatVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
-		break;
-
-	case EDlgConditionType::DlgConditionClassNameVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
-		break;
-
-
-	case EDlgConditionType::DlgConditionEventCall:
-	case EDlgConditionType::DlgConditionNodeVisited:
-	default:
-		Dialogue->GetConditions(ParticipantName, Suggestions);
-		break;
+		Suggestions = SuggestionSet.Array();
 	}
 
 	FDlgHelper::SortDefault(Suggestions);
-	return Suggestions.Array();
+	return Suggestions;
 }
+
 
 #undef LOCTEXT_NAMESPACE
