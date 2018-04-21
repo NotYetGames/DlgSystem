@@ -224,9 +224,9 @@ FName UDlgContext::GetActiveParticipantName() const
 }
 
 
-UObject* UDlgContext::GetParticipant(FName DlgParticipantName)
+const UObject* UDlgContext::GetConstParticipant(FName DlgParticipantName) const
 {
-	UObject** ParticipantPtr = Participants.Find(DlgParticipantName);
+	const UObject* const* ParticipantPtr = Participants.Find(DlgParticipantName);
 	if (ParticipantPtr != nullptr)
 	{
 		return *ParticipantPtr;

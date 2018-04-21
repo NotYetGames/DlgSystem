@@ -39,19 +39,13 @@ public:
 	}
 
 	// Operator overload for serialization
-	friend FArchive& operator<<(FArchive &Ar, FDlgEdge& DlgEdge)
-	{
-		Ar << DlgEdge.TargetIndex;
-		Ar << DlgEdge.Text;
-		Ar << DlgEdge.Conditions;
-		return Ar;
-	}
+	friend FArchive& operator<<(FArchive &Ar, FDlgEdge& DlgEdge);
 
 	/** Creates a simple edge without text, without conditions */
 	FDlgEdge(int32 InTargetIndex = INDEX_NONE) : TargetIndex(InTargetIndex) {}
 
 	/** Returns with true if every condition attached to the edge and every enter condition of the target node are satisfied */
-	bool Evaluate(class UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyVisitedNodes) const;
+	bool Evaluate(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
 	/** Returns if the Edge is valid, has the TargetIndex non negative  */
 	bool IsValid() const
@@ -140,12 +134,12 @@ public:
 	DECLARE_EVENT_TwoParams(UDlgNode, FDialogueNodePropertyChanged, const FPropertyChangedEvent& /* PropertyChangedEvent */, int32 /* EdgeIndexChanged */);
 	FDialogueNodePropertyChanged OnDialogueNodePropertyChanged;
 
-	virtual bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<UDlgNode*> NodesEnteredWithThisStep);
+	virtual bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep);
 
-	virtual bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyEvaluated);
+	virtual bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated);
 
-	virtual bool CheckNodeEnterConditions(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyVisitedNodes);
-	virtual bool HasAnySatisfiedChild(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyVisitedNodes);
+	virtual bool CheckNodeEnterConditions(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
+	virtual bool HasAnySatisfiedChild(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
 	virtual bool OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext);
 

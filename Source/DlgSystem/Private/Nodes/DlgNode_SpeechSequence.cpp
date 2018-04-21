@@ -12,13 +12,13 @@ void UDlgNode_SpeechSequence::PostEditChangeProperty(FPropertyChangedEvent& Prop
 }
 #endif
 
-bool UDlgNode_SpeechSequence::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<UDlgNode*> NodesEnteredWithThisStep)
+bool UDlgNode_SpeechSequence::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
 	ActualIndex = 0;
 	return Super::HandleNodeEnter(DlgContext, NodesEnteredWithThisStep);
 }
 
-bool UDlgNode_SpeechSequence::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyEvaluated)
+bool UDlgNode_SpeechSequence::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated)
 {
 	TArray<const FDlgEdge*>& Options = DlgContext->GetOptionArray();
 	TArray<FDlgEdgeData>& AllOptions = DlgContext->GetAllOptionsArray();

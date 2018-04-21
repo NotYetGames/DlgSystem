@@ -25,7 +25,7 @@ public:
 	FString GetDesc() override;
 
 	// Begin UDlgNode Interface.
-	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyEvaluated) override { return false; }
+	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated) override { return false; }
 	bool OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext) override { return false; }
 
 #if WITH_EDITOR

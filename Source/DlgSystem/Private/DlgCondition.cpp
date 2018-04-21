@@ -8,7 +8,7 @@
 
 #include "DlgDialogueParticipant.h"
 
-bool FDlgCondition::EvaluateArray(const TArray<FDlgCondition>& DlgConditionArray, UDlgContextInternal* DlgContext, FName DefaultParticipantName)
+bool FDlgCondition::EvaluateArray(const TArray<FDlgCondition>& DlgConditionArray, const UDlgContextInternal* DlgContext, FName DefaultParticipantName)
 {
 	bool bHasAnyWeak = false;
 	bool bHasSuccessfulWeak = false;
@@ -16,25 +16,23 @@ bool FDlgCondition::EvaluateArray(const TArray<FDlgCondition>& DlgConditionArray
 	for (const FDlgCondition& Condition : DlgConditionArray)
 	{
 		const FName ParticipantName = Condition.ParticipantName == NAME_None ? DefaultParticipantName : Condition.ParticipantName;
-		const bool bSatisfied = Condition.Evaluate(DlgContext, DlgContext->GetParticipant(ParticipantName));
+		const bool bSatisfied = Condition.Evaluate(DlgContext, DlgContext->GetConstParticipant(ParticipantName));
 		if (Condition.Strength == EDlgConditionStrength::DlgConditionStrengthWeak)
 		{
 			bHasAnyWeak = true;
 			bHasSuccessfulWeak = bHasSuccessfulWeak || bSatisfied;
 		}
-		else
+		else if (!bSatisfied)
 		{
-			if (!bSatisfied)
-			{
-				return false;
-			}
+			// All must be satisfied 
+			return false;
 		}
 	}
 
-	return (bHasSuccessfulWeak || !bHasAnyWeak);
+	return bHasSuccessfulWeak || !bHasAnyWeak;
 }
 
-bool FDlgCondition::Evaluate(UDlgContextInternal* DlgContext, UObject* DlgParticipant) const
+bool FDlgCondition::Evaluate(const UDlgContextInternal* DlgContext, const UObject* DlgParticipant) const
 {
 	if (!IsValid(DlgContext) || (IsParticipantInvolved() && !IsParticipantValid(DlgParticipant)))
 	{
@@ -83,7 +81,7 @@ bool FDlgCondition::Evaluate(UDlgContextInternal* DlgContext, UObject* DlgPartic
 
 		case EDlgConditionType::DlgConditionHasSatisfiedChild:
 			{
-				UDlgNode* Node = DlgContext->GetNode(IntValue);
+				const UDlgNode* Node = DlgContext->GetNode(IntValue);
 				return Node != nullptr ? Node->HasAnySatisfiedChild(DlgContext, {}) == bBoolValue : false;
 			}
 
@@ -93,12 +91,12 @@ bool FDlgCondition::Evaluate(UDlgContextInternal* DlgContext, UObject* DlgPartic
 	}
 }
 
-bool FDlgCondition::CheckFloat(float Value, UDlgContextInternal* DlgContext) const
+bool FDlgCondition::CheckFloat(float Value, const UDlgContextInternal* DlgContext) const
 {
 	float ValueToCheckAgainst = FloatValue;
 	if (CompareType == EDlgCompareType::DlgCompareToVariable || CompareType == EDlgCompareType::DlgCompareToClassVariable)
 	{
-		UObject* OtherParticipant = DlgContext->GetParticipant(OtherParticipantName);
+		const UObject* OtherParticipant = DlgContext->GetConstParticipant(OtherParticipantName);
 		if (!IsParticipantValid(OtherParticipant))
 		{
 			return false;
@@ -117,7 +115,7 @@ bool FDlgCondition::CheckFloat(float Value, UDlgContextInternal* DlgContext) con
 	switch (Operation)
 	{
 		case EDlgOperation::DlgEqual:
-			return Value == ValueToCheckAgainst;
+			return FMath::IsNearlyEqual(Value, ValueToCheckAgainst);
 
 		case EDlgOperation::DlgGreater:
 			return Value > ValueToCheckAgainst;
@@ -132,7 +130,7 @@ bool FDlgCondition::CheckFloat(float Value, UDlgContextInternal* DlgContext) con
 			return Value <= ValueToCheckAgainst;
 
 		case EDlgOperation::DlgNotEqual:
-			return Value != ValueToCheckAgainst;
+			return !FMath::IsNearlyEqual(Value, ValueToCheckAgainst);
 
 		default:
 			UE_LOG(LogDlgSystem, Error, TEXT("Invalid Operation in float based condition!"));
@@ -140,12 +138,12 @@ bool FDlgCondition::CheckFloat(float Value, UDlgContextInternal* DlgContext) con
 	}
 }
 
-bool FDlgCondition::CheckInt(int32 Value, UDlgContextInternal* DlgContext) const
+bool FDlgCondition::CheckInt(int32 Value, const UDlgContextInternal* DlgContext) const
 {
 	int32 ValueToCheckAgainst = IntValue;
 	if (CompareType == EDlgCompareType::DlgCompareToVariable || CompareType == EDlgCompareType::DlgCompareToClassVariable)
 	{
-		UObject* OtherParticipant = DlgContext->GetParticipant(OtherParticipantName);
+		const UObject* OtherParticipant = DlgContext->GetConstParticipant(OtherParticipantName);
 		if (!IsParticipantValid(OtherParticipant))
 		{
 			return false;
@@ -187,12 +185,12 @@ bool FDlgCondition::CheckInt(int32 Value, UDlgContextInternal* DlgContext) const
 	}
 }
 
-bool FDlgCondition::CheckBool(bool bValue, UDlgContextInternal* DlgContext) const
+bool FDlgCondition::CheckBool(bool bValue, const UDlgContextInternal* DlgContext) const
 {
 	bool bValueToCheckAgainst = bBoolValue;
 	if (CompareType == EDlgCompareType::DlgCompareToVariable || CompareType == EDlgCompareType::DlgCompareToClassVariable)
 	{
-		UObject* OtherParticipant = DlgContext->GetParticipant(OtherParticipantName);
+		const UObject* OtherParticipant = DlgContext->GetConstParticipant(OtherParticipantName);
 		if (!IsParticipantValid(OtherParticipant))
 		{
 			return false;
@@ -211,12 +209,12 @@ bool FDlgCondition::CheckBool(bool bValue, UDlgContextInternal* DlgContext) cons
 	return bValue == bValueToCheckAgainst;
 }
 
-bool FDlgCondition::CheckName(FName Value, UDlgContextInternal* DlgContext) const
+bool FDlgCondition::CheckName(FName Value, const UDlgContextInternal* DlgContext) const
 {
 	FName ValueToCheckAgainst = NameValue;
 	if (CompareType == EDlgCompareType::DlgCompareToVariable || CompareType == EDlgCompareType::DlgCompareToClassVariable)
 	{
-		UObject* OtherParticipant = DlgContext->GetParticipant(OtherParticipantName);
+		const UObject* OtherParticipant = DlgContext->GetConstParticipant(OtherParticipantName);
 		if (!IsParticipantValid(OtherParticipant))
 		{
 			return false;
@@ -235,7 +233,7 @@ bool FDlgCondition::CheckName(FName Value, UDlgContextInternal* DlgContext) cons
 	return (ValueToCheckAgainst == Value) == bBoolValue;
 }
 
-bool FDlgCondition::IsParticipantValid(UObject* Participant) const
+bool FDlgCondition::IsParticipantValid(const UObject* Participant) const
 {
 	if (Participant != nullptr)
 	{
@@ -271,5 +269,8 @@ FArchive& operator<<(FArchive &Ar, FDlgCondition& DlgCondition)
 	Ar << DlgCondition.Operation;
 	Ar << DlgCondition.ConditionType;
 	Ar << DlgCondition.bLongTermMemory;
+	Ar << DlgCondition.CompareType;
+	Ar << DlgCondition.OtherParticipantName;
+	Ar << DlgCondition.OtherVariableName;
 	return Ar;
 }

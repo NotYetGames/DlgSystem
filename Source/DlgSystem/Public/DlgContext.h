@@ -31,6 +31,7 @@ UCLASS(BlueprintType, Abstract)
 class DLGSYSTEM_API UDlgContext : public UObject
 {
 	GENERATED_BODY()
+	typedef UDlgContext Self;
 public:
 
 	/**
@@ -132,8 +133,12 @@ public:
 	FName GetActiveParticipantName() const;
 
 	UFUNCTION(BlueprintPure, Category = DlgData)
-	UObject* GetParticipant(FName DlgParticipantName);
+	UObject* GetParticipant(FName DlgParticipantName)
+	{
+		return const_cast<UObject*>(GetConstParticipant(DlgParticipantName));
+	}
 
+	const UObject* GetConstParticipant(FName DlgParticipantName) const;
 	const TMap<FName, UObject*>& GetParticipantMap() { return Participants; }
 
 	UFUNCTION(BlueprintPure, Category = DlgData)
@@ -161,7 +166,7 @@ protected:
 	// Methods implemented by UDlgContextInternal
 
 	/** the Dialogue jumps to the defined node, or the function returns with false, if the conversation is over */
-	virtual bool EnterNode(int32 NodeIndex, TSet<UDlgNode*> NodesEnteredWithThisStep) { return false; }
+	virtual bool EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep) { return false; }
 
 	virtual class UDlgNode* GetActiveNode() { return nullptr; }
 	virtual const class UDlgNode* GetActiveNode() const { return nullptr; }
@@ -178,7 +183,7 @@ protected:
 	UPROPERTY()
 	TMap<FName, UObject*> Participants;
 
-	/** The index of the active node in the dialogue's Nodes array */
+	/** The index of the active node in the dialogues Nodes array */
 	int32 ActiveNodeIndex = INDEX_NONE;
 
 	/** Children of the active node with satisfied conditions - the options the player can choose from */

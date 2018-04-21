@@ -13,7 +13,7 @@ const FDlgEdge& FDlgEdge::GetInvalidEdge()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgEdge
-bool FDlgEdge::Evaluate(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyVisitedNodes) const
+bool FDlgEdge::Evaluate(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const
 {
 	if (!IsValid())
 	{
@@ -29,6 +29,18 @@ bool FDlgEdge::Evaluate(UDlgContextInternal* DlgContext, TSet<UDlgNode*> Already
 	// Check this edge conditions
 	return FDlgCondition::EvaluateArray(Conditions, DlgContext);
 }
+
+
+FArchive& operator<<(FArchive &Ar, FDlgEdge& DlgEdge)
+{
+	Ar << DlgEdge.TargetIndex;
+	Ar << DlgEdge.Text;
+	Ar << DlgEdge.Conditions;
+	Ar << DlgEdge.SpeakerState;
+	Ar << DlgEdge.bIncludeInAllOptionListIfUnsatisfied;
+	return Ar;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin UObject interface
@@ -86,7 +98,7 @@ void UDlgNode::AddReferencedObjects(UObject* InThis, FReferenceCollector& Collec
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin own function
-bool UDlgNode::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<UDlgNode*> NodesEnteredWithThisStep)
+bool UDlgNode::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
 	check(DlgContext != nullptr);
 
@@ -109,7 +121,7 @@ void UDlgNode::FireNodeEnterEvents(UDlgContextInternal* DlgContext)
 	}
 }
 
-bool UDlgNode::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyEvaluated)
+bool UDlgNode::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated)
 {
 	check(DlgContext != nullptr);
 
@@ -142,7 +154,7 @@ bool UDlgNode::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<UDlgNode
 	return true;
 }
 
-bool UDlgNode::CheckNodeEnterConditions(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyVisitedNodes)
+bool UDlgNode::CheckNodeEnterConditions(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const
 {
 	if (AlreadyVisitedNodes.Contains(this))
 	{
@@ -165,7 +177,7 @@ bool UDlgNode::CheckNodeEnterConditions(UDlgContextInternal* DlgContext, TSet<UD
 	return HasAnySatisfiedChild(DlgContext, AlreadyVisitedNodes);
 }
 
-bool UDlgNode::HasAnySatisfiedChild(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyVisitedNodes)
+bool UDlgNode::HasAnySatisfiedChild(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const
 {
 	for (const FDlgEdge& Edge : Children)
 	{

@@ -4,7 +4,7 @@
 #include "DlgContextInternal.h"
 
 
-bool UDlgNode_Selector::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<UDlgNode*> NodesEnteredWithThisStep)
+bool UDlgNode_Selector::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
 	check(DlgContext != nullptr);
 	FireNodeEnterEvents(DlgContext);
