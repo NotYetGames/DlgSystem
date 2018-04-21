@@ -18,7 +18,11 @@ struct FDialogueSearchFilter
 public:
 	bool IsEmptyFilter() const 
 	{ 
-		return SearchString.IsEmpty() && bIncludeIndices == false && bIncludeDialogueGUID == false && bIncludeComments == true;
+		return SearchString.IsEmpty() 
+			&& bIncludeIndices == false 
+			&& bIncludeDialogueGUID == false 
+			&& bIncludeComments == true
+			&& bIncludeNumericalTypes == false;
 	}
 
 public:
@@ -33,6 +37,9 @@ public:
 
 	/** Include node comments in search results? */
 	bool bIncludeComments = true;
+
+	/** Include numerical data in search results like (int32, floats)? */
+	bool bIncludeNumericalTypes = false;
 };
 
 /* Base class that matched the search results. When used by itself it is a simple text node. */

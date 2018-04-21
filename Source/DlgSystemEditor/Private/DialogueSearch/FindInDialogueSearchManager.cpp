@@ -89,6 +89,53 @@ bool FFindInDialogueSearchManager::QueryDlgCondition(const FDialogueSearchFilter
 						  TEXT("DlgCondition.NameValue"));
 	}
 
+	// Test OtherParticipantName
+	if (!InDlgCondition.OtherParticipantName.IsNone() &&
+		InDlgCondition.OtherParticipantName.ToString().Contains(SearchFilter.SearchString))
+	{
+		bContainsSearchString = true;
+		MakeChildTextNode(OutParentNode,
+			FText::FromName(InDlgCondition.OtherParticipantName),
+			LOCTEXT("DlgConditionOtherParticipantName", "DlgCondition OtherParticipantName"),
+			TEXT("DlgCondition.OtherParticipantName"));
+	}
+
+	// Test OtherVariableName
+	if (!InDlgCondition.OtherVariableName.IsNone() &&
+		InDlgCondition.OtherVariableName.ToString().Contains(SearchFilter.SearchString))
+	{
+		bContainsSearchString = true;
+		MakeChildTextNode(OutParentNode,
+			FText::FromName(InDlgCondition.OtherVariableName),
+			LOCTEXT("DlgConditionOtherVariableName", "DlgCondition OtherVariableName"),
+			TEXT("DlgCondition.OtherVariableName"));
+	}
+
+	if (SearchFilter.bIncludeNumericalTypes)
+	{
+		// Test IntValue
+		const FString IntValue = FString::FromInt(InDlgCondition.IntValue);
+		if (IntValue.Contains(SearchFilter.SearchString))
+		{
+			bContainsSearchString = true;
+			MakeChildTextNode(OutParentNode,
+				FText::FromString(IntValue),
+				LOCTEXT("DlgConditionIntValue", "DlgCondition IntValue"),
+				TEXT("DlgCondition.IntValue"));
+		}
+
+		// Test FloatValue
+		const FString FloatValue = FString::SanitizeFloat(InDlgCondition.FloatValue);
+		if (FloatValue.Contains(SearchFilter.SearchString))
+		{
+			bContainsSearchString = true;
+			MakeChildTextNode(OutParentNode,
+				FText::FromString(FloatValue),
+				LOCTEXT("DlgConditionFloatValue", "DlgCondition FloatValue"),
+				TEXT("DlgCondition.FloatValue"));
+		}
+	}
+
 	return bContainsSearchString;
 }
 
@@ -132,6 +179,31 @@ bool FFindInDialogueSearchManager::QueryDlgEvent(const FDialogueSearchFilter& Se
 						  FText::FromName(InDlgEvent.NameValue),
 						  LOCTEXT("DlgEventNameValue", "DlgEvent NameValue"),
 						  TEXT("DlgEvent.NameValue"));
+	}
+
+	if (SearchFilter.bIncludeNumericalTypes)
+	{
+		// Test IntValue
+		const FString IntValue = FString::FromInt(InDlgEvent.IntValue);
+		if (IntValue.Contains(SearchFilter.SearchString))
+		{
+			bContainsSearchString = true;
+			MakeChildTextNode(OutParentNode,
+				FText::FromString(IntValue),
+				LOCTEXT("DlgEventIntValue", "DlgEvent IntValue"),
+				TEXT("DlgEvent.IntValue"));
+		}
+
+		// Test FloatValue
+		const FString FloatValue = FString::SanitizeFloat(InDlgEvent.FloatValue);
+		if (FloatValue.Contains(SearchFilter.SearchString))
+		{
+			bContainsSearchString = true;
+			MakeChildTextNode(OutParentNode,
+				FText::FromString(FloatValue),
+				LOCTEXT("DlgEventFloatValue", "DlgEvent FloatValue"),
+				TEXT("DlgEvent.FloatValue"));
+		}
 	}
 
 	return bContainsSearchString;

@@ -13,28 +13,29 @@ UENUM()
 enum class EDlgConditionStrength : uint8
 {
 	/** All strong condition must be satisfied inside the condition array */
-	DlgConditionStrengthStrong		UMETA(DisplayName = "Strong Condition"),
+	DlgConditionStrengthStrong = 0		UMETA(DisplayName = "Strong Condition"),
+
 	/** At least one of the weak conditions must be satisfied inside the condition array (if there is any) */
-	DlgConditionStrengthWeak		UMETA(DisplayName = "Weak Condition"),
+	DlgConditionStrengthWeak			UMETA(DisplayName = "Weak Condition"),
 };
 
 UENUM()
 enum class EDlgConditionType : uint8
 {
 	/** A logical operation on a requested int variable acquired via the IDlgParticipant getter function */
-	DlgConditionIntCall		UMETA(DisplayName = "Check int call"),
+	DlgConditionIntCall = 0		UMETA(DisplayName = "Check int call"),
 
 	/** A logical operation on a requested float variable acquired via the IDlgParticipant getter function */
-	DlgConditionFloatCall	UMETA(DisplayName = "Check float call"),
+	DlgConditionFloatCall		UMETA(DisplayName = "Check float call"),
 
 	/** A logical operation on a requested bool variable acquired via the IDlgParticipant getter function */
-	DlgConditionBoolCall	UMETA(DisplayName = "Check bool call"),
+	DlgConditionBoolCall		UMETA(DisplayName = "Check bool call"),
 
 	/** A logical operation on a requested name variable acquired via the IDlgParticipant getter function */
-	DlgConditionNameCall	UMETA(DisplayName = "Check name call"),
+	DlgConditionNameCall		UMETA(DisplayName = "Check name call"),
 
 	/** A named condition call on the selected Participant */
-	DlgConditionEventCall	UMETA(DisplayName = "Check named condition"),
+	DlgConditionEventCall		UMETA(DisplayName = "Check named condition"),
 
 
 	/** A logical operation on an variables acquired from the object using the UClass */
@@ -57,7 +58,7 @@ enum class EDlgConditionType : uint8
 UENUM()
 enum class EDlgOperation : uint8
 {
-	DlgEqual			UMETA(DisplayName = "== (Is Equal To)"),
+	DlgEqual = 0		UMETA(DisplayName = "== (Is Equal To)"),
 	DlgNotEqual			UMETA(DisplayName = "!= (Is Not Equal To)"),
 	DlgLess				UMETA(DisplayName = "<  (Is Less Than)"),
 	DlgLessOrEqual		UMETA(DisplayName = "<= (Is Less Than Or Equal To)"),
@@ -71,7 +72,7 @@ enum class EDlgOperation : uint8
 UENUM()
 enum class EDlgCompareType : uint8
 {
-	DlgCompareToConst				UMETA(DisplayName = "Compare to Constant"),
+	DlgCompareToConst = 0			UMETA(DisplayName = "Compare to Constant"),
 	DlgCompareToVariable			UMETA(DisplayName = "Compare to Variable"),
 	DlgCompareToClassVariable		UMETA(DisplayName = "Compare to Class Variable")
 };
@@ -112,11 +113,11 @@ public:
 
 	/** Defines the way the condition is interpreted inside the condition array */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
-	EDlgConditionStrength Strength;
+	EDlgConditionStrength Strength = EDlgConditionStrength::DlgConditionStrengthStrong;
 
 	/** Type of the condition, defines the behavior */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
-	EDlgConditionType ConditionType;
+	EDlgConditionType ConditionType = EDlgConditionType::DlgConditionIntCall;
 
 	/** Name of the participant (speaker) the event is called on. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
@@ -129,11 +130,11 @@ public:
 
 	/** The desired operation on the selected variable */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
-	EDlgOperation Operation;
+	EDlgOperation Operation = EDlgOperation::DlgEqual;
 
 	/** Type of value to check against  */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
-	EDlgCompareType CompareType;
+	EDlgCompareType CompareType = EDlgCompareType::DlgCompareToConst;
 
 
 	/** Name of the other participant (speaker) the check is performed against (with some compare types) */
@@ -147,11 +148,11 @@ public:
 
 	/** Node index for "node already visited" condition, the value the participant's int is checked against otherwise */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
-	int32 IntValue;
+	int32 IntValue = 0;
 
-	/** Float the particpants float is checked against */
+	/** Float the participants float is checked against */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
-	float FloatValue;
+	float FloatValue = 0.f;
 
 	/** FName the particpants name is checked against */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)

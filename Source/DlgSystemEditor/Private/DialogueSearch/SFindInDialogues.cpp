@@ -479,6 +479,25 @@ TSharedRef<SWidget> SFindInDialogues::FillFilterEntries()
 		NAME_None,
 		EUserInterfaceActionType::ToggleButton
 	);
+	MenuBuilder.AddMenuEntry(
+		LOCTEXT("IncludeNumericalTypes", "Include int32/floats in search"),
+		LOCTEXT("IncludeNumericalTypes_ToolTip", "Include int32/floats in search result"),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]()
+			{
+				CurrentFilter.bIncludeNumericalTypes = !CurrentFilter.bIncludeNumericalTypes;
+				MakeSearchQuery(CurrentFilter, bIsInFindWithinDialogueMode);
+			}),
+			FCanExecuteAction(),
+			FIsActionChecked::CreateLambda([this]() -> bool
+			{
+				return CurrentFilter.bIncludeNumericalTypes;
+			})
+		),
+		NAME_None,
+		EUserInterfaceActionType::ToggleButton
+	);
 
 	return MenuBuilder.MakeWidget();
 }

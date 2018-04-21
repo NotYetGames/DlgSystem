@@ -91,7 +91,7 @@ void UDlgDialogue::PostLoad()
 	}
 
 	// Refresh the data, so that it is valid after loading.
-	if (DialogueVersion < FDlgDialogueObjectVersion::ConvertDialogueDataArraysToSets)
+	if (DialogueVersion < FDlgDialogueObjectVersion::AddComparisonWithOtherParticipant)
 	{
 		RefreshData();
 	}
@@ -524,6 +524,7 @@ void UDlgDialogue::RefreshData()
 			for (const FDlgCondition& Condition : Edge.Conditions)
 			{
 				AddCondition(Condition.ParticipantName, Node->GetNodeParticipantName(), Condition.ConditionType, Condition.CallbackName);
+				AddCondition(Condition.OtherParticipantName, Node->GetNodeParticipantName(), Condition.ConditionType, Condition.OtherVariableName);
 			}
 		}
 	};
@@ -558,6 +559,7 @@ void UDlgDialogue::RefreshData()
 		for (const FDlgCondition& Condition : Node->GetNodeEnterConditions())
 		{
 			AddCondition(Condition.ParticipantName, Node->GetNodeParticipantName(), Condition.ConditionType, Condition.CallbackName);
+			AddCondition(Condition.OtherParticipantName, Node->GetNodeParticipantName(), Condition.ConditionType, Condition.OtherVariableName);
 		}
 		// 1.2: Conditions from edges
 		AddConditionsFromEdges(Node);
