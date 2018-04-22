@@ -215,12 +215,12 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 
 	case EDlgConditionType::DlgConditionBoolCall:
 	case EDlgConditionType::DlgConditionClassBoolVariable:
-		BoolValueToolTip = LOCTEXT("ConditionBool_BoolValueToolTip", "Does the VariableName equal this bool value?");
+		BoolValueToolTip = LOCTEXT("ConditionBool_BoolValueToolTip", "Whether the bool check is expected to be true or false in order to satisfy the condition");
 		break;
 
 	case EDlgConditionType::DlgConditionNameCall:
 	case EDlgConditionType::DlgConditionClassNameVariable:
-		BoolValueToolTip = LOCTEXT("ConditionBool_BoolValueToolTip", "Should the Variable be checked if it equals this Name value?");
+		BoolValueToolTip = LOCTEXT("ConditionBool_BoolValueToolTip", "Whether the two Name is expected to be equal or not in order to satisfy the condition");
 		BoolValueDisplayName = LOCTEXT("BoolValueDisplayName", "Succeed on Equal");
 		break;
 
