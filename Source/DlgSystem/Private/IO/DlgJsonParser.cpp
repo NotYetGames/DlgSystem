@@ -250,13 +250,14 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 
 			// make the output array size match
 			FScriptArrayHelper Helper(ArrayProperty, OutValue);
+			Helper.EmptyValues();
 			Helper.Resize(ArrayNum);
 
 			// set the property values
 			for (int32 Index = 0; Index < ArrayNum; Index++)
 			{
 				const TSharedPtr<FJsonValue>& ArrayValueItem = ArrayValue[Index];
-				if (ArrayValueItem.IsValid() && !ArrayValueItem->IsNull())
+				if (ArrayValueItem.IsValid())
 				{
 					if (!JsonValueToUProperty(ArrayValueItem, ArrayProperty->Inner, Helper.GetRawPtr(Index)))
 					{
@@ -296,7 +297,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 			for (int32 Index = 0; Index < ArrayNum; ++Index)
 			{
 				const TSharedPtr<FJsonValue>& ArrayValueItem = ArrayValue[Index];
-				if (ArrayValueItem.IsValid() && !ArrayValueItem->IsNull())
+				if (ArrayValueItem.IsValid())
 				{
 					const int32 NewIndex = Helper.AddDefaultValue_Invalid_NeedsRehash();
 					if (!JsonValueToUProperty(ArrayValueItem, SetProperty->ElementProp, Helper.GetElementPtr(NewIndex)))
@@ -336,7 +337,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 			// set the property values
 			for (const auto& Entry : ObjectValue->Values)
 			{
-				if (Entry.Value.IsValid() && !Entry.Value->IsNull())
+				if (Entry.Value.IsValid())
 				{
 					const int32 NewIndex = Helper.AddDefaultValue_Invalid_NeedsRehash();
 
@@ -438,7 +439,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 			else
 			{
 				UE_LOG(LogDlgJsonParser,
-					   Error,
+					   Warning,
 					   TEXT("ConvertScalarJsonValueToUProperty - Unable to import FDateTime for property %s"),
 					   *Property->GetNameCPP());
 				return false;
@@ -502,14 +503,26 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 				   *Property->GetNameCPP());
 			return false;
 		}
+
+		// Reset first
+		*ObjectPtrPtr = nullptr;
+		if (JsonValue->IsNull())
+		{
+			// Nothing else to do
+			return true;
+		}
+
 		const UClass* ObjectClass = ObjectProperty->PropertyClass;
 
 		// Special case, load by reference, See CanSaveAsReference
 		// Handle some objects that are exported to string in a special way. Similar to the UStruct above.
 		if (JsonValue->Type == EJson::String)
 		{
-			const FString ObjectReferenceName = JsonValue->AsString();
-			*ObjectPtrPtr = StaticLoadObject(UObject::StaticClass(), DefaultObjectOuter, *ObjectReferenceName);
+			const FString Path = JsonValue->AsString();
+			if (!Path.TrimStartAndEnd().IsEmpty()) // null reference?
+			{
+				*ObjectPtrPtr = StaticLoadObject(UObject::StaticClass(), DefaultObjectOuter, *Path);
+			}
 			return true;
 		}
 
@@ -545,7 +558,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 				return false;
 			}
 
-			*ObjectPtrPtr = NewObject<UObject>(DefaultObjectOuter, const_cast<UClass*>(ChildClass), NAME_None, RF_Transactional);
+			*ObjectPtrPtr = CreateNewUObject(ChildClass, DefaultObjectOuter);
 			check(*ObjectPtrPtr);
 		}
 
@@ -644,6 +657,7 @@ bool FDlgJsonParser::JsonValueToUProperty(const TSharedPtr<FJsonValue> JsonValue
 	for (int32 Index = 0; Index < ItemsToRead; ++Index)
 	{
 		// ValuePtr + Index * Property->ElementSize is literally FScriptArrayHelper::GetRawPtr
+		// TODO allow to set all items in the array? do not stop at the first failure
 		if (!ConvertScalarJsonValueToUProperty(ArrayValue[Index], Property, ValuePtr + Index * Property->ElementSize))
 		{
 			return false;
@@ -706,7 +720,7 @@ bool FDlgJsonParser::JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJso
 				break;
 			}
 		}
-		if (!JsonValue.IsValid() || JsonValue->IsNull())
+		if (!JsonValue.IsValid())
 		{
 			// we allow values to not be found since this mirrors the typical UObject mantra that all the fields are optional when deserializing
 			continue;

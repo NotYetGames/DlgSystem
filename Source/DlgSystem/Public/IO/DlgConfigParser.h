@@ -36,7 +36,7 @@ public:
 	 *  It is better to use a single parser for more files from the same type if those contain dynamic arrays,
 	 *  because it has to check all class names for the first time for each class
 	 */
-	FDlgConfigParser(const FString& InPreTag = "Dlg");
+	FDlgConfigParser(const FString InPreTag = "");
 
 	/**
 	 * Creates the parser and finds the first word
@@ -257,6 +257,9 @@ private:
 
 	bool bHasValidWord = false;
 
+	// Nullptr value?
+	bool bHasNullptr = false;
+
 	/** used to skip the closing '"' */
 	bool bActiveIsString = false;
 };
@@ -353,7 +356,12 @@ bool FDlgConfigParser::ReadComplexProperty(void* Target,
 				{
 					const FString Path = GetActiveWord();
 					void* TargetPtr = Helper.GetRawPtr(Helper.AddValue());
-					*reinterpret_cast<UObject**>(TargetPtr) = StaticLoadObject(UObject::StaticClass(), NULL, *Path);
+					auto* ObjectPtrPtr = static_cast<UObject**>(TargetPtr);
+					*ObjectPtrPtr = nullptr; // reset first
+					if (!Path.TrimStartAndEnd().IsEmpty()) // null reference ?
+					{
+						*ObjectPtrPtr = StaticLoadObject(UObject::StaticClass(), Outer, *Path);
+					}
 
 					FindNextWord();
 					continue;

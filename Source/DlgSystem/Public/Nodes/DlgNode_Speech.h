@@ -26,7 +26,7 @@ public:
 	}
 
 	// Begin UDlgNode Interface.
-	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyEvaluated) override;
+	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated) override;
 
 	// Getters:
 	const FText& GetNodeText() const override { return Text; }

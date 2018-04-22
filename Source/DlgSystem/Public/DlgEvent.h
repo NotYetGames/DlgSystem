@@ -50,7 +50,7 @@ public:
 
 	/** Type of the event, can be a simple event or a call to modify a bool/int/float variable */
 	UPROPERTY(EditAnywhere, Category = DlgEventData)
-	EDlgEventType EventType;
+	EDlgEventType EventType = EDlgEventType::DlgEventEvent;
 
 	/** Name of the relevant variable or event */
 	UPROPERTY(EditAnywhere, Category = DlgEventData)
@@ -58,11 +58,11 @@ public:
 
 	/** The value the participant gets */
 	UPROPERTY(EditAnywhere, Category = DlgEventData)
-	int32 IntValue;
+	int32 IntValue = 0;
 
 	/** The value the participant gets */
 	UPROPERTY(EditAnywhere, Category = DlgEventData)
-	float FloatValue;
+	float FloatValue = 0.f;
 
 	/** The value the participant gets */
 	UPROPERTY(EditAnywhere, Category = DlgEventData)
@@ -70,11 +70,11 @@ public:
 
 	/** Weather to add the value to the existing one, or simply override it  */
 	UPROPERTY(EditAnywhere, Category = DlgEventData)
-	bool bDelta;
+	bool bDelta = false;
 
 	/** The value the participant gets */
 	UPROPERTY(EditAnywhere, Category = DlgEventData)
-	bool bValue;
+	bool bValue = false;
 
 public:
 

@@ -423,19 +423,76 @@ TSharedRef<SWidget> SFindInDialogues::FillFilterEntries()
 {
 	FMenuBuilder MenuBuilder(true, nullptr);
 	MenuBuilder.AddMenuEntry(
-		LOCTEXT("IncludeIndices", "Include Indices in search"),
-		LOCTEXT("IncludeIndices_ToolTip", "Include indices of nodes in the search result"),
+		LOCTEXT("IncludeIndices", "Include indices in search"),
+		LOCTEXT("IncludeIndices_ToolTip", "Include indices of nodes/edges in the search result"),
 		FSlateIcon(),
 		FUIAction(
 			FExecuteAction::CreateLambda([this]()
 			{
-				CurrentFilter.bIncludeIndicesInSearch = !CurrentFilter.bIncludeIndicesInSearch;
+				CurrentFilter.bIncludeIndices = !CurrentFilter.bIncludeIndices;
 				MakeSearchQuery(CurrentFilter, bIsInFindWithinDialogueMode);
 			}),
 			FCanExecuteAction(),
 			FIsActionChecked::CreateLambda([this]() -> bool
 			{
-				return CurrentFilter.bIncludeIndicesInSearch;
+				return CurrentFilter.bIncludeIndices;
+			})
+		),
+		NAME_None,
+		EUserInterfaceActionType::ToggleButton
+	);
+	MenuBuilder.AddMenuEntry(
+		LOCTEXT("IncludeGUID", "Include Dialogue GUIDs in search"),
+		LOCTEXT("IncludeGUID_ToolTip", "Include Dialogue GUIDs in search in the search result"),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]()
+			{
+				CurrentFilter.bIncludeDialogueGUID = !CurrentFilter.bIncludeDialogueGUID;
+				MakeSearchQuery(CurrentFilter, bIsInFindWithinDialogueMode);
+			}),
+			FCanExecuteAction(),
+			FIsActionChecked::CreateLambda([this]() -> bool
+			{
+				return CurrentFilter.bIncludeDialogueGUID;
+			})
+		),
+		NAME_None,
+		EUserInterfaceActionType::ToggleButton
+	);
+	MenuBuilder.AddMenuEntry(
+		LOCTEXT("IncludeComments", "Include Comments in search"),
+		LOCTEXT("IncludeComments_ToolTip", "Include Comments from nodes and comments on nodes in the search result"),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]()
+			{
+				CurrentFilter.bIncludeComments = !CurrentFilter.bIncludeComments;
+				MakeSearchQuery(CurrentFilter, bIsInFindWithinDialogueMode);
+			}),
+			FCanExecuteAction(),
+			FIsActionChecked::CreateLambda([this]() -> bool
+			{
+				return CurrentFilter.bIncludeComments;
+			})
+		),
+		NAME_None,
+		EUserInterfaceActionType::ToggleButton
+	);
+	MenuBuilder.AddMenuEntry(
+		LOCTEXT("IncludeNumericalTypes", "Include int32/floats in search"),
+		LOCTEXT("IncludeNumericalTypes_ToolTip", "Include int32/floats in search result"),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]()
+			{
+				CurrentFilter.bIncludeNumericalTypes = !CurrentFilter.bIncludeNumericalTypes;
+				MakeSearchQuery(CurrentFilter, bIsInFindWithinDialogueMode);
+			}),
+			FCanExecuteAction(),
+			FIsActionChecked::CreateLambda([this]() -> bool
+			{
+				return CurrentFilter.bIncludeNumericalTypes;
 			})
 		),
 		NAME_None,

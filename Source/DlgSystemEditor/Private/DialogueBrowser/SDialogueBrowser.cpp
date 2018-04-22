@@ -267,7 +267,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 
 	// Build fast lookup structure for participants (the ParticipantsProperties)
 	TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
-	for (UDlgDialogue* Dialogue : Dialogues)
+	for (const UDlgDialogue* Dialogue : Dialogues)
 	{
 		const FGuid DialogueGuid = Dialogue->GetDlgGuid();
 

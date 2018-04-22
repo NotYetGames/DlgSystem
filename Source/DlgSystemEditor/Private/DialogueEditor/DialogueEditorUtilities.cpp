@@ -5,6 +5,7 @@
 #include "ToolkitManager.h"
 #include "Casts.h"
 #include "Queue.h"
+#include "EdGraphNode_Comment.h"
 
 #include "DlgSystemEditorPrivatePCH.h"
 #include "IDialogueEditor.h"
@@ -568,16 +569,25 @@ bool FDialogueEditorUtilities::CanConvertSpeechSequenceNodeToSpeechNodes(const T
 	return false;
 }
 
-bool FDialogueEditorUtilities::OpenEditorAndJumpToGraphNode(const UDialogueGraphNode_Base* GraphNodeBase,
+bool FDialogueEditorUtilities::OpenEditorAndJumpToGraphNode(const UEdGraphNode* GraphNode,
 															const bool bFocusIfOpen /*= false*/)
 {
-	if (!IsValid(GraphNodeBase))
+	if (!IsValid(GraphNode))
 	{
 		return false;
 	}
 
 	// Open if not already.
-	UDlgDialogue* Dialogue = GraphNodeBase->GetDialogue();
+	UDlgDialogue* Dialogue = nullptr;
+	if (const UDialogueGraphNode_Base* DialogueBaseNode = Cast<UDialogueGraphNode_Base>(GraphNode))
+	{
+		Dialogue = DialogueBaseNode->GetDialogue();
+	}
+	else if (const UEdGraphNode_Comment* CommentNode = Cast<UEdGraphNode_Comment>(GraphNode))
+	{
+		Dialogue = FDialogueEditorUtilities::GetDialogueFromGraphNodeComment(CommentNode);
+	}
+
 	if (!OpenEditorForAsset(Dialogue))
 	{
 		return false;
@@ -587,7 +597,7 @@ bool FDialogueEditorUtilities::OpenEditorAndJumpToGraphNode(const UDialogueGraph
 	IAssetEditorInstance* EditorInstance = FAssetEditorManager::Get().FindEditorForAsset(Dialogue, bFocusIfOpen);
 	if (EditorInstance)
 	{
-		EditorInstance->FocusWindow(const_cast<UDialogueGraphNode_Base*>(GraphNodeBase));
+		EditorInstance->FocusWindow(const_cast<UEdGraphNode*>(GraphNode));
 		return true;
 	}
 

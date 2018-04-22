@@ -20,7 +20,7 @@ class UDialogueWave;
 /**
  * The representation of a child in a node. Defined by a TargetIndex which points to the index array in the Dialogue.Nodes
  */
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType, Blueprintable)
 struct DLGSYSTEM_API FDlgEdge
 {
 	GENERATED_USTRUCT_BODY()
@@ -39,19 +39,13 @@ public:
 	}
 
 	// Operator overload for serialization
-	friend FArchive& operator<<(FArchive &Ar, FDlgEdge& DlgEdge)
-	{
-		Ar << DlgEdge.TargetIndex;
-		Ar << DlgEdge.Text;
-		Ar << DlgEdge.Conditions;
-		return Ar;
-	}
+	friend FArchive& operator<<(FArchive &Ar, FDlgEdge& DlgEdge);
 
 	/** Creates a simple edge without text, without conditions */
 	FDlgEdge(int32 InTargetIndex = INDEX_NONE) : TargetIndex(InTargetIndex) {}
 
 	/** Returns with true if every condition attached to the edge and every enter condition of the target node are satisfied */
-	bool Evaluate(class UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyVisitedNodes) const;
+	bool Evaluate(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
 	/** Returns if the Edge is valid, has the TargetIndex non negative  */
 	bool IsValid() const
@@ -63,23 +57,23 @@ public:
 
 public:
 	/** Index of the node in the Nodes TArray of the dialogue this edge is leading to */
-	UPROPERTY(VisibleAnywhere, Category = DlgEdgeData, Meta = (ClampMin = -1))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = DlgEdgeData, Meta = (ClampMin = -1))
 	int32 TargetIndex = INDEX_NONE;
 
 	/** Required but not sufficient conditions - target node's enter conditions are checked too */
-	UPROPERTY(EditAnywhere, Category = DlgEdgeData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData)
 	TArray<FDlgCondition> Conditions;
 
 	/** Text associated with the child, can be used for user choices */
-	UPROPERTY(EditAnywhere, Category = DlgEdgeData, Meta = (MultiLine = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData, Meta = (MultiLine = true))
 	FText Text;
 
 	/** player emotion/state attached to this player choice */
-	UPROPERTY(EditAnywhere, Category = DlgEdgeData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData)
 	FName SpeakerState;
 
 	/** Set this to false in order to skip this edge in the AllChildren array (which lists both satisfied and not satisfied player choices */
-	UPROPERTY(EditAnywhere, Category = DlgEdgeData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData)
 	bool bIncludeInAllOptionListIfUnsatisfied = true;
 };
 
@@ -140,12 +134,12 @@ public:
 	DECLARE_EVENT_TwoParams(UDlgNode, FDialogueNodePropertyChanged, const FPropertyChangedEvent& /* PropertyChangedEvent */, int32 /* EdgeIndexChanged */);
 	FDialogueNodePropertyChanged OnDialogueNodePropertyChanged;
 
-	virtual bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<UDlgNode*> NodesEnteredWithThisStep);
+	virtual bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep);
 
-	virtual bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyEvaluated);
+	virtual bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated);
 
-	virtual bool CheckNodeEnterConditions(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyVisitedNodes);
-	virtual bool HasAnySatisfiedChild(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyVisitedNodes);
+	virtual bool CheckNodeEnterConditions(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
+	virtual bool HasAnySatisfiedChild(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
 	virtual bool OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext);
 

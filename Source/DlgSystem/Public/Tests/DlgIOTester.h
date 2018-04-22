@@ -43,20 +43,20 @@ bool FDlgIOTester::TestParser(const FDlgIOTesterOptions& Options, const FString 
 
 	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestArrayPrimitive>("Array of Primitives", Options, NameWriterType, NameParserType)
 		&& bAllSucceeded;
-	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestArrayStruct>("Array of Structs", Options, NameWriterType, NameParserType)
+	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestArrayComplex>("Array of Complex types", Options, NameWriterType, NameParserType)
 		&& bAllSucceeded;
 
 	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestSetPrimitive>("Set of Primitives", Options, NameWriterType, NameParserType)
 		&& bAllSucceeded;
 	if (Options.bSupportsNonPrimitiveInSet)
 	{
-		bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestSetStruct>("Set of Structs", Options, NameWriterType, NameParserType)
+		bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestSetComplex>("Set of Complex types", Options, NameWriterType, NameParserType)
 			&& bAllSucceeded;
 	}
 
 	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestMapPrimitive>("Map with Primitives", Options, NameWriterType, NameParserType)
 		&& bAllSucceeded;
-	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestMapStruct>("Map with Structs", Options, NameWriterType, NameParserType)
+	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestMapComplex>("Map with Complex types", Options, NameWriterType, NameParserType)
 		&& bAllSucceeded;
 
 	return bAllSucceeded;
@@ -66,18 +66,20 @@ bool FDlgIOTester::TestParser(const FDlgIOTesterOptions& Options, const FString 
 template <typename ConfigWriterType, typename ConfigParserType, typename StructType>
 bool FDlgIOTester::TestStruct(const FString& StructDescription, const FDlgIOTesterOptions& Options, const FString NameWriterType, const FString NameParserType)
 {
-	StructType ExportedStruct(Options);
-	StructType ImportedStruct(Options);
+	StructType ExportedStruct;
+	StructType ImportedStruct;
+	ExportedStruct.GenerateRandomData(Options);
+	ImportedStruct.GenerateRandomData(Options);
 
 	// Write struct
 	ConfigWriterType Writer;
-	Writer.SetLogVerbose(true);
+	//Writer.SetLogVerbose(true);
 	Writer.Write(StructType::StaticStruct(), &ExportedStruct);
 	const FString WriterString = Writer.GetAsString();
 
-	// Read strusct
+	// Read struct
 	ConfigParserType Parser;
-	Parser.SetLogVerbose(true);
+	//Parser.SetLogVerbose(true);
 	Parser.InitializeParserFromString(WriterString);
 	Parser.ReadAllProperty(StructType::StaticStruct(), &ImportedStruct);
 
@@ -90,7 +92,7 @@ bool FDlgIOTester::TestStruct(const FString& StructDescription, const FDlgIOTest
 
 	if (NameWriterType.IsEmpty() || NameParserType.IsEmpty())
 	{
-		UE_LOG(LogDlgIOTester, Warning, TEXT("TestStruct: Test Failed: %s"), *StructDescription);
+		UE_LOG(LogDlgIOTester, Warning, TEXT("TestStruct: Test Failed (both empty) = %s"), *StructDescription);
 	}
 	else
 	{

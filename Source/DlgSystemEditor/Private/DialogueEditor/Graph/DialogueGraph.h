@@ -48,10 +48,13 @@ public:
 	/** Gets the root graph node of this graph */
 	UDialogueGraphNode_Root* GetRootGraphNode() const;
 
-	/** Gets the all the dialogue graph nodes (that inherit from UDialogueGraphNode_Base). */
+	/** Gets all the graph nodes of this  Graph */
+	const TArray<UEdGraphNode*>& GetAllGraphNodes() const { return Nodes;  }
+
+	/** Gets the all the dialogue graph nodes (that inherit from UDialogueGraphNode_Base). Includes Root node. */
 	const TArray<UDialogueGraphNode_Base*> GetAllBaseDialogueGraphNodes() const;
 
-	/** Gets the all the dialogue graph nodes (that inherit from UDialogueGraphNode). */
+	/** Gets the all the dialogue graph nodes (that inherit from UDialogueGraphNode). Includes Root node. */
 	const TArray<UDialogueGraphNode*> GetAllDialogueGraphNodes() const;
 
 	/** Gets the all the dialogue graph nodes (that inherit from UDialogueGraphNode_Edge). */

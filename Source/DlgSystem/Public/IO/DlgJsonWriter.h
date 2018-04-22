@@ -62,7 +62,7 @@ private: // UStruct -> JSON
 	 * Convert property to JSON, assuming either the property is not an array or the value is an individual array element
 	 * Used by UPropertyToJsonValue
 	 */
-	TSharedPtr<FJsonValue> ConvertScalarUPropertyToJsonValue(UProperty* Property, const void* Value);
+	TSharedPtr<FJsonValue> ConvertScalarUPropertyToJsonValue(const UProperty* Property, const void* Value);
 
 	/**
 	 * Converts from a UProperty to a Json Value using exportText
@@ -72,7 +72,7 @@ private: // UStruct -> JSON
 	 *
 	 * @return					The constructed JsonValue from the property
 	 */
-	TSharedPtr<FJsonValue> UPropertyToJsonValue(UProperty* Property, const void* Value);
+	TSharedPtr<FJsonValue> UPropertyToJsonValue(const UProperty* Property, const void* Value);
 
 	/**
 	 * Converts from a UStruct to a set of json attributes (possibly from within a JsonObject)

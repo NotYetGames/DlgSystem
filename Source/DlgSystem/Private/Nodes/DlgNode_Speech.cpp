@@ -4,7 +4,7 @@
 #include "DlgContextInternal.h"
 #include "DlgSystemPrivatePCH.h"
 
-bool UDlgNode_Speech::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyEvaluated)
+bool UDlgNode_Speech::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated)
 {
 	if (bIsVirtualParent)
 	{

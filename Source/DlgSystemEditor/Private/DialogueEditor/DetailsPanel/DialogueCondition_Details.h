@@ -52,11 +52,22 @@ private:
 	// Called every time the condition type is changed
 	void OnConditionTypeChanged(bool bForceRefresh);
 
+	// Called every time the compare type is changed
+	void OnCompareTypeChanged(bool bForceRefresh);
+
 	// Getters for the visibility of some properties
 	EVisibility GetParticipantNameVisibility() const
 	{
 		return ConditionType != EDlgConditionType::DlgConditionNodeVisited
 			&& ConditionType != EDlgConditionType::DlgConditionHasSatisfiedChild
+			? EVisibility::Visible : EVisibility::Hidden;
+	}
+
+	EVisibility GetOtherParticipantNameAndVariableVisibility() const
+	{
+		return ConditionType != EDlgConditionType::DlgConditionNodeVisited
+			&& ConditionType != EDlgConditionType::DlgConditionHasSatisfiedChild
+			&& CompareType != EDlgCompareType::DlgCompareToConst
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
@@ -69,36 +80,37 @@ private:
 
 	EVisibility GetIntValueVisibility() const
 	{
-		return ConditionType == EDlgConditionType::DlgConditionIntCall
-			|| ConditionType == EDlgConditionType::DlgConditionClassIntVariable
-			|| ConditionType == EDlgConditionType::DlgConditionNodeVisited
-			|| ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild
+		return ((CompareType == EDlgCompareType::DlgCompareToConst)
+				&& (ConditionType == EDlgConditionType::DlgConditionIntCall || ConditionType == EDlgConditionType::DlgConditionClassIntVariable))
+				|| ConditionType == EDlgConditionType::DlgConditionNodeVisited
+				|| ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetFloatValueVisibility() const
 	{
-		return ConditionType == EDlgConditionType::DlgConditionFloatCall
-			|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
+		return (CompareType == EDlgCompareType::DlgCompareToConst) &&
+			(ConditionType == EDlgConditionType::DlgConditionFloatCall || ConditionType == EDlgConditionType::DlgConditionClassFloatVariable)
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetNameValueVisibility() const
 	{
-		return ConditionType == EDlgConditionType::DlgConditionNameCall
-			|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable
+		return(CompareType == EDlgCompareType::DlgCompareToConst) &&
+			  (ConditionType == EDlgConditionType::DlgConditionNameCall || ConditionType == EDlgConditionType::DlgConditionClassNameVariable)
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetBoolValueVisibility() const
 	{
 		return ConditionType == EDlgConditionType::DlgConditionEventCall
-			|| ConditionType == EDlgConditionType::DlgConditionBoolCall
-			|| ConditionType == EDlgConditionType::DlgConditionClassBoolVariable
-			|| ConditionType == EDlgConditionType::DlgConditionNodeVisited
 			|| ConditionType == EDlgConditionType::DlgConditionNameCall
 			|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable
+			|| ConditionType == EDlgConditionType::DlgConditionNodeVisited
 			|| ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild
+			|| ConditionType == EDlgConditionType::DlgConditionBoolCall
+			|| ConditionType == EDlgConditionType::DlgConditionClassBoolVariable
+				
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
@@ -116,11 +128,44 @@ private:
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
+	EVisibility GetCompareTypeVisibility() const
+	{
+		return ConditionType == EDlgConditionType::DlgConditionFloatCall
+			|| ConditionType == EDlgConditionType::DlgConditionIntCall
+			|| ConditionType == EDlgConditionType::DlgConditionBoolCall
+			|| ConditionType == EDlgConditionType::DlgConditionNameCall
+			|| ConditionType == EDlgConditionType::DlgConditionClassIntVariable
+			|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
+			|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable
+			|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
+			? EVisibility::Visible : EVisibility::Hidden;
+	}
+
 	/** Gets all the condition name suggestions depending on ConditionType from all Dialogues. */
-	TArray<FName> GetAllDialoguesCallbackNames() const;
+	TArray<FName> GetAllDialoguesCallbackNames() const
+	{
+		return GetCallbackNamesForParticipant(false, false);
+	}
 
 	/** Gets all the condition name suggestions depending on EventType from the current Dialogue */
-	TArray<FName> GetCurrentDialogueCallbackNames() const;
+	TArray<FName> GetCurrentDialogueCallbackNames() const
+	{
+		return GetCallbackNamesForParticipant(true, false);
+	}
+
+	TArray<FName> GetAllDialoguesOtherVariableNames() const
+	{
+		return GetCallbackNamesForParticipant(false, true);
+	}
+
+	TArray<FName> GetCurrentDialogueOtherVariableNames() const
+	{
+		return GetCallbackNamesForParticipant(true, true);
+	}
+
+	TArray<FName> GetCallbackNamesForParticipant(bool bCurrentOnly, bool bOtherValue) const;
+
+
 
 	/** Gets the ParticipantNames from all Dialogues. */
 	TArray<FName> GetAllDialoguesParticipantNames() const
@@ -145,13 +190,16 @@ private:
 private:
 	// The current Condition type of the struct.
 	EDlgConditionType ConditionType = EDlgConditionType::DlgConditionEventCall;
+	EDlgCompareType CompareType = EDlgCompareType::DlgCompareToConst;
 
 	// Cache the Struct property handle
 	TSharedPtr<IPropertyHandle> StructPropertyHandle;
 
 	// Cache the property handle of some properties
 	TSharedPtr<IPropertyHandle> ParticipantNamePropertyHandle;
+	TSharedPtr<IPropertyHandle> OtherParticipantNamePropertyHandle;
 	TSharedPtr<IPropertyHandle> ConditionTypePropertyHandle;
+	TSharedPtr<IPropertyHandle> CompareTypePropertyHandle;
 	TSharedPtr<IPropertyHandle> IntValuePropertyHandle;
 
 	// just some nice utilities
@@ -166,6 +214,9 @@ private:
 	IDetailPropertyRow* BoolValuePropertyRow = nullptr;
 	IDetailPropertyRow* LongTermMemoryPropertyRow = nullptr;
 	IDetailPropertyRow* OperationPropertyRow = nullptr;
+	IDetailPropertyRow* CompareTypePropertyRow = nullptr;
+	TSharedPtr<FTextPropertyPickList_CustomRowHelper> OtherParticipantNamePropertyRow;
+	TSharedPtr<FTextPropertyPickList_CustomRowHelper> OtherVariableNamePropertyRow;
 
 	/** Hold a reference to dialogue we are displaying. */
 	UDlgDialogue* Dialogue = nullptr;

@@ -8,7 +8,7 @@
 
 #include "DlgDialogueParticipant.h"
 
-bool FDlgCondition::EvaluateArray(const TArray<FDlgCondition>& DlgConditionArray, UDlgContextInternal* DlgContext, FName DefaultParticipantName)
+bool FDlgCondition::EvaluateArray(const TArray<FDlgCondition>& DlgConditionArray, const UDlgContextInternal* DlgContext, FName DefaultParticipantName)
 {
 	bool bHasAnyWeak = false;
 	bool bHasSuccessfulWeak = false;
@@ -16,72 +16,59 @@ bool FDlgCondition::EvaluateArray(const TArray<FDlgCondition>& DlgConditionArray
 	for (const FDlgCondition& Condition : DlgConditionArray)
 	{
 		const FName ParticipantName = Condition.ParticipantName == NAME_None ? DefaultParticipantName : Condition.ParticipantName;
-		const bool bSatisfied = Condition.Evaluate(DlgContext, DlgContext->GetParticipant(ParticipantName));
+		const bool bSatisfied = Condition.Evaluate(DlgContext, DlgContext->GetConstParticipant(ParticipantName));
 		if (Condition.Strength == EDlgConditionStrength::DlgConditionStrengthWeak)
 		{
 			bHasAnyWeak = true;
 			bHasSuccessfulWeak = bHasSuccessfulWeak || bSatisfied;
 		}
-		else
+		else if (!bSatisfied)
 		{
-			if (!bSatisfied)
-			{
-				return false;
-			}
+			// All must be satisfied 
+			return false;
 		}
 	}
 
-	return (bHasSuccessfulWeak || !bHasAnyWeak);
+	return bHasSuccessfulWeak || !bHasAnyWeak;
 }
 
-bool FDlgCondition::Evaluate(UDlgContextInternal* DlgContext, UObject* DlgParticipant) const
+bool FDlgCondition::Evaluate(const UDlgContextInternal* DlgContext, const UObject* DlgParticipant) const
 {
-	if (!IsValid(DlgContext))
+	if (!IsValid(DlgContext) || (IsParticipantInvolved() && !IsParticipantValid(DlgParticipant)))
 	{
 		return false;
 	}
-
-	auto CheckParticipant = [](UObject* DlgParticipantParam) -> bool
-	{
-		if (DlgParticipantParam != nullptr)
-		{
-			return true;
-		}
-
-		UE_LOG(LogDlgSystem, Error, TEXT("Condition failed: called on invalid (null) participant!"));
-		return false;
-	};
-
+	
 	switch (ConditionType)
 	{
 		case EDlgConditionType::DlgConditionEventCall:
-			return CheckParticipant(DlgParticipant) && IDlgDialogueParticipant::Execute_CheckCondition(DlgParticipant, CallbackName) == bBoolValue;
+			return IDlgDialogueParticipant::Execute_CheckCondition(DlgParticipant, CallbackName) == bBoolValue;
 
 
 		case EDlgConditionType::DlgConditionBoolCall:
-			return CheckParticipant(DlgParticipant) && IDlgDialogueParticipant::Execute_GetBoolValue(DlgParticipant, CallbackName) == bBoolValue;
+			return CheckBool(IDlgDialogueParticipant::Execute_GetBoolValue(DlgParticipant, CallbackName), DlgContext);
 
 		case EDlgConditionType::DlgConditionFloatCall:
-			return CheckParticipant(DlgParticipant) && CheckFloat(IDlgDialogueParticipant::Execute_GetFloatValue(DlgParticipant, CallbackName));
+			return CheckFloat(IDlgDialogueParticipant::Execute_GetFloatValue(DlgParticipant, CallbackName), DlgContext);
 
 		case EDlgConditionType::DlgConditionIntCall:
-			return CheckParticipant(DlgParticipant) && CheckInt(IDlgDialogueParticipant::Execute_GetIntValue(DlgParticipant, CallbackName));
+			return CheckInt(IDlgDialogueParticipant::Execute_GetIntValue(DlgParticipant, CallbackName), DlgContext);
 
 		case EDlgConditionType::DlgConditionNameCall:
-			return CheckParticipant(DlgParticipant) && ((IDlgDialogueParticipant::Execute_GetNameValue(DlgParticipant, CallbackName) == NameValue) == bBoolValue);
+			return CheckName(IDlgDialogueParticipant::Execute_GetNameValue(DlgParticipant, CallbackName), DlgContext);
 
 
 		case EDlgConditionType::DlgConditionClassBoolVariable:
-			return CheckParticipant(DlgParticipant) && UDlgReflectionHelper::GetVariable<UBoolProperty, bool>(DlgParticipant, CallbackName) == bBoolValue;
+			return CheckBool(UDlgReflectionHelper::GetVariable<UBoolProperty, bool>(DlgParticipant, CallbackName), DlgContext);
 
 		case EDlgConditionType::DlgConditionClassFloatVariable:
-			return CheckParticipant(DlgParticipant) && CheckFloat(UDlgReflectionHelper::GetVariable<UFloatProperty, float>(DlgParticipant, CallbackName));
+			return CheckFloat(UDlgReflectionHelper::GetVariable<UFloatProperty, float>(DlgParticipant, CallbackName), DlgContext);
 
 		case EDlgConditionType::DlgConditionClassIntVariable:
-			return CheckParticipant(DlgParticipant) && CheckInt(UDlgReflectionHelper::GetVariable<UIntProperty, int32>(DlgParticipant, CallbackName));
+			return CheckInt(UDlgReflectionHelper::GetVariable<UIntProperty, int32>(DlgParticipant, CallbackName), DlgContext);
 
 		case EDlgConditionType::DlgConditionClassNameVariable:
-			return CheckParticipant(DlgParticipant) && ((UDlgReflectionHelper::GetVariable<UNameProperty, FName>(DlgParticipant, CallbackName) == NameValue) == bBoolValue);
+			return CheckName(UDlgReflectionHelper::GetVariable<UNameProperty, FName>(DlgParticipant, CallbackName), DlgContext);
 
 
 		case EDlgConditionType::DlgConditionNodeVisited:
@@ -94,7 +81,7 @@ bool FDlgCondition::Evaluate(UDlgContextInternal* DlgContext, UObject* DlgPartic
 
 		case EDlgConditionType::DlgConditionHasSatisfiedChild:
 			{
-				UDlgNode* Node = DlgContext->GetNode(IntValue);
+				const UDlgNode* Node = DlgContext->GetNode(IntValue);
 				return Node != nullptr ? Node->HasAnySatisfiedChild(DlgContext, {}) == bBoolValue : false;
 			}
 
@@ -104,27 +91,46 @@ bool FDlgCondition::Evaluate(UDlgContextInternal* DlgContext, UObject* DlgPartic
 	}
 }
 
-bool FDlgCondition::CheckFloat(float Value) const
+bool FDlgCondition::CheckFloat(float Value, const UDlgContextInternal* DlgContext) const
 {
+	float ValueToCheckAgainst = FloatValue;
+	if (CompareType == EDlgCompareType::DlgCompareToVariable || CompareType == EDlgCompareType::DlgCompareToClassVariable)
+	{
+		const UObject* OtherParticipant = DlgContext->GetConstParticipant(OtherParticipantName);
+		if (!IsParticipantValid(OtherParticipant))
+		{
+			return false;
+		}
+
+		if (CompareType == EDlgCompareType::DlgCompareToVariable)
+		{
+			ValueToCheckAgainst = IDlgDialogueParticipant::Execute_GetFloatValue(OtherParticipant, OtherVariableName);
+		}
+		else
+		{
+			ValueToCheckAgainst = UDlgReflectionHelper::GetVariable<UFloatProperty, float>(OtherParticipant, OtherVariableName);
+		}
+	}
+
 	switch (Operation)
 	{
 		case EDlgOperation::DlgEqual:
-			return Value == FloatValue;
+			return FMath::IsNearlyEqual(Value, ValueToCheckAgainst);
 
 		case EDlgOperation::DlgGreater:
-			return Value > FloatValue;
+			return Value > ValueToCheckAgainst;
 
 		case EDlgOperation::DlgGreaterOrEqual:
-			return Value >= FloatValue;
+			return Value >= ValueToCheckAgainst;
 
 		case EDlgOperation::DlgLess:
-			return Value < FloatValue;
+			return Value < ValueToCheckAgainst;
 
 		case EDlgOperation::DlgLessOrEqual:
-			return Value <= FloatValue;
+			return Value <= ValueToCheckAgainst;
 
 		case EDlgOperation::DlgNotEqual:
-			return Value != FloatValue;
+			return !FMath::IsNearlyEqual(Value, ValueToCheckAgainst);
 
 		default:
 			UE_LOG(LogDlgSystem, Error, TEXT("Invalid Operation in float based condition!"));
@@ -132,31 +138,124 @@ bool FDlgCondition::CheckFloat(float Value) const
 	}
 }
 
-bool FDlgCondition::CheckInt(int32 Value) const
+bool FDlgCondition::CheckInt(int32 Value, const UDlgContextInternal* DlgContext) const
 {
+	int32 ValueToCheckAgainst = IntValue;
+	if (CompareType == EDlgCompareType::DlgCompareToVariable || CompareType == EDlgCompareType::DlgCompareToClassVariable)
+	{
+		const UObject* OtherParticipant = DlgContext->GetConstParticipant(OtherParticipantName);
+		if (!IsParticipantValid(OtherParticipant))
+		{
+			return false;
+		}
+
+		if (CompareType == EDlgCompareType::DlgCompareToVariable)
+		{
+			ValueToCheckAgainst = IDlgDialogueParticipant::Execute_GetIntValue(OtherParticipant, OtherVariableName);
+		}
+		else
+		{
+			ValueToCheckAgainst = UDlgReflectionHelper::GetVariable<UIntProperty, int32>(OtherParticipant, OtherVariableName);
+		}
+	}
+
 	switch (Operation)
 	{
 		case EDlgOperation::DlgEqual:
-			return Value == IntValue;
+			return Value == ValueToCheckAgainst;
 
 		case EDlgOperation::DlgGreater:
-			return Value > IntValue;
+			return Value > ValueToCheckAgainst;
 
 		case EDlgOperation::DlgGreaterOrEqual:
-			return Value >= IntValue;
+			return Value >= ValueToCheckAgainst;
 
 		case EDlgOperation::DlgLess:
-			return Value < IntValue;
+			return Value < ValueToCheckAgainst;
 
 		case EDlgOperation::DlgLessOrEqual:
-			return Value <= IntValue;
+			return Value <= ValueToCheckAgainst;
 
 		case EDlgOperation::DlgNotEqual:
-			return Value != IntValue;
+			return Value != ValueToCheckAgainst;
 
 		default:
 			UE_LOG(LogDlgSystem, Error, TEXT("Invalid Operation in int based condition!"));
 			return false;
+	}
+}
+
+bool FDlgCondition::CheckBool(bool bValue, const UDlgContextInternal* DlgContext) const
+{
+	if (CompareType == EDlgCompareType::DlgCompareToVariable || CompareType == EDlgCompareType::DlgCompareToClassVariable)
+	{
+		bool bValueToCheckAgainst = bBoolValue;
+		const UObject* OtherParticipant = DlgContext->GetConstParticipant(OtherParticipantName);
+		if (!IsParticipantValid(OtherParticipant))
+		{
+			return false;
+		}
+
+		if (CompareType == EDlgCompareType::DlgCompareToVariable)
+		{
+			bValueToCheckAgainst = IDlgDialogueParticipant::Execute_GetBoolValue(OtherParticipant, OtherVariableName);
+		}
+		else
+		{
+			bValueToCheckAgainst = UDlgReflectionHelper::GetVariable<UBoolProperty, bool>(OtherParticipant, OtherVariableName);
+		}
+
+		return (bValue == bValueToCheckAgainst) == bBoolValue;
+	}
+
+	return bValue == bBoolValue;
+}
+
+bool FDlgCondition::CheckName(FName Value, const UDlgContextInternal* DlgContext) const
+{
+	FName ValueToCheckAgainst = NameValue;
+	if (CompareType == EDlgCompareType::DlgCompareToVariable || CompareType == EDlgCompareType::DlgCompareToClassVariable)
+	{
+		const UObject* OtherParticipant = DlgContext->GetConstParticipant(OtherParticipantName);
+		if (!IsParticipantValid(OtherParticipant))
+		{
+			return false;
+		}
+
+		if (CompareType == EDlgCompareType::DlgCompareToVariable)
+		{
+			ValueToCheckAgainst = IDlgDialogueParticipant::Execute_GetNameValue(OtherParticipant, OtherVariableName);
+		}
+		else
+		{
+			ValueToCheckAgainst = UDlgReflectionHelper::GetVariable<UNameProperty, FName>(OtherParticipant, OtherVariableName);
+		}
+	}
+
+	return (ValueToCheckAgainst == Value) == bBoolValue;
+}
+
+bool FDlgCondition::IsParticipantValid(const UObject* Participant) const
+{
+	if (Participant != nullptr)
+	{
+		return true;
+	}
+
+	UE_LOG(LogDlgSystem, Error, TEXT("Condition failed: invalid (nullptr) participant is involved!"));
+	return false;
+}
+
+bool FDlgCondition::IsParticipantInvolved() const
+{
+	switch (ConditionType)
+	{
+		case EDlgConditionType::DlgConditionHasSatisfiedChild:
+		case EDlgConditionType::DlgConditionNodeVisited:
+			return false;
+
+		default:
+			return true;
 	}
 }
 
@@ -172,5 +271,8 @@ FArchive& operator<<(FArchive &Ar, FDlgCondition& DlgCondition)
 	Ar << DlgCondition.Operation;
 	Ar << DlgCondition.ConditionType;
 	Ar << DlgCondition.bLongTermMemory;
+	Ar << DlgCondition.CompareType;
+	Ar << DlgCondition.OtherParticipantName;
+	Ar << DlgCondition.OtherVariableName;
 	return Ar;
 }

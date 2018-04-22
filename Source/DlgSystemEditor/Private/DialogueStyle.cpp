@@ -45,6 +45,8 @@ const FName FDialogueStyle::PROPERTY_FindInDialogueEditorIcon(TEXT("DlgSystemEdi
 // Tied with FDialogueEditorCommands::FindInAllDialogues
 const FName FDialogueStyle::PROPERTY_FindInAllDialogueEditorIcon(TEXT("DlgSystemEditor.FindInAllDialogues"));
 
+const FName FDialogueStyle::PROPERTY_CommentBubbleOn(TEXT("DlgSystemEditor.CommentBubbleOn"));
+
 // The private ones
 TSharedPtr<FSlateStyleSet> FDialogueStyle::StyleSet = nullptr;
 FString FDialogueStyle::EngineContentRoot = FString();
@@ -114,6 +116,9 @@ void FDialogueStyle::Initialize()
 				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_Genericfinder_16x.png"), Icon16x16));
 	StyleSet->Set(PROPERTY_GraphNodeCircleBox,
 				  new FSlateBoxBrush(GetEngineContentPath("BehaviorTree/IndexCircle.png"), Icon20x20, FMargin(8.0f / 20.0f)));
+	StyleSet->Set(PROPERTY_CommentBubbleOn,
+				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_Blueprint_CommentBubbleOn_16x.png"), Icon16x16, FLinearColor(1.f, 1.f, 1.f, 1.f)));
+
 
 	// Register the current style
 	FSlateStyleRegistry::RegisterSlateStyle(*StyleSet.Get());

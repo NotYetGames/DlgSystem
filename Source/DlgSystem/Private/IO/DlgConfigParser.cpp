@@ -6,11 +6,12 @@
 #include "UnrealType.h"
 #include "EnumProperty.h"
 #include "UObjectIterator.h"
+#include "ObjectMacros.h"
 
 DEFINE_LOG_CATEGORY(LogDlgConfigParser);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-FDlgConfigParser::FDlgConfigParser(const FString& InPreTag) :
+FDlgConfigParser::FDlgConfigParser(const FString InPreTag) :
 	PreTag(InPreTag)
 {
 }
@@ -68,7 +69,6 @@ bool FDlgConfigParser::ReadProperty(const UStruct* ReferenceClass, void* TargetO
 	{
 		return false;
 	}
-
 	check(From < String.Len());
 
 	const FString PropertyName = GetActiveWord();
@@ -99,8 +99,7 @@ bool FDlgConfigParser::ReadProperty(const UStruct* ReferenceClass, void* TargetO
 	UProperty* ComplexPropBase = ReferenceClass->FindPropertyByName(*PropertyName);
 
 	// struct
-	UStructProperty* StructProperty = SmartCastProperty<UStructProperty>(ComplexPropBase);
-	if (StructProperty != nullptr)
+	if (UStructProperty* StructProperty = SmartCastProperty<UStructProperty>(ComplexPropBase))
 	{
 		return ReadComplexProperty<UStructProperty>(TargetObject,
 													ComplexPropBase,
@@ -128,17 +127,28 @@ bool FDlgConfigParser::ReadProperty(const UStruct* ReferenceClass, void* TargetO
 			return false;
 		}
 
-		void* TargetPtr = ComplexPropBase->template ContainerPtrToValuePtr<void>(TargetObject);
-		*reinterpret_cast<UObject**>(TargetPtr) = StaticLoadObject(UObject::StaticClass(), NULL, *VariableName);
+		auto* ObjectPtrPtr = static_cast<UObject**>(ComplexPropBase->template ContainerPtrToValuePtr<void>(TargetObject));
+		*ObjectPtrPtr = nullptr; // reset first
+		if (!VariableName.TrimStartAndEnd().IsEmpty()) // null reference?
+		{
+			*ObjectPtrPtr = StaticLoadObject(UObject::StaticClass(), DefaultObjectOuter, *VariableName);
+		}
 		FindNextWord();
 		return true;
 	}
 
-	ComplexPropBase = ReferenceClass->FindPropertyByName(*VariableName);
-
-	// UObject
-	UObjectProperty* ObjectProp = SmartCastProperty<UObjectProperty>(ComplexPropBase);
-	if (ObjectProp != nullptr)
+	// UObject is in the format:
+	// - not nullptr - UObjectType PropertyName 
+	// - nullptr - PropertyName ""
+	if (bHasNullptr)
+	{
+		ComplexPropBase = ReferenceClass->FindPropertyByName(*PropertyName);
+	}
+	else
+	{
+		ComplexPropBase = ReferenceClass->FindPropertyByName(*VariableName);
+	}
+	if (UObjectProperty* ObjectProperty = SmartCastProperty<UObjectProperty>(ComplexPropBase))
 	{
 		const UClass* Class = SmartGetPropertyClass(ComplexPropBase, TypeName);
 		if (Class == nullptr)
@@ -149,8 +159,8 @@ bool FDlgConfigParser::ReadProperty(const UStruct* ReferenceClass, void* TargetO
 		return ReadComplexProperty<UObjectProperty>(TargetObject, ComplexPropBase, Class, ObjectInitializer, DefaultObjectOuter);
 	}
 
-	UE_LOG(LogDlgConfigParser, Warning, TEXT("Invalid token %s in script %s (line: %d) (Property expected)"),
-		   *GetActiveWord(), *FileName, GetActiveLineNumber());
+	UE_LOG(LogDlgConfigParser, Warning, TEXT("Invalid token `%s` in script `%s` (line: %d) (Property expected for PropertyName = `%s`)"),
+		   *GetActiveWord(), *FileName, GetActiveLineNumber(), *PropertyName);
 	FindNextWord();
 	return false;
 }
@@ -208,6 +218,11 @@ FString FDlgConfigParser::ConstructConfigFile(const UStruct* ReferenceType, void
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool FDlgConfigParser::IsNextWordString() const
 {
+	if (bHasNullptr)
+	{
+		return true;
+	}
+
 	int32 Index = From + Len;
 	// Skip whitespaces
 	while (Index < String.Len() && FChar::IsWhitespace(String[Index]))
@@ -215,7 +230,7 @@ bool FDlgConfigParser::IsNextWordString() const
 		Index++;
 	}
 
-	return (Index < String.Len() && String[Index] == '"');
+	return Index < String.Len() && String[Index] == '"';
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -228,6 +243,7 @@ bool FDlgConfigParser::IsActualWordString() const
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool FDlgConfigParser::FindNextWord()
 {
+	bHasNullptr = false;
 	From += Len;
 
 	// Skip " (aka the open of string)
@@ -248,6 +264,16 @@ bool FDlgConfigParser::FindNextWord()
 	{
 		bHasValidWord = false;
 		return false;
+	}
+
+	// Handle "" as special empty string
+	if (From + 1 < String.Len() && String[From] == '"' && String[From + 1] == '"')
+	{
+		From += 2; // skip both characters for the next string
+		Len = 0;
+		bHasValidWord = true;
+		bHasNullptr = true;
+		return true;
 	}
 
 	// Handle special string case - read everything between two "
@@ -604,8 +630,9 @@ void* FDlgConfigParser::OnInitObject(void* ValuePtr, const UClass* ChildClass, U
 	if (ChildClass != nullptr)
 	{
 		UObject** Value = (UObject**)ValuePtr;
-		(*Value) = CreateDefaultUObject(ChildClass, OuterInit);
-		return (*Value);
+		*Value = nullptr;
+		*Value = CreateNewUObject(ChildClass, OuterInit);
+		return *Value;
 	}
 	UE_LOG(LogDlgConfigParser, Warning, TEXT("OnInitValue called without class!"));
 	return nullptr;
@@ -629,7 +656,7 @@ const UClass* FDlgConfigParser::SmartGetPropertyClass(UProperty* Property, const
 
 	if (Class == nullptr)
 	{
-		UE_LOG(LogDlgConfigParser, Warning, TEXT("Could not find class %s for %s in config %s (:%d)"),
+		UE_LOG(LogDlgConfigParser, Warning, TEXT("Could not find class `%s` for `%s` in config `%s` (Line=%d)"),
 			   *TypeName, *ObjectProperty->GetName(), *FileName, GetActiveLineNumber());
 	}
 

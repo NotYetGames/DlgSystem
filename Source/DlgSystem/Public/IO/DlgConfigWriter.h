@@ -39,7 +39,7 @@ public:
 								   can be used not to export it to have better readable config file
 	 * @param bInDontWriteEmptyContainer: if it is enabled empty TSet, TMap and TArray properties won't be written
 	 */
-	FDlgConfigWriter(const FString& InComplexNamePrefix = "Dlg",
+	FDlgConfigWriter(const FString InComplexNamePrefix = "",
 					 bool bInDontWriteEmptyContainer = true);
 
 	// IDlgWriter Interface

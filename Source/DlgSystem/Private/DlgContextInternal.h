@@ -13,7 +13,7 @@ UCLASS(BlueprintType)
 class DLGSYSTEM_API UDlgContextInternal : public UDlgContext
 {
 	GENERATED_BODY()
-
+	typedef UDlgContextInternal Self;
 public:
 	// Begin UDlgContext Interface
 
@@ -24,7 +24,7 @@ public:
 	 *  is not granted
 	 *  Conditions are not checked here - they are expected to be satisfied
 	 */
-	bool EnterNode(int32 NodeIndex, TSet<UDlgNode*> NodesEnteredWithThisStep) override;
+	bool EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
 
 	/**
 	 *  Called when an option is selected
@@ -61,7 +61,7 @@ public:
 
 
 	/** Checks the enter conditions of the node, return false if they are not satisfied or if the index is invalid */
-	bool IsNodeEnterable(int32 NodeIndex, TSet<UDlgNode*> AlreadyVisitedNodes);
+	bool IsNodeEnterable(int32 NodeIndex, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
 	// Helper methods to get some Dialogue properties
 	FName GetDialogueName() const { check(Dialogue); return Dialogue->GetDlgFName(); }
@@ -72,7 +72,10 @@ public:
 	const TMap<FName, UObject*>& GetParticipants() const { return Participants; }
 
 	// Gets the Node at the NodeIndex index
-	UDlgNode* GetNode(int32 NodeIndex);
+	UDlgNode* GetNode(int32 NodeIndex) 
+	{ 
+		return const_cast<UDlgNode*>(const_cast<const Self*>(this)->GetNode(NodeIndex));
+	}
 	const UDlgNode* GetNode(int32 NodeIndex) const;
 
 	// Was node with NodeIndex visited?

@@ -60,8 +60,8 @@ public:
 #endif
 
 	// Begin UDlgNode interface
-	bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<UDlgNode*> NodesEnteredWithThisStep) override;
-	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<UDlgNode*> AlreadyEvaluated) override;
+	bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
+	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated) override;
 	bool OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext) override;
 
 	// Getters

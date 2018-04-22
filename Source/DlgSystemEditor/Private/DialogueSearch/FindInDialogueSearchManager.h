@@ -15,6 +15,7 @@ class FAssetRegistryModule;
 class FWorkspaceItem;
 class UDialogueGraphNode;
 class UDialogueGraphNode_Edge;
+class UEdGraphNode_Comment;
 struct FAssetData;
 struct FDlgCondition;
 struct FDlgEvent;
@@ -72,6 +73,13 @@ public:
 	 */
 	bool QueryEdgeNode(const FDialogueSearchFilter& SearchFilter, const UDialogueGraphNode_Edge* InEdgeNode,
 						TSharedPtr<FFindInDialoguesResult> OutParentNode);
+
+	/**
+	 * Searches for InSearchString in the Comment Node. Adds the result as a child in OutParentNode.
+	 * @return True if found anything matching the InSearchString
+	 */
+	bool QueryCommentNode(const FDialogueSearchFilter& SearchFilter, const UEdGraphNode_Comment* InCommentNode,
+		TSharedPtr<FFindInDialoguesResult> OutParentNode);
 
 	/**
 	 * Searches for InSearchString in the InDialogue. Adds the result as a child of OutParentNode.

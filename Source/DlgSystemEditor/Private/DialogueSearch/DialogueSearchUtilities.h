@@ -151,7 +151,8 @@ public:
 	{
 		for (const FDlgCondition& Condition : Conditions)
 		{
-			if (Condition.ConditionType == ConditionType && Condition.CallbackName == ConditionName)
+			if (Condition.ConditionType == ConditionType && 
+				(Condition.CallbackName == ConditionName || Condition.OtherVariableName == ConditionName))
 			{
 				return true;
 			}

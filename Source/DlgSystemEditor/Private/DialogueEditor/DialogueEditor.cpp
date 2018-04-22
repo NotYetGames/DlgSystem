@@ -174,21 +174,21 @@ void FDialogueEditor::JumpToObject(const UObject* Object)
 		return;
 	}
 
-	const UDialogueGraphNode_Base* GraphNodeBase = Cast<UDialogueGraphNode_Base>(Object);
-	if (!IsValid(GraphNodeBase))
+	const UEdGraphNode* GraphNode = Cast<UEdGraphNode>(Object);
+	if (!IsValid(GraphNode))
 	{
 		return;
 	}
 
 	// Are we in the same graph?
-	if (DialogueBeingEdited->GetGraph() != GraphNodeBase->GetGraph())
+	if (DialogueBeingEdited->GetGraph() != GraphNode->GetGraph())
 	{
 		return;
 	}
 
 	// TODO create custom SGraphEditor
 	// Not part of the graph anymore :(
-	if (!DialogueBeingEdited->GetGraph()->Nodes.Contains(GraphNodeBase))
+	if (!DialogueBeingEdited->GetGraph()->Nodes.Contains(GraphNode))
 	{
 		return;
 	}
@@ -197,11 +197,11 @@ void FDialogueEditor::JumpToObject(const UObject* Object)
 	static constexpr bool bRequestRename = false;
 	static constexpr bool bSelectNode = true;
 	Refresh();
-	GraphEditorView->JumpToNode(GraphNodeBase, bRequestRename, bSelectNode);
+	GraphEditorView->JumpToNode(GraphNode, bRequestRename, bSelectNode);
 
 	// Select from JumpNode seems to be buggy sometimes, WE WILL DO IT OURSELFS!
 	// I know, I know, it is not my fault that SetNodeSelection does not have the graph node as const, sigh
-	GraphEditorView->SetNodeSelection(CastChecked<UEdGraphNode>(const_cast<UDialogueGraphNode_Base*>(GraphNodeBase)), bSelectNode);
+	GraphEditorView->SetNodeSelection(const_cast<UEdGraphNode*>(GraphNode), bSelectNode);
 }
 // End of IDialogueEditor
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -83,9 +83,9 @@ protected:
 	/**
 	 * Default way to create new objects
 	 */
-	static UObject* CreateDefaultUObject(const UClass* StructDefinition, UObject* ObjectOuter)
+	static UObject* CreateNewUObject(const UClass* StructDefinition, UObject* ObjectOuter)
 	{
-		return NewObject<UObject>(ObjectOuter == nullptr ? (UObject*)GetTransientPackage() : ObjectOuter,
+		return NewObject<UObject>(!IsValid(ObjectOuter) ? (UObject*)GetTransientPackage() : ObjectOuter,
 								 const_cast<UClass*>(StructDefinition), NAME_None, RF_Transactional);
 	}
 

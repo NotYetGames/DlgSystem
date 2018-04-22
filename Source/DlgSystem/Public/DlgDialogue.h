@@ -23,6 +23,7 @@ struct DLGSYSTEM_API FDlgDialogueObjectVersion
 		MergeVirtualParentAndSelectorTypes,
 		ConvertDialogueDataArraysToSets,
 		AddGuid,
+		AddComparisonWithOtherParticipant,
 
 		// -----<new versions can be added above this line>-------------------------------------------------
 		VersionPlusOne,
