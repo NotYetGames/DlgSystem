@@ -14,27 +14,7 @@ void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 	// rebuild text arguments
 	if (PropertyName == UDlgNode_Speech::GetMemberNameText())
 	{
-		TArray<FString> NewArgumentParams;
-		FText::GetFormatPatternParameters(Text, NewArgumentParams);
-
-		TArray<FDlgTextArgument> OldArguments = TextArguments;
-		TextArguments.Empty();
-
-		for (const FString& String : NewArgumentParams)
-		{
-			TextArguments.Add({});
-			TextArguments.Last().DisplayString = String;
-
-			for (const FDlgTextArgument& OldArgument : OldArguments)
-			{
-				if (String == OldArgument.DisplayString)
-				{
-					TextArguments.Last() = OldArgument;
-					break;
-				}
-			}
-		}
-
+		FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments);
 		ConstructedText = Text;
 	}
 }

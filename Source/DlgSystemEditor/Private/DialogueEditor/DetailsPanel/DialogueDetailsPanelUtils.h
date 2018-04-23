@@ -122,6 +122,16 @@ namespace DetailsPanel
 		return nullptr;
 	}
 
+	/**
+	 * Similar to the Base node only this always returns a UDialogueGraphNode_Edge
+	 * If the BaseGraphNode is an GraphNode then returns nullptr
+	 * If the BaseGraphNode is an Edge then returns that
+	 */
+	inline UDialogueGraphNode_Edge* GetAsGraphNodeEdgeFromPropertyHandle(const TSharedRef<IPropertyHandle> PropertyHandle)
+	{
+		return Cast<UDialogueGraphNode_Edge>(GetGraphNodeBaseFromPropertyHandle(PropertyHandle));
+	}
+
 	/** Gets the Dialogue that is the top most root owner of this PropertyHandle. used in the details panel. */
 	inline UDlgDialogue* GetDialogueFromPropertyHandle(const TSharedRef<IPropertyHandle> PropertyHandle)
 	{

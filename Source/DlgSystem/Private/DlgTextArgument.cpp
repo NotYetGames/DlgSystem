@@ -52,3 +52,27 @@ FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(class UDlgCo
 			return FFormatArgumentValue(0);
 	}
 }
+
+void FDlgTextArgument::UpdateTextArgumentArray(const FText& Text, TArray<FDlgTextArgument>& InOutArgumentArray)
+{
+	TArray<FString> NewArgumentParams;
+	FText::GetFormatPatternParameters(Text, NewArgumentParams);
+
+	TArray<FDlgTextArgument> OldArguments = InOutArgumentArray;
+	InOutArgumentArray.Empty();
+
+	for (const FString& String : NewArgumentParams)
+	{
+		InOutArgumentArray.Add({});
+		InOutArgumentArray.Last().DisplayString = String;
+
+		for (const FDlgTextArgument& OldArgument : OldArguments)
+		{
+			if (String == OldArgument.DisplayString)
+			{
+				InOutArgumentArray.Last() = OldArgument;
+				break;
+			}
+		}
+	}
+}

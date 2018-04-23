@@ -40,6 +40,8 @@ public:
 
 	FFormatArgumentValue ConstructFormatArgumentValue(class UDlgContextInternal* DlgContext, FName NodeOwner) const;
 
+	static void UpdateTextArgumentArray(const FText& Text, TArray<FDlgTextArgument>& InOutArgumentArray);
+
 public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
