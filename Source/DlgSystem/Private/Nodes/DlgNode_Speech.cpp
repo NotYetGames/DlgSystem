@@ -12,7 +12,7 @@ void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 	const FName PropertyName = PropertyChangedEvent.Property != nullptr ? PropertyChangedEvent.Property->GetFName() : NAME_None;
 
 	// rebuild text arguments
-	if (PropertyName == UDlgNode_Speech::GetMemberNameText())
+	if (PropertyName == UDlgNode_Speech::GetMemberNameText() || PropertyName == UDlgNode_Speech::GetMemberNameTextArguments())
 	{
 		FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments);
 		ConstructedText = Text;
