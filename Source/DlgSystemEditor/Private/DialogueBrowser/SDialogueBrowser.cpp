@@ -870,13 +870,6 @@ void SDialogueBrowser::BuildTreeViewItem(TSharedPtr<FDialogueBrowserTreeNode> It
 				EDialogueTreeNodeTextType::FNameVariableGraphNode, EDialogueTreeNodeTextType::FNameVariableEdgeNode);
 			break;
 
-		case EDialogueTreeNodeTextType::FTextClassVariableDialogue:
-			// List the graph nodes for the dialogue that contains this FName variable
-			AddGraphNodeBaseChildrenToItemFromProperty(Item,
-				ParticipantProperties->GetClassFTexts().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FTextVariableGraphNode, EDialogueTreeNodeTextType::Default);
-			break;
-
 		case EDialogueTreeNodeTextType::IntClassVariableDialogue:
 			// List the graph nodes for the dialogue that contains this UClass int variable
 			AddGraphNodeBaseChildrenToItemFromProperty(Item,
@@ -894,6 +887,19 @@ void SDialogueBrowser::BuildTreeViewItem(TSharedPtr<FDialogueBrowserTreeNode> It
 			AddGraphNodeBaseChildrenToItemFromProperty(Item,
 				ParticipantProperties->GetClassBools().Find(Item->GetParentVariableName()),
 				EDialogueTreeNodeTextType::BoolVariableGraphNode, EDialogueTreeNodeTextType::BoolVariableEdgeNode);
+			break;
+		case EDialogueTreeNodeTextType::FNameClassVariableDialogue:
+			// List the graph nodes for the dialogue that contains this UClass FName variable
+			AddGraphNodeBaseChildrenToItemFromProperty(Item,
+				ParticipantProperties->GetClassFNames().Find(Item->GetParentVariableName()),
+				EDialogueTreeNodeTextType::FNameVariableGraphNode, EDialogueTreeNodeTextType::FNameVariableEdgeNode);
+			break;
+
+		case EDialogueTreeNodeTextType::FTextClassVariableDialogue:
+			// List the graph nodes for the dialogue that contains this FName variable
+			AddGraphNodeBaseChildrenToItemFromProperty(Item,
+				ParticipantProperties->GetClassFTexts().Find(Item->GetParentVariableName()),
+				EDialogueTreeNodeTextType::FTextVariableGraphNode, EDialogueTreeNodeTextType::Default);
 			break;
 
 		default:
