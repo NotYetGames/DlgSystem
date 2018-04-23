@@ -26,7 +26,7 @@ bool FDlgEdge::Evaluate(const UDlgContextInternal* DlgContext, TSet<const UDlgNo
 	return FDlgCondition::EvaluateArray(Conditions, DlgContext);
 }
 
-void FDlgEdge::ConstructTextFromArguments(UDlgContextInternal* DlgContext, FName NodeOwnerName)
+void FDlgEdge::ConstructTextFromArguments(const UDlgContextInternal* DlgContext, FName NodeOwnerName)
 {
 	if (TextArguments.Num() > 0)
 	{

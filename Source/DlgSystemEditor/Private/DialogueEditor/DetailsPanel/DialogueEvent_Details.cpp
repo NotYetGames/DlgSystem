@@ -144,7 +144,9 @@ void FDialogueEvent_Details::OnEventTypeChanged(bool bForceRefresh)
 
 	// Refresh the view, without this some names/tooltips won't get refreshed
 	if (bForceRefresh && PropertyUtils.IsValid())
+	{
 		PropertyUtils->ForceRefresh();
+	}
 }
 
 TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const

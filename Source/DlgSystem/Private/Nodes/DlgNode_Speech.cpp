@@ -84,8 +84,3 @@ void UDlgNode_Speech::GetAssociatedParticipants(TArray<FName>& OutArray) const
 		OutArray.AddUnique(TextArgument.ParticipantName);
 	}
 }
-
-void UDlgNode_Speech::GetTextArguments(TArray<struct FDlgTextArgument>& OutArray) const
-{
-	OutArray = TextArguments;
-}

@@ -25,6 +25,7 @@ struct DLGSYSTEM_API FDlgDialogueObjectVersion
 		ConvertDialogueDataArraysToSets,
 		AddGuid,
 		AddComparisonWithOtherParticipant,
+		AddTextFormatArguments,
 
 		// -----<new versions can be added above this line>-------------------------------------------------
 		VersionPlusOne,

@@ -15,9 +15,9 @@ FArchive& operator<<(FArchive &Ar, FDlgTextArgument& DlgCondition)
 	return Ar;
 }
 
-FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(class UDlgContextInternal* DlgContext, FName NodeOwner) const
+FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgContextInternal* DlgContext, FName NodeOwner) const
 {
-	UObject* Participant = DlgContext->GetParticipant(ParticipantName);
+	const UObject* Participant = DlgContext->GetConstParticipant(ParticipantName);
 	if (Participant == nullptr)
 	{
 		UE_LOG(LogDlgSystem, Error, TEXT("Failed to construct text argument %s: invalid owner name %s"), *DisplayString, *ParticipantName.ToString());
@@ -63,16 +63,19 @@ void FDlgTextArgument::UpdateTextArgumentArray(const FText& Text, TArray<FDlgTex
 
 	for (const FString& String : NewArgumentParams)
 	{
-		InOutArgumentArray.Add({});
-		InOutArgumentArray.Last().DisplayString = String;
+		FDlgTextArgument Argument;
+		Argument.DisplayString = String;
 
+		// Replace with old argument values if display string matches
 		for (const FDlgTextArgument& OldArgument : OldArguments)
 		{
 			if (String == OldArgument.DisplayString)
 			{
-				InOutArgumentArray.Last() = OldArgument;
+				Argument = OldArgument;
 				break;
 			}
 		}
+
+		InOutArgumentArray.Add(Argument);
 	}
 }

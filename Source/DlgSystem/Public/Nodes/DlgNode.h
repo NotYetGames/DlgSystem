@@ -17,6 +17,7 @@ class UDlgContextInternal;
 class UDlgNode;
 class USoundWave;
 class UDialogueWave;
+struct FDlgTextArgument;
 
 /**
  *  Abstract base class for Dialogue nodes
@@ -138,10 +139,21 @@ public:
 	/** Gathers associated participants, they are only added to the array if they are not yet there */
 	virtual void GetAssociatedParticipants(TArray<FName>& OutArray) const;
 
-	virtual void GetTextArguments(TArray<struct FDlgTextArgument>& OutArray) const {};
+	/** Gets the text arguments for this Node (if any). Used for FText::Format */
+	virtual const TArray<FDlgTextArgument>& GetTextArguments() const
+	{
+		static TArray<FDlgTextArgument> EmptyArray;
+		return EmptyArray;
+	};
 
-	/** Gets the Text of this Node */
+	/** Gets the Text of this Node. This can be the final formatted string. */
 	virtual const FText& GetNodeText() const { return FText::GetEmpty(); }
+
+	/**
+	 * Gets the Raw Text of this Node. Usually the same as GetNodeText but in case the node supports formatted string this
+	 * is the raw form with all the arguments intact. To get the text arguments call GetTextArguments.
+	 */
+	virtual const FText& GetRawNodeText() const { return GetNodeText(); }
 
 	/** Gets the voice of this Node as a SoundWave. */
 	virtual USoundWave* GetNodeVoiceSoundWave() const { return nullptr; }

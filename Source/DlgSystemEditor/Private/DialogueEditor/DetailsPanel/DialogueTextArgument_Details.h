@@ -52,7 +52,7 @@ private:
 	// Getters for the visibility of some properties
 	EVisibility GetVariableNameVisibility() const
 	{
-		return (ArgumentType != EDlgTextArgumentType::DlgTextArgumentDisplayName &&  ArgumentType != EDlgTextArgumentType::DlgTextArgumentGender)
+		return (ArgumentType != EDlgTextArgumentType::DlgTextArgumentDisplayName && ArgumentType != EDlgTextArgumentType::DlgTextArgumentGender)
 			   ? EVisibility::Visible : EVisibility::Hidden;
 	}
 

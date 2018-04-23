@@ -23,7 +23,7 @@ void FDialogueTextArgument_Details::CustomizeHeader(TSharedRef<IPropertyHandle> 
 	Dialogue = DetailsPanel::GetDialogueFromPropertyHandle(StructPropertyHandle.ToSharedRef());
 	PropertyUtils = StructCustomizationUtils.GetPropertyUtilities();
 
-	// Cache the Property Handle for the EventType
+	// Cache the Property Handle for the ArgumentType
 	ParticipantNamePropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgTextArgument, ParticipantName));
 	ArgumentTypePropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgTextArgument, Type));
 	check(ParticipantNamePropertyHandle.IsValid());
@@ -100,7 +100,9 @@ void FDialogueTextArgument_Details::OnArgumentTypeChanged(bool bForceRefresh)
 
 	// Refresh the view, without this some names/tooltips won't get refreshed
 	if (bForceRefresh && PropertyUtils.IsValid())
+	{
 		PropertyUtils->ForceRefresh();
+	}
 }
 
 TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurrentOnly) const

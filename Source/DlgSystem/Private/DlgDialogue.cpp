@@ -92,7 +92,7 @@ void UDlgDialogue::PostLoad()
 	}
 
 	// Refresh the data, so that it is valid after loading.
-	if (DialogueVersion < FDlgDialogueObjectVersion::AddComparisonWithOtherParticipant)
+	if (DialogueVersion < FDlgDialogueObjectVersion::AddTextFormatArguments)
 	{
 		RefreshData();
 	}
@@ -537,9 +537,7 @@ void UDlgDialogue::RefreshData()
 		}
 
 		// Text arguments
-		TArray<FDlgTextArgument> TextArguments;
-		Node->GetTextArguments(TextArguments);
-		for (const FDlgTextArgument& TextArgument : TextArguments)
+		for (const FDlgTextArgument& TextArgument : Node->GetTextArguments())
 		{
 			GetParticipantDataEntry(TextArgument.ParticipantName, Node->GetNodeParticipantName()).AddTextArgumentData(TextArgument);
 		}

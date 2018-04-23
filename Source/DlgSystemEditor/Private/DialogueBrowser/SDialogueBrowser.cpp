@@ -251,7 +251,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 
 	auto PopulateVariablePropertiesFromSearchResult = [](
 		const TSharedPtr<FDialogueBrowserTreeVariableProperties> VariableProperties,
-		const FDialogueSearchFoundResultPtr SearchResult, const FGuid& DialogueGuid)
+		const TSharedPtr<FDialogueSearchFoundResult> SearchResult, const FGuid& DialogueGuid)
 	{
 		if (VariableProperties->HasGraphNodeSet(DialogueGuid))
 		{
@@ -547,10 +547,10 @@ void SDialogueBrowser::AddDialogueChildrenToItemFromProperty(TSharedPtr<FDialogu
 }
 
 void SDialogueBrowser::AddGraphNodeChildrenToItem(TSharedPtr<FDialogueBrowserTreeNode> InItem,
-								const TSet<TWeakObjectPtr<UDialogueGraphNode>>& GraphNodes,
+								const TSet<TWeakObjectPtr<const UDialogueGraphNode>>& GraphNodes,
 								const EDialogueTreeNodeTextType TextType)
 {
-	for (TWeakObjectPtr<UDialogueGraphNode> GraphNode : GraphNodes)
+	for (TWeakObjectPtr<const UDialogueGraphNode> GraphNode : GraphNodes)
 	{
 		if (!GraphNode.IsValid())
 		{
@@ -566,10 +566,10 @@ void SDialogueBrowser::AddGraphNodeChildrenToItem(TSharedPtr<FDialogueBrowserTre
 }
 
 void SDialogueBrowser::AddEdgeNodeChildrenToItem(TSharedPtr<FDialogueBrowserTreeNode> InItem,
-								const TSet<TWeakObjectPtr<UDialogueGraphNode_Edge>>& EdgeNodes,
+								const TSet<TWeakObjectPtr<const UDialogueGraphNode_Edge>>& EdgeNodes,
 								const EDialogueTreeNodeTextType TextType)
 {
-	for (TWeakObjectPtr<UDialogueGraphNode_Edge> EdgeNode : EdgeNodes)
+	for (TWeakObjectPtr<const UDialogueGraphNode_Edge> EdgeNode : EdgeNodes)
 	{
 		if (!EdgeNode.IsValid())
 		{
@@ -896,7 +896,7 @@ void SDialogueBrowser::BuildTreeViewItem(TSharedPtr<FDialogueBrowserTreeNode> It
 			break;
 
 		case EDialogueTreeNodeTextType::FTextClassVariableDialogue:
-			// List the graph nodes for the dialogue that contains this FName variable
+			// List the graph nodes for the dialogue that contains this UClass FText variable
 			AddGraphNodeBaseChildrenToItemFromProperty(Item,
 				ParticipantProperties->GetClassFTexts().Find(Item->GetParentVariableName()),
 				EDialogueTreeNodeTextType::FTextVariableGraphNode, EDialogueTreeNodeTextType::FTextVariableEdgeNode);

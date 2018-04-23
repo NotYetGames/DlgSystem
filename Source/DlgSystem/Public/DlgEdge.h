@@ -43,7 +43,11 @@ public:
 	/** Returns with true if every condition attached to the edge and every enter condition of the target node are satisfied */
 	bool Evaluate(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
-	void ConstructTextFromArguments(UDlgContextInternal* DlgContext, FName NodeOwnerName);
+	/** Constructs the ConstructedText. */
+	void ConstructTextFromArguments(const UDlgContextInternal* DlgContext, FName NodeOwnerName);
+
+	/** Gets the edge text. Empty text, or Text formatted with the text arguments if there is any, when the parent node is entered. */
+	const FText& GetEdgeText() const { return (TextArguments.Num() > 0 && !ConstructedText.IsEmpty()) ? ConstructedText : Text; }
 
 	/** Returns if the Edge is valid, has the TargetIndex non negative  */
 	bool IsValid() const
@@ -69,10 +73,6 @@ public:
 	UPROPERTY(EditAnywhere, EditFixedSize, Category = DlgEdgeData)
 	TArray<FDlgTextArgument> TextArguments;
 
-	/** Empty text, or Text formatted with the text arguments if there is any, and the parent node is enterred */
-	UPROPERTY(BlueprintReadOnly)
-	FText ConstructedText;
-
 	/** player emotion/state attached to this player choice */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData)
 	FName SpeakerState;
@@ -80,4 +80,7 @@ public:
 	/** Set this to false in order to skip this edge in the AllChildren array (which lists both satisfied and not satisfied player choices */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData)
 	bool bIncludeInAllOptionListIfUnsatisfied = true;
+
+	/** Constructed at runtime from the original text and the arguments if there is any.*/
+	FText ConstructedText;
 };

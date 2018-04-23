@@ -13,7 +13,7 @@ class UDlgContextInternal;
 UENUM()
 enum class EDlgTextArgumentType : uint8
 {
-	DlgTextArgumentDisplayName		UMETA(DisplayName = "Participant Display Name"),
+	DlgTextArgumentDisplayName = 0	UMETA(DisplayName = "Participant Display Name"),
 	DlgTextArgumentGender			UMETA(DisplayName = "Participant Gender"),
 
 	DlgTextArgumentDialogueInt		UMETA(DisplayName = "Dialogue Int Variable"),
@@ -26,8 +26,9 @@ enum class EDlgTextArgumentType : uint8
 };
 
 /**
- *  An argument is a variable to extend node texts with dynamic values runtime
- *  It can be inserted to the FText, the same way FText::Format works
+ * An argument is a variable to extend node texts with dynamic values runtime
+ * It can be inserted to the FText, the same way FText::Format works
+ * See: https://docs.unrealengine.com/en-us/Gameplay/Localization/Formatting
  */
 USTRUCT(Blueprintable, BlueprintType)
 struct DLGSYSTEM_API FDlgTextArgument
@@ -38,17 +39,18 @@ public:
 	
 	bool operator==(const FDlgTextArgument& Other) const;
 
-	FFormatArgumentValue ConstructFormatArgumentValue(class UDlgContextInternal* DlgContext, FName NodeOwner) const;
+	/** Construct the argument for usage in FText::Format */
+	FFormatArgumentValue ConstructFormatArgumentValue(const UDlgContextInternal* DlgContext, FName NodeOwner) const;
 
+	/** Helper method to update the array InOutArgumentArray with the new arguments from Text. */
 	static void UpdateTextArgumentArray(const FText& Text, TArray<FDlgTextArgument>& InOutArgumentArray);
 
 public:
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FString DisplayString;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EDlgTextArgumentType Type;
+	EDlgTextArgumentType Type = EDlgTextArgumentType::DlgTextArgumentDisplayName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName ParticipantName;
@@ -65,8 +67,8 @@ public:
 
 FORCEINLINE bool FDlgTextArgument::operator==(const FDlgTextArgument& Other) const
 {
-	return	(DisplayString == Other.DisplayString &&
-			 Type == Other.Type &&
-			 ParticipantName == Other.ParticipantName &&
-			 VariableName == Other.VariableName);
+	return	DisplayString == Other.DisplayString &&
+			Type == Other.Type &&
+			ParticipantName == Other.ParticipantName &&
+			VariableName == Other.VariableName;
 }

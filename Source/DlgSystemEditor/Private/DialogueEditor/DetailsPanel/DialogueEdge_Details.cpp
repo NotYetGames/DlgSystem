@@ -23,7 +23,7 @@ void FDialogueEdge_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InStruct
 	bShowTextProperty = true;
 
 	// Should we show hide the Text property?
-	if (UDialogueGraphNode* GraphNode = DetailsPanel::GetClosestGraphNodeFromPropertyHandle(StructPropertyHandle.ToSharedRef()))
+	if (const UDialogueGraphNode* GraphNode = DetailsPanel::GetClosestGraphNodeFromPropertyHandle(StructPropertyHandle.ToSharedRef()))
 	{
 		// Virtual parents do not handle direct children, only grand children
 		// And selector node do not even touch them
