@@ -47,6 +47,47 @@ FFindInDialogueSearchManager::~FFindInDialogueSearchManager()
 	UnInitialize();
 }
 
+bool FFindInDialogueSearchManager::QueryDlgTextArgument(const FDialogueSearchFilter& SearchFilter, const FDlgTextArgument& InDlgTextArgument,
+	TSharedPtr<FFindInDialoguesResult> OutParentNode, const int32 ArgumentIndex)
+{
+	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid())
+	{
+		return false;
+	}
+	bool bContainsSearchString = false;
+
+	// Test DisplayString
+	if (InDlgTextArgument.DisplayString.Contains(SearchFilter.SearchString))
+	{
+		bContainsSearchString = true;
+		const FText Category = FText::Format(
+			LOCTEXT("DlgTextArgumentDisplayString", "DlgTextArgument.DisplayString at index = {0}"), FText::AsNumber(ArgumentIndex));
+		MakeChildTextNode(OutParentNode, FText::FromString(InDlgTextArgument.DisplayString), Category, Category.ToString());
+	}
+
+	// Test ParticipantName
+	if (!InDlgTextArgument.ParticipantName.IsNone() &&
+		InDlgTextArgument.ParticipantName.ToString().Contains(SearchFilter.SearchString))
+	{
+		bContainsSearchString = true;
+		const FText Category = FText::Format(
+			LOCTEXT("DlgTextArgumentParticipantName", "DlgTextArgument.ParticipantName at index = {0}"), FText::AsNumber(ArgumentIndex));
+		MakeChildTextNode(OutParentNode, FText::FromName(InDlgTextArgument.ParticipantName), Category, Category.ToString());
+	}
+
+	// Test VariableName
+	if (!InDlgTextArgument.VariableName.IsNone() &&
+		InDlgTextArgument.VariableName.ToString().Contains(SearchFilter.SearchString))
+	{
+		bContainsSearchString = true;
+		const FText Category = FText::Format(
+			LOCTEXT("DlgTextArgumentVariableNamee", "DlgTextArgument.VariableName at index = {0}"), FText::AsNumber(ArgumentIndex));
+		MakeChildTextNode(OutParentNode, FText::FromName(InDlgTextArgument.VariableName), Category, Category.ToString());
+	}
+
+	return bContainsSearchString;
+}
+
 bool FFindInDialogueSearchManager::QueryDlgCondition(const FDialogueSearchFilter& SearchFilter, const FDlgCondition& InDlgCondition,
 													TSharedPtr<FFindInDialoguesResult> OutParentNode)
 {
@@ -62,9 +103,9 @@ bool FFindInDialogueSearchManager::QueryDlgCondition(const FDialogueSearchFilter
 	{
 		bContainsSearchString = true;
 		MakeChildTextNode(OutParentNode,
-						  FText::FromName(InDlgCondition.ParticipantName),
-						  LOCTEXT("DlgConditionParticipantName", "DlgCondition ParticipantName"),
-						  TEXT("DlgCondition.ParticipantName"));
+			FText::FromName(InDlgCondition.ParticipantName),
+			LOCTEXT("DlgConditionParticipantName", "DlgCondition ParticipantName"),
+			TEXT("DlgCondition.ParticipantName"));
 	}
 
 	// Test CallBackName
@@ -73,9 +114,9 @@ bool FFindInDialogueSearchManager::QueryDlgCondition(const FDialogueSearchFilter
 	{
 		bContainsSearchString = true;
 		MakeChildTextNode(OutParentNode,
-						  FText::FromName(InDlgCondition.CallbackName),
-						  LOCTEXT("DlgConditionCallbackName", "DlgCondition CallbackName"),
-						  TEXT("DlgCondition.CallbackName"));
+			FText::FromName(InDlgCondition.CallbackName),
+			LOCTEXT("DlgConditionCallbackName", "DlgCondition CallbackName"),
+			TEXT("DlgCondition.CallbackName"));
 	}
 
 	// Test NameValue
@@ -84,9 +125,9 @@ bool FFindInDialogueSearchManager::QueryDlgCondition(const FDialogueSearchFilter
 	{
 		bContainsSearchString = true;
 		MakeChildTextNode(OutParentNode,
-						  FText::FromName(InDlgCondition.NameValue),
-						  LOCTEXT("DlgConditionNameValue", "DlgCondition NameValue"),
-						  TEXT("DlgCondition.NameValue"));
+			FText::FromName(InDlgCondition.NameValue),
+			LOCTEXT("DlgConditionNameValue", "DlgCondition NameValue"),
+			TEXT("DlgCondition.NameValue"));
 	}
 
 	// Test OtherParticipantName
@@ -154,9 +195,9 @@ bool FFindInDialogueSearchManager::QueryDlgEvent(const FDialogueSearchFilter& Se
 	{
 		bContainsSearchString = true;
 		MakeChildTextNode(OutParentNode,
-						  FText::FromName(InDlgEvent.ParticipantName),
-						  LOCTEXT("DlgEventParticipantName", "DlgEvent ParticipantName"),
-						  TEXT("DlgEvent.ParticipantName"));
+			FText::FromName(InDlgEvent.ParticipantName),
+			LOCTEXT("DlgEventParticipantName", "DlgEvent ParticipantName"),
+			TEXT("DlgEvent.ParticipantName"));
 	}
 
 	// Test EventName
@@ -165,9 +206,9 @@ bool FFindInDialogueSearchManager::QueryDlgEvent(const FDialogueSearchFilter& Se
 	{
 		bContainsSearchString = true;
 		MakeChildTextNode(OutParentNode,
-						  FText::FromName(InDlgEvent.EventName),
-						  LOCTEXT("DlgEventCallbackName", "DlgEvent EventName"),
-						  TEXT("DlgEvent.EventName"));
+			FText::FromName(InDlgEvent.EventName),
+			LOCTEXT("DlgEventCallbackName", "DlgEvent EventName"),
+			TEXT("DlgEvent.EventName"));
 	}
 
 	// Test NameValue
@@ -176,9 +217,9 @@ bool FFindInDialogueSearchManager::QueryDlgEvent(const FDialogueSearchFilter& Se
 	{
 		bContainsSearchString = true;
 		MakeChildTextNode(OutParentNode,
-						  FText::FromName(InDlgEvent.NameValue),
-						  LOCTEXT("DlgEventNameValue", "DlgEvent NameValue"),
-						  TEXT("DlgEvent.NameValue"));
+			FText::FromName(InDlgEvent.NameValue),
+			LOCTEXT("DlgEventNameValue", "DlgEvent NameValue"),
+			TEXT("DlgEvent.NameValue"));
 	}
 
 	if (SearchFilter.bIncludeNumericalTypes)
@@ -218,7 +259,6 @@ bool FFindInDialogueSearchManager::QueryDlgEdge(const FDialogueSearchFilter& Sea
 	}
 	bool bContainsSearchString = false;
 
-
 	// Test Text
 	if (InDlgEdge.Text.ToString().Contains(SearchFilter.SearchString))
 	{
@@ -233,6 +273,23 @@ bool FFindInDialogueSearchManager::QueryDlgEdge(const FDialogueSearchFilter& Sea
 	for (const FDlgCondition& Condition : InDlgEdge.Conditions)
 	{
 		bContainsSearchString = QueryDlgCondition(SearchFilter, Condition, OutParentNode) || bContainsSearchString;
+	}
+
+	// Test SpeakerState
+	if (!InDlgEdge.SpeakerState.IsNone() &&
+		InDlgEdge.SpeakerState.ToString().Contains(SearchFilter.SearchString))
+	{
+		bContainsSearchString = true;
+		MakeChildTextNode(OutParentNode,
+			FText::FromName(InDlgEdge.SpeakerState),
+			LOCTEXT("DlgEdgeSpeakerState", "DlgEdge SpeakerState"),
+			TEXT("DlgEdge.SpeakerState"));
+	}
+
+	// Test TextArguments
+	for (int32 Index = 0, Num = InDlgEdge.TextArguments.Num(); Index < Num; Index++)
+	{
+		bContainsSearchString |= QueryDlgTextArgument(SearchFilter, InDlgEdge.TextArguments[Index], OutParentNode, Index);
 	}
 
 	return bContainsSearchString;
@@ -292,10 +349,10 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& S
 	}
 
 	// Test the Node text
-	if (Node.GetNodeText().ToString().Contains(SearchFilter.SearchString))
+	if (Node.GetRawNodeText().ToString().Contains(SearchFilter.SearchString))
 	{
 		bContainsSearchString = true;
-		MakeChildTextNode(TreeGraphNode, Node.GetNodeText(), LOCTEXT("DescriptionKey", "Description"), TEXT("Description"));
+		MakeChildTextNode(TreeGraphNode, Node.GetRawNodeText(), LOCTEXT("DescriptionKey", "Description"), TEXT("Description"));
 	}
 
 	// Test the EnterConditions
@@ -304,56 +361,79 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& S
 		bContainsSearchString |= QueryDlgCondition(SearchFilter, Condition, TreeGraphNode);
 	}
 
-// Test the EnterEvents
-for (const FDlgEvent& Event : Node.GetNodeEnterEvents())
-{
-	bContainsSearchString |= QueryDlgEvent(SearchFilter, Event, TreeGraphNode);
-}
-
-// Handle Speech sequences
-if (const UDlgNode_SpeechSequence* SpeechSequence = Cast<UDlgNode_SpeechSequence>(&Node))
-{
-	const TArray<FDlgSpeechSequenceEntry>& SpeechSequenceArray = SpeechSequence->GetNodeSpeechSequence();
-	for (int32 Index = 0, Num = SpeechSequenceArray.Num(); Index < Num; Index++)
+	// Test the EnterEvents
+	for (const FDlgEvent& Event : Node.GetNodeEnterEvents())
 	{
-		const FDlgSpeechSequenceEntry& SequenceEntry = SpeechSequenceArray[Index];
+		bContainsSearchString |= QueryDlgEvent(SearchFilter, Event, TreeGraphNode);
+	}
 
-		// Test the Speaker
-		if (SequenceEntry.Speaker.ToString().Contains(SearchFilter.SearchString))
+	// Test SpeakerState
+	if (!Node.GetSpeakerState().IsNone() &&
+		Node.GetSpeakerState().ToString().Contains(SearchFilter.SearchString))
+	{
+		bContainsSearchString = true;
+		MakeChildTextNode(TreeGraphNode,
+			FText::FromName(Node.GetSpeakerState()),
+			LOCTEXT("SpeakerStateKey", "Speaker State"),
+			TEXT("Speaker State"));
+	}
+
+	// Test TextArguments
+	const TArray<FDlgTextArgument>& TextArguments = Node.GetTextArguments();
+	for (int32 Index = 0, Num = TextArguments.Num(); Index < Num; Index++)
+	{
+		bContainsSearchString |= QueryDlgTextArgument(SearchFilter, TextArguments[Index], TreeGraphNode, Index);
+	}
+
+	// Handle Speech sequences
+	if (const UDlgNode_SpeechSequence* SpeechSequence = Cast<UDlgNode_SpeechSequence>(&Node))
+	{
+		const TArray<FDlgSpeechSequenceEntry>& SpeechSequenceArray = SpeechSequence->GetNodeSpeechSequence();
+		for (int32 Index = 0, Num = SpeechSequenceArray.Num(); Index < Num; Index++)
 		{
-			bContainsSearchString = true;
-			const FText Category = FText::Format(LOCTEXT("SequenceEntrySpeaker", "SequenceEntry.Speaker at index = {0}"),
-				FText::AsNumber(Index));
+			const FDlgSpeechSequenceEntry& SequenceEntry = SpeechSequenceArray[Index];
 
-			MakeChildTextNode(TreeGraphNode, FText::FromName(SequenceEntry.Speaker), Category, Category.ToString());
-		}
+			// Test Speaker
+			if (SequenceEntry.Speaker.ToString().Contains(SearchFilter.SearchString))
+			{
+				bContainsSearchString = true;
+				const FText Category = FText::Format(LOCTEXT("SequenceEntrySpeaker", "SequenceEntry.Speaker at index = {0}"), FText::AsNumber(Index));
+				MakeChildTextNode(TreeGraphNode, FText::FromName(SequenceEntry.Speaker), Category, Category.ToString());
+			}
 
-		// Test the Text Description
-		if (SequenceEntry.Text.ToString().Contains(SearchFilter.SearchString))
-		{
-			bContainsSearchString = true;
-			const FText Category = FText::Format(LOCTEXT("SequenceEntryText", "SequenceEntry.Description at index = {0}"),
-				FText::AsNumber(Index));
-			MakeChildTextNode(TreeGraphNode, SequenceEntry.Text, Category, Category.ToString());
-		}
+			// Test Text Description
+			if (SequenceEntry.Text.ToString().Contains(SearchFilter.SearchString))
+			{
+				bContainsSearchString = true;
+				const FText Category = FText::Format(LOCTEXT("SequenceEntryText", "SequenceEntry.Description at index = {0}"), FText::AsNumber(Index));
+				MakeChildTextNode(TreeGraphNode, SequenceEntry.Text, Category, Category.ToString());
+			}
 
-		// Test the EdgeText
-		if (SequenceEntry.EdgeText.ToString().Contains(SearchFilter.SearchString))
-		{
-			bContainsSearchString = true;
-			const FText Category = FText::Format(LOCTEXT("SequenceEntryEdgeText", "SequenceEntry.EdgeText at index = {0}"),
-				FText::AsNumber(Index));
-			MakeChildTextNode(TreeGraphNode, SequenceEntry.EdgeText, Category, Category.ToString());
+			// Test EdgeText
+			if (SequenceEntry.EdgeText.ToString().Contains(SearchFilter.SearchString))
+			{
+				bContainsSearchString = true;
+				const FText Category = FText::Format(LOCTEXT("SequenceEntryEdgeText", "SequenceEntry.EdgeText at index = {0}"), FText::AsNumber(Index));
+				MakeChildTextNode(TreeGraphNode, SequenceEntry.EdgeText, Category, Category.ToString());
+			}
+
+			// Test SpeakerState
+			if (!SequenceEntry.SpeakerState.IsNone() &&
+				SequenceEntry.SpeakerState.ToString().Contains(SearchFilter.SearchString))
+			{
+				bContainsSearchString = true;
+				const FText Category = FText::Format(LOCTEXT("SequenceEntrySpeakerState", "SequenceEntry.SpeakerState at index = {0}"), FText::AsNumber(Index));
+				MakeChildTextNode(TreeGraphNode, FText::FromName(SequenceEntry.SpeakerState), Category, Category.ToString());
+			}
 		}
 	}
-}
 
-if (bContainsSearchString)
-{
-	OutParentNode->AddChild(TreeGraphNode);
-}
+	if (bContainsSearchString)
+	{
+		OutParentNode->AddChild(TreeGraphNode);
+	}
 
-return bContainsSearchString;
+	return bContainsSearchString;
 }
 
 bool FFindInDialogueSearchManager::QueryEdgeNode(const FDialogueSearchFilter& SearchFilter, const UDialogueGraphNode_Edge* InEdgeNode,

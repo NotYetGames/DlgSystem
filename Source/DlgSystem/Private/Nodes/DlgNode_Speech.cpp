@@ -4,6 +4,39 @@
 #include "DlgContextInternal.h"
 #include "DlgSystemPrivatePCH.h"
 
+#if WITH_EDITOR
+void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	const FName PropertyName = PropertyChangedEvent.Property != nullptr ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+
+	// rebuild text arguments
+	if (PropertyName == UDlgNode_Speech::GetMemberNameText() || PropertyName == UDlgNode_Speech::GetMemberNameTextArguments())
+	{
+		FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments);
+		ConstructedText = Text;
+	}
+}
+#endif
+
+bool UDlgNode_Speech::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)
+{
+	if (TextArguments.Num() > 0)
+	{
+		FFormatNamedArguments OrderedArguments;
+
+		for (const FDlgTextArgument& DlgArgument : TextArguments)
+		{
+			OrderedArguments.Add(DlgArgument.DisplayString, DlgArgument.ConstructFormatArgumentValue(DlgContext, OwnerName));
+		}
+
+		ConstructedText = FText::Format(Text, OrderedArguments);
+	}
+
+	return Super::HandleNodeEnter(DlgContext, NodesEnteredWithThisStep);
+}
+
 bool UDlgNode_Speech::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated)
 {
 	if (bIsVirtualParent)
@@ -40,4 +73,14 @@ bool UDlgNode_Speech::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<c
 
 	// Normal speech node
 	return Super::ReevaluateChildren(DlgContext, AlreadyEvaluated);
+}
+
+
+void UDlgNode_Speech::GetAssociatedParticipants(TArray<FName>& OutArray) const
+{
+	Super::GetAssociatedParticipants(OutArray);
+	for (const FDlgTextArgument& TextArgument : TextArguments)
+	{
+		OutArray.AddUnique(TextArgument.ParticipantName);
+	}
 }

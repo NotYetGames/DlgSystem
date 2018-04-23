@@ -116,7 +116,7 @@ protected:
 	{
 		if (DialogueGraphNode && DialogueGraphNode->IsDialogueNodeSet())
 		{
-			return DialogueGraphNode->GetDialogueNode().GetNodeText();
+			return DialogueGraphNode->GetDialogueNode().GetRawNodeText();
 		}
 
 		return FText::GetEmpty();

@@ -32,6 +32,7 @@ enum class EDialogueTreeNodeCategoryType : uint8
 	ClassVariableFloat,
 	ClassVariableBool,
 	ClassVariableFName,
+	ClassVariableFText,
 
 	Max
 };
@@ -51,6 +52,7 @@ enum class EDialogueTreeNodeTextType : uint8
 	ParticipantClassVariableFloat,
 	ParticipantClassVariableBool,
 	ParticipantClassVariableFName,
+	ParticipantClassVariableFText,
 
 	EventDialogue,
 	EventGraphNode,
@@ -78,6 +80,10 @@ enum class EDialogueTreeNodeTextType : uint8
 	FNameClassVariableDialogue,
 	FNameVariableGraphNode,
 	FNameVariableEdgeNode,
+
+	FTextClassVariableDialogue,
+	FTextVariableGraphNode,
+	FTextVariableEdgeNode,
 
 	Max
 };
@@ -157,6 +163,7 @@ public:
 			|| TextType == EDialogueTreeNodeTextType::IntClassVariableDialogue
 			|| TextType == EDialogueTreeNodeTextType::FloatClassVariableDialogue
 			|| TextType == EDialogueTreeNodeTextType::BoolClassVariableDialogue
+			|| TextType == EDialogueTreeNodeTextType::FTextClassVariableDialogue
 			|| TextType == EDialogueTreeNodeTextType::FNameClassVariableDialogue);
 	}
 	bool IsEventText() const
@@ -174,6 +181,7 @@ public:
 							TextType == EDialogueTreeNodeTextType::IntVariableGraphNode ||
 							TextType == EDialogueTreeNodeTextType::FloatVariableGraphNode ||
 							TextType == EDialogueTreeNodeTextType::BoolVariableGraphNode ||
+							TextType == EDialogueTreeNodeTextType::FTextVariableGraphNode ||
 							TextType == EDialogueTreeNodeTextType::FNameVariableGraphNode);
 	}
 	bool IsEdgeNodeText()
@@ -182,6 +190,7 @@ public:
 							TextType == EDialogueTreeNodeTextType::IntVariableEdgeNode ||
 							TextType == EDialogueTreeNodeTextType::FloatVariableEdgeNode ||
 							TextType == EDialogueTreeNodeTextType::BoolVariableEdgeNode ||
+							TextType == EDialogueTreeNodeTextType::FTextVariableEdgeNode ||
 							TextType == EDialogueTreeNodeTextType::FNameVariableEdgeNode);
 	}
 

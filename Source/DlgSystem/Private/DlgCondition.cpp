@@ -187,9 +187,9 @@ bool FDlgCondition::CheckInt(int32 Value, const UDlgContextInternal* DlgContext)
 
 bool FDlgCondition::CheckBool(bool bValue, const UDlgContextInternal* DlgContext) const
 {
-	bool bValueToCheckAgainst = bBoolValue;
 	if (CompareType == EDlgCompareType::DlgCompareToVariable || CompareType == EDlgCompareType::DlgCompareToClassVariable)
 	{
+		bool bValueToCheckAgainst = bBoolValue;
 		const UObject* OtherParticipant = DlgContext->GetConstParticipant(OtherParticipantName);
 		if (!IsParticipantValid(OtherParticipant))
 		{
@@ -204,9 +204,11 @@ bool FDlgCondition::CheckBool(bool bValue, const UDlgContextInternal* DlgContext
 		{
 			bValueToCheckAgainst = UDlgReflectionHelper::GetVariable<UBoolProperty, bool>(OtherParticipant, OtherVariableName);
 		}
+
+		return (bValue == bValueToCheckAgainst) == bBoolValue;
 	}
 
-	return bValue == bValueToCheckAgainst;
+	return bValue == bBoolValue;
 }
 
 bool FDlgCondition::CheckName(FName Value, const UDlgContextInternal* DlgContext) const

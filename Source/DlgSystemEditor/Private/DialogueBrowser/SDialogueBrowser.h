@@ -48,12 +48,12 @@ private:
 
 	/** Add GraphNode Children of type TextType to the InItem. */
 	void AddGraphNodeChildrenToItem(TSharedPtr<FDialogueBrowserTreeNode> InItem,
-									const TSet<TWeakObjectPtr<UDialogueGraphNode>>& GraphNodes,
+									const TSet<TWeakObjectPtr<const UDialogueGraphNode>>& GraphNodes,
 									const EDialogueTreeNodeTextType TextType);
 
 	/** Add EdgeNode Children of type TextType to the InItem. */
 	void AddEdgeNodeChildrenToItem(TSharedPtr<FDialogueBrowserTreeNode> InItem,
-									const TSet<TWeakObjectPtr<UDialogueGraphNode_Edge>>& EdgeNodes,
+									const TSet<TWeakObjectPtr<const UDialogueGraphNode_Edge>>& EdgeNodes,
 									const EDialogueTreeNodeTextType TextType);
 
 	/** Add both GraphNode Children and EdgeNode Children to the InItem from The Property. */

@@ -4,43 +4,6 @@
 #include "DlgContextInternal.h"
 #include "EngineUtils.h"
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const FDlgEdge& FDlgEdge::GetInvalidEdge()
-{
-	static FDlgEdge DlgEdge;
-	return DlgEdge;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FDlgEdge
-bool FDlgEdge::Evaluate(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const
-{
-	if (!IsValid())
-	{
-		return false;
-	}
-
-	// Check target node enter conditions
-	if (!DlgContext->IsNodeEnterable(TargetIndex, AlreadyVisitedNodes))
-	{
-		return false;
-	}
-
-	// Check this edge conditions
-	return FDlgCondition::EvaluateArray(Conditions, DlgContext);
-}
-
-
-FArchive& operator<<(FArchive &Ar, FDlgEdge& DlgEdge)
-{
-	Ar << DlgEdge.TargetIndex;
-	Ar << DlgEdge.Text;
-	Ar << DlgEdge.Conditions;
-	Ar << DlgEdge.SpeakerState;
-	Ar << DlgEdge.bIncludeInAllOptionListIfUnsatisfied;
-	return Ar;
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin UObject interface
@@ -104,6 +67,11 @@ bool UDlgNode::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgN
 
 	// Fire all the node enter events
 	FireNodeEnterEvents(DlgContext);
+
+	for (FDlgEdge& Edge : Children)
+	{
+		Edge.ConstructTextFromArguments(DlgContext, OwnerName);
+	}
 
 	return ReevaluateChildren(DlgContext, {});
 }

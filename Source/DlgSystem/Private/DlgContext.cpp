@@ -41,7 +41,7 @@ const FText& UDlgContext::GetOptionText(int32 OptionIndex) const
 		return FText::GetEmpty();
 	}
 
-	return AvailableChildren[OptionIndex]->Text;
+	return AvailableChildren[OptionIndex]->GetEdgeText();
 }
 
 FName UDlgContext::GetOptionSpeakerState(int32 OptionIndex) const
@@ -80,7 +80,7 @@ const FText& UDlgContext::GetOptionTextFromAll(int32 Index) const
 		return FText::GetEmpty();
 	}
 
-	return AllChildren[Index].EdgePtr->Text;
+	return AllChildren[Index].EdgePtr->GetEdgeText();
 }
 
 bool UDlgContext::IsOptionSatisfied(int32 Index) const

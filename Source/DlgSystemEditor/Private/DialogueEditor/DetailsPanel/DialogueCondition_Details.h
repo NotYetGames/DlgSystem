@@ -108,8 +108,9 @@ private:
 			|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable
 			|| ConditionType == EDlgConditionType::DlgConditionNodeVisited
 			|| ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild
-			|| ((ConditionType == EDlgConditionType::DlgConditionBoolCall || ConditionType == EDlgConditionType::DlgConditionClassBoolVariable) 
-				&& (CompareType == EDlgCompareType::DlgCompareToConst))
+			|| ConditionType == EDlgConditionType::DlgConditionBoolCall
+			|| ConditionType == EDlgConditionType::DlgConditionClassBoolVariable
+				
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
@@ -136,7 +137,7 @@ private:
 			|| ConditionType == EDlgConditionType::DlgConditionClassIntVariable
 			|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
 			|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable
-			|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
+			|| ConditionType == EDlgConditionType::DlgConditionClassBoolVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 

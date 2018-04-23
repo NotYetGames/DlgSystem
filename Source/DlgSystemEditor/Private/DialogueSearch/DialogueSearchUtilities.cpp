@@ -7,13 +7,13 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueSearchUtilities
-FDialogueSearchFoundResultPtr FDialogueSearchUtilities::GetGraphNodesForEventEventName(
+TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesForEventEventName(
 		const FName& EventName, const UDlgDialogue* Dialogue)
 {
-	FDialogueSearchFoundResultPtr FoundResult = FDialogueSearchFoundResult::Make();
+	TSharedPtr<FDialogueSearchFoundResult> FoundResult = FDialogueSearchFoundResult::Make();
 
 	const UDialogueGraph* Graph = CastChecked<UDialogueGraph>(Dialogue->GetGraph());
-	for (UDialogueGraphNode* GraphNode : Graph->GetAllDialogueGraphNodes())
+	for (const UDialogueGraphNode* GraphNode : Graph->GetAllDialogueGraphNodes())
 	{
 		// Enter events
 		if (IsEventInArray(EventName, EDlgEventType::DlgEventEvent, GraphNode->GetDialogueNode().GetNodeEnterEvents()))
@@ -25,15 +25,15 @@ FDialogueSearchFoundResultPtr FDialogueSearchUtilities::GetGraphNodesForEventEve
 	return FoundResult;
 }
 
-FDialogueSearchFoundResultPtr FDialogueSearchUtilities::GetGraphNodesForConditionEventCallName(
+TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesForConditionEventCallName(
 		const FName& ConditionName, const UDlgDialogue* Dialogue)
 {
-	FDialogueSearchFoundResultPtr FoundResult = FDialogueSearchFoundResult::Make();
+	TSharedPtr<FDialogueSearchFoundResult> FoundResult = FDialogueSearchFoundResult::Make();
 
 	const UDialogueGraph* Graph = CastChecked<UDialogueGraph>(Dialogue->GetGraph());
-	for (UDialogueGraphNode_Base* GraphNodeBase : Graph->GetAllBaseDialogueGraphNodes())
+	for (const UDialogueGraphNode_Base* GraphNodeBase : Graph->GetAllBaseDialogueGraphNodes())
 	{
-		if (UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(GraphNodeBase))
+		if (const UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(GraphNodeBase))
 		{
 			// Node
 			// Node Enter conditions
@@ -45,7 +45,7 @@ FDialogueSearchFoundResultPtr FDialogueSearchUtilities::GetGraphNodesForConditio
 
 			// The children are handled by the edges, below
 		}
-		else if (UDialogueGraphNode_Edge* EdgeNode = Cast<UDialogueGraphNode_Edge>(GraphNodeBase))
+		else if (const UDialogueGraphNode_Edge* EdgeNode = Cast<UDialogueGraphNode_Edge>(GraphNodeBase))
 		{
 			// Edge
 			if (IsConditionInArray(ConditionName, EDlgConditionType::DlgConditionEventCall,
@@ -59,15 +59,15 @@ FDialogueSearchFoundResultPtr FDialogueSearchUtilities::GetGraphNodesForConditio
 	return FoundResult;
 }
 
-FDialogueSearchFoundResultPtr FDialogueSearchUtilities::GetGraphNodesForVariablesOfNameAndType(const FName& VariableName,
+TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesForVariablesOfNameAndType(const FName& VariableName,
 	const UDlgDialogue* Dialogue, const EDlgEventType EventType, const EDlgConditionType ConditionType)
 {
-	FDialogueSearchFoundResultPtr FoundResult = FDialogueSearchFoundResult::Make();
+	TSharedPtr<FDialogueSearchFoundResult> FoundResult = FDialogueSearchFoundResult::Make();
 
 	const UDialogueGraph* Graph = CastChecked<UDialogueGraph>(Dialogue->GetGraph());
-	for (UDialogueGraphNode_Base* GraphNodeBase : Graph->GetAllBaseDialogueGraphNodes())
+	for (const UDialogueGraphNode_Base* GraphNodeBase : Graph->GetAllBaseDialogueGraphNodes())
 	{
-		if (UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(GraphNodeBase))
+		if (const UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(GraphNodeBase))
 		{
 			// The root node does not have searchable info
 			if (GraphNode->IsRootNode())
@@ -92,7 +92,7 @@ FDialogueSearchFoundResultPtr FDialogueSearchUtilities::GetGraphNodesForVariable
 
 			// The children are handled by the edges, below
 		}
-		else if (UDialogueGraphNode_Edge* EdgeNode = Cast<UDialogueGraphNode_Edge>(GraphNodeBase))
+		else if (const UDialogueGraphNode_Edge* EdgeNode = Cast<UDialogueGraphNode_Edge>(GraphNodeBase))
 		{
 			// Edge
 			if (IsConditionInArray(VariableName, ConditionType,
@@ -105,3 +105,46 @@ FDialogueSearchFoundResultPtr FDialogueSearchUtilities::GetGraphNodesForVariable
 
 	return FoundResult;
 }
+
+
+void FDialogueSearchUtilities::GetGraphNodesForTextArgumentVariable(const FName& VariableName,
+	const UDlgDialogue* Dialogue, const EDlgTextArgumentType ArgumentType, TSharedPtr<FDialogueSearchFoundResult> FoundResult)
+{
+
+	const UDialogueGraph* Graph = CastChecked<UDialogueGraph>(Dialogue->GetGraph());
+	for (const UDialogueGraphNode_Base* GraphNodeBase : Graph->GetAllBaseDialogueGraphNodes())
+	{
+		if (const UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(GraphNodeBase))
+		{
+			// The root node does not have searchable info
+			if (GraphNode->IsRootNode())
+			{
+				continue;
+			}
+
+			// Node
+			const UDlgNode& Node = GraphNode->GetDialogueNode();
+
+			if (IsTextArgumentInArray(VariableName, ArgumentType, Node.GetTextArguments()))
+			{
+				FoundResult->GraphNodes.Add(GraphNode);
+			}
+		}
+		else if (const UDialogueGraphNode_Edge* EdgeNode = Cast<UDialogueGraphNode_Edge>(GraphNodeBase))
+		{
+			// Edge
+			if (IsTextArgumentInArray(VariableName, ArgumentType, EdgeNode->GetDialogueEdge().TextArguments))
+			{
+				FoundResult->EdgeNodes.Add(EdgeNode);
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
