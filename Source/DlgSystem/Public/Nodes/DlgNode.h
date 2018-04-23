@@ -101,7 +101,7 @@ public:
 	 *
 	 * @param PropertyChangedEvent the property that was modified
 	 */
-	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	/**
 	 * This alternate version of PostEditChange is called when properties inside structs are modified.  The property that was actually modified
@@ -196,6 +196,8 @@ public:
 
 	/** Gathers associated participants, they are only added to the array if they are not yet there */
 	virtual void GetAssociatedParticipants(TArray<FName>& OutArray) const;
+
+	virtual void GetTextArguments(TArray<struct FDlgTextArgument>& OutArray) const {};
 
 	/** Gets the Text of this Node */
 	virtual const FText& GetNodeText() const { return FText::GetEmpty(); }

@@ -275,6 +275,14 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 			{
 				ActorsPropertiesValue->AddDialogueToClassFNameVariable(NameVariableName, Dialogue);
 			}
+
+			// Populate UClass FText variable names
+			TSet<FName> ClassFTextVariableNames;
+			Dialogue->GetClassTextNames(ParticipantName, ClassFTextVariableNames);
+			for (const FName& NameVariableName : ClassFTextVariableNames)
+			{
+				ActorsPropertiesValue->AddDialogueToClassFTextVariable(NameVariableName, Dialogue);
+			}
 		}
 	}
 
@@ -463,7 +471,9 @@ void SDlgDataDisplay::BuildTreeViewItem(TSharedPtr<FDlgDataDisplayTreeNode> Item
 				AddVariableChildrenToItem(Item, ActorPropertiesValue->GetClassBools(),
 					LOCTEXT("VariableBoolKey", "bool {0} = "), EDlgDataDisplayVariableTreeNodeType::ClassBool);
 				AddVariableChildrenToItem(Item, ActorPropertiesValue->GetClassFNames(),
-					LOCTEXT("VariableFNameKey", "FName {0} = "), EDlgDataDisplayVariableTreeNodeType::ClassFName);
+					LOCTEXT("VariableFNameKey", "Name {0} = "), EDlgDataDisplayVariableTreeNodeType::ClassFName);
+				AddVariableChildrenToItem(Item, ActorPropertiesValue->GetClassFTexts(),
+					LOCTEXT("VariableFTextKey", "Text {0} = "), EDlgDataDisplayVariableTreeNodeType::ClassFText);
 				break;
 			}
 			default:
@@ -521,6 +531,7 @@ TSharedRef<ITableRow> SDlgDataDisplay::HandleGenerateRow(TSharedPtr<FDlgDataDisp
 				case EDlgDataDisplayVariableTreeNodeType::ClassInteger:
 				case EDlgDataDisplayVariableTreeNodeType::ClassFloat:
 				case EDlgDataDisplayVariableTreeNodeType::ClassFName:
+				case EDlgDataDisplayVariableTreeNodeType::ClassFText:
 					// Editable text box
 					SAssignNew(RightWidget, SDlgDataTextPropertyValue, VariableNode);
 					break;

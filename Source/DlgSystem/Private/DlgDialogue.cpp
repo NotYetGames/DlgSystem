@@ -44,6 +44,7 @@ void UpdateDialogueToVersion_UseOnlyOneOutputAndInputPin(UDlgDialogue* Dialogue)
 #endif
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin UObject interface
 void UDlgDialogue::PreSave(const class ITargetPlatform* TargetPlatform)
@@ -472,59 +473,16 @@ void UDlgDialogue::RefreshData()
 		return *ParticipantData;
 	};
 
-	// Adds condition to the appropriate ParticipantDataEntry
-	auto AddCondition = [this, &GetParticipantDataEntry](const FName& ParticipantName,
-														const FName& FallbackNodeOwnerName,
-														const EDlgConditionType& ConditionType,
-														const FName& ConditionName)
-	{
-		FDlgParticipantData& ParticipantData = GetParticipantDataEntry(ParticipantName, FallbackNodeOwnerName);
-		switch (ConditionType)
-		{
-			case EDlgConditionType::DlgConditionEventCall:
-				ParticipantData.Conditions.Add(ConditionName);
-				break;
-
-			case EDlgConditionType::DlgConditionIntCall:
-				ParticipantData.IntVariableNames.Add(ConditionName);
-				break;
-			case EDlgConditionType::DlgConditionFloatCall:
-				ParticipantData.FloatVariableNames.Add(ConditionName);
-				break;
-			case EDlgConditionType::DlgConditionBoolCall:
-				ParticipantData.BoolVariableNames.Add(ConditionName);
-				break;
-			case EDlgConditionType::DlgConditionNameCall:
-				ParticipantData.NameVariableNames.Add(ConditionName);
-				break;
-
-			case EDlgConditionType::DlgConditionClassIntVariable:
-				ParticipantData.ClassIntVariableNames.Add(ConditionName);
-				break;
-			case EDlgConditionType::DlgConditionClassFloatVariable:
-				ParticipantData.ClassFloatVariableNames.Add(ConditionName);
-				break;
-			case EDlgConditionType::DlgConditionClassBoolVariable:
-				ParticipantData.ClassBoolVariableNames.Add(ConditionName);
-				break;
-			case EDlgConditionType::DlgConditionClassNameVariable:
-				ParticipantData.ClassNameVariableNames.Add(ConditionName);
-				break;
-
-			default:
-				break;
-		}
-	};
-
 	// Adds conditions from the edges of this Node.
-	auto AddConditionsFromEdges = [this, &AddCondition](const UDlgNode* Node)
+	auto AddConditionsFromEdges = [this, &GetParticipantDataEntry](const UDlgNode* Node)
 	{
+		const FName FallbackNodeOwnerName = Node->GetNodeParticipantName();
 		for (const FDlgEdge& Edge : Node->GetNodeChildren())
 		{
 			for (const FDlgCondition& Condition : Edge.Conditions)
 			{
-				AddCondition(Condition.ParticipantName, Node->GetNodeParticipantName(), Condition.ConditionType, Condition.CallbackName);
-				AddCondition(Condition.OtherParticipantName, Node->GetNodeParticipantName(), Condition.ConditionType, Condition.OtherVariableName);
+				GetParticipantDataEntry(Condition.ParticipantName, FallbackNodeOwnerName).AddConditionPrimaryData(Condition);
+				GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName).AddConditionSecondaryData(Condition);
 			}
 		}
 	};
@@ -538,6 +496,7 @@ void UDlgDialogue::RefreshData()
 	// Regular Nodes
 	for (UDlgNode* Node : Nodes)
 	{
+		// participant names
 		TArray<FName> Participants;
 		Node->GetAssociatedParticipants(Participants);
 		for (const FName& Participant : Participants)
@@ -555,55 +514,27 @@ void UDlgDialogue::RefreshData()
 			DlgSpeakerStates.Add(Edge.SpeakerState);
 		}
 
-		// 1.1: Conditions from nodes
+		// Conditions from nodes
 		for (const FDlgCondition& Condition : Node->GetNodeEnterConditions())
 		{
-			AddCondition(Condition.ParticipantName, Node->GetNodeParticipantName(), Condition.ConditionType, Condition.CallbackName);
-			AddCondition(Condition.OtherParticipantName, Node->GetNodeParticipantName(), Condition.ConditionType, Condition.OtherVariableName);
+			GetParticipantDataEntry(Condition.ParticipantName, Node->GetNodeParticipantName()).AddConditionPrimaryData(Condition);
+			GetParticipantDataEntry(Condition.OtherParticipantName, Node->GetNodeParticipantName()).AddConditionSecondaryData(Condition);
 		}
-		// 1.2: Conditions from edges
+		// Conditions from edges
 		AddConditionsFromEdges(Node);
 
-		// 2: Events
+		// Events
 		for (const FDlgEvent& Event : Node->GetNodeEnterEvents())
 		{
-			FDlgParticipantData& ParticipantData = GetParticipantDataEntry(Event.ParticipantName, Node->GetNodeParticipantName());
+			GetParticipantDataEntry(Event.ParticipantName, Node->GetNodeParticipantName()).AddEventData(Event);
+		}
 
-			switch (Event.EventType)
-			{
-				case EDlgEventType::DlgEventEvent:
-					ParticipantData.Events.Add(Event.EventName);
-					break;
-
-				case EDlgEventType::DlgEventModifyInt:
-					ParticipantData.IntVariableNames.Add(Event.EventName);
-					break;
-				case EDlgEventType::DlgEventModifyFloat:
-					ParticipantData.FloatVariableNames.Add(Event.EventName);
-					break;
-				case EDlgEventType::DlgEventModifyBool:
-					ParticipantData.BoolVariableNames.Add(Event.EventName);
-					break;
-				case EDlgEventType::DlgEventModifyName:
-					ParticipantData.NameVariableNames.Add(Event.EventName);
-					break;
-
-				case EDlgEventType::DlgEventModifyClassIntVariable:
-					ParticipantData.ClassIntVariableNames.Add(Event.EventName);
-					break;
-				case EDlgEventType::DlgEventModifyClassFloatVariable:
-					ParticipantData.ClassFloatVariableNames.Add(Event.EventName);
-					break;
-				case EDlgEventType::DlgEventModifyClassBoolVariable:
-					ParticipantData.ClassBoolVariableNames.Add(Event.EventName);
-					break;
-				case EDlgEventType::DlgEventModifyClassNameVariable:
-					ParticipantData.ClassNameVariableNames.Add(Event.EventName);
-					break;
-
-				default:
-					break;
-			}
+		// Text arguments
+		TArray<FDlgTextArgument> TextArguments;
+		Node->GetTextArguments(TextArguments);
+		for (const FDlgTextArgument& TextArgument : TextArguments)
+		{
+			GetParticipantDataEntry(TextArgument.ParticipantName, Node->GetNodeParticipantName()).AddTextArgumentData(TextArgument);
 		}
 	}
 

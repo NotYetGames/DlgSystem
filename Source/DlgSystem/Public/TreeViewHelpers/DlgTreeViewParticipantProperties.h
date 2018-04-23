@@ -38,6 +38,7 @@ public:
 		FDlgHelper::SortDefault(ClassFloats);
 		FDlgHelper::SortDefault(ClassBools);
 		FDlgHelper::SortDefault(ClassFNames);
+		FDlgHelper::SortDefault(ClassFTexts);
 	}
 
 	// Setters
@@ -105,6 +106,12 @@ public:
 		return AddDialogueToVariable(&ClassFNames, FNameVariableName, Dialogue);
 	}
 
+	/** Returns the FText Property */
+	TSharedPtr<VariablePropertyType> AddDialogueToClassFTextVariable(const FName& FTextVariableName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	{
+		return AddDialogueToVariable(&ClassFTexts, FTextVariableName, Dialogue);
+	}
+
 	// Getters
 	const TSet<TWeakObjectPtr<UDlgDialogue>>& GetDialogues() const { return Dialogues; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetEvents() const { return Events; }
@@ -117,6 +124,7 @@ public:
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetClassFloats() const { return ClassFloats; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetClassBools() const { return ClassBools; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetClassFNames() const { return ClassFNames; }
+	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetClassFTexts() const { return ClassFTexts; }
 
 	/** Does this participant has any variables of the basic type */
 	bool HasVariables() const
@@ -127,7 +135,7 @@ public:
 	/** Does this participant has any variables that belong to the UClass of the participant */
 	bool HasClassVariables() const
 	{
-		return ClassIntegers.Num() > 0 || ClassFloats.Num() > 0 || ClassBools.Num() > 0 || ClassFNames.Num() > 0;
+		return ClassIntegers.Num() > 0 || ClassFloats.Num() > 0 || ClassBools.Num() > 0 || ClassFNames.Num() > 0 || ClassFTexts.Num() > 0;
 	}
 
 	bool HasDialogues() const { return Dialogues.Num() > 0; }
@@ -141,6 +149,7 @@ public:
 	bool HasClassFloats() const { return ClassFloats.Num() > 0; }
 	bool HasClassBools() const { return ClassBools.Num() > 0; }
 	bool HasClassFNames() const { return ClassFNames.Num() > 0; }
+	bool HasClassFTexts() const { return ClassFTexts.Num() > 0; }
 
 protected:
 	TSharedPtr<VariablePropertyType> AddDialogueToVariable(TMap<FName, TSharedPtr<VariablePropertyType>>* VariableMap,
@@ -240,4 +249,11 @@ protected:
 	 * Value: The properties of this FName variable
 	 */
 	TMap<FName, TSharedPtr<VariablePropertyType>> ClassFNames;
+
+	/**
+	* FText variables that belong to the UClass of this participant
+	* Key: FText Variable Name
+	* Value: The properties of this FText variable
+	*/
+	TMap<FName, TSharedPtr<VariablePropertyType>> ClassFTexts;
 };

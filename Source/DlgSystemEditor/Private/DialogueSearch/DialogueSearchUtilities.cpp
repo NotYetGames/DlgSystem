@@ -105,3 +105,40 @@ FDialogueSearchFoundResultPtr FDialogueSearchUtilities::GetGraphNodesForVariable
 
 	return FoundResult;
 }
+
+
+void FDialogueSearchUtilities::GetGraphNodesForTextArgumentVariable(const FName& VariableName,
+	const UDlgDialogue* Dialogue, const EDlgTextArgumentType ArgumentType, FDialogueSearchFoundResultPtr& FoundResult)
+{
+
+	const UDialogueGraph* Graph = CastChecked<UDialogueGraph>(Dialogue->GetGraph());
+	for (UDialogueGraphNode_Base* GraphNodeBase : Graph->GetAllBaseDialogueGraphNodes())
+	{
+		if (UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(GraphNodeBase))
+		{
+			// The root node does not have searchable info
+			if (GraphNode->IsRootNode())
+			{
+				continue;
+			}
+
+			// Node
+			const UDlgNode& Node = GraphNode->GetDialogueNode();
+
+			TArray<FDlgTextArgument> TextArguments;
+			Node.GetTextArguments(TextArguments);
+			if (IsTextArgumentInArray(VariableName, ArgumentType, TextArguments))
+			{
+				FoundResult->GraphNodes.Add(GraphNode);
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+

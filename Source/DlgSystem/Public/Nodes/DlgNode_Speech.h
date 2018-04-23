@@ -2,6 +2,7 @@
 #pragma once
 
 #include "DlgNode.h"
+#include "DlgTextArgument.h"
 #include "DlgNode_Speech.generated.h"
 
 class USoundWave;
@@ -25,11 +26,22 @@ public:
 		return TEXT("Normal dialogue node - someone says something.");
 	}
 
+#if WITH_EDITOR
+	/**
+	 * Called when a property on this object has been modified externally
+	 *
+	 * @param PropertyChangedEvent the property that was modified
+	 */
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
+
+
 	// Begin UDlgNode Interface.
+	bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
 	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated) override;
 
 	// Getters:
-	const FText& GetNodeText() const override { return Text; }
+	const FText& GetNodeText() const override { return (TextArguments.Num() > 0 && !ConstructedText.IsEmpty()) ? ConstructedText : Text; }
 	USoundWave* GetNodeVoiceSoundWave() const override { return VoiceSoundWave; }
 	UDialogueWave* GetNodeVoiceDialogueWave() const override { return VoiceDialogueWave; }
 	FName GetSpeakerState() const override { return SpeakerState; }
@@ -49,8 +61,12 @@ public:
 	/** Sets the Text of the Node. */
 	virtual void SetNodeText(const FText& InText) { Text = InText; }
 
+	virtual void GetAssociatedParticipants(TArray<FName>& OutArray) const override;
+	virtual void GetTextArguments(TArray<struct FDlgTextArgument>& OutArray) const override;
+
 	/** Helper functions to get the names of some properties. Used by the DlgSystemEditor module. */
 	static FName GetMemberNameText() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, Text); }
+	static FName GetMemberNameTextArguments() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, TextArguments); }
 	static FName GetMemberNameVoiceSoundWave() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, VoiceSoundWave); }
 	static FName GetMemberNameVoiceDialogueWave() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, VoiceDialogueWave); }
 	static FName GetMemberNameSpeakerState() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, SpeakerState); }
@@ -61,6 +77,9 @@ protected:
 	/** Text that will appear when this node participant name speaks to someone else. */
 	UPROPERTY(EditAnywhere, Category = DlgNodeData, Meta = (MultiLine = true))
 	FText Text;
+
+	UPROPERTY(EditAnywhere, EditFixedSize, Category = DlgNodeData)
+	TArray<struct FDlgTextArgument> TextArguments;
 
 	/** Voice attached to this node. The Sound Wave variant. */
 	UPROPERTY(EditAnywhere, Category = DlgNodeData, Meta = (DlgSaveOnlyReference))
@@ -81,4 +100,7 @@ protected:
 	 */
 	UPROPERTY(EditAnywhere, Category = DlgNodeData)
 	bool bIsVirtualParent = false;
+
+	/** Constructed runtime from the original text and the arguments if there is any */
+	FText ConstructedText;
 };

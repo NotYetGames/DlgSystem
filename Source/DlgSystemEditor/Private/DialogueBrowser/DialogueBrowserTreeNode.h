@@ -32,6 +32,7 @@ enum class EDialogueTreeNodeCategoryType : uint8
 	ClassVariableFloat,
 	ClassVariableBool,
 	ClassVariableFName,
+	ClassVariableFText,
 
 	Max
 };
@@ -51,6 +52,7 @@ enum class EDialogueTreeNodeTextType : uint8
 	ParticipantClassVariableFloat,
 	ParticipantClassVariableBool,
 	ParticipantClassVariableFName,
+	ParticipantClassVariableFText,
 
 	EventDialogue,
 	EventGraphNode,
@@ -78,6 +80,8 @@ enum class EDialogueTreeNodeTextType : uint8
 	FNameClassVariableDialogue,
 	FNameVariableGraphNode,
 	FNameVariableEdgeNode,
+
+	FTextClassVariableDialogue,
 
 	Max
 };
@@ -157,6 +161,7 @@ public:
 			|| TextType == EDialogueTreeNodeTextType::IntClassVariableDialogue
 			|| TextType == EDialogueTreeNodeTextType::FloatClassVariableDialogue
 			|| TextType == EDialogueTreeNodeTextType::BoolClassVariableDialogue
+			|| TextType == EDialogueTreeNodeTextType::FTextClassVariableDialogue
 			|| TextType == EDialogueTreeNodeTextType::FNameClassVariableDialogue);
 	}
 	bool IsEventText() const

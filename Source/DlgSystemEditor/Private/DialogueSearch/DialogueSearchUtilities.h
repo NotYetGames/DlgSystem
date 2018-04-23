@@ -63,9 +63,11 @@ public:
 	 */
 	static FDialogueSearchFoundResultPtr GetGraphNodesForIntVariableName(const FName& IntVariableName, const UDlgDialogue* Dialogue)
 	{
-		return GetGraphNodesForVariablesOfNameAndType(IntVariableName, Dialogue,
-													  EDlgEventType::DlgEventModifyInt,
-													  EDlgConditionType::DlgConditionIntCall);
+		FDialogueSearchFoundResultPtr FoundResult = GetGraphNodesForVariablesOfNameAndType(IntVariableName, Dialogue,
+																						   EDlgEventType::DlgEventModifyInt,
+																						   EDlgConditionType::DlgConditionIntCall);
+		GetGraphNodesForTextArgumentVariable(IntVariableName, Dialogue, EDlgTextArgumentType::DlgTextArgumentDialogueInt, FoundResult);
+		return FoundResult;
 	}
 
 	/**
@@ -74,9 +76,11 @@ public:
 	 */
 	static FDialogueSearchFoundResultPtr GetGraphNodesForFloatVariableName(const FName& FloatVariableName, const UDlgDialogue* Dialogue)
 	{
-		return GetGraphNodesForVariablesOfNameAndType(FloatVariableName, Dialogue,
-													  EDlgEventType::DlgEventModifyFloat,
-													  EDlgConditionType::DlgConditionFloatCall);
+		FDialogueSearchFoundResultPtr FoundResult = GetGraphNodesForVariablesOfNameAndType(FloatVariableName, Dialogue,
+																						   EDlgEventType::DlgEventModifyFloat,
+																						   EDlgConditionType::DlgConditionFloatCall);
+		GetGraphNodesForTextArgumentVariable(FloatVariableName, Dialogue, EDlgTextArgumentType::DlgTextArgumentDialogueInt, FoundResult);
+		return FoundResult;
 	}
 
 	/**
@@ -107,9 +111,11 @@ public:
 	 */
 	static FDialogueSearchFoundResultPtr GetGraphNodesForClassIntVariableName(const FName& IntVariableName, const UDlgDialogue* Dialogue)
 	{
-		return GetGraphNodesForVariablesOfNameAndType(IntVariableName, Dialogue,
-													  EDlgEventType::DlgEventModifyClassIntVariable,
-													  EDlgConditionType::DlgConditionClassIntVariable);
+		FDialogueSearchFoundResultPtr FoundResult = GetGraphNodesForVariablesOfNameAndType(IntVariableName, Dialogue,
+																						   EDlgEventType::DlgEventModifyClassIntVariable,
+																						   EDlgConditionType::DlgConditionClassIntVariable);
+		GetGraphNodesForTextArgumentVariable(IntVariableName, Dialogue, EDlgTextArgumentType::DlgTextArgumentClassInt, FoundResult);
+		return FoundResult;
 	}
 
 	/**
@@ -118,9 +124,12 @@ public:
 	 */
 	static FDialogueSearchFoundResultPtr GetGraphNodesForClassFloatVariableName(const FName& FloatVariableName, const UDlgDialogue* Dialogue)
 	{
-		return GetGraphNodesForVariablesOfNameAndType(FloatVariableName, Dialogue,
-													  EDlgEventType::DlgEventModifyClassFloatVariable,
-													  EDlgConditionType::DlgConditionClassFloatVariable);
+
+		FDialogueSearchFoundResultPtr FoundResult = GetGraphNodesForVariablesOfNameAndType(FloatVariableName, Dialogue,
+																						   EDlgEventType::DlgEventModifyClassFloatVariable,
+																						   EDlgConditionType::DlgConditionClassFloatVariable);
+		GetGraphNodesForTextArgumentVariable(FloatVariableName, Dialogue, EDlgTextArgumentType::DlgTextArgumentClassFloat, FoundResult);
+		return FoundResult;
 	}
 
 	/**
@@ -143,6 +152,17 @@ public:
 		return GetGraphNodesForVariablesOfNameAndType(FNameVariableName, Dialogue,
 													  EDlgEventType::DlgEventModifyClassNameVariable,
 													  EDlgConditionType::DlgConditionClassNameVariable);
+	}
+
+	/**
+	 * Gets all the graph nodes that contain the specified FNameVariableName from the UClass.
+	 * This contains both graph nodes and edges.
+	 */
+	static FDialogueSearchFoundResultPtr GetGraphNodesForClassFTextVariableName(const FName& FTextVariableName, const UDlgDialogue* Dialogue)
+	{
+		FDialogueSearchFoundResultPtr FoundResult = FDialogueSearchFoundResult::Make();
+		GetGraphNodesForTextArgumentVariable(FTextVariableName, Dialogue, EDlgTextArgumentType::DlgTextArgumentClassText, FoundResult);
+		return FoundResult;
 	}
 
 	/** Does Conditions contain the ConditionName (of type ConditionType)? */
@@ -173,9 +193,27 @@ public:
 		return false;
 	}
 
+	/** Does Events contain the EventName (of type EventType)? */
+	static bool IsTextArgumentInArray(const FName& TextArgumentName, const EDlgTextArgumentType TextArgumentType, const TArray<FDlgTextArgument>& TextArguments)
+	{
+		for (const FDlgTextArgument& TextArgument : TextArguments)
+		{
+			if (TextArgument.Type == TextArgumentType && TextArgument.VariableName == TextArgumentName)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 private:
 	static FDialogueSearchFoundResultPtr GetGraphNodesForVariablesOfNameAndType(const FName& VariableName,
 																				const UDlgDialogue* Dialogue,
 																				const EDlgEventType EventType,
 																				const EDlgConditionType ConditionType);
+
+	static void GetGraphNodesForTextArgumentVariable(const FName& VariableName,
+													 const UDlgDialogue* Dialogue, 
+													 const EDlgTextArgumentType ArgumentType, 
+													 FDialogueSearchFoundResultPtr& FoundResult);
 };

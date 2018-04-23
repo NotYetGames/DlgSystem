@@ -25,7 +25,8 @@ enum class EDlgDataDisplayVariableTreeNodeType : uint8
 	ClassInteger,
 	ClassFloat,
 	ClassBool,
-	ClassFName
+	ClassFName,
+	ClassFText
 };
 
 // Type of Text

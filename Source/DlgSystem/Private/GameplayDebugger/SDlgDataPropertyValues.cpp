@@ -135,6 +135,12 @@ void SDlgDataPropertyValue::UpdateVariableNodeFromActor()
 			VariableNode->SetVariableValue(Value.ToString());
 			break;
 		}
+		case EDlgDataDisplayVariableTreeNodeType::ClassFText:
+		{
+			const FText Value = UDlgReflectionHelper::GetVariable<UTextProperty, FText>(Actor.Get(), VariableName);
+			VariableNode->SetVariableValue(Value.ToString());
+			break;
+		}
 
 		case EDlgDataDisplayVariableTreeNodeType::Event:
 		{
@@ -253,6 +259,13 @@ void SDlgDataTextPropertyValue::HandleTextCommitted(const FText& NewText, ETextC
 		{
 			const FName Value(*NewString);
 			UDlgReflectionHelper::SetVariable<UNameProperty>(Actor.Get(), VariableName, Value);
+			break;
+		}
+
+		case EDlgDataDisplayVariableTreeNodeType::ClassFText:
+		{
+			const FText Value = FText::FromString(NewString);
+			UDlgReflectionHelper::SetVariable<UTextProperty>(Actor.Get(), VariableName, Value);
 			break;
 		}
 
