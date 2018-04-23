@@ -870,6 +870,13 @@ void SDialogueBrowser::BuildTreeViewItem(TSharedPtr<FDialogueBrowserTreeNode> It
 				EDialogueTreeNodeTextType::FNameVariableGraphNode, EDialogueTreeNodeTextType::FNameVariableEdgeNode);
 			break;
 
+		case EDialogueTreeNodeTextType::FTextClassVariableDialogue:
+			// List the graph nodes for the dialogue that contains this FName variable
+			AddGraphNodeBaseChildrenToItemFromProperty(Item,
+				ParticipantProperties->GetClassFTexts().Find(Item->GetParentVariableName()),
+				EDialogueTreeNodeTextType::FTextVariableGraphNode, EDialogueTreeNodeTextType::Default);
+			break;
+
 		case EDialogueTreeNodeTextType::IntClassVariableDialogue:
 			// List the graph nodes for the dialogue that contains this UClass int variable
 			AddGraphNodeBaseChildrenToItemFromProperty(Item,
