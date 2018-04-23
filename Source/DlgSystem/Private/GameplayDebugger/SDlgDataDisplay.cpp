@@ -471,9 +471,9 @@ void SDlgDataDisplay::BuildTreeViewItem(TSharedPtr<FDlgDataDisplayTreeNode> Item
 				AddVariableChildrenToItem(Item, ActorPropertiesValue->GetClassBools(),
 					LOCTEXT("VariableBoolKey", "bool {0} = "), EDlgDataDisplayVariableTreeNodeType::ClassBool);
 				AddVariableChildrenToItem(Item, ActorPropertiesValue->GetClassFNames(),
-					LOCTEXT("VariableFNameKey", "Name {0} = "), EDlgDataDisplayVariableTreeNodeType::ClassFName);
+					LOCTEXT("VariableFNameKey", "FName {0} = "), EDlgDataDisplayVariableTreeNodeType::ClassFName);
 				AddVariableChildrenToItem(Item, ActorPropertiesValue->GetClassFTexts(),
-					LOCTEXT("VariableFTextKey", "Text {0} = "), EDlgDataDisplayVariableTreeNodeType::ClassFText);
+					LOCTEXT("VariableFTextKey", "FText {0} = "), EDlgDataDisplayVariableTreeNodeType::ClassFText);
 				break;
 			}
 			default:

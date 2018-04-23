@@ -1393,7 +1393,7 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeVariableCateg
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasFNames()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
-			FText::FromString(TEXT("Names")), Parent, EDialogueTreeNodeCategoryType::VariableFName));
+			FText::FromString(TEXT("FNames")), Parent, EDialogueTreeNodeCategoryType::VariableFName));
 		Categories.Add(Category);
 	}
 
@@ -1430,14 +1430,14 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeClassVariable
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassFNames()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
-			FText::FromString(TEXT("Class Names")), Parent, EDialogueTreeNodeCategoryType::ClassVariableFName));
+			FText::FromString(TEXT("Class FNames")), Parent, EDialogueTreeNodeCategoryType::ClassVariableFName));
 		Categories.Add(Category);
 	}
 
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassFTexts()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShareable(new FDialogueBrowserTreeCategoryNode(
-			FText::FromString(TEXT("Class Texts")), Parent, EDialogueTreeNodeCategoryType::ClassVariableFText));
+			FText::FromString(TEXT("Class FTexts")), Parent, EDialogueTreeNodeCategoryType::ClassVariableFText));
 		Categories.Add(Category);
 	}
 
