@@ -417,7 +417,14 @@ void SDlgDataBoolPropertyValue::HandleCheckStateChanged(ECheckBoxState InNewStat
 	// Set the bool value
 	const FName VariableName = VariableNode->GetVariableName();
 	const bool Value = InNewState == ECheckBoxState::Checked || InNewState == ECheckBoxState::Undetermined;
-	IDlgDialogueParticipant::Execute_ModifyBoolValue(Actor.Get(), VariableName, Value);
+	if (VariableNode->GetVariableType() == EDlgDataDisplayVariableTreeNodeType::ClassBool)
+	{
+		UDlgReflectionHelper::SetVariable<UBoolProperty>(Actor.Get(), VariableName, Value);
+	}
+	else
+	{
+		IDlgDialogueParticipant::Execute_ModifyBoolValue(Actor.Get(), VariableName, Value);
+	}
 	UpdateVariableNodeFromActor();
 }
 
