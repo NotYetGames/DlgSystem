@@ -37,8 +37,8 @@ public:
 	bool operator==(const FDlgEvent& Other) const;
 
 	/**
-	 *  Executes the event
-	 *  TargetParticipant is expected to implement IDlgDialogueParticipant interface
+	 * Executes the event
+	 * TargetParticipant is expected to implement IDlgDialogueParticipant interface
 	 */
 	void Call(UObject* TargetParticipant) const;
 

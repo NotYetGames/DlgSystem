@@ -23,7 +23,7 @@ void FDialogueEdge_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InStruct
 	bShowTextProperty = true;
 
 	// Should we show hide the Text property?
-	if (UDialogueGraphNode* GraphNode = DetailsPanel::GetClosestGraphNodeFromPropertyHandle(StructPropertyHandle.ToSharedRef()))
+	if (const UDialogueGraphNode* GraphNode = DetailsPanel::GetClosestGraphNodeFromPropertyHandle(StructPropertyHandle.ToSharedRef()))
 	{
 		// Virtual parents do not handle direct children, only grand children
 		// And selector node do not even touch them
@@ -78,10 +78,13 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 		.AutoWrapText(true)
 		.ModiferKeyForNewLine(DetailsPanel::GetModifierKeyFromDialogueSettings())
 		.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
-		.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
+		.OnTextCommitted(this, &Self::HandleTextCommitted)
 	)
 	->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility))
 	->Update();
+
+	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, TextArguments)).ToSharedRef())
+		.Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility));
 
 	IDetailPropertyRow& BoolPropertyRow = StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(
 		GET_MEMBER_NAME_CHECKED(FDlgEdge, bIncludeInAllOptionListIfUnsatisfied)).ToSharedRef()
@@ -92,6 +95,19 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 void FDialogueEdge_Details::HandleSpeakerStateCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo)
 {
 	Dialogue->RefreshData();
+}
+
+void FDialogueEdge_Details::HandleTextCommitted(const FText& InText, ETextCommit::Type CommitInfo)
+{
+	TextPropertyRow->HandleTextCommited(InText, CommitInfo);
+
+	if (UDialogueGraphNode_Edge* GraphEdge = DetailsPanel::GetAsGraphNodeEdgeFromPropertyHandle(StructPropertyHandle.ToSharedRef()))
+	{
+		FDlgEdge& Edge = GraphEdge->GetDialogueEdge();
+		FDlgTextArgument::UpdateTextArgumentArray(Edge.Text, Edge.TextArguments);
+
+		Dialogue->RefreshData();
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

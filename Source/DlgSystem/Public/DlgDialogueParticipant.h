@@ -30,6 +30,10 @@ class DLGSYSTEM_API IDlgDialogueParticipant
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = DialogueCallback)
 	FText GetParticipantDisplayName(FName ActiveSpeaker = NAME_None) const;
 
+	/** May be used for formatted node texts, check https://docs.unrealengine.com/en-us/Gameplay/Localization/Formatting for more information */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = DialogueCallback)
+	ETextGender GetParticipantGender() const;
+
 	/**
 	* @param	ActiveSpeaker: name of the active speaker at the time of the call (might or might not this participant)
 	* @param	ActiveSpeakerState: state of the active participant (might or might not belong to this participant)

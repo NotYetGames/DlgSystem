@@ -24,11 +24,11 @@ public:
 
 	// GraphNodes:
 	bool HasGraphNodeSet(const FGuid& DialogueGuid) { return GraphNodes.Find(DialogueGuid) != nullptr; }
-	TSet<TWeakObjectPtr<UDialogueGraphNode>>* GetMutableGraphNodeSet(const FGuid& DialogueGuid)
+	TSet<TWeakObjectPtr<const UDialogueGraphNode>>* GetMutableGraphNodeSet(const FGuid& DialogueGuid)
 	{
 		return GraphNodes.Find(DialogueGuid);
 	}
-	const TSet<TWeakObjectPtr<UDialogueGraphNode>>& GetGraphNodeSet(const FGuid& DialogueGuid) const
+	const TSet<TWeakObjectPtr<const UDialogueGraphNode>>& GetGraphNodeSet(const FGuid& DialogueGuid) const
 	{
 		auto* SetPtr = GraphNodes.Find(DialogueGuid);
 		check(SetPtr);
@@ -37,11 +37,11 @@ public:
 
 	// EdgeNodes:
 	bool HasEdgeNodeSet(const FGuid& DialogueGuid) { return EdgeNodes.Find(DialogueGuid) != nullptr; }
-	TSet<TWeakObjectPtr<UDialogueGraphNode_Edge>>* GetMutableEdgeNodeSet(const FGuid& DialogueGuid)
+	TSet<TWeakObjectPtr<const UDialogueGraphNode_Edge>>* GetMutableEdgeNodeSet(const FGuid& DialogueGuid)
 	{
 		return EdgeNodes.Find(DialogueGuid);
 	}
-	const TSet<TWeakObjectPtr<UDialogueGraphNode_Edge>>& GetEdgeNodeSet(const FGuid& DialogueGuid) const
+	const TSet<TWeakObjectPtr<const UDialogueGraphNode_Edge>>& GetEdgeNodeSet(const FGuid& DialogueGuid) const
 	{
 		auto* SetPtr = EdgeNodes.Find(DialogueGuid);
 		check(SetPtr);
@@ -54,12 +54,12 @@ protected:
 	 * Key: The unique identifier for the Dialogue
 	 * Value: All nodes in the Dialogue that contain this variable name.
 	 */
-	TMap<FGuid, TSet<TWeakObjectPtr<UDialogueGraphNode>>> GraphNodes;
+	TMap<FGuid, TSet<TWeakObjectPtr<const UDialogueGraphNode>>> GraphNodes;
 
 	/**
 	 * All the edge nodes that contain this variable property
 	 * Key: The unique identifier for the Dialogue
 	 * Value: All edge in the Dialogue that contain this condition.
 	 */
-	TMap<FGuid, TSet<TWeakObjectPtr<UDialogueGraphNode_Edge>>> EdgeNodes;
+	TMap<FGuid, TSet<TWeakObjectPtr<const UDialogueGraphNode_Edge>>> EdgeNodes;
 };

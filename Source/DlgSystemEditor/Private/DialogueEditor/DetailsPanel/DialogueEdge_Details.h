@@ -57,6 +57,9 @@ public:
 	/** Handler for when the speaker state is changed */
 	void HandleSpeakerStateCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo);
 
+	/** Handler for when the text is changed */
+	void HandleTextCommitted(const FText& InText, ETextCommit::Type CommitInfo);
+
 private:
 	// Getters for the visibility of some properties
 	EVisibility GetTextVisibility() const { return bShowTextProperty ? EVisibility::Visible : EVisibility::Hidden; }

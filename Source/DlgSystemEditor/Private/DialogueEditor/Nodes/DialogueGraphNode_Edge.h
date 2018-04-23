@@ -122,6 +122,7 @@ public:
 	// Begin own function
 	/** Gets the corresponding Dialogue Edge of this Node as a const. */
 	const FDlgEdge& GetDialogueEdge() const { return DialogueEdge; }
+	FDlgEdge& GetDialogueEdge() { return DialogueEdge; }
 
 	/** Sets the corresponding Dialogue Edge of this Node. */
 	void SetDialogueEdge(const FDlgEdge& InEdge) { DialogueEdge = InEdge; }

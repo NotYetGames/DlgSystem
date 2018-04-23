@@ -6,6 +6,7 @@
 #include "EdGraph/EdGraphNode.h"
 #endif
 
+#include "DlgEdge.h"
 #include "DlgCondition.h"
 #include "DlgEvent.h"
 
@@ -16,66 +17,7 @@ class UDlgContextInternal;
 class UDlgNode;
 class USoundWave;
 class UDialogueWave;
-
-/**
- * The representation of a child in a node. Defined by a TargetIndex which points to the index array in the Dialogue.Nodes
- */
-USTRUCT(BlueprintType, Blueprintable)
-struct DLGSYSTEM_API FDlgEdge
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-	bool operator==(const FDlgEdge& Other) const
-	{
-		return TargetIndex == Other.TargetIndex &&
-			Text.EqualTo(Other.Text) &&
-			Conditions == Other.Conditions;
-	}
-
-	bool operator!=(const FDlgEdge& Other) const
-	{
-		return !(*this == Other);
-	}
-
-	// Operator overload for serialization
-	friend FArchive& operator<<(FArchive &Ar, FDlgEdge& DlgEdge);
-
-	/** Creates a simple edge without text, without conditions */
-	FDlgEdge(int32 InTargetIndex = INDEX_NONE) : TargetIndex(InTargetIndex) {}
-
-	/** Returns with true if every condition attached to the edge and every enter condition of the target node are satisfied */
-	bool Evaluate(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
-
-	/** Returns if the Edge is valid, has the TargetIndex non negative  */
-	bool IsValid() const
-	{
-		return TargetIndex > INDEX_NONE;
-	}
-
-	static const FDlgEdge& GetInvalidEdge();
-
-public:
-	/** Index of the node in the Nodes TArray of the dialogue this edge is leading to */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = DlgEdgeData, Meta = (ClampMin = -1))
-	int32 TargetIndex = INDEX_NONE;
-
-	/** Required but not sufficient conditions - target node's enter conditions are checked too */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData)
-	TArray<FDlgCondition> Conditions;
-
-	/** Text associated with the child, can be used for user choices */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData, Meta = (MultiLine = true))
-	FText Text;
-
-	/** player emotion/state attached to this player choice */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData)
-	FName SpeakerState;
-
-	/** Set this to false in order to skip this edge in the AllChildren array (which lists both satisfied and not satisfied player choices */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData)
-	bool bIncludeInAllOptionListIfUnsatisfied = true;
-};
+struct FDlgTextArgument;
 
 /**
  *  Abstract base class for Dialogue nodes
@@ -101,7 +43,7 @@ public:
 	 *
 	 * @param PropertyChangedEvent the property that was modified
 	 */
-	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	/**
 	 * This alternate version of PostEditChange is called when properties inside structs are modified.  The property that was actually modified
@@ -197,8 +139,21 @@ public:
 	/** Gathers associated participants, they are only added to the array if they are not yet there */
 	virtual void GetAssociatedParticipants(TArray<FName>& OutArray) const;
 
-	/** Gets the Text of this Node */
+	/** Gets the text arguments for this Node (if any). Used for FText::Format */
+	virtual const TArray<FDlgTextArgument>& GetTextArguments() const
+	{
+		static TArray<FDlgTextArgument> EmptyArray;
+		return EmptyArray;
+	};
+
+	/** Gets the Text of this Node. This can be the final formatted string. */
 	virtual const FText& GetNodeText() const { return FText::GetEmpty(); }
+
+	/**
+	 * Gets the Raw Text of this Node. Usually the same as GetNodeText but in case the node supports formatted string this
+	 * is the raw form with all the arguments intact. To get the text arguments call GetTextArguments.
+	 */
+	virtual const FText& GetRawNodeText() const { return GetNodeText(); }
 
 	/** Gets the voice of this Node as a SoundWave. */
 	virtual USoundWave* GetNodeVoiceSoundWave() const { return nullptr; }

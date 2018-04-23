@@ -83,9 +83,9 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 
 		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameCheckChildrenOnEvaluation()));
 		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameEnterConditions()))
-			.ShouldAutoExpand(true);;
+			.ShouldAutoExpand(true);
 		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameEnterEvents()))
-			.ShouldAutoExpand(true);;
+			.ShouldAutoExpand(true);
 	}
 	if (!bIsEndNode)
 	{
@@ -143,6 +143,10 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 				)
 				->Update();
 			}
+
+			// text arguments
+			SpeechDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameTextArguments()))
+				.ShouldAutoExpand(true);
 
 			// Voice
 

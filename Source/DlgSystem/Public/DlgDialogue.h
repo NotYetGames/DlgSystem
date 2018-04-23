@@ -6,6 +6,7 @@
 #include "DlgIDialogueEditorModule.h"
 #include "DlgMemory.h"
 #include "DlgSystemSettings.h"
+#include "DlgDialogueParticipantData.h"
 
 #include "DlgDialogue.generated.h"
 
@@ -24,6 +25,7 @@ struct DLGSYSTEM_API FDlgDialogueObjectVersion
 		ConvertDialogueDataArraysToSets,
 		AddGuid,
 		AddComparisonWithOtherParticipant,
+		AddTextFormatArguments,
 
 		// -----<new versions can be added above this line>-------------------------------------------------
 		VersionPlusOne,
@@ -35,54 +37,6 @@ struct DLGSYSTEM_API FDlgDialogueObjectVersion
 
 private:
 	FDlgDialogueObjectVersion() {}
-};
-
-
-/** Structure useful to cache all the names used by a participant */
-USTRUCT(BlueprintType)
-struct DLGSYSTEM_API FDlgParticipantData
-{
-	GENERATED_USTRUCT_BODY()
-
-	/** FName based conditions (aka conditions of type DlgConditionEventCall). */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
-	TSet<FName> Conditions;
-
-	/** FName based events (aka events of type EDlgEventType) */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
-	TSet<FName> Events;
-
-	/** Integers both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
-	TSet<FName> IntVariableNames;
-
-	/** Floats both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
-	TSet<FName> FloatVariableNames;
-
-	/** Booleans both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
-	TSet<FName> BoolVariableNames;
-
-	/** Names both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
-	TSet<FName> NameVariableNames;
-
-	/** Class Integers both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
-	TSet<FName> ClassIntVariableNames;
-
-	/** Class Floats both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
-	TSet<FName> ClassFloatVariableNames;
-
-	/** Class Booleans both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
-	TSet<FName> ClassBoolVariableNames;
-
-	/** Class Names both from conditions and from events */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
-	TSet<FName> ClassNameVariableNames;
 };
 
 
@@ -410,6 +364,16 @@ public:
 		if (DlgData.Contains(ParticipantName))
 		{
 			OutSet.Append(DlgData[ParticipantName].ClassNameVariableNames);
+		}
+	}
+
+	/** Gets the FText variable Names that correspond to the UClass of the provided ParticipantName. */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	void GetClassTextNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	{
+		if (DlgData.Contains(ParticipantName))
+		{
+			OutSet.Append(DlgData[ParticipantName].ClassTextVariableNames);
 		}
 	}
 

@@ -137,7 +137,7 @@ private:
 			|| ConditionType == EDlgConditionType::DlgConditionClassIntVariable
 			|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
 			|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable
-			|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
+			|| ConditionType == EDlgConditionType::DlgConditionClassBoolVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 

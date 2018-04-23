@@ -153,7 +153,8 @@ public:
 protected:
 	ECheckBoxState IsChecked() const;
 	void HandleCheckStateChanged(ECheckBoxState InNewState);
-	bool IsBoolProperty() const { return VariableNode->GetVariableType() == EDlgDataDisplayVariableTreeNodeType::Bool; }
+	bool IsBoolProperty() const { return VariableNode->GetVariableType() == EDlgDataDisplayVariableTreeNodeType::Bool ||
+										 VariableNode->GetVariableType() == EDlgDataDisplayVariableTreeNodeType::ClassBool; }
 
 protected:
 	TSharedPtr<SCheckBox> CheckBoxWidget;
