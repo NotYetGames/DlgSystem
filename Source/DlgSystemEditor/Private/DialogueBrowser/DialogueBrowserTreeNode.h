@@ -83,6 +83,7 @@ enum class EDialogueTreeNodeTextType : uint8
 
 	FTextClassVariableDialogue,
 	FTextVariableGraphNode,
+	FTextVariableEdgeNode,
 
 	Max
 };
@@ -189,6 +190,7 @@ public:
 							TextType == EDialogueTreeNodeTextType::IntVariableEdgeNode ||
 							TextType == EDialogueTreeNodeTextType::FloatVariableEdgeNode ||
 							TextType == EDialogueTreeNodeTextType::BoolVariableEdgeNode ||
+							TextType == EDialogueTreeNodeTextType::FTextVariableEdgeNode ||
 							TextType == EDialogueTreeNodeTextType::FNameVariableEdgeNode);
 	}
 

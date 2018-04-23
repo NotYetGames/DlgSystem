@@ -132,6 +132,14 @@ void FDialogueSearchUtilities::GetGraphNodesForTextArgumentVariable(const FName&
 				FoundResult->GraphNodes.Add(GraphNode);
 			}
 		}
+		else if (UDialogueGraphNode_Edge* EdgeNode = Cast<UDialogueGraphNode_Edge>(GraphNodeBase))
+		{
+			// Edge
+			if (IsTextArgumentInArray(VariableName, ArgumentType, EdgeNode->GetDialogueEdge().TextArguments))
+			{
+				FoundResult->EdgeNodes.Add(EdgeNode);
+			}
+		}
 	}
 }
 

@@ -509,10 +509,6 @@ void UDlgDialogue::RefreshData()
 
 		// gather SpeakerStates
 		Node->AddSpeakerStates(DlgSpeakerStates);
-		for (const FDlgEdge& Edge : Node->GetNodeChildren())
-		{
-			DlgSpeakerStates.Add(Edge.SpeakerState);
-		}
 
 		// Conditions from nodes
 		for (const FDlgCondition& Condition : Node->GetNodeEnterConditions())
@@ -520,8 +516,19 @@ void UDlgDialogue::RefreshData()
 			GetParticipantDataEntry(Condition.ParticipantName, Node->GetNodeParticipantName()).AddConditionPrimaryData(Condition);
 			GetParticipantDataEntry(Condition.OtherParticipantName, Node->GetNodeParticipantName()).AddConditionSecondaryData(Condition);
 		}
-		// Conditions from edges
+
+		// Gather Edge Data
 		AddConditionsFromEdges(Node);
+
+		for (const FDlgEdge& Edge : Node->GetNodeChildren())
+		{
+			DlgSpeakerStates.Add(Edge.SpeakerState);
+
+			for (const FDlgTextArgument& TextArgument : Edge.TextArguments)
+			{
+				GetParticipantDataEntry(TextArgument.ParticipantName, Node->GetNodeParticipantName()).AddTextArgumentData(TextArgument);
+			}
+		}
 
 		// Events
 		for (const FDlgEvent& Event : Node->GetNodeEnterEvents())
