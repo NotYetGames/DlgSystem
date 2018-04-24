@@ -83,6 +83,10 @@ bool FDlgIOTester::TestStruct(const FString& StructDescription, const FDlgIOTest
 	Parser.InitializeParserFromString(WriterString);
 	Parser.ReadAllProperty(StructType::StaticStruct(), &ImportedStruct);
 
+	//UE_LOG(LogDlgIOTester, Warning, TEXT(""));
+	//UE_LOG(LogDlgIOTester, Warning, TEXT("ExportedStruct.GetAsString() = |%s|\n"), *WriterString);
+	//UE_LOG(LogDlgIOTester, Warning, TEXT(""));
+
 	// Should be the same
 	FString ErrorMessage;
 	if (ExportedStruct.IsEqual(ImportedStruct, ErrorMessage))

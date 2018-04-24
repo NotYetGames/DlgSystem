@@ -40,7 +40,7 @@ public:
 	FDlgJsonWriter() {};
 
 	// IDlgWriter Interface
-	void Write(const UStruct* StructDefinition, const void* Object) override;
+	void Write(const UStruct* StructDefinition, const void* ContainerPtr) override;
 
 	/**
 	 * Save the config string to a text file
@@ -62,54 +62,54 @@ private: // UStruct -> JSON
 	 * Convert property to JSON, assuming either the property is not an array or the value is an individual array element
 	 * Used by UPropertyToJsonValue
 	 */
-	TSharedPtr<FJsonValue> ConvertScalarUPropertyToJsonValue(const UProperty* Property, const void* Value);
+	TSharedPtr<FJsonValue> ConvertScalarUPropertyToJsonValue(const UProperty* Property, const void* const ContainerPtr, const void* const ValuePtr);
 
 	/**
 	 * Converts from a UProperty to a Json Value using exportText
 	 *
 	 * @param Property			The property to export
-	 * @param Value				Pointer to the value of the property
+	 * @param ValuePtr			Pointer to the value of the property
 	 *
 	 * @return					The constructed JsonValue from the property
 	 */
-	TSharedPtr<FJsonValue> UPropertyToJsonValue(const UProperty* Property, const void* Value);
+	TSharedPtr<FJsonValue> UPropertyToJsonValue(const UProperty* Property, const void* const ContainerPtr, const void* const ValuePtr);
 
 	/**
 	 * Converts from a UStruct to a set of json attributes (possibly from within a JsonObject)
 	 *
 	 * @param StructDefinition UStruct definition that is looked over for properties
-	 * @param Object		   The object the UStruct represents.
+	 * @param ContainerPtr	   The object the UStruct represents.
 	 * @param JsonAttributes   Map of attributes to copy in to
 	 *
 	 * @return False if any properties failed to write
 	 */
-	bool UStructToJsonAttributes(const UStruct* StructDefinition, const void* Object,
+	bool UStructToJsonAttributes(const UStruct* StructDefinition, const void* const ContainerPtr,
 								 TMap<FString, TSharedPtr<FJsonValue>>& OutJsonAttributes);
 
 	/**
 	 * Converts from a UStruct to a JSON Object
 	 *
 	 * @param StructDefinition UStruct definition that is looked over for properties
-	 * @param Object		   The object the UStruct represents.
+	 * @param ContainerPtr	   The object the UStruct represents.
 	 * @param OutJsonObject    Json Object to be filled in with data from the ustruct
 	 *
 	 * @return False if faile to fill properties
 	 */
-	bool UStructToJsonObject(const UStruct* StructDefinition, const void* Object, TSharedRef<FJsonObject> OutJsonObject)
+	bool UStructToJsonObject(const UStruct* StructDefinition, const void* const ContainerPtr, TSharedRef<FJsonObject> OutJsonObject)
 	{
-		return UStructToJsonAttributes(StructDefinition, Object, OutJsonObject->Values);
+		return UStructToJsonAttributes(StructDefinition, ContainerPtr, OutJsonObject->Values);
 	}
 
 	/**
 	 * Converts from a UStruct to a JSON string containing an object, using exportText
 	 *
 	 * @param StructDefinition UStruct definition that is looked over for properties
-	 * @param Object		   The object the UStruct represents.
+	 * @param ContainerPtr	   The object the UStruct represents.
 	 * @param OutJsonString    Json Object to be filled in with data from the ustruct
 	 *
 	 * @return False if failed to serialize to string
 	 */
-	bool UStructToJsonString(const UStruct* StructDefinition, const void* Object, const DlgJsonWriterOptions& Options,
+	bool UStructToJsonString(const UStruct* StructDefinition, const void* const ContainerPtr, const DlgJsonWriterOptions& Options,
 							 FString& OutJsonString);
 
 	void ResetState()

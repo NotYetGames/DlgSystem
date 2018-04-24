@@ -23,13 +23,11 @@ bool FDlgIOTester::TestAllParsers()
 	Options.bSupportsNonPrimitiveInSet = false;
 	Options.bSupportsColorPrimitives = false;
 	Options.bSupportsDatePrimitive = false;
-	bAllSucceeded = TestParser<FDlgConfigWriter, FDlgConfigParser>(Options, TEXT("FDlgConfigWriter"), TEXT("FDlgConfigParser"))
-		&& bAllSucceeded;
+	bAllSucceeded &= TestParser<FDlgConfigWriter, FDlgConfigParser>(Options, TEXT("FDlgConfigWriter"), TEXT("FDlgConfigParser"));
 
 	Options = {};
 	Options.bSupportsDatePrimitive = false;
-	bAllSucceeded = TestParser<FDlgJsonWriter, FDlgJsonParser>(Options, TEXT("FDlgJsonWriter"), TEXT("FDlgJsonParser"))
-		&& bAllSucceeded;
+	bAllSucceeded &= TestParser<FDlgJsonWriter, FDlgJsonParser>(Options, TEXT("FDlgJsonWriter"), TEXT("FDlgJsonParser"));
 
 	return bAllSucceeded;
 }

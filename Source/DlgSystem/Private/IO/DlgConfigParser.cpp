@@ -588,6 +588,7 @@ bool FDlgConfigParser::ReadMap(void* TargetObject, UMapProperty& Property, UObje
 			else if (Cast<UNameProperty>(Props[i]))		{ *(FName*)Ptrs[i]	 = GetAsName();		bDone = true; }
 			else if (Cast<UStrProperty>(Props[i]))		{ *(FString*)Ptrs[i] = GetAsString();	bDone = true; }
 			else if (Cast<UTextProperty>(Props[i]))		{ *(FText*)Ptrs[i]   = GetAsText();		bDone = true; }
+			else if (i == 1 && bHasNullptr)				{ bDone = true; } // Value is nullptr, ignore
 			// else if (Cast<UByteProperty>(Props[i]))		{ *(uint8*)Ptrs[i]	 = OnGetAsEnum();	bDone = true; } // would not work, check enum above
 			
 			UStructProperty* StructVal = Cast<UStructProperty>(Props[i]);
@@ -608,7 +609,7 @@ bool FDlgConfigParser::ReadMap(void* TargetObject, UMapProperty& Property, UObje
 			{
 				if (!bDone)
 				{
-					UE_LOG(LogDlgConfigParser, Warning, TEXT("Invalid map type %s in script %s(:%d)"), *Helper.KeyProp->GetName(), *FileName, GetActiveLineNumber());
+					UE_LOG(LogDlgConfigParser, Warning, TEXT("Invalid map type %s in script `%s` (:%d)"), *Helper.KeyProp->GetName(), *FileName, GetActiveLineNumber());
 					return false;
 				}
 				bDone = false;

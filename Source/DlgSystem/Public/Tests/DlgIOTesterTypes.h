@@ -334,6 +334,12 @@ public:
 	FDlgIOTesterOptions Options;
 
 	UPROPERTY()
+	TArray<int32> EmptyArray;
+
+	UPROPERTY()
+	TArray<int32> Num1_Array;
+
+	UPROPERTY()
 	TArray<int32> IntArray;
 
 	UPROPERTY()
@@ -413,6 +419,12 @@ public:
 	FDlgIOTesterOptions Options;
 
 	UPROPERTY()
+	TSet<int32> EmptySet;
+
+	UPROPERTY()
+	TSet<int32> Num1_Set;
+
+	UPROPERTY()
 	TSet<int32> IntSet;
 
 	UPROPERTY()
@@ -464,10 +476,17 @@ public:
 		FString DiscardError;
 		return IsEqual(Other, DiscardError);
 	}
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("IntToIntMap.Num()=%d, IntToStringMap.Num()=%d"),  IntToIntMap.Num(), IntToStringMap.Num());
+	}
 
 public:
 	// Tester Options
 	FDlgIOTesterOptions Options;
+
+	UPROPERTY()
+	TMap<int32, int32> EmptyMap;
 
 	UPROPERTY()
 	TMap<int32, int32> IntToIntMap;
@@ -501,7 +520,7 @@ public:
 
 	// Filled with only nulls, check if the writers support it
 	UPROPERTY()
-	TMap<FName, UDlgTestObjectPrimitivesBase*> ObjectConstantNullMap;
+	TMap<FString, UDlgTestObjectPrimitivesBase*> ObjectConstantNullMap;
 };
 
 USTRUCT()
@@ -531,4 +550,7 @@ public:
 
 	UPROPERTY()
 	TMap<FDlgTestStructPrimitives, int32> StructPrimitiveToIntMap;
+
+	UPROPERTY()
+	TMap<FName, FDlgTestMapPrimitive> NameoToStructOfMapPrimitives;
 };
