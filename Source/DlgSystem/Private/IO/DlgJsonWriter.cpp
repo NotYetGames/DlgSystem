@@ -178,7 +178,6 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 		const TSharedRef<FJsonObject> OutObject = MakeShareable(new FJsonObject());
 
 		FScriptMapHelper Helper(MapProperty, ValuePtr);
-		//FScriptMapHelper Helper(MapProperty, MapProperty->ContainerPtrToValuePtr<uint8>(ContainerPtr));
 		for (int32 Index = 0, Num = Helper.Num(); Index < Num; Index++)
 		{
 			if (!Helper.IsValidIndex(Index))
@@ -189,11 +188,11 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 
 			bIsPropertyMapKey = true;
 			const uint8* MapKeyPtr = Helper.GetKeyPtr(Index);
-			const TSharedPtr<FJsonValue> KeyElement = UPropertyToJsonValue(MapProperty->KeyProp, ContainerPtr, MapKeyPtr);
+			const TSharedPtr<FJsonValue> KeyElement = UPropertyToJsonValue(Helper.GetKeyProperty(), ContainerPtr, MapKeyPtr);
 
 			bIsPropertyMapKey = false;
 			const uint8* MapValuePtr = Helper.GetValuePtr(Index);
-			const TSharedPtr<FJsonValue> ValueElement = UPropertyToJsonValue(MapProperty->ValueProp, ContainerPtr, MapValuePtr);
+			const TSharedPtr<FJsonValue> ValueElement = UPropertyToJsonValue(Helper.GetValueProperty(), ContainerPtr, MapValuePtr);
 
 			if (KeyElement.IsValid() && ValueElement.IsValid())
 			{

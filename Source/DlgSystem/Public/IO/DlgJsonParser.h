@@ -85,7 +85,7 @@ private: // JSON -> UStruct
 	 *
 	 * @return False if any properties matched but failed to deserialize
 	 */
-	bool JsonObjectToUStruct(const TSharedRef<FJsonObject>& JsonObject, const UStruct* StructDefinition, void* ContainerPtr)
+	bool JsonObjectToUStruct(const TSharedRef<const FJsonObject>& JsonObject, const UStruct* StructDefinition, void* ContainerPtr)
 	{
 		return JsonAttributesToUStruct(JsonObject->Values, StructDefinition, ContainerPtr);
 	}

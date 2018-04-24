@@ -48,14 +48,13 @@ bool FDlgIOTester::TestParser(const FDlgIOTesterOptions& Options, const FString 
 
 	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestSetPrimitive>("Set of Primitives", Options, NameWriterType, NameParserType)
 		&& bAllSucceeded;
-	if (Options.bSupportsNonPrimitiveInSet)
-	{
-		bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestSetComplex>("Set of Complex types", Options, NameWriterType, NameParserType)
-			&& bAllSucceeded;
-	}
+
+	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestSetComplex>("Set of Complex types", Options, NameWriterType, NameParserType)
+		&& bAllSucceeded;
 
 	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestMapPrimitive>("Map with Primitives", Options, NameWriterType, NameParserType)
 		&& bAllSucceeded;
+
 	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestMapComplex>("Map with Complex types", Options, NameWriterType, NameParserType)
 		&& bAllSucceeded;
 
@@ -82,10 +81,6 @@ bool FDlgIOTester::TestStruct(const FString& StructDescription, const FDlgIOTest
 	//Parser.SetLogVerbose(true);
 	Parser.InitializeParserFromString(WriterString);
 	Parser.ReadAllProperty(StructType::StaticStruct(), &ImportedStruct);
-
-	//UE_LOG(LogDlgIOTester, Warning, TEXT(""));
-	//UE_LOG(LogDlgIOTester, Warning, TEXT("ExportedStruct.GetAsString() = |%s|\n"), *WriterString);
-	//UE_LOG(LogDlgIOTester, Warning, TEXT(""));
 
 	// Should be the same
 	FString ErrorMessage;

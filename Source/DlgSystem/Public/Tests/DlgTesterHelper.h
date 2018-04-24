@@ -170,7 +170,7 @@ public:
 				if (OtherMapValue != nullptr)
 				{
 					FString ComparisonErrorMessage;
-					if (!AreValuesEqual(*OtherMapValue, ThisElem.Value, ComparisonErrorMessage))
+					if (!AreValuesEqual(ThisElem.Value, *OtherMapValue, ComparisonErrorMessage))
 					{
 						if (bIsValuePrimitive)
 						{
@@ -286,6 +286,17 @@ public:
 			return TEXT("INVALID CLASS");
 		}
 		return Object->GetClass()->GetName();
+	}
+
+	template <typename ValueType>
+	static void CheckMapStringKeyInvariants(const TMap<FString, ValueType>& ThisMap)
+	{
+		for (const auto& Elem : ThisMap)
+		{
+			// Most likely the map is corrupted
+			check((void*)(*Elem.Key) != nullptr);
+			Elem.Key.CheckInvariants();
+		}
 	}
 
 	template <typename SetType>

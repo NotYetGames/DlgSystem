@@ -101,10 +101,14 @@ void FDlgJsonParser::ReadAllProperty( const UStruct* ReferenceClass, void* Targe
 bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> JsonValue, UProperty* Property, void* ContainerPtr, void* ValuePtr)
 {
 	check(Property);
-	check(ValuePtr);
 	if (bLogVerbose)
 	{
 		UE_LOG(LogDlgJsonParser, Verbose, TEXT("ConvertScalarJsonValueToUProperty, Property = `%s`"), *Property->GetPathName());
+	}
+	if (ValuePtr == nullptr)
+	{
+		// Nothing else to do
+		return true;
 	}
 
 	// Enum
@@ -199,8 +203,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 	if (UStrProperty* StringProperty = Cast<UStrProperty>(Property))
 	{
 		// Seems unsafe: AsString will log an error for completely inappropriate types (then give us a default)
-		FString String;
-		JsonValue->TryGetString(String);
+		FString String = JsonValue->AsString();
 		StringProperty->SetPropertyValue(ValuePtr, String);
 		return true;
 	}
@@ -209,11 +212,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 	if (UNameProperty* NameProperty = Cast<UNameProperty>(Property))
 	{
 		FString String;
-		FName StringFName = NAME_None;
-		if (JsonValue->TryGetString(String))
-		{
-			StringFName = FName(*String);
-		}
+		const FName StringFName = FName(*JsonValue->AsString());
 		NameProperty->SetPropertyValue(ValuePtr, StringFName);
 		return true;
 	}
@@ -224,8 +223,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 		if (JsonValue->Type == EJson::String)
 		{
 			// assume this string is already localized, so import as invariant
-			FString String;
-			JsonValue->TryGetString(String);
+			const FString String = JsonValue->AsString();
 			TextProperty->SetPropertyValue(ValuePtr, FText::FromString(String));
 		}
 		else if (JsonValue->Type == EJson::Object)
@@ -364,13 +362,14 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 					// NOTE if key is a UStructProperty no need to Import the text item here as it will do that below in UStruct
 					// Add key
 					const TSharedPtr<FJsonValueString> KeyAsString = MakeShareable(new FJsonValueString(Entry.Key));
-					const bool bKeySuccess = JsonValueToUProperty(KeyAsString, MapProperty->KeyProp, ContainerPtr, Helper.GetKeyPtr(NewIndex));
+					const bool bKeySuccess = JsonValueToUProperty(KeyAsString, Helper.GetKeyProperty(), ContainerPtr, Helper.GetKeyPtr(NewIndex));
 
 					// Add value
-					const bool bValueSuccess = JsonValueToUProperty(Entry.Value, MapProperty->ValueProp, ContainerPtr, Helper.GetValuePtr(NewIndex));
+					const bool bValueSuccess = JsonValueToUProperty(Entry.Value, Helper.GetValueProperty(), ContainerPtr, Helper.GetValuePtr(NewIndex));
 
 					if (!bKeySuccess || !bValueSuccess)
 					{
+						Helper.RemoveAt(NewIndex);
 						bReturnStatus = false;
 						UE_LOG(LogDlgJsonParser,
 							Error,
@@ -484,8 +483,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 		{
 			// Import as simple string
 			// UTextBuffer* ImportErrors = NewObject<UTextBuffer>();
-			FString ImportTextString;
-			JsonValue->TryGetString(ImportTextString);
+			const FString ImportTextString = JsonValue->AsString();
 			const TCHAR* ImportTextPtr = *ImportTextString;
 			Property->ImportText(ImportTextPtr, ValuePtr, PPF_None, nullptr);
 		}
@@ -506,7 +504,6 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 	{
 		// NOTE: The Value here should be a pointer to a pointer
 		// Because the UObjects are pointers, we must deference it. So instead of it being a void** we want it to be a void*
-		//UObject* ObjectPtr = ObjectProperty->GetObjectPropertyValue_InContainer(ValuePtr);
 		auto* ObjectPtrPtr = static_cast<UObject**>(ObjectProperty->ContainerPtrToValuePtr<void>(ValuePtr, 0));
 		if (ObjectPtrPtr == nullptr)
 		{
@@ -517,22 +514,26 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 			return false;
 		}
 
-		// Reset first
-		*ObjectPtrPtr = nullptr;
-		if (JsonValue->IsNull())
+		// NOTE: We must check one level up to check if it is a nullptr or not
+		// Reset first, if non nullptr
+		const UObject* ContainerObjectPtr = ObjectProperty->GetObjectPropertyValue_InContainer(ContainerPtr);
+		if (ContainerObjectPtr != nullptr)
 		{
-			// Nothing else to do
-			return true;
+			*ObjectPtrPtr = nullptr;
 		}
 
+		// Nothing else to do
+		if (JsonValue->IsNull())
+		{
+			return true;
+		}
 		const UClass* ObjectClass = ObjectProperty->PropertyClass;
 
 		// Special case, load by reference, See CanSaveAsReference
 		// Handle some objects that are exported to string in a special way. Similar to the UStruct above.
 		if (JsonValue->Type == EJson::String)
 		{
-			FString Path;
-			JsonValue->TryGetString(Path);
+			const FString Path = JsonValue->AsString();
 			if (!Path.TrimStartAndEnd().IsEmpty()) // null reference?
 			{
 				*ObjectPtrPtr = StaticLoadObject(UObject::StaticClass(), DefaultObjectOuter, *Path);
@@ -596,8 +597,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 
 	// Default to expect a string for everything else
 	check(JsonValue->Type != EJson::Object);
-	FString Buffer;
-	JsonValue->TryGetString(Buffer);
+	const FString Buffer = JsonValue->AsString();
 	if (Property->ImportText(*Buffer, ValuePtr, PPF_None, nullptr) == nullptr)
 	{
 		UE_LOG(LogDlgJsonParser,
@@ -617,7 +617,6 @@ bool FDlgJsonParser::JsonValueToUProperty(const TSharedPtr<FJsonValue> JsonValue
 	{
 		UE_LOG(LogDlgJsonParser, Verbose, TEXT("JsonValueToUProperty, Property = `%s`"), *Property->GetPathName());
 	}
-
 	if (!JsonValue.IsValid())
 	{
 		UE_LOG(LogDlgJsonParser, Error, TEXT("JsonValueToUProperty - Invalid value JSON key"));

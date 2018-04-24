@@ -34,6 +34,10 @@ public:
 	UPROPERTY()
 	bool bSupportsDatePrimitive = true;
 
+	// Can we Have TMap<Key, UObject*> ?
+	UPROPERTY()
+	bool bSupportsUObjectValueInMap = true;
+
 public:
 	bool operator==(const FDlgIOTesterOptions& Other) const
 	{
@@ -359,7 +363,7 @@ public:
 
 	// Filled with only nulls, check if the writers support it
 	UPROPERTY()
-	TArray<UObject*> ObjectArrayConstantNulls;
+	TArray<UDlgTestObjectPrimitivesBase*> ObjectArrayConstantNulls;
 };
 
 USTRUCT()
@@ -471,6 +475,7 @@ public:
 	FDlgTestMapPrimitive() {}
 	bool IsEqual(const Self& Other, FString& OutError) const;
 	void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
+	void CheckInvariants() const;
 	bool operator==(const Self& Other) const
 	{
 		FString DiscardError;
@@ -521,6 +526,12 @@ public:
 	// Filled with only nulls, check if the writers support it
 	UPROPERTY()
 	TMap<FString, UDlgTestObjectPrimitivesBase*> ObjectConstantNullMap;
+
+	UPROPERTY()
+	TMap<FString, UDlgTestObjectPrimitivesBase*> ObjectFrequentsNullsMap;
+
+	UPROPERTY()
+	TMap<FString, UDlgTestObjectPrimitivesBase*> ObjectPrimitivesAllMap;
 };
 
 USTRUCT()
@@ -552,5 +563,17 @@ public:
 	TMap<FDlgTestStructPrimitives, int32> StructPrimitiveToIntMap;
 
 	UPROPERTY()
-	TMap<FName, FDlgTestMapPrimitive> NameoToStructOfMapPrimitives;
+	TMap<FName, FDlgTestMapPrimitive> NameToStructOfMapPrimitives;
+
+	UPROPERTY()
+	TMap<FName, FDlgTestArrayPrimitive> NameToStructOfArrayPrimitives;
+
+	UPROPERTY()
+	TMap<FName, FDlgTestSetPrimitive> NameToStructOfSetPrimitives;
+
+	UPROPERTY()
+	TMap<FName, FDlgTestArrayComplex> NameToStructOfArrayComplex;
+
+	UPROPERTY()
+	TMap<FName, FDlgTestSetComplex> NameToStructOfSetComplex;
 };

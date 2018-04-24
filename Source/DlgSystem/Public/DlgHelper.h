@@ -25,7 +25,7 @@ public:
 				if (FoundValueSecondMap != nullptr)
 				{
 					// Key exists in second map
-					if (!AreValuesEqual(*FoundValueSecondMap, ElemFirstMap.Value))
+					if (!AreValuesEqual(ElemFirstMap.Value, *FoundValueSecondMap))
 					{
 						// Value differs
 						return false;
@@ -88,8 +88,12 @@ public:
 		{
 			// Some value is not equal
 			for (int32 Index = 0; Index < FirstArray.Num(); Index++)
+			{
 				if (!AreValuesEqual(FirstArray[Index], SecondArray[Index]))
+				{
 					return false;
+				}
+			}
 
 			return true;
 		}
