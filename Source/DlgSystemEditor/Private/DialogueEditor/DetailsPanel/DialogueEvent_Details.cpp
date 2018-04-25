@@ -20,7 +20,7 @@ void FDialogueEvent_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InStruc
 	FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 	StructPropertyHandle = InStructPropertyHandle;
-	Dialogue = DetailsPanel::GetDialogueFromPropertyHandle(StructPropertyHandle.ToSharedRef());
+	Dialogue = FDialogueDetailsPanelUtils::GetDialogueFromPropertyHandle(StructPropertyHandle.ToSharedRef());
 	PropertyUtils = StructCustomizationUtils.GetPropertyUtilities();
 
 	// Cache the Property Handle for the EventType
@@ -125,9 +125,12 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 void FDialogueEvent_Details::OnEventTypeChanged(bool bForceRefresh)
 {
 	// Update to the new type
-	uint8 value;
-	verify(EventTypePropertyHandle->GetValue(value) == FPropertyAccess::Success);
-	EventType = static_cast<EDlgEventType>(value);
+	uint8 Value = 0;
+	if (EventTypePropertyHandle->GetValue(Value) != FPropertyAccess::Success)
+	{
+		return;
+	}
+	EventType = static_cast<EDlgEventType>(Value);
 
 	// Update the display name/tooltips
 	FText EventNameDisplayName = LOCTEXT("EventNameDisplayName", "Variable Name");
@@ -152,7 +155,7 @@ void FDialogueEvent_Details::OnEventTypeChanged(bool bForceRefresh)
 TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
 {
 	TArray<FName> Suggestions;
-	const FName ParticipantName = DetailsPanel::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
+	const FName ParticipantName = FDialogueDetailsPanelUtils::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
 
 	switch (EventType)
 	{
@@ -204,7 +207,7 @@ TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
 
 TArray<FName> FDialogueEvent_Details::GetCurrentDialogueEventNames() const
 {
-	const FName ParticipantName = DetailsPanel::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
+	const FName ParticipantName = FDialogueDetailsPanelUtils::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
 	TSet<FName> Suggestions;
 
 	switch (EventType)

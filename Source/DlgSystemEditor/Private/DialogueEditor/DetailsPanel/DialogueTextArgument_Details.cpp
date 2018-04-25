@@ -20,7 +20,7 @@ void FDialogueTextArgument_Details::CustomizeHeader(TSharedRef<IPropertyHandle> 
 	FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 	StructPropertyHandle = InStructPropertyHandle;
-	Dialogue = DetailsPanel::GetDialogueFromPropertyHandle(StructPropertyHandle.ToSharedRef());
+	Dialogue = FDialogueDetailsPanelUtils::GetDialogueFromPropertyHandle(StructPropertyHandle.ToSharedRef());
 	PropertyUtils = StructCustomizationUtils.GetPropertyUtilities();
 
 	// Cache the Property Handle for the ArgumentType
@@ -94,9 +94,12 @@ void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle
 void FDialogueTextArgument_Details::OnArgumentTypeChanged(bool bForceRefresh)
 {
 	// Update to the new type
-	uint8 value;
-	verify(ArgumentTypePropertyHandle->GetValue(value) == FPropertyAccess::Success);
-	ArgumentType = static_cast<EDlgTextArgumentType>(value);
+	uint8 Value = 0;
+	if (ArgumentTypePropertyHandle->GetValue(Value) != FPropertyAccess::Success)
+	{
+		return;
+	}
+	ArgumentType = static_cast<EDlgTextArgumentType>(Value);
 
 	// Refresh the view, without this some names/tooltips won't get refreshed
 	if (bForceRefresh && PropertyUtils.IsValid())
@@ -108,7 +111,7 @@ void FDialogueTextArgument_Details::OnArgumentTypeChanged(bool bForceRefresh)
 TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurrentOnly) const
 {
 	TArray<FName> Suggestions;
-	const FName ParticipantName = DetailsPanel::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
+	const FName ParticipantName = FDialogueDetailsPanelUtils::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
 
 	switch (ArgumentType)
 	{

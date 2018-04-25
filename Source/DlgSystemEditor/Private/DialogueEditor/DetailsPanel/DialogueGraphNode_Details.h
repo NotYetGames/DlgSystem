@@ -40,7 +40,7 @@ private:
 	/** Gets the current Dialogue Participant Names. */
 	TArray<FName> GetCurrentDialogueParticipantNames() const
 	{
-		return DetailsPanel::GetDialogueSortedParticipantNames(Dialogue);
+		return FDialogueDetailsPanelUtils::GetDialogueSortedParticipantNames(Dialogue);
 	}
 
 	/** Gets the Speaker States from all Dialogues. */

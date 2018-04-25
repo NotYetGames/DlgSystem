@@ -19,11 +19,11 @@ void FDialogueEdge_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InStruct
 	FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 	StructPropertyHandle = InStructPropertyHandle;
-	Dialogue = DetailsPanel::GetDialogueFromPropertyHandle(StructPropertyHandle.ToSharedRef());
+	Dialogue = FDialogueDetailsPanelUtils::GetDialogueFromPropertyHandle(StructPropertyHandle.ToSharedRef());
 	bShowTextProperty = true;
 
 	// Should we show hide the Text property?
-	if (const UDialogueGraphNode* GraphNode = DetailsPanel::GetClosestGraphNodeFromPropertyHandle(StructPropertyHandle.ToSharedRef()))
+	if (const UDialogueGraphNode* GraphNode = FDialogueDetailsPanelUtils::GetClosestGraphNodeFromPropertyHandle(StructPropertyHandle.ToSharedRef()))
 	{
 		// Virtual parents do not handle direct children, only grand children
 		// And selector node do not even touch them
@@ -76,7 +76,7 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 		.ClearKeyboardFocusOnCommit(false)
 		.SelectAllTextOnCommit(false)
 		.AutoWrapText(true)
-		.ModiferKeyForNewLine(DetailsPanel::GetModifierKeyFromDialogueSettings())
+		.ModiferKeyForNewLine(FDialogueDetailsPanelUtils::GetModifierKeyFromDialogueSettings())
 		.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
 		.OnTextCommitted(this, &Self::HandleTextCommitted)
 	)
@@ -101,7 +101,7 @@ void FDialogueEdge_Details::HandleTextCommitted(const FText& InText, ETextCommit
 {
 	TextPropertyRow->HandleTextCommited(InText, CommitInfo);
 
-	if (UDialogueGraphNode_Edge* GraphEdge = DetailsPanel::GetAsGraphNodeEdgeFromPropertyHandle(StructPropertyHandle.ToSharedRef()))
+	if (UDialogueGraphNode_Edge* GraphEdge = FDialogueDetailsPanelUtils::GetAsGraphNodeEdgeFromPropertyHandle(StructPropertyHandle.ToSharedRef()))
 	{
 		FDlgEdge& Edge = GraphEdge->GetDialogueEdge();
 		FDlgTextArgument::UpdateTextArgumentArray(Edge.Text, Edge.TextArguments);
