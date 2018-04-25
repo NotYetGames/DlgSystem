@@ -23,13 +23,13 @@ bool FDlgIOTester::TestAllParsers()
 	Options.bSupportsNonPrimitiveInSet = false;
 	Options.bSupportsColorPrimitives = false;
 	Options.bSupportsDatePrimitive = false;
-	bAllSucceeded = TestParser<FDlgConfigWriter, FDlgConfigParser>(Options, TEXT("FDlgConfigWriter"), TEXT("FDlgConfigParser"))
-		&& bAllSucceeded;
+	Options.bSupportsUObjectValueInMap = false;
+	bAllSucceeded &= TestParser<FDlgConfigWriter, FDlgConfigParser>(Options, TEXT("FDlgConfigWriter"), TEXT("FDlgConfigParser"));
 
 	Options = {};
 	Options.bSupportsDatePrimitive = false;
-	bAllSucceeded = TestParser<FDlgJsonWriter, FDlgJsonParser>(Options, TEXT("FDlgJsonWriter"), TEXT("FDlgJsonParser"))
-		&& bAllSucceeded;
+	Options.bSupportsUObjectValueInMap = false;
+	bAllSucceeded &= TestParser<FDlgJsonWriter, FDlgJsonParser>(Options, TEXT("FDlgJsonWriter"), TEXT("FDlgJsonParser"));
 
 	return bAllSucceeded;
 }
@@ -38,8 +38,8 @@ bool FDlgIOTester::TestAllParsers()
 
 // NOTE: to run this test, first remove the EAutomationTestFlags::Disabled flag
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDlgIOAutomationTest, "DlgSystem.IO.Tests", //EAutomationTestFlags::Disabled |
-																			 EAutomationTestFlags::RequiresUser | 
-																			 EAutomationTestFlags::EditorContext | 
+																			 EAutomationTestFlags::RequiresUser |
+																			 EAutomationTestFlags::EditorContext |
 																			 EAutomationTestFlags::ClientContext |
 																			 EAutomationTestFlags::CommandletContext |
 																			 EAutomationTestFlags::ProductFilter)

@@ -34,6 +34,10 @@ public:
 	UPROPERTY()
 	bool bSupportsDatePrimitive = true;
 
+	// Can we Have TMap<Key, UObject*> ?
+	UPROPERTY()
+	bool bSupportsUObjectValueInMap = true;
+
 public:
 	bool operator==(const FDlgIOTesterOptions& Other) const
 	{
@@ -334,6 +338,12 @@ public:
 	FDlgIOTesterOptions Options;
 
 	UPROPERTY()
+	TArray<int32> EmptyArray;
+
+	UPROPERTY()
+	TArray<int32> Num1_Array;
+
+	UPROPERTY()
 	TArray<int32> IntArray;
 
 	UPROPERTY()
@@ -353,7 +363,7 @@ public:
 
 	// Filled with only nulls, check if the writers support it
 	UPROPERTY()
-	TArray<UObject*> ObjectArrayConstantNulls;
+	TArray<UDlgTestObjectPrimitivesBase*> ObjectArrayConstantNulls;
 };
 
 USTRUCT()
@@ -413,6 +423,12 @@ public:
 	FDlgIOTesterOptions Options;
 
 	UPROPERTY()
+	TSet<int32> EmptySet;
+
+	UPROPERTY()
+	TSet<int32> Num1_Set;
+
+	UPROPERTY()
 	TSet<int32> IntSet;
 
 	UPROPERTY()
@@ -459,15 +475,23 @@ public:
 	FDlgTestMapPrimitive() {}
 	bool IsEqual(const Self& Other, FString& OutError) const;
 	void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
+	void CheckInvariants() const;
 	bool operator==(const Self& Other) const
 	{
 		FString DiscardError;
 		return IsEqual(Other, DiscardError);
 	}
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("IntToIntMap.Num()=%d, IntToStringMap.Num()=%d"),  IntToIntMap.Num(), IntToStringMap.Num());
+	}
 
 public:
 	// Tester Options
 	FDlgIOTesterOptions Options;
+
+	UPROPERTY()
+	TMap<int32, int32> EmptyMap;
 
 	UPROPERTY()
 	TMap<int32, int32> IntToIntMap;
@@ -501,7 +525,13 @@ public:
 
 	// Filled with only nulls, check if the writers support it
 	UPROPERTY()
-	TMap<FName, UDlgTestObjectPrimitivesBase*> ObjectConstantNullMap;
+	TMap<FString, UDlgTestObjectPrimitivesBase*> ObjectConstantNullMap;
+
+	UPROPERTY()
+	TMap<FString, UDlgTestObjectPrimitivesBase*> ObjectFrequentsNullsMap;
+
+	UPROPERTY()
+	TMap<FString, UDlgTestObjectPrimitivesBase*> ObjectPrimitivesAllMap;
 };
 
 USTRUCT()
@@ -531,4 +561,19 @@ public:
 
 	UPROPERTY()
 	TMap<FDlgTestStructPrimitives, int32> StructPrimitiveToIntMap;
+
+	UPROPERTY()
+	TMap<FName, FDlgTestMapPrimitive> NameToStructOfMapPrimitives;
+
+	UPROPERTY()
+	TMap<FName, FDlgTestArrayPrimitive> NameToStructOfArrayPrimitives;
+
+	UPROPERTY()
+	TMap<FName, FDlgTestSetPrimitive> NameToStructOfSetPrimitives;
+
+	UPROPERTY()
+	TMap<FName, FDlgTestArrayComplex> NameToStructOfArrayComplex;
+
+	UPROPERTY()
+	TMap<FName, FDlgTestSetComplex> NameToStructOfSetComplex;
 };

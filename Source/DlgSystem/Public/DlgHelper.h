@@ -21,11 +21,11 @@ public:
 		{
 			for (const auto& ElemFirstMap : FirstMap)
 			{
-				const ValueType* FoundValueSecondMap = SecondMap.Find(ElemFirstMap.Key);
+				const auto* FoundValueSecondMap = SecondMap.Find(ElemFirstMap.Key);
 				if (FoundValueSecondMap != nullptr)
 				{
 					// Key exists in second map
-					if (!AreValuesEqual(*FoundValueSecondMap, ElemFirstMap.Value))
+					if (!AreValuesEqual(ElemFirstMap.Value, *FoundValueSecondMap))
 					{
 						// Value differs
 						return false;
@@ -88,8 +88,12 @@ public:
 		{
 			// Some value is not equal
 			for (int32 Index = 0; Index < FirstArray.Num(); Index++)
+			{
 				if (!AreValuesEqual(FirstArray[Index], SecondArray[Index]))
+				{
 					return false;
+				}
+			}
 
 			return true;
 		}
@@ -110,20 +114,6 @@ public:
 			[](const ArrayType& FirstValue, const ArrayType& SecondValue) -> bool
 		{
 			return FirstValue == SecondValue;
-		});
-	}
-};
-
-template <typename ArrayType>
-class FDlgHelper_ArrayEqualVariantPointersImpl
-{
-public:
-	static bool IsEqual(const TArray<ArrayType>& FirstArray, const TArray<ArrayType>& SecondArray)
-	{
-		return FDlgHelper_ArrayEqualImpl<ArrayType>::IsEqual(FirstArray, SecondArray,
-			[](const ArrayType& FirstValue, const ArrayType& SecondValue) -> bool
-		{
-			return *FirstValue == *SecondValue;
 		});
 	}
 };
@@ -187,7 +177,15 @@ public:
 	template <typename ArrayType>
 	static bool IsArrayOfPointersEqual(const TArray<ArrayType*>& FirstArray, const TArray<ArrayType*>& SecondArray)
 	{
-		return FDlgHelper_ArrayEqualVariantPointersImpl<ArrayType*>::IsEqual(FirstArray, SecondArray);
+		return FDlgHelper_ArrayEqualImpl<ArrayType*>::IsEqual(FirstArray, SecondArray,
+			[](const auto* FirstValue, const auto* SecondValue) -> bool
+			{
+				if (FirstValue == nullptr)
+				{
+					return SecondValue == nullptr;
+				}
+				return *FirstValue == *SecondValue;
+			});
 	}
 
 	// Is FirstMap == SecondMap ?

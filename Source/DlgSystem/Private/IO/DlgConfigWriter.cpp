@@ -51,14 +51,14 @@ void FDlgConfigWriter::WriteComplexMembersToString(const UStruct* StructDefiniti
 	if (StructDefinition->IsA<UClass>())
 	{
 		const UObject* UnrealObject = static_cast<const UObject*>(Object);
-		if (UnrealObject == nullptr)
+		if (!UnrealObject->IsValidLowLevelFast())
 		{
 			return;
 		}
 
 		StructDefinition = UnrealObject->GetClass();
 	}
-	if (StructDefinition == nullptr)
+	if (!StructDefinition->IsValidLowLevelFast())
 	{
 		return;
 	}
@@ -339,7 +339,7 @@ void FDlgConfigWriter::WriteComplexToString(const UStruct* StructDefinition,
 	}
 
 	const UObject* UnrealObject = static_cast<const UObject*>(Object);
-	if (bWriteType && UnrealObject == nullptr)
+	if (bWriteType && !UnrealObject->IsValidLowLevelFast())
 	{
 		return;
 	}
@@ -456,6 +456,7 @@ bool FDlgConfigWriter::WriteMapToString(const UProperty* Property,
 		return true;
 	}
 
+	// NOTE: Because we access the value with GetPropertyValue_InContainer, we can't use GetValuePtr, instead use GetPairPtr
 	if (IsPrimitive(MapProp->KeyProp) && IsPrimitive(MapProp->ValueProp))
 	{
 		// Both Key and Value are primitives
@@ -474,8 +475,8 @@ bool FDlgConfigWriter::WriteMapToString(const UProperty* Property,
 		Target += PreString + "{" + EOL;
 		for (int32 i = 0; i < Helper.Num(); ++i)
 		{
-			WritePropertyToString(MapProp->KeyProp, Helper.GetKeyPtr(i), true, PreString + "\t", EOL, CanSaveAsReference(MapProp), Target);
-			WritePropertyToString(MapProp->ValueProp, Helper.GetKeyPtr(i), true, PreString + "\t", EOL, CanSaveAsReference(MapProp), Target);
+			WritePropertyToString(MapProp->KeyProp, Helper.GetPairPtr(i), true, PreString + "\t", EOL, CanSaveAsReference(MapProp), Target);
+			WritePropertyToString(MapProp->ValueProp, Helper.GetPairPtr(i), true, PreString + "\t", EOL, CanSaveAsReference(MapProp), Target);
 		}
 		Target += PreString + "}" + EOL;
 	}

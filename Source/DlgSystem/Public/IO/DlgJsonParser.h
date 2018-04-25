@@ -51,53 +51,54 @@ private: // JSON -> UStruct
 	 * Convert JSON to property, assuming either the property is not an array or the value is an individual array element
 	 * Used by JsonValueToUProperty
 	 */
-	bool ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> JsonValue, UProperty* Property, void* OutValue);
+	bool ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> JsonValue, UProperty* Property, void* ContainerPtr, void* ValuePtr);
 
 	/**
 	 * Converts a single JsonValue to the corresponding UProperty (this may recurse if the property is a UStruct for instance).
 	 *
 	 * @param JsonValue The value to assign to this property
 	 * @param Property The UProperty definition of the property we're setting.
-	 * @param OutValue Pointer to the property instance to be modified.
+	 * @param ValuePtr Pointer to the property instance to be modified.
 	 *
 	 * @return False if the property failed to serialize
 	 */
-	bool JsonValueToUProperty(const TSharedPtr<FJsonValue> JsonValue, UProperty* Property, void* OutValue);
+	bool JsonValueToUProperty(const TSharedPtr<FJsonValue> JsonValue, UProperty* Property, void* ContainerPtr, void* ValuePtr);
 
 	/**
 	 * Converts a set of json attributes (possibly from within a JsonObject) to a UStruct, using importText
 	 *
 	 * @param JsonAttributes 	Json Object to copy data out of
 	 * @param StructDefinition  UStruct definition that is looked over for properties
-	 * @param OutPtr 			The Pointer instance to copy in to
+	 * @param ContainerPtr 		The Pointer instance to copy in to
 	 *
 	 * @return False if any properties matched but failed to deserialize
 	 */
 	bool JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJsonValue>>& JsonAttributes,
-								const UStruct* StructDefinition, void* OutPtr);
+								const UStruct* StructDefinition, void* ContainerPtr);
 
 	/**
 	 * Converts from a Json Object to a UStruct, using importText
 	 *
 	 * @param JsonObject 		Json Object to copy data out of
 	 * @param StructDefinition  UStruct definition that is looked over for properties
-	 * @param OutPtr 			The Pointer instance to copy in to
+	 * @param ContainerPtr 		The Pointer instance to copy in to
 	 *
 	 * @return False if any properties matched but failed to deserialize
 	 */
-	bool JsonObjectToUStruct(const TSharedRef<FJsonObject>& JsonObject, const UStruct* StructDefinition, void* OutPtr)
+	bool JsonObjectToUStruct(const TSharedRef<const FJsonObject>& JsonObject, const UStruct* StructDefinition, void* ContainerPtr)
 	{
-		return JsonAttributesToUStruct(JsonObject->Values, StructDefinition, OutPtr);
+		return JsonAttributesToUStruct(JsonObject->Values, StructDefinition, ContainerPtr);
 	}
 
 	/**
 	 * Converts from a json string containing an object to a UStruct
 	 *
 	 * @param OutStruct The UStruct instance to copy in to
+	 * @param ContainerPtr 		The Pointer instance to copy in to
 	 *
 	 * @return False if any properties matched but failed to deserialize
 	 */
-	bool JsonObjectStringToUStruct(const UStruct* StructDefinition, void* TargetPtr);
+	bool JsonObjectStringToUStruct(const UStruct* StructDefinition, void* ContainerPtr);
 
 private:
 	FString JsonString;

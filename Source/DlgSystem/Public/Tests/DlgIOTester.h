@@ -48,14 +48,13 @@ bool FDlgIOTester::TestParser(const FDlgIOTesterOptions& Options, const FString 
 
 	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestSetPrimitive>("Set of Primitives", Options, NameWriterType, NameParserType)
 		&& bAllSucceeded;
-	if (Options.bSupportsNonPrimitiveInSet)
-	{
-		bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestSetComplex>("Set of Complex types", Options, NameWriterType, NameParserType)
-			&& bAllSucceeded;
-	}
+
+	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestSetComplex>("Set of Complex types", Options, NameWriterType, NameParserType)
+		&& bAllSucceeded;
 
 	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestMapPrimitive>("Map with Primitives", Options, NameWriterType, NameParserType)
 		&& bAllSucceeded;
+
 	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestMapComplex>("Map with Complex types", Options, NameWriterType, NameParserType)
 		&& bAllSucceeded;
 

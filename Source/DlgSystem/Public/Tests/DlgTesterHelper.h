@@ -38,8 +38,8 @@ public:
 			for (int32 Index = 0; Index < ThisArray.Num() && Index < OtherArray.Num(); Index++)
 			{
 				// Values differ
-				FString ComparisonErorrMessage;
-				if (!AreValuesEqual(ThisArray[Index], OtherArray[Index], ComparisonErorrMessage))
+				FString ComparisonErrorMessage;
+				if (!AreValuesEqual(ThisArray[Index], OtherArray[Index], ComparisonErrorMessage))
 				{
 					if (bIsPrimitive)
 					{
@@ -49,9 +49,8 @@ public:
 					else
 					{
 						OutError += FString::Printf(TEXT("\tThis.%s[%d] != Other.%s[%d] |message = %s|\n"),
-							*PropertyName, Index, *PropertyName, Index, *ComparisonErorrMessage);
+							*PropertyName, Index, *PropertyName, Index, *ComparisonErrorMessage);
 					}
-
 				}
 			}
 		}
@@ -67,36 +66,12 @@ class FDlgTestHelper_ArrayPrimitiveVariantImpl
 public:
 	static bool IsEqual(const TArray<ArrayType>& ThisArray, const TArray<ArrayType>& OtherArray,
 		const FString& PropertyName, FString& OutError,
-		const bool bIsPrimitive,
 		std::function<FString(const ArrayType&)> GetArrayTypeAsString)
 	{
-		return FDlgTestHelper_ArrayEqualImpl<ArrayType>::IsEqual(ThisArray, OtherArray, PropertyName, OutError, bIsPrimitive, GetArrayTypeAsString,
+		return FDlgTestHelper_ArrayEqualImpl<ArrayType>::IsEqual(ThisArray, OtherArray, PropertyName, OutError, true, GetArrayTypeAsString,
 			[](const ArrayType& FirstValue, const ArrayType& SecondValue, FString& ComparisonErrorMessage) -> bool
 		{
 			return FirstValue == SecondValue;
-		});
-	}
-};
-
-// Pointers variant
-template <typename ArrayType>
-class FDlgTestHelper_ArrayPointersVariantImpl
-{
-public:
-	static bool IsEqual(const TArray<ArrayType>& ThisArray, const TArray<ArrayType>& OtherArray,
-		const FString& PropertyName, FString& OutError,
-		const bool bIsPrimitive,
-		std::function<FString(const ArrayType&)> GetArrayTypeAsString)
-	{
-		return FDlgTestHelper_ArrayEqualImpl<ArrayType>::IsEqual(ThisArray, OtherArray, PropertyName, OutError, bIsPrimitive, GetArrayTypeAsString,
-			[](const ArrayType& FirstValue, const ArrayType& SecondValue, FString& ComparisonErrorMessage) -> bool
-		{
-			if (FirstValue == nullptr)
-			{
-				ComparisonErrorMessage = TEXT("FirstValue is nullptr");
-				return SecondValue == nullptr;
-			}
-			return FirstValue->IsEqual(SecondValue, ComparisonErrorMessage);
 		});
 	}
 };
@@ -108,10 +83,9 @@ class FDlgTestHelper_ArrayPrimitiveVariantImpl<float>
 public:
 	static bool IsEqual(const TArray<float>& ThisArray, const TArray<float>& OtherArray,
 		const FString& PropertyName, FString& OutError,
-		const bool bIsPrimitive,
 		std::function<FString(const float&)> GetArrayTypeAsString)
 	{
-		return FDlgTestHelper_ArrayEqualImpl<float>::IsEqual(ThisArray, OtherArray, PropertyName, OutError, bIsPrimitive, GetArrayTypeAsString,
+		return FDlgTestHelper_ArrayEqualImpl<float>::IsEqual(ThisArray, OtherArray, PropertyName, OutError, true, GetArrayTypeAsString,
 			[](const float& FirstValue, const float& SecondValue, FString& ComparisonErrorMessage) -> bool
 		{
 			return FMath::IsNearlyEqual(FirstValue, SecondValue, KINDA_SMALL_NUMBER);
@@ -130,7 +104,7 @@ public:
 		std::function<FString(const SetType&)> GetSetTypeAsString)
 	{
 		bool bIsEqual = true;
-		if (FDlgHelper::IsSetEqual(ThisSet, OtherSet) == false)
+		if (FDlgHelper::IsSetEqual<SetType>(ThisSet, OtherSet) == false)
 		{
 			bIsEqual = false;
 			if (ThisSet.Num() != OtherSet.Num())
@@ -163,13 +137,19 @@ struct FDlgTestHelper_MapEqualImpl
 {
 public:
 	static bool IsEqual(const TMap<KeyType, ValueType>& ThisMap, const TMap<KeyType, ValueType>& OtherMap,
-		const FString& PropertyName, FString& OutError,
+		const FString& PropertyName, FString& OutError, const bool bIsValuePrimitive,
 		std::function<FString(const KeyType&)> GetKeyTypeAsString,
 		std::function<FString(const ValueType&)> GetValueTypeAsString,
-		std::function<bool(const ValueType& FirstValue, const ValueType& SecondValue)> AreValuesEqual)
+		std::function<bool(const ValueType& FirstValue, const ValueType& SecondValue, FString& ComparisonErrorMessage)> AreValuesEqual)
 	{
 		bool bIsEqual = true;
-		if (FDlgHelper::IsMapEqual(ThisMap, OtherMap, AreValuesEqual) == false)
+		auto AreValuesEqualWithoutMessage = [&AreValuesEqual](const ValueType& FirstValue, const ValueType& SecondValue) -> bool
+		{
+			FString DiscardMessage;
+			return AreValuesEqual(FirstValue, SecondValue, DiscardMessage);
+		};
+
+		if (FDlgHelper::IsMapEqual<KeyType, ValueType>(ThisMap, OtherMap, AreValuesEqualWithoutMessage) == false)
 		{
 			bIsEqual = false;
 			if (ThisMap.Num() != OtherMap.Num())
@@ -189,13 +169,25 @@ public:
 				const ValueType* OtherMapValue = OtherMap.Find(ThisElem.Key);
 				if (OtherMapValue != nullptr)
 				{
-					if (!AreValuesEqual(*OtherMapValue, ThisElem.Value))
+					FString ComparisonErrorMessage;
+					if (!AreValuesEqual(ThisElem.Value, *OtherMapValue, ComparisonErrorMessage))
 					{
-						ValuesThatDifferString += FString::Printf(
-							TEXT("\tThis.%s[key] (%s) != Other.%s[key] (%s). Key = (%s)\n"),
-							*PropertyName, *GetValueTypeAsString(ThisElem.Value),
-							*PropertyName, *GetValueTypeAsString(*OtherMapValue),
-							*GetKeyTypeAsString(ThisElem.Key));
+						if (bIsValuePrimitive)
+						{
+							ValuesThatDifferString += FString::Printf(
+								TEXT("\tThis.%s[key] (%s) != Other.%s[key] (%s). Key = (%s)\n"),
+								*PropertyName, *GetValueTypeAsString(ThisElem.Value),
+								*PropertyName, *GetValueTypeAsString(*OtherMapValue),
+								*GetKeyTypeAsString(ThisElem.Key));
+						}
+						else
+						{
+							ValuesThatDifferString += FString::Printf(
+								TEXT("\tThis.%s[key] (%s) != Other.%s[key] (%s). Key = (%s). |Message = %s|\n"),
+								*PropertyName, *GetValueTypeAsString(ThisElem.Value),
+								*PropertyName, *GetValueTypeAsString(*OtherMapValue),
+								*GetKeyTypeAsString(ThisElem.Key), *ComparisonErrorMessage);
+						}
 					}
 				}
 				else
@@ -233,7 +225,7 @@ public:
 
 // Variant with default comparison
 template <typename KeyType, typename ValueType>
-class FDlgTestHelper_MapVariantImpl
+class FDlgTestHelper_MapPrimitiveVariantImpl
 {
 public:
 	static bool IsEqual(const TMap<KeyType, ValueType>& ThisMap, const TMap<KeyType, ValueType>& OtherMap,
@@ -241,40 +233,17 @@ public:
 		std::function<FString(const KeyType&)> GetKeyTypeAsString,
 		std::function<FString(const ValueType&)> GetValueTypeAsString)
 	{
-		return FDlgTestHelper_MapEqualImpl<KeyType, ValueType>::IsEqual(ThisMap, OtherMap, PropertyName, OutError, GetKeyTypeAsString, GetValueTypeAsString,
-			[](const ValueType& FirstMapValue, const ValueType& SecondMapValue) -> bool
+		return FDlgTestHelper_MapEqualImpl<KeyType, ValueType>::IsEqual(ThisMap, OtherMap, PropertyName, OutError, true, GetKeyTypeAsString, GetValueTypeAsString,
+			[](const ValueType& FirstMapValue, const ValueType& SecondMapValue, FString& ComparisonErrorMessage) -> bool
 		{
 			return FirstMapValue == SecondMapValue;
 		});
 	}
 };
 
-// Pointers variant
-template <typename KeyType, typename ValueType>
-class FDlgTestHelper_MapPointersVariantImpl
-{
-public:
-	static bool IsEqual(const TMap<KeyType, ValueType>& ThisMap, const TMap<KeyType, ValueType>& OtherMap,
-		const FString& PropertyName, FString& OutError,
-		std::function<FString(const KeyType&)> GetKeyTypeAsString,
-		std::function<FString(const ValueType&)> GetValueTypeAsString)
-	{
-		return FDlgTestHelper_MapEqualImpl<KeyType, ValueType>::IsEqual(ThisMap, OtherMap, PropertyName, OutError, GetKeyTypeAsString, GetValueTypeAsString,
-			[](const ValueType& FirstMapValue, const ValueType& SecondMapValue) -> bool
-		{
-			if (FirstMapValue == nullptr)
-			{
-				return SecondMapValue == nullptr;
-			}
-			FString ComparisonErrorMessage;
-			return FirstMapValue->IsEqual(SecondMapValue, ComparisonErrorMessage);
-		});
-	}
-};
-
 // Variant for float
 template <typename KeyType>
-class FDlgTestHelper_MapVariantImpl<KeyType, float>
+class FDlgTestHelper_MapPrimitiveVariantImpl<KeyType, float>
 {
 public:
 	static bool IsEqual(const TMap<KeyType, float>& ThisMap, const TMap<KeyType, float>& OtherMap,
@@ -282,8 +251,8 @@ public:
 		std::function<FString(const KeyType&)> GetKeyTypeAsString,
 		std::function<FString(const float&)> GetValueTypeAsString)
 	{
-		return FDlgTestHelper_MapEqualImpl<KeyType, float>::IsEqual(ThisMap, OtherMap, PropertyName, OutError, GetKeyTypeAsString, GetValueTypeAsString,
-			[](const float& FirstMapValue, const float& SecondMapValue) -> bool
+		return FDlgTestHelper_MapEqualImpl<KeyType, float>::IsEqual(ThisMap, OtherMap, PropertyName, OutError, true, GetKeyTypeAsString, GetValueTypeAsString,
+			[](const float& FirstMapValue, const float& SecondMapValue, FString& ComparisonErrorMessage) -> bool
 		{
 			return FMath::IsNearlyEqual(FirstMapValue, SecondMapValue, KINDA_SMALL_NUMBER);
 		});
@@ -319,6 +288,17 @@ public:
 		return Object->GetClass()->GetName();
 	}
 
+	template <typename ValueType>
+	static void CheckMapStringKeyInvariants(const TMap<FString, ValueType>& ThisMap)
+	{
+		for (const auto& Elem : ThisMap)
+		{
+			// Most likely the map is corrupted
+			check((void*)(*Elem.Key) != nullptr);
+			Elem.Key.CheckInvariants();
+		}
+	}
+
 	template <typename SetType>
 	static bool IsSetEqual(const TSet<SetType>& ThisSet, const TSet<SetType>& OtherSet,
 		const FString& PropertyName, FString& OutError, std::function<FString(const SetType&)> GetSetTypeAsString)
@@ -327,23 +307,45 @@ public:
 	}
 
 	template <typename KeyType, typename ValueType>
-	static bool IsMapEqual(const TMap<KeyType, ValueType>& ThisMap, const TMap<KeyType, ValueType>& OtherMap,
+	static bool IsPrimitiveMapEqual(const TMap<KeyType, ValueType>& ThisMap, const TMap<KeyType, ValueType>& OtherMap,
 		const FString& PropertyName, FString& OutError,
 		std::function<FString(const KeyType&)> GetKeyTypeAsString,
 		std::function<FString(const ValueType&)> GetValueTypeAsString)
 	{
-		return FDlgTestHelper_MapVariantImpl<KeyType, ValueType>::IsEqual(ThisMap, OtherMap, PropertyName, OutError, GetKeyTypeAsString, GetValueTypeAsString);
+		return FDlgTestHelper_MapPrimitiveVariantImpl<KeyType, ValueType>::IsEqual(ThisMap, OtherMap, PropertyName, OutError, GetKeyTypeAsString, GetValueTypeAsString);
 	}
 
 	template <typename KeyType, typename ValueType>
-	static bool IsPointersMapEqual(const TMap<KeyType, ValueType*>& ThisMap, const TMap<KeyType, ValueType*>& OtherMap,
+	static bool IsComplexMapValueEqual(const TMap<KeyType, ValueType>& ThisMap, const TMap<KeyType, ValueType>& OtherMap,
+		const FString& PropertyName, FString& OutError,
+		std::function<FString(const KeyType&)> GetKeyTypeAsString,
+		std::function<FString(const ValueType&)> GetValueTypeAsString)
+	{
+		return FDlgTestHelper_MapEqualImpl<KeyType, ValueType>::IsEqual(ThisMap, OtherMap, PropertyName, OutError, false, GetKeyTypeAsString, GetValueTypeAsString,
+			[](const ValueType& FirstMapValue, const ValueType& SecondMapValue, FString& ComparisonErrorMessage) -> bool
+			{
+				return FirstMapValue.IsEqual(SecondMapValue, ComparisonErrorMessage);
+			});
+	}
+
+	template <typename KeyType, typename ValueType>
+	static bool IsComplexPointersMapEqual(const TMap<KeyType, ValueType*>& ThisMap, const TMap<KeyType, ValueType*>& OtherMap,
 		const FString& PropertyName, FString& OutError,
 		std::function<FString(const KeyType&)> GetKeyTypeAsString)
 	{
-		return FDlgTestHelper_MapPointersVariantImpl<KeyType, ValueType*>::IsEqual(ThisMap, OtherMap, PropertyName, OutError, GetKeyTypeAsString, 
-			[](const auto* Object)->FString
+		return FDlgTestHelper_MapEqualImpl<KeyType, ValueType*>::IsEqual(ThisMap, OtherMap, PropertyName, OutError, false, GetKeyTypeAsString,
+			[](const auto* Object) -> FString
 			{
 				return FDlgTestHelper::GetFullNameFromObject(Object);
+			},
+			[](const auto* FirstMapValue, const auto* SecondMapValue, FString& ComparisonErrorMessage) -> bool
+			{
+				if (FirstMapValue == nullptr)
+				{
+					ComparisonErrorMessage = TEXT("FirstMapValue is nullptr");
+					return SecondMapValue == nullptr;
+				}
+				return FirstMapValue->IsEqual(SecondMapValue, ComparisonErrorMessage);
 			});
 	}
 
@@ -351,7 +353,7 @@ public:
 	static bool IsPrimitiveArrayEqual(const TArray<ArrayType>& ThisArray, const TArray<ArrayType>& OtherArray,
 		const FString& PropertyName, FString& OutError, std::function<FString(const ArrayType&)> GetArrayTypeAsString)
 	{
-		return FDlgTestHelper_ArrayPrimitiveVariantImpl<ArrayType>::IsEqual(ThisArray, OtherArray, PropertyName, OutError, true, GetArrayTypeAsString);
+		return FDlgTestHelper_ArrayPrimitiveVariantImpl<ArrayType>::IsEqual(ThisArray, OtherArray, PropertyName, OutError, GetArrayTypeAsString);
 	}
 
 	template <typename ArrayType>
@@ -361,7 +363,7 @@ public:
 		return FDlgTestHelper_ArrayEqualImpl<ArrayType>::IsEqual(ThisArray, OtherArray, PropertyName, OutError, false,
 			[](const ArrayType& Value) -> FString
 			{
-				return FString();
+				return TEXT("IsComplexArrayEqual SHOULD NOT SEE THIS");
 			},
 			[](const ArrayType& FirstValue, const ArrayType& SecondValue, FString& ComparisonErrorMessage) -> bool
 			{
@@ -373,10 +375,19 @@ public:
 	static bool IsComplexPointerArrayEqual(const TArray<ArrayType*>& ThisArray, const TArray<ArrayType*>& OtherArray,
 		const FString& PropertyName, FString& OutError)
 	{
-		return FDlgTestHelper_ArrayPointersVariantImpl<ArrayType*>::IsEqual(ThisArray, OtherArray, PropertyName, OutError, false,
+		return FDlgTestHelper_ArrayEqualImpl<ArrayType*>::IsEqual(ThisArray, OtherArray, PropertyName, OutError, false,
 			[](const auto* Value) -> FString
 			{
 				return Value ? Value->ToString() : "";
+			},
+			[](const auto* FirstValue, const auto* SecondValue, FString& ComparisonErrorMessage) -> bool
+			{
+				if (FirstValue == nullptr)
+				{
+					ComparisonErrorMessage = TEXT("FirstValue is nullptr");
+					return SecondValue == nullptr;
+				}
+				return FirstValue->IsEqual(SecondValue, ComparisonErrorMessage);
 			});
 	}
 
