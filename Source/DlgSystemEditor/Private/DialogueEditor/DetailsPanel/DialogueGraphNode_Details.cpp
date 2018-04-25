@@ -137,7 +137,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 					.ClearKeyboardFocusOnCommit(false)
 					.SelectAllTextOnCommit(false)
 					.AutoWrapText(true)
-					.ModiferKeyForNewLine(DetailsPanel::GetModifierKeyFromDialogueSettings())
+					.ModiferKeyForNewLine(FDialogueDetailsPanelUtils::GetModifierKeyFromDialogueSettings())
 					.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
 					.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
 				)
