@@ -106,7 +106,7 @@ private:
 	/** Gets the current Dialogue Participant Names. */
 	TArray<FName> GetCurrentDialogueParticipantNames() const
 	{
-		return DetailsPanel::GetDialogueSortedParticipantNames(Dialogue);
+		return FDialogueDetailsPanelUtils::GetDialogueSortedParticipantNames(Dialogue);
 	}
 
 	/** Handler for when text in the editable text box changed */

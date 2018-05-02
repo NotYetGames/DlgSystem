@@ -21,7 +21,7 @@ void FDialogueCondition_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InS
 	FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 	StructPropertyHandle = InStructPropertyHandle;
-	Dialogue = DetailsPanel::GetDialogueFromPropertyHandle(StructPropertyHandle.ToSharedRef());
+	Dialogue = FDialogueDetailsPanelUtils::GetDialogueFromPropertyHandle(StructPropertyHandle.ToSharedRef());
 	PropertyUtils = StructCustomizationUtils.GetPropertyUtilities();
 
 	// Cache the Property Handle for some properties
@@ -188,9 +188,12 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 {
 	// Update to the new type
-	uint8 value;
-	verify(ConditionTypePropertyHandle->GetValue(value) == FPropertyAccess::Success);
-	ConditionType = static_cast<EDlgConditionType>(value);
+	uint8 Value = 0;
+	if (ConditionTypePropertyHandle->GetValue(Value) != FPropertyAccess::Success)
+	{
+		return;
+	}
+	ConditionType = static_cast<EDlgConditionType>(Value);
 
 	// Update the display names/tooltips
 	FText CalllBackNameDisplayName = LOCTEXT("CalllBackNameDisplayName", "Variable Name");
@@ -204,7 +207,7 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 	FText IntValueToolTip = LOCTEXT("IntValueToolTip", "The int value the VariableName is checked against (depending on the operation).\n"
 		"VariableName <Operation> IntValue");
 
-	DetailsPanel::ResetNumericPropertyLimits(IntValuePropertyHandle);
+	FDialogueDetailsPanelUtils::ResetNumericPropertyLimits(IntValuePropertyHandle);
 	switch (ConditionType)
 	{
 	case EDlgConditionType::DlgConditionEventCall:
@@ -233,7 +236,7 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 		break;
 
 	case EDlgConditionType::DlgConditionNodeVisited:
-		DetailsPanel::SetNumericPropertyLimits<int32>(IntValuePropertyHandle, 0, Dialogue->GetNodes().Num() - 1);
+		FDialogueDetailsPanelUtils::SetNumericPropertyLimits<int32>(IntValuePropertyHandle, 0, Dialogue->GetNodes().Num() - 1);
 
 		IntValueDisplayName = LOCTEXT("ConditionNodeVisited_IntValueDisplayName", "Node Index");
 		IntValueToolTip = LOCTEXT("ConditionNodeVisited_IntValueToolTip", "Node index of the node we want to check the visited status");
@@ -242,7 +245,7 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 		break;
 
 	case EDlgConditionType::DlgConditionHasSatisfiedChild:
-		DetailsPanel::SetNumericPropertyLimits<int32>(IntValuePropertyHandle, 0, Dialogue->GetNodes().Num() - 1);
+		FDialogueDetailsPanelUtils::SetNumericPropertyLimits<int32>(IntValuePropertyHandle, 0, Dialogue->GetNodes().Num() - 1);
 
 		IntValueDisplayName = LOCTEXT("ConditionHasSatisfiedChild_IntValueDisplayName", "Node Index");
 		IntValueToolTip = LOCTEXT("ConditionHasSatisfiedChild_IntValueToolTip", "Node index of the node we want to check");
@@ -274,9 +277,12 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 
 void FDialogueCondition_Details::OnCompareTypeChanged(bool bForceRefresh)
 {
-	uint8 value;
-	verify(CompareTypePropertyHandle->GetValue(value) == FPropertyAccess::Success);
-	CompareType = static_cast<EDlgCompareType>(value);
+	uint8 Value = 0;
+	if (CompareTypePropertyHandle->GetValue(Value) != FPropertyAccess::Success)
+	{
+		return;
+	}
+	CompareType = static_cast<EDlgCompareType>(Value);
 
 	// Refresh the view, without this some names/tooltips won't get refreshed
 	if (bForceRefresh && PropertyUtils.IsValid())
@@ -291,7 +297,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 	TArray<FName> Suggestions;
 	TSet<FName> SuggestionSet;
 	const TSharedPtr<IPropertyHandle>& ParticipantHandle = bOtherValue ? OtherParticipantNamePropertyHandle : ParticipantNamePropertyHandle;
-	const FName ParticipantName = DetailsPanel::GetParticipantNameFromPropertyHandle(ParticipantHandle.ToSharedRef());
+	const FName ParticipantName = FDialogueDetailsPanelUtils::GetParticipantNameFromPropertyHandle(ParticipantHandle.ToSharedRef());
 
 	bool bReflectionBased = false;
 	if (bOtherValue)

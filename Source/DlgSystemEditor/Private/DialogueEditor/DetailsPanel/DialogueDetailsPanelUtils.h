@@ -17,24 +17,25 @@ static constexpr const TCHAR* META_UIMax = TEXT("UIMax");
 static constexpr const TCHAR* META_ClampMin = TEXT("ClampMin");
 static constexpr const TCHAR* META_ClampMax = TEXT("ClampMax");
 
-namespace DetailsPanel
+struct FDialogueDetailsPanelUtils
 {
+public:
 	/** Gets the appropriate modifier key for an input field depending on the Dialogue System Settings */
-	inline EModifierKey::Type GetModifierKeyFromDialogueSettings()
+	static EModifierKey::Type GetModifierKeyFromDialogueSettings()
 	{
 		switch (GetDefault<UDlgSystemSettings>()->DialogueTextInputKeyForNewLine)
 		{
-			case EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineShiftPlusEnter:
-				return EModifierKey::Shift;
+		case EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineShiftPlusEnter:
+			return EModifierKey::Shift;
 
-			case EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineEnter:
-			default:
-				return EModifierKey::None;
+		case EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineEnter:
+		default:
+			return EModifierKey::None;
 		}
 	}
 
 	/** Resets the numeric property to not have any limits */
-	inline void ResetNumericPropertyLimits(TSharedPtr<IPropertyHandle> PropertyHandle)
+	static void ResetNumericPropertyLimits(TSharedPtr<IPropertyHandle> PropertyHandle)
 	{
 		if (!PropertyHandle.IsValid())
 		{
@@ -50,7 +51,7 @@ namespace DetailsPanel
 
 	/** Sets the limits of the numeric property. It can only have values in the range [Min, Max] */
 	template <typename NumericType>
-	void SetNumericPropertyLimits(TSharedPtr<IPropertyHandle> PropertyHandle, const NumericType Min, const NumericType Max)
+	static void SetNumericPropertyLimits(TSharedPtr<IPropertyHandle> PropertyHandle, const NumericType Min, const NumericType Max)
 	{
 		if (!PropertyHandle.IsValid())
 		{
@@ -59,8 +60,14 @@ namespace DetailsPanel
 
 		// Clamp Current value if not in range
 		NumericType NumericValue;
-		verify(PropertyHandle->GetValue(NumericValue) == FPropertyAccess::Success);
-		verify(PropertyHandle->SetValue(FMath::Clamp(NumericValue, Min, Max)) == FPropertyAccess::Success);
+		if (PropertyHandle->GetValue(NumericValue) != FPropertyAccess::Success)
+		{
+			return;
+		}
+		if (PropertyHandle->SetValue(FMath::Clamp(NumericValue, Min, Max)) != FPropertyAccess::Success)
+		{
+			return;
+		}
 
 		const FString MinString = FString::FromInt(Min);
 		const FString MaxString = FString::FromInt(Max);
@@ -76,7 +83,7 @@ namespace DetailsPanel
 	}
 
 	/** Gets the Base GraphNode owner that belongs to this PropertyHandle. It could be an Edge or a GraphNode */
-	inline UDialogueGraphNode_Base* GetGraphNodeBaseFromPropertyHandle(const TSharedRef<IPropertyHandle> PropertyHandle)
+	static UDialogueGraphNode_Base* GetGraphNodeBaseFromPropertyHandle(const TSharedRef<IPropertyHandle> PropertyHandle)
 	{
 		TArray<UObject*> OuterObjects;
 		PropertyHandle->GetOuterObjects(OuterObjects);
@@ -102,7 +109,7 @@ namespace DetailsPanel
 	 * If the BaseGraphNode is an GraphNode then return that
 	 * If the BaseGraphNode is an Edge then return the ParentGraphNode
 	 */
-	inline UDialogueGraphNode* GetClosestGraphNodeFromPropertyHandle(const TSharedRef<IPropertyHandle> PropertyHandle)
+	static UDialogueGraphNode* GetClosestGraphNodeFromPropertyHandle(const TSharedRef<IPropertyHandle> PropertyHandle)
 	{
 		if (UDialogueGraphNode_Base* BaseGraphNode = GetGraphNodeBaseFromPropertyHandle(PropertyHandle))
 		{
@@ -127,13 +134,13 @@ namespace DetailsPanel
 	 * If the BaseGraphNode is an GraphNode then returns nullptr
 	 * If the BaseGraphNode is an Edge then returns that
 	 */
-	inline UDialogueGraphNode_Edge* GetAsGraphNodeEdgeFromPropertyHandle(const TSharedRef<IPropertyHandle> PropertyHandle)
+	static UDialogueGraphNode_Edge* GetAsGraphNodeEdgeFromPropertyHandle(const TSharedRef<IPropertyHandle> PropertyHandle)
 	{
 		return Cast<UDialogueGraphNode_Edge>(GetGraphNodeBaseFromPropertyHandle(PropertyHandle));
 	}
 
 	/** Gets the Dialogue that is the top most root owner of this PropertyHandle. used in the details panel. */
-	inline UDlgDialogue* GetDialogueFromPropertyHandle(const TSharedRef<IPropertyHandle> PropertyHandle)
+	static UDlgDialogue* GetDialogueFromPropertyHandle(const TSharedRef<IPropertyHandle> PropertyHandle)
 	{
 		UDlgDialogue* Dialogue = nullptr;
 
@@ -178,10 +185,13 @@ namespace DetailsPanel
 	 * 1. Tries to get the value from the ParticipantNamePropertyHandle of that struct.
 	 * 2. Gets the ParticipantName from the Node that has this property.
 	 */
-	inline FName GetParticipantNameFromPropertyHandle(TSharedRef<IPropertyHandle> ParticipantNamePropertyHandle)
+	static FName GetParticipantNameFromPropertyHandle(TSharedRef<IPropertyHandle> ParticipantNamePropertyHandle)
 	{
 		FName ParticipantName = NAME_None;
-		verify(ParticipantNamePropertyHandle->GetValue(ParticipantName) == FPropertyAccess::Success);
+		if (ParticipantNamePropertyHandle->GetValue(ParticipantName) != FPropertyAccess::Success)
+		{
+			return ParticipantName;
+		}
 
 		// Try the node that owns this
 		if (ParticipantName.IsNone())
@@ -197,11 +207,11 @@ namespace DetailsPanel
 	}
 
 	/** Gets all the participant names of the Dialogue sorted alphabetically */
-	inline TArray<FName> GetDialogueSortedParticipantNames(UDlgDialogue* Dialogue)
+	static TArray<FName> GetDialogueSortedParticipantNames(UDlgDialogue* Dialogue)
 	{
 		TSet<FName> ParticipantNames;
 		Dialogue->GetAllParticipantNames(ParticipantNames);
 		FDlgHelper::SortDefault(ParticipantNames);
 		return ParticipantNames.Array();
 	}
-}
+};

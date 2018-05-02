@@ -19,7 +19,7 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeHeader(TSharedRef<IPropertyH
 	FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 	StructPropertyHandle = InStructPropertyHandle;
-	Dialogue = DetailsPanel::GetDialogueFromPropertyHandle(StructPropertyHandle.ToSharedRef());
+	Dialogue = FDialogueDetailsPanelUtils::GetDialogueFromPropertyHandle(StructPropertyHandle.ToSharedRef());
 
 	const bool bShowOnlyInnerProperties = StructPropertyHandle->GetProperty()->HasMetaData(META_ShowOnlyInnerProperties);
 	if (!bShowOnlyInnerProperties)
@@ -83,7 +83,7 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 			.ClearKeyboardFocusOnCommit(false)
 			.SelectAllTextOnCommit(false)
 			.AutoWrapText(true)
-			.ModiferKeyForNewLine(DetailsPanel::GetModifierKeyFromDialogueSettings())
+			.ModiferKeyForNewLine(FDialogueDetailsPanelUtils::GetModifierKeyFromDialogueSettings())
 			.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
 			.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
 		)
@@ -112,7 +112,7 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 			.ClearKeyboardFocusOnCommit(false)
 			.SelectAllTextOnCommit(false)
 			.AutoWrapText(true)
-			.ModiferKeyForNewLine(DetailsPanel::GetModifierKeyFromDialogueSettings())
+			.ModiferKeyForNewLine(FDialogueDetailsPanelUtils::GetModifierKeyFromDialogueSettings())
 			.Text(EdgeTextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
 			.OnTextCommitted(EdgeTextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
 		)

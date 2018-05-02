@@ -58,6 +58,8 @@ public:
 
 	void ReadAllProperty(const UStruct* ReferenceClass, void* TargetObject, UObject* DefaultObjectOuter = nullptr) override;
 
+	void ResetParser();
+
 	/**
 	 * Tries to read a property from the config starting from the current word
 	 * If everything goes well the active word will be the first word *after* the property value

@@ -63,6 +63,15 @@ void FDlgConfigParser::ReadAllProperty(const UStruct* ReferenceClass, void* Targ
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void FDlgConfigParser::ResetParser()
+{
+	From = 0;
+	Len = 0;
+	bHasValidWord = false;
+	FindNextWord();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool FDlgConfigParser::ReadProperty(const UStruct* ReferenceClass, void* TargetObject, UObject* DefaultObjectOuter)
 {
 	if (!bHasValidWord)
