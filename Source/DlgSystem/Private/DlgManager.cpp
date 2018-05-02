@@ -144,6 +144,11 @@ void UDlgManager::SetDialogueHistory(const TMap<FGuid, FDlgHistory>& DlgHistory)
 	FDlgMemory::GetInstance()->SetHistoryMap(DlgHistory);
 }
 
+void UDlgManager::ClearDialogueHistory()
+{
+	FDlgMemory::GetInstance()->Empty();
+}
+
 bool UDlgManager::DoesObjectImplementDialogueParticipantInterface(const UObject* Object)
 {
 	static const UClass* DialogueParticipantClass = UDlgDialogueParticipant::StaticClass();

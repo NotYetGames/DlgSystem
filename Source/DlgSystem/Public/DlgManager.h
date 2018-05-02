@@ -118,6 +118,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = DialogueData)
 	static void SetDialogueHistory(const TMap<FGuid, FDlgHistory>& DlgHistory);
 
+	/** Empties the FDlgMemory Dialogue history. */
+	UFUNCTION(BlueprintCallable, Category = DialogueData)
+	static void ClearDialogueHistory();
+
 	/** Gets the Dialogue History from the FDlgMemory. */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	static const TMap<FGuid, FDlgHistory>& GetDialogueHistory();
