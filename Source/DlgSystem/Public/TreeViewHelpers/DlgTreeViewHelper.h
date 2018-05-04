@@ -9,8 +9,8 @@
 class DLGSYSTEM_API FDlgTreeViewHelper
 {
 public:
-	static bool PredicateSortDialogueWeakPtrAlphabeticallyAscending(const TWeakObjectPtr<UDlgDialogue>& First,
-		const TWeakObjectPtr<UDlgDialogue>& Second)
+	static bool PredicateSortDialogueWeakPtrAlphabeticallyAscending(const TWeakObjectPtr<const UDlgDialogue>& First,
+		const TWeakObjectPtr<const UDlgDialogue>& Second)
 	{
 		if (!First.IsValid())
 		{

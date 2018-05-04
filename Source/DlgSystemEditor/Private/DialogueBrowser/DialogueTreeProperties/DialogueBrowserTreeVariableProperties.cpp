@@ -4,23 +4,23 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueTreeVariableProperties
-FDialogueBrowserTreeVariableProperties::FDialogueBrowserTreeVariableProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>& InDialogues)
+FDialogueBrowserTreeVariableProperties::FDialogueBrowserTreeVariableProperties(const TSet<TWeakObjectPtr<const UDlgDialogue>>& InDialogues)
 	: Super(InDialogues)
 {
 	// Empty initialize the graph nodes
-	for (const TWeakObjectPtr<UDlgDialogue>& Dialogue : InDialogues)
+	for (TWeakObjectPtr<const UDlgDialogue> Dialogue: InDialogues)
 	{
 		GraphNodes.Add(Dialogue->GetDlgGuid(), {});
 	}
 
 	// Empty initialize the edge nodes
-	for (const TWeakObjectPtr<UDlgDialogue>& Dialogue : InDialogues)
+	for (TWeakObjectPtr<const UDlgDialogue> Dialogue : InDialogues)
 	{
 		EdgeNodes.Add(Dialogue->GetDlgGuid(), {});
 	}
 }
 
-void FDialogueBrowserTreeVariableProperties::AddDialogue(TWeakObjectPtr<UDlgDialogue> Dialogue)
+void FDialogueBrowserTreeVariableProperties::AddDialogue(TWeakObjectPtr<const UDlgDialogue> Dialogue)
 {
 	Super::AddDialogue(Dialogue);
 

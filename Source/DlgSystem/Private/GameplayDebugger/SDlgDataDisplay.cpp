@@ -139,19 +139,19 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 
 	// Build fast lookup for ParticipantNames
 	// Maps from ParticipantName => Array of Dialogues that have this Participant.
-	TMap<FName, TSet<TWeakObjectPtr<UDlgDialogue>>> ParticipantNamesDialoguesMap;
-	for (UDlgDialogue* Dialogue : Dialogues)
+	TMap<FName, TSet<TWeakObjectPtr<const UDlgDialogue>>> ParticipantNamesDialoguesMap;
+	for (const UDlgDialogue* Dialogue : Dialogues)
 	{
 		TSet<FName> ParticipantsNames;
 		Dialogue->GetAllParticipantNames(ParticipantsNames);
 
 		for (const FName& ParticipantName : ParticipantsNames)
 		{
-			TSet<TWeakObjectPtr<UDlgDialogue>>* ValuePtr = ParticipantNamesDialoguesMap.Find(ParticipantName);
+			TSet<TWeakObjectPtr<const UDlgDialogue>>* ValuePtr = ParticipantNamesDialoguesMap.Find(ParticipantName);
 			if (ValuePtr == nullptr)
 			{
 				// does not exist
-				TSet<TWeakObjectPtr<UDlgDialogue>> ValueArray{Dialogue};
+				TSet<TWeakObjectPtr<const UDlgDialogue>> ValueArray{Dialogue};
 				ParticipantNamesDialoguesMap.Add(ParticipantName, ValueArray);
 			}
 			else
@@ -175,8 +175,8 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 
 		// Find out the Dialogues that have the ParticipantName of this Actor.
 		const FName ParticipantName = IDlgDialogueParticipant::Execute_GetParticipantName(Actor.Get());
-		TSet<TWeakObjectPtr<UDlgDialogue>> ActorDialogues;
-	    TSet<TWeakObjectPtr<UDlgDialogue>>* ActorDialoguesPtr = ParticipantNamesDialoguesMap.Find(ParticipantName);
+		TSet<TWeakObjectPtr<const UDlgDialogue>> ActorDialogues;
+	    TSet<TWeakObjectPtr<const UDlgDialogue>>* ActorDialoguesPtr = ParticipantNamesDialoguesMap.Find(ParticipantName);
 		if (ActorDialoguesPtr != nullptr)
 		{
 			// Found some dialogue
@@ -189,7 +189,7 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 		ActorsProperties.Add(Actor, ActorsPropertiesValue);
 
 		// Gather Data from the Dialogues
-		for (TWeakObjectPtr<UDlgDialogue> Dialogue : ActorDialogues)
+		for (TWeakObjectPtr<const UDlgDialogue> Dialogue : ActorDialogues)
 		{
 			if (!Dialogue.IsValid())
 			{
@@ -295,7 +295,7 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 			continue;
 		}
 
-		const AActor* Actor = Elem.Key.Get();
+		AActor* Actor = Elem.Key.Get();
 		TSharedPtr<FDlgDataDisplayTreeNode> ActorItem =
 			MakeShareable(new FDlgDataDisplayTreeActorNode(FText::FromString(Actor->GetName()), RootTreeItem, Actor));
 		BuildTreeViewItem(ActorItem);

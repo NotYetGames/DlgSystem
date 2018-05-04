@@ -12,12 +12,12 @@ class UDlgDialogue;
 class DLGSYSTEM_API FDlgTreeViewVariableProperties
 {
 public:
-	FDlgTreeViewVariableProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>& InDialogues) : Dialogues(InDialogues) {}
+	FDlgTreeViewVariableProperties(const TSet<TWeakObjectPtr<const UDlgDialogue>>& InDialogues) : Dialogues(InDialogues) {}
 	virtual ~FDlgTreeViewVariableProperties() {}
 
 	// Dialogues:
-	virtual void AddDialogue(TWeakObjectPtr<UDlgDialogue> Dialogue) { Dialogues.Add(Dialogue); }
-	const TSet<TWeakObjectPtr<UDlgDialogue>>& GetDialogues() const { return Dialogues; }
+	virtual void AddDialogue(TWeakObjectPtr<const UDlgDialogue> Dialogue) { Dialogues.Add(Dialogue); }
+	const TSet<TWeakObjectPtr<const UDlgDialogue>>& GetDialogues() const { return Dialogues; }
 
 	/** Sorts all the properties it can */
 	virtual void Sort()
@@ -27,5 +27,5 @@ public:
 
 protected:
 	/** Dialogues that contain this variable property */
-	TSet<TWeakObjectPtr<UDlgDialogue>> Dialogues;
+	TSet<TWeakObjectPtr<const UDlgDialogue>> Dialogues;
 };

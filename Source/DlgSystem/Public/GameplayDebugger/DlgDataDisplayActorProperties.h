@@ -13,8 +13,8 @@ class DLGSYSTEM_API FDlgDataDisplayVariableProperties : public FDlgTreeViewVaria
 	typedef FDlgTreeViewVariableProperties Super;
 
 public:
-	FDlgDataDisplayVariableProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>& InDialogues) : Super(InDialogues) {}
-	FDlgDataDisplayVariableProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>&& InDialogues) : Super(InDialogues) {}
+	FDlgDataDisplayVariableProperties(const TSet<TWeakObjectPtr<const UDlgDialogue>>& InDialogues) : Super(InDialogues) {}
+	FDlgDataDisplayVariableProperties(const TSet<TWeakObjectPtr<const UDlgDialogue>>&& InDialogues) : Super(InDialogues) {}
 };
 
 /** Used as a key for the Actor in the fast lookup table. */
@@ -23,6 +23,6 @@ class DLGSYSTEM_API FDlgDataDisplayActorProperties : public FDlgTreeViewParticip
 	typedef FDlgTreeViewParticipantProperties Super;
 
 public:
-	FDlgDataDisplayActorProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>& InDialogues) : Super(InDialogues) {}
-	FDlgDataDisplayActorProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>&& InDialogues) : Super(InDialogues) {}
+	FDlgDataDisplayActorProperties(const TSet<TWeakObjectPtr<const UDlgDialogue>>& InDialogues) : Super(InDialogues) {}
+	FDlgDataDisplayActorProperties(const TSet<TWeakObjectPtr<const UDlgDialogue>>&& InDialogues) : Super(InDialogues) {}
 };

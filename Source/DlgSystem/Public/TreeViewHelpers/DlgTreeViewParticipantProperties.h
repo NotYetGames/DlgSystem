@@ -16,8 +16,8 @@ class FDlgTreeViewParticipantProperties
 	typedef typename std::enable_if<std::is_base_of<FDlgTreeViewVariableProperties, VariablePropertyType>::value>::type check;
 
 public:
-	FDlgTreeViewParticipantProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>& InDialogues) : Dialogues(InDialogues) {}
-	FDlgTreeViewParticipantProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>&& InDialogues) : Dialogues(InDialogues) {}
+	FDlgTreeViewParticipantProperties(const TSet<TWeakObjectPtr<const UDlgDialogue>>& InDialogues) : Dialogues(InDialogues) {}
+	FDlgTreeViewParticipantProperties(const TSet<TWeakObjectPtr<const UDlgDialogue>>&& InDialogues) : Dialogues(InDialogues) {}
 
 	/** Sorts all the properties it can */
 	void Sort()
@@ -44,76 +44,76 @@ public:
 	// Setters
 
 	/** Add Dialogue that containt this participant. */
-	void AddDialogue(TWeakObjectPtr<UDlgDialogue> Dialogue) { Dialogues.Add(Dialogue); }
+	void AddDialogue(TWeakObjectPtr<const UDlgDialogue> Dialogue) { Dialogues.Add(Dialogue); }
 
 	/** Returns the EventName Property */
-	TSharedPtr<VariablePropertyType> AddDialogueToEvent(const FName& EventName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	TSharedPtr<VariablePropertyType> AddDialogueToEvent(const FName& EventName, TWeakObjectPtr<const UDlgDialogue> Dialogue)
 	{
 		return AddDialogueToVariable(&Events, EventName, Dialogue);
 	}
 
 	/** Returns the ConditionName Property */
-	TSharedPtr<VariablePropertyType> AddDialogueToCondition(const FName& ConditionName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	TSharedPtr<VariablePropertyType> AddDialogueToCondition(const FName& ConditionName, TWeakObjectPtr<const UDlgDialogue> Dialogue)
 	{
 		return AddDialogueToVariable(&Conditions, ConditionName, Dialogue);
 	}
 
 	/** Returns the IntName Property */
-	TSharedPtr<VariablePropertyType> AddDialogueToIntVariable(const FName& IntVariableName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	TSharedPtr<VariablePropertyType> AddDialogueToIntVariable(const FName& IntVariableName, TWeakObjectPtr<const UDlgDialogue> Dialogue)
 	{
 		return AddDialogueToVariable(&Integers, IntVariableName, Dialogue);
 	}
 
 	/** Returns the FloatName Property */
-	TSharedPtr<VariablePropertyType> AddDialogueToFloatVariable(const FName& FloatVariableName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	TSharedPtr<VariablePropertyType> AddDialogueToFloatVariable(const FName& FloatVariableName, TWeakObjectPtr<const UDlgDialogue> Dialogue)
 	{
 		return AddDialogueToVariable(&Floats, FloatVariableName, Dialogue);
 	}
 
 	/** Returns the BoolName Property */
-	TSharedPtr<VariablePropertyType> AddDialogueToBoolVariable(const FName& BoolVariableName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	TSharedPtr<VariablePropertyType> AddDialogueToBoolVariable(const FName& BoolVariableName, TWeakObjectPtr<const UDlgDialogue> Dialogue)
 	{
 		return AddDialogueToVariable(&Bools, BoolVariableName, Dialogue);
 	}
 
 	/** Returns the FName Property */
-	TSharedPtr<VariablePropertyType> AddDialogueToFNameVariable(const FName& FNameVariableName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	TSharedPtr<VariablePropertyType> AddDialogueToFNameVariable(const FName& FNameVariableName, TWeakObjectPtr<const UDlgDialogue> Dialogue)
 	{
 		return AddDialogueToVariable(&FNames, FNameVariableName, Dialogue);
 	}
 
 	/** Returns the IntName Property */
-	TSharedPtr<VariablePropertyType> AddDialogueToClassIntVariable(const FName& IntVariableName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	TSharedPtr<VariablePropertyType> AddDialogueToClassIntVariable(const FName& IntVariableName, TWeakObjectPtr<const UDlgDialogue> Dialogue)
 	{
 		return AddDialogueToVariable(&ClassIntegers, IntVariableName, Dialogue);
 	}
 
 	/** Returns the FloatName Property */
-	TSharedPtr<VariablePropertyType> AddDialogueToClassFloatVariable(const FName& FloatVariableName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	TSharedPtr<VariablePropertyType> AddDialogueToClassFloatVariable(const FName& FloatVariableName, TWeakObjectPtr<const UDlgDialogue> Dialogue)
 	{
 		return AddDialogueToVariable(&ClassFloats, FloatVariableName, Dialogue);
 	}
 
 	/** Returns the BoolName Property */
-	TSharedPtr<VariablePropertyType> AddDialogueToClassBoolVariable(const FName& BoolVariableName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	TSharedPtr<VariablePropertyType> AddDialogueToClassBoolVariable(const FName& BoolVariableName, TWeakObjectPtr<const UDlgDialogue> Dialogue)
 	{
 		return AddDialogueToVariable(&ClassBools, BoolVariableName, Dialogue);
 	}
 
 	/** Returns the FName Property */
-	TSharedPtr<VariablePropertyType> AddDialogueToClassFNameVariable(const FName& FNameVariableName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	TSharedPtr<VariablePropertyType> AddDialogueToClassFNameVariable(const FName& FNameVariableName, TWeakObjectPtr<const UDlgDialogue> Dialogue)
 	{
 		return AddDialogueToVariable(&ClassFNames, FNameVariableName, Dialogue);
 	}
 
 	/** Returns the FText Property */
-	TSharedPtr<VariablePropertyType> AddDialogueToClassFTextVariable(const FName& FTextVariableName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+	TSharedPtr<VariablePropertyType> AddDialogueToClassFTextVariable(const FName& FTextVariableName, TWeakObjectPtr<const UDlgDialogue> Dialogue)
 	{
 		return AddDialogueToVariable(&ClassFTexts, FTextVariableName, Dialogue);
 	}
 
 	// Getters
-	const TSet<TWeakObjectPtr<UDlgDialogue>>& GetDialogues() const { return Dialogues; }
+	const TSet<TWeakObjectPtr<const UDlgDialogue>>& GetDialogues() const { return Dialogues; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetEvents() const { return Events; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetConditions() const { return Conditions; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetIntegers() const { return Integers; }
@@ -153,7 +153,7 @@ public:
 
 protected:
 	TSharedPtr<VariablePropertyType> AddDialogueToVariable(TMap<FName, TSharedPtr<VariablePropertyType>>* VariableMap,
-		const FName& VariableName, TWeakObjectPtr<UDlgDialogue> Dialogue)
+		const FName& VariableName, TWeakObjectPtr<const UDlgDialogue> Dialogue)
 	{
 		TSharedPtr<VariablePropertyType>* VariablePropsPtr = VariableMap->Find(VariableName);
 		TSharedPtr<VariablePropertyType> VariableProps;
@@ -178,7 +178,7 @@ protected:
 	 * Dialogues that contain this participant
 	 * NOTE: can't convert it into a map with the key as an FName becaus we can expect duplicate dialogues
 	 */
-	TSet<TWeakObjectPtr<UDlgDialogue>> Dialogues;
+	TSet<TWeakObjectPtr<const UDlgDialogue>> Dialogues;
 
 	/**
 	 * Events that belong to this participant
