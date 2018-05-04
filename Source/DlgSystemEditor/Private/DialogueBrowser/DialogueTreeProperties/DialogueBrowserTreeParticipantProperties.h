@@ -12,6 +12,6 @@ class FDialogueBrowserTreeParticipantProperties : public FDlgTreeViewParticipant
 	typedef FDlgTreeViewParticipantProperties Super;
 
 public:
-	FDialogueBrowserTreeParticipantProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>& InDialogues) : Super(InDialogues) {}
-	FDialogueBrowserTreeParticipantProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>&& InDialogues) : Super(InDialogues) {}
+	FDialogueBrowserTreeParticipantProperties(const TSet<TWeakObjectPtr<const UDlgDialogue>>& InDialogues) : Super(InDialogues) {}
+	FDialogueBrowserTreeParticipantProperties(const TSet<TWeakObjectPtr<const UDlgDialogue>>&& InDialogues) : Super(InDialogues) {}
 };

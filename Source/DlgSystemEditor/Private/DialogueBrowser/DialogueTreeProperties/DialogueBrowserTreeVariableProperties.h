@@ -17,10 +17,10 @@ class FDialogueBrowserTreeVariableProperties : public FDlgTreeViewVariableProper
 	typedef FDlgTreeViewVariableProperties Super;
 
 public:
-	FDialogueBrowserTreeVariableProperties(const TSet<TWeakObjectPtr<UDlgDialogue>>& InDialogues);
+	FDialogueBrowserTreeVariableProperties(const TSet<TWeakObjectPtr<const UDlgDialogue>>& InDialogues);
 
 	// Dialogues:
-	void AddDialogue(TWeakObjectPtr<UDlgDialogue> Dialogue) override;
+	void AddDialogue(TWeakObjectPtr<const UDlgDialogue> Dialogue) override;
 
 	// GraphNodes:
 	bool HasGraphNodeSet(const FGuid& DialogueGuid) { return GraphNodes.Find(DialogueGuid) != nullptr; }

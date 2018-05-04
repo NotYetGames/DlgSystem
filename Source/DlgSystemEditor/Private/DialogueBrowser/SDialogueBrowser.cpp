@@ -526,13 +526,13 @@ void SDialogueBrowser::AddDialogueChildrenToItemFromProperty(TSharedPtr<FDialogu
 	 const TSharedPtr<FDialogueBrowserTreeVariableProperties>* PropertyPtr, const EDialogueTreeNodeTextType TextType)
 {
 	// List the dialogues that contain this event for this property
-	TSet<TWeakObjectPtr<UDlgDialogue>> Dialogues;
+	TSet<TWeakObjectPtr<const UDlgDialogue>> Dialogues;
 	if (PropertyPtr != nullptr)
 	{
 		Dialogues = (*PropertyPtr)->GetDialogues();
 	}
 
-	for (const TWeakObjectPtr<UDlgDialogue>& Dialogue : Dialogues)
+	for (TWeakObjectPtr<const UDlgDialogue> Dialogue : Dialogues)
 	{
 		if (!Dialogue.IsValid())
 		{
@@ -667,7 +667,7 @@ void SDialogueBrowser::BuildTreeViewItem(TSharedPtr<FDialogueBrowserTreeNode> It
 		case EDialogueTreeNodeCategoryType::Dialogue:
 		{
 			// Add the dialogues
-			for (const TWeakObjectPtr<UDlgDialogue>& Dialogue : ParticipantProperties->GetDialogues())
+			for (TWeakObjectPtr<const UDlgDialogue> Dialogue : ParticipantProperties->GetDialogues())
 			{
 				if (!Dialogue.IsValid())
 				{
