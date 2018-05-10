@@ -315,7 +315,7 @@ public:
 
 	/** Does this node have the child edge ChildEdgeToFind? */
 	bool HasChildEdgeNode(const UDialogueGraphNode_Edge* ChildEdgeToFind) const;
-		
+
 	/** Does this node has the  parent edge ParentEdgeToFind?  */
 	bool HasParentEdgeNode(const UDialogueGraphNode_Edge* ParentEdgeToFind) const;
 
@@ -377,11 +377,11 @@ private:
 
 protected:
 	/** The Dialogue Node this graph node references.  */
-	UPROPERTY(EditAnywhere, Instanced, Meta = (ShowOnlyInnerProperties))
+	UPROPERTY(EditAnywhere, Instanced, Category = DialogueGraphNode, Meta = (ShowOnlyInnerProperties))
 	UDlgNode* DialogueNode;
 
 	/** The Dialogue Node index in the Dialogue (array) this represents. This is not relevant for the StartNode. */
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = DialogueGraphNode)
 	int32 NodeIndex = INDEX_NONE;
 
 	/** Indicates the distance from the start node. This is only set after the graph is compiled. */

@@ -36,7 +36,7 @@ struct DLGSYSTEM_API FDlgTextArgument
 	GENERATED_USTRUCT_BODY()
 
 public:
-	
+
 	bool operator==(const FDlgTextArgument& Other) const;
 
 	/** Construct the argument for usage in FText::Format */
@@ -46,16 +46,16 @@ public:
 	static void UpdateTextArgumentArray(const FText& Text, TArray<FDlgTextArgument>& InOutArgumentArray);
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = DialogueTextArgument)
 	FString DisplayString;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueTextArgument)
 	EDlgTextArgumentType Type = EDlgTextArgumentType::DlgTextArgumentDisplayName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueTextArgument)
 	FName ParticipantName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueTextArgument)
 	FName VariableName;
 
 public:

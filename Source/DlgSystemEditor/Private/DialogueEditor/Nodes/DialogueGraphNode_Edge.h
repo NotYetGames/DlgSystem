@@ -196,7 +196,7 @@ private:
 
 private:
 	/** The copy Dialogue Edge corresponding to this graph node. This belongs to the the Node of the Input Pin (GetParentNode) */
-	UPROPERTY(EditAnywhere, Meta = (ShowOnlyInnerProperties))
+	UPROPERTY(EditAnywhere, Category = DialogueGraphNode, Meta = (ShowOnlyInnerProperties))
 	FDlgEdge DialogueEdge;
 
 	/**
