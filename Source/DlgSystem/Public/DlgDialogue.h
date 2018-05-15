@@ -47,11 +47,11 @@ struct DLGSYSTEM_API FDlgParticipantClass
 	GENERATED_USTRUCT_BODY()
 
 	/** FName based conditions (aka conditions of type DlgConditionEventCall). */
-	UPROPERTY(VisibleAnywhere, Category = DlgParticipantData)
+	UPROPERTY(VisibleAnywhere, Category = DialogueParticipantData)
 	FName ParticipantName;
 
 	/** FName based events (aka events of type EDlgEventType) */
-	UPROPERTY(EditAnywhere, Category = DlgParticipantData, meta = (MustImplement = "DlgDialogueParticipant"))
+	UPROPERTY(EditAnywhere, Category = DialogueParticipantData, meta = (MustImplement = "DlgDialogueParticipant"))
 	UClass* ParticipantClass;
 };
 

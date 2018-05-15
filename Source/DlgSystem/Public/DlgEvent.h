@@ -45,35 +45,35 @@ public:
 public:
 
 	/** Name of the participant (speaker) the event is called on. */
-	UPROPERTY(EditAnywhere, Category = DlgEventData)
+	UPROPERTY(EditAnywhere, Category = DialogueEventData)
 	FName ParticipantName;
 
 	/** Type of the event, can be a simple event or a call to modify a bool/int/float variable */
-	UPROPERTY(EditAnywhere, Category = DlgEventData)
+	UPROPERTY(EditAnywhere, Category = DialogueEventData)
 	EDlgEventType EventType = EDlgEventType::DlgEventEvent;
 
 	/** Name of the relevant variable or event */
-	UPROPERTY(EditAnywhere, Category = DlgEventData)
+	UPROPERTY(EditAnywhere, Category = DialogueEventData)
 	FName EventName;
 
 	/** The value the participant gets */
-	UPROPERTY(EditAnywhere, Category = DlgEventData)
+	UPROPERTY(EditAnywhere, Category = DialogueEventData)
 	int32 IntValue = 0;
 
 	/** The value the participant gets */
-	UPROPERTY(EditAnywhere, Category = DlgEventData)
+	UPROPERTY(EditAnywhere, Category = DialogueEventData)
 	float FloatValue = 0.f;
 
 	/** The value the participant gets */
-	UPROPERTY(EditAnywhere, Category = DlgEventData)
+	UPROPERTY(EditAnywhere, Category = DialogueEventData)
 	FName NameValue;
 
 	/** Weather to add the value to the existing one, or simply override it  */
-	UPROPERTY(EditAnywhere, Category = DlgEventData)
+	UPROPERTY(EditAnywhere, Category = DialogueEventData)
 	bool bDelta = false;
 
 	/** The value the participant gets */
-	UPROPERTY(EditAnywhere, Category = DlgEventData)
+	UPROPERTY(EditAnywhere, Category = DialogueEventData)
 	bool bValue = false;
 
 public:

@@ -59,26 +59,26 @@ public:
 
 public:
 	/** Index of the node in the Nodes TArray of the dialogue this edge is leading to */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = DlgEdgeData, Meta = (ClampMin = -1))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = DialogueEdgeData, Meta = (ClampMin = -1))
 	int32 TargetIndex = INDEX_NONE;
 
 	/** Required but not sufficient conditions - target node's enter conditions are checked too */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueEdgeData)
 	TArray<FDlgCondition> Conditions;
 
 	/** Text associated with the child, can be used for user choices */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData, Meta = (MultiLine = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueEdgeData, Meta = (MultiLine = true))
 	FText Text;
 
-	UPROPERTY(EditAnywhere, EditFixedSize, Category = DlgEdgeData)
+	UPROPERTY(EditAnywhere, EditFixedSize, Category = DialogueEdgeData)
 	TArray<FDlgTextArgument> TextArguments;
 
 	/** player emotion/state attached to this player choice */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueEdgeData)
 	FName SpeakerState;
 
 	/** Set this to false in order to skip this edge in the AllChildren array (which lists both satisfied and not satisfied player choices */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgEdgeData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueEdgeData)
 	bool bIncludeInAllOptionListIfUnsatisfied = true;
 
 	/** Constructed at runtime from the original text and the arguments if there is any.*/

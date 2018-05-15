@@ -78,22 +78,22 @@ public:
 protected:
 
 	/** Text that will appear when this node participant name speaks to someone else. */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData, Meta = (MultiLine = true))
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
 	FText Text;
 
-	UPROPERTY(EditAnywhere, EditFixedSize, Category = DlgNodeData)
+	UPROPERTY(EditAnywhere, EditFixedSize, Category = DialogueNodeData)
 	TArray<FDlgTextArgument> TextArguments;
 
 	/** Voice attached to this node. The Sound Wave variant. */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData, Meta = (DlgSaveOnlyReference))
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
 	USoundWave* VoiceSoundWave;
 
 	/** Voice attached to this node. The Dialogue Wave variant. Only the first wave from the dialogue context array should be used. */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData, Meta = (DlgSaveOnlyReference))
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
 	UDialogueWave* VoiceDialogueWave;
 
 	/** State of the speaker attached to this node. Passed to the GetParticipantIcon function. */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData)
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	FName SpeakerState;
 
 	/**
@@ -101,7 +101,7 @@ protected:
 	 * On revaluate children, it does not get the direct children but the children of the first satisfied direct child node (grandchildren).
 	 * It should have at least one satisfied child otherwise the Dialogue is terminated.
 	 */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData)
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	bool bIsVirtualParent = false;
 
 	/** Constructed at runtime from the original text and the arguments if there is any. */
