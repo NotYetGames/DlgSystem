@@ -14,27 +14,27 @@ struct DLGSYSTEM_API FDlgSpeechSequenceEntry
 
 public:
 	/** The Participant Name (speaker) associated with this speech entry. */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData, Meta = (DisplayName = "Participant Name"))
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DisplayName = "Participant Name"))
 	FName Speaker;
 
 	/** Text that will appear when this node participant name speaks to someone else. */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData, Meta = (MultiLine = true))
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
 	FText Text;
 
 	/** Voice attached to the entry. The Sound Wave variant. */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData, Meta = (DlgSaveOnlyReference))
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
 	USoundWave* VoiceSoundWave;
 
 	/** Voice attached to the entry. The Dialogue Wave variant. Only the first wave from the dialogue context array should be used. */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData, Meta = (DlgSaveOnlyReference))
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
 	UDialogueWave* VoiceDialogueWave;
 
 	/** State of the speaker attached to the entry. Passed to the GetParticipantIcon function. */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData)
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	FName SpeakerState;
 
 	/** Text that will appear when you want to continue down this edge to the next conversation. Usually "Next". */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData, Meta = (MultiLine = true))
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
 	FText EdgeText = FText::FromString("Next");
 };
 
@@ -95,7 +95,7 @@ public:
 
 protected:
 	/** array of important stuff to say */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData)
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	TArray<FDlgSpeechSequenceEntry> SpeechSequence;
 
 	/** inner edge, filled automatically based on SpeechSequence */

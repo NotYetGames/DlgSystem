@@ -21,46 +21,46 @@ public:
 public:
 
 	/** FName based conditions (aka conditions of type DlgConditionEventCall). */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DialogueParticipantData)
 	TSet<FName> Conditions;
 
 	/** FName based events (aka events of type EDlgEventType) */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DialogueParticipantData)
 	TSet<FName> Events;
 
 	/** Integers used in a Dialogue */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DialogueParticipantData)
 	TSet<FName> IntVariableNames;
 
 	/** Floats used in a Dialogue  */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DialogueParticipantData)
 	TSet<FName> FloatVariableNames;
 
 	/** Booleans used in a Dialogue */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DialogueParticipantData)
 	TSet<FName> BoolVariableNames;
 
 	/** Names used in a Dialogue */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DialogueParticipantData)
 	TSet<FName> NameVariableNames;
 
 	/** Class Integers used in a Dialogue */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DialogueParticipantData)
 	TSet<FName> ClassIntVariableNames;
 
 	/** Class Floats used in a Dialogue */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DialogueParticipantData)
 	TSet<FName> ClassFloatVariableNames;
 
 	/** Class Booleans used in a Dialogue */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DialogueParticipantData)
 	TSet<FName> ClassBoolVariableNames;
 
 	/** Class Names used in a Dialogue */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DialogueParticipantData)
 	TSet<FName> ClassNameVariableNames;
 
 	/** Class Texts used in a Dialogue */
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DlgParticipantData)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DialogueParticipantData)
 	TSet<FName> ClassTextVariableNames;
 };

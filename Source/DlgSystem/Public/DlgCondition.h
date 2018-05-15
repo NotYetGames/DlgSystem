@@ -112,58 +112,58 @@ protected:
 public:
 
 	/** Defines the way the condition is interpreted inside the condition array */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	EDlgConditionStrength Strength = EDlgConditionStrength::DlgConditionStrengthStrong;
 
 	/** Type of the condition, defines the behavior */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	EDlgConditionType ConditionType = EDlgConditionType::DlgConditionIntCall;
 
 	/** Name of the participant (speaker) the event is called on. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	FName ParticipantName;
 
 	/** Name of the variable or event, passed in the function call to the participant */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	FName CallbackName;
 
 
 	/** The desired operation on the selected variable */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	EDlgOperation Operation = EDlgOperation::DlgEqual;
 
 	/** Type of value to check against  */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	EDlgCompareType CompareType = EDlgCompareType::DlgCompareToConst;
 
 
 	/** Name of the other participant (speaker) the check is performed against (with some compare types) */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	FName OtherParticipantName;
 
 	/** Name of the variable of the other participant the value is checked against (with some compare types) */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	FName OtherVariableName;
 
 
 	/** Node index for "node already visited" condition, the value the participant's int is checked against otherwise */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	int32 IntValue = 0;
 
 	/** Float the participants float is checked against */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	float FloatValue = 0.f;
 
 	/** FName the particpants name is checked against */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	FName NameValue;
 
 	/** Weather the result defined by the other params has to be true or false in order for this condition to be satisfied */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	bool bBoolValue = true;
 
 	/** Weather to check if the node was visited at all (in the long term), set it to false to check if it was visited in the actual dialogue context */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	bool bLongTermMemory = true;
 
 public:

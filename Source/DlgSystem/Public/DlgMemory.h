@@ -15,7 +15,7 @@ struct DLGSYSTEM_API FDlgHistory
 	GENERATED_USTRUCT_BODY()
 public:
 	/** list of already visited node indices */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DlgHistoryData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueHistoryData)
 	TSet<int32> VisitedNodeIndices;
 
 public:

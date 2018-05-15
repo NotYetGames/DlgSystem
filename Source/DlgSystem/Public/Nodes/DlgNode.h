@@ -191,25 +191,25 @@ protected:
 #endif
 
 	/** Name of a participant (speaker) associated with this node. */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData, Meta = (DisplayName = "Participant Name"))
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DisplayName = "Participant Name"))
 	FName OwnerName;
 
 	/**
 	 *  If it is set the node is only satisfied if at least one of its children is
 	 *  Should not be used if entering this node can modify the condition results of its children.
 	 */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData)
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	bool bCheckChildrenOnEvaluation = false;
 
 	/** Conditions necessary to enter this node */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData)
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	TArray<FDlgCondition> EnterConditions;
 
 	/** Events fired when the node is reached in the dialogue */
-	UPROPERTY(EditAnywhere, Category = DlgNodeData)
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	TArray<FDlgEvent> EnterEvents;
 
 	/** Edges that point to Children of this Node */
-	UPROPERTY(EditAnywhere, EditFixedSize, AdvancedDisplay, Category = DlgNodeData)
+	UPROPERTY(EditAnywhere, EditFixedSize, AdvancedDisplay, Category = DialogueNodeData)
 	TArray<FDlgEdge> Children;
 };
