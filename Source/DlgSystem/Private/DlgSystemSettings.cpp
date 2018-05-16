@@ -17,7 +17,7 @@ UDlgSystemSettings::UDlgSystemSettings()
 #if WITH_EDITOR
 FText UDlgSystemSettings::GetSectionText() const
 {
-	return LOCTEXT("SectionText", "Dialogue Editor");
+	return LOCTEXT("SectionText", "Dialogue");
 }
 
 FText UDlgSystemSettings::GetSectionDescription() const
