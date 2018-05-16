@@ -92,11 +92,11 @@ public:
 
 	// UDeveloperSettings interface
 	/** Gets the settings container name for the settings, either Project or Editor */
-	FName GetContainerName() const override { return "Editor"; }
+	FName GetContainerName() const override { return "Project"; }
 	/** Gets the category for the settings, some high level grouping like, Editor, Engine, Game...etc. */
-	FName GetCategoryName() const override { return "ContentEditors"; };
+	FName GetCategoryName() const override { return "Editor"; };
 	/** The unique name for your section of settings, uses the class's FName. */
-	FName GetSectionName() const override { return "DialogueEditor"; };
+	FName GetSectionName() const override { return Super::GetSectionName(); };
 
 #if WITH_EDITOR
 	/** Gets the section text, uses the classes DisplayName by default. */

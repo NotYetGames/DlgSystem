@@ -43,7 +43,6 @@ Brought to you by Not Yet:
 
 ### Branches
 The supported unreal versions have their own branches.
-The master branch is usually updated to the newest engine versions as soon as possible (way before the engine version is in a stable state).
 The outdated version branches are kept but not updated anymore.
 
 ### Code Style
