@@ -39,6 +39,15 @@ Brought to you by Not Yet:
 * [Plugin Marketplace](https://www.unrealengine.com/marketplace/not-yet-dialogue-system)
 
 
+## Modules dependency
+```mermaid
+graph TD;
+    A[DlgSystemEditor]-->B[UnrealEd];
+    A-->C[DlgSystem];
+    C-. WITH_EDITOR .->B;
+    C-. WITH_EDITOR using IDlgDialogueEditorModule .->A
+```
+
 ## Conventions
 
 ### Branches
