@@ -156,7 +156,9 @@ void FDlgTestStructPrimitives::GenerateRandomData(const FDlgIOTesterOptions& InO
 	SetToDefaults();
 
 	bBoolean = FMath::RandBool();
-	Integer = FMath::Rand();
+	// Random negative too
+	Integer32 = FMath::Rand() * (FMath::RandBool() ? 1 : -1);
+	Integer64 = FDlgTestHelper::RandomInt64() * (FMath::RandBool() ? 1 : -1);
 	Float = FMath::SRand();
 	String = FString::SanitizeFloat(Float);
 	Name = FName(*String);
@@ -250,10 +252,16 @@ bool FDlgTestStructPrimitives::IsEqual(const Self& Other, FString& OutError) con
 		OutError += FString::Printf(TEXT("\tThis.bBoolean (%d) != Other.bBoolean (%d)\n"), bBoolean, Other.bBoolean);
 	}
 
-	if (Integer != Other.Integer)
+	if (Integer32 != Other.Integer32)
 	{
 		bIsEqual = false;
-		OutError += FString::Printf(TEXT("\tThis.Integer (%d) != Other.Integer (%d)\n"), Integer, Other.Integer);
+		OutError += FString::Printf(TEXT("\tThis.Integer32 (%d) != Other.Integer32 (%d)\n"), Integer32, Other.Integer32);
+	}
+
+	if (Integer64 != Other.Integer64)
+	{
+		bIsEqual = false;
+		OutError += FString::Printf(TEXT("\tThis.Integer64 (%lld) != Other.Integer64 (%lld)\n"), Integer64, Other.Integer64);
 	}
 
 	if (!FDlgTestHelper::IsFloatEqual(Float, Other.Float))
@@ -428,7 +436,8 @@ bool FDlgTestStructPrimitives::IsEqual(const Self& Other, FString& OutError) con
 
 void FDlgTestStructPrimitives::SetToDefaults()
 {
-	Integer = 42;
+	Integer32 = 42;
+	Integer64 = 223372036854775807;
 	bBoolean = true;
 	Enum = EDlgTestEnum::ETE_Second;
 	Float = -23.549f;
@@ -469,7 +478,8 @@ void FDlgTestArrayPrimitive::GenerateRandomData(const FDlgIOTesterOptions& InOpt
 	Options = InOptions;
 	Num1_Array = { FMath::Rand() };
 	EmptyArray.Empty();
-	IntArray.Empty();
+	Int32Array.Empty();
+	Int64Array.Empty();
 	BoolArray.Empty();
 	FloatArray.Empty();
 	EnumArray.Empty();
@@ -478,7 +488,8 @@ void FDlgTestArrayPrimitive::GenerateRandomData(const FDlgIOTesterOptions& InOpt
 	ObjectArrayConstantNulls.Empty();
 
 	const int32 Num = FMath::RandHelper(10) + 2;
-	IntArray.SetNum(Num);
+	Int32Array.SetNum(Num);
+	Int64Array.SetNum(Num);
 	BoolArray.SetNum(Num);
 	FloatArray.SetNum(Num);
 	if (Options.bSupportsPureEnumContainer)
@@ -491,7 +502,8 @@ void FDlgTestArrayPrimitive::GenerateRandomData(const FDlgIOTesterOptions& InOpt
 
 	for (int32 i = 0; i < Num; ++i)
 	{
-		IntArray[i] = FMath::Rand();
+		Int32Array[i] = FMath::Rand();
+		Int64Array[i] = FDlgTestHelper::RandomInt64();
 		BoolArray[i] = FMath::RandBool();
 		if (Options.bSupportsPureEnumContainer)
 		{
@@ -530,11 +542,15 @@ bool FDlgTestArrayPrimitive::IsEqual(const Self& Other, FString& OutError) const
 
 	PropertyName = TEXT("Num1_Array");
 	bIsEqual &= FDlgTestHelper::IsPrimitiveArrayEqual<int32>(Num1_Array, Other.Num1_Array, PropertyName, OutError,
-		[](const int32& Value) -> FString { return FString::FromInt(Value); });
+		FDlgTestHelper::Int32ToString);
 
-	PropertyName = TEXT("IntArray");
-	bIsEqual &= FDlgTestHelper::IsPrimitiveArrayEqual<int32>(IntArray, Other.IntArray, PropertyName, OutError,
-		[](const int32& Value) -> FString { return FString::FromInt(Value); });
+	PropertyName = TEXT("Int32Array");
+	bIsEqual &= FDlgTestHelper::IsPrimitiveArrayEqual<int32>(Int32Array, Other.Int32Array, PropertyName, OutError,
+		FDlgTestHelper::Int32ToString);
+
+	PropertyName = TEXT("Int64Array");
+	bIsEqual &= FDlgTestHelper::IsPrimitiveArrayEqual<int64>(Int64Array, Other.Int64Array, PropertyName, OutError,
+		FDlgTestHelper::Int64ToString);
 
 	PropertyName = TEXT("BoolArray");
 	bIsEqual &= FDlgTestHelper::IsPrimitiveArrayEqual<bool>(BoolArray, Other.BoolArray, PropertyName, OutError,
@@ -542,7 +558,7 @@ bool FDlgTestArrayPrimitive::IsEqual(const Self& Other, FString& OutError) const
 
 	PropertyName = TEXT("FloatArray");
 	bIsEqual &= FDlgTestHelper::IsPrimitiveArrayEqual<float>(FloatArray, Other.FloatArray, PropertyName, OutError,
-		[](const float& Value) -> FString { return FString::SanitizeFloat(Value); });
+		FDlgTestHelper::FloatToString);
 
 	PropertyName = TEXT("EnumArray");
 	bIsEqual &= FDlgTestHelper::IsPrimitiveArrayEqual<EDlgTestEnum>(EnumArray, Other.EnumArray, PropertyName, OutError,
@@ -550,11 +566,11 @@ bool FDlgTestArrayPrimitive::IsEqual(const Self& Other, FString& OutError) const
 
 	PropertyName = TEXT("NameArray");
 	bIsEqual &= FDlgTestHelper::IsPrimitiveArrayEqual<FName>(NameArray, Other.NameArray, PropertyName, OutError,
-		[](const FName& Value) -> FString { return Value.ToString(); });
+		FDlgTestHelper::NameToString);
 
 	PropertyName = TEXT("StringArray");
 	bIsEqual &= FDlgTestHelper::IsPrimitiveArrayEqual<FString>(StringArray, Other.StringArray, PropertyName, OutError,
-		[](const FString& Value) -> FString { return Value; });
+		FDlgTestHelper::StringToString);
 
 	// Clear error message
 	if (bIsEqual)
@@ -666,7 +682,8 @@ void FDlgTestSetPrimitive::GenerateRandomData(const FDlgIOTesterOptions& InOptio
 	Options = InOptions;
 	Num1_Set = { FMath::Rand() };
 	EmptySet.Empty();
-	IntSet.Empty();
+	Int32Set.Empty();
+	Int64Set.Empty();
 	EnumSet.Empty();
 	NameSet.Empty();
 	StringSet.Empty();
@@ -674,7 +691,8 @@ void FDlgTestSetPrimitive::GenerateRandomData(const FDlgIOTesterOptions& InOptio
 	const int32 Num = FMath::RandHelper(10) + 2;
 	for (int32 i = 0; i < Num; ++i)
 	{
-		IntSet.Add(FMath::Rand());
+		Int32Set.Add(FMath::Rand());
+		Int64Set.Add(FDlgTestHelper::RandomInt64());
 		if (Options.bSupportsPureEnumContainer)
 		{
 			EnumSet.Add(static_cast<EDlgTestEnum>(FMath::RandHelper(static_cast<int32>(EDlgTestEnum::ETE_NumOf))));
@@ -701,24 +719,23 @@ bool FDlgTestSetPrimitive::IsEqual(const Self& Other, FString& OutError) const
 	}
 
 	PropertyName = TEXT("Num1_Set");
-	bIsEqual &= FDlgTestHelper::IsSetEqual<int32>(Num1_Set, Other.Num1_Set, PropertyName, OutError,
-		[](const int32& Value) -> FString { return FString::FromInt(Value); });
+	bIsEqual &= FDlgTestHelper::IsSetEqual<int32>(Num1_Set, Other.Num1_Set, PropertyName, OutError, FDlgTestHelper::Int32ToString);
 
-	PropertyName = TEXT("IntSet");
-	bIsEqual &= FDlgTestHelper::IsSetEqual<int32>(IntSet, Other.IntSet, PropertyName, OutError,
-		[](const int32& Value) -> FString { return FString::FromInt(Value); });
+	PropertyName = TEXT("Int32Set");
+	bIsEqual &= FDlgTestHelper::IsSetEqual<int32>(Int32Set, Other.Int32Set, PropertyName, OutError, FDlgTestHelper::Int32ToString);
+
+	PropertyName = TEXT("Int64Set");
+	bIsEqual &= FDlgTestHelper::IsSetEqual<int64>(Int64Set, Other.Int64Set, PropertyName, OutError, FDlgTestHelper::Int64ToString);
 
 	PropertyName = TEXT("EnumSet");
 	bIsEqual &= FDlgTestHelper::IsSetEqual<EDlgTestEnum>(EnumSet, Other.EnumSet, PropertyName, OutError,
 		[](const EDlgTestEnum& Value) -> FString { return FString::FromInt(static_cast<int32>(Value)); });
 
 	PropertyName = TEXT("NameSet");
-	bIsEqual &= FDlgTestHelper::IsSetEqual<FName>(NameSet, Other.NameSet, PropertyName, OutError,
-		[](const FName& Value) -> FString { return Value.ToString(); });
+	bIsEqual &= FDlgTestHelper::IsSetEqual<FName>(NameSet, Other.NameSet, PropertyName, OutError, FDlgTestHelper::NameToString);
 
 	PropertyName = TEXT("StringSet");
-	bIsEqual &= FDlgTestHelper::IsSetEqual<FString>(StringSet, Other.StringSet, PropertyName, OutError,
-		[](const FString& Value) -> FString { return Value; });
+	bIsEqual &= FDlgTestHelper::IsSetEqual<FString>(StringSet, Other.StringSet, PropertyName, OutError, FDlgTestHelper::StringToString);
 
 	if (bIsEqual)
 	{
@@ -781,15 +798,16 @@ void FDlgTestMapPrimitive::GenerateRandomData(const FDlgIOTesterOptions& InOptio
 {
 	Options = InOptions;
 	EmptyMap.Empty();
-	IntToIntMap.Empty();
-	IntToStringMap.Empty();
-	IntToNameMap.Empty();
-	StringToIntMap.Empty();
+	Int32ToInt32Map.Empty();
+	Int64ToInt64Map.Empty();
+	Int32ToStringMap.Empty();
+	Int32ToNameMap.Empty();
+	StringToInt32Map.Empty();
 	StringToStringMap.Empty();
-	NameToIntMap.Empty();
+	NameToInt32Map.Empty();
 	NameToNameMap.Empty();
 	StringToFloatMap.Empty();
-	IntToFloatMap.Empty();
+	Int32ToFloatMap.Empty();
 	NameToColorMap.Empty();
 	ObjectConstantNullMap.Empty();
 	ObjectFrequentsNullsMap.Empty();
@@ -802,16 +820,17 @@ void FDlgTestMapPrimitive::GenerateRandomData(const FDlgIOTesterOptions& InOptio
 	const int32 Num = FMath::RandHelper(10) + 2;
 	for (int32 i = 0; i < Num; ++i)
 	{
-		IntToIntMap.Add(FMath::Rand(), FMath::Rand());
-		IntToStringMap.Add(FMath::Rand(), FString::SanitizeFloat(FMath::SRand()));
-		IntToNameMap.Add(FMath::Rand(), FName(*FString::SanitizeFloat(FMath::SRand())));
+		Int32ToInt32Map.Add(FMath::Rand(), FMath::Rand());
+		Int64ToInt64Map.Add(FDlgTestHelper::RandomInt64(), FDlgTestHelper::RandomInt64());
+		Int32ToStringMap.Add(FMath::Rand(), FString::SanitizeFloat(FMath::SRand()));
+		Int32ToNameMap.Add(FMath::Rand(), FName(*FString::SanitizeFloat(FMath::SRand())));
 
-		StringToIntMap.Add(FString::FromInt(FMath::Rand()), FMath::Rand());
+		StringToInt32Map.Add(FString::FromInt(FMath::Rand()), FMath::Rand());
 		StringToStringMap.Add(FString::FromInt(FMath::Rand()), FString::FromInt(FMath::Rand()));
-		NameToIntMap.Add(FName(*FString::FromInt(FMath::Rand())), FMath::Rand());
+		NameToInt32Map.Add(FName(*FString::FromInt(FMath::Rand())), FMath::Rand());
 		NameToNameMap.Add(FName(*FString::FromInt(FMath::Rand())), FName(*FString::FromInt(FMath::Rand())));
 		StringToFloatMap.Add(FString::FromInt(FMath::Rand()), FMath::SRand());
-		IntToFloatMap.Add(FMath::Rand(), FMath::SRand());
+		Int32ToFloatMap.Add(FMath::Rand(), FMath::SRand());
 
 		ObjectConstantNullMap.Add(FString::FromInt(FMath::Rand()), nullptr);
 
@@ -858,7 +877,7 @@ void FDlgTestMapPrimitive::GenerateRandomData(const FDlgIOTesterOptions& InOptio
 
 void FDlgTestMapPrimitive::CheckInvariants() const
 {
-	FDlgTestHelper::CheckMapStringKeyInvariants(StringToIntMap);
+	FDlgTestHelper::CheckMapStringKeyInvariants(StringToInt32Map);
 	FDlgTestHelper::CheckMapStringKeyInvariants(StringToStringMap);
 	FDlgTestHelper::CheckMapStringKeyInvariants(StringToFloatMap);
 	FDlgTestHelper::CheckMapStringKeyInvariants(ObjectConstantNullMap);
@@ -881,29 +900,33 @@ bool FDlgTestMapPrimitive::IsEqual(const Self& Other, FString& OutError) const
 		return false;
 	}
 
-	PropertyName = TEXT("IntToIntMap");
-	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<int32, int32>(IntToIntMap, Other.IntToIntMap, PropertyName, OutError,
-		FDlgTestHelper::IntToString, FDlgTestHelper::IntToString);
+	PropertyName = TEXT("Int32ToInt32Map");
+	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<int32, int32>(Int32ToInt32Map, Other.Int32ToInt32Map, PropertyName, OutError,
+		FDlgTestHelper::Int32ToString, FDlgTestHelper::Int32ToString);
 
-	PropertyName = TEXT("IntToStringMap");
-	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<int32, FString>(IntToStringMap, Other.IntToStringMap, PropertyName, OutError,
-		FDlgTestHelper::IntToString, FDlgTestHelper::StringToString);
+	PropertyName = TEXT("Int64ToInt64Map");
+	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<int64, int64>(Int64ToInt64Map, Other.Int64ToInt64Map, PropertyName, OutError,
+		FDlgTestHelper::Int64ToString, FDlgTestHelper::Int64ToString);
 
-	PropertyName = TEXT("IntToNameMap");
-	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<int32, FName>(IntToNameMap, Other.IntToNameMap, PropertyName, OutError,
-		FDlgTestHelper::IntToString, FDlgTestHelper::NameToString);
+	PropertyName = TEXT("Int32ToStringMap");
+	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<int32, FString>(Int32ToStringMap, Other.Int32ToStringMap, PropertyName, OutError,
+		FDlgTestHelper::Int32ToString, FDlgTestHelper::StringToString);
 
-	PropertyName = TEXT("NameToIntMap");
-	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<FName, int32>(NameToIntMap, Other.NameToIntMap, PropertyName, OutError,
-		FDlgTestHelper::NameToString, FDlgTestHelper::IntToString);
+	PropertyName = TEXT("Int32ToNameMap");
+	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<int32, FName>(Int32ToNameMap, Other.Int32ToNameMap, PropertyName, OutError,
+		FDlgTestHelper::Int32ToString, FDlgTestHelper::NameToString);
+
+	PropertyName = TEXT("NameToInt32Map");
+	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<FName, int32>(NameToInt32Map, Other.NameToInt32Map, PropertyName, OutError,
+		FDlgTestHelper::NameToString, FDlgTestHelper::Int32ToString);
 
 	PropertyName = TEXT("NameToNameMap");
 	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<FName, FName>(NameToNameMap, Other.NameToNameMap, PropertyName, OutError,
 		FDlgTestHelper::NameToString, FDlgTestHelper::NameToString);
 
-	PropertyName = TEXT("StringToIntMap");
-	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<FString, int32>(StringToIntMap, Other.StringToIntMap, PropertyName, OutError,
-		FDlgTestHelper::StringToString, FDlgTestHelper::IntToString);
+	PropertyName = TEXT("StringToInt32Map");
+	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<FString, int32>(StringToInt32Map, Other.StringToInt32Map, PropertyName, OutError,
+		FDlgTestHelper::StringToString, FDlgTestHelper::Int32ToString);
 
 	PropertyName = TEXT("StringToStringMap");
 	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<FString, FString>(StringToStringMap, Other.StringToStringMap, PropertyName, OutError,
@@ -914,8 +937,8 @@ bool FDlgTestMapPrimitive::IsEqual(const Self& Other, FString& OutError) const
 		FDlgTestHelper::StringToString, FDlgTestHelper::FloatToString);
 
 	PropertyName = TEXT("IntToFloatMap");
-	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<int32, float>(IntToFloatMap, Other.IntToFloatMap, PropertyName, OutError,
-		FDlgTestHelper::IntToString, FDlgTestHelper::FloatToString);
+	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<int32, float>(Int32ToFloatMap, Other.Int32ToFloatMap, PropertyName, OutError,
+		FDlgTestHelper::Int32ToString, FDlgTestHelper::FloatToString);
 
 	PropertyName = TEXT("NameToColorMap");
 	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<FName, FColor>(NameToColorMap, Other.NameToColorMap, PropertyName, OutError,
@@ -946,7 +969,7 @@ bool FDlgTestMapPrimitive::IsEqual(const Self& Other, FString& OutError) const
 void FDlgTestMapComplex::GenerateRandomData(const FDlgIOTesterOptions& InOptions)
 {
 	Options = InOptions;
-	IntToStructPrimitiveMap.Empty();
+	Int32ToStructPrimitiveMap.Empty();
 	StructPrimitiveToIntMap.Empty();
 	NameToStructPrimitiveMap.Empty();
 	NameToStructOfMapPrimitives.Empty();
@@ -962,7 +985,7 @@ void FDlgTestMapComplex::GenerateRandomData(const FDlgIOTesterOptions& InOptions
 		FDlgTestStructPrimitives StructPrimitives;
 		StructPrimitives.GenerateRandomData(Options);
 
-		IntToStructPrimitiveMap.Add(FMath::Rand(), StructPrimitives);
+		Int32ToStructPrimitiveMap.Add(FMath::Rand(), StructPrimitives);
 		NameToStructPrimitiveMap.Add(FName(*StringKey), StructPrimitives);
 		StructPrimitiveToIntMap.Add(StructPrimitives, FMath::Rand());
 
@@ -1019,9 +1042,9 @@ bool FDlgTestMapComplex::IsEqual(const Self& Other, FString& OutError) const
 		return TEXT("FDlgTestSetComplex");
 	};
 
-	PropertyName = TEXT("IntToStructPrimitiveMap");
-	bIsEqual &= FDlgTestHelper::IsComplexMapValueEqual<int32, FDlgTestStructPrimitives>(IntToStructPrimitiveMap, Other.IntToStructPrimitiveMap, PropertyName, OutError,
-		FDlgTestHelper::IntToString, StructPrimitiveToString);
+	PropertyName = TEXT("Int32ToStructPrimitiveMap");
+	bIsEqual &= FDlgTestHelper::IsComplexMapValueEqual<int32, FDlgTestStructPrimitives>(Int32ToStructPrimitiveMap, Other.Int32ToStructPrimitiveMap, PropertyName, OutError,
+		FDlgTestHelper::Int32ToString, StructPrimitiveToString);
 
 	PropertyName = TEXT("NameToStructPrimitiveMap");
 	bIsEqual &= FDlgTestHelper::IsComplexMapValueEqual<FName, FDlgTestStructPrimitives>(NameToStructPrimitiveMap, Other.NameToStructPrimitiveMap, PropertyName, OutError,
@@ -1029,7 +1052,7 @@ bool FDlgTestMapComplex::IsEqual(const Self& Other, FString& OutError) const
 
 	PropertyName = TEXT("StructPrimitiveToIntMap");
 	bIsEqual &= FDlgTestHelper::IsPrimitiveMapEqual<FDlgTestStructPrimitives, int32>(StructPrimitiveToIntMap, Other.StructPrimitiveToIntMap, PropertyName, OutError,
-		StructPrimitiveToString, FDlgTestHelper::IntToString);
+		StructPrimitiveToString, FDlgTestHelper::Int32ToString);
 
 	PropertyName = TEXT("NameToStructOfMapPrimitives");
 	bIsEqual &= FDlgTestHelper::IsComplexMapValueEqual<FName, FDlgTestMapPrimitive>(NameToStructOfMapPrimitives, Other.NameToStructOfMapPrimitives, PropertyName, OutError,

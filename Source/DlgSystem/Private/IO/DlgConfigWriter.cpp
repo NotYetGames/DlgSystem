@@ -169,6 +169,10 @@ bool FDlgConfigWriter::WritePrimitiveElementToString(const UProperty* Prop,
 	{
 		return true;
 	}
+	if (WritePrimitiveElementToStringTemplated<UInt64Property, int64>(Prop, Object, bInContainer, IntToString, PreS, PostS, Target))
+	{
+		return true;
+	}
 	if (WritePrimitiveElementToStringTemplated<UFloatProperty, float>(Prop, Object, bInContainer, FloatToString, PreS, PostS, Target))
 	{
 		return true;
@@ -221,6 +225,10 @@ bool FDlgConfigWriter::WritePrimitiveArrayToString(const UProperty* Property,
 		return true;
 	}
 	if (WritePrimitiveArrayToStringTemplated<UIntProperty, int32>(ArrayProp, Object, IntToString, PreString, PostString, Target))
+	{
+		return true;
+	}
+	if (WritePrimitiveArrayToStringTemplated<UInt64Property, int64>(ArrayProp, Object, IntToString, PreString, PostString, Target))
 	{
 		return true;
 	}
@@ -553,6 +561,7 @@ bool FDlgConfigWriter::IsPrimitive(const UProperty* Property)
 {
 	return Cast<UBoolProperty>(Property) != nullptr ||
 		   Cast<UIntProperty>(Property) != nullptr ||
+		   Cast<UInt64Property>(Property) != nullptr ||
 		   Cast<UFloatProperty>(Property) != nullptr ||
 		   Cast<UStrProperty>(Property) != nullptr ||
 		   Cast<UNameProperty>(Property) != nullptr ||

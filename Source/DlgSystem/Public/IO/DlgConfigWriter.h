@@ -264,15 +264,15 @@ private:
 	const FString ComplexNamePrefix;
 	const bool bDontWriteEmptyContainer;
 
-	// Conversion to strng functions
+	// Conversion to string functions
 	const std::function<FString(const bool&)> BoolToString = [](const bool& bBool) -> FString
 	{
 		return bBool ? "True" : "False";
 	};
 
-	const std::function<FString(const int32&)> IntToString = [](const int32& IntVal) -> FString
+	const std::function<FString(const int64&)> IntToString = [](const int64& IntVal) -> FString
 	{
-		return FString::FromInt(IntVal);
+		return FString::Printf(TEXT("%lld"), IntVal);
 	};
 
 	const std::function<FString(const float&)> FloatToString = [](const float& FloatVal) -> FString

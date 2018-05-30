@@ -77,7 +77,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 				// NOTE, because JSON only supports floats we do not use the FJsonValueNumber for map keys because integers
 				// are displayed as floats. For example '42' is displayed as '42.0'
 				// Instead we use it as a string, this should be similar as the parser can parse an int from string
-				return MakeShareable(new FJsonValueString(FString::FromInt(NumericProperty->GetSignedIntPropertyValue(ValuePtr))));
+				return MakeShareable(new FJsonValueString(FString::Printf(TEXT("%lld"), NumericProperty->GetSignedIntPropertyValue(ValuePtr))));
 			}
 			else
 			{
