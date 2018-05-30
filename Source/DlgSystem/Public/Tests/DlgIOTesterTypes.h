@@ -187,7 +187,8 @@ public:
 	friend uint32 GetTypeHash(const Self& This)
 	{
 		// NOTE not floats in the hash, these should be enough
-		uint32 KeyHash = GetTypeHash(This.Integer);
+		uint32 KeyHash = GetTypeHash(This.Integer32);
+		KeyHash = HashCombine(KeyHash, GetTypeHash(This.Integer64));
 		KeyHash = HashCombine(KeyHash, GetTypeHash(This.String));
 		KeyHash = HashCombine(KeyHash, GetTypeHash(This.Name));
 		KeyHash = HashCombine(KeyHash, GetTypeHash(This.bBoolean));
@@ -204,8 +205,8 @@ public:
 
 	FString ToString() const
 	{
-		return FString::Printf(TEXT("bBoolean=%d, Integer=%d, Float=%f, Enum=%d, Name=%s, String=%s, Text=%s, Color=%s, LinearColor=%s, DateTime=%s"),
-			bBoolean, Integer, Float, static_cast<int32>(Enum), *Name.ToString(), *String, *Text.ToString(), *Color.ToString(), *LinearColor.ToString(), *DateTime.ToString());
+		return FString::Printf(TEXT("bBoolean=%d, Integer32=%d, Integer64=%lld, Float=%f, Enum=%d, Name=%s, String=%s, Text=%s, Color=%s, LinearColor=%s, DateTime=%s"),
+			bBoolean, Integer32, Integer64, Float, static_cast<int32>(Enum), *Name.ToString(), *String, *Text.ToString(), *Color.ToString(), *LinearColor.ToString(), *DateTime.ToString());
 	}
 
 public:
@@ -213,7 +214,10 @@ public:
 	FDlgIOTesterOptions Options;
 
 	UPROPERTY()
-	int32 Integer;
+	int32 Integer32;
+
+	UPROPERTY()
+	int64 Integer64;
 
 	UPROPERTY()
 	bool bBoolean;
@@ -344,7 +348,10 @@ public:
 	TArray<int32> Num1_Array;
 
 	UPROPERTY()
-	TArray<int32> IntArray;
+	TArray<int32> Int32Array;
+
+	UPROPERTY()
+	TArray<int64> Int64Array;
 
 	UPROPERTY()
 	TArray<bool> BoolArray;
@@ -429,7 +436,10 @@ public:
 	TSet<int32> Num1_Set;
 
 	UPROPERTY()
-	TSet<int32> IntSet;
+	TSet<int32> Int32Set;
+
+	UPROPERTY()
+	TSet<int64> Int64Set;
 
 	UPROPERTY()
 	TSet<EDlgTestEnum> EnumSet;
@@ -483,7 +493,7 @@ public:
 	}
 	FString ToString() const
 	{
-		return FString::Printf(TEXT("IntToIntMap.Num()=%d, IntToStringMap.Num()=%d"),  IntToIntMap.Num(), IntToStringMap.Num());
+		return FString::Printf(TEXT("IntToIntMap.Num()=%d, IntToStringMap.Num()=%d"),  Int32ToInt32Map.Num(), Int32ToStringMap.Num());
 	}
 
 public:
@@ -494,22 +504,25 @@ public:
 	TMap<int32, int32> EmptyMap;
 
 	UPROPERTY()
-	TMap<int32, int32> IntToIntMap;
+	TMap<int32, int32> Int32ToInt32Map;
 
 	UPROPERTY()
-	TMap<int32, FString> IntToStringMap;
+	TMap<int64, int64> Int64ToInt64Map;
 
 	UPROPERTY()
-	TMap<int32, FName> IntToNameMap;
+	TMap<int32, FString> Int32ToStringMap;
 
 	UPROPERTY()
-	TMap<FString, int32> StringToIntMap;
+	TMap<int32, FName> Int32ToNameMap;
+
+	UPROPERTY()
+	TMap<FString, int32> StringToInt32Map;
 
 	UPROPERTY()
 	TMap<FString, FString> StringToStringMap;
 
 	UPROPERTY()
-	TMap<FName, int32> NameToIntMap;
+	TMap<FName, int32> NameToInt32Map;
 
 	UPROPERTY()
 	TMap<FName, FName> NameToNameMap;
@@ -518,7 +531,7 @@ public:
 	TMap<FString, float> StringToFloatMap;
 
 	UPROPERTY()
-	TMap<int32, float> IntToFloatMap;
+	TMap<int32, float> Int32ToFloatMap;
 
 	UPROPERTY()
 	TMap<FName, FColor> NameToColorMap;
@@ -554,7 +567,7 @@ public:
 	FDlgIOTesterOptions Options;
 
 	UPROPERTY()
-	TMap<int32, FDlgTestStructPrimitives> IntToStructPrimitiveMap;
+	TMap<int32, FDlgTestStructPrimitives> Int32ToStructPrimitiveMap;
 
 	UPROPERTY()
 	TMap<FName, FDlgTestStructPrimitives> NameToStructPrimitiveMap;

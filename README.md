@@ -14,7 +14,7 @@ Branch Unreal version: `4.19`
     - Search window
     - Dialogue Browser to get a good overview of all the dialogues
     - Customized blueprint nodes to handle certain events and conditions in Blueprint easily
-    - Settings panel in Editor Preferences to modify the layout
+    - Settings panel in Project Settings to modify the layout
     - Option to import from and export to plain text formats (e.g. json)
     - Real time display/edit functionality of the Dialogue runtime data.
 

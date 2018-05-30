@@ -2,9 +2,14 @@
 #include "DlgTesterHelper.h"
 
 
-std::function<FString(const int32&)> FDlgTestHelper::IntToString = [](const int32& Value) -> FString
+std::function<FString(const int32&)> FDlgTestHelper::Int32ToString = [](const int32& Value) -> FString
 {
 	return FString::FromInt(Value);
+};
+
+std::function<FString(const int64&)> FDlgTestHelper::Int64ToString = [](const int64& Value) -> FString
+{
+	return FString::Printf(TEXT("%lld"), Value);
 };
 
 

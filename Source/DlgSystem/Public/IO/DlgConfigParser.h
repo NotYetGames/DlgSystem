@@ -53,7 +53,7 @@ public:
 
 	bool IsValidFile() const override
 	{
-		return HasValidWord(); 
+		return HasValidWord();
 	}
 
 	void ReadAllProperty(const UStruct* ReferenceClass, void* TargetObject, UObject* DefaultObjectOuter = nullptr) override;
@@ -183,7 +183,7 @@ private:
 
 	/** Tries to read the actual config value as a primitive property (all supported primitive is checked) */
 	bool TryToReadPrimitiveProperty(void* Target, UProperty* PropertyBase);
-	
+
 	bool TryToReadEnum(void* TargetObject, UProperty* PropertyBase);
 
 	/** Return value shows if it was read properly or not */
@@ -231,7 +231,8 @@ private:
 
 	bool GetAsBool() const;
 	float GetAsFloat() const;
-	int32 GetAsInt() const;
+	int32 GetAsInt32() const;
+	int64 GetAsInt64() const;
 	FName GetAsName() const;
 	FString GetAsString() const;
 	FText GetAsText() const;

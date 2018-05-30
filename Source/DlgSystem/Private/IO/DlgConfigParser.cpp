@@ -147,7 +147,7 @@ bool FDlgConfigParser::ReadProperty(const UStruct* ReferenceClass, void* TargetO
 	}
 
 	// UObject is in the format:
-	// - not nullptr - UObjectType PropertyName 
+	// - not nullptr - UObjectType PropertyName
 	// - nullptr - PropertyName ""
 	if (bHasNullptr)
 	{
@@ -468,7 +468,11 @@ bool FDlgConfigParser::TryToReadPrimitiveProperty(void* TargetObject, UProperty*
 	{
 		return true;
 	}
-	if (ReadPrimitiveProperty<int32, UIntProperty>(TargetObject, PropertyBase, std::bind(&FDlgConfigParser::GetAsInt, this), "int32", false))
+	if (ReadPrimitiveProperty<int32, UIntProperty>(TargetObject, PropertyBase, std::bind(&FDlgConfigParser::GetAsInt32, this), "int32", false))
+	{
+		return true;
+	}
+	if (ReadPrimitiveProperty<int64, UInt64Property>(TargetObject, PropertyBase, std::bind(&FDlgConfigParser::GetAsInt64, this), "int64", false))
 	{
 		return true;
 	}
@@ -551,12 +555,13 @@ bool FDlgConfigParser::ReadSet(void* TargetObject, USetProperty& Property, UObje
 		const int32 Index = Helper.AddDefaultValue_Invalid_NeedsRehash();
 		bool bDone = false;
 		uint8* ElementPtr = Helper.GetElementPtr(Index);
-		if (Cast<UBoolProperty>(Helper.ElementProp)) { *(bool*)ElementPtr = GetAsBool();		bDone = true; }
-		else if (Cast<UFloatProperty>(Helper.ElementProp)) { *(float*)ElementPtr = GetAsFloat();		bDone = true; }
-		else if (Cast<UIntProperty>(Helper.ElementProp)) { *(int32*)ElementPtr = GetAsInt();		bDone = true; }
-		else if (Cast<UNameProperty>(Helper.ElementProp)) { *(FName*)ElementPtr = GetAsName();		bDone = true; }
-		else if (Cast<UStrProperty>(Helper.ElementProp)) { *(FString*)ElementPtr = GetAsString();	bDone = true; }
-		else if (Cast<UTextProperty>(Helper.ElementProp)) { *(FText*)ElementPtr = GetAsText();		bDone = true; }
+		if (Cast<UBoolProperty>(Helper.ElementProp)) 		{ *(bool*)ElementPtr = GetAsBool();			bDone = true; }
+		else if (Cast<UFloatProperty>(Helper.ElementProp)) 	{ *(float*)ElementPtr = GetAsFloat();		bDone = true; }
+		else if (Cast<UIntProperty>(Helper.ElementProp)) 	{ *(int32*)ElementPtr = GetAsInt32();		bDone = true; }
+		else if (Cast<UInt64Property>(Helper.ElementProp)) 	{ *(int64*)ElementPtr = GetAsInt64();		bDone = true; }
+		else if (Cast<UNameProperty>(Helper.ElementProp)) 	{ *(FName*)ElementPtr = GetAsName();		bDone = true; }
+		else if (Cast<UStrProperty>(Helper.ElementProp)) 	{ *(FString*)ElementPtr = GetAsString();	bDone = true; }
+		else if (Cast<UTextProperty>(Helper.ElementProp)) 	{ *(FText*)ElementPtr = GetAsText();		bDone = true; }
 		// else if (Cast<UByteProperty>(Helper.ElementProp))	{ *(uint8*)ElementPtr	= OnGetAsEnum();	bDone = true; } // would not work, check enum above
 
 		if (!bDone)
@@ -593,13 +598,14 @@ bool FDlgConfigParser::ReadMap(void* TargetObject, UMapProperty& Property, UObje
 		{
 			if (Cast<UBoolProperty>(Props[i]))			{ *(bool*)Ptrs[i]	 = GetAsBool();		bDone = true; }
 			else if (Cast<UFloatProperty>(Props[i]))	{ *(float*)Ptrs[i]	 = GetAsFloat();	bDone = true; }
-			else if (Cast<UIntProperty>(Props[i]))		{ *(int32*)Ptrs[i]	 = GetAsInt();		bDone = true; }
+			else if (Cast<UIntProperty>(Props[i]))		{ *(int32*)Ptrs[i]	 = GetAsInt32();	bDone = true; }
+			else if (Cast<UInt64Property>(Props[i]))	{ *(int64*)Ptrs[i]	 = GetAsInt64();	bDone = true; }
 			else if (Cast<UNameProperty>(Props[i]))		{ *(FName*)Ptrs[i]	 = GetAsName();		bDone = true; }
 			else if (Cast<UStrProperty>(Props[i]))		{ *(FString*)Ptrs[i] = GetAsString();	bDone = true; }
 			else if (Cast<UTextProperty>(Props[i]))		{ *(FText*)Ptrs[i]   = GetAsText();		bDone = true; }
 			else if (i == 1 && bHasNullptr)				{ bDone = true; } // Value is nullptr, ignore
 			// else if (Cast<UByteProperty>(Props[i]))		{ *(uint8*)Ptrs[i]	 = OnGetAsEnum();	bDone = true; } // would not work, check enum above
-			
+
 			UStructProperty* StructVal = Cast<UStructProperty>(Props[i]);
 			if (StructVal != nullptr)
 			{
@@ -706,7 +712,7 @@ float FDlgConfigParser::GetAsFloat() const
 	return Value;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int32 FDlgConfigParser::GetAsInt() const
+int32 FDlgConfigParser::GetAsInt32() const
 {
 	int32 Value = 0;
 	const FString IntString = String.Mid(From, Len);
@@ -716,6 +722,19 @@ int32 FDlgConfigParser::GetAsInt() const
 		Value = FCString::Atoi(*IntString);
 	return Value;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int64 FDlgConfigParser::GetAsInt64() const
+{
+	int64 Value = 0;
+	const FString IntString = String.Mid(From, Len);
+	if (IntString.Len() == 0 || (!IntString.IsNumeric()))
+		OnInvalidValue("int64");
+	else
+		Value = FCString::Atoi64(*IntString);
+	return Value;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 FName FDlgConfigParser::GetAsName() const
 {
@@ -726,6 +745,7 @@ FName FDlgConfigParser::GetAsName() const
 		Value = FName(*String.Mid(From, Len));
 	return Value;
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 FString FDlgConfigParser::GetAsString() const
 {
@@ -734,6 +754,7 @@ FString FDlgConfigParser::GetAsString() const
 
 	return "";
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 FText FDlgConfigParser::GetAsText() const
 {

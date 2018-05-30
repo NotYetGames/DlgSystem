@@ -265,6 +265,11 @@ public:
 struct FDlgTestHelper
 {
 public:
+	FORCEINLINE static int64 RandomInt64()
+	{
+		return static_cast<int64>(FMath::Rand()) << 32 | FMath::Rand();
+	}
+
 	static bool IsFloatEqual(const float A, const float B)
 	{
 		return FMath::IsNearlyEqual(A, B, KINDA_SMALL_NUMBER);
@@ -391,7 +396,8 @@ public:
 			});
 	}
 
-	static std::function<FString(const int32&)> IntToString;
+	static std::function<FString(const int32&)> Int32ToString;
+	static std::function<FString(const int64&)> Int64ToString;
 	static std::function<FString(const FName&)> NameToString;
 	static std::function<FString(const FString&)> StringToString;
 	static std::function<FString(const float&)> FloatToString;
