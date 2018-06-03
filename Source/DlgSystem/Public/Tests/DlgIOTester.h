@@ -38,25 +38,17 @@ bool FDlgIOTester::TestParser(const FDlgIOTesterOptions& Options, const FString 
 {
 	bool bAllSucceeded = true;
 
-	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestStructPrimitives>("Struct of Primitives", Options, NameWriterType, NameParserType)
-		&& bAllSucceeded;
+	bAllSucceeded &= TestStruct<ConfigWriterType, ConfigParserType, FDlgTestStructPrimitives>("Struct of Primitives", Options, NameWriterType, NameParserType);
+	bAllSucceeded &= TestStruct<ConfigWriterType, ConfigParserType, FDlgTestStructComplex>("Struct of Complex types", Options, NameWriterType, NameParserType);
 
-	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestArrayPrimitive>("Array of Primitives", Options, NameWriterType, NameParserType)
-		&& bAllSucceeded;
-	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestArrayComplex>("Array of Complex types", Options, NameWriterType, NameParserType)
-		&& bAllSucceeded;
+	bAllSucceeded &= TestStruct<ConfigWriterType, ConfigParserType, FDlgTestArrayPrimitive>("Array of Primitives", Options, NameWriterType, NameParserType);
+	bAllSucceeded &= TestStruct<ConfigWriterType, ConfigParserType, FDlgTestArrayComplex>("Array of Complex types", Options, NameWriterType, NameParserType);
 
-	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestSetPrimitive>("Set of Primitives", Options, NameWriterType, NameParserType)
-		&& bAllSucceeded;
+	bAllSucceeded &= TestStruct<ConfigWriterType, ConfigParserType, FDlgTestSetPrimitive>("Set of Primitives", Options, NameWriterType, NameParserType);
+	bAllSucceeded &= TestStruct<ConfigWriterType, ConfigParserType, FDlgTestSetComplex>("Set of Complex types", Options, NameWriterType, NameParserType);
 
-	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestSetComplex>("Set of Complex types", Options, NameWriterType, NameParserType)
-		&& bAllSucceeded;
-
-	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestMapPrimitive>("Map with Primitives", Options, NameWriterType, NameParserType)
-		&& bAllSucceeded;
-
-	bAllSucceeded = TestStruct<ConfigWriterType, ConfigParserType, FDlgTestMapComplex>("Map with Complex types", Options, NameWriterType, NameParserType)
-		&& bAllSucceeded;
+	bAllSucceeded &= TestStruct<ConfigWriterType, ConfigParserType, FDlgTestMapPrimitive>("Map with Primitives", Options, NameWriterType, NameParserType);
+	bAllSucceeded &= TestStruct<ConfigWriterType, ConfigParserType, FDlgTestMapComplex>("Map with Complex types", Options, NameWriterType, NameParserType);
 
 	return bAllSucceeded;
 }

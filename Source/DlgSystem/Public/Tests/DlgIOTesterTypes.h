@@ -170,6 +170,7 @@ public:
 	int32 IntegerGrandChildA_Of_ChildA;
 };
 
+// Struct of primitives
 USTRUCT()
 struct DLGSYSTEM_API FDlgTestStructPrimitives
 {
@@ -321,7 +322,45 @@ public:
 };
 
 
-// Arrays
+// Struct of Complex types
+USTRUCT()
+struct DLGSYSTEM_API FDlgTestStructComplex
+{
+	GENERATED_USTRUCT_BODY()
+	typedef FDlgTestStructComplex Self;
+public:
+	FDlgTestStructComplex() { SetToDefaults(); }
+	bool IsEqual(const Self& Other, FString& OutError) const;
+	bool operator==(const Self& Other) const
+	{
+		FString DiscardError;
+		return IsEqual(Other, DiscardError);
+	}
+	bool operator!=(const Self& Other) const { return !(*this == Other); }
+	void GenerateRandomData(const FDlgIOTesterOptions& InOptions);
+	void SetToDefaults();
+
+	FString ToString() const
+	{
+		return FString();
+	}
+
+public:
+	// Tester Options
+	FDlgIOTesterOptions Options;
+
+	UPROPERTY()
+	TArray<FDlgTestStructPrimitives> StructArrayPrimitives;
+
+	UPROPERTY()
+	TArray<UDlgTestObjectPrimitivesBase*> ArrayOfObjects;
+
+	UPROPERTY(meta = (DlgSaveOnlyReference))
+	TArray<UDlgTestObjectPrimitivesBase*> ArrayOfObjectsAsReference;
+};
+
+
+// Arrays simple
 USTRUCT()
 struct DLGSYSTEM_API FDlgTestArrayPrimitive
 {
@@ -373,6 +412,7 @@ public:
 	TArray<UDlgTestObjectPrimitivesBase*> ObjectArrayConstantNulls;
 };
 
+// Array complex
 USTRUCT()
 struct DLGSYSTEM_API FDlgTestArrayComplex
 {
@@ -409,7 +449,7 @@ public:
 };
 
 
-// Sets
+// Set primitive
 USTRUCT()
 struct DLGSYSTEM_API FDlgTestSetPrimitive
 {
@@ -451,6 +491,7 @@ public:
 	TSet<FString> StringSet;
 };
 
+// Set complex
 USTRUCT()
 struct DLGSYSTEM_API FDlgTestSetComplex
 {
@@ -475,7 +516,7 @@ public:
 };
 
 
-// Map
+// Map primitive
 USTRUCT()
 struct DLGSYSTEM_API FDlgTestMapPrimitive
 {
@@ -547,6 +588,7 @@ public:
 	TMap<FString, UDlgTestObjectPrimitivesBase*> ObjectPrimitivesAllMap;
 };
 
+// Map complex
 USTRUCT()
 struct DLGSYSTEM_API FDlgTestMapComplex
 {
