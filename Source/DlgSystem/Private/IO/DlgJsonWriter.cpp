@@ -273,6 +273,12 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 		// Because the UObjects are pointers, we must deference it. So instead of it being a void** we want it to be a void*
 		const UObject* ObjectPtr = ObjectProperty->GetObjectPropertyValue_InContainer(ValuePtr);
 
+		// Special case were we want just to save a reference to the object location
+		if (ObjectPtr != nullptr && CanSaveAsReference(ObjectProperty))
+		{
+			return MakeShareable(new FJsonValueString(ObjectPtr->GetPathName()));
+		}
+
 		// To find out if in nested containers the object is nullptr we must go a level up
 		const UObject* ContainerObjectPtr = ObjectProperty->GetObjectPropertyValue_InContainer(ContainerPtr);
 		if (ObjectPtr == nullptr || ContainerObjectPtr == nullptr)
@@ -297,23 +303,15 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 			return returnNullptr();
 		}
 
-		// Special case were we want just to save a reference to the object location
-		if (CanSaveAsReference(ObjectProperty))
-		{
-			return MakeShareable(new FJsonValueString(ObjectPtr->GetPathName()));
-		}
-		else
-		{
-			// Save as normal JSON Object
-			TSharedRef<FJsonObject> OutObject = MakeShareable(new FJsonObject());
-			AddIndexMetadata(OutObject);
+		// Save as normal JSON Object
+		TSharedRef<FJsonObject> OutObject = MakeShareable(new FJsonObject());
+		AddIndexMetadata(OutObject);
 
-			// Set the uproperties of the object
-			const UClass* ObjectClass = ObjectProperty->PropertyClass;
-			if (UStructToJsonObject(ObjectClass, ObjectPtr, OutObject))
-			{
-				return MakeShareable(new FJsonValueObject(OutObject));
-			}
+		// Set the uproperties of the object
+		const UClass* ObjectClass = ObjectProperty->PropertyClass;
+		if (UStructToJsonObject(ObjectClass, ObjectPtr, OutObject))
+		{
+			return MakeShareable(new FJsonValueObject(OutObject));
 		}
 
 		// Invalid

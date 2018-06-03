@@ -472,6 +472,72 @@ void FDlgTestStructPrimitives::SetToDefaults()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// FDlgTestStructPrimitives
+void FDlgTestStructComplex::GenerateRandomData(const FDlgIOTesterOptions& InOptions)
+{
+	Options = InOptions;
+	SetToDefaults();
+	const int32 Num = FMath::RandHelper(10) + 2;
+	static const TArray<UClass*> ObjectClassPool = {
+		UDlgTestObjectPrimitivesBase::StaticClass(), UDlgTestObjectPrimitives_ChildA::StaticClass(),
+		UDlgTestObjectPrimitives_ChildB::StaticClass(), UDlgTestObjectPrimitives_GrandChildA_Of_ChildA::StaticClass(), nullptr
+	};
+
+	for (int32 i = 0; i < Num; ++i)
+	{
+		// StructArrayPrimitives
+		FDlgTestStructPrimitives StructPrimitives;
+		StructPrimitives.GenerateRandomData(Options);
+		StructArrayPrimitives.Add(StructPrimitives);
+
+		// ArrayOfObjects
+		{
+			UClass* ChosenClass = ObjectClassPool[FMath::RandHelper(ObjectClassPool.Num())];
+			if (ChosenClass == nullptr)
+			{
+				ArrayOfObjects.Add(nullptr);
+			}
+			else
+			{
+				UDlgTestObjectPrimitivesBase* ObjectPrimitives = NewObject<UDlgTestObjectPrimitivesBase>((UObject*)GetTransientPackage(), ChosenClass);
+				ObjectPrimitives->GenerateRandomData(Options);
+				ArrayOfObjects.Add(ObjectPrimitives);
+			}
+		}
+	}
+}
+
+bool FDlgTestStructComplex::IsEqual(const Self& Other, FString& OutError) const
+{
+	FString PropertyName;
+	bool bIsEqual = true;
+	OutError += TEXT("FDlgTestStructComplex::IsEqual:\n");
+
+	PropertyName = TEXT("StructArrayPrimitives");
+	bIsEqual &= FDlgTestHelper::IsComplexArrayEqual<FDlgTestStructPrimitives>(StructArrayPrimitives, Other.StructArrayPrimitives, PropertyName, OutError);
+
+	PropertyName = TEXT("ArrayOfObjects");
+	bIsEqual &= FDlgTestHelper::IsComplexPointerArrayEqual<UDlgTestObjectPrimitivesBase>(ArrayOfObjects, Other.ArrayOfObjects, PropertyName, OutError);
+
+
+	// Clear error message
+	if (bIsEqual)
+	{
+		OutError.Empty();
+	}
+	return bIsEqual;
+}
+
+
+void FDlgTestStructComplex::SetToDefaults()
+{
+	StructArrayPrimitives = {};
+	ArrayOfObjects = {};
+	ArrayOfObjectsAsReference = {};
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgTestArrayPrimitive
 void FDlgTestArrayPrimitive::GenerateRandomData(const FDlgIOTesterOptions& InOptions)
 {
@@ -580,6 +646,7 @@ bool FDlgTestArrayPrimitive::IsEqual(const Self& Other, FString& OutError) const
 	return bIsEqual;
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgTestArrayStruct
 void FDlgTestArrayComplex::GenerateRandomData(const FDlgIOTesterOptions& InOptions)
@@ -591,7 +658,7 @@ void FDlgTestArrayComplex::GenerateRandomData(const FDlgIOTesterOptions& InOptio
 	ObjectArrayPrimitivesAll.Empty();
 
 	const int32 Num = FMath::RandHelper(20) + 3;
-	static TArray<UClass*> ObjectPrimitiveClassPool = {
+	static const TArray<UClass*> ObjectPrimitiveClassPool = {
 		UDlgTestObjectPrimitivesBase::StaticClass(), UDlgTestObjectPrimitives_ChildA::StaticClass(),
 		UDlgTestObjectPrimitives_ChildB::StaticClass(), UDlgTestObjectPrimitives_GrandChildA_Of_ChildA::StaticClass(), nullptr
 	};
