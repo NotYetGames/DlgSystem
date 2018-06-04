@@ -469,8 +469,15 @@ bool FDlgConfigWriter::WriteMapToString(const UProperty* Property,
 	{
 		// Both Key and Value are primitives
 		Target += PreString + MapProp->GetName() + " { ";
-		for (int32 i = 0; i < Helper.Num(); ++i)
+		// GetMaxIndex() instead of Num() - the container is not contiguous
+		// elements are in [0, GetMaxIndex[, some of them is invalid (Num() returns with the valid element num)
+		for (int32 i = 0; i < Helper.GetMaxIndex(); ++i)
 		{
+			if (!Helper.IsValidIndex(i))
+			{
+				continue;
+			}
+
 			WritePrimitiveElementToString(MapProp->KeyProp, Helper.GetPairPtr(i), true, "", " ", Target);
 			WritePrimitiveElementToString(MapProp->ValueProp, Helper.GetPairPtr(i), true, "", " ", Target);
 		}
@@ -481,8 +488,15 @@ bool FDlgConfigWriter::WriteMapToString(const UProperty* Property,
 		// Either Key or Value is not a primitive
 		Target += PreString + MapProp->GetName() + EOL;
 		Target += PreString + "{" + EOL;
-		for (int32 i = 0; i < Helper.Num(); ++i)
+		// GetMaxIndex() instead of Num() - the container is not contiguous
+		// elements are in [0, GetMaxIndex[, some of them is invalid (Num() returns with the valid element num)
+		for (int32 i = 0; i < Helper.GetMaxIndex(); ++i)
 		{
+			if (!Helper.IsValidIndex(i))
+			{
+				continue;
+			}
+
 			WritePropertyToString(MapProp->KeyProp, Helper.GetPairPtr(i), true, PreString + "\t", EOL, CanSaveAsReference(MapProp), Target);
 			WritePropertyToString(MapProp->ValueProp, Helper.GetPairPtr(i), true, PreString + "\t", EOL, CanSaveAsReference(MapProp), Target);
 		}
@@ -533,8 +547,14 @@ bool FDlgConfigWriter::WriteSetToString(const UProperty* Property,
 		}
 
 		// Set content
-		for (int32 i = 0; i < Helper.Num(); ++i)
+		// GetMaxIndex() instead of Num() - the container is not contiguous, elements are in [0, GetMaxIndex[, some of them is invalid (Num() returns with the valid element num)
+		for (int32 i = 0; i < Helper.GetMaxIndex(); ++i)
 		{
+			if (!Helper.IsValidIndex(i))
+			{
+				continue;
+			}
+
 			if (bLinePerItem)
 			{
 				WritePrimitiveElementToString(SetProp->ElementProp, Helper.GetElementPtr(i), true, EOL + SubPreString, "", Target);

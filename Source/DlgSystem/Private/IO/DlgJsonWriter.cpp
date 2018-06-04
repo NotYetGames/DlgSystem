@@ -157,8 +157,15 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 	{
 		TArray<TSharedPtr<FJsonValue>> Array;
 		FScriptSetHelper Helper(SetProperty, ValuePtr);
-		for (int32 Index = 0, Num = Helper.Num(); Index < Num; Index++)
+		// GetMaxIndex() instead of Num() - the container is not contiguous
+		// elements are in [0, GetMaxIndex[, some of them is invalid (Num() returns with the valid element num)
+		for (int32 Index = 0; Index < Helper.GetMaxIndex(); Index++)
 		{
+			if (!Helper.IsValidIndex(Index))
+			{
+				continue;
+			}
+
 			IndexInArray = Index;
 			TSharedPtr<FJsonValue> Elem = UPropertyToJsonValue(SetProperty->ElementProp, ContainerPtr, Helper.GetElementPtr(Index));
 			if (Elem.IsValid())
@@ -178,7 +185,10 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 		const TSharedRef<FJsonObject> OutObject = MakeShareable(new FJsonObject());
 
 		FScriptMapHelper Helper(MapProperty, ValuePtr);
-		for (int32 Index = 0, Num = Helper.Num(); Index < Num; Index++)
+
+		// GetMaxIndex() instead of Num() - the container is not contiguous
+		// elements are in [0, GetMaxIndex[, some of them is invalid (Num() returns with the valid element num)
+		for (int32 Index = 0; Index < Helper.GetMaxIndex(); Index++)
 		{
 			if (!Helper.IsValidIndex(Index))
 			{
