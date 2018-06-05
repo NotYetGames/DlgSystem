@@ -4,7 +4,48 @@
 #include "CoreMinimal.h"
 #include "Math/UnrealMathUtility.h"
 #include "Object.h"
+#include "UnrealType.h"
 #include <functional>
+
+
+// Const version of FScriptArrayHelper
+class FDlgConstScriptArrayHelper : public FScriptArrayHelper
+{
+	typedef FScriptArrayHelper Super;
+	typedef FDlgConstScriptArrayHelper Self;
+public:
+	FORCEINLINE FDlgConstScriptArrayHelper(const UArrayProperty* InProperty, const void *InArray)
+		: Super(InProperty, InArray) {}
+
+	FORCEINLINE const uint8* GetConstRawPtr(int32 Index = 0) const
+	{
+		return const_cast<Self*>(this)->GetRawPtr(Index);
+	}
+};
+
+
+// Const version of FScriptMapHelper
+class FDlgConstScriptMapHelper : public FScriptMapHelper
+{
+	typedef FScriptMapHelper Super;
+	typedef FDlgConstScriptMapHelper Self;
+public:
+
+	FORCEINLINE FDlgConstScriptMapHelper(const UMapProperty* InProperty, const void* InMap)
+		: Super(InProperty, InMap) {}
+
+
+	FORCEINLINE const uint8* GetConstKeyPtr(int32 Index) const
+	{
+		return const_cast<Self*>(this)->GetKeyPtr(Index);
+	}
+
+	FORCEINLINE const uint8* GetConstValuePtr(int32 Index) const
+	{
+		return const_cast<Self*>(this)->GetValuePtr(Index);
+	}
+};
+
 
 /**
  * Classes created because Function templates cannot be partially specialised. so we use a delegate class trick

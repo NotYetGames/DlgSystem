@@ -17,7 +17,9 @@ bool UDlgContextInternal::Initialize(UDlgDialogue* InDialogue, const TMap<FName,
 		if (ChildLink.TargetIndex != INDEX_NONE && ChildLink.Evaluate(this, {}))
 		{
 			if (EnterNode(ChildLink.TargetIndex, {}))
+			{
 				return true;
+			}
 		}
 	}
 
@@ -32,7 +34,6 @@ bool UDlgContextInternal::Initialize(UDlgDialogue* InDialogue, const TMap<FName,
 	Dialogue = InDialogue;
 	Participants = InParticipants;
 	VisitedNodeIndices = VisitedNodes;
-
 
 	UDlgNode* Node = GetNode(StartIndex);
 	if (!IsValid(Node))
@@ -78,8 +79,7 @@ bool UDlgContextInternal::EnterNode(int32 NodeIndex, TSet<const UDlgNode*> Nodes
 bool UDlgContextInternal::ChooseChild(int32 OptionIndex)
 {
 	check(Dialogue);
-	UDlgNode* Node = GetActiveNode();
-	if (Node != nullptr)
+	if (UDlgNode* Node = GetActiveNode())
 	{
 		return Node->OptionSelected(OptionIndex, this);
 	}
@@ -91,9 +91,7 @@ bool UDlgContextInternal::ChooseChild(int32 OptionIndex)
 bool UDlgContextInternal::IsNodeEnterable(int32 NodeIndex, TSet<const UDlgNode*> AlreadyVisitedNodes) const
 {
 	check(Dialogue);
-
-	const UDlgNode* Node = GetNode(NodeIndex);
-	if (Node != nullptr)
+	if (const UDlgNode* Node = GetNode(NodeIndex))
 	{
 		return Node->CheckNodeEnterConditions(this, AlreadyVisitedNodes);
 	}

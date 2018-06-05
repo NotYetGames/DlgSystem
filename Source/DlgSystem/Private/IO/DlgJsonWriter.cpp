@@ -136,11 +136,11 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 	if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
 	{
 		TArray<TSharedPtr<FJsonValue>> Array;
-		FScriptArrayHelper Helper(ArrayProperty, ValuePtr);
+		const FDlgConstScriptArrayHelper Helper(ArrayProperty, ValuePtr);
 		for (int32 Index = 0, Num = Helper.Num(); Index < Num; Index++)
 		{
 			IndexInArray = Index;
-			TSharedPtr<FJsonValue> Elem = UPropertyToJsonValue(ArrayProperty->Inner, ContainerPtr, Helper.GetRawPtr(Index));
+			TSharedPtr<FJsonValue> Elem = UPropertyToJsonValue(ArrayProperty->Inner, ContainerPtr, Helper.GetConstRawPtr(Index));
 			if (Elem.IsValid())
 			{
 				// add to the array
@@ -156,9 +156,10 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 	if (const USetProperty* SetProperty = Cast<USetProperty>(Property))
 	{
 		TArray<TSharedPtr<FJsonValue>> Array;
-		FScriptSetHelper Helper(SetProperty, ValuePtr);
+		const FScriptSetHelper Helper(SetProperty, ValuePtr);
+
 		// GetMaxIndex() instead of Num() - the container is not contiguous
-		// elements are in [0, GetMaxIndex[, some of them is invalid (Num() returns with the valid element num)
+		// elements are in [0, GetMaxIndex[, some of them are invalid (Num() returns with the valid element num)
 		for (int32 Index = 0; Index < Helper.GetMaxIndex(); Index++)
 		{
 			if (!Helper.IsValidIndex(Index))
@@ -183,11 +184,10 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 	if (const UMapProperty* MapProperty = Cast<UMapProperty>(Property))
 	{
 		const TSharedRef<FJsonObject> OutObject = MakeShareable(new FJsonObject());
-
-		FScriptMapHelper Helper(MapProperty, ValuePtr);
+		const FDlgConstScriptMapHelper Helper(MapProperty, ValuePtr);
 
 		// GetMaxIndex() instead of Num() - the container is not contiguous
-		// elements are in [0, GetMaxIndex[, some of them is invalid (Num() returns with the valid element num)
+		// elements are in [0, GetMaxIndex[, some of them are invalid (Num() returns with the valid element num)
 		for (int32 Index = 0; Index < Helper.GetMaxIndex(); Index++)
 		{
 			if (!Helper.IsValidIndex(Index))
@@ -197,11 +197,11 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 			IndexInArray = Index;
 
 			bIsPropertyMapKey = true;
-			const uint8* MapKeyPtr = Helper.GetKeyPtr(Index);
+			const uint8* MapKeyPtr = Helper.GetConstKeyPtr(Index);
 			const TSharedPtr<FJsonValue> KeyElement = UPropertyToJsonValue(Helper.GetKeyProperty(), ContainerPtr, MapKeyPtr);
 
 			bIsPropertyMapKey = false;
-			const uint8* MapValuePtr = Helper.GetValuePtr(Index);
+			const uint8* MapValuePtr = Helper.GetConstValuePtr(Index);
 			const TSharedPtr<FJsonValue> ValueElement = UPropertyToJsonValue(Helper.GetValueProperty(), ContainerPtr, MapValuePtr);
 
 			if (KeyElement.IsValid() && ValueElement.IsValid())
