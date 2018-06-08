@@ -28,7 +28,7 @@ public:
 	/** IDlgSystemModule implementation */
 	void RegisterConsoleCommands(AActor* InReferenceActor = nullptr) override;
 	void UnregisterConsoleCommands() override;
-	TSharedRef<SWidget> GetDialogueDataDisplayWindow(const TSharedRef<SDockTab>& InParentTab) override;
+	TSharedRef<SWidget> GetDialogueDataDisplayWindow() override;
 	void DisplayDialogueDataWindow() override;
 
 private:

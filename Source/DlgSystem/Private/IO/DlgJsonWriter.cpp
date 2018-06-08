@@ -451,7 +451,8 @@ bool FDlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, co
 	for (TFieldIterator<const UProperty> It(StructDefinition); It; ++It)
 	{
 		const UProperty* Property = *It;
-		check(Property);
+		if (!ensure(Property))
+			continue;
 
 		// Check to see if we should ignore this property
 		if (CheckFlags != 0 && !Property->HasAnyPropertyFlags(CheckFlags))
@@ -465,7 +466,7 @@ bool FDlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, co
 		}
 		if (CanSkipProperty(Property))
 		{
-			// Markes as skiped.
+			// Marke as skipped.
 			if (bLogVerbose)
 			{
 				UE_LOG(LogDlgJsonWriter, Verbose, TEXT("Property = `%s` Marked as skiped"), *Property->GetPathName());

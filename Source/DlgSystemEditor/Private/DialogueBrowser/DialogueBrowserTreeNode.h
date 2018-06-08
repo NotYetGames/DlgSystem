@@ -205,8 +205,7 @@ public:
 			CategoryType == Other.GetCategoryType() &&
 			DisplayText.EqualTo(Other.GetDisplayText()) &&
 			GetParentParticipantName() == Other.GetParentParticipantName() &&
-			GetParentVariableName() == Other.GetParentVariableName() &&
-			DisplayText.EqualTo(Other.GetDisplayText());
+			GetParentVariableName() == Other.GetParentVariableName();
 	}
 
 	bool operator==(const Self& Other)

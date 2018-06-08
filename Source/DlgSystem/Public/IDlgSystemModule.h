@@ -52,7 +52,7 @@ public:
 	virtual void UnregisterConsoleCommands() = 0;
 
 	/** Gets the debug Dialogue Data Display Window. */
-	virtual TSharedRef<SWidget> GetDialogueDataDisplayWindow(const TSharedRef<SDockTab>& InParentTab) = 0;
+	virtual TSharedRef<SWidget> GetDialogueDataDisplayWindow() = 0;
 
 	/** Display the debug Dialogue Data Window on the screen */
 	virtual void DisplayDialogueDataWindow() = 0;

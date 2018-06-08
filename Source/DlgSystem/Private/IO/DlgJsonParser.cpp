@@ -731,7 +731,9 @@ bool FDlgJsonParser::JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJso
 	for  (TFieldIterator<UProperty> PropIt(StructDefinition); PropIt; ++PropIt)
 	{
 		UProperty* Property = *PropIt;
-		check(Property);
+		if (!ensure(Property))
+			continue;
+
 		const FString PropertyName = Property->GetName();
 
 		// Check to see if we should ignore this property
