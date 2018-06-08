@@ -63,7 +63,7 @@ void FDlgSystemModule::StartupModule()
 				TSharedRef<SDockTab> DialogueDataDisplayTab = SNew(SDockTab)
 					.TabRole(ETabRole::NomadTab)
 					[
-						GetDialogueDataDisplayWindow(DialogueDataDisplayTab)
+						GetDialogueDataDisplayWindow()
 					];
 				return DialogueDataDisplayTab;
 			}))
@@ -111,7 +111,7 @@ void FDlgSystemModule::ShutdownModule()
 	UE_LOG(LogDlgSystem, Verbose, TEXT("Stopped DlgSystemModule"));
 }
 
-TSharedRef<SWidget> FDlgSystemModule::GetDialogueDataDisplayWindow(const TSharedRef<SDockTab>& InParentTab)
+TSharedRef<SWidget> FDlgSystemModule::GetDialogueDataDisplayWindow()
 {
 	TSharedPtr<SDlgDataDisplay> DialogueData = DialogueDataDisplayWidget.Pin();
 	if (!DialogueData.IsValid())

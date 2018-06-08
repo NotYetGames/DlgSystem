@@ -1,4 +1,4 @@
-DlgVersion 6
+DlgVersion 7
 DlgName "TestDialogue"
 DlgGuid {  A -743047120 B 1156639802 C 1124860857 D 1676713096 }
 Node_Speech StartNode
