@@ -32,7 +32,7 @@ Contribution, feedback and constructive criticism are appreciated and we would b
 Should it prove useful to you, the best way to say thanks is to mention us and our game to your own audience.
 
 Brought to you by Not Yet:
-* Discord: https://discord.gg/5gH5tWR
+* Discord: https://discord.notyet.eu
 * Website: [notyet.eu](http://www.notyet.eu)
 * Twitter: https://twitter.com/NotYetDevs
 * [Plugin Forum post](https://forums.unrealengine.com/community/community-content-tools-and-tutorials/1424923-open-source-dialogue-system-plugin)
