@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 
 using UnrealBuildTool;
+using System.IO;
 
 public class DlgSystemEditor : ModuleRules
 {
@@ -25,14 +26,14 @@ public class DlgSystemEditor : ModuleRules
 
 		PublicIncludePaths.AddRange(
 			new string[] {
-				"DlgSystemEditor/Public"
+				Path.Combine(ModuleDirectory, "Public")
 				// ... add public include paths required here ...
 			});
 
 
 		PrivateIncludePaths.AddRange(
 			new string[] {
-				"DlgSystemEditor/Private",
+				Path.Combine(ModuleDirectory, "Private")
 				// ... add other private include paths required here ...
 			});
 
