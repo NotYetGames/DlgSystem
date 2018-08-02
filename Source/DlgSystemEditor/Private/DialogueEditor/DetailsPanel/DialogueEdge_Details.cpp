@@ -80,6 +80,7 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 		.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
 		.OnTextCommitted(this, &Self::HandleTextCommitted)
 	)
+	->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities())
 	->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility))
 	->Update();
 

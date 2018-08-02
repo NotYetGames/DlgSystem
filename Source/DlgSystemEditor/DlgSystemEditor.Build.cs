@@ -58,6 +58,7 @@ public class DlgSystemEditor : ModuleRules
 				"Slate",
 				"EditorStyle",
 				"MessageLog",
+				"EditorWidgets",
 
 				// Accessing the menu
 				"WorkspaceMenuStructure",

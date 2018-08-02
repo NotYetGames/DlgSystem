@@ -39,6 +39,13 @@ public:
 		return this;
 	}
 
+	/** Set the optional utils */
+	Self* SetPropertyUtils(TSharedPtr<IPropertyUtilities> Utils)
+	{
+		PropertyUtils = Utils;
+		return this;
+	}
+
 	/** Update the full property row. */
 	void Update();
 
@@ -49,6 +56,9 @@ protected:
 protected:
 	/** The custom widget row this represents */
 	FDetailWidgetRow* DetailWidgetRow = nullptr;
+
+	/** Helpers class  */
+	TSharedPtr<IPropertyUtilities> PropertyUtils;
 
 	/** The Property handle of what this row represents */
 	TSharedPtr<IPropertyHandle> PropertyHandle;
