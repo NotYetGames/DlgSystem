@@ -19,11 +19,17 @@
 #include "DlgNode_End.h"
 #include "DlgManager.h"
 
+#define LOCTEXT_NAMESPACE "DlgDialogue"
+
 // Unique DlgDialogue Object version id, generated with random
 const FGuid FDlgDialogueObjectVersion::GUID(0x2B8E5105, 0x6F66348F, 0x2A8A0B25, 0x9047A071);
 // Register Dialogue custom version with Core
 FDevVersionRegistration GRegisterDlgDialogueObjectVersion(FDlgDialogueObjectVersion::GUID,
 														  FDlgDialogueObjectVersion::LatestVersion, TEXT("Dev-DlgDialogue"));
+
+
+const FText UDlgDialogue::EdgeTextFinish = LOCTEXT("edge_finish", "Finish");
+const FText UDlgDialogue::EdgeTextNext = LOCTEXT("edge_next", "Next");
 
 // Update dialogue up to the ConvertedNodesToUObject version
 void UpdateDialogueToVersion_ConvertedNodesToUObject(UDlgDialogue* Dialogue)
@@ -620,11 +626,11 @@ void UDlgDialogue::AutoFixGraph()
 			UDlgNode* NextNode = Nodes[NodeChildren[0].TargetIndex];
 			if (NextNode->IsA<UDlgNode_End>())
 			{
-				Node->GetMutableNodeChildAt(0)->Text = FText::FromString("Finish");
+				Node->GetMutableNodeChildAt(0)->Text = EdgeTextFinish;
 			}
 			else
 			{
-				Node->GetMutableNodeChildAt(0)->Text = FText::FromString("Next");
+				Node->GetMutableNodeChildAt(0)->Text = EdgeTextNext;
 			}
 		}
 	}
@@ -702,3 +708,5 @@ FString UDlgDialogue::GetTextFileExtension(EDlgDialogueTextFormat InTextFormat)
 
 // End own functions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#undef LOCTEXT_NAMESPACE

@@ -12,6 +12,8 @@ struct DLGSYSTEM_API FDlgSpeechSequenceEntry
 {
 	GENERATED_USTRUCT_BODY()
 
+	FDlgSpeechSequenceEntry();
+
 public:
 	/** The Participant Name (speaker) associated with this speech entry. */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DisplayName = "Participant Name"))
@@ -35,7 +37,7 @@ public:
 
 	/** Text that will appear when you want to continue down this edge to the next conversation. Usually "Next". */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
-	FText EdgeText = FText::FromString("Next");
+	FText EdgeText;
 };
 
 
