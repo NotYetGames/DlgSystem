@@ -131,7 +131,11 @@ public:
 	void SetDialogueEdgeTargetIndex(int32 InIndex) { DialogueEdge.TargetIndex = InIndex; }
 
 	/** Sets the DialogueEdge.Text */
-	void SetDialogueEdgeText(const FText& InText) { DialogueEdge.Text = InText; }
+	void SetDialogueEdgeText(const FText& InText)
+	{
+		DialogueEdge.Text = InText;
+		DialogueEdge.RebuildTextArgumentsArray();
+	}
 
 	/** Tells us if this edge has any conditions set. */
 	bool HasConditions() const { return DialogueEdge.Conditions.Num() > 0; }

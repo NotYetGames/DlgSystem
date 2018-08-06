@@ -104,9 +104,7 @@ void FDialogueEdge_Details::HandleTextCommitted(const FText& InText, ETextCommit
 
 	if (UDialogueGraphNode_Edge* GraphEdge = FDialogueDetailsPanelUtils::GetAsGraphNodeEdgeFromPropertyHandle(StructPropertyHandle.ToSharedRef()))
 	{
-		FDlgEdge& Edge = GraphEdge->GetDialogueEdge();
-		FDlgTextArgument::UpdateTextArgumentArray(Edge.Text, Edge.TextArguments);
-
+		GraphEdge->GetDialogueEdge().RebuildTextArgumentsArray();
 		Dialogue->RefreshData();
 	}
 }

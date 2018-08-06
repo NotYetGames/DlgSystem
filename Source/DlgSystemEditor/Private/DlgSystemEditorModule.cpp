@@ -74,7 +74,7 @@ void FDlgSystemEditorModule::StartupModule()
 
 	// Give it another try, Give up :((
 	// May the math Gods have mercy on us!
-	for (UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGuid())
+	for (const UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGuid())
 	{
 		// GUID already exists (╯°□°）╯︵ ┻━┻
 		// Does this break the universe?

@@ -280,6 +280,9 @@ public:
 	/** Gets the Dialogue node index number for the DlgDialogue.Nodes Array */
 	virtual int32 GetDialogueNodeIndex() const { return NodeIndex; }
 
+	/** Gets the edge inside fromGraphNodeEdges for the ChildNodeIndex  */
+	int32 GetChildEdgeIndexForChildNodeIndex(const int32 ChildNodeIndex) const;
+
 	/** Sets a new TargetIndex for the Edge at location EdgeIndex.  */
 	void SetEdgeTargetIndexAt(int32 EdgeIndex, int32 NewTargetIndex);
 

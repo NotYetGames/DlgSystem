@@ -134,6 +134,27 @@ TArray<UDlgDialogue*> UDlgManager::GetDialoguesWithDuplicateGuid()
 	return DuplicateDialogues;
 }
 
+TMap<FGuid, UDlgDialogue*> UDlgManager::GetAllDialoguesGuidMap()
+{
+	TArray<UDlgDialogue*> Dialogues = GetAllDialoguesFromMemory();
+	TMap<FGuid, UDlgDialogue*> DialoguesMap;
+
+	for (UDlgDialogue* Dialogue : Dialogues)
+	{
+		const FGuid ID = Dialogue->GetDlgGuid();
+		if (DialoguesMap.Contains(ID))
+		{
+			UE_LOG(LogDlgSystem,
+				Error,
+				TEXT("GetAllDialoguesGuidMap: ID = `%s` for Dialogue = `%s` already exists"), *ID.ToString(), *Dialogue->GetPathName());
+		}
+
+		DialoguesMap.Add(ID, Dialogue);
+	}
+
+	return DialoguesMap;
+}
+
 const TMap<FGuid, FDlgHistory>& UDlgManager::GetDialogueHistory()
 {
 	return FDlgMemory::GetInstance()->GetHistoryMaps();

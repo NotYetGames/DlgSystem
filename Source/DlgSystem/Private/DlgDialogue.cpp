@@ -384,7 +384,7 @@ void UDlgDialogue::ReloadFromFile()
 
 	// TODO(leyyin): validate if data is legit, indicies exist and that sort.
 	// Check if Guid is not a duplicate
-	TArray<UDlgDialogue*> DuplicateDialogues = UDlgManager::GetDialoguesWithDuplicateGuid();
+	const TArray<UDlgDialogue*> DuplicateDialogues = UDlgManager::GetDialoguesWithDuplicateGuid();
 	if (DuplicateDialogues.Num() > 0)
 	{
 		if (DuplicateDialogues.Contains(this))
@@ -626,11 +626,11 @@ void UDlgDialogue::AutoFixGraph()
 			UDlgNode* NextNode = Nodes[NodeChildren[0].TargetIndex];
 			if (NextNode->IsA<UDlgNode_End>())
 			{
-				Node->GetMutableNodeChildAt(0)->Text = EdgeTextFinish;
+				Node->GetSafeMutableNodeChildAt(0)->Text = EdgeTextFinish;
 			}
 			else
 			{
-				Node->GetMutableNodeChildAt(0)->Text = EdgeTextNext;
+				Node->GetSafeMutableNodeChildAt(0)->Text = EdgeTextNext;
 			}
 		}
 	}

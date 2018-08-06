@@ -114,7 +114,7 @@ void UDialogueGraphNode_Edge::PinConnectionListChanged(UEdGraphPin* Pin)
 		// Change the Parent Edge Target Index
 		UDlgNode* ParentNodeDialogue = ParentNode->GetMutableDialogueNode();
 		check(ParentNodeDialogue->GetNodeChildren()[ParentThisEdgeIndex].TargetIndex == DialogueEdge.TargetIndex);
-		ParentNodeDialogue->GetMutableNodeChildAt(ParentThisEdgeIndex)->TargetIndex = NewTargetIndex;
+		ParentNodeDialogue->GetSafeMutableNodeChildAt(ParentThisEdgeIndex)->TargetIndex = NewTargetIndex;
 		DialogueEdge.TargetIndex = NewTargetIndex;
 	}
 }

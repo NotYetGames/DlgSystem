@@ -11,6 +11,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogDlgHumanReadableTextCommandlet, All, All);
 
 class UDlgDialogue;
 class UDlgNode;
+class UDialogueGraphNode;
 
 USTRUCT()
 struct FDlgNodeContext_FormatHumanReadable
@@ -26,21 +27,6 @@ public:
 
 	UPROPERTY()
 	TArray<int32> ChildNodeIndices;
-};
-
-// Variant of the FDlgEdge that is human readable
-USTRUCT()
-struct FDlgEdge_FormatHumanReadable
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-	// Metadata
-	UPROPERTY()
-	int32 TargetNodeIndex = INDEX_NONE;
-
-	UPROPERTY()
-	FText Text;
 };
 
 
@@ -63,15 +49,28 @@ public:
 };
 
 
+// Variant of the FDlgEdge that is human readable
+USTRUCT()
+struct FDlgEdge_FormatHumanReadable
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	// Metadata
+	UPROPERTY()
+	int32 TargetNodeIndex = INDEX_NONE;
+
+	UPROPERTY()
+	FText Text;
+};
+
+
 // Variant of the FDlgSpeechSequenceEntry that is human readable
 USTRUCT()
 struct FDlgSpeechSequenceEntry_FormatHumanReadable
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	UPROPERTY()
-	FName Speaker;
-
 	UPROPERTY()
 	FText Text;
 
@@ -92,10 +91,10 @@ public:
 	int32 NodeIndex = INDEX_NONE;
 
 	UPROPERTY()
-	FDlgNodeContext_FormatHumanReadable Context;
+	TArray<FDlgSpeechSequenceEntry_FormatHumanReadable> Sequence;
 
 	UPROPERTY()
-	TArray<FDlgSpeechSequenceEntry_FormatHumanReadable> Sequence;
+	TArray<FDlgEdge_FormatHumanReadable> Edges;
 };
 
 
@@ -111,10 +110,10 @@ public:
 	int32 NodeIndex = INDEX_NONE;
 
 	UPROPERTY()
-	FDlgNodeContext_FormatHumanReadable Context;
+	FText Text;
 
 	UPROPERTY()
-	FText Text;
+	TArray<FDlgEdge_FormatHumanReadable> Edges;
 };
 
 
@@ -136,10 +135,6 @@ public:
 
 	UPROPERTY()
 	TArray<FDlgNodeSpeechSequence_FormatHumanReadable> SpeechSequenceNodes;
-
-	// Edges from other nodes
-	UPROPERTY()
-	TArray<FDlgEdgeOrphan_FormatHumanReadable> SpeechEdges;
 };
 
 
@@ -149,8 +144,6 @@ class UDlgHumanReadableTextCommandlet : public UCommandlet
 	GENERATED_BODY()
 
 public:
-
-	/** Default constructor. */
 	UDlgHumanReadableTextCommandlet();
 
 public:
@@ -158,17 +151,28 @@ public:
 	//~ UCommandlet interface
 	int32 Main(const FString& Params) override;
 
-	// Own methods
-	void Export();
-	void Import();
-
 	static bool ExportDialogueToHumanReadableFormat(const UDlgDialogue& Dialogue, FDlgDialogue_FormatHumanReadable& OutFormat);
 	static bool ExportNodeToContext(const UDlgNode* Node, FDlgNodeContext_FormatHumanReadable& OutContext);
 
+	static bool ImportHumanReadableFormatIntoDialogue(const FDlgDialogue_FormatHumanReadable& Format, UDlgDialogue* Dialogue);
 
 	// Tells us if the edge text is default
 	static bool IsEdgeTextDefault(const FText& EdgeText);
 
+	static bool SaveAllDirtyDialogues();
+	static bool SaveAllDialogues();
+
+protected:
+	// Own methods
+	int32 Export();
+	int32 Import();
+
+	static bool SetGraphNodesNewEdgesText(UDialogueGraphNode* GraphNode, const TArray<FDlgEdge_FormatHumanReadable>& Edges, const int32 NodeIndex, const UDlgDialogue* Dialogue);
+
 protected:
 	FString OutputInputDirectory;
+
+	TArray<UPackage*> PackagesToSave;
+
+	static const TCHAR* FileExtension;
 };
