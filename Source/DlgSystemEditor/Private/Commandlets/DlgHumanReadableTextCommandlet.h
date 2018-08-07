@@ -1,6 +1,6 @@
-// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
-
+// Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
+
 
 #include "Commandlets/Commandlet.h"
 
@@ -158,9 +158,6 @@ public:
 
 	// Tells us if the edge text is default
 	static bool IsEdgeTextDefault(const FText& EdgeText);
-
-	static bool SaveAllDirtyDialogues();
-	static bool SaveAllDialogues();
 
 protected:
 	// Own methods

@@ -1,5 +1,4 @@
-// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
-
+// Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgHumanReadableTextCommandlet.h"
 
 #include "Paths.h"
@@ -15,6 +14,7 @@
 #include "DlgNode_SpeechSequence.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DlgJsonParser.h"
+#include "DlgCommandletHelper.h"
 
 
 DEFINE_LOG_CATEGORY(LogDlgHumanReadableTextCommandlet);
@@ -79,7 +79,7 @@ int32 UDlgHumanReadableTextCommandlet::Main(const FString& Params)
 		return -1;
 	}
 
-	// Create destination file
+	// Create destination directory
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 	if (!PlatformFile.DirectoryExists(*OutputInputDirectory) && PlatformFile.CreateDirectoryTree(*OutputInputDirectory))
 	{
@@ -98,10 +98,10 @@ int32 UDlgHumanReadableTextCommandlet::Main(const FString& Params)
 
 int32 UDlgHumanReadableTextCommandlet::Export()
 {
-	UE_LOG(LogDlgHumanReadableTextCommandlet, Display, TEXT("Exporting from = `%s`"), *OutputInputDirectory);
+	UE_LOG(LogDlgHumanReadableTextCommandlet, Display, TEXT("Exporting to = `%s`"), *OutputInputDirectory);
 
 	// Some Dialogues may be unclean?
-	SaveAllDialogues();
+	FDlgCommandletHelper::SaveAllDialogues();
 
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 	const TArray<UDlgDialogue*> AllDialogues = UDlgManager::GetAllDialoguesFromMemory();
@@ -113,12 +113,13 @@ int32 UDlgHumanReadableTextCommandlet::Export()
 		FString DialoguePath = OriginalDialoguePath;
 
 		// Only export game dialogues
-		if (!DialoguePath.RemoveFromStart(TEXT("/Game")))
+		if (!FDlgCommandletHelper::IsDialoguePathInProjectDirectory(DialoguePath))
 		{
 			UE_LOG(LogDlgHumanReadableTextCommandlet, Warning, TEXT("Dialogue = `%s` is not in the game directory, ignoring"), *DialoguePath);
 			continue;
 		}
 
+		verify(DialoguePath.RemoveFromStart(TEXT("/Game")));
 		const FString FileName = FPaths::GetBaseFilename(DialoguePath);
 		const FString Directory = FPaths::GetPath(DialoguePath);
 
@@ -484,30 +485,4 @@ bool UDlgHumanReadableTextCommandlet::SetGraphNodesNewEdgesText(UDialogueGraphNo
 bool UDlgHumanReadableTextCommandlet::IsEdgeTextDefault(const FText& EdgeText)
 {
 	return UDlgDialogue::EdgeTextFinish.EqualToCaseIgnored(EdgeText) || UDlgDialogue::EdgeTextNext.EqualToCaseIgnored(EdgeText);
-}
-
-bool UDlgHumanReadableTextCommandlet::SaveAllDirtyDialogues()
-{
-	// Save all dirty packages
-	constexpr bool bPromptUserToSave = false;
-	constexpr bool bFastSave = true;
-	constexpr bool bNotifyNoPackagesSaved = false;
-	constexpr bool bCanBeDeclined = false;
-	static TArray<UClass*> SaveContentClasses = { UDlgDialogue::StaticClass() };
-	return FEditorFileUtils::SaveDirtyContentPackages(SaveContentClasses, bPromptUserToSave, bFastSave, bNotifyNoPackagesSaved, bCanBeDeclined);
-}
-
-bool UDlgHumanReadableTextCommandlet::SaveAllDialogues()
-{
-	TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
-	TArray<UPackage*> PackagesToSave;
-	for (UDlgDialogue* Dialogue : Dialogues)
-	{
-		Dialogue->OnAssetSaved();
-		Dialogue->MarkPackageDirty();
-		PackagesToSave.Add(Dialogue->GetOutermost());
-	}
-
-	static constexpr bool bCheckDirty = false;
-	return UEditorLoadingAndSavingUtils::SavePackages(PackagesToSave, bCheckDirty);
 }
