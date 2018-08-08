@@ -2,7 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "STreeView.h"
+#include "Widgets/Views/STreeView.h"
 
 /** Base Tree Node for all Nodes used in the STreeView. */
 template <class SelfType>

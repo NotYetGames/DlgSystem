@@ -4,7 +4,7 @@
 #include "DetailCategoryBuilder.h"
 #include "DetailLayoutBuilder.h"
 #include "IPropertyUtilities.h"
-#include "STextBlock.h"
+#include "Widgets/Text/STextBlock.h"
 #include "DetailWidgetRow.h"
 
 #include "Nodes/DlgNode.h"

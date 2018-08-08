@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 
 #include "DlgManager.h"
-#include "DlgTreeViewVariableProperties.h"
-#include "DlgTreeViewHelper.h"
+#include "TreeViewHelpers/DlgTreeViewVariableProperties.h"
+#include "TreeViewHelpers/DlgTreeViewHelper.h"
 
 /** Structure that holds the common properties of a Participant (where it appears and stuff like this) in the STreeView. */
 template <class VariablePropertyType>

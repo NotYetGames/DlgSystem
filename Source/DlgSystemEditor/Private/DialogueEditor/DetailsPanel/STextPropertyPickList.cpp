@@ -2,9 +2,11 @@
 #include "STextPropertyPickList.h"
 
 #include "PropertyHandle.h"
-#include "SSearchBox.h"
+#include "Widgets/Input/SSearchBox.h"
+#include "Framework/Application/SlateApplication.h"
 #include "DetailWidgetRow.h"
 #include "IDocumentation.h"
+#include "Layout/WidgetPath.h"
 
 #define LOCTEXT_NAMESPACE "STextPropertyPickList"
 

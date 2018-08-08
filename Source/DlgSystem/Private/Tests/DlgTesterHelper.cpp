@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "DlgTesterHelper.h"
+#include "Tests/DlgTesterHelper.h"
 
 
 std::function<FString(const int32&)> FDlgTestHelper::Int32ToString = [](const int32& Value) -> FString

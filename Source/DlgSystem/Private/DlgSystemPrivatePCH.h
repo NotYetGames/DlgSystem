@@ -2,6 +2,6 @@
 #pragma once
 
 #include "DlgSystemModule.h"
-#include "LogMacros.h"
+#include "Logging/LogMacros.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogDlgSystem, All, All);

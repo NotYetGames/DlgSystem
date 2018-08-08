@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 
+#include "UObject/TextProperty.h"
 #include "DlgSystemSettings.h"
 
 #include "DlgReflectionHelper.generated.h"

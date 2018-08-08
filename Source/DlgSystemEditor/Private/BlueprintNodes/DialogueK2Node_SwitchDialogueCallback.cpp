@@ -5,7 +5,7 @@
 #include "BlueprintActionDatabaseRegistrar.h"
 #include "EdGraphSchema_K2.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "UObjectIterator.h"
+#include "UObject/UObjectIterator.h"
 
 #include "DlgSystemEditorPrivatePCH.h"
 #include "DlgDialogue.h"

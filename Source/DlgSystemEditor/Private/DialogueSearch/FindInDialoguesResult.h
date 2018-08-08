@@ -2,7 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Reply.h"
+#include "Input/Reply.h"
 
 #include "DlgDialogue.h"
 #include "TreeViewHelpers/DlgTreeViewNode.h"
@@ -16,11 +16,11 @@ class UEdGraphNode_Comment;
 struct FDialogueSearchFilter
 {
 public:
-	bool IsEmptyFilter() const 
-	{ 
-		return SearchString.IsEmpty() 
-			&& bIncludeIndices == false 
-			&& bIncludeDialogueGUID == false 
+	bool IsEmptyFilter() const
+	{
+		return SearchString.IsEmpty()
+			&& bIncludeIndices == false
+			&& bIncludeDialogueGUID == false
 			&& bIncludeComments == true
 			&& bIncludeNumericalTypes == false;
 	}

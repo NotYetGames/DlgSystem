@@ -2,8 +2,8 @@
 #pragma once
 
 #include "Widgets/DeclarativeSyntaxSupport.h"
-#include "SCompoundWidget.h"
-#include "STreeView.h"
+#include "Widgets/SCompoundWidget.h"
+#include "Widgets/Views/STreeView.h"
 #include "Framework/Commands/UICommandList.h"
 
 #include "FindInDialoguesResult.h"

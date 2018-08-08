@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "UObjectIterator.h"
+#include "UObject/UObjectIterator.h"
 #include "EngineUtils.h"
 
 #include "DlgDialogue.h"

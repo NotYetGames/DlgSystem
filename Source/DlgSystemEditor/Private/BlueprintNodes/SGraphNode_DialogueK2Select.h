@@ -3,7 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "Widgets/DeclarativeSyntaxSupport.h"
-#include "SGraphNodeK2Base.h"
+#include "KismetNodes/SGraphNodeK2Base.h"
 
 class UDialogueK2Node_Select;
 

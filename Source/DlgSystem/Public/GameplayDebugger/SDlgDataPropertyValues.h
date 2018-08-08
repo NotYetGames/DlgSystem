@@ -1,10 +1,10 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 #include "Widgets/DeclarativeSyntaxSupport.h"
-#include "SCompoundWidget.h"
+#include "Widgets/SCompoundWidget.h"
 
-#include "DlgDataDisplayTreeNode.h"
-#include "DlgDataDisplayActorProperties.h"
+#include "GameplayDebugger/DlgDataDisplayTreeNode.h"
+#include "GameplayDebugger/DlgDataDisplayActorProperties.h"
 
 class SEditableTextBox;
 class SCheckBox;

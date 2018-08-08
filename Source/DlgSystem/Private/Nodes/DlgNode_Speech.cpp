@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "DlgNode_Speech.h"
+#include "Nodes/DlgNode_Speech.h"
 
 #include "DlgContextInternal.h"
 #include "DlgSystemPrivatePCH.h"

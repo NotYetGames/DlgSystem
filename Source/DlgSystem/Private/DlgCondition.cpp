@@ -1,8 +1,9 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgCondition.h"
+
 #include "DlgSystemPrivatePCH.h"
 #include "DlgMemory.h"
-#include "DlgNode.h"
+#include "Nodes/DlgNode.h"
 #include "DlgContextInternal.h"
 #include "DlgReflectionHelper.h"
 
@@ -24,7 +25,7 @@ bool FDlgCondition::EvaluateArray(const TArray<FDlgCondition>& DlgConditionArray
 		}
 		else if (!bSatisfied)
 		{
-			// All must be satisfied 
+			// All must be satisfied
 			return false;
 		}
 	}
@@ -38,7 +39,7 @@ bool FDlgCondition::Evaluate(const UDlgContextInternal* DlgContext, const UObjec
 	{
 		return false;
 	}
-	
+
 	switch (ConditionType)
 	{
 		case EDlgConditionType::DlgConditionEventCall:

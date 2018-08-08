@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "SGraphNode_DialogueBase.h"
 
-#include "SBox.h"
+#include "Widgets/Layout/SBox.h"
 #include "DialogueGraphNode_Root.h"
 #include "IDocumentation.h"
 #include "GraphEditorDragDropAction.h"

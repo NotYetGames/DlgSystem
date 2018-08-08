@@ -2,8 +2,11 @@
 #pragma once
 
 #include "Widgets/DeclarativeSyntaxSupport.h"
-#include "EditorStyle.h"
-#include "SSearchBox.h"
+#include "Widgets/Input/SSearchBox.h"
+#include "Widgets/Layout/SScrollBorder.h"
+#include "Widgets/Views/SListView.h"
+#include "Widgets/Input/SComboButton.h"
+#include "Widgets/Input/SCheckBox.h"
 
 class IPropertyHandle;
 

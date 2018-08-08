@@ -1,9 +1,9 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DialogueStyle.h"
 
-#include "SlateStyle.h"
-#include "IPluginManager.h"
-#include "SlateStyleRegistry.h"
+#include "Styling/SlateStyle.h"
+#include "Interfaces/IPluginManager.h"
+#include "Styling/SlateStyleRegistry.h"
 
 #include "DlgSystemEditorPrivatePCH.h"
 #include "DlgSystemModule.h"

@@ -1,10 +1,10 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DialogueEditorUtilities.h"
 
-#include "IToolkit.h"
-#include "ToolkitManager.h"
-#include "Casts.h"
-#include "Queue.h"
+#include "Toolkits/IToolkit.h"
+#include "Toolkits/ToolkitManager.h"
+#include "Templates/Casts.h"
+#include "Containers/Queue.h"
 #include "EdGraphNode_Comment.h"
 
 #include "DlgSystemEditorPrivatePCH.h"

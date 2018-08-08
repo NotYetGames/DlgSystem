@@ -1,9 +1,9 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "EditorStyle.h"
 #include "DetailWidgetRow.h"
 
+#include "Widgets/Input/SMultiLineEditableTextBox.h"
 #include "Base_CustomRowHelper.h"
 #include "STextPropertyEditableTextBox.h"
 

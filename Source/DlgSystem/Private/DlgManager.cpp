@@ -1,9 +1,9 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgManager.h"
 
-#include "UObjectIterator.h"
+#include "UObject/UObjectIterator.h"
 #include "Engine/ObjectLibrary.h"
-#include "IPluginManager.h"
+#include "Interfaces/IPluginManager.h"
 #include "Engine/Blueprint.h"
 
 #include "IDlgSystemModule.h"

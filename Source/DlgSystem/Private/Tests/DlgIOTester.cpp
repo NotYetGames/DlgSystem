@@ -1,8 +1,8 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "DlgIOTester.h"
+#include "Tests/DlgIOTester.h"
 
-#include "FileHelper.h"
-#include "EnumProperty.h"
+#include "Misc/FileHelper.h"
+#include "UObject/EnumProperty.h"
 #include "CoreTypes.h"
 #include "Containers/UnrealString.h"
 #include "Misc/AutomationTest.h"

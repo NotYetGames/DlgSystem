@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "SDlgDataDisplay.h"
+#include "GameplayDebugger/SDlgDataDisplay.h"
 
 #include "Widgets/Layout/SBorder.h"
 #include "Widgets/Text/STextBlock.h"
@@ -13,7 +13,7 @@
 
 #include "DlgManager.h"
 #include "DlgContext.h"
-#include "SDlgDataPropertyValues.h"
+#include "GameplayDebugger/SDlgDataPropertyValues.h"
 
 //////////////////////////////////////////////////////////////////////////
 DEFINE_LOG_CATEGORY(LogDlgSystemDataDisplay)

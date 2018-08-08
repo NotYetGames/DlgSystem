@@ -2,9 +2,10 @@
 #include "DialogueEdge_Details.h"
 
 #include "IDetailPropertyRow.h"
-#include "PropertyEditing.h"
+#include "IDetailChildrenBuilder.h"
+#include "IPropertyTypeCustomization.h"
 
-#include "DlgNode.h"
+#include "Nodes/DlgNode.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "CustomRowHelpers/MultiLineEditableTextBox_CustomRowHelper.h"

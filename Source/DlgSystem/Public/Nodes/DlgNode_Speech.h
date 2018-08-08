@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "DlgNode.h"
+#include "Nodes/DlgNode.h"
 #include "DlgTextArgument.h"
 #include "DlgNode_Speech.generated.h"
 

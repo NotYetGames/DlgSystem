@@ -1,12 +1,13 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "IO/DlgConfigParser.h"
-#include "LogMacros.h"
-#include "FileHelper.h"
-#include "Paths.h"
-#include "UnrealType.h"
-#include "EnumProperty.h"
-#include "UObjectIterator.h"
-#include "ObjectMacros.h"
+
+#include "Logging/LogMacros.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "UObject/UnrealType.h"
+#include "UObject/EnumProperty.h"
+#include "UObject/UObjectIterator.h"
+#include "UObject/ObjectMacros.h"
 
 DEFINE_LOG_CATEGORY(LogDlgConfigParser);
 

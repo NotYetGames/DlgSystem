@@ -1,9 +1,9 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "DlgIOTesterTypes.h"
+#include "Tests/DlgIOTesterTypes.h"
 
 #include "Engine/Engine.h"
 
-#include "DlgTesterHelper.h"
+#include "Tests/DlgTesterHelper.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

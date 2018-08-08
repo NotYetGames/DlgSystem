@@ -2,7 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "STreeView.h"
+#include "Widgets/Views/STreeView.h"
 
 #include "DlgHelper.h"
 

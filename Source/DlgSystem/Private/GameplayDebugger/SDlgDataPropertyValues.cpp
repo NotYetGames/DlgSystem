@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "SDlgDataPropertyValues.h"
+#include "GameplayDebugger/SDlgDataPropertyValues.h"
 
 #include "Widgets/Layout/SBorder.h"
 #include "Widgets/Text/STextBlock.h"

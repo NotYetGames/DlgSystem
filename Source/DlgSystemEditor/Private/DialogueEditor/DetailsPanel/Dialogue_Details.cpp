@@ -3,7 +3,6 @@
 
 #include "DetailCategoryBuilder.h"
 #include "DetailLayoutBuilder.h"
-#include "PropertyEditing.h"
 
 #include "DlgDialogue.h"
 

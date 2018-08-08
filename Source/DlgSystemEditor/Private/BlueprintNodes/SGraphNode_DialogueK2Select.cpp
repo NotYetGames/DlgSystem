@@ -5,8 +5,8 @@
 #include "Widgets/SBoxPanel.h"
 #include "GraphEditorSettings.h"
 #include "K2Node.h"
-#include "BlueprintEditorUtils.h"
-#include "SImage.h"
+#include "Kismet2/BlueprintEditorUtils.h"
+#include "Widgets/Images/SImage.h"
 
 #include "DialogueK2Node_Select.h"
 

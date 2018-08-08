@@ -3,7 +3,7 @@
 
 #include "CoreMinimal.h"
 
-#include "DlgNode.h"
+#include "Nodes/DlgNode.h"
 
 #include "DlgNode_End.generated.h"
 

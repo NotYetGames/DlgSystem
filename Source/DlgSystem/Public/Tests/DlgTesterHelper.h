@@ -4,7 +4,7 @@
 
 #include <functional>
 #include "CoreMinimal.h"
-#include "NoExportTypes.h"
+#include "UObject/NoExportTypes.h"
 
 #include "DlgHelper.h"
 

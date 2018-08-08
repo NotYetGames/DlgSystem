@@ -1,9 +1,9 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgDialogue.h"
 
-#include "DevObjectVersion.h"
-#include "FileManager.h"
-#include "Paths.h"
+#include "UObject/DevObjectVersion.h"
+#include "HAL/FileManager.h"
+#include "Misc/Paths.h"
 
 #if WITH_EDITOR
 #include "EdGraph/EdGraph.h"
@@ -15,8 +15,8 @@
 #include "IO/DlgConfigWriter.h"
 #include "IO/DlgJsonWriter.h"
 #include "IO/DlgJsonParser.h"
-#include "DlgNode_Speech.h"
-#include "DlgNode_End.h"
+#include "Nodes/DlgNode_Speech.h"
+#include "Nodes/DlgNode_End.h"
 #include "DlgManager.h"
 
 #define LOCTEXT_NAMESPACE "DlgDialogue"

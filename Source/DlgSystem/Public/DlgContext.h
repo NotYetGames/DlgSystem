@@ -2,7 +2,7 @@
 #pragma once
 
 #include "DlgDialogue.h"
-#include "DlgNode.h"
+#include "Nodes/DlgNode.h"
 #include "DlgContext.generated.h"
 
 class USoundWave;

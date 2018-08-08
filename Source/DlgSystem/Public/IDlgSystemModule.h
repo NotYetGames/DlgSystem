@@ -1,8 +1,8 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "ModuleManager.h"
-#include "ModuleInterface.h"
+#include "Modules/ModuleManager.h"
+#include "Modules/ModuleInterface.h"
 
 // The name of the Dialogue System plugin as defined in the .uplugin file
 const FName DIALOGUE_SYSTEM_PLUGIN_NAME(TEXT("DlgSystem"));
