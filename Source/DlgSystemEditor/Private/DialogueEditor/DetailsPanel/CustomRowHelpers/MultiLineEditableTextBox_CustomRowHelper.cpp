@@ -3,10 +3,15 @@
 
 #include "PropertyHandle.h"
 #include "DetailWidgetRow.h"
-#include "SButton.h"
-#include "SImage.h"
+#include "Widgets/Input/SButton.h"
+#include "Widgets/Images/SImage.h"
+#include "Widgets/Input/SComboButton.h"
+#include "Widgets/Layout/SBox.h"
+#include "Widgets/Layout/SUniformGridPanel.h"
+#include "Widgets/Layout/SGridPanel.h"
+#include "Widgets/Input/SCheckBox.h"
+#include "Internationalization/TextNamespaceUtil.h"
 #include "IPropertyUtilities.h"
-#include "TextNamespaceUtil.h"
 
 #define LOCTEXT_NAMESPACE "MultiLineEditableTextBox_CustomRowHelper"
 
