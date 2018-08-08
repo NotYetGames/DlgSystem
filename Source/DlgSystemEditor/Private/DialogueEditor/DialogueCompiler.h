@@ -2,8 +2,8 @@
 #pragma once
 
 #include "CoreTypes.h"
-#include "CompilerResultsLog.h"
-#include "Queue.h"
+#include "Kismet2/CompilerResultsLog.h"
+#include "Containers/Queue.h"
 
 class UDialogueGraphNode_Root;
 class UDlgNode;

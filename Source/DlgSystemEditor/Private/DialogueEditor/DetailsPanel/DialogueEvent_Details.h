@@ -2,7 +2,7 @@
 #pragma once
 
 #include "IPropertyTypeCustomization.h"
-#include "Visibility.h"
+#include "Layout/Visibility.h"
 #include "IDetailPropertyRow.h"
 
 #include "DlgDialogue.h"

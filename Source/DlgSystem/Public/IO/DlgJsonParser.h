@@ -2,9 +2,9 @@
 #pragma once
 
 #include "CoreTypes.h"
-#include "LogMacros.h"
-#include "JsonValue.h"
-#include "JsonObject.h"
+#include "Logging/LogMacros.h"
+#include "Dom/JsonValue.h"
+#include "Dom/JsonObject.h"
 
 #include "IDlgParser.h"
 

@@ -2,7 +2,7 @@
 #pragma once
 
 #include "DlgSystemEditorModule.h"
-#include "LogMacros.h"
+#include "Logging/LogMacros.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogDlgSystemEditor, Verbose, All)
 

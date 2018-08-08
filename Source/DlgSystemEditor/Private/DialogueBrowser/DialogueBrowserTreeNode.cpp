@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DialogueBrowserTreeNode.h"
 
-#include "STreeView.h"
+#include "Widgets/Views/STreeView.h"
 
 #include "DialogueEditor/DialogueEditorUtilities.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"

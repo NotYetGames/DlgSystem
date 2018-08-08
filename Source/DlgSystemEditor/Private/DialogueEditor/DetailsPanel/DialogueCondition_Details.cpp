@@ -2,9 +2,9 @@
 #include "DialogueCondition_Details.h"
 
 #include "IDetailPropertyRow.h"
-#include "PropertyEditing.h"
+#include "IDetailChildrenBuilder.h"
 
-#include "DlgNode.h"
+#include "Nodes/DlgNode.h"
 #include "DlgReflectionHelper.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
@@ -36,7 +36,7 @@ void FDialogueCondition_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InS
 	check(CompareTypePropertyHandle.IsValid());
 	check(IntValuePropertyHandle.IsValid());
 
-	// Register handler propeties changes
+	// Register handler properties changes
 	ConditionTypePropertyHandle->SetOnPropertyValueChanged(FSimpleDelegate::CreateSP(this, &Self::OnConditionTypeChanged, true));
 
 	CompareTypePropertyHandle->SetOnPropertyValueChanged(FSimpleDelegate::CreateSP(this, &Self::OnCompareTypeChanged, true));
@@ -311,8 +311,8 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 						|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
 						|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable;
 	}
-	
-	
+
+
 	switch (ConditionType)
 	{
 	case EDlgConditionType::DlgConditionClassBoolVariable:

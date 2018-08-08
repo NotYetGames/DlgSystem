@@ -1,8 +1,8 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "IO/DlgConfigWriter.h"
 
-#include "FileHelper.h"
-#include "EnumProperty.h"
+#include "Misc/FileHelper.h"
+#include "UObject/EnumProperty.h"
 
 #include "DlgHelper.h"
 

@@ -3,9 +3,9 @@
 
 #include "IDocumentation.h"
 #include "SGraphPanel.h"
-#include "Images/SImage.h"
-#include "SToolTip.h"
-#include "SBox.h"
+#include "Widgets/Images/SImage.h"
+#include "Widgets/SToolTip.h"
+#include "Widgets/Layout/SBox.h"
 
 #include "DialogueGraphNode.h"
 #include "SDialogueNodeOverlayWidget.h"
@@ -97,8 +97,8 @@ TArray<FOverlayWidgetInfo> SGraphNode_DialogueEdge::GetOverlayWidgets(bool bSele
 		{
 			FOverlayWidgetInfo Overlay(ConditionOverlayWidget);
 			// Position on the top/right of the node
-			const FVector2D& DesiredSize = ConditionOverlayWidget->GetDesiredSize();
-			Overlay.OverlayOffset = FVector2D(WidgetSize.X - DesiredSize.X / 2.0f, -DesiredSize.Y / 2.0f);
+			const FVector2D& NewDesiredSize = ConditionOverlayWidget->GetDesiredSize();
+			Overlay.OverlayOffset = FVector2D(WidgetSize.X - NewDesiredSize.X / 2.0f, -NewDesiredSize.Y / 2.0f);
 			Widgets.Add(Overlay);
 		}
 	}

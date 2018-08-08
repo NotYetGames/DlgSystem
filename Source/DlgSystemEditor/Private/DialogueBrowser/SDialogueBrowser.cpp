@@ -1,14 +1,14 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "SDialogueBrowser.h"
 
-#include "CoreUObject.h"
 #include "Editor.h"
-#include "EditorStyle.h"
-#include "AssetEditorManager.h"
-#include "SComboBox.h"
-#include "SSearchBox.h"
-#include "SImage.h"
-#include "SMissingWidget.h"
+#include "Toolkits/AssetEditorManager.h"
+#include "Widgets/Input/SComboBox.h"
+#include "Widgets/Input/SSearchBox.h"
+#include "Widgets/Images/SImage.h"
+#include "Widgets/Layout/SMissingWidget.h"
+#include "Widgets/Layout/SWrapBox.h"
+#include "Widgets/Input/SButton.h"
 
 #include "DlgManager.h"
 #include "DlgDialogue.h"
@@ -17,7 +17,8 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueBrowserUtilities.h"
-#include "DlgTreeViewHelper.h"
+#include "TreeViewHelpers/DlgTreeViewHelper.h"
+#include "Framework/MultiBox/MultiBoxBuilder.h"
 
 #define LOCTEXT_NAMESPACE "SDialogueBrowser"
 

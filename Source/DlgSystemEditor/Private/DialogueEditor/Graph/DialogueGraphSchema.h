@@ -4,7 +4,7 @@
 #include "CoreTypes.h"
 #include "EdGraph/EdGraphSchema.h"
 
-#include "DlgNode.h"
+#include "Nodes/DlgNode.h"
 #include "DialogueEditor/DialogueEditorUtilities.h"
 #include "DialogueGraphConnectionDrawingPolicy.h"
 #include "SchemaActions/NewComment_DialogueGraphSchemaAction.h"

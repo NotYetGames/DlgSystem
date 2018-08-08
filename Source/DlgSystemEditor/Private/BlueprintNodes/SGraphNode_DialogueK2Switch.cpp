@@ -3,11 +3,11 @@
 
 #include "ScopedTransaction.h"
 #include "Widgets/SBoxPanel.h"
-#include "SImage.h"
+#include "Widgets/Images/SImage.h"
 #include "GraphEditorSettings.h"
 #include "NodeFactory.h"
-#include "SGraphPinExec.h"
-#include "BlueprintEditorUtils.h"
+#include "KismetPins/SGraphPinExec.h"
+#include "Kismet2/BlueprintEditorUtils.h"
 #include "K2Node_Switch.h"
 
 #include "DialogueK2Node_SwitchDialogueCallback.h"

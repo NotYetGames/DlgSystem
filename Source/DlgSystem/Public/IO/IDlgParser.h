@@ -1,10 +1,10 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "UnrealType.h"
-#include "UObjectIterator.h"
-#include "Array.h"
-#include "Object.h"
+#include "UObject/UnrealType.h"
+#include "UObject/UObjectIterator.h"
+#include "Containers/Array.h"
+#include "UObject/Object.h"
 
 class DLGSYSTEM_API IDlgParser
 {

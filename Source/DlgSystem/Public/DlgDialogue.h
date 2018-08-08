@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "SubclassOf.h"
+#include "Templates/SubclassOf.h"
 
 #include "DlgIDialogueEditorModule.h"
 #include "DlgMemory.h"

@@ -2,9 +2,9 @@
 #include "DialogueSpeechSequenceEntry_Details.h"
 
 #include "IPropertyUtilities.h"
-#include "PropertyEditing.h"
+#include "IDetailChildrenBuilder.h"
 
-#include "DlgNode.h"
+#include "Nodes/DlgNode.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "STextPropertyPickList.h"

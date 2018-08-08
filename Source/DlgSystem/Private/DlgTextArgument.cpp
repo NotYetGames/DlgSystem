@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgTextArgument.h"
 
-#include "TextProperty.h"
+#include "UObject/TextProperty.h"
 
 #include "DlgSystemPrivatePCH.h"
 #include "DlgContextInternal.h"

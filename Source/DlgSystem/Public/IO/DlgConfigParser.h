@@ -3,8 +3,8 @@
 
 #include <functional>
 #include "CoreTypes.h"
-#include "LogMacros.h"
-#include "TextProperty.h"
+#include "Logging/LogMacros.h"
+#include "UObject/TextProperty.h"
 
 #include "IDlgParser.h"
 

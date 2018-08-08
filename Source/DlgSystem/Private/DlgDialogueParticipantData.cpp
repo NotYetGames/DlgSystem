@@ -1,9 +1,9 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgDialogueParticipantData.h"
 
-#include "DevObjectVersion.h"
-#include "FileManager.h"
-#include "Paths.h"
+#include "UObject/DevObjectVersion.h"
+#include "HAL/FileManager.h"
+#include "Misc/Paths.h"
 
 #include "DlgSystemPrivatePCH.h"
 #include "DlgEvent.h"

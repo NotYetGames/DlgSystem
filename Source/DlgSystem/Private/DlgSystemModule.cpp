@@ -1,11 +1,11 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgSystemModule.h"
 
-#include "ModuleManager.h"
+#include "Modules/ModuleManager.h"
 #include "AssetRegistryModule.h"
-#include "TabManager.h"
+#include "Framework/Docking/TabManager.h"
 #include "Widgets/Docking/SDockTab.h"
-#include "IConsoleManager.h"
+#include "HAL/IConsoleManager.h"
 #include "HAL/FileManager.h"
 
 #if WITH_GAMEPLAY_DEBUGGER

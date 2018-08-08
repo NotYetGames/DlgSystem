@@ -2,11 +2,11 @@
 #pragma once
 
 #include "IDlgSystemEditorModule.h"
-#include "SharedPointer.h"
+#include "Templates/SharedPointer.h"
 #include "AssetTypeCategories.h"
 #include "IAssetTypeActions.h"
-#include "Commands/UICommandList.h"
-#include "Docking/WorkspaceItem.h"
+#include "Framework/Commands/UICommandList.h"
+#include "Framework/Docking/WorkspaceItem.h"
 
 
 class FSpawnTabArgs;

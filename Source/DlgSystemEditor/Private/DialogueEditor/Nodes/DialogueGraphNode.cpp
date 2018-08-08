@@ -2,10 +2,10 @@
 #include "DialogueGraphNode.h"
 
 #include "Editor/EditorEngine.h"
-#include "GenericCommands.h"
+#include "Framework/Commands/GenericCommands.h"
 #include "EdGraph/EdGraphNode.h"
 #include "Engine/Font.h"
-#include "MultiBoxBuilder.h"
+#include "Framework/MultiBox/MultiBoxBuilder.h"
 
 #include "DlgSystemEditorPrivatePCH.h"
 #include "DlgDialogue.h"

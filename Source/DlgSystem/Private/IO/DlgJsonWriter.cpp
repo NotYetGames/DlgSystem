@@ -1,9 +1,11 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "DlgJsonWriter.h"
-#include "JsonUtilities.h"
+#include "IO/DlgJsonWriter.h"
+
+#include "JsonObjectConverter.h"
+#include "JsonObjectWrapper.h"
 #include "Policies/CondensedJsonPrintPolicy.h"
-#include "TextProperty.h"
-#include "PropertyPortFlags.h"
+#include "UObject/TextProperty.h"
+#include "UObject/PropertyPortFlags.h"
 #include "DlgHelper.h"
 
 DEFINE_LOG_CATEGORY(LogDlgJsonWriter);

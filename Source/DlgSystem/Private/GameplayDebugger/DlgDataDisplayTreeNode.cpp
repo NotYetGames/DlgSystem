@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "DlgDataDisplayTreeNode.h"
+#include "GameplayDebugger/DlgDataDisplayTreeNode.h"
 
 #define LOCTEXT_NAMESPACE "FDlgDataDisplayTreeNode"
 

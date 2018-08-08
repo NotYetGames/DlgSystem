@@ -1,12 +1,12 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 #include "Widgets/DeclarativeSyntaxSupport.h"
-#include "SCompoundWidget.h"
-#include "STreeView.h"
+#include "Widgets/SCompoundWidget.h"
+#include "Widgets/Views/STreeView.h"
 #include "Widgets/Input/SSearchBox.h"
 
-#include "DlgDataDisplayTreeNode.h"
-#include "DlgDataDisplayActorProperties.h"
+#include "GameplayDebugger/DlgDataDisplayTreeNode.h"
+#include "GameplayDebugger/DlgDataDisplayActorProperties.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogDlgSystemDataDisplay, Verbose, All);
 

@@ -3,8 +3,8 @@
 
 #include "CoreMinimal.h"
 #include "Math/UnrealMathUtility.h"
-#include "Object.h"
-#include "UnrealType.h"
+#include "UObject/Object.h"
+#include "UObject/UnrealType.h"
 #include <functional>
 
 

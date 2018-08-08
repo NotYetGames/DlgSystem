@@ -4,7 +4,7 @@
 #include "ScopedTransaction.h"
 #include "SGraphPanel.h"
 #include "SGraphNode.h"
-#include "UnitConversion.h"
+#include "Math/UnitConversion.h"
 
 #include "DialogueGraphNode_Edge.h"
 #include "DialogueGraphNode.h"
