@@ -312,7 +312,7 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataLinksFromEdges(const TA
 	FString Links;
 	for (const FDlgEdge& Edge : Edges)
 	{
-		const FString EdgeText = bNoTextOnEdges || Edge.Text.IsEmpty() ? FString::Printf(TEXT("Empty - To Node %d"), Edge.TargetIndex) : EscapeHtml(Edge.Text.ToString());
+		const FString EdgeText = bNoTextOnEdges || Edge.Text.IsEmpty() ? FString::Printf(TEXT("$$Empty$$ - To Node %d"), Edge.TargetIndex) : EscapeHtml(Edge.Text.ToString());
 		Links += FString::Printf(TEXT("[[%s|%d]]\n"), *EdgeText, Edge.TargetIndex);
 	}
 	Links.RemoveFromEnd(TEXT("\n"));

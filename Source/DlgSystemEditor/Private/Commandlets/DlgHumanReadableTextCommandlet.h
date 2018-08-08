@@ -39,10 +39,10 @@ struct FDlgEdgeOrphan_FormatHumanReadable
 public:
 	// Metadata
 	UPROPERTY()
-	int32 SourceNodeIndex = INDEX_NONE;
+	int32 SourceNodeIndex = INDEX_NONE - 1;
 
 	UPROPERTY()
-	int32 TargetNodeIndex = INDEX_NONE;
+	int32 TargetNodeIndex = INDEX_NONE - 1;
 
 	UPROPERTY()
 	FText Text;
@@ -58,7 +58,7 @@ struct FDlgEdge_FormatHumanReadable
 public:
 	// Metadata
 	UPROPERTY()
-	int32 TargetNodeIndex = INDEX_NONE;
+	int32 TargetNodeIndex = INDEX_NONE - 1;
 
 	UPROPERTY()
 	FText Text;
@@ -84,11 +84,14 @@ USTRUCT()
 struct FDlgNodeSpeechSequence_FormatHumanReadable
 {
 	GENERATED_USTRUCT_BODY()
+public:
+	// INDEX_NONE is root node
+	bool IsValid() const { return NodeIndex >= INDEX_NONE; }
 
 public:
 	// Metadata
 	UPROPERTY()
-	int32 NodeIndex = INDEX_NONE;
+	int32 NodeIndex = INDEX_NONE - 1;
 
 	UPROPERTY()
 	TArray<FDlgSpeechSequenceEntry_FormatHumanReadable> Sequence;
@@ -105,9 +108,13 @@ struct FDlgNodeSpeech_FormatHumanReadable
 	GENERATED_USTRUCT_BODY()
 
 public:
+	// INDEX_NONE is root node
+	bool IsValid() const { return NodeIndex >= INDEX_NONE; }
+
+public:
 	// Metadata, NodeIndex
 	UPROPERTY()
-	int32 NodeIndex = INDEX_NONE;
+	int32 NodeIndex = INDEX_NONE - 1;
 
 	UPROPERTY()
 	FText Text;
@@ -152,7 +159,6 @@ public:
 	int32 Main(const FString& Params) override;
 
 	static bool ExportDialogueToHumanReadableFormat(const UDlgDialogue& Dialogue, FDlgDialogue_FormatHumanReadable& OutFormat);
-	static bool ExportNodeToContext(const UDlgNode* Node, FDlgNodeContext_FormatHumanReadable& OutContext);
 
 	static bool ImportHumanReadableFormatIntoDialogue(const FDlgDialogue_FormatHumanReadable& Format, UDlgDialogue* Dialogue);
 
@@ -164,6 +170,8 @@ protected:
 	int32 Export();
 	int32 Import();
 
+	static bool ExportNodeToContext(const UDlgNode* Node, FDlgNodeContext_FormatHumanReadable& OutContext);
+	static void ExportNodeEdgesToHumanReadableFormat(const TArray<FDlgEdge>& Edges, TArray<FDlgEdge_FormatHumanReadable>& OutEdges);
 	static bool SetGraphNodesNewEdgesText(UDialogueGraphNode* GraphNode, const TArray<FDlgEdge_FormatHumanReadable>& Edges, const int32 NodeIndex, const UDlgDialogue* Dialogue);
 
 protected:
@@ -171,5 +179,6 @@ protected:
 
 	TArray<UPackage*> PackagesToSave;
 
+	static constexpr int32 RootNodeIndex = INDEX_NONE;
 	static const TCHAR* FileExtension;
 };

@@ -218,37 +218,27 @@ bool UDlgHumanReadableTextCommandlet::ExportDialogueToHumanReadableFormat(const 
 	OutFormat.DialogueName = Dialogue.GetDlgFName();
 	OutFormat.DialogueGuid = Dialogue.GetDlgGuid();
 
+	// Root Node
+	{
+		FDlgNodeSpeech_FormatHumanReadable RootNode;
+		RootNode.NodeIndex = RootNodeIndex;
+		ExportNodeEdgesToHumanReadableFormat(Dialogue.GetStartNode().GetNodeChildren(), RootNode.Edges);
+		OutFormat.SpeechNodes.Add(RootNode);
+	}
+
 	const TArray<UDlgNode*>& Nodes = Dialogue.GetNodes();
 	for (int32 NodeIndex = 0; NodeIndex < Nodes.Num(); NodeIndex++)
 	{
 		const UDlgNode* Node = Nodes[NodeIndex];
 		if (const UDlgNode_Speech* NodeSpeech = Cast<UDlgNode_Speech>(Node))
 		{
-			// Speech
-			if (NodeSpeech->IsVirtualParent())
-			{
-				continue;
-			}
-
 			// Fill Nodes
 			FDlgNodeSpeech_FormatHumanReadable ExportNode;
 			ExportNode.NodeIndex = NodeIndex;
 			ExportNode.Text = NodeSpeech->GetNodeUnformattedText();
 
 			// Fill Edges
-			for (const FDlgEdge& Edge : Node->GetNodeChildren())
-			{
-				if (!Edge.IsValid())
-				{
-					continue;
-				}
-
-				FDlgEdge_FormatHumanReadable ExportEdge;
-				ExportEdge.TargetNodeIndex = Edge.TargetIndex;
-				ExportEdge.Text = Edge.Text;
-				ExportNode.Edges.Add(ExportEdge);
-			}
-
+			ExportNodeEdgesToHumanReadableFormat(Node->GetNodeChildren(), ExportNode.Edges);
 			OutFormat.SpeechNodes.Add(ExportNode);
 		}
 		else if (const UDlgNode_SpeechSequence* NodeSpeechSequence = Cast<UDlgNode_SpeechSequence>(Node))
@@ -268,19 +258,7 @@ bool UDlgHumanReadableTextCommandlet::ExportDialogueToHumanReadableFormat(const 
 			}
 
 			// Fill Edges
-			for (const FDlgEdge& Edge : Node->GetNodeChildren())
-			{
-				if (!Edge.IsValid())
-				{
-					continue;
-				}
-
-				FDlgEdge_FormatHumanReadable ExportEdge;
-				ExportEdge.TargetNodeIndex = Edge.TargetIndex;
-				ExportEdge.Text = Edge.Text;
-				ExportNode.Edges.Add(ExportEdge);
-			}
-
+			ExportNodeEdgesToHumanReadableFormat(Node->GetNodeChildren(), ExportNode.Edges);
 			OutFormat.SpeechSequenceNodes.Add(ExportNode);
 		}
 		else
@@ -330,6 +308,23 @@ bool UDlgHumanReadableTextCommandlet::ExportNodeToContext(const UDlgNode* Node, 
 	return true;
 }
 
+void UDlgHumanReadableTextCommandlet::ExportNodeEdgesToHumanReadableFormat(const TArray<FDlgEdge>& Edges, TArray<FDlgEdge_FormatHumanReadable>& OutEdges)
+{
+	// Fill Edges
+	for (const FDlgEdge& Edge : Edges)
+	{
+		if (!Edge.IsValid())
+		{
+			continue;
+		}
+
+		FDlgEdge_FormatHumanReadable ExportEdge;
+		ExportEdge.TargetNodeIndex = Edge.TargetIndex;
+		ExportEdge.Text = Edge.Text;
+		OutEdges.Add(ExportEdge);
+	}
+}
+
 bool UDlgHumanReadableTextCommandlet::ImportHumanReadableFormatIntoDialogue(const FDlgDialogue_FormatHumanReadable& Format, UDlgDialogue* Dialogue)
 {
 	verify(Dialogue);
@@ -344,31 +339,37 @@ bool UDlgHumanReadableTextCommandlet::ImportHumanReadableFormatIntoDialogue(cons
 	// Speech nodes
 	for (const FDlgNodeSpeech_FormatHumanReadable& HumanNode : Format.SpeechNodes)
 	{
+		if (!HumanNode.IsValid())
+		{
+			continue;
+		}
+
+		// Handle root Node
+		const bool bIsRootNode = HumanNode.NodeIndex == RootNodeIndex;
+
 		// Node
-		UDlgNode* Node = Dialogue->GetMutableNode(HumanNode.NodeIndex);
+		UDlgNode* Node = bIsRootNode ? Dialogue->GetMutableStartNode() : Dialogue->GetMutableNode(HumanNode.NodeIndex);
 		if (Node == nullptr)
 		{
 			UE_LOG(LogDlgHumanReadableTextCommandlet, Warning, TEXT("Invalid node index = %d, in Dialogue = `%s`. Ignoring."), HumanNode.NodeIndex, *Dialogue->GetPathName());
 			continue;
 		}
 
-		UDlgNode_Speech* NodeSpeech = Cast<UDlgNode_Speech>(Node);
-		if (NodeSpeech == nullptr)
+		if (!bIsRootNode)
 		{
-			UE_LOG(LogDlgHumanReadableTextCommandlet, Warning, TEXT("Node index = %d  is not a UDlgNode_Speech, in Dialogue = `%s`. Ignoring."), HumanNode.NodeIndex, *Dialogue->GetPathName());
-			continue;
-		}
-		if (NodeSpeech->IsVirtualParent())
-		{
-			UE_LOG(LogDlgHumanReadableTextCommandlet, Warning, TEXT("Node index = %d  is not VirtualParent, in Dialogue = `%s`. Ignoring."), HumanNode.NodeIndex, *Dialogue->GetPathName());
-			continue;
-		}
+			UDlgNode_Speech* NodeSpeech = Cast<UDlgNode_Speech>(Node);
+			if (NodeSpeech == nullptr)
+			{
+				UE_LOG(LogDlgHumanReadableTextCommandlet, Warning, TEXT("Node index = %d  is not a UDlgNode_Speech, in Dialogue = `%s`. Ignoring."), HumanNode.NodeIndex, *Dialogue->GetPathName());
+				continue;
+			}
 
-		// Node Text changed
-		if (!NodeSpeech->GetNodeUnformattedText().EqualTo(HumanNode.Text))
-		{
-			NodeSpeech->SetNodeUnformattedText(HumanNode.Text);
-			bModified = true;
+			// Node Text changed
+			if (!NodeSpeech->GetNodeUnformattedText().EqualTo(HumanNode.Text))
+			{
+				NodeSpeech->SetNodeUnformattedText(HumanNode.Text);
+				bModified = true;
+			}
 		}
 
 		UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(Node->GetGraphNode());
@@ -389,13 +390,18 @@ bool UDlgHumanReadableTextCommandlet::ImportHumanReadableFormatIntoDialogue(cons
 	// Speech sequence nodes
 	for (const FDlgNodeSpeechSequence_FormatHumanReadable& HumanSpeechSequence : Format.SpeechSequenceNodes)
 	{
+		if (!HumanSpeechSequence.IsValid())
+		{
+			continue;
+		}
+
 		// Node
 		UDlgNode* Node = Dialogue->GetMutableNode(HumanSpeechSequence.NodeIndex);
 		if (Node == nullptr)
 		{
 			UE_LOG(LogDlgHumanReadableTextCommandlet,
 				Warning,
-				TEXT("Invalid node index = %d, in Dialogue = `%s`. Ignoring."),
+				TEXT("Invalid node speech sequence index = %d, in Dialogue = `%s`. Ignoring."),
 				HumanSpeechSequence.NodeIndex, *Dialogue->GetPathName());
 			continue;
 		}
@@ -405,7 +411,7 @@ bool UDlgHumanReadableTextCommandlet::ImportHumanReadableFormatIntoDialogue(cons
 		{
 			UE_LOG(LogDlgHumanReadableTextCommandlet,
 				Warning,
-				TEXT("Node index = %d  is not a UDlgNode_SpeechSequence, in Dialogue = `%s`. Ignoring."),
+				TEXT("Node node speech sequence  index = %d  is not a UDlgNode_SpeechSequence, in Dialogue = `%s`. Ignoring."),
 				HumanSpeechSequence.NodeIndex, *Dialogue->GetPathName());
 			continue;
 		}
