@@ -299,7 +299,7 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 			}
 		}
 
-		NodeContent += TEXT("\n\n\n") + CreateTwinePassageDataLinksFromEdges(Node.GetNodeChildren(), true);
+		NodeContent += TEXT("\n\n\n") + CreateTwinePassageDataLinksFromEdges(Node.GetNodeChildren());
 		return CreateTwinePassageData(NodeIndex, NodeName, Tags, Position, Size, NodeContent);
 	}
 

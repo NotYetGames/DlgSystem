@@ -113,18 +113,16 @@ class TwineEdgeData:
     EMPTY_TEXT_FLAG = "$$empty$$"
 
     def __init__(self):
-        self.raw_target_node_index = None
+        self.raw_data = None
         self.raw_text = None
 
         self.text = None
         self.target_node_index = None
+        self.owner_node_index = None
 
     # The edge has empty text
     def is_empty_edge_text(self):
         return self.raw_text is None or self.EMPTY_TEXT_FLAG in self.raw_text.lower()
-
-    def _parse_target_node_index(self):
-        self.target_node_index = string_to_int(self.raw_target_node_index)
 
     def _parse_text(self):
         if self.is_empty_edge_text():
@@ -133,7 +131,14 @@ class TwineEdgeData:
             self.text = self.raw_text
 
     def parse(self):
-        self._parse_target_node_index()
+        # TODO make sure there are not multiple of these
+        parts = self.raw_data.split("|")
+        if len(parts) != 2:
+            print_yellow("Node Index = {} has an edge with len(parts) = {}. There must be exactly 2. Did you use `|` inside your edge?".format(self.owner_node_index, len(parts)))
+            return
+
+        self.raw_text = parts[0]
+        self.target_node_index = string_to_int(parts[1])
         self._parse_text()
 
     def to_dict(self):
@@ -147,6 +152,62 @@ class TwineEdgeData:
 
     def __str__(self):
         return "TwineEdgeData(target_node_index = {}, text = `{}`)".format(self.target_node_index, self.text)
+
+    def __repr__(self):
+        return str(self)
+
+
+class TwineInnerEdgeData:
+    REGEX_TEXT = r"``\s*Text\s*:\s*``\s*//(.*)//"
+    REGEX_EDGE_TEXT = r"``\s*EdgeText\s*:\s*``\s*//(.*)//"
+
+    def __init__(self):
+        self.raw_data = None
+
+        self.text = None
+        self.edge_text = None
+        self.owner_node_index = None
+
+    def parse(self):
+        # Parse text
+        matches_text = re.finditer(self.REGEX_TEXT, self.raw_data, re.MULTILINE | re.UNICODE)
+        for index, match in enumerate(matches_text):
+            if index > 0:
+                print_yellow("Node speech sequence Index = {} got multiple matches for text".format(self.owner_node_index))
+                break
+
+            group = match.group(1)
+            if group is None:
+                print_yellow("Node speech sequence Index = {} could not get group 1 that matches ``Text:`` //<text>//".format(self.owner_node_index))
+                continue
+
+            self.text = group.strip()
+
+        # Parse edge text
+        matches_edge_text = re.finditer(self.REGEX_EDGE_TEXT, self.raw_data, re.MULTILINE | re.UNICODE)
+        for index, match in enumerate(matches_edge_text):
+            if index > 0:
+                print_yellow("Node speech sequence Index = {} got multiple matches for edge text".format(self.owner_node_index))
+                break
+
+            group = match.group(1)
+            if group is None:
+                print_yellow("Node speech sequence Index = {} could not get group 1 that matches ``EdgeText:`` //<edge_text>//".format(self.owner_node_index))
+                continue
+            self.edge_text = group.strip()
+
+    def to_dict(self):
+        if self.raw_data is None or self.text is None or self.edge_text is None:
+            return {}
+
+        return {
+            "Text": self.text,
+            "EdgeText": self.edge_text
+        }
+
+
+    def __str__(self):
+        return "TwineInnerEdgeData(text = {}, edge_text = `{}`)".format(self.text, self.edge_text)
 
     def __repr__(self):
         return str(self)
@@ -173,17 +234,20 @@ class TwineNodeData:
     def _parse_node_index(self):
         self.node_index = string_to_int(self.raw_name)
 
+    def __get_raw_data_until_edges(self):
+        index_edge_start = self.raw_data.find("[[")
+        if index_edge_start == -1:
+            # take whole string
+            return self.raw_data
+
+        # Until the first
+        return self.raw_data[0:index_edge_start].strip()
+
     def _parse_text(self):
         if not self.can_have_text():
             return
 
-        index_edge_start = self.raw_data.find("[[")
-        if index_edge_start == -1:
-            # take whole string
-            self.text = self.raw_data
-        else:
-            # Until the first
-            self.text = self.raw_data[0:index_edge_start].strip()
+        self.text = self.__get_raw_data_until_edges()
 
     def _parse_edges(self):
         # Refuse to parse, because on some nodes we don't care about the edge text
@@ -193,15 +257,13 @@ class TwineNodeData:
         matches = re.finditer(self.REGEX_EDGES, self.raw_data, re.MULTILINE | re.UNICODE)
         for index, match in enumerate(matches):
             group = match.group(1)
-            # TODO make sure there are not multiple of these
-            group_parts = group.split("|")
-            if len(group_parts) != 2:
-                print_yellow("Node Index = {} has an edge with len(group_parts) = {}. There must be exactly 2. Did you use `|` inside your edge?".format(self.node_index, len(group_parts)))
+            if group is None:
+                print_yellow("Node Index = {} could not get group 1 that matches [[<edge content>|<edge index>]]".format(self.node_index))
                 continue
 
             edge = TwineEdgeData()
-            edge.raw_text = group_parts[0]
-            edge.raw_target_node_index = group_parts[1]
+            edge.raw_data = group.strip()
+            edge.owner_node_index = self.node_index
             edge.parse()
             self.edges.append(edge)
 
@@ -210,7 +272,18 @@ class TwineNodeData:
         if not self.is_node_speech_sequence() or not self.raw_data:
             return
 
-        # TODO
+        raw_text_data = self.__get_raw_data_until_edges()
+        inner_edges_parts = raw_text_data.split("---")
+        if not inner_edges_parts:
+            print_yellow("Node Index = {} which is a speech sequence node does not have inner edges".format(self.node_index))
+            return
+
+        for raw_inner_edge in inner_edges_parts:
+            inner_edge = TwineInnerEdgeData()
+            inner_edge.raw_data = raw_inner_edge.strip()
+            inner_edge.owner_node_index = self.node_index
+            inner_edge.parse()
+            self.inner_edges.append(inner_edge)
 
     def parse(self):
         self._parse_tags()
@@ -257,15 +330,22 @@ class TwineNodeData:
         if self.node_index is None or self.node_index < ROOT_NODE_INDEX:
             return {}
 
+        edges = []
+        for edge in self.edges:
+            edges.append(edge.to_dict())
+
+        inner_edges = []
+        for inner_edge in self.inner_edges:
+            inner_edges.append(inner_edge.to_dict())
+
         if self.is_node_speech_sequence():
-            # TODO
-            return {}
+            return {
+                "NodeIndex": self.node_index,
+                "Sequence": inner_edges,
+                "Edges": edges
+            }
 
         if self.can_have_text() or self.is_node_start():
-            edges = []
-            for edge in self.edges:
-                edges.append(edge.to_dict())
-
             return {
                 "NodeIndex": self.node_index,
                 "Text": self.text,
