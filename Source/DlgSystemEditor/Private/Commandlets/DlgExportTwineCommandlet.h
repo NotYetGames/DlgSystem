@@ -31,7 +31,7 @@ public:
 	FString CreateTwineStoryData(const FString& Name, const FGuid& DialogueGuid, const int32 StartNodeIndex, const FString& PassagesData);
 
 	FString CreateTwinePassageDataFromNode(const UDlgDialogue& Dialogue, const UDlgNode& Node, const int32 NodeIndex);
-	FString CreateTwinePassageDataLinksFromEdges(const TArray<FDlgEdge>& Edges, const bool bNoTextOnEdges = false);
+	FString CreateTwinePassageDataLinksFromEdges(const UDlgDialogue& Dialogue, const TArray<FDlgEdge>& Edges, const bool bNoTextOnEdges = false);
 
 	FString CreateTwinePassageData(const int32 Pid, const FString& Name, const FString& Tags, const FIntPoint& Position, const FIntPoint& Size, const FString& Content);
 
@@ -50,6 +50,8 @@ public:
 	}
 
 	static FString CreateTwineTagColorsData();
+
+	FString GetNodeNameFromNode(const UDlgNode& Node, const int32 NodeIndex, const bool bIsRootNode = false);
 
 	FORCEINLINE static FString& EscapeHtml(FString& String)
 	{

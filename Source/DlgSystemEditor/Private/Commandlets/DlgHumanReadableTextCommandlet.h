@@ -18,10 +18,6 @@ struct FDlgNodeContext_FormatHumanReadable
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	// Some context
-	UPROPERTY()
-	FName Speaker;
-
 	UPROPERTY()
 	TArray<int32> ParentNodeIndices;
 
@@ -71,6 +67,10 @@ struct FDlgSpeechSequenceEntry_FormatHumanReadable
 {
 	GENERATED_USTRUCT_BODY()
 public:
+	// ParticipantName
+	UPROPERTY()
+	FName Speaker;
+
 	UPROPERTY()
 	FText Text;
 
@@ -94,6 +94,9 @@ public:
 	int32 NodeIndex = INDEX_NONE - 1;
 
 	UPROPERTY()
+	FName Speaker;
+
+	UPROPERTY()
 	TArray<FDlgSpeechSequenceEntry_FormatHumanReadable> Sequence;
 
 	UPROPERTY()
@@ -115,6 +118,9 @@ public:
 	// Metadata, NodeIndex
 	UPROPERTY()
 	int32 NodeIndex = INDEX_NONE - 1;
+
+	UPROPERTY()
+	FName Speaker;
 
 	UPROPERTY()
 	FText Text;
@@ -158,9 +164,9 @@ public:
 	//~ UCommandlet interface
 	int32 Main(const FString& Params) override;
 
-	static bool ExportDialogueToHumanReadableFormat(const UDlgDialogue& Dialogue, FDlgDialogue_FormatHumanReadable& OutFormat);
+	bool ExportDialogueToHumanReadableFormat(const UDlgDialogue& Dialogue, FDlgDialogue_FormatHumanReadable& OutFormat);
 
-	static bool ImportHumanReadableFormatIntoDialogue(const FDlgDialogue_FormatHumanReadable& Format, UDlgDialogue* Dialogue);
+	bool ImportHumanReadableFormatIntoDialogue(const FDlgDialogue_FormatHumanReadable& Format, UDlgDialogue* Dialogue);
 
 	// Tells us if the edge text is default
 	static bool IsEdgeTextDefault(const FText& EdgeText);
@@ -178,6 +184,10 @@ protected:
 	FString OutputInputDirectory;
 
 	TArray<UPackage*> PackagesToSave;
+
+	bool bSaveAllDialogues = false;
+	bool bExport = false;
+	bool bImport = false;
 
 	static constexpr int32 RootNodeIndex = INDEX_NONE;
 	static const TCHAR* FileExtension;

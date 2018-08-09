@@ -544,7 +544,7 @@ void FMultiLineEditableTextBox_CustomRowHelper::UpdateInternal()
 	[
 		SAssignNew(HorizontalBox, SHorizontalBox)
 		+SHorizontalBox::Slot()
-		.Padding(4.f, 0.f)
+		.Padding(0.f, 0.f, 4.f, 0.f)
 		.FillWidth(1.f)
 		[
 			MultiLineEditableTextBoxWidget.ToSharedRef()

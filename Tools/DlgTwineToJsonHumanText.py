@@ -109,8 +109,41 @@ class TwineNodeTag:
         return bool(common)
 
 
+class TwineHelper:
+    REGEX_NAME = r"(-?\d+)\.\s*(.*)"
+
+    @classmethod
+    def parse_twine_node_name(cls, raw_name, context_multiple_matches, context_invalid_index, context_invalid_speaker):
+        # Get node index and speaker
+        matches_name = re.finditer(cls.REGEX_NAME, raw_name, re.MULTILINE | re.UNICODE)
+        node_index, speaker = None, None
+        for index, match in enumerate(matches_name):
+            if index > 0:
+                print_yellow("{}, got multiple name matches".format(context_multiple_matches))
+                break
+
+            group_index = match.group(1)
+            if group_index is not None:
+                node_index = string_to_int(group_index.strip())
+            else:
+                print_yellow("{}, could not get node index from <node index>. <Speaker>".format(context_invalid_index))
+
+            group_speaker = match.group(2)
+            if group_index is not None:
+                speaker = group_speaker.strip()
+            else:
+                print_yellow("{}, could not get speaker from <node index>. <Speaker>".format(context_invalid_speaker))
+
+        return node_index, speaker
+
+    @classmethod
+    def clean_text(cls, text):
+        # Use windows line endings
+        return text.strip().replace("\n", "\r\n")
+
+
 class TwineEdgeData:
-    EMPTY_TEXT_FLAG = "$$empty$$"
+    IGNORE_EMPTY_TEXT_FLAG = "~ignore~"
 
     def __init__(self):
         self.raw_data = None
@@ -122,13 +155,7 @@ class TwineEdgeData:
 
     # The edge has empty text
     def is_empty_edge_text(self):
-        return self.raw_text is None or self.EMPTY_TEXT_FLAG in self.raw_text.lower()
-
-    def _parse_text(self):
-        if self.is_empty_edge_text():
-            self.text = ""
-        else:
-            self.text = self.raw_text
+        return self.raw_text is None or self.IGNORE_EMPTY_TEXT_FLAG in self.raw_text.lower()
 
     def parse(self):
         # TODO make sure there are not multiple of these
@@ -137,12 +164,22 @@ class TwineEdgeData:
             print_yellow("Node Index = {} has an edge with len(parts) = {}. There must be exactly 2. Did you use `|` inside your edge?".format(self.owner_node_index, len(parts)))
             return
 
+        # Text
         self.raw_text = parts[0]
-        self.target_node_index = string_to_int(parts[1])
-        self._parse_text()
+        if self.is_empty_edge_text():
+            self.text = ""
+        else:
+            self.text = TwineHelper.clean_text(self.raw_text)
+
+        # Target nnode index
+        context_parse_name = "Node Index = {} Edge, parts[1] = `{}`".format(self.owner_node_index, parts[1])
+        self.target_node_index, ignored_speaker = TwineHelper.parse_twine_node_name(parts[1], context_parse_name, context_parse_name, context_parse_name)
+
 
     def to_dict(self):
         if self.text is None or self.target_node_index is None or self.target_node_index < ROOT_NODE_INDEX:
+            print(self.text)
+            print_yellow("Node index = {}, Edge invalid = {}. ignoring.".format(self.owner_node_index, str(self)))
             return {}
 
         return {
@@ -158,22 +195,38 @@ class TwineEdgeData:
 
 
 class TwineInnerEdgeData:
+    REGEX_SPEAKER = r"``\s*Speaker\s*:\s*``\s*//(.*)//"
     REGEX_TEXT = r"``\s*Text\s*:\s*``\s*//(.*)//"
     REGEX_EDGE_TEXT = r"``\s*EdgeText\s*:\s*``\s*//(.*)//"
 
     def __init__(self):
         self.raw_data = None
 
+        self.speaker = None
         self.text = None
         self.edge_text = None
         self.owner_node_index = None
 
     def parse(self):
-        # Parse text
-        matches_text = re.finditer(self.REGEX_TEXT, self.raw_data, re.MULTILINE | re.UNICODE)
+        # Parse speaker
+        matches_text = re.finditer(self.REGEX_SPEAKER, self.raw_data, re.MULTILINE | re.UNICODE | re.IGNORECASE)
         for index, match in enumerate(matches_text):
             if index > 0:
-                print_yellow("Node speech sequence Index = {} got multiple matches for text".format(self.owner_node_index))
+                print_yellow("Node speech sequence Index = {} got multiple matches for Speaker".format(self.owner_node_index))
+                break
+
+            group = match.group(1)
+            if group is None:
+                print_yellow("Node speech sequence Index = {} could not get group 1 that matches ``Speaker:`` //<Name>//".format(self.owner_node_index))
+                continue
+
+            self.speaker = group.strip()
+
+        # Parse text
+        matches_text = re.finditer(self.REGEX_TEXT, self.raw_data, re.MULTILINE | re.UNICODE | re.IGNORECASE)
+        for index, match in enumerate(matches_text):
+            if index > 0:
+                print_yellow("Node speech sequence Index = {} got multiple matches for Text".format(self.owner_node_index))
                 break
 
             group = match.group(1)
@@ -181,10 +234,10 @@ class TwineInnerEdgeData:
                 print_yellow("Node speech sequence Index = {} could not get group 1 that matches ``Text:`` //<text>//".format(self.owner_node_index))
                 continue
 
-            self.text = group.strip()
+            self.text = TwineHelper.clean_text(group.strip())
 
         # Parse edge text
-        matches_edge_text = re.finditer(self.REGEX_EDGE_TEXT, self.raw_data, re.MULTILINE | re.UNICODE)
+        matches_edge_text = re.finditer(self.REGEX_EDGE_TEXT, self.raw_data, re.MULTILINE | re.UNICODE | re.IGNORECASE)
         for index, match in enumerate(matches_edge_text):
             if index > 0:
                 print_yellow("Node speech sequence Index = {} got multiple matches for edge text".format(self.owner_node_index))
@@ -197,17 +250,18 @@ class TwineInnerEdgeData:
             self.edge_text = group.strip()
 
     def to_dict(self):
-        if self.raw_data is None or self.text is None or self.edge_text is None:
+        if self.speaker is None or self.raw_data is None or self.text is None or self.edge_text is None:
             return {}
 
         return {
+            "Speaker": self.speaker,
             "Text": self.text,
             "EdgeText": self.edge_text
         }
 
 
     def __str__(self):
-        return "TwineInnerEdgeData(text = {}, edge_text = `{}`)".format(self.text, self.edge_text)
+        return "TwineInnerEdgeData(speaker = {}, text = {}, edge_text = `{}`)".format(self.speaker, self.text, self.edge_text)
 
     def __repr__(self):
         return str(self)
@@ -223,16 +277,11 @@ class TwineNodeData:
 
         # Computed from raw data
         self.node_index = None
+        self.speaker = None
         self.text = ""
         self.tags = []
         self.edges = []
         self.inner_edges = []
-
-    def _parse_tags(self):
-        self.tags = [x.lower() for x in  self.raw_tags.strip().split(" ")]
-
-    def _parse_node_index(self):
-        self.node_index = string_to_int(self.raw_name)
 
     def __get_raw_data_until_edges(self):
         index_edge_start = self.raw_data.find("[[")
@@ -241,13 +290,13 @@ class TwineNodeData:
             return self.raw_data
 
         # Until the first
-        return self.raw_data[0:index_edge_start].strip()
+        return self.raw_data[0:index_edge_start]
 
     def _parse_text(self):
         if not self.can_have_text():
             return
 
-        self.text = self.__get_raw_data_until_edges()
+        self.text = TwineHelper.clean_text(self.__get_raw_data_until_edges())
 
     def _parse_edges(self):
         # Refuse to parse, because on some nodes we don't care about the edge text
@@ -272,7 +321,7 @@ class TwineNodeData:
         if not self.is_node_speech_sequence() or not self.raw_data:
             return
 
-        raw_text_data = self.__get_raw_data_until_edges()
+        raw_text_data = self.__get_raw_data_until_edges().strip()
         inner_edges_parts = raw_text_data.split("---")
         if not inner_edges_parts:
             print_yellow("Node Index = {} which is a speech sequence node does not have inner edges".format(self.node_index))
@@ -286,10 +335,13 @@ class TwineNodeData:
             self.inner_edges.append(inner_edge)
 
     def parse(self):
-        self._parse_tags()
-        self._parse_node_index()
-        self._parse_text()
+        self.tags = [x.lower() for x in  self.raw_tags.strip().split(" ")]
 
+        # Get node index and speaker
+        context_parse_name = "Node Name = {}".format(self.raw_name)
+        self.node_index, self.speaker = TwineHelper.parse_twine_node_name(self.raw_name, context_parse_name, context_parse_name, context_parse_name)
+
+        self._parse_text()
         if not TwineNodeTag.has_valid_tags(self.tags):
             print_yellow("Node Index = {} does not have any valid tags = {}".format(self.node_index, self.tags))
 
@@ -328,6 +380,7 @@ class TwineNodeData:
 
     def to_dict(self):
         if self.node_index is None or self.node_index < ROOT_NODE_INDEX:
+            print_yellow("Node Index = {} is invalid ignoring".format(self.node_index))
             return {}
 
         edges = []
@@ -341,6 +394,7 @@ class TwineNodeData:
         if self.is_node_speech_sequence():
             return {
                 "NodeIndex": self.node_index,
+                "Speaker": self.speaker,
                 "Sequence": inner_edges,
                 "Edges": edges
             }
@@ -348,6 +402,7 @@ class TwineNodeData:
         if self.can_have_text() or self.is_node_start():
             return {
                 "NodeIndex": self.node_index,
+                "Speaker": self.speaker,
                 "Text": self.text,
                 "Edges": edges
             }
@@ -355,7 +410,7 @@ class TwineNodeData:
         return {}
 
     def __str__(self):
-        return "TwineNodeData(node_index = {}, tags = {}, text = `{}`, edges = {})".format(self.node_index, self.tags, self.text, self.edges)
+        return "TwineNodeData(node_index = {}, speakr = {},  tags = {}, text = `{}`, edges = {})".format(self.node_index, self.speaker, self.tags, self.text, self.edges)
 
     def __repr__(self):
         return str(self)

@@ -208,8 +208,9 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 		UE_LOG(LogDlgExportTwineCommandlet, Warning, TEXT("Invalid UDialogueGraphNode for Node index = %d in Dialogue = `%s`. Ignoring."), NodeIndex, *Dialogue.GetPathName());
 		return "";
 	}
+	const bool bIsRootNode = DialogueGraphNode->IsRootNode();
 
-	const FString NodeName = FString::FromInt(NodeIndex);
+	const FString NodeName = GetNodeNameFromNode(Node, NodeIndex, bIsRootNode);
 	FString Tags;
 	FIntPoint Position = GraphNodeToTwineCanvas(DialogueGraphNode->NodePosX, DialogueGraphNode->NodePosY);
 
@@ -228,8 +229,7 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 		Tags += TagNodeStart;
 		Size = SizeSmall;
 
-		NodeContent += TEXT("START\n");
-		NodeContent += CreateTwinePassageDataLinksFromEdges(Node.GetNodeChildren());
+		NodeContent += CreateTwinePassageDataLinksFromEdges(Dialogue, Node.GetNodeChildren());
 		return CreateTwinePassageData(NodeIndex, NodeName, Tags, Position, Size, NodeContent);
 	}
 
@@ -240,7 +240,7 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 		Tags += TagNodeVirtualParent;
 		const UDlgNode_Speech& NodeSpeech = DialogueGraphNode->GetDialogueNode<UDlgNode_Speech>();
 		NodeContent += EscapeHtml(NodeSpeech.GetNodeUnformattedText().ToString());
-		NodeContent += TEXT("\n\n\n") + CreateTwinePassageDataLinksFromEdges(Node.GetNodeChildren(), true);
+		NodeContent += TEXT("\n\n\n") + CreateTwinePassageDataLinksFromEdges(Dialogue, Node.GetNodeChildren(), true);
 		return CreateTwinePassageData(NodeIndex, NodeName, Tags, Position, Size, NodeContent);
 	}
 	if (DialogueGraphNode->IsSpeechNode())
@@ -249,7 +249,7 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 		Position = FIntPoint(Position.X, Position.Y);
 		const UDlgNode_Speech& NodeSpeech = DialogueGraphNode->GetDialogueNode<UDlgNode_Speech>();
 		NodeContent += EscapeHtml(NodeSpeech.GetNodeUnformattedText().ToString());
-		NodeContent += TEXT("\n\n\n") + CreateTwinePassageDataLinksFromEdges(Node.GetNodeChildren());
+		NodeContent += TEXT("\n\n\n") + CreateTwinePassageDataLinksFromEdges(Dialogue, Node.GetNodeChildren());
 		return CreateTwinePassageData(NodeIndex, NodeName, Tags, Position, Size, NodeContent);
 	}
 	if (DialogueGraphNode->IsEndNode())
@@ -274,7 +274,7 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 
 		Size = SizeSmall;
 		NodeContent += TEXT("SELECTOR\n");
-		NodeContent += CreateTwinePassageDataLinksFromEdges(Node.GetNodeChildren(), true);
+		NodeContent += CreateTwinePassageDataLinksFromEdges(Dialogue, Node.GetNodeChildren(), true);
 		return CreateTwinePassageData(NodeIndex, NodeName, Tags, Position, Size, NodeContent);
 	}
 	if (DialogueGraphNode->IsSpeechSequenceNode())
@@ -288,9 +288,12 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 		{
 			const FDlgSpeechSequenceEntry& Entry = Sequence[EntryIndex];
 			NodeContent += FString::Printf(
+				TEXT("``Speaker:`` //%s//\n")
 				TEXT("``Text:`` //%s//\n")
 				TEXT("``EdgeText:`` //%s//\n"),
-				*EscapeHtml(Entry.Text.ToString()), *EscapeHtml(Entry.EdgeText.ToString())
+				*EscapeHtml(Entry.Speaker.ToString()),
+				*EscapeHtml(Entry.Text.ToString()), 
+				*EscapeHtml(Entry.EdgeText.ToString())
 			);
 
 			if (EntryIndex != Sequence.Num() - 1)
@@ -299,7 +302,7 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 			}
 		}
 
-		NodeContent += TEXT("\n\n\n") + CreateTwinePassageDataLinksFromEdges(Node.GetNodeChildren());
+		NodeContent += TEXT("\n\n\n") + CreateTwinePassageDataLinksFromEdges(Dialogue, Node.GetNodeChildren());
 		return CreateTwinePassageData(NodeIndex, NodeName, Tags, Position, Size, NodeContent);
 	}
 
@@ -307,13 +310,29 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 	return "";
 }
 
-FString UDlgExportTwineCommandlet::CreateTwinePassageDataLinksFromEdges(const TArray<FDlgEdge>& Edges, const bool bNoTextOnEdges)
+FString UDlgExportTwineCommandlet::GetNodeNameFromNode(const UDlgNode& Node, const int32 NodeIndex, const bool bIsRootNode)
+{
+	return FString::Printf(TEXT("%d. %s"), NodeIndex, bIsRootNode ? TEXT("START") : *Node.GetNodeParticipantName().ToString());
+}
+
+FString UDlgExportTwineCommandlet::CreateTwinePassageDataLinksFromEdges(const UDlgDialogue& Dialogue, const TArray<FDlgEdge>& Edges, const bool bNoTextOnEdges)
 {
 	FString Links;
+	const TArray<UDlgNode*>& Nodes = Dialogue.GetNodes();
 	for (const FDlgEdge& Edge : Edges)
 	{
-		const FString EdgeText = bNoTextOnEdges || Edge.Text.IsEmpty() ? FString::Printf(TEXT("$$Empty$$ - To Node %d"), Edge.TargetIndex) : EscapeHtml(Edge.Text.ToString());
-		Links += FString::Printf(TEXT("[[%s|%d]]\n"), *EdgeText, Edge.TargetIndex);
+		if (!Edge.IsValid())
+		{
+			continue;
+		}
+		if (!Nodes.IsValidIndex(Edge.TargetIndex))
+		{
+			UE_LOG(LogDlgExportTwineCommandlet, Warning, TEXT("Target index = %d not valid. Ignoring"), Edge.TargetIndex);
+			continue;
+		}
+		
+		const FString EdgeText = bNoTextOnEdges || Edge.Text.IsEmpty() ? FString::Printf(TEXT("~ignore~ To Node %d"), Edge.TargetIndex) : EscapeHtml(Edge.Text.ToString());
+		Links += FString::Printf(TEXT("[[%s|%s]]\n"), *EdgeText, *GetNodeNameFromNode(*Nodes[Edge.TargetIndex], Edge.TargetIndex, false));
 	}
 	Links.RemoveFromEnd(TEXT("\n"));
 	return Links;
@@ -359,7 +378,7 @@ void UDlgExportTwineCommandlet::InitTwinetagNodesColors()
 
 	TwineTagNodesColorsMap.Add(TagNodeStart, TEXT("green"));
 	TwineTagNodesColorsMap.Add(TagNodeEnd, TEXT("red"));
-	TwineTagNodesColorsMap.Add(TagNodeVirtualParent, TEXT("gray"));
+	TwineTagNodesColorsMap.Add(TagNodeVirtualParent, TEXT("blue"));
 	TwineTagNodesColorsMap.Add(TagNodeSpeech, TEXT("blue"));
 	TwineTagNodesColorsMap.Add(TagNodeSpeechSequence, TEXT("blue"));
 	TwineTagNodesColorsMap.Add(TagNodeSelectorFirst, TEXT("purple"));

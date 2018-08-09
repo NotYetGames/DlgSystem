@@ -41,9 +41,6 @@ int32 UDlgHumanReadableTextCommandlet::Main(const FString& Params)
 	TMap<FString, FString> ParamVals;
 	UCommandlet::ParseCommandLine(*Params, Tokens, Switches, ParamVals);
 
-	bool bExport = false;
-	bool bImport = false;
-
 	// Set the output directory
 	const FString* OutputInputDirectoryVal = ParamVals.Find(FString(TEXT("OutputInputDirectory")));
 	if (OutputInputDirectoryVal == nullptr)
@@ -63,6 +60,15 @@ int32 UDlgHumanReadableTextCommandlet::Main(const FString& Params)
 	if (FPaths::IsRelative(OutputInputDirectory))
 	{
 		OutputInputDirectory = FPaths::Combine(FPaths::ProjectDir(), OutputInputDirectory);
+	}
+
+	if (Switches.Contains(TEXT("SaveAllDialogues")))
+	{
+		bSaveAllDialogues = true;
+	}
+	else if (Switches.Contains(TEXT("NoSaveAllDialogues")))
+	{
+		bSaveAllDialogues = false;
 	}
 
 	if (Switches.Contains(TEXT("Export")))
@@ -101,7 +107,10 @@ int32 UDlgHumanReadableTextCommandlet::Export()
 	UE_LOG(LogDlgHumanReadableTextCommandlet, Display, TEXT("Exporting to = `%s`"), *OutputInputDirectory);
 
 	// Some Dialogues may be unclean?
-	FDlgCommandletHelper::SaveAllDialogues();
+	if (bSaveAllDialogues)
+	{
+		FDlgCommandletHelper::SaveAllDialogues();
+	}
 
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 	const TArray<UDlgDialogue*> AllDialogues = UDlgManager::GetAllDialoguesFromMemory();
@@ -235,8 +244,9 @@ bool UDlgHumanReadableTextCommandlet::ExportDialogueToHumanReadableFormat(const 
 			// Fill Nodes
 			FDlgNodeSpeech_FormatHumanReadable ExportNode;
 			ExportNode.NodeIndex = NodeIndex;
+			ExportNode.Speaker = NodeSpeech->GetNodeParticipantName();
 			ExportNode.Text = NodeSpeech->GetNodeUnformattedText();
-
+				
 			// Fill Edges
 			ExportNodeEdgesToHumanReadableFormat(Node->GetNodeChildren(), ExportNode.Edges);
 			OutFormat.SpeechNodes.Add(ExportNode);
@@ -247,6 +257,7 @@ bool UDlgHumanReadableTextCommandlet::ExportDialogueToHumanReadableFormat(const 
 
 			FDlgNodeSpeechSequence_FormatHumanReadable ExportNode;
 			ExportNode.NodeIndex = NodeIndex;
+			ExportNode.Speaker = NodeSpeechSequence->GetNodeParticipantName();
 
 			// Fill sequence
 			for (const FDlgSpeechSequenceEntry& Entry : NodeSpeechSequence->GetNodeSpeechSequence())
@@ -254,6 +265,7 @@ bool UDlgHumanReadableTextCommandlet::ExportDialogueToHumanReadableFormat(const 
 				FDlgSpeechSequenceEntry_FormatHumanReadable ExportEntry;
 				ExportEntry.EdgeText = Entry.EdgeText;
 				ExportEntry.Text = Entry.Text;
+				ExportEntry.Speaker = Entry.Speaker;
 				ExportNode.Sequence.Add(ExportEntry);
 			}
 
@@ -303,7 +315,6 @@ bool UDlgHumanReadableTextCommandlet::ExportNodeToContext(const UDlgNode* Node, 
 	{
 		OutContext.ChildNodeIndices.Add(ChildNode->GetDialogueNodeIndex());
 	}
-	OutContext.Speaker = Node->GetNodeParticipantName();
 
 	return true;
 }
@@ -370,6 +381,13 @@ bool UDlgHumanReadableTextCommandlet::ImportHumanReadableFormatIntoDialogue(cons
 				NodeSpeech->SetNodeUnformattedText(HumanNode.Text);
 				bModified = true;
 			}
+
+			// Node speaker changed
+			if (!NodeSpeech->GetNodeParticipantName().IsEqual(HumanNode.Speaker, ENameCase::CaseSensitive))
+			{
+				NodeSpeech->SetNodeParticipantName(HumanNode.Speaker);
+				bModified = true;
+			}
 		}
 
 		UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(Node->GetGraphNode());
@@ -416,6 +434,13 @@ bool UDlgHumanReadableTextCommandlet::ImportHumanReadableFormatIntoDialogue(cons
 			continue;
 		}
 
+		// Node speaker changed
+		if (!NodeSpeechSequence->GetNodeParticipantName().IsEqual(HumanSpeechSequence.Speaker, ENameCase::CaseSensitive))
+		{
+			NodeSpeechSequence->SetNodeParticipantName(HumanSpeechSequence.Speaker);
+			bModified = true;
+		}
+
 		// Sequence nodes
 		TArray<FDlgSpeechSequenceEntry>& SequenceArray = *NodeSpeechSequence->GetMutableNodeSpeechSequence();
 		for (int32 SequenceIndex = 0; SequenceIndex < SequenceArray.Num() && SequenceIndex < HumanSpeechSequence.Sequence.Num(); SequenceIndex++)
@@ -426,6 +451,13 @@ bool UDlgHumanReadableTextCommandlet::ImportHumanReadableFormatIntoDialogue(cons
 			if (!SequenceArray[SequenceIndex].EdgeText.EqualTo(HumanSequence.EdgeText))
 			{
 				SequenceArray[SequenceIndex].EdgeText = HumanSequence.EdgeText;
+				bModified = true;
+			}
+
+			// Speaker Changed
+			if (!SequenceArray[SequenceIndex].Speaker.IsEqual(HumanSequence.Speaker, ENameCase::CaseSensitive))
+			{
+				SequenceArray[SequenceIndex].Speaker = HumanSequence.Speaker;
 				bModified = true;
 			}
 
