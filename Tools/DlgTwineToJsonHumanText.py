@@ -43,39 +43,56 @@ def print_newlines(nr = 1):
 
 
 def print_reset_color():
-    print(Colors.END)
+    if sys.stdout.isatty():
+        print(Colors.END)
+
+
+def _print_internal(color, string, **kwargs):
+    if sys.stdout.isatty():
+        # You're running in a real terminal
+        prefix, suffix = color, Colors.END
+    else:
+        # You're being piped or redirected
+        prefix, suffix = '', ''
+
+    print(prefix + string + suffix, **kwargs)
 
 
 def print_red(*args, **kwargs):
-    print(Colors.RED + " ".join(map(str, args)) + Colors.END, **kwargs)
+    _print_internal(Colors.RED, " ".join(map(str, args)), **kwargs)
 
 
 def print_red_light(*args, **kwargs):
-    print(Colors.RED_LIGHT + " ".join(map(str, args)) + Colors.END, **kwargs)
+    _print_internal(Colors.RED_LIGHT, " ".join(map(str, args)), **kwargs)
 
 
 def print_blue(*args, **kwargs):
-    print(Colors.BLUE + " ".join(map(str, args)) + Colors.END, **kwargs)
+    _print_internal(Colors.BLUE, " ".join(map(str, args)), **kwargs)
 
 
 def print_blue_light(*args, **kwargs):
-    print(Colors.BLUE_LIGHT + " ".join(map(str, args)) + Colors.END, **kwargs)
+    _print_internal(Colors.BLUE_LIGHT, " ".join(map(str, args)), **kwargs)
 
 
 def print_yellow(*args, **kwargs):
-    print(Colors.YELLOW + " ".join(map(str, args)) + Colors.END, **kwargs)
+    _print_internal(Colors.YELLOW, " ".join(map(str, args)), **kwargs)
 
 
 def print_yellow_light(*args, **kwargs):
-    print(Colors.YELLOW_LIGHT + " ".join(map(str, args)) + Colors.END, **kwargs)
+    _print_internal(Colors.YELLOW_LIGHT, " ".join(map(str, args)), **kwargs)
 
 
 def print_green(*args, **kwargs):
-    print(Colors.GREEN + " ".join(map(str, args)) + Colors.END, **kwargs)
+    _print_internal(Colors.GREEN, " ".join(map(str, args)), **kwargs)
 
 
 def print_green_light(*args, **kwargs):
-    print(Colors.GREEN_LIGHT + " ".join(map(str, args)) + Colors.END, **kwargs)
+    _print_internal(Colors.GREEN_LIGHT, " ".join(map(str, args)), **kwargs)
+
+
+def print_config_value(config_name, config_value):
+    print_blue("{} = ".format(config_name), end='')
+    print_blue_light(config_value)
 
 
 def string_to_int(string):
@@ -556,6 +573,9 @@ def convert_path_to_absolute_if_not_already(path):
 
 
 def is_path_twine_file(path):
+    if not os.path.isfile(path):
+        return False
+
     filename = os.path.basename(str(path))
     file, extension = os.path.splitext(filename)
 
@@ -652,7 +672,7 @@ def main(src_twine_dir, dst_json_dir):
     for path, subdirs, files in os.walk(src_twine_dir):
         for name in files:
             full_filename = os.path.join(path, name)
-            if os.path.isfile(full_filename) and is_path_twine_file(full_filename):
+            if is_path_twine_file(full_filename):
                 export_twine_file_dlg_text_json(full_filename, src_twine_dir_from, dst_json_dir)
             else:
                 print_yellow("Path = `{}` is not a file or a twine file".format(full_filename))
