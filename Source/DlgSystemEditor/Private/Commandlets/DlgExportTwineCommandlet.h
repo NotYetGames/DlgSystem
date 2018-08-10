@@ -80,6 +80,9 @@ protected:
 protected:
 	FString OutputDirectory;
 
+	// Flatten files to the same directory
+	bool bFlatten = false;
+
 	// used to compute the proper size
 	int32 MinimumGraphX = 0;
 	int32 MinimumGraphY = 0;

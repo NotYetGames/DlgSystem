@@ -58,6 +58,11 @@ int32 UDlgExportTwineCommandlet::Main(const FString& Params)
 	TMap<FString, FString> ParamVals;
 	UCommandlet::ParseCommandLine(*Params, Tokens, Switches, ParamVals);
 
+	if (Switches.Contains(TEXT("Flatten")))
+	{
+		bFlatten = true;
+	}
+
 	// Set the output directory
 	const FString* OutputDirectoryVal = ParamVals.Find(FString(TEXT("OutputDirectory")));
 	if (OutputDirectoryVal == nullptr)
@@ -92,6 +97,9 @@ int32 UDlgExportTwineCommandlet::Main(const FString& Params)
 	// Some Dialogues may be unclean?
 	//FDlgCommandletHelper::SaveAllDialogues();
 
+	// Keep track of all created files so that we don't have duplicates
+	TSet<FString> CreateFiles;
+
 	// Export to twine
 	const TArray<UDlgDialogue*> AllDialogues = UDlgManager::GetAllDialoguesFromMemory();
 	for (const UDlgDialogue* Dialogue : AllDialogues)
@@ -112,13 +120,40 @@ int32 UDlgExportTwineCommandlet::Main(const FString& Params)
 		const FString FileName = FPaths::GetBaseFilename(DialoguePath);
 		const FString Directory = FPaths::GetPath(DialoguePath);
 
-		// Ensure directory tree
-		const FString FileSystemDirectoryPath = OutputDirectory / Directory;
-		if (!PlatformFile.DirectoryExists(*FileSystemDirectoryPath) && PlatformFile.CreateDirectoryTree(*FileSystemDirectoryPath))
+		FString FileSystemFilePath;
+		if (bFlatten)
 		{
-			UE_LOG(LogDlgExportTwineCommandlet, Display, TEXT("Creating directory = `%s`"), *FileSystemDirectoryPath);
-		}
+			// Create in root of output directory
 
+			// Make sure file does not exist
+			FString FlattenedFileName = FileName;
+			int32 CurrentTryIndex = 1;
+			while (CreateFiles.Contains(FlattenedFileName) && CurrentTryIndex < 100)
+			{
+				FlattenedFileName = FString::Printf(TEXT("%s-%d"), *FileName, CurrentTryIndex);
+				CurrentTryIndex++;
+			}
+
+			// Give up :(
+			if (CreateFiles.Contains(FlattenedFileName))
+			{
+				UE_LOG(LogDlgExportTwineCommandlet, Warning, TEXT("Dialogue = `%s` could not generate unique flattened file, ignoring"), *DialoguePath);
+				continue;
+			}
+
+			CreateFiles.Add(FlattenedFileName);
+			FileSystemFilePath = OutputDirectory / FlattenedFileName + TEXT(".html");
+		}
+		else
+		{
+			// Ensure directory tree
+			const FString FileSystemDirectoryPath = OutputDirectory / Directory;
+			if (!PlatformFile.DirectoryExists(*FileSystemDirectoryPath) && PlatformFile.CreateDirectoryTree(*FileSystemDirectoryPath))
+			{
+				UE_LOG(LogDlgExportTwineCommandlet, Display, TEXT("Creating directory = `%s`"), *FileSystemDirectoryPath);
+			}
+			FileSystemFilePath = FileSystemDirectoryPath / FileName + TEXT(".html");
+		}
 
 		// Compute minimum graph node positions
 		const TArray<UDlgNode*>& Nodes = Dialogue->GetNodes();
@@ -152,7 +187,6 @@ int32 UDlgExportTwineCommandlet::Main(const FString& Params)
 		}
 
 		// Export file
-		const FString FileSystemFilePath = FileSystemDirectoryPath / FileName + TEXT(".html");
 		const FString TwineFileContent = CreateTwineStoryData(Dialogue->GetDlgName(), Dialogue->GetDlgGuid(), INDEX_NONE, PassagesData);
 		if (FFileHelper::SaveStringToFile(TwineFileContent, *FileSystemFilePath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM))
 		{
@@ -292,7 +326,7 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 				TEXT("``Text:`` //%s//\n")
 				TEXT("``EdgeText:`` //%s//\n"),
 				*EscapeHtml(Entry.Speaker.ToString()),
-				*EscapeHtml(Entry.Text.ToString()), 
+				*EscapeHtml(Entry.Text.ToString()),
 				*EscapeHtml(Entry.EdgeText.ToString())
 			);
 
@@ -330,7 +364,7 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataLinksFromEdges(const UD
 			UE_LOG(LogDlgExportTwineCommandlet, Warning, TEXT("Target index = %d not valid. Ignoring"), Edge.TargetIndex);
 			continue;
 		}
-		
+
 		const FString EdgeText = bNoTextOnEdges || Edge.Text.IsEmpty() ? FString::Printf(TEXT("~ignore~ To Node %d"), Edge.TargetIndex) : EscapeHtml(Edge.Text.ToString());
 		Links += FString::Printf(TEXT("[[%s|%s]]\n"), *EdgeText, *GetNodeNameFromNode(*Nodes[Edge.TargetIndex], Edge.TargetIndex, false));
 	}
