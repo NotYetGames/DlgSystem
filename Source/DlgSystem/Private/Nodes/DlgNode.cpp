@@ -3,7 +3,7 @@
 #include "DlgSystemPrivatePCH.h"
 #include "DlgContextInternal.h"
 #include "EngineUtils.h"
-#include "DlgNode_End.h"
+#include "Nodes/DlgNode_End.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
