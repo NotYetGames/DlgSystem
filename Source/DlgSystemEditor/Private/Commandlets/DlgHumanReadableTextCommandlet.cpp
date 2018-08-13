@@ -1,19 +1,19 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgHumanReadableTextCommandlet.h"
 
-#include "Paths.h"
-#include "PlatformFilemanager.h"
-#include "GenericPlatformFile.h"
-#include "DlgManager.h"
-#include "Package.h"
-#include "FileHelper.h"
+#include "Misc/Paths.h"
+#include "Misc/FileHelper.h"
+#include "HAL/PlatformFilemanager.h"
+#include "GenericPlatform/GenericPlatformFile.h"
+#include "UObject/Package.h"
 #include "FileHelpers.h"
 
+#include "DlgManager.h"
 #include "Nodes/DlgNode_Speech.h"
-#include "DlgJsonWriter.h"
-#include "DlgNode_SpeechSequence.h"
+#include "IO/DlgJsonWriter.h"
+#include "Nodes/DlgNode_SpeechSequence.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
-#include "DlgJsonParser.h"
+#include "IO/DlgJsonParser.h"
 #include "DlgCommandletHelper.h"
 
 
@@ -246,7 +246,7 @@ bool UDlgHumanReadableTextCommandlet::ExportDialogueToHumanReadableFormat(const 
 			ExportNode.NodeIndex = NodeIndex;
 			ExportNode.Speaker = NodeSpeech->GetNodeParticipantName();
 			ExportNode.Text = NodeSpeech->GetNodeUnformattedText();
-				
+
 			// Fill Edges
 			ExportNodeEdgesToHumanReadableFormat(Node->GetNodeChildren(), ExportNode.Edges);
 			OutFormat.SpeechNodes.Add(ExportNode);

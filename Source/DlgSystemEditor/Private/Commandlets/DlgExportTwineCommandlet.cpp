@@ -2,19 +2,17 @@
 
 #include "DlgExportTwineCommandlet.h"
 
-#include "Paths.h"
-#include "PlatformFilemanager.h"
-#include "GenericPlatformFile.h"
-#include "DlgManager.h"
-#include "Package.h"
-#include "FileHelper.h"
+#include "Misc/Paths.h"
+#include "Misc/FileHelper.h"
+#include "HAL/PlatformFilemanager.h"
+#include "GenericPlatform/GenericPlatformFile.h"
+#include "UObject/Package.h"
 #include "FileHelpers.h"
 
+#include "DlgManager.h"
 #include "Nodes/DlgNode_Speech.h"
-#include "DlgJsonWriter.h"
-#include "DlgNode_SpeechSequence.h"
+#include "Nodes/DlgNode_SpeechSequence.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
-#include "DlgJsonParser.h"
 #include "DlgCommandletHelper.h"
 
 
