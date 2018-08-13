@@ -3,9 +3,9 @@
 
 #include "GraphEditor.h"
 #include "EditorUndoClient.h"
-#include "AssetEditorToolkit.h"
+#include "Toolkits/AssetEditorToolkit.h"
 #include "IDetailsView.h"
-#include "NotifyHook.h"
+#include "Misc/NotifyHook.h"
 
 #include "DialogueEditor/Graph/DialogueGraph.h"
 #include "DialogueEditor/IDialogueEditor.h"

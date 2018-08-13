@@ -2,7 +2,7 @@
 #pragma once
 
 #include "EdGraph/EdGraphSchema.h"
-#include "SubclassOf.h"
+#include "Templates/SubclassOf.h"
 
 #include "Nodes/DlgNode.h"
 

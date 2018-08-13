@@ -1,8 +1,9 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "SGraphNode_Dialogue.h"
 
-#include "SBox.h"
-#include "Images/SImage.h"
+#include "Widgets/Layout/SBox.h"
+#include "Widgets/Images/SImage.h"
+#include "Widgets/SToolTip.h"
 #include "GraphEditorSettings.h"
 #include "SCommentBubble.h"
 #include "SLevelOfDetailBranchNode.h"

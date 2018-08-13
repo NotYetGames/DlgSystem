@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "UnrealType.h"
+#include "UObject/UnrealType.h"
 
 /**
  * The writer will ignore properties by default that are marked DEPRECATED or TRANSIENT, see SkipFlags variable.

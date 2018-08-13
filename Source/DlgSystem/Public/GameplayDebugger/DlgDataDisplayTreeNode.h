@@ -2,7 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Reply.h"
+#include "Input/Reply.h"
 #include "UObject/WeakObjectPtr.h"
 #include "Containers/Set.h"
 #include "GameFramework/Actor.h"

@@ -1,9 +1,9 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "SDialogueNodeOverlayWidget.h"
 
-#include "SOverlay.h"
-#include "SBox.h"
-#include "SBorder.h"
+#include "Widgets/SOverlay.h"
+#include "Widgets/Layout/SBox.h"
+#include "Widgets/Layout/SBorder.h"
 
 #include "DialogueStyle.h"
 

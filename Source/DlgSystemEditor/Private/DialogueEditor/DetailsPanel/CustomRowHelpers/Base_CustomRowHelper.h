@@ -1,8 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "EditorStyle.h"
-#include "SSearchBox.h"
+#include "Widgets/Input/SSearchBox.h"
 #include "DetailWidgetRow.h"
 
 class FDetailWidgetRow;
@@ -39,6 +38,13 @@ public:
 		return this;
 	}
 
+	/** Set the optional utils */
+	Self* SetPropertyUtils(TSharedPtr<IPropertyUtilities> Utils)
+	{
+		PropertyUtils = Utils;
+		return this;
+	}
+
 	/** Update the full property row. */
 	void Update();
 
@@ -49,6 +55,9 @@ protected:
 protected:
 	/** The custom widget row this represents */
 	FDetailWidgetRow* DetailWidgetRow = nullptr;
+
+	/** Helpers class  */
+	TSharedPtr<IPropertyUtilities> PropertyUtils;
 
 	/** The Property handle of what this row represents */
 	TSharedPtr<IPropertyHandle> PropertyHandle;

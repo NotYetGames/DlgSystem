@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "DlgNode_Speech.h"
+#include "Nodes/DlgNode_Speech.h"
 
 #include "DlgContextInternal.h"
 #include "DlgSystemPrivatePCH.h"
@@ -14,11 +14,17 @@ void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 	// rebuild text arguments
 	if (PropertyName == UDlgNode_Speech::GetMemberNameText() || PropertyName == UDlgNode_Speech::GetMemberNameTextArguments())
 	{
-		FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments);
-		ConstructedText = Text;
+		RebuildTextArguments();
 	}
 }
+
 #endif
+
+void UDlgNode_Speech::RebuildTextArguments()
+{
+	FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments);
+	ConstructedText = Text;
+}
 
 bool UDlgNode_Speech::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {

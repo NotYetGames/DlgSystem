@@ -2,7 +2,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
-#include "Margin.h"
+#include "Layout/Margin.h"
 
 #include "DlgIDialogueEditorModule.h"
 

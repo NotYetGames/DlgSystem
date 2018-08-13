@@ -1,15 +1,20 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "SFindInDialogues.h"
 
-#include "STableRow.h"
 #include "Editor.h"
-#include "EditorStyle.h"
+#include "Widgets/Views/STableRow.h"
 #include "Widgets/Input/SSearchBox.h"
+#include "Widgets/Input/SComboButton.h"
+#include "Widgets/Input/SButton.h"
+#include "Widgets/Input/SCheckBox.h"
+#include "Framework/MultiBox/MultiBoxBuilder.h"
+#include "Framework/Application/SlateApplication.h"
 #include "Framework/Commands/GenericCommands.h"
 
 #include "DialogueEditor/DialogueEditor.h"
 #include "FindInDialoguesResult.h"
 #include "FindInDialogueSearchManager.h"
+
 
 #define LOCTEXT_NAMESPACE "SFindInDialogues"
 

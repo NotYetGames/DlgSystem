@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "UObjectIterator.h"
+#include "UObject/UObjectIterator.h"
 #include "EngineUtils.h"
 
 #include "DlgDialogue.h"
@@ -99,8 +99,7 @@ public:
 		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
 		{
 			AActor* Actor = *Itr;
-			if (IsValid(Actor) &&
-				Actor->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
+			if (IsValid(Actor) && Actor->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
 			{
 				Array.Add(Actor);
 			}
@@ -111,7 +110,10 @@ public:
 	/** Gets all the dialogues that have a duplicate GUID, should not happen, like ever. */
 	static TArray<UDlgDialogue*> GetDialoguesWithDuplicateGuid();
 
-	/** Gets all the loaded dialogues from memory that have the ParticipantName included insided them. */
+	/** Helper methods that gets all the dialouges in a map by guid. */
+	static TMap<FGuid, UDlgDialogue*> GetAllDialoguesGuidMap();
+
+	/** Gets all the loaded dialogues from memory that have the ParticipantName included inside them. */
 	static TArray<UDlgDialogue*> GetAllDialoguesForParticipantName(const FName& ParticipantName);
 
 	/** Sets the FDlgMemory Dialogue history. */

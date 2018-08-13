@@ -2,7 +2,8 @@
 #include "SDialogueActionMenu.h"
 
 #include "EdGraph/EdGraph.h"
-#include "EditorStyle.h"
+#include "EditorStyleSet.h"
+#include "Framework/Application/SlateApplication.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

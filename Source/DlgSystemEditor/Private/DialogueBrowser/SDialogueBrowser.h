@@ -2,10 +2,10 @@
 #pragma once
 
 #include "Widgets/DeclarativeSyntaxSupport.h"
-#include "SCompoundWidget.h"
-#include "SListView.h"
-#include "STreeView.h"
-#include "SSearchBox.h"
+#include "Widgets/SCompoundWidget.h"
+#include "Widgets/Views/SListView.h"
+#include "Widgets/Views/STreeView.h"
+#include "Widgets/Input/SSearchBox.h"
 
 #include "DialogueBrowserTreeNode.h"
 #include "DialogueTreeProperties/DialogueBrowserTreeParticipantProperties.h"
@@ -61,7 +61,7 @@ private:
 													 const TSharedPtr<FDialogueBrowserTreeVariableProperties>* PropertyPtr,
 													 const EDialogueTreeNodeTextType GraphNodeTextType,
 													 const EDialogueTreeNodeTextType EdgeNodeTextType);
-	
+
 	/** Adds the Variables to the Item */
 	void AddVariableChildrenToItem(TSharedPtr<FDialogueBrowserTreeNode> Item, const TMap<FName, TSharedPtr<FDialogueBrowserTreeVariableProperties>>& Variables,
 		const EDialogueTreeNodeTextType VariableType);

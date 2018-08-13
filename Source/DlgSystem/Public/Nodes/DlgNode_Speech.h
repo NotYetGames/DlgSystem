@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "DlgNode.h"
+#include "Nodes/DlgNode.h"
 #include "DlgTextArgument.h"
 #include "DlgNode_Speech.generated.h"
 
@@ -38,6 +38,8 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 
+	// Rebuilds ConstructedText
+	void RebuildTextArguments();
 
 	// Begin UDlgNode Interface.
 	bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
@@ -47,7 +49,7 @@ public:
 
 	// Getters:
 	const FText& GetNodeText() const override { return (TextArguments.Num() > 0 && !ConstructedText.IsEmpty()) ? ConstructedText : Text; }
-	const FText& GetRawNodeText() const override { return Text; }
+	const FText& GetNodeUnformattedText() const override { return Text; }
 	USoundWave* GetNodeVoiceSoundWave() const override { return VoiceSoundWave; }
 	UDialogueWave* GetNodeVoiceDialogueWave() const override { return VoiceDialogueWave; }
 	FName GetSpeakerState() const override { return SpeakerState; }
@@ -64,8 +66,12 @@ public:
 	/** Sets the virtual parent status */
 	virtual void SetIsVirtualParent(bool bValue) { bIsVirtualParent = bValue; }
 
-	/** Sets the Text of the Node. */
-	virtual void SetNodeText(const FText& InText) { Text = InText; }
+	/** Sets the RawNodeText of the Node. */
+	virtual void SetNodeUnformattedText(const FText& InText)
+	{
+		Text = InText;
+		RebuildTextArguments();
+	}
 
 	/** Helper functions to get the names of some properties. Used by the DlgSystemEditor module. */
 	static FName GetMemberNameText() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, Text); }
@@ -76,7 +82,6 @@ public:
 	static FName GetMemberNameIsVirtualParent() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, bIsVirtualParent); }
 
 protected:
-
 	/** Text that will appear when this node participant name speaks to someone else. */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
 	FText Text;

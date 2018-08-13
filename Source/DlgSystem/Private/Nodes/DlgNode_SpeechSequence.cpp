@@ -1,6 +1,12 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "DlgNode_SpeechSequence.h"
+#include "Nodes/DlgNode_SpeechSequence.h"
 #include "DlgContextInternal.h"
+
+
+FDlgSpeechSequenceEntry::FDlgSpeechSequenceEntry()
+{
+	EdgeText = UDlgDialogue::EdgeTextNext;
+}
 
 #if WITH_EDITOR
 void UDlgNode_SpeechSequence::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)

@@ -1,11 +1,11 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "LogMacros.h"
-#include "UnrealType.h"
-#include "FileHelper.h"
-#include "JsonValue.h"
-#include "JsonObject.h"
+#include "Logging/LogMacros.h"
+#include "UObject/UnrealType.h"
+#include "Misc/FileHelper.h"
+#include "Dom/JsonValue.h"
+#include "Dom/JsonObject.h"
 
 #include "IDlgWriter.h"
 

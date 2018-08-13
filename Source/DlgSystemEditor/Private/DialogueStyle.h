@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "SlateStyle.h"
+#include "Styling/SlateStyle.h"
 
 // how everything looks, fancy stuff
 class FDialogueStyle

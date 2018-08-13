@@ -3,7 +3,6 @@
 
 #include "DetailCategoryBuilder.h"
 #include "DetailLayoutBuilder.h"
-#include "PropertyEditing.h"
 
 #include "Nodes/DlgNode.h"
 #include "Nodes/DlgNode_SpeechSequence.h"
@@ -141,6 +140,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 					.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
 					.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
 				)
+				->SetPropertyUtils(DetailBuilder.GetPropertyUtilities())
 				->Update();
 			}
 

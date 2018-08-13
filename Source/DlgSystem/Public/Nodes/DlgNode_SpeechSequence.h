@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "DlgNode.h"
+#include "Nodes/DlgNode.h"
 #include "DlgNode_SpeechSequence.generated.h"
 
 class USoundWave;
@@ -11,6 +11,8 @@ USTRUCT(BlueprintType)
 struct DLGSYSTEM_API FDlgSpeechSequenceEntry
 {
 	GENERATED_USTRUCT_BODY()
+
+	FDlgSpeechSequenceEntry();
 
 public:
 	/** The Participant Name (speaker) associated with this speech entry. */
@@ -35,7 +37,7 @@ public:
 
 	/** Text that will appear when you want to continue down this edge to the next conversation. Usually "Next". */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
-	FText EdgeText = FText::FromString("Next");
+	FText EdgeText;
 };
 
 

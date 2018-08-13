@@ -1,9 +1,9 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "FindInDialoguesResult.h"
 
-#include "SImage.h"
-#include "STreeView.h"
-#include "AssetEditorManager.h"
+#include "Widgets/Images/SImage.h"
+#include "Widgets/Views/STreeView.h"
+#include "Toolkits/AssetEditorManager.h"
 
 #include "DialogueEditor/DialogueEditorUtilities.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"

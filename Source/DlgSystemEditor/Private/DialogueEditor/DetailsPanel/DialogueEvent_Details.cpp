@@ -2,10 +2,10 @@
 #include "DialogueEvent_Details.h"
 
 #include "IDetailPropertyRow.h"
-#include "PropertyEditing.h"
 #include "IPropertyUtilities.h"
+#include "IDetailChildrenBuilder.h"
 
-#include "DlgNode.h"
+#include "Nodes/DlgNode.h"
 #include "DlgReflectionHelper.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"

@@ -349,10 +349,10 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& S
 	}
 
 	// Test the Node text
-	if (Node.GetRawNodeText().ToString().Contains(SearchFilter.SearchString))
+	if (Node.GetNodeUnformattedText().ToString().Contains(SearchFilter.SearchString))
 	{
 		bContainsSearchString = true;
-		MakeChildTextNode(TreeGraphNode, Node.GetRawNodeText(), LOCTEXT("DescriptionKey", "Description"), TEXT("Description"));
+		MakeChildTextNode(TreeGraphNode, Node.GetNodeUnformattedText(), LOCTEXT("DescriptionKey", "Description"), TEXT("Description"));
 	}
 
 	// Test the EnterConditions

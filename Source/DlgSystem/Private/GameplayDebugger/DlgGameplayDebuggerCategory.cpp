@@ -1,6 +1,6 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #if WITH_GAMEPLAY_DEBUGGER
-#include "DlgGameplayDebuggerCategory.h"
+#include "GameplayDebugger/DlgGameplayDebuggerCategory.h"
 
 #include "DebugRenderSceneProxy.h"
 

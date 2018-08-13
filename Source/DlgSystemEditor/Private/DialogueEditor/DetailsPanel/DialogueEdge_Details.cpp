@@ -2,9 +2,10 @@
 #include "DialogueEdge_Details.h"
 
 #include "IDetailPropertyRow.h"
-#include "PropertyEditing.h"
+#include "IDetailChildrenBuilder.h"
+#include "IPropertyTypeCustomization.h"
 
-#include "DlgNode.h"
+#include "Nodes/DlgNode.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "CustomRowHelpers/MultiLineEditableTextBox_CustomRowHelper.h"
@@ -80,6 +81,7 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 		.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
 		.OnTextCommitted(this, &Self::HandleTextCommitted)
 	)
+	->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities())
 	->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility))
 	->Update();
 
@@ -103,9 +105,7 @@ void FDialogueEdge_Details::HandleTextCommitted(const FText& InText, ETextCommit
 
 	if (UDialogueGraphNode_Edge* GraphEdge = FDialogueDetailsPanelUtils::GetAsGraphNodeEdgeFromPropertyHandle(StructPropertyHandle.ToSharedRef()))
 	{
-		FDlgEdge& Edge = GraphEdge->GetDialogueEdge();
-		FDlgTextArgument::UpdateTextArgumentArray(Edge.Text, Edge.TextArguments);
-
+		GraphEdge->GetDialogueEdge().RebuildTextArgumentsArray();
 		Dialogue->RefreshData();
 	}
 }

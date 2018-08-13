@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Widgets/DeclarativeSyntaxSupport.h"
-#include "SCompoundWidget.h"
+#include "Widgets/SCompoundWidget.h"
 
 /** Widget for overlaying another widget besides the node */
 class SDialogueNodeOverlayWidget : public SCompoundWidget

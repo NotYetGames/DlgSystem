@@ -2,10 +2,10 @@
 #include "DialogueGraphNode.h"
 
 #include "Editor/EditorEngine.h"
-#include "GenericCommands.h"
+#include "Framework/Commands/GenericCommands.h"
 #include "EdGraph/EdGraphNode.h"
 #include "Engine/Font.h"
-#include "MultiBoxBuilder.h"
+#include "Framework/MultiBox/MultiBoxBuilder.h"
 
 #include "DlgSystemEditorPrivatePCH.h"
 #include "DlgDialogue.h"
@@ -344,6 +344,26 @@ void UDialogueGraphNode::SetDialogueNodeDataChecked(int32 InIndex, UDlgNode* InN
 	SetDialogueNode(InNode);
 }
 
+int32 UDialogueGraphNode::GetChildEdgeIndexForChildNodeIndex(const int32 ChildNodeIndex) const
+{
+	const TArray<UDialogueGraphNode_Edge*> GraphNodeEdges = GetChildEdgeNodes();
+	for (int32 EdgeIndex = 0; EdgeIndex < GraphNodeEdges.Num(); EdgeIndex++)
+	{
+		const UDialogueGraphNode_Edge* GraphEdge = GraphNodeEdges[EdgeIndex];
+		if (!GraphEdge->HasChildNode())
+		{
+			continue;
+		}
+
+		if (GraphEdge->GetChildNode()->GetDialogueNodeIndex() == ChildNodeIndex)
+		{
+			return EdgeIndex;
+		}
+	}
+
+	return INDEX_NONE;
+}
+
 void UDialogueGraphNode::SetEdgeTargetIndexAt(int32 EdgeIndex, int32 NewTargetIndex)
 {
 	check(NewTargetIndex > INDEX_NONE);
@@ -351,7 +371,7 @@ void UDialogueGraphNode::SetEdgeTargetIndexAt(int32 EdgeIndex, int32 NewTargetIn
 	check(DialogueNode->GetNodeChildren().Num() == GraphNodeEdges.Num());
 	check(GraphNodeEdges.IsValidIndex(EdgeIndex));
 
-	DialogueNode->GetMutableNodeChildAt(EdgeIndex)->TargetIndex = NewTargetIndex;
+	DialogueNode->GetSafeMutableNodeChildAt(EdgeIndex)->TargetIndex = NewTargetIndex;
 	GraphNodeEdges[EdgeIndex]->SetDialogueEdgeTargetIndex(NewTargetIndex);
 }
 
@@ -361,7 +381,9 @@ void UDialogueGraphNode::SetEdgeTextAt(int32 EdgeIndex, const FText& NewText)
 	check(DialogueNode->GetNodeChildren().Num() == GraphNodeEdges.Num());
 	check(GraphNodeEdges.IsValidIndex(EdgeIndex));
 
-	DialogueNode->GetMutableNodeChildAt(EdgeIndex)->Text = NewText;
+	FDlgEdge* Edge = DialogueNode->GetSafeMutableNodeChildAt(EdgeIndex);
+	Edge->Text = NewText;
+	Edge->RebuildTextArgumentsArray();
 	GraphNodeEdges[EdgeIndex]->SetDialogueEdgeText(NewText);
 }
 
@@ -587,7 +609,9 @@ struct FCompareNodeXLocation
 {
 	FORCEINLINE bool operator()(const TPair<UEdGraphPin*, FDlgEdge>& A, const TPair<UEdGraphPin*, FDlgEdge>& B) const
 	{
-		return A.Key->GetOwningNode()->NodePosX < B.Key->GetOwningNode()->NodePosX;
+		const UEdGraphNode* NodeA = A.Key->GetOwningNode();
+		const UEdGraphNode* NodeB = B.Key->GetOwningNode();
+		return NodeA->NodePosX != NodeB->NodePosX ? NodeA->NodePosX < NodeB->NodePosX : NodeA->NodePosY < NodeB->NodePosY;
 	}
 };
 

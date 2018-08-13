@@ -1,7 +1,8 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgContextInternal.h"
+
 #include "DlgSystemPrivatePCH.h"
-#include "DlgNode.h"
+#include "Nodes/DlgNode.h"
 #include "DlgMemory.h"
 
 

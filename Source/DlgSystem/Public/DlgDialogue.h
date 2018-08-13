@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "SubclassOf.h"
+#include "Templates/SubclassOf.h"
 
 #include "DlgIDialogueEditorModule.h"
 #include "DlgMemory.h"
@@ -417,6 +417,9 @@ public:
 	/** Gets the Start Node as a mutable pointer. */
 	UDlgNode* GetMutableStartNode() { return StartNode; }
 
+	/** Gets the Node as a mutable pointer. */
+	UDlgNode* GetMutableNode(const int32 NodeIndex) { return Nodes.IsValidIndex(NodeIndex) ? Nodes[NodeIndex] : nullptr; }
+
 	/** Sets a new Start Node. Use with care. */
 	void SetStartNode(UDlgNode* InStartNode) { StartNode = InStartNode; }
 
@@ -476,6 +479,12 @@ private:
 	 * 3. If a node is not an end node but has no children it will "adopt" the next node
 	 */
 	void AutoFixGraph();
+
+
+public:
+	// Some constants used
+	static const FText EdgeTextFinish;
+	static const FText EdgeTextNext;
 
 private:
 	/** Used to keep track of the version in text  file too, besides being written in the .uasset file. */

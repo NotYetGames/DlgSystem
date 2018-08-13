@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "DlgNode_Selector.h"
+#include "Nodes/DlgNode_Selector.h"
 #include "DlgSystemPrivatePCH.h"
 #include "DlgContextInternal.h"
 

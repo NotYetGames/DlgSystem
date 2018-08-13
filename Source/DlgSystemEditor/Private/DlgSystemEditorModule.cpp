@@ -4,18 +4,19 @@
 #include "Extensions/ContentBrowserExtensions.h"
 #include "Engine/ObjectLibrary.h"
 #include "Engine/BlueprintCore.h"
-#include "SharedPointer.h"
+#include "Templates/SharedPointer.h"
 #include "AssetRegistryModule.h"
-#include "BlueprintEditorUtils.h"
+#include "Kismet2/BlueprintEditorUtils.h"
 #include "WorkspaceMenuStructureModule.h"
 #include "WorkspaceMenuStructure.h"
-#include "SDockTab.h"
+#include "Widgets/Docking/SDockTab.h"
 #include "K2Node.h"
 #include "FileHelpers.h"
-#include "MultiBox/MultiBoxExtender.h"
+#include "Framework/MultiBox/MultiBoxExtender.h"
 #include "LevelEditor.h"
-#include "GenericPlatformMisc.h"
+#include "GenericPlatform/GenericPlatformMisc.h"
 #include "Editor.h"
+#include "Framework/MultiBox/MultiBoxBuilder.h"
 
 #include "DialogueGraphFactories.h"
 #include "DlgSystemEditorPrivatePCH.h"
@@ -74,7 +75,7 @@ void FDlgSystemEditorModule::StartupModule()
 
 	// Give it another try, Give up :((
 	// May the math Gods have mercy on us!
-	for (UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGuid())
+	for (const UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGuid())
 	{
 		// GUID already exists (╯°□°）╯︵ ┻━┻
 		// Does this break the universe?

@@ -2,9 +2,9 @@
 #include "DialogueSpeechSequenceEntry_Details.h"
 
 #include "IPropertyUtilities.h"
-#include "PropertyEditing.h"
+#include "IDetailChildrenBuilder.h"
 
-#include "DlgNode.h"
+#include "Nodes/DlgNode.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "STextPropertyPickList.h"
@@ -87,6 +87,7 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 			.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
 			.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
 		)
+		->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities())
 		->Update();
 	}
 
@@ -116,6 +117,7 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 			.Text(EdgeTextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
 			.OnTextCommitted(EdgeTextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
 		)
+		->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities())
 		->Update();
 	}
 }

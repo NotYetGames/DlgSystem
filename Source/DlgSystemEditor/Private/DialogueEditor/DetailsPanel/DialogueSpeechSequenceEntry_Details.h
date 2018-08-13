@@ -2,7 +2,7 @@
 #pragma once
 
 #include "IPropertyTypeCustomization.h"
-#include "Visibility.h"
+#include "Layout/Visibility.h"
 #include "IDetailPropertyRow.h"
 
 #include "DlgDialogue.h"
@@ -92,7 +92,7 @@ private:
 			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWaveAndDialogueWave
 			   ? EVisibility::Visible : EVisibility::Hidden;
 	}
-	
+
 	EVisibility GetSpeakerStateVisibility() const
 	{
 		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();

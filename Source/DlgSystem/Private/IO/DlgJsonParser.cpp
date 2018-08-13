@@ -1,17 +1,22 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "IO/DlgJsonParser.h"
 
-#include "LogMacros.h"
-#include "Object.h"
-#include "FileHelper.h"
-#include "Paths.h"
-#include "UnrealType.h"
-#include "EnumProperty.h"
-#include "UObjectIterator.h"
-#include "JsonUtilities.h"
-#include "TextProperty.h"
-#include "PropertyPortFlags.h"
+#include "Logging/LogMacros.h"
+#include "UObject/Object.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "UObject/UnrealType.h"
+#include "UObject/EnumProperty.h"
+#include "UObject/UObjectIterator.h"
+#include "JsonObjectConverter.h"
+#include "JsonObjectWrapper.h"
+#include "UObject/TextProperty.h"
+#include "UObject/PropertyPortFlags.h"
 #include "Misc/TextBuffer.h"
+#include "Internationalization/CulturePointer.h"
+#include "Internationalization/Culture.h"
+#include "Misc/OutputDevice.h"
+#include "Misc/FeedbackContext.h"
 
 DEFINE_LOG_CATEGORY(LogDlgJsonParser);
 

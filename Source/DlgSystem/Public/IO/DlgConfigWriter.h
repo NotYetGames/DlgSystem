@@ -2,10 +2,10 @@
 #pragma once
 
 #include <functional>
-#include "LogMacros.h"
-#include "UnrealType.h"
-#include "FileHelper.h"
-#include "TextProperty.h"
+#include "Logging/LogMacros.h"
+#include "UObject/UnrealType.h"
+#include "Misc/FileHelper.h"
+#include "UObject/TextProperty.h"
 
 #include "IDlgWriter.h"
 

@@ -1,8 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "EditorStyle.h"
-#include "SSearchBox.h"
+#include "Widgets/Input/SSearchBox.h"
 #include "DetailWidgetRow.h"
 
 #include "Base_CustomRowHelper.h"

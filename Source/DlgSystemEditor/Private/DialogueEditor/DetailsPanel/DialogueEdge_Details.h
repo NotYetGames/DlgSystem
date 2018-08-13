@@ -2,7 +2,7 @@
 #pragma once
 
 #include "IPropertyTypeCustomization.h"
-#include "Visibility.h"
+#include "Layout/Visibility.h"
 #include "DialogueDetailsPanelUtils.h"
 
 class UDlgDialogue;
@@ -45,7 +45,7 @@ public:
 		IPropertyTypeCustomizationUtils& StructCustomizationUtils) override;
 
 
-	
+
 	/** Gets the Speaker States from all Dialogues. */
 	TArray<FName> GetAllDialoguesSpeakerStates() const
 	{

@@ -4,7 +4,7 @@
 #include "CoreMinimal.h"
 
 #include "DlgManager.h"
-#include "DlgTreeViewHelper.h"
+#include "TreeViewHelpers/DlgTreeViewHelper.h"
 
 class UDlgDialogue;
 

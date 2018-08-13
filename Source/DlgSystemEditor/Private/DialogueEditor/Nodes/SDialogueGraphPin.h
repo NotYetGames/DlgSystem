@@ -2,8 +2,7 @@
 #pragma once
 
 #include "Widgets/DeclarativeSyntaxSupport.h"
-#include "SCompoundWidget.h"
-#include "EditorStyle.h"
+#include "Widgets/SCompoundWidget.h"
 #include "SGraphPin.h"
 
 #include "DlgSystemSettings.h"
