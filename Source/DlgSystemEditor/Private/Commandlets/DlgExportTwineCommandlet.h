@@ -40,14 +40,13 @@ public:
 	FORCEINLINE FIntPoint GraphNodeToTwineCanvas(const int32 PositionX, const int32 PositionY)
 	{
 		// Twine Graph canvas always starts from 0,0 - there is not negative position
-		// TODO proper translate
-		//const int32 NewX = PositionX < 0 ? FMath::Abs(PositionX) + 200 : PositionX + PositionX + 400;
-		//const int32 NewY = PositionY < 0 ? FMath::Abs(PositionY) + 200 : PositionY + PositionY/2 + 200;
-		int32 NewX = MinimumGraphX < 0 ? FMath::Abs(MinimumGraphX) + PositionX : PositionX;
-		int32 NewY = MinimumGraphY < 0 ? FMath::Abs(MinimumGraphY) + PositionY : PositionY;
-
-		return FIntPoint(NewX + 200, NewY + 200);
+		const int32 NewX = FMath::Abs(MinimumGraphX) + PositionX;
+		const int32 NewY = FMath::Abs(MinimumGraphY) + PositionY;
+		return FIntPoint(NewX, NewY);
 	}
+
+	bool GetBoxThatConflicts(const FBox2D& Box, FBox2D& OutConflict);
+	FIntPoint GetNonConflictingPointFor(const FIntPoint& InPoint, const FIntPoint& Size, const FIntPoint& Padding);
 
 	static FString CreateTwineTagColorsData();
 
@@ -86,6 +85,9 @@ protected:
 	// used to compute the proper size
 	int32 MinimumGraphX = 0;
 	int32 MinimumGraphY = 0;
+
+	// Stop overlapping nodes
+	TArray<FBox2D> CurrentNodesAreas;
 
 	// Maps from:
 	// Key: NodeTagName

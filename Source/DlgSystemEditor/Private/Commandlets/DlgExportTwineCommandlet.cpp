@@ -175,8 +175,10 @@ int32 UDlgExportTwineCommandlet::Main(const FString& Params)
 			MinimumGraphX = FMath::Min(MinimumGraphX, DialogueGraphNode->NodePosX);
 			MinimumGraphY = FMath::Min(MinimumGraphY, DialogueGraphNode->NodePosY);
 		}
+		//UE_LOG(LogDlgExportTwineCommandlet, Verbose, TEXT("MinimumGraphX = %d, MinimumGraphY = %d"), MinimumGraphX, MinimumGraphY);
 
 		// Gather passages data
+		CurrentNodesAreas.Empty();
 		FString PassagesData;
 		PassagesData += CreateTwinePassageDataFromNode(*Dialogue, Dialogue->GetStartNode(), INDEX_NONE) + TEXT("\n");
 
@@ -234,6 +236,44 @@ FString UDlgExportTwineCommandlet::CreateTwineStoryData(const FString& Name, con
 	);
 }
 
+bool UDlgExportTwineCommandlet::GetBoxThatConflicts(const FBox2D& Box, FBox2D& OutConflict)
+{
+	for (const FBox2D& CurrentBox : CurrentNodesAreas)
+	{
+		if (CurrentBox.Intersect(Box))
+		{
+			OutConflict = CurrentBox;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+FIntPoint UDlgExportTwineCommandlet::GetNonConflictingPointFor(const FIntPoint& Point, const FIntPoint& Size, const FIntPoint& Padding)
+{
+	FVector2D MinVector(Point + Padding);
+	FVector2D MaxVector(MinVector + Size);
+	FBox2D NewBox(MinVector, MaxVector);
+
+	FBox2D ConflictBox;
+	while (GetBoxThatConflicts(NewBox, ConflictBox))
+	{
+		//UE_LOG(LogDlgExportTwineCommandlet, Warning, TEXT("Found conflict in rectangle: %s for Point: %s"), *ConflictRect.ToString(), *NewPoint.ToString());
+		// Assume the curent box is a child, adjust
+		FVector2D Center, Extent;
+		ConflictBox.GetCenterAndExtents(Center, Extent);
+
+		// Update on vertical
+		MinVector.Y += Extent.Y / 2.f;
+		MaxVector = MinVector + Size;
+		NewBox = FBox2D(MinVector, MaxVector);
+	}
+
+	CurrentNodesAreas.Add(NewBox);
+	return MinVector.IntPoint();
+}
+
 FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDialogue& Dialogue, const UDlgNode& Node, const int32 NodeIndex)
 {
 	const UDialogueGraphNode* DialogueGraphNode = Cast<UDialogueGraphNode>(Node.GetGraphNode());
@@ -257,11 +297,13 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 	}
 
 	FString NodeContent;
+	const FIntPoint Padding(20, 20);
 	if (DialogueGraphNode->IsRootNode())
 	{
 		verify(NodeIndex == INDEX_NONE);
 		Tags += TagNodeStart;
 		Size = SizeSmall;
+		Position = GetNonConflictingPointFor(Position, Size, Padding);
 
 		NodeContent += CreateTwinePassageDataLinksFromEdges(Dialogue, Node.GetNodeChildren());
 		return CreateTwinePassageData(NodeIndex, NodeName, Tags, Position, Size, NodeContent);
@@ -272,6 +314,9 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 	{
 		// Edges from this node do not matter
 		Tags += TagNodeVirtualParent;
+		Position = GetNonConflictingPointFor(Position, Size, Padding);
+		//CurrentNodesAreas.Add(FIntRect(Position + Padding, Position + Size + Padding));
+
 		const UDlgNode_Speech& NodeSpeech = DialogueGraphNode->GetDialogueNode<UDlgNode_Speech>();
 		NodeContent += EscapeHtml(NodeSpeech.GetNodeUnformattedText().ToString());
 		NodeContent += TEXT("\n\n\n") + CreateTwinePassageDataLinksFromEdges(Dialogue, Node.GetNodeChildren(), true);
@@ -280,7 +325,9 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 	if (DialogueGraphNode->IsSpeechNode())
 	{
 		Tags += TagNodeSpeech;
-		Position = FIntPoint(Position.X, Position.Y);
+		Position = GetNonConflictingPointFor(Position, Size, Padding);
+		//CurrentNodesAreas.Add(FIntRect(Position + Padding, Position + Size + Padding));
+
 		const UDlgNode_Speech& NodeSpeech = DialogueGraphNode->GetDialogueNode<UDlgNode_Speech>();
 		NodeContent += EscapeHtml(NodeSpeech.GetNodeUnformattedText().ToString());
 		NodeContent += TEXT("\n\n\n") + CreateTwinePassageDataLinksFromEdges(Dialogue, Node.GetNodeChildren());
@@ -291,6 +338,9 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 		// Does not have any children/text
 		Tags += TagNodeEnd;
 		Size = SizeSmall;
+		Position = GetNonConflictingPointFor(Position, Size, Padding);
+		//CurrentNodesAreas.Add(FIntRect(Position + Padding, Position + Size + Padding));
+
 		NodeContent += TEXT("END");
 		return CreateTwinePassageData(NodeIndex, NodeName, Tags, Position, Size, NodeContent);
 	}
@@ -305,8 +355,9 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 		{
 			Tags += TagNodeSelectorRandom;
 		}
-
 		Size = SizeSmall;
+		Position = GetNonConflictingPointFor(Position, Size, Padding);
+
 		NodeContent += TEXT("SELECTOR\n");
 		NodeContent += CreateTwinePassageDataLinksFromEdges(Dialogue, Node.GetNodeChildren(), true);
 		return CreateTwinePassageData(NodeIndex, NodeName, Tags, Position, Size, NodeContent);
@@ -314,6 +365,8 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 	if (DialogueGraphNode->IsSpeechSequenceNode())
 	{
 		Tags += TagNodeSpeechSequence;
+		Position = GetNonConflictingPointFor(Position, Size, Padding);
+
 		const UDlgNode_SpeechSequence& NodeSpeechSequence = DialogueGraphNode->GetDialogueNode<UDlgNode_SpeechSequence>();
 
 		// Fill sequence
