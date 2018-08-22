@@ -488,7 +488,8 @@ void UDlgDialogue::RefreshData()
 			for (const FDlgCondition& Condition : Edge.Conditions)
 			{
 				GetParticipantDataEntry(Condition.ParticipantName, FallbackNodeOwnerName).AddConditionPrimaryData(Condition);
-				GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName).AddConditionSecondaryData(Condition);
+				if (Condition.IsSecondParticipantInvolved())
+					GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName).AddConditionSecondaryData(Condition);
 			}
 		}
 	};

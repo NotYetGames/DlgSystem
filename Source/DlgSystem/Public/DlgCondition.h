@@ -94,6 +94,8 @@ public:
 
 	bool Evaluate(const UDlgContextInternal* DlgContext, const UObject* DlgParticipant) const;
 
+	bool IsSecondParticipantInvolved() const;
+
 protected:
 
 	/** Helper functions doing the check on the primary value based on EDlgCompareType */
