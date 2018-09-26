@@ -10,6 +10,7 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "Nodes/DlgNode.h"
 #include "DlgDialogue.h"
+#include "DlgSystemSettings.h"
 
 
 void FDialogueCompilerContext::Compile()
@@ -86,11 +87,11 @@ void FDialogueCompilerContext::PostCompileGraphNode(UDialogueGraphNode* GraphNod
 			// TODO add graph nodes for each type
 			if (ChildGraphNode->IsEndNode())
 			{
-				GraphNode->SetEdgeTextAt(0, UDlgDialogue::EdgeTextFinish);
+				GraphNode->SetEdgeTextAt(0, UDlgSystemSettings::EdgeTextFinish);
 			}
 			else
 			{
-				GraphNode->SetEdgeTextAt(0, UDlgDialogue::EdgeTextNext);
+				GraphNode->SetEdgeTextAt(0, UDlgSystemSettings::EdgeTextNext);
 			}
 		}
 	}
