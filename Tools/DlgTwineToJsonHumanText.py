@@ -557,7 +557,9 @@ def exit_program(status):
     sys.exit(status)
 
 
-def exit_program_error():
+def exit_program_error(message=None):
+    if message is not None:
+        print_red(message)
     exit_program(1)
 
 
@@ -662,6 +664,17 @@ def export_twine_file_dlg_text_json(src_file_path, src_twine_dir_from, dst_json_
 
 
 def main(src_twine_dir, dst_json_dir):
+    if not os.path.exists(src_twine_dir):
+        exit_program_error("src_twine_dir = `{}` does not exist".format(src_twine_dir))
+    if not os.path.isdir(src_twine_dir):
+        exit_program_error("src_twine_dir = `{}` is not a directory".format(src_twine_dir))
+
+    if not os.path.exists(dst_json_dir):
+        os.makedirs(dst_json_dir, exist_ok=True)
+        print_blue("Creating dst_json_dir = `{}`".format(dst_json_dir))
+    if not os.path.isdir(dst_json_dir):
+        exit_program_error("dst_json_dir = `{}` is not a directory".format(dst_json_dir))
+
     # Walk over all files in directory
     src_twine_dir = convert_path_to_absolute_if_not_already(src_twine_dir)
     dst_json_dir = convert_path_to_absolute_if_not_already(dst_json_dir)
@@ -684,21 +697,4 @@ if __name__ == "__main__":
     parser.add_argument('dst_json_dir', nargs='?', type=str, help='Destination directory where we store all the .dlg_human.json files',  default="DialoguesJsonHumanText/")
 
     args = parser.parse_args()
-    src_twine_dir = args.src_twine_dir
-    dst_json_dir = args.dst_json_dir
-    if not os.path.exists(src_twine_dir):
-        print_red("src_twine_dir = `{}` does not exist".format(src_twine_dir))
-        exit_program_error()
-    if not os.path.isdir(src_twine_dir):
-        print_red("src_twine_dir = `{}` is not a directory".format(src_twine_dir))
-        exit_program_error()
-
-    if not os.path.exists(dst_json_dir):
-        os.makedirs(dst_json_dir, exist_ok=True)
-        print_blue("Creating dst_json_dir = `{}`".format(dst_json_dir))
-    if not os.path.isdir(dst_json_dir):
-        print_red("dst_json_dir = `{}` is not a directory".format(dst_json_dir))
-        exit_program_error()
-
-    main(src_twine_dir, dst_json_dir)
-
+    main(args.src_twine_dir, args.dst_json_dir)

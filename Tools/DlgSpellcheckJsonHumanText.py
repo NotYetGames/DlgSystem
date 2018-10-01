@@ -96,7 +96,9 @@ def exit_program(status):
     sys.exit(status)
 
 
-def exit_program_error():
+def exit_program_error(message=None):
+    if message is not None:
+        print_red(message)
     exit_program(1)
 
 
@@ -246,11 +248,9 @@ def run_aspell_on_words(words_list_str):
         process = subprocess.run("echo \"{}\" | aspell list -l en_us".format(words_list_str), check=True, cwd=None, universal_newlines=True, \
                               stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     except ValueError as e:
-        print_red("ValueError = {}".format(command_to_execute, e))
-        exit_program_error()
+        exit_program_error("ValueError = {}".format(e))
     except OSError as e:
-        print_red("OSError = {}".format(command_to_execute, e))
-        exit_program_error()
+        exit_program_error("OSError = {}".format(e))
 
     return process.stdout.strip()
 
@@ -359,7 +359,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not os.path.isdir(args.directory):
-        print_red("`{}` is not directory".format(args.directory))
-        exit_program_error()
+        exit_program_error("`{}` is not directory".format(args.directory))
 
     main(args.directory)
