@@ -480,12 +480,6 @@ private:
 	 */
 	void AutoFixGraph();
 
-
-public:
-	// Some constants used
-	static const FText EdgeTextFinish;
-	static const FText EdgeTextNext;
-
 private:
 	/** Used to keep track of the version in text  file too, besides being written in the .uasset file. */
 	UPROPERTY()

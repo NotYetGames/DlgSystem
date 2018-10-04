@@ -9,6 +9,9 @@
 
 //////////////////////////////////////////////////////////////////////////
 // UDlgSystemSettings
+const FText UDlgSystemSettings::EdgeTextFinish = LOCTEXT("edge_finish", "Finish");
+const FText UDlgSystemSettings::EdgeTextNext = LOCTEXT("edge_next", "Next");
+
 UDlgSystemSettings::UDlgSystemSettings()
 {
 	BlacklistedReflectionClasses = {AActor::StaticClass(), APawn::StaticClass(),  ACharacter::StaticClass()};

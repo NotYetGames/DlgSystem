@@ -28,9 +28,6 @@ FDevVersionRegistration GRegisterDlgDialogueObjectVersion(FDlgDialogueObjectVers
 														  FDlgDialogueObjectVersion::LatestVersion, TEXT("Dev-DlgDialogue"));
 
 
-const FText UDlgDialogue::EdgeTextFinish = LOCTEXT("edge_finish", "Finish");
-const FText UDlgDialogue::EdgeTextNext = LOCTEXT("edge_next", "Next");
-
 // Update dialogue up to the ConvertedNodesToUObject version
 void UpdateDialogueToVersion_ConvertedNodesToUObject(UDlgDialogue* Dialogue)
 {
@@ -488,7 +485,8 @@ void UDlgDialogue::RefreshData()
 			for (const FDlgCondition& Condition : Edge.Conditions)
 			{
 				GetParticipantDataEntry(Condition.ParticipantName, FallbackNodeOwnerName).AddConditionPrimaryData(Condition);
-				GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName).AddConditionSecondaryData(Condition);
+				if (Condition.IsSecondParticipantInvolved())
+					GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName).AddConditionSecondaryData(Condition);
 			}
 		}
 	};
@@ -626,11 +624,11 @@ void UDlgDialogue::AutoFixGraph()
 			UDlgNode* NextNode = Nodes[NodeChildren[0].TargetIndex];
 			if (NextNode->IsA<UDlgNode_End>())
 			{
-				Node->GetSafeMutableNodeChildAt(0)->Text = EdgeTextFinish;
+				Node->GetSafeMutableNodeChildAt(0)->Text = UDlgSystemSettings::EdgeTextFinish;
 			}
 			else
 			{
-				Node->GetSafeMutableNodeChildAt(0)->Text = EdgeTextNext;
+				Node->GetSafeMutableNodeChildAt(0)->Text = UDlgSystemSettings::EdgeTextNext;
 			}
 		}
 	}

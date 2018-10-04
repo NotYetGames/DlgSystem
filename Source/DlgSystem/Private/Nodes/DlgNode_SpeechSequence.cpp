@@ -3,11 +3,6 @@
 #include "DlgContextInternal.h"
 
 
-FDlgSpeechSequenceEntry::FDlgSpeechSequenceEntry()
-{
-	EdgeText = UDlgDialogue::EdgeTextNext;
-}
-
 #if WITH_EDITOR
 void UDlgNode_SpeechSequence::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {

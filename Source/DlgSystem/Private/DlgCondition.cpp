@@ -260,6 +260,13 @@ bool FDlgCondition::IsParticipantInvolved() const
 	}
 }
 
+bool FDlgCondition::IsSecondParticipantInvolved() const
+{
+	return ConditionType != EDlgConditionType::DlgConditionNodeVisited
+		&& ConditionType != EDlgConditionType::DlgConditionHasSatisfiedChild
+		&& CompareType != EDlgCompareType::DlgCompareToConst;
+}
+
 FArchive& operator<<(FArchive &Ar, FDlgCondition& DlgCondition)
 {
 	Ar << DlgCondition.Strength;

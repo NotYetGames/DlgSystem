@@ -522,5 +522,5 @@ bool UDlgHumanReadableTextCommandlet::SetGraphNodesNewEdgesText(UDialogueGraphNo
 
 bool UDlgHumanReadableTextCommandlet::IsEdgeTextDefault(const FText& EdgeText)
 {
-	return UDlgDialogue::EdgeTextFinish.EqualToCaseIgnored(EdgeText) || UDlgDialogue::EdgeTextNext.EqualToCaseIgnored(EdgeText);
+	return UDlgSystemSettings::EdgeTextFinish.EqualToCaseIgnored(EdgeText) || UDlgSystemSettings::EdgeTextNext.EqualToCaseIgnored(EdgeText);
 }

@@ -149,6 +149,11 @@ public:
 	}
 
 public:
+	// Some constants used. TODO make these configurable
+	static const FText EdgeTextFinish;
+	static const FText EdgeTextNext;
+
+public:
 	/** The dialogue text format used for saving and reloading from text files. */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Format")
 	EDlgDialogueTextFormat DialogueTextFormat = EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue;
