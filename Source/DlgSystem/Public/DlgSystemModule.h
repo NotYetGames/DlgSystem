@@ -50,6 +50,9 @@ private:
 	/** Handle the event after the Dialogue was renamed. Rename the text file(s). */
 	void HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, const FString& OldObjectPath);
 
+	/** Handle event when a new map is loaded. */
+	void HandlePreLoadMap(const FString& MapName);
+
 private:
 	/** True if the tab spawners have been registered for this module */
 	bool bHasRegisteredTabSpawners = false;
@@ -62,4 +65,7 @@ private:
 
 	/** Reference Actor used to get the UWorld. */
 	AActor* ReferenceActor = nullptr;
+
+	// Handlers
+	FDelegateHandle OnPreLoadMapHandle;
 };
