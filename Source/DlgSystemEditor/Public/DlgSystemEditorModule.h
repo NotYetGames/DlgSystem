@@ -39,6 +39,9 @@ private:
 	/** Handle clicking on save all dialogues. */
 	static void HandleOnSaveAllDialogues();
 
+	/** Handle on post engine init event */
+	void HandleOnPostEngineInit();
+
 	/** Extend the Menus of the editor */
 	void ExtendMenu();
 
@@ -68,4 +71,7 @@ private:
 
 	/** The Tools Dialogue category. */
 	TSharedPtr<FWorkspaceItem> ToolsDialogueCategory;
+
+	// Handlers
+	FDelegateHandle OnPostEngineInitHandle;
 };
