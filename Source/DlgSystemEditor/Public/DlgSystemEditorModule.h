@@ -43,6 +43,9 @@ private:
 	void HandleOnPostEngineInit();
 
 	/** Extend the Menus of the editor */
+	void HandleOnBeginPIE(bool bIsSimulating);
+
+	/** Extend the Menus of the editor */
 	void ExtendMenu();
 
 private:
@@ -74,4 +77,5 @@ private:
 
 	// Handlers
 	FDelegateHandle OnPostEngineInitHandle;
+	FDelegateHandle OnBeginPIEHandle;
 };

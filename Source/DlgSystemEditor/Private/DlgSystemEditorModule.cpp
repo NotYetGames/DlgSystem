@@ -58,6 +58,7 @@ void FDlgSystemEditorModule::StartupModule()
 {
 	UE_LOG(LogDlgSystemEditor, Verbose, TEXT("Started DlgSystemEditorModule"));
 	OnPostEngineInitHandle = FCoreDelegates::OnPostEngineInit.AddRaw(this, &Self::HandleOnPostEngineInit);
+	OnBeginPIEHandle = FEditorDelegates::BeginPIE.AddRaw(this, &Self::HandleOnBeginPIE);
 
 	// Register slate style overrides
 	FDialogueStyle::Initialize();
@@ -203,6 +204,11 @@ void FDlgSystemEditorModule::ShutdownModule()
 	// Unregister the Dialogue Search
 	FFindInDialogueSearchManager::Get()->DisableGlobalFindResults();
 
+	if (OnBeginPIEHandle.IsValid())
+	{
+		FEditorDelegates::BeginPIE.Remove(OnBeginPIEHandle);
+	}
+
 	UE_LOG(LogDlgSystemEditor, Verbose, TEXT("Stopped DlgSystemEditorModule"));
 }
 
@@ -244,7 +250,7 @@ void FDlgSystemEditorModule::HandleOnPostEngineInit()
 		return;
 	}
 
-	UE_LOG(LogDlgSystemEditor, Verbose, TEXT("DlgSystemEditorModule::OnPostEngineInit"));
+	UE_LOG(LogDlgSystemEditor, Verbose, TEXT("DlgSystemEditorModule::HandleOnPostEngineInit"));
 	FCoreDelegates::OnPostEngineInit.Remove(OnPostEngineInitHandle);
 	OnPostEngineInitHandle.Reset();
 
@@ -280,6 +286,24 @@ void FDlgSystemEditorModule::HandleOnPostEngineInit()
 				TEXT("(╯°□°）╯︵ ┻━┻ Congrats, you just broke the universe, are you even human? Now please go and proove an NP complete problem."
 					"The chance of generating two equal random FGuid (picking 4, uint32 numbers) is p = 9.3132257 * 10^(-10) % (or something like this)"))
 	}
+}
+
+void FDlgSystemEditorModule::HandleOnBeginPIE(bool bIsSimulating)
+{
+	if (!OnBeginPIEHandle.IsValid())
+	{
+		return;
+	}
+	if (const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>())
+	{
+		if (!Settings->bClearDialogueHistoryAutomatically)
+		{
+			return;
+		}
+	}
+
+	UE_LOG(LogDlgSystemEditor, Verbose, TEXT("BeginPIE: Clearing Dialogue History"));
+	UDlgManager::ClearDialogueHistory();
 }
 
 void FDlgSystemEditorModule::ExtendMenu()
