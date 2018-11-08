@@ -343,19 +343,15 @@ protected:
 	/** Creates the input pin for this node. */
 	virtual void CreateInputPin()
 	{
-		static const FName PinName(TEXT("Input Pin"));
-		FCreatePinParams PinParams;
-		PinParams.Index = INDEX_PIN_Input;
-		CreatePin(EGPD_Input, UDialogueGraphSchema::PIN_CATEGORY_Input, PinName, PinParams);
+		CreatePin(EGPD_Input, UDialogueGraphSchema::PIN_CATEGORY_Input, /*PinSubCategory=*/ TEXT(""), /*PinSubCategoryObject=*/ nullptr,
+			/*bIsArray=*/ false, /*bIsReference=*/ false, TEXT("Input Pin"),  /*bIsConst=*/ false, /*Index=*/ INDEX_PIN_Input);
 	}
 
 	/** Creates the output pin for this node. */
 	virtual void CreateOutputPin()
 	{
-		static const FName PinName(TEXT("Output Pin"));
-		FCreatePinParams PinParams;
-		PinParams.Index = INDEX_PIN_Output;
-		CreatePin(EGPD_Output, UDialogueGraphSchema::PIN_CATEGORY_Output, PinName, PinParams);
+		CreatePin(EGPD_Output, UDialogueGraphSchema::PIN_CATEGORY_Output, /*PinSubCategory=*/ TEXT(""), /*PinSubCategoryObject=*/ nullptr,
+			/*bIsArray=*/ false, /*bIsReference=*/ false, TEXT("Output Pin"), /*bIsConst=*/ false, /*Index=*/ INDEX_PIN_Output);
 
 		// This enables or disables dragging of the pin from the Node, see SGraphPin::OnPinMouseDown for details
 		GetOutputPin()->bNotConnectable = IsEndNode();

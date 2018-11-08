@@ -176,21 +176,15 @@ protected:
 	/** Creates the input pin for this node. */
 	void CreateInputPin() override
 	{
-		static const FName PinName(TEXT("Input"));
-		static const FName CategoryName(TEXT("Transition"));
-		FCreatePinParams PinParams;
-		PinParams.Index = INDEX_PIN_Input;
-		CreatePin(EGPD_Input, CategoryName, PinName, PinParams);
+		CreatePin(EGPD_Input, TEXT("Transition"), /*PinSubCategory=*/ TEXT(""), /*PinSubCategoryObject=*/ nullptr,
+			/*bIsArray=*/ false, /*bIsReference=*/ false, TEXT("Input"),  /*bIsConst=*/ false, /*Index=*/ INDEX_PIN_Input);
 	}
 
 	/** Creates the output pin for this node. */
 	void CreateOutputPin() override
 	{
-		static const FName PinName(TEXT("Output"));
-		static const FName CategoryName(TEXT("Transition"));
-		FCreatePinParams PinParams;
-		PinParams.Index = INDEX_PIN_Output;
-		CreatePin(EGPD_Output, CategoryName, PinName, PinParams);
+		CreatePin(EGPD_Output, TEXT("Transition"), /*PinSubCategory=*/ TEXT(""), /*PinSubCategoryObject=*/ nullptr,
+			/*bIsArray=*/ false, /*bIsReference=*/ false, TEXT("Output"), /*bIsConst=*/ false, /*Index=*/ INDEX_PIN_Output);
 	}
 
 private:
