@@ -2,6 +2,7 @@
 #include "Nodes/DlgNode_SpeechSequence.h"
 #include "DlgContextInternal.h"
 
+
 #if WITH_EDITOR
 void UDlgNode_SpeechSequence::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {

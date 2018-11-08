@@ -9,7 +9,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FBase_CustomRowHelper
 FBase_CustomRowHelper::FBase_CustomRowHelper(FDetailWidgetRow* InDetailWidgetRow, TSharedPtr<IPropertyHandle> InPropertyHandle) :
-	DetailWidgetRow(InDetailWidgetRow), PropertyHandle(InPropertyHandle),
+	DetailWidgetRow(InDetailWidgetRow),
+	PropertyHandle(InPropertyHandle),
 	DisplayName(DetailWidgetRow->FilterTextString),
 	ToolTip(InPropertyHandle->GetToolTipText())
 {

@@ -31,9 +31,11 @@ public class DlgSystemEditor : ModuleRules
 			});
 
 
-		PrivateIncludePaths.AddRange(
+        string PrivateDirectory = Path.Combine(ModuleDirectory, "Private");
+        PrivateIncludePaths.AddRange(
 			new string[] {
-				Path.Combine(ModuleDirectory, "Private")
+                PrivateDirectory,
+				Path.Combine(PrivateDirectory, "Commandlets")
 				// ... add other private include paths required here ...
 			});
 
@@ -59,6 +61,7 @@ public class DlgSystemEditor : ModuleRules
 				"Slate",
 				"EditorStyle",
 				"MessageLog",
+				"EditorWidgets",
 
 				// Accessing the menu
 				"WorkspaceMenuStructure",

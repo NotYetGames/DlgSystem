@@ -686,7 +686,7 @@ void FDialogueEditorUtilities::ReplaceReferencesToOldIndiciesWithNew(const TArra
 		// Update Edges
 		for (int32 EdgeIndex = 0, EdgesNum = DialogueNode->GetNodeChildren().Num(); EdgeIndex < EdgesNum; EdgeIndex++)
 		{
-			FDlgEdge* DialogueEdge = DialogueNode->GetMutableNodeChildAt(EdgeIndex);
+			FDlgEdge* DialogueEdge = DialogueNode->GetSafeMutableNodeChildAt(EdgeIndex);
 			bool bModifiedConditions = false;
 
 			for (FDlgCondition& Condition : DialogueEdge->Conditions)

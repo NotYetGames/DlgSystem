@@ -124,10 +124,16 @@ public:
 	virtual void RemoveAllChildren() { Children.Empty(); }
 
 	/** Gets the mutable edge/child at location EdgeIndex. */
-	virtual FDlgEdge* GetMutableNodeChildAt(int32 EdgeIndex)
+	virtual FDlgEdge* GetSafeMutableNodeChildAt(int32 EdgeIndex)
 	{
 		check(Children.IsValidIndex(EdgeIndex));
 		return &Children[EdgeIndex];
+	}
+
+	/** Unsafe version, can be null */
+	virtual FDlgEdge* GetMutableNodeChildAt(int32 EdgeIndex)
+	{
+		return Children.IsValidIndex(EdgeIndex) ? &Children[EdgeIndex] : nullptr; 
 	}
 
 	/** Gets the mutable Edge that corresponds to the provided TargetIndex or nullptr if nothing was found. */
@@ -150,10 +156,10 @@ public:
 	virtual const FText& GetNodeText() const { return FText::GetEmpty(); }
 
 	/**
-	 * Gets the Raw Text of this Node. Usually the same as GetNodeText but in case the node supports formatted string this
+	 * Gets the Raw unformatted Text of this Node. Usually the same as GetNodeText but in case the node supports formatted string this
 	 * is the raw form with all the arguments intact. To get the text arguments call GetTextArguments.
 	 */
-	virtual const FText& GetRawNodeText() const { return GetNodeText(); }
+	virtual const FText& GetNodeUnformattedText() const { return GetNodeText(); }
 
 	/** Gets the voice of this Node as a SoundWave. */
 	virtual USoundWave* GetNodeVoiceSoundWave() const { return nullptr; }

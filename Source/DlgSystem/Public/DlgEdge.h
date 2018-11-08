@@ -40,6 +40,9 @@ public:
 	/** Creates a simple edge without text, without conditions */
 	FDlgEdge(int32 InTargetIndex = INDEX_NONE) : TargetIndex(InTargetIndex) {}
 
+	// Rebuilds TextArguments
+	void RebuildTextArgumentsArray() { FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments); }
+
 	/** Returns with true if every condition attached to the edge and every enter condition of the target node are satisfied */
 	bool Evaluate(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 

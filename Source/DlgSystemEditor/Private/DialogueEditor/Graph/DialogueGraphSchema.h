@@ -116,7 +116,7 @@ public:
 	 * @param	SourcePin	The pin where the link begins.
 	 * @param	TargetPin	The pin where the link ends.
 	 */
-	void BreakSinglePinLink(UEdGraphPin* SourcePin, UEdGraphPin* TargetPin) override;
+	void BreakSinglePinLink(UEdGraphPin* SourcePin, UEdGraphPin* TargetPin) const override;
 
 	/** Called when asset(s) are dropped onto the specified node */
 	void DroppedAssetsOnGraph(const TArray<FAssetData>& Assets, const FVector2D& GraphPosition, UEdGraph* Graph) const override;
@@ -178,8 +178,8 @@ private:
 
 public:
 	// Allowed PinType.PinCategory values
-	static const FString PIN_CATEGORY_Input;
-	static const FString PIN_CATEGORY_Output;
+	static const FName PIN_CATEGORY_Input;
+	static const FName PIN_CATEGORY_Output;
 
 	// Categories for actions
 	static const FText NODE_CATEGORY_Dialogue;

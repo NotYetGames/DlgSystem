@@ -417,6 +417,9 @@ public:
 	/** Gets the Start Node as a mutable pointer. */
 	UDlgNode* GetMutableStartNode() { return StartNode; }
 
+	/** Gets the Node as a mutable pointer. */
+	UDlgNode* GetMutableNode(const int32 NodeIndex) { return Nodes.IsValidIndex(NodeIndex) ? Nodes[NodeIndex] : nullptr; }
+
 	/** Sets a new Start Node. Use with care. */
 	void SetStartNode(UDlgNode* InStartNode) { StartNode = InStartNode; }
 

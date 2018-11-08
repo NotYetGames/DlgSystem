@@ -34,6 +34,7 @@ void FDlgSystemModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 	UE_LOG(LogDlgSystem, Verbose, TEXT("Started DlgSystemModule"));
+	OnPreLoadMapHandle = FCoreUObjectDelegates::PreLoadMap.AddRaw(this, &Self::HandlePreLoadMap);
 
 	// Listen for deleted assets
 	// Maybe even check OnAssetRemoved if not loaded into memory?
@@ -106,6 +107,11 @@ void FDlgSystemModule::ShutdownModule()
 		AssetRegistry.OnInMemoryAssetDeleted().RemoveAll(this);
 		AssetRegistry.OnAssetRemoved().RemoveAll(this);
 		AssetRegistry.OnAssetRenamed().RemoveAll(this);
+	}
+
+	if (OnPreLoadMapHandle.IsValid())
+	{
+		FCoreUObjectDelegates::PreLoadMap.Remove(OnPreLoadMapHandle);
 	}
 
 	UE_LOG(LogDlgSystem, Verbose, TEXT("Stopped DlgSystemModule"));
@@ -337,6 +343,24 @@ void FDlgSystemModule::HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, cons
 		const FString FileExtension = UDlgDialogue::GetTextFileExtension(CurrentTextFormat);
 		RenameFileIfItExists(*(OldTextFilePathName + FileExtension), *(CurrentTextFilePathName + FileExtension));
 	}
+}
+
+void FDlgSystemModule::HandlePreLoadMap(const FString& MapName)
+{
+	if (!OnPreLoadMapHandle.IsValid())
+	{
+		return;
+	}
+	if (const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>())
+	{
+		if (!Settings->bClearDialogueHistoryAutomatically)
+		{
+			return;
+		}
+	}
+
+	UE_LOG(LogDlgSystem, Verbose, TEXT("PreLoadMap = %s. Clearing Dialogue History"), *MapName);
+	UDlgManager::ClearDialogueHistory();
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -19,11 +19,14 @@
 #include "Nodes/DlgNode_End.h"
 #include "DlgManager.h"
 
+#define LOCTEXT_NAMESPACE "DlgDialogue"
+
 // Unique DlgDialogue Object version id, generated with random
 const FGuid FDlgDialogueObjectVersion::GUID(0x2B8E5105, 0x6F66348F, 0x2A8A0B25, 0x9047A071);
 // Register Dialogue custom version with Core
 FDevVersionRegistration GRegisterDlgDialogueObjectVersion(FDlgDialogueObjectVersion::GUID,
 														  FDlgDialogueObjectVersion::LatestVersion, TEXT("Dev-DlgDialogue"));
+
 
 // Update dialogue up to the ConvertedNodesToUObject version
 void UpdateDialogueToVersion_ConvertedNodesToUObject(UDlgDialogue* Dialogue)
@@ -378,7 +381,7 @@ void UDlgDialogue::ReloadFromFile()
 
 	// TODO(leyyin): validate if data is legit, indicies exist and that sort.
 	// Check if Guid is not a duplicate
-	TArray<UDlgDialogue*> DuplicateDialogues = UDlgManager::GetDialoguesWithDuplicateGuid();
+	const TArray<UDlgDialogue*> DuplicateDialogues = UDlgManager::GetDialoguesWithDuplicateGuid();
 	if (DuplicateDialogues.Num() > 0)
 	{
 		if (DuplicateDialogues.Contains(this))
@@ -482,7 +485,8 @@ void UDlgDialogue::RefreshData()
 			for (const FDlgCondition& Condition : Edge.Conditions)
 			{
 				GetParticipantDataEntry(Condition.ParticipantName, FallbackNodeOwnerName).AddConditionPrimaryData(Condition);
-				GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName).AddConditionSecondaryData(Condition);
+				if (Condition.IsSecondParticipantInvolved())
+					GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName).AddConditionSecondaryData(Condition);
 			}
 		}
 	};
@@ -620,11 +624,11 @@ void UDlgDialogue::AutoFixGraph()
 			UDlgNode* NextNode = Nodes[NodeChildren[0].TargetIndex];
 			if (NextNode->IsA<UDlgNode_End>())
 			{
-				Node->GetMutableNodeChildAt(0)->Text = FText::FromString("Finish");
+				Node->GetSafeMutableNodeChildAt(0)->Text = UDlgSystemSettings::EdgeTextFinish;
 			}
 			else
 			{
-				Node->GetMutableNodeChildAt(0)->Text = FText::FromString("Next");
+				Node->GetSafeMutableNodeChildAt(0)->Text = UDlgSystemSettings::EdgeTextNext;
 			}
 		}
 	}
@@ -702,3 +706,5 @@ FString UDlgDialogue::GetTextFileExtension(EDlgDialogueTextFormat InTextFormat)
 
 // End own functions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#undef LOCTEXT_NAMESPACE

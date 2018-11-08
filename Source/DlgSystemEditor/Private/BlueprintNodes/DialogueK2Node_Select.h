@@ -134,15 +134,15 @@ protected:
 
 	// The pin type of this select
 	UPROPERTY()
-	FString VariablePinType;
+	FName VariablePinType;
 
 	/** Whether we need to reconstruct the node after the pins have changed */
 	UPROPERTY(Transient)
 	bool bReconstructNode;
 
 	// Constants.
-	static const FString PIN_VariableName; // index
-	static const FString PIN_DefaultValue;
+	static const FName PIN_VariableName; // index
+	static const FName PIN_DefaultValue;
 };
 
 /**

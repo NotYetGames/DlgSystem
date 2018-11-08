@@ -87,6 +87,7 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 			.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
 			.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
 		)
+		->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities())
 		->Update();
 	}
 
@@ -116,6 +117,7 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 			.Text(EdgeTextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
 			.OnTextCommitted(EdgeTextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
 		)
+		->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities())
 		->Update();
 	}
 }

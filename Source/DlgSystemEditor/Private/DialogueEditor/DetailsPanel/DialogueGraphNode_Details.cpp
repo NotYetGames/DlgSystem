@@ -140,6 +140,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 					.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
 					.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
 				)
+				->SetPropertyUtils(DetailBuilder.GetPropertyUtilities())
 				->Update();
 			}
 

@@ -9,6 +9,8 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode_Root.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "Nodes/DlgNode.h"
+#include "DlgDialogue.h"
+#include "DlgSystemSettings.h"
 
 
 void FDialogueCompilerContext::Compile()
@@ -22,6 +24,8 @@ void FDialogueCompilerContext::Compile()
 	ResultDialogueNodes.Empty();
 	VisitedNodes.Empty();
 	Queue.Empty();
+	IndicesHistory.Empty();
+	NodesPath.Empty();
 	NextAvailableIndex = 0;
 
 	// The code below tries to reconstruct the Dialogue Nodes from the Graph Nodes (aka compile).
@@ -45,7 +49,7 @@ void FDialogueCompilerContext::Compile()
 	// Step 2. Walk the graph and set the rest of the nodes.
 	CompileGraph();
 
-	// Step 3. Set nodes categorization, this ignores isolated hodes
+	// Step 3. Set nodes categorization, this ignores isolated nodes
 	SetEdgesCategorization();
 
 	// Step 4. Add orphan nodes (nodes / node group with no parents), not connected to the start node
@@ -83,11 +87,11 @@ void FDialogueCompilerContext::PostCompileGraphNode(UDialogueGraphNode* GraphNod
 			// TODO add graph nodes for each type
 			if (ChildGraphNode->IsEndNode())
 			{
-				GraphNode->SetEdgeTextAt(0, FText::FromString("Finish"));
+				GraphNode->SetEdgeTextAt(0, UDlgSystemSettings::EdgeTextFinish);
 			}
 			else
 			{
-				GraphNode->SetEdgeTextAt(0, FText::FromString("Next"));
+				GraphNode->SetEdgeTextAt(0, UDlgSystemSettings::EdgeTextNext);
 			}
 		}
 	}
@@ -133,7 +137,7 @@ void FDialogueCompilerContext::CompileGraphNode(UDialogueGraphNode* GraphNode)
 		UDialogueGraphNode* ChildNode = ChildNodes[ChildIndex];
 
 		// Sanity check to assume that the child node will have the same edge data from the parent
-		// BEFORE TargetIndex reassigment. If this fails it means that the Dialogue Node Children are not in
+		// BEFORE TargetIndex reassignment. If this fails it means that the Dialogue Node Children are not in
 		// the right order (assumption below fails).
 		const int32 ChildNodeTargetIndex = NodeEdges[ChildIndex].TargetIndex;
 		check(ChildNode == DialogueNodes[ChildNodeTargetIndex]->GetGraphNode())
