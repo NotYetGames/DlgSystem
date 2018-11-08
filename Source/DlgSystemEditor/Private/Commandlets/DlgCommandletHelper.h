@@ -25,17 +25,16 @@ public:
 
 	static bool SaveAllDialogues()
 	{
-		TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
-		TArray<UPackage*> PackagesToSave;
-		for (UDlgDialogue* Dialogue : Dialogues)
-		{
-			Dialogue->OnAssetSaved();
-			Dialogue->MarkPackageDirty();
-			PackagesToSave.Add(Dialogue->GetOutermost());
-		}
+		//TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
+		//TArray<UPackage*> PackagesToSave;
+		//for (UDlgDialogue* Dialogue : Dialogues)
+		//{
+		//	Dialogue->OnAssetSaved();
+		//	Dialogue->MarkPackageDirty();
+		//	PackagesToSave.Add(Dialogue->GetOutermost());
+		//}
 
-		static constexpr bool bCheckDirty = false;
-		return UEditorLoadingAndSavingUtils::SavePackages(PackagesToSave, bCheckDirty);
+		return SaveAllDirtyDialogues();
 	}
 
 	static bool IsDialoguePathInProjectDirectory(const FString& DialoguePath)

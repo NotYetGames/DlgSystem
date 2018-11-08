@@ -219,7 +219,12 @@ int32 UDlgHumanReadableTextCommandlet::Import()
 		}
 	}
 
-	return UEditorLoadingAndSavingUtils::SavePackages(PackagesToSave, false) == true ? 0 : -1;
+	constexpr bool bPromptUserToSave = false;
+	constexpr bool bFastSave = true;
+	constexpr bool bNotifyNoPackagesSaved = false;
+	constexpr bool bCanBeDeclined = false;
+	static TArray<UClass*> SaveContentClasses = { UDlgDialogue::StaticClass() };
+	return FEditorFileUtils::SaveDirtyContentPackages(SaveContentClasses, bPromptUserToSave, bFastSave, bNotifyNoPackagesSaved, bCanBeDeclined) == true ? 0 : -1;
 }
 
 bool UDlgHumanReadableTextCommandlet::ExportDialogueToHumanReadableFormat(const UDlgDialogue& Dialogue, FDlgDialogue_FormatHumanReadable& OutFormat)

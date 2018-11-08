@@ -528,7 +528,7 @@ void FMultiLineEditableTextBox_CustomRowHelper::UpdateInternal()
 	check(PropertyUtils.IsValid());
 	MultiLineEditableTextBoxWidget->SetToolTipText(ToolTip);
 
-	PropertyHandle->MarkResetToDefaultCustomized(true);
+	PropertyHandle->MarkResetToDefaultCustomized();
 	EditableTextProperty = MakeShareable(new FDlgEditableTextPropertyHandle(PropertyHandle.ToSharedRef(), PropertyUtils));
 
 	TSharedPtr<SHorizontalBox> HorizontalBox;
