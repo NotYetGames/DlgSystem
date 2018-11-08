@@ -1,6 +1,6 @@
 # DlgSystem (Dialogue System) Plugin
 
-Branch Unreal version: `4.19`
+Branch Unreal version: `4.20`
 
 ## Features:
 
@@ -24,7 +24,7 @@ Not yet convinced? Have you seen our [`showcase page`](https://gitlab.com/NotYet
 
 See the [Wiki](https://gitlab.com/NotYetGames/DlgSystem/wikis/home) for the manual and tutorials.
 
-[DlgSystemExample project](https://gitlab.com/NotYetGames/DlgSystemExample/tree/4.19) is also provided.
+[DlgSystemExample project](https://gitlab.com/NotYetGames/DlgSystemExample/tree/4.20) is also provided.
 
 This plugin is primary developed and used for our own [game](http://www.warriorb.com).
 We have put significant effort into it and decided to make it open source in order to help out other teams facing similar challenges.

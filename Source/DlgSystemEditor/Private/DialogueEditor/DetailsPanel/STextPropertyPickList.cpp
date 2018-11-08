@@ -296,6 +296,7 @@ void STextPropertyPickList::HandleMenuOpenChanged(bool bOpen)
 {
 	if (!bOpen)
 	{
+		FSlateApplication::Get().ClearKeyboardFocus(EFocusCause::SetDirectly);
 		ComboButtonWidget->SetMenuContent(SNullWidget::NullWidget);
 	}
 }
