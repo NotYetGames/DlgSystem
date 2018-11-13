@@ -176,7 +176,6 @@ public:
 			}
 		}
 
-		check(Dialogue);
 		return Dialogue;
 	}
 
@@ -209,6 +208,11 @@ public:
 	/** Gets all the participant names of the Dialogue sorted alphabetically */
 	static TArray<FName> GetDialogueSortedParticipantNames(UDlgDialogue* Dialogue)
 	{
+		if (Dialogue == nullptr)
+		{
+			return {};
+		}
+
 		TSet<FName> ParticipantNames;
 		Dialogue->GetAllParticipantNames(ParticipantNames);
 		FDlgHelper::SortDefault(ParticipantNames);

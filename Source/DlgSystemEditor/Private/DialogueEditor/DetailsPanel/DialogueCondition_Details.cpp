@@ -54,6 +54,8 @@ void FDialogueCondition_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InS
 void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStructPropertyHandle,
 	IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
+	const bool bHasDialogue = Dialogue != nullptr;
+
 	// Add common ConditionStrength, ConditionType
 	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, Strength)).ToSharedRef());
 	StructBuilder.AddProperty(ConditionTypePropertyHandle.ToSharedRef());
@@ -67,7 +69,7 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 			SNew(STextPropertyPickList)
 			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
-			.HasContextCheckbox(true)
+			.HasContextCheckbox(bHasDialogue)
 			.IsContextCheckBoxChecked(true)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueParticipantNames)
 		)
@@ -86,7 +88,7 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 			SNew(STextPropertyPickList)
 			.AvailableSuggestions(this, &Self::GetAllDialoguesCallbackNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
-			.HasContextCheckbox(true)
+			.HasContextCheckbox(bHasDialogue)
 			.IsContextCheckBoxChecked(false)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueCallbackNames)
 		)
@@ -236,7 +238,10 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 		break;
 
 	case EDlgConditionType::DlgConditionNodeVisited:
-		FDialogueDetailsPanelUtils::SetNumericPropertyLimits<int32>(IntValuePropertyHandle, 0, Dialogue->GetNodes().Num() - 1);
+		if (Dialogue)
+		{
+			FDialogueDetailsPanelUtils::SetNumericPropertyLimits<int32>(IntValuePropertyHandle, 0, Dialogue->GetNodes().Num() - 1);
+		}
 
 		IntValueDisplayName = LOCTEXT("ConditionNodeVisited_IntValueDisplayName", "Node Index");
 		IntValueToolTip = LOCTEXT("ConditionNodeVisited_IntValueToolTip", "Node index of the node we want to check the visited status");
@@ -245,7 +250,10 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 		break;
 
 	case EDlgConditionType::DlgConditionHasSatisfiedChild:
-		FDialogueDetailsPanelUtils::SetNumericPropertyLimits<int32>(IntValuePropertyHandle, 0, Dialogue->GetNodes().Num() - 1);
+		if (Dialogue)
+		{
+			FDialogueDetailsPanelUtils::SetNumericPropertyLimits<int32>(IntValuePropertyHandle, 0, Dialogue->GetNodes().Num() - 1);
+		}
 
 		IntValueDisplayName = LOCTEXT("ConditionHasSatisfiedChild_IntValueDisplayName", "Node Index");
 		IntValueToolTip = LOCTEXT("ConditionHasSatisfiedChild_IntValueToolTip", "Node index of the node we want to check");
@@ -317,13 +325,13 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 	{
 	case EDlgConditionType::DlgConditionClassBoolVariable:
 	case EDlgConditionType::DlgConditionBoolCall:
-		if (bReflectionBased)
+		if (bReflectionBased && Dialogue)
 		{
 			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
 		}
 		else
 		{
-			if (bCurrentOnly)
+			if (bCurrentOnly && Dialogue)
 			{
 				Dialogue->GetBoolNames(ParticipantName, SuggestionSet);
 				Suggestions = SuggestionSet.Array();
@@ -337,13 +345,13 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 
 	case EDlgConditionType::DlgConditionClassFloatVariable:
 	case EDlgConditionType::DlgConditionFloatCall:
-		if (bReflectionBased)
+		if (bReflectionBased && Dialogue)
 		{
 			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
 		}
 		else
 		{
-			if (bCurrentOnly)
+			if (bCurrentOnly && Dialogue)
 			{
 				Dialogue->GetFloatNames(ParticipantName, SuggestionSet);
 			}
@@ -356,13 +364,13 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 
 	case EDlgConditionType::DlgConditionClassIntVariable:
 	case EDlgConditionType::DlgConditionIntCall:
-		if (bReflectionBased)
+		if (bReflectionBased && Dialogue)
 		{
 			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
 		}
 		else
 		{
-			if (bCurrentOnly)
+			if (bCurrentOnly && Dialogue)
 			{
 				Dialogue->GetIntNames(ParticipantName, SuggestionSet);
 			}
@@ -375,13 +383,13 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 
 	case EDlgConditionType::DlgConditionNameCall:
 	case EDlgConditionType::DlgConditionClassNameVariable:
-		if (bReflectionBased)
+		if (bReflectionBased && Dialogue)
 		{
 			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
 		}
 		else
 		{
-			if (bCurrentOnly)
+			if (bCurrentOnly && Dialogue)
 			{
 				Dialogue->GetNameNames(ParticipantName, SuggestionSet);
 			}
@@ -395,7 +403,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 	case EDlgConditionType::DlgConditionEventCall:
 	case EDlgConditionType::DlgConditionNodeVisited:
 	default:
-		if (bCurrentOnly)
+		if (bCurrentOnly && Dialogue)
 		{
 			Dialogue->GetConditions(ParticipantName, SuggestionSet);
 		}

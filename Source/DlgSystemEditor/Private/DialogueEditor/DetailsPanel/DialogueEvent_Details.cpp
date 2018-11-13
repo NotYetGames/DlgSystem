@@ -46,6 +46,9 @@ void FDialogueEvent_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InStruc
 void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStructPropertyHandle,
 	IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
+	const bool bHasDialogue = Dialogue != nullptr;
+
+
 	// Common ParticipantName
 	{
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("ParticipantNameSearchKey", "Participant Name"));
@@ -55,7 +58,7 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 			SNew(STextPropertyPickList)
 			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
-			.HasContextCheckbox(true)
+			.HasContextCheckbox(bHasDialogue)
 			.IsContextCheckBoxChecked(true)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueParticipantNames)
 		)
@@ -76,7 +79,7 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 				SNew(STextPropertyPickList)
 				.AvailableSuggestions(this, &Self::GetAllDialoguesEventNames)
 				.OnTextCommitted(this, &Self::HandleTextCommitted)
-				.HasContextCheckbox(true)
+				.HasContextCheckbox(bHasDialogue)
 				.IsContextCheckBoxChecked(false)
 				.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueEventNames)
 		);
@@ -176,23 +179,35 @@ TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
 		break;
 
 	case EDlgEventType::DlgEventModifyClassIntVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
-		FDlgHelper::SortDefault(Suggestions);
+		if (Dialogue)
+		{
+			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
+			FDlgHelper::SortDefault(Suggestions);
+		}
 		break;
 
 	case EDlgEventType::DlgEventModifyClassFloatVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
-		FDlgHelper::SortDefault(Suggestions);
+		if (Dialogue)
+		{
+			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
+			FDlgHelper::SortDefault(Suggestions);
+		}
 		break;
 
 	case EDlgEventType::DlgEventModifyClassBoolVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
-		FDlgHelper::SortDefault(Suggestions);
+		if (Dialogue)
+		{
+			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
+			FDlgHelper::SortDefault(Suggestions);
+		}
 		break;
 
 	case EDlgEventType::DlgEventModifyClassNameVariable:
-		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
-		FDlgHelper::SortDefault(Suggestions);
+		if (Dialogue)
+		{
+			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
+			FDlgHelper::SortDefault(Suggestions);
+		}
 		break;
 
 
@@ -207,6 +222,11 @@ TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
 
 TArray<FName> FDialogueEvent_Details::GetCurrentDialogueEventNames() const
 {
+	if (Dialogue == nullptr)
+	{
+		return {};
+	}
+
 	const FName ParticipantName = FDialogueDetailsPanelUtils::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
 	TSet<FName> Suggestions;
 
