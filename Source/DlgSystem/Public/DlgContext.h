@@ -162,6 +162,19 @@ public:
 	bool IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory = false, bool bIndexSkipsUnsatisfiedEdges = true) const;
 
 
+	/**
+	 *  Checks if the node is connected directly to an end node or not
+	 *  Does not handle complicated logic - if the said node is a logical one it will still check that node, and not one
+	 *  of its children
+	 *
+	 * @param Index  Index of the edge/player choice to test
+	 * @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionNum()[ interval (if true), or in the [0, GetAllOptionNum()[ (if false)
+	 * @return true if the node is an end node
+	 */
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	bool IsEdgeConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisfiedEdges = true) const;
+
+
 protected:
 	// Methods implemented by UDlgContextInternal
 
