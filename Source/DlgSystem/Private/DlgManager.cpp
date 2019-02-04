@@ -333,8 +333,7 @@ bool UDlgManager::ConstructParticipantMap(const UDlgDialogue* Dialogue, const TA
 	{
 		UE_LOG(LogDlgSystem,
 			   Error,
-			   TEXT("Failed to start dialogue - the amount of participants does not match the dialogue's "
-					"expectation! Dialogue Participants Num %d != Participants Num %d"),
+			   TEXT("Dialogue failed to start: the asset has %d participants! Provided participant count: %d"),
 			   DialogueParticipants.Num(), Participants.Num());
 		return false;
 	}
@@ -345,7 +344,7 @@ bool UDlgManager::ConstructParticipantMap(const UDlgDialogue* Dialogue, const TA
 		UObject* Participant = Participants[ParticipantIndex];
 		if (!IsValid(Participant))
 		{
-			UE_LOG(LogDlgSystem, Error, TEXT("Failed to start dialogue - Participant at index %d is null"), ParticipantIndex);
+			UE_LOG(LogDlgSystem, Error, TEXT("Failed to start dialogue - Participant at index %d is nullptr"), ParticipantIndex);
 			return false;
 		}
 
@@ -366,8 +365,7 @@ bool UDlgManager::ConstructParticipantMap(const UDlgDialogue* Dialogue, const TA
 		{
 			UE_LOG(LogDlgSystem,
 				   Error,
-				   TEXT("Failed to start dialogue - Input Participant at index = %d "
-						"does not have a participant with name = `%s` in the Dialogue"),
+				   TEXT("Failed to start dialogue - Input Participant at index = %d has the name %s, which is not referenced by this Dialogue"),
 				   ParticipantIndex, *ParticipantName.ToString());
 			return false;
 		}

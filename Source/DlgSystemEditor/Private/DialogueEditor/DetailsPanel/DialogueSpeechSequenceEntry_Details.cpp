@@ -34,6 +34,8 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeHeader(TSharedRef<IPropertyH
 void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStructPropertyHandle,
 	IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
+	const bool bHasDialogue = Dialogue != nullptr;
+
 	// Speaker
 	{
 		const TSharedPtr<IPropertyHandle> ParticipantNamePropertyHandle =
@@ -45,7 +47,7 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 			SNew(STextPropertyPickList)
 			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
-			.HasContextCheckbox(true)
+			.HasContextCheckbox(bHasDialogue)
 			.IsContextCheckBoxChecked(true)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueParticipantNames)
 		)

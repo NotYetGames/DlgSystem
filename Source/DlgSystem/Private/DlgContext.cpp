@@ -3,6 +3,7 @@
 
 #include "DlgSystemPrivatePCH.h"
 #include "Nodes/DlgNode.h"
+#include "Nodes/DlgNode_End.h"
 #include "DlgDialogueParticipant.h"
 #include "DlgMemory.h"
 
@@ -275,3 +276,45 @@ bool UDlgContext::IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory, 
 		return FDlgMemory::GetInstance()->IsNodeVisited(Dialogue->GetDlgGuid(), TargetIndex);
 	}
 }
+
+
+bool UDlgContext::IsEdgeConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisfiedEdges) const
+{
+	int32 TargetIndex = INDEX_NONE;
+
+	if (bIndexSkipsUnsatisfiedEdges)
+	{
+		if (!AvailableChildren.IsValidIndex(Index))
+		{
+			UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToEndNode failed - invalid index %d"), Index);
+			return false;
+		}
+		TargetIndex = AvailableChildren[Index]->TargetIndex;
+	}
+	else
+	{
+		if (!AllChildren.IsValidIndex(Index))
+		{
+			UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToEndNode failed - invalid index %d"), Index);
+			return false;
+		}
+		TargetIndex = AllChildren[Index].EdgePtr->TargetIndex;
+	}
+
+	if (Dialogue == nullptr)
+	{
+		UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToEndNode called, but the context does not have a valid dialogue!"));
+		return false;
+	}
+
+	const TArray<UDlgNode*>& Nodes = Dialogue->GetNodes();
+
+	if (Nodes.IsValidIndex(TargetIndex))
+	{
+		return Cast<UDlgNode_End>(Nodes[TargetIndex]) != nullptr;
+	}
+
+	UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToEndNode called, but the examined edge does not point to a valid node!"));
+	return false;
+}
+

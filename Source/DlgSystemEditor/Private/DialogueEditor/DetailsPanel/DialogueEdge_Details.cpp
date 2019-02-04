@@ -96,7 +96,10 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 
 void FDialogueEdge_Details::HandleSpeakerStateCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo)
 {
-	Dialogue->RefreshData();
+	if (Dialogue)
+	{
+		Dialogue->RefreshData();
+	}
 }
 
 void FDialogueEdge_Details::HandleTextCommitted(const FText& InText, ETextCommit::Type CommitInfo)
@@ -106,7 +109,11 @@ void FDialogueEdge_Details::HandleTextCommitted(const FText& InText, ETextCommit
 	if (UDialogueGraphNode_Edge* GraphEdge = FDialogueDetailsPanelUtils::GetAsGraphNodeEdgeFromPropertyHandle(StructPropertyHandle.ToSharedRef()))
 	{
 		GraphEdge->GetDialogueEdge().RebuildTextArgumentsArray();
-		Dialogue->RefreshData();
+
+		if (Dialogue)
+		{
+			Dialogue->RefreshData();
+		}
 	}
 }
 

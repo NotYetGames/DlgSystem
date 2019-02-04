@@ -46,6 +46,8 @@ void FDialogueTextArgument_Details::CustomizeHeader(TSharedRef<IPropertyHandle> 
 void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStructPropertyHandle,
 	IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
+	const bool bHasDialogue = Dialogue != nullptr;
+
 	// DisplayString
 	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgTextArgument, DisplayString)).ToSharedRef());
 
@@ -58,7 +60,7 @@ void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle
 			SNew(STextPropertyPickList)
 			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
-			.HasContextCheckbox(true)
+			.HasContextCheckbox(bHasDialogue)
 			.IsContextCheckBoxChecked(true)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueParticipantNames)
 		)
@@ -79,7 +81,7 @@ void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle
 				SNew(STextPropertyPickList)
 				.AvailableSuggestions(this, &Self::GetAllDialoguesVariableNames)
 				.OnTextCommitted(this, &Self::HandleTextCommitted)
-				.HasContextCheckbox(true)
+				.HasContextCheckbox(bHasDialogue)
 				.IsContextCheckBoxChecked(false)
 				.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueVariableNames)
 		);
@@ -116,7 +118,7 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 	switch (ArgumentType)
 	{
 		case EDlgTextArgumentType::DlgTextArgumentDialogueInt:
-			if (bCurrentOnly)
+			if (bCurrentOnly && Dialogue)
 			{
 				TSet<FName> SuggestionsSet;
 				Dialogue->GetIntNames(ParticipantName, SuggestionsSet);
@@ -133,7 +135,7 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 			break;
 
 		case EDlgTextArgumentType::DlgTextArgumentDialogueFloat:
-			if (bCurrentOnly)
+			if (bCurrentOnly && Dialogue)
 			{
 				TSet<FName> SuggestionsSet;
 				Dialogue->GetFloatNames(ParticipantName, SuggestionsSet);
@@ -146,11 +148,17 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 			break;
 
 		case EDlgTextArgumentType::DlgTextArgumentClassFloat:
-			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
+			if (Dialogue)
+			{
+				UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
+			}
 			break;
 
 		case EDlgTextArgumentType::DlgTextArgumentClassText:
-			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UTextProperty::StaticClass(), Suggestions);
+			if (Dialogue)
+			{
+				UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UTextProperty::StaticClass(), Suggestions);
+			}
 			break;
 
 		case EDlgTextArgumentType::DlgTextArgumentDisplayName:
