@@ -30,7 +30,6 @@ UDlgHumanReadableTextCommandlet::UDlgHumanReadableTextCommandlet()
 	ShowErrorCount = true;
 }
 
-
 int32 UDlgHumanReadableTextCommandlet::Main(const FString& Params)
 {
 	UE_LOG(LogDlgHumanReadableTextCommandlet, Display, TEXT("Starting"));
