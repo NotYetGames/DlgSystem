@@ -71,7 +71,7 @@ namespace
 				if (PropertyHandle->GetPerObjectValue(InIndex, ObjectValue) == FPropertyAccess::Success)
 				{
 					FText TextValue;
-					if (FTextStringHelper::ReadFromString(*ObjectValue, TextValue))
+					if (FTextStringHelper::ReadFromBuffer(*ObjectValue, TextValue))
 					{
 						return TextValue;
 					}
@@ -86,10 +86,8 @@ namespace
 			if (PropertyHandle->IsValidHandle())
 			{
 				FString ObjectValue;
-				if (FTextStringHelper::WriteToString(ObjectValue, InText))
-				{
-					PropertyHandle->SetPerObjectValue(InIndex, ObjectValue);
-				}
+				FTextStringHelper::WriteToBuffer(ObjectValue, InText);
+				PropertyHandle->SetPerObjectValue(InIndex, ObjectValue);
 			}
 		}
 

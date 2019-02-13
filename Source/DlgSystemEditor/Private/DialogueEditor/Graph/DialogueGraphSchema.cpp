@@ -96,7 +96,7 @@ void UDialogueGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
 	//SetNodeMetaData(ResultRootNode, FNodeMetadata::DefaultGraphNode);
 }
 
-FPinConnectionResponse UDialogueGraphSchema::MovePinLinks(UEdGraphPin& MoveFromPin, UEdGraphPin& MoveToPin, bool bIsIntermediateMove) const
+FPinConnectionResponse UDialogueGraphSchema::MovePinLinks(UEdGraphPin& MoveFromPin, UEdGraphPin& MoveToPin, bool bIsIntermediateMove, bool bNotifyLinkedNodes) const
 {
 	return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, LOCTEXT("ConnectionMovePinLinks", "Move Pin Links Not implemented"));
 }
