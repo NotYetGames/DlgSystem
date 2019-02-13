@@ -3,6 +3,7 @@
 
 
 #include "Commandlets/Commandlet.h"
+#include "DlgEdge.h"
 
 #include "DlgHumanReadableTextCommandlet.generated.h"
 

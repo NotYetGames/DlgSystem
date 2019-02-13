@@ -182,7 +182,10 @@ private:
 	/** Handler for when text in the editable text box changed */
 	void HandleTextCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo) const
 	{
-		Dialogue->RefreshData();
+		if (Dialogue)
+		{
+			Dialogue->RefreshData();
+		}
 	}
 
 private:
