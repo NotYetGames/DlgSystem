@@ -180,5 +180,6 @@ public:
 	static bool UnRegisterDialogueModuleConsoleCommands();
 
 private:
+	static bool ValidateParticipant(const FString& ContextMessageFailure, const UDlgDialogue* ContextDialogue, UObject* Participant);
 	static bool ConstructParticipantMap(const UDlgDialogue* Dialogue, const TArray<UObject*>& Participants, TMap<FName, UObject*>& OutMap);
 };

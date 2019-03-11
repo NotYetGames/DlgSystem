@@ -63,10 +63,6 @@ public:
 	/** Checks the enter conditions of the node, return false if they are not satisfied or if the index is invalid */
 	bool IsNodeEnterable(int32 NodeIndex, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
-	// Helper methods to get some Dialogue properties
-	FName GetDialogueName() const { check(Dialogue); return Dialogue->GetDlgFName(); }
-	FGuid GetDialogueGuid() const { check(Dialogue); return Dialogue->GetDlgGuid();  }
-
 	TArray<const FDlgEdge*>& GetOptionArray() { return AvailableChildren; }
 	TArray<FDlgEdgeData>& GetAllOptionsArray() { return AllChildren; }
 	const TMap<FName, UObject*>& GetParticipants() const { return Participants; }
