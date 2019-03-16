@@ -53,6 +53,9 @@ UDlgContext* UDlgManager::ResumeDialogue(UDlgDialogue* Dialogue, UPARAM(ref)cons
 
 UDlgContext* UDlgManager::StartMonologue(UDlgDialogue* Dialogue, UObject* Participant)
 {
+	if (!ValidateParticipant(TEXT("StartMonologue argument = `Participant`"), Dialogue, Participant))
+		return nullptr;
+
 	TArray<UObject*> Participants;
 	Participants.Add(Participant);
 	return StartDialogue(Dialogue, Participants);
@@ -60,6 +63,11 @@ UDlgContext* UDlgManager::StartMonologue(UDlgDialogue* Dialogue, UObject* Partic
 
 UDlgContext* UDlgManager::StartDialogue2(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1)
 {
+	if (!ValidateParticipant(TEXT("StartDialogue2 argument = `Participant0`"), Dialogue, Participant0))
+		return nullptr;
+	if (!ValidateParticipant(TEXT("StartDialogue2 argument = `Participant1`"), Dialogue, Participant1))
+		return nullptr;
+
 	TArray<UObject*> Participants;
 	Participants.Add(Participant0);
 	Participants.Add(Participant1);
@@ -68,6 +76,13 @@ UDlgContext* UDlgManager::StartDialogue2(UDlgDialogue* Dialogue, UObject* Partic
 
 UDlgContext* UDlgManager::StartDialogue3(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1, UObject* Participant2)
 {
+	if (!ValidateParticipant(TEXT("StartDialogue3 argument = `Participant0`"), Dialogue, Participant0))
+		return nullptr;
+	if (!ValidateParticipant(TEXT("StartDialogue3 argument = `Participant1`"), Dialogue, Participant1))
+		return nullptr;
+	if (!ValidateParticipant(TEXT("StartDialogue3 argument = `Participant2`"), Dialogue, Participant2))
+		return nullptr;
+
 	TArray<UObject*> Participants;
 	Participants.Add(Participant0);
 	Participants.Add(Participant1);
@@ -77,6 +92,15 @@ UDlgContext* UDlgManager::StartDialogue3(UDlgDialogue* Dialogue, UObject* Partic
 
 UDlgContext* UDlgManager::StartDialogue4(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1, UObject* Participant2, UObject* Participant3)
 {
+	if (!ValidateParticipant(TEXT("StartDialogue4 argument = `Participant0`"), Dialogue, Participant0))
+		return nullptr;
+	if (!ValidateParticipant(TEXT("StartDialogue4 argument = `Participant1`"), Dialogue, Participant1))
+		return nullptr;
+	if (!ValidateParticipant(TEXT("StartDialogue4 argument = `Participant2`"), Dialogue, Participant2))
+		return nullptr;
+	if (!ValidateParticipant(TEXT("StartDialogue4 argument = `Participant3`"), Dialogue, Participant3))
+		return nullptr;
+
 	TArray<UObject*> Participants;
 	Participants.Add(Participant0);
 	Participants.Add(Participant1);
@@ -317,13 +341,45 @@ bool UDlgManager::UnRegisterDialogueModuleConsoleCommands()
 	return true;
 }
 
+bool UDlgManager::ValidateParticipant(const FString& ContextMessageFailure, const UDlgDialogue* ContextDialogue, UObject* Participant)
+{
+	const FString DialoguePath = IsValid(ContextDialogue) ? ContextDialogue->GetPathName() : TEXT("NONE");
+	if (!IsValid(Participant))
+	{
+		UE_LOG(LogDlgSystem,
+			Error,
+			TEXT("%s - Participant is invalid (not set or nullptr). For Dialogue = `%s`"),
+			*ContextMessageFailure, *DialoguePath);
+		return false;
+	}
+	if (!Participant->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
+	{
+		UE_LOG(LogDlgSystem,
+			Error,
+			TEXT("%s - Participant = `%s` does not implement the IDlgDialogueParticipant interface!. For Dialogue = `%s`"),
+			*ContextMessageFailure, *Participant->GetPathName(), *DialoguePath);
+		return false;
+	}
+
+	return true;
+}
+
 bool UDlgManager::ConstructParticipantMap(const UDlgDialogue* Dialogue, const TArray<UObject*>& Participants, TMap<FName, UObject*>& OutMap)
 {
-	if (!IsValid(Dialogue) || Dialogue->GetParticipantData().Num() == 0)
+	if (!IsValid(Dialogue))
 	{
 		UE_LOG(LogDlgSystem,
 			   Error,
-			   TEXT("Failed to start dialogue - Invalid dialogue! (Either nullptr or a dialogue without any participants)"));
+			   TEXT("Failed to start dialogue - Invalid dialogue (is nullptr)!"));
+		return false;
+	}
+
+	if (Dialogue->GetParticipantData().Num() == 0)
+	{
+		UE_LOG(LogDlgSystem,
+			   Error,
+			   TEXT("Failed to start dialogue = `%s` - Dialogue does not have any participants"),
+			   *Dialogue->GetPathName());
 		return false;
 	}
 
@@ -333,8 +389,8 @@ bool UDlgManager::ConstructParticipantMap(const UDlgDialogue* Dialogue, const TA
 	{
 		UE_LOG(LogDlgSystem,
 			   Error,
-			   TEXT("Dialogue failed to start: the asset has %d participants! Provided participant count: %d"),
-			   DialogueParticipants.Num(), Participants.Num());
+			   TEXT("Failed to start dialogue = `%s` - The asset has %d participants! Provided participant count: %d"),
+			   *Dialogue->GetPathName(), DialogueParticipants.Num(), Participants.Num());
 		return false;
 	}
 
@@ -344,7 +400,10 @@ bool UDlgManager::ConstructParticipantMap(const UDlgDialogue* Dialogue, const TA
 		UObject* Participant = Participants[ParticipantIndex];
 		if (!IsValid(Participant))
 		{
-			UE_LOG(LogDlgSystem, Error, TEXT("Failed to start dialogue - Participant at index %d is nullptr"), ParticipantIndex);
+			UE_LOG(LogDlgSystem,
+				   Error,
+				   TEXT("Failed to start dialogue = `%s` - Participant at index %d is invalid (not set or nullptr)"),
+				   *Dialogue->GetPathName(), ParticipantIndex);
 			return false;
 		}
 
@@ -353,9 +412,9 @@ bool UDlgManager::ConstructParticipantMap(const UDlgDialogue* Dialogue, const TA
 		{
 			UE_LOG(LogDlgSystem,
 				   Error,
-				   TEXT("Failed to start dialogue - Participant object at index = %d with ObjectName = `%s`"
+				   TEXT("Failed to start dialogue = `%s` - Participant object at index = %d and Path = `%s`"
 						"does not implement the IDlgDialogueParticipant interface!"),
-				   ParticipantIndex, *Participant->GetName());
+				   *Dialogue->GetPathName(), ParticipantIndex, *Participant->GetPathName());
 			return false;
 		}
 
@@ -365,8 +424,8 @@ bool UDlgManager::ConstructParticipantMap(const UDlgDialogue* Dialogue, const TA
 		{
 			UE_LOG(LogDlgSystem,
 				   Error,
-				   TEXT("Failed to start dialogue - Input Participant at index = %d has the name %s, which is not referenced by this Dialogue"),
-				   ParticipantIndex, *ParticipantName.ToString());
+				   TEXT("Failed to start dialogue = `%s` - Input Participant at index = %d has the name %s, which is not referenced by this Dialogue"),
+				   *Dialogue->GetPathName(), ParticipantIndex, *ParticipantName.ToString());
 			return false;
 		}
 		OutMap.Add(ParticipantName, Participant);
