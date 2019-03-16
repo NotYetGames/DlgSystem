@@ -1,11 +1,13 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgEvent.h"
+
+#include "DlgSystemPrivatePCH.h"
 #include "DlgReflectionHelper.h"
 #include "DlgDialogueParticipant.h"
 
 void FDlgEvent::Call(UObject* TargetParticipant) const
 {
-	if (!IsValid(TargetParticipant))
+	if (!ValidateIsParticipantValid(TargetParticipant))
 	{
 		return;
 	}
@@ -45,6 +47,17 @@ void FDlgEvent::Call(UObject* TargetParticipant) const
 	default:
 		checkNoEntry();
 	}
+}
+
+bool FDlgEvent::ValidateIsParticipantValid(const UObject* Participant) const
+{
+	if (IsValid(Participant))
+	{
+		return true;
+	}
+
+	UE_LOG(LogDlgSystem, Error, TEXT("Event failed: invalid participant! ParticipantName = %s, EventName = %s"), *ParticipantName.ToString(), *EventName.ToString());
+	return false;
 }
 
 FArchive& operator<<(FArchive &Ar, FDlgEvent& DlgEvent)
