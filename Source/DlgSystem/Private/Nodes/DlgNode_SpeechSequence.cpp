@@ -96,7 +96,7 @@ FName UDlgNode_SpeechSequence::GetSpeakerState() const
 	return NAME_None;
 }
 
-void UDlgNode_SpeechSequence::AddSpeakerStates(TSet<FName>& States) const
+void UDlgNode_SpeechSequence::AddAllSpeakerStatesIntoSet(TSet<FName>& States) const
 {
 	for (const auto& SpeechEntry : SpeechSequence)
 	{
