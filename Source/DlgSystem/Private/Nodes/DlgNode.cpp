@@ -82,10 +82,13 @@ void UDlgNode::FireNodeEnterEvents(UDlgContextInternal* DlgContext)
 	for (const FDlgEvent& Event : EnterEvents)
 	{
 		UObject* Particpant = DlgContext->GetParticipant(Event.ParticipantName);
+
+		// Try parent
 		if (!IsValid(Particpant))
 		{
 			Particpant = DlgContext->GetParticipant(OwnerName);
 		}
+
 		Event.Call(Particpant);
 	}
 }

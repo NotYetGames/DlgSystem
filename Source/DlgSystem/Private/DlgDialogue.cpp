@@ -508,7 +508,7 @@ void UDlgDialogue::RefreshData()
 	};
 
 	// do not forget about the edges of the Root/Start Node
-	if (StartNode != nullptr)
+	if (IsValid(StartNode))
 	{
 		AddConditionsFromEdges(StartNode, INDEX_NONE);
 	}
@@ -519,6 +519,7 @@ void UDlgDialogue::RefreshData()
 	{
 		const FString NodeContext = FString::Printf(TEXT("Node %d"), NodeIndex);
 		const UDlgNode* Node = Nodes[NodeIndex];
+		const FName NodeParticipantName = Node->GetNodeParticipantName();
 
 		// participant names
 		TArray<FName> Participants;
@@ -538,11 +539,11 @@ void UDlgDialogue::RefreshData()
 		for (const FDlgCondition& Condition : Node->GetNodeEnterConditions())
 		{
 			FString ContextMessage = FString::Printf(TEXT("Adding primary condition data for %s"), *NodeContext);
-			GetParticipantDataEntry(Condition.ParticipantName, Node->GetNodeParticipantName(), true, ContextMessage)
+			GetParticipantDataEntry(Condition.ParticipantName, NodeParticipantName, true, ContextMessage)
 				.AddConditionPrimaryData(Condition);
 
 			ContextMessage = FString::Printf(TEXT("Adding secondary condition data for %s"), *NodeContext);
-			GetParticipantDataEntry(Condition.OtherParticipantName, Node->GetNodeParticipantName(), true, ContextMessage)
+			GetParticipantDataEntry(Condition.OtherParticipantName, NodeParticipantName, true, ContextMessage)
 				.AddConditionSecondaryData(Condition);
 		}
 
@@ -557,7 +558,7 @@ void UDlgDialogue::RefreshData()
 			for (const FDlgTextArgument& TextArgument : Edge.TextArguments)
 			{
 				const FString ContextMessage = FString::Printf(TEXT("Adding Edge text arguments data from %s, to Node %d"), *NodeContext, TargetIndex);
-				GetParticipantDataEntry(TextArgument.ParticipantName, Node->GetNodeParticipantName(), true, ContextMessage)
+				GetParticipantDataEntry(TextArgument.ParticipantName, NodeParticipantName, true, ContextMessage)
 					.AddTextArgumentData(TextArgument);
 			}
 		}
@@ -566,7 +567,7 @@ void UDlgDialogue::RefreshData()
 		for (const FDlgEvent& Event : Node->GetNodeEnterEvents())
 		{
 			const FString ContextMessage = FString::Printf(TEXT("Adding events data for %s"), *NodeContext);
-			GetParticipantDataEntry(Event.ParticipantName, Node->GetNodeParticipantName(), true, ContextMessage)
+			GetParticipantDataEntry(Event.ParticipantName, NodeParticipantName, true, ContextMessage)
 				.AddEventData(Event);
 		}
 
@@ -574,7 +575,7 @@ void UDlgDialogue::RefreshData()
 		for (const FDlgTextArgument& TextArgument : Node->GetTextArguments())
 		{
 			const FString ContextMessage = FString::Printf(TEXT("Adding text arguments data for %s"), *NodeContext);
-			GetParticipantDataEntry(TextArgument.ParticipantName, Node->GetNodeParticipantName(), true, ContextMessage)
+			GetParticipantDataEntry(TextArgument.ParticipantName, NodeParticipantName, true, ContextMessage)
 				.AddTextArgumentData(TextArgument);
 		}
 	}
@@ -589,12 +590,12 @@ void UDlgDialogue::RefreshData()
 	GetAllParticipantNames(Participants);
 
 	// 1. remove outdated entries
-	for (int32 i = DlgParticipantClasses.Num() - 1; i >= 0; --i)
+	for (int32 Index = DlgParticipantClasses.Num() - 1; Index >= 0; --Index)
 	{
-		const FName ExaminedName = DlgParticipantClasses[i].ParticipantName;
+		const FName ExaminedName = DlgParticipantClasses[Index].ParticipantName;
 		if (!Participants.Contains(ExaminedName) || ExaminedName.IsNone())
 		{
-			DlgParticipantClasses.RemoveAtSwap(i);
+			DlgParticipantClasses.RemoveAtSwap(Index);
 		}
 
 		Participants.Remove(ExaminedName);
