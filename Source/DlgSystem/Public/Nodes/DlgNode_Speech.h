@@ -53,7 +53,7 @@ public:
 	USoundWave* GetNodeVoiceSoundWave() const override { return VoiceSoundWave; }
 	UDialogueWave* GetNodeVoiceDialogueWave() const override { return VoiceDialogueWave; }
 	FName GetSpeakerState() const override { return SpeakerState; }
-	void AddSpeakerStates(TSet<FName>& States) const { States.Add(SpeakerState); }
+	void AddAllSpeakerStatesIntoSet(TSet<FName>& States) const { States.Add(SpeakerState); }
 
 #if WITH_EDITOR
 	FString GetNodeTypeString() const override { return bIsVirtualParent ? TEXT("Virtual Parent") : TEXT("Speech"); }

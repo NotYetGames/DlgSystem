@@ -169,7 +169,7 @@ public:
 
 	/** Gets the speaker state ordered to this node (can be used e.g. for icon selection) */
 	virtual FName GetSpeakerState() const { return NAME_None; }
-	virtual void AddSpeakerStates(TSet<FName>& States) const {};
+	virtual void AddAllSpeakerStatesIntoSet(TSet<FName>& States) const {};
 
 	/** Helper method to get directly the Dialogue */
 	class UDlgDialogue* GetDialogue() const;
