@@ -118,7 +118,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = DialogueDataSound)
 	UDialogueWave* GetActiveNodeVoiceDialogueWave() const;
 
-
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UObject* GetActiveNodeGenericData() const;
 
 	/** Gets the Icon associated with the active node participant name (owner name). */
 	UFUNCTION(BlueprintPure, Category = DialogueData)

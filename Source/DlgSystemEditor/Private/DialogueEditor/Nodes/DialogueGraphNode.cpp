@@ -335,6 +335,34 @@ bool UDialogueGraphNode::HasVoicePropertiesSet() const
 	return false;
 }
 
+bool UDialogueGraphNode::HasGenericDataSet() const
+{
+	if (!IsValid(DialogueNode))
+	{
+		return false;
+	}
+
+	// Try simple node
+	if (DialogueNode->GetGenericData() != nullptr)
+	{
+		return true;
+	}
+
+	// Speech sequence node
+	if (IsSpeechSequenceNode())
+	{
+		for (const FDlgSpeechSequenceEntry Sequence : GetDialogueNode<UDlgNode_SpeechSequence>().GetNodeSpeechSequence())
+		{
+			if (Sequence.GenericData != nullptr)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 void UDialogueGraphNode::SetDialogueNodeDataChecked(int32 InIndex, UDlgNode* InNode)
 {
 	const UDlgDialogue* Dialogue = GetDialogue();

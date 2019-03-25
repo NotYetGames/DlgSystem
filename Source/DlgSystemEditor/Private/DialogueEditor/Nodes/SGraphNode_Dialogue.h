@@ -173,6 +173,9 @@ protected:
 	/** Gets the tooltip for the voice overlay. */
 	FText GetVoiceOverlayTooltipText() const;
 
+	/** Gets the tooltip for the voice overlay. */
+	FText GetGenericOverlayTooltipText() const;
+
 	/** Get the visibility of the overlay widgets. */
 	EVisibility GetOverlayWidgetVisibility() const;
 
@@ -211,4 +214,7 @@ protected:
 
 	/** The widget we use to display if the node has voice/sound variables set */
 	TSharedPtr<SWidget> VoiceOverlayWidget;
+
+	/** The widget we use to display if the node has the GenericData variable set */
+	TSharedPtr<SWidget> GenericOverlayWidget;
 };
