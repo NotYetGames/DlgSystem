@@ -234,6 +234,9 @@ public:
 	/** Does this node has any voice properties set? */
 	bool HasVoicePropertiesSet() const;
 
+	/** Does this node has any voice properties set? */
+	bool HasGenericDataSet() const;
+
 	/** Gets the node depth in the graph. */
 	int32 GetNodeDepth() const { return NodeDepth; }
 

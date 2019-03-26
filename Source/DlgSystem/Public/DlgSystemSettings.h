@@ -170,6 +170,10 @@ public:
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "SpeakerState Visibility")
 	EDlgSpeakerStateVisibility DialogueSpeakerStateVisibility = EDlgSpeakerStateVisibility::DlgHideAll;
 
+	/** Generic data is an UObject* which can be assigned to nodes and can be asked from the active one */
+	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Generic Data Visibility")
+	bool bShowGenericData = false;
+
 	/** What key combination to press to add a new line for FText fields in the Dialogue Editor. */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Input Key for NewLine")
 	EDlgTextInputKeyForNewLine DialogueTextInputKeyForNewLine = EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineEnter;
@@ -201,6 +205,10 @@ public:
 	/** To show or not the voice icon in the case the node has any voice members set */
 	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
 	bool bShowHasVoiceIcon = true;
+
+	/** To show or not the voice icon in the case the node has any voice members set */
+	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	bool bShowHasGenericDataIcon = true;
 
 	// Colors based on https://material.io/guidelines/style/color.html#color-color-palette
 

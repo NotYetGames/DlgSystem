@@ -86,6 +86,16 @@ UDialogueWave* UDlgNode_SpeechSequence::GetNodeVoiceDialogueWave() const
 	return nullptr;
 }
 
+UObject* UDlgNode_SpeechSequence::GetGenericData() const
+{
+	if (SpeechSequence.IsValidIndex(ActualIndex))
+	{
+		return SpeechSequence[ActualIndex].GenericData;
+	}
+
+	return nullptr;
+}
+
 FName UDlgNode_SpeechSequence::GetSpeakerState() const
 {
 	if (SpeechSequence.IsValidIndex(ActualIndex))
