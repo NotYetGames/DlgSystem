@@ -169,6 +169,17 @@ UDialogueWave* UDlgContext::GetActiveNodeVoiceDialogueWave() const
 	return Node->GetNodeVoiceDialogueWave();
 }
 
+UObject* UDlgContext::GetActiveNodeGenericData() const
+{
+	const UDlgNode* Node = GetActiveNode();
+	if (!IsValid(Node))
+	{
+		return nullptr;
+	}
+
+	return Node->GetGenericData();
+}
+
 UTexture2D* UDlgContext::GetActiveParticipantIcon() const
 {
 	if (!IsValid(Dialogue))

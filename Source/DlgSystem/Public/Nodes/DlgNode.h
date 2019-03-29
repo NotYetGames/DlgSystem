@@ -171,6 +171,9 @@ public:
 	virtual FName GetSpeakerState() const { return NAME_None; }
 	virtual void AddAllSpeakerStatesIntoSet(TSet<FName>& States) const {};
 
+	/** Gets the generic data asset of this Node. */
+	virtual UObject* GetGenericData() const { return nullptr; }
+
 	/** Helper method to get directly the Dialogue */
 	class UDlgDialogue* GetDialogue() const;
 

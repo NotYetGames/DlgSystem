@@ -52,6 +52,8 @@ TArray<FOverlayWidgetInfo> SGraphNode_DialogueNode::GetOverlayWidgets(bool bSele
 	check(ConditionOverlayWidget.IsValid());
 	check(EventOverlayWidget.IsValid());
 	check(VoiceOverlayWidget.IsValid());
+	check(GenericOverlayWidget.IsValid());
+	
 	TArray<FOverlayWidgetInfo> Widgets;
 	constexpr float DistanceBetweenWidgetsY = 1.5f;
 	FVector2D OriginRightSide(0.0f, 0.0f);
@@ -74,6 +76,16 @@ TArray<FOverlayWidgetInfo> SGraphNode_DialogueNode::GetOverlayWidgets(bool bSele
 		Overlay.OverlayOffset = FVector2D(WidgetSize.X - VoiceOverlayWidget->GetDesiredSize().X / 3.0f, OriginRightSide.Y);
 		Widgets.Add(Overlay);
 		OriginRightSide.Y += VoiceOverlayWidget->GetDesiredSize().Y + DistanceBetweenWidgetsY;
+	}
+
+	// Add Generic overlay
+	if (Settings->bShowHasGenericDataIcon && DialogueGraphNode->HasGenericDataSet())
+	{
+		// Position on the right of the node
+		FOverlayWidgetInfo Overlay(GenericOverlayWidget);
+		Overlay.OverlayOffset = FVector2D(WidgetSize.X - GenericOverlayWidget->GetDesiredSize().X / 3.0f, OriginRightSide.Y);
+		Widgets.Add(Overlay);
+		OriginRightSide.Y += GenericOverlayWidget->GetDesiredSize().Y + DistanceBetweenWidgetsY;
 	}
 
 	// Add Condition overlay
@@ -178,6 +190,22 @@ void SGraphNode_DialogueNode::UpdateGraphNode()
 			]
 		)
 		.ToolTipText(this, &Self::GetVoiceOverlayTooltipText)
+		.Visibility(this, &Self::GetOverlayWidgetVisibility)
+		.OnGetBackgroundColor(this, &Self::GetOverlayWidgetBackgroundColor);
+
+	GenericOverlayWidget = SNew(SDialogueNodeOverlayWidget)
+		.OverlayBody(
+			SNew(SBox)
+			.HAlign(HAlign_Fill)
+			.VAlign(VAlign_Fill)
+			.WidthOverride(WidthOverride)
+			.HeightOverride(HeightOverride)
+			[
+				SNew(SImage)
+				.Image(FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_GenericIcon))
+			]
+		)
+		.ToolTipText(this, &Self::GetGenericOverlayTooltipText)
 		.Visibility(this, &Self::GetOverlayWidgetVisibility)
 		.OnGetBackgroundColor(this, &Self::GetOverlayWidgetBackgroundColor);
 
@@ -503,6 +531,11 @@ FText SGraphNode_DialogueNode::GetEventOverlayTooltipText() const
 FText SGraphNode_DialogueNode::GetVoiceOverlayTooltipText() const
 {
 	return LOCTEXT("NodeVoiceTooltip", "Node has some voice variables set. Either the SoundWave or the DialogueWave.");
+}
+
+FText SGraphNode_DialogueNode::GetGenericOverlayTooltipText() const
+{
+	return LOCTEXT("NodeGenericTooltip", "Node has the generic data variable set.");
 }
 
 void SGraphNode_DialogueNode::OnIndexHoverStateChanged(bool bHovered)
