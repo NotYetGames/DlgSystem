@@ -56,7 +56,7 @@ FDlgSystemEditorModule::FDlgSystemEditorModule() : DlgSystemAssetCategoryBit(EAs
 
 void FDlgSystemEditorModule::StartupModule()
 {
-	UE_LOG(LogDlgSystemEditor, Verbose, TEXT("Started DlgSystemEditorModule"));
+	UE_LOG(LogDlgSystemEditor, Log, TEXT("Started DlgSystemEditorModule"));
 	OnPostEngineInitHandle = FCoreDelegates::OnPostEngineInit.AddRaw(this, &Self::HandleOnPostEngineInit);
 	OnBeginPIEHandle = FEditorDelegates::BeginPIE.AddRaw(this, &Self::HandleOnBeginPIE);
 
@@ -209,7 +209,7 @@ void FDlgSystemEditorModule::ShutdownModule()
 		FEditorDelegates::BeginPIE.Remove(OnBeginPIEHandle);
 	}
 
-	UE_LOG(LogDlgSystemEditor, Verbose, TEXT("Stopped DlgSystemEditorModule"));
+	UE_LOG(LogDlgSystemEditor, Log, TEXT("Stopped DlgSystemEditorModule"));
 }
 
 bool FDlgSystemEditorModule::SaveAllDialogues()
@@ -250,7 +250,7 @@ void FDlgSystemEditorModule::HandleOnPostEngineInit()
 		return;
 	}
 
-	UE_LOG(LogDlgSystemEditor, Verbose, TEXT("DlgSystemEditorModule::HandleOnPostEngineInit"));
+	UE_LOG(LogDlgSystemEditor, Log, TEXT("DlgSystemEditorModule::HandleOnPostEngineInit"));
 	FCoreDelegates::OnPostEngineInit.Remove(OnPostEngineInitHandle);
 	OnPostEngineInitHandle.Reset();
 
@@ -258,7 +258,7 @@ void FDlgSystemEditorModule::HandleOnPostEngineInit()
 	const int32 NumLoadedDialogues = UDlgManager::LoadAllDialoguesIntoMemory();
 	//const int32 NumDialoguesAfter = UDlgManager::GetAllDialoguesFromMemory().Num();
 	//check(NumDialoguesBefore == NumDialoguesAfter);
-	UE_LOG(LogDlgSystemEditor, Verbose, TEXT("UDlgManager::LoadAllDialoguesIntoMemory loaded %d Dialogues into Memory"), NumLoadedDialogues);
+	UE_LOG(LogDlgSystemEditor, Log, TEXT("UDlgManager::LoadAllDialoguesIntoMemory loaded %d Dialogues into Memory"), NumLoadedDialogues);
 
 	// Try to fix duplicate GUID
 	// Can happen for one of the following reasons:

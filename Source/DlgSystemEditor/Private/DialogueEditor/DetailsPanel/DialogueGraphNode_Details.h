@@ -83,6 +83,11 @@ private:
 			   ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
+	EVisibility GetGenericDataVisibility() const
+	{
+		return GetDefault<UDlgSystemSettings>()->bShowGenericData ? EVisibility::Visible : EVisibility::Hidden;
+	}
+
 	EVisibility GetSpeakerStateVisibility() const
 	{
 		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
@@ -106,6 +111,7 @@ private:
 	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
 	IDetailPropertyRow* VoiceSoundWavePropertyRow = nullptr;
 	IDetailPropertyRow* VoiceDialogueWavePropertyRow = nullptr;
+	IDetailPropertyRow* GenericDataPropertyRow = nullptr;
 
 	/** The details panel layout builder reference. */
 	IDetailLayoutBuilder* DetailLayoutBuilder = nullptr;

@@ -159,6 +159,11 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 			VoiceDialogueWavePropertyRow =  &SpeechDataCategory.AddProperty(
 				PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameVoiceDialogueWave()));
 			VoiceDialogueWavePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetVoiceDialogueWaveVisibility));
+
+			// Generic Data
+			GenericDataPropertyRow = &SpeechDataCategory.AddProperty(
+				PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameGenericData()));
+			GenericDataPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetGenericDataVisibility));
 		}
 	}
 	else if (bIsSelectorNode)

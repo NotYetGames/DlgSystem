@@ -169,7 +169,10 @@ public:
 
 	/** Gets the speaker state ordered to this node (can be used e.g. for icon selection) */
 	virtual FName GetSpeakerState() const { return NAME_None; }
-	virtual void AddSpeakerStates(TSet<FName>& States) const {};
+	virtual void AddAllSpeakerStatesIntoSet(TSet<FName>& States) const {};
+
+	/** Gets the generic data asset of this Node. */
+	virtual UObject* GetGenericData() const { return nullptr; }
 
 	/** Helper method to get directly the Dialogue */
 	class UDlgDialogue* GetDialogue() const;

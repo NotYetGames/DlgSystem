@@ -35,7 +35,7 @@ bool FDlgCondition::EvaluateArray(const TArray<FDlgCondition>& DlgConditionArray
 
 bool FDlgCondition::Evaluate(const UDlgContextInternal* DlgContext, const UObject* DlgParticipant) const
 {
-	if (!IsValid(DlgContext) || (IsParticipantInvolved() && !IsParticipantValid(DlgParticipant)))
+	if (!IsValid(DlgContext) || (IsParticipantInvolved() && !ValidateIsParticipantValid(DlgParticipant, TEXT("Evaluate"))))
 	{
 		return false;
 	}
@@ -98,7 +98,7 @@ bool FDlgCondition::CheckFloat(float Value, const UDlgContextInternal* DlgContex
 	if (CompareType == EDlgCompareType::DlgCompareToVariable || CompareType == EDlgCompareType::DlgCompareToClassVariable)
 	{
 		const UObject* OtherParticipant = DlgContext->GetConstParticipant(OtherParticipantName);
-		if (!IsParticipantValid(OtherParticipant))
+		if (!ValidateIsParticipantValid(OtherParticipant, TEXT("CheckFloat")))
 		{
 			return false;
 		}
@@ -145,7 +145,7 @@ bool FDlgCondition::CheckInt(int32 Value, const UDlgContextInternal* DlgContext)
 	if (CompareType == EDlgCompareType::DlgCompareToVariable || CompareType == EDlgCompareType::DlgCompareToClassVariable)
 	{
 		const UObject* OtherParticipant = DlgContext->GetConstParticipant(OtherParticipantName);
-		if (!IsParticipantValid(OtherParticipant))
+		if (!ValidateIsParticipantValid(OtherParticipant, TEXT("CheckInt")))
 		{
 			return false;
 		}
@@ -192,7 +192,7 @@ bool FDlgCondition::CheckBool(bool bValue, const UDlgContextInternal* DlgContext
 	{
 		bool bValueToCheckAgainst = bBoolValue;
 		const UObject* OtherParticipant = DlgContext->GetConstParticipant(OtherParticipantName);
-		if (!IsParticipantValid(OtherParticipant))
+		if (!ValidateIsParticipantValid(OtherParticipant, TEXT("CheckBool")))
 		{
 			return false;
 		}
@@ -218,7 +218,7 @@ bool FDlgCondition::CheckName(FName Value, const UDlgContextInternal* DlgContext
 	if (CompareType == EDlgCompareType::DlgCompareToVariable || CompareType == EDlgCompareType::DlgCompareToClassVariable)
 	{
 		const UObject* OtherParticipant = DlgContext->GetConstParticipant(OtherParticipantName);
-		if (!IsParticipantValid(OtherParticipant))
+		if (!ValidateIsParticipantValid(OtherParticipant, TEXT("CheckName")))
 		{
 			return false;
 		}
@@ -236,14 +236,17 @@ bool FDlgCondition::CheckName(FName Value, const UDlgContextInternal* DlgContext
 	return (ValueToCheckAgainst == Value) == bBoolValue;
 }
 
-bool FDlgCondition::IsParticipantValid(const UObject* Participant) const
+bool FDlgCondition::ValidateIsParticipantValid(const UObject* Participant, const FString& ContextMessage) const
 {
-	if (Participant != nullptr)
+	if (IsValid(Participant))
 	{
 		return true;
 	}
 
-	UE_LOG(LogDlgSystem, Error, TEXT("Condition failed: invalid (nullptr) participant is involved!"));
+	UE_LOG(LogDlgSystem,
+		Error,
+		TEXT("Condition failed: invalid participant! ParticipantName = %s, ConditionName = %s with Context = %s"),
+		*ParticipantName.ToString(), *CallbackName.ToString(), *ContextMessage);
 	return false;
 }
 

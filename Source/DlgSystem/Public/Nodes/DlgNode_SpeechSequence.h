@@ -38,6 +38,9 @@ public:
 	/** Text that will appear when you want to continue down this edge to the next conversation. Usually "Next". */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
 	FText EdgeText = UDlgSystemSettings::EdgeTextNext;
+
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
+	UObject* GenericData;
 };
 
 
@@ -71,7 +74,8 @@ public:
 	USoundWave* GetNodeVoiceSoundWave() const override;
 	UDialogueWave* GetNodeVoiceDialogueWave() const override;
 	FName GetSpeakerState() const override;
-	void AddSpeakerStates(TSet<FName>& States) const override;
+	void AddAllSpeakerStatesIntoSet(TSet<FName>& States) const override;
+	UObject* GetGenericData() const override;
 	FName GetNodeParticipantName() const override;
 	void GetAssociatedParticipants(TArray<FName>& OutArray) const override;
 

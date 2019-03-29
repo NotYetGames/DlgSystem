@@ -169,6 +169,17 @@ UDialogueWave* UDlgContext::GetActiveNodeVoiceDialogueWave() const
 	return Node->GetNodeVoiceDialogueWave();
 }
 
+UObject* UDlgContext::GetActiveNodeGenericData() const
+{
+	const UDlgNode* Node = GetActiveNode();
+	if (!IsValid(Node))
+	{
+		return nullptr;
+	}
+
+	return Node->GetGenericData();
+}
+
 UTexture2D* UDlgContext::GetActiveParticipantIcon() const
 {
 	if (!IsValid(Dialogue))
@@ -229,11 +240,12 @@ FName UDlgContext::GetActiveParticipantName() const
 const UObject* UDlgContext::GetConstParticipant(FName DlgParticipantName) const
 {
 	const UObject* const* ParticipantPtr = Participants.Find(DlgParticipantName);
-	if (ParticipantPtr != nullptr)
+	if (ParticipantPtr != nullptr && IsValid(*ParticipantPtr))
 	{
 		return *ParticipantPtr;
 	}
 
+	UE_LOG(LogDlgSystem, Error, TEXT("Participant = %s does not exist, Dialogue = `%s`"), *DlgParticipantName.ToString(), *Dialogue->GetPathName());
 	return nullptr;
 }
 

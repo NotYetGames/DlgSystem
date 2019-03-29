@@ -33,7 +33,7 @@ static const FName NAME_MODULE_AssetRegistry("AssetRegistry");
 void FDlgSystemModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
-	UE_LOG(LogDlgSystem, Verbose, TEXT("Started DlgSystemModule"));
+	UE_LOG(LogDlgSystem, Log, TEXT("Started DlgSystemModule"));
 	OnPreLoadMapHandle = FCoreUObjectDelegates::PreLoadMap.AddRaw(this, &Self::HandlePreLoadMap);
 
 	// Listen for deleted assets
@@ -114,7 +114,7 @@ void FDlgSystemModule::ShutdownModule()
 		FCoreUObjectDelegates::PreLoadMap.Remove(OnPreLoadMapHandle);
 	}
 
-	UE_LOG(LogDlgSystem, Verbose, TEXT("Stopped DlgSystemModule"));
+	UE_LOG(LogDlgSystem, Log, TEXT("Stopped DlgSystemModule"));
 }
 
 TSharedRef<SWidget> FDlgSystemModule::GetDialogueDataDisplayWindow()
@@ -253,7 +253,7 @@ void FDlgSystemModule::HandleDialogueDeleted(UDlgDialogue* DeletedDialogue)
 		// Text file does not exist, ignore
 		if (!FileManager.FileExists(Filename))
 		{
-			UE_LOG(LogDlgSystem, Verbose, TEXT("Text file does not exist at path = `%s`. Can't delete."), Filename);
+			UE_LOG(LogDlgSystem, Warning, TEXT("Text file does not exist at path = `%s`. Can't delete."), Filename);
 			return;
 		}
 
@@ -264,7 +264,7 @@ void FDlgSystemModule::HandleDialogueDeleted(UDlgDialogue* DeletedDialogue)
 			return;
 		}
 
-		UE_LOG(LogDlgSystem, Verbose, TEXT("Deleted file %s"), Filename);
+		UE_LOG(LogDlgSystem, Log, TEXT("Deleted file %s"), Filename);
 	};
 
 	// Iterate over all possible text formats
@@ -310,7 +310,7 @@ void FDlgSystemModule::HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, cons
 		// Text file we want to rename does not exist anymore
 		if (!FileManager.FileExists(OldFileName))
 		{
-			UE_LOG(LogDlgSystem, Verbose, TEXT("Text file before rename at path = `%s` does not exist. Can't Rename."), OldFileName);
+			UE_LOG(LogDlgSystem, Warning, TEXT("Text file before rename at path = `%s` does not exist. Can't Rename."), OldFileName);
 			return;
 		}
 
@@ -331,7 +331,7 @@ void FDlgSystemModule::HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, cons
 			return;
 		}
 
-		UE_LOG(LogDlgSystem, Verbose, TEXT("Text file moved/renamed from `%s` to `%s`"), OldFileName, NewFileName);
+		UE_LOG(LogDlgSystem, Log, TEXT("Text file moved/renamed from `%s` to `%s`"), OldFileName, NewFileName);
 	};
 
 	// Iterate over all possible text formats

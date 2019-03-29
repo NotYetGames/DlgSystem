@@ -104,6 +104,11 @@ private:
 			   ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
+	EVisibility GetGenericDataVisibility() const
+	{
+		return GetDefault<UDlgSystemSettings>()->bShowGenericData ? EVisibility::Visible : EVisibility::Hidden;
+	}
+
 private:
 	/** The property handle of the entire struct. */
 	TSharedPtr<IPropertyHandle> StructPropertyHandle;
@@ -116,6 +121,7 @@ private:
 	TSharedPtr<FTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
 	IDetailPropertyRow* VoiceSoundWavePropertyRow = nullptr;
 	IDetailPropertyRow* VoiceDialogueWavePropertyRow = nullptr;
+	IDetailPropertyRow* GenericDataPropertyRow = nullptr;
 	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
 	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> EdgeTextPropertyRow;
 

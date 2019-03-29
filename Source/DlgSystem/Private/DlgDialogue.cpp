@@ -460,46 +460,67 @@ void UDlgDialogue::RefreshData()
 	DlgData.Empty();
 	DlgSpeakerStates.Empty();
 
+	// Used to ignore some participants
+	FDlgParticipantData BlackHoleParticipant;
+
 	// Gets the map entry - creates it first if it is not yet there
-	auto GetParticipantDataEntry = [this](const FName& ParticipantName,
-										const FName& FallbackNodeOwnerName) -> FDlgParticipantData&
+	auto GetParticipantDataEntry =
+		[this, &BlackHoleParticipant](FName ParticipantName, FName FallbackNodeOwnerName, bool bCheckNone, const FString& ContextMessage) -> FDlgParticipantData&
 	{
 		// If the Participant Name is not set, it adopts the Node Owner Name
-		const FName& Name = ParticipantName == NAME_None ? FallbackNodeOwnerName : ParticipantName;
+		const FName& ValidParticipantName = ParticipantName == NAME_None ? FallbackNodeOwnerName : ParticipantName;
 
-		FDlgParticipantData* ParticipantData = DlgData.Find(Name);
-		if (ParticipantData == nullptr)
+		// Parent/child is not valid, simply do nothing
+		if (bCheckNone && ValidParticipantName == NAME_None)
 		{
-			ParticipantData = &DlgData.Add(Name);
+			UE_LOG(LogDlgSystem, Warning, TEXT("Ignoring ParticipantName = None, Context = %s. Either your node name is None or your participant name is None."), *ContextMessage);
+			return BlackHoleParticipant;
 		}
 
-		return *ParticipantData;
+		FDlgParticipantData& ParticipantData = DlgData.FindOrAdd(ValidParticipantName);
+		return ParticipantData;
 	};
 
 	// Adds conditions from the edges of this Node.
-	auto AddConditionsFromEdges = [this, &GetParticipantDataEntry](const UDlgNode* Node)
+	auto AddConditionsFromEdges = [this, &GetParticipantDataEntry](const UDlgNode* Node, const int32 NodeIndex)
 	{
+		const FString NodeContext = FString::Printf(TEXT("Node %s"), NodeIndex > INDEX_NONE ? *FString::FromInt(NodeIndex) : TEXT("Start") );
 		const FName FallbackNodeOwnerName = Node->GetNodeParticipantName();
+
 		for (const FDlgEdge& Edge : Node->GetNodeChildren())
 		{
+			const int32 TargetIndex = Edge.TargetIndex;
+
 			for (const FDlgCondition& Condition : Edge.Conditions)
 			{
-				GetParticipantDataEntry(Condition.ParticipantName, FallbackNodeOwnerName).AddConditionPrimaryData(Condition);
+				FString ContextMessage = FString::Printf(TEXT("Adding Edge primary condition data from %s, to Node %d"), *NodeContext, TargetIndex);
+				GetParticipantDataEntry(Condition.ParticipantName, FallbackNodeOwnerName, true, ContextMessage)
+					.AddConditionPrimaryData(Condition);
+
 				if (Condition.IsSecondParticipantInvolved())
-					GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName).AddConditionSecondaryData(Condition);
+				{
+					ContextMessage = FString::Printf(TEXT("Adding Edge secondary condition data from %s, to Node %d"), *NodeContext, TargetIndex);
+					GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName, true, ContextMessage)
+						.AddConditionSecondaryData(Condition);
+				}
 			}
 		}
 	};
 
 	// do not forget about the edges of the Root/Start Node
-	if (StartNode != nullptr)
+	if (IsValid(StartNode))
 	{
-		AddConditionsFromEdges(StartNode);
+		AddConditionsFromEdges(StartNode, INDEX_NONE);
 	}
 
 	// Regular Nodes
-	for (UDlgNode* Node : Nodes)
+	const int32 NodesNum = Nodes.Num();
+	for (int32 NodeIndex = 0; NodeIndex < NodesNum; NodeIndex++)
 	{
+		const FString NodeContext = FString::Printf(TEXT("Node %d"), NodeIndex);
+		const UDlgNode* Node = Nodes[NodeIndex];
+		const FName NodeParticipantName = Node->GetNodeParticipantName();
+
 		// participant names
 		TArray<FName> Participants;
 		Node->GetAssociatedParticipants(Participants);
@@ -512,66 +533,84 @@ void UDlgDialogue::RefreshData()
 		}
 
 		// gather SpeakerStates
-		Node->AddSpeakerStates(DlgSpeakerStates);
+		Node->AddAllSpeakerStatesIntoSet(DlgSpeakerStates);
 
 		// Conditions from nodes
 		for (const FDlgCondition& Condition : Node->GetNodeEnterConditions())
 		{
-			GetParticipantDataEntry(Condition.ParticipantName, Node->GetNodeParticipantName()).AddConditionPrimaryData(Condition);
-			GetParticipantDataEntry(Condition.OtherParticipantName, Node->GetNodeParticipantName()).AddConditionSecondaryData(Condition);
+			FString ContextMessage = FString::Printf(TEXT("Adding primary condition data for %s"), *NodeContext);
+			GetParticipantDataEntry(Condition.ParticipantName, NodeParticipantName, true, ContextMessage)
+				.AddConditionPrimaryData(Condition);
+
+			ContextMessage = FString::Printf(TEXT("Adding secondary condition data for %s"), *NodeContext);
+			GetParticipantDataEntry(Condition.OtherParticipantName, NodeParticipantName, true, ContextMessage)
+				.AddConditionSecondaryData(Condition);
 		}
 
 		// Gather Edge Data
-		AddConditionsFromEdges(Node);
+		AddConditionsFromEdges(Node, NodeIndex);
 
 		for (const FDlgEdge& Edge : Node->GetNodeChildren())
 		{
+			const int32 TargetIndex = Edge.TargetIndex;
 			DlgSpeakerStates.Add(Edge.SpeakerState);
 
 			for (const FDlgTextArgument& TextArgument : Edge.TextArguments)
 			{
-				GetParticipantDataEntry(TextArgument.ParticipantName, Node->GetNodeParticipantName()).AddTextArgumentData(TextArgument);
+				const FString ContextMessage = FString::Printf(TEXT("Adding Edge text arguments data from %s, to Node %d"), *NodeContext, TargetIndex);
+				GetParticipantDataEntry(TextArgument.ParticipantName, NodeParticipantName, true, ContextMessage)
+					.AddTextArgumentData(TextArgument);
 			}
 		}
 
 		// Events
 		for (const FDlgEvent& Event : Node->GetNodeEnterEvents())
 		{
-			GetParticipantDataEntry(Event.ParticipantName, Node->GetNodeParticipantName()).AddEventData(Event);
+			const FString ContextMessage = FString::Printf(TEXT("Adding events data for %s"), *NodeContext);
+			GetParticipantDataEntry(Event.ParticipantName, NodeParticipantName, true, ContextMessage)
+				.AddEventData(Event);
 		}
 
 		// Text arguments
 		for (const FDlgTextArgument& TextArgument : Node->GetTextArguments())
 		{
-			GetParticipantDataEntry(TextArgument.ParticipantName, Node->GetNodeParticipantName()).AddTextArgumentData(TextArgument);
+			const FString ContextMessage = FString::Printf(TEXT("Adding text arguments data for %s"), *NodeContext);
+			GetParticipantDataEntry(TextArgument.ParticipantName, NodeParticipantName, true, ContextMessage)
+				.AddTextArgumentData(TextArgument);
 		}
 	}
 
 	// Remove default values
 	DlgSpeakerStates.Remove(FName(NAME_None));
 
-	// ParticipantClasses
+	//
+	// Fill ParticipantClasses
+	//
 	TSet<FName> Participants;
 	GetAllParticipantNames(Participants);
 
 	// 1. remove outdated entries
-	for (int32 i = DlgParticipantClasses.Num() - 1; i >= 0; --i)
+	for (int32 Index = DlgParticipantClasses.Num() - 1; Index >= 0; --Index)
 	{
-		FName ExaminedName = DlgParticipantClasses[i].ParticipantName;
+		const FName ExaminedName = DlgParticipantClasses[Index].ParticipantName;
 		if (!Participants.Contains(ExaminedName) || ExaminedName.IsNone())
 		{
-			DlgParticipantClasses.RemoveAtSwap(i);
+			DlgParticipantClasses.RemoveAtSwap(Index);
 		}
 
 		Participants.Remove(ExaminedName);
 	}
 
 	// 2. add new entries
-	for (FName Participant : Participants)
+	for (const FName Participant : Participants)
 	{
-		if (!Participant.IsNone())
+		if (Participant != NAME_None)
 		{
 			DlgParticipantClasses.Add({ Participant, nullptr });
+		}
+		else
+		{
+			UE_LOG(LogDlgSystem, Warning, TEXT("Trying to fill DlgParticipantClasses, got a Participant name = None. Ignoring!"));
 		}
 	}
 }
