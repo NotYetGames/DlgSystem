@@ -109,7 +109,6 @@ void UDlgReflectionHelper::ModifyVariable(UObject* ParticipantObject, const FNam
 		   Warning,
 		   TEXT("Failed to modify %s %s from %s - property not found!"),
 		   *PropertyType::StaticClass()->GetName(), *VariableName.ToString(), *ParticipantObject->GetName());
-
 }
 
 

@@ -4,8 +4,8 @@
 #include "DlgManager.h"
 #include "DlgDialogue.h"
 #include "DlgCommandletHelper.h"
-#include "DlgNode_SpeechSequence.h"
-#include "DlgNode_Speech.h"
+#include "Nodes/DlgNode_SpeechSequence.h"
+#include "Nodes/DlgNode_Speech.h"
 
 
 DEFINE_LOG_CATEGORY(LogDlgStatsCommandlet);

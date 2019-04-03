@@ -118,7 +118,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = DialogueDataSound)
 	UDialogueWave* GetActiveNodeVoiceDialogueWave() const;
 
-
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UObject* GetActiveNodeGenericData() const;
 
 	/** Gets the Icon associated with the active node participant name (owner name). */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
@@ -174,6 +175,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	bool IsEdgeConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisfiedEdges = true) const;
 
+	// Helper methods to get some Dialogue properties
+	FName GetDialogueName() const { check(Dialogue); return Dialogue->GetDlgFName(); }
+	FGuid GetDialogueGuid() const { check(Dialogue); return Dialogue->GetDlgGuid(); }
+	FString GetDialoguePathName() const { check(Dialogue); return Dialogue->GetPathName(); }
 
 protected:
 	// Methods implemented by UDlgContextInternal

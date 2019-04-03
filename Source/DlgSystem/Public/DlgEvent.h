@@ -42,6 +42,9 @@ public:
 	 */
 	void Call(UObject* TargetParticipant) const;
 
+protected:
+	bool ValidateIsParticipantValid(const UObject* Participant) const;
+
 public:
 
 	/** Name of the participant (speaker) the event is called on. */

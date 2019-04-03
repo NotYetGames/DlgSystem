@@ -93,7 +93,6 @@ public:
 	static bool EvaluateArray(const TArray<FDlgCondition>& DlgConditionArray, const UDlgContextInternal* DlgContext, FName DefaultParticipantName = NAME_None);
 
 	bool Evaluate(const UDlgContextInternal* DlgContext, const UObject* DlgParticipant) const;
-
 	bool IsSecondParticipantInvolved() const;
 
 protected:
@@ -106,7 +105,7 @@ protected:
 	bool CheckName(FName Value, const UDlgContextInternal* DlgContext) const;
 
 	/** Checks Participant, prints warning if it is nullptr */
-	bool IsParticipantValid(const UObject* Participant) const;
+	bool ValidateIsParticipantValid(const UObject* Participant, const FString& ContextMessage) const;
 
 	/** returns true if ParticipantName has to belong to match with a valid Participant in order for the condition type to work */
 	bool IsParticipantInvolved() const;
@@ -128,7 +127,6 @@ public:
 	/** Name of the variable or event, passed in the function call to the participant */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	FName CallbackName;
-
 
 	/** The desired operation on the selected variable */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)

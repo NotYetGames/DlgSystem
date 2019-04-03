@@ -53,7 +53,8 @@ public:
 	USoundWave* GetNodeVoiceSoundWave() const override { return VoiceSoundWave; }
 	UDialogueWave* GetNodeVoiceDialogueWave() const override { return VoiceDialogueWave; }
 	FName GetSpeakerState() const override { return SpeakerState; }
-	void AddSpeakerStates(TSet<FName>& States) const { States.Add(SpeakerState); }
+	void AddAllSpeakerStatesIntoSet(TSet<FName>& States) const { States.Add(SpeakerState); }
+	UObject* GetGenericData() const override { return GenericData; }
 
 #if WITH_EDITOR
 	FString GetNodeTypeString() const override { return bIsVirtualParent ? TEXT("Virtual Parent") : TEXT("Speech"); }
@@ -78,6 +79,7 @@ public:
 	static FName GetMemberNameTextArguments() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, TextArguments); }
 	static FName GetMemberNameVoiceSoundWave() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, VoiceSoundWave); }
 	static FName GetMemberNameVoiceDialogueWave() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, VoiceDialogueWave); }
+	static FName GetMemberNameGenericData() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, GenericData); }
 	static FName GetMemberNameSpeakerState() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, SpeakerState); }
 	static FName GetMemberNameIsVirtualParent() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, bIsVirtualParent); }
 
@@ -96,6 +98,9 @@ protected:
 	/** Voice attached to this node. The Dialogue Wave variant. Only the first wave from the dialogue context array should be used. */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
 	UDialogueWave* VoiceDialogueWave;
+
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
+	class UObject* GenericData;
 
 	/** State of the speaker attached to this node. Passed to the GetParticipantIcon function. */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)

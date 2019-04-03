@@ -20,10 +20,16 @@ FArchive& operator<<(FArchive &Ar, FDlgTextArgument& DlgCondition)
 
 FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgContextInternal* DlgContext, FName NodeOwner) const
 {
-	const UObject* Participant = DlgContext->GetConstParticipant(ParticipantName);
+	// If participant name is not valid we use the node owner namne
+	const FName ValidParticipantName = ParticipantName == NAME_None ? NodeOwner : ParticipantName;
+
+	const UObject* Participant = DlgContext->GetConstParticipant(ValidParticipantName);
 	if (Participant == nullptr)
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("Failed to construct text argument %s: invalid owner name %s"), *DisplayString, *ParticipantName.ToString());
+		UE_LOG(LogDlgSystem,
+			Error,
+			TEXT("Failed to construct text argument = %s, invalid owner name = %s, NodeOwner = %s"),
+			*DisplayString, *ValidParticipantName.ToString(), *NodeOwner.ToString());
 		return FFormatArgumentValue(0);
 	}
 

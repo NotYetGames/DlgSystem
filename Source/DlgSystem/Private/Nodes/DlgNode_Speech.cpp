@@ -87,6 +87,9 @@ void UDlgNode_Speech::GetAssociatedParticipants(TArray<FName>& OutArray) const
 	Super::GetAssociatedParticipants(OutArray);
 	for (const FDlgTextArgument& TextArgument : TextArguments)
 	{
-		OutArray.AddUnique(TextArgument.ParticipantName);
+		if (TextArgument.ParticipantName != NAME_None)
+		{
+			OutArray.AddUnique(TextArgument.ParticipantName);
+		}
 	}
 }

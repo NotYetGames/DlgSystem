@@ -42,6 +42,7 @@ public:
 	static const FName PROPERTY_ConditionIcon;
 	static const FName PROPERTY_EventIcon;
 	static const FName PROPERTY_VoiceIcon;
+	static const FName PROPERTY_GenericIcon;
 	static const FName PROPERTY_QuestionMarkIcon;
 
 	static const FName PROPERTY_ShowPrimarySecondaryEdgesIcon;
