@@ -19,7 +19,7 @@
 			"Name": "DlgSystem",
 			"Type": "Runtime",
 			"LoadingPhase": "PreDefault",
-			"WhitelistPlatforms": ["Win64", "Win32", "Linux"]
+			"WhitelistPlatforms": ["Win64", "Win32", "Linux", "XboxOne"]
 		},
 		{
 			"Name": "DlgSystemEditor",
