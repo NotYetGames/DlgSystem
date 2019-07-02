@@ -8,6 +8,7 @@
 #include "UObject/EnumProperty.h"
 #include "UObject/UObjectIterator.h"
 #include "UObject/ObjectMacros.h"
+#include "UObject/TextProperty.h"
 
 DEFINE_LOG_CATEGORY(LogDlgConfigParser);
 

@@ -5,6 +5,8 @@
 #include "Engine/ObjectLibrary.h"
 #include "Interfaces/IPluginManager.h"
 #include "Engine/Blueprint.h"
+#include "UObject/UObjectIterator.h"
+#include "EngineUtils.h"
 
 #include "IDlgSystemModule.h"
 #include "DlgSystemPrivatePCH.h"
@@ -132,6 +134,34 @@ int32 UDlgManager::LoadAllDialoguesIntoMemory()
 	const int32 Count = ObjectLibrary->LoadAssetsFromAssetData();
 	ObjectLibrary->RemoveFromRoot();
 	return Count;
+}
+
+TArray<UDlgDialogue*> UDlgManager::GetAllDialoguesFromMemory()
+{
+	TArray<UDlgDialogue*> Array;
+	for (TObjectIterator<UDlgDialogue> Itr; Itr; ++Itr)
+	{
+		UDlgDialogue* Dialogue = *Itr;
+		if (IsValid(Dialogue))
+		{
+			Array.Add(Dialogue);
+		}
+	}
+	return Array;
+}
+
+TArray<TWeakObjectPtr<AActor>> UDlgManager::GetAllActorsImplementingDialogueParticipantInterface(UWorld* World)
+{
+	TArray<TWeakObjectPtr<AActor>> Array;
+	for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
+	{
+		AActor* Actor = *Itr;
+		if (IsValid(Actor) && Actor->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
+		{
+			Array.Add(Actor);
+		}
+	}
+	return Array;
 }
 
 TArray<UDlgDialogue*> UDlgManager::GetDialoguesWithDuplicateGuid()

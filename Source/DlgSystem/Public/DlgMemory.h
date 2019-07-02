@@ -2,7 +2,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DlgHelper.h"
 
 #include "DlgMemory.generated.h"
 
@@ -19,10 +18,7 @@ public:
 	TSet<int32> VisitedNodeIndices;
 
 public:
-	bool operator==(const FDlgHistory& Other) const
-	{
-		return FDlgHelper::IsSetEqual(VisitedNodeIndices, Other.VisitedNodeIndices);
-	}
+	bool operator==(const FDlgHistory& Other) const;
 };
 
 /**

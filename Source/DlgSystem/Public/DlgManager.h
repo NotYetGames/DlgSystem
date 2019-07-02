@@ -1,8 +1,6 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "UObject/UObjectIterator.h"
-#include "EngineUtils.h"
 
 #include "DlgDialogue.h"
 #include "DlgDialogueParticipant.h"
@@ -10,6 +8,7 @@
 
 #include "DlgManager.generated.h"
 
+class AActor;
 class UDlgContext;
 class UDlgDialogue;
 
@@ -78,34 +77,10 @@ public:
 	static int32 LoadAllDialoguesIntoMemory();
 
 	/** Gets all loaded dialogues from memory. LoadAllDialoguesIntoMemory must be called before this */
-	static TArray<UDlgDialogue*> GetAllDialoguesFromMemory()
-	{
-		TArray<UDlgDialogue*> Array;
-		for (TObjectIterator<UDlgDialogue> Itr; Itr; ++Itr)
-		{
-			UDlgDialogue* Dialogue = *Itr;
-			if (IsValid(Dialogue))
-			{
-				Array.Add(Dialogue);
-			}
-		}
-		return Array;
-	}
+	static TArray<UDlgDialogue*> GetAllDialoguesFromMemory();
 
 	/** Gets all the actors from the provided World that implement the Dialogue Participant Interface */
-	static TArray<TWeakObjectPtr<AActor>> GetAllActorsImplementingDialogueParticipantInterface(UWorld* World)
-	{
-		TArray<TWeakObjectPtr<AActor>> Array;
-		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
-		{
-			AActor* Actor = *Itr;
-			if (IsValid(Actor) && Actor->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
-			{
-				Array.Add(Actor);
-			}
-		}
-		return Array;
-	}
+	static TArray<TWeakObjectPtr<AActor>> GetAllActorsImplementingDialogueParticipantInterface(UWorld* World);
 
 	/** Gets all the dialogues that have a duplicate GUID, should not happen, like ever. */
 	static TArray<UDlgDialogue*> GetDialoguesWithDuplicateGuid();
