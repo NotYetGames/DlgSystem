@@ -78,6 +78,22 @@ enum class EDlgTextInputKeyForNewLine : uint8
 	DlgTextInputKeyForNewLineShiftPlusEnter			UMETA(DisplayName = "Shift + Enter"),
 };
 
+/**
+ *  Defines the visibility of the SpeakerState values
+ */
+UENUM()
+enum class EDlgTextLocalization : uint8
+{
+	/** The system does not modify the Namespace and Key values of the Text fields. */
+	DlgIgnore					UMETA(DisplayName = "Ignore"),
+
+	/** The system sets the Namespace for Text fields for each dialogue separately. Unique keys are also generated. */
+	DlgNamespacePerDialogue		UMETA(DisplayName = "Namespace Per Dialogue"),
+
+	/** The system sets the Namespace for Text fields for each dialogue into the same value. Unique keys are also generated. */
+	DlgGlobalNamespace		UMETA(DisplayName = "Global Namespace")
+};
+
 // Config = DlgSystemPlugin, DefaultConfig
 // UDeveloperSettings classes are autodiscovered https://wiki.unrealengine.com/CustomSettings
 UCLASS(Config = EditorPerProjectUserSettings, DefaultConfig, meta = (DisplayName = "Dialogue Editor Settings"))
@@ -173,6 +189,14 @@ public:
 	/** Generic data is an UObject* which can be assigned to nodes and can be asked from the active one */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Generic Data Visibility")
 	bool bShowGenericData = false;
+
+	/** Defines what the system should do with Text Namespaces and Keys for localization */
+	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Localization Method")
+	EDlgTextLocalization DialogueTextLocalizationMode = EDlgTextLocalization::DlgIgnore;
+
+	/** Depending on DialogueTextLocalizationMode it can be used as the namespace for all dialogue text fields or as their prefix */
+	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Generic Data Visibility")
+	FString DialogueTextNamespaceName = "Dialogue";
 
 	/** What key combination to press to add a new line for FText fields in the Dialogue Editor. */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Input Key for NewLine")

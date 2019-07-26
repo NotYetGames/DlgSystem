@@ -93,6 +93,29 @@ void UDlgNode::FireNodeEnterEvents(UDlgContextInternal* DlgContext)
 	}
 }
 
+void UDlgNode::UpdateTextNamespace(FText& Text)
+{
+	if (const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>())
+	{
+		if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::DlgIgnore)
+		{
+			return;
+		}
+
+		const auto Key = FTextInspector::GetKey(Text);
+		if (Key.IsSet())
+		{
+			FString Namespace = Settings->DialogueTextNamespaceName;
+			if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::DlgNamespacePerDialogue)
+			{
+				Namespace += GetOuter()->GetName();
+			}
+			Text = FInternationalization::ForUseOnlyByLocMacroAndGraphNodeTextLiterals_CreateText(*Text.ToString(), *Namespace, *Key.GetValue());
+		}
+	}
+	
+}
+
 bool UDlgNode::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated)
 {
 	check(DlgContext != nullptr);
