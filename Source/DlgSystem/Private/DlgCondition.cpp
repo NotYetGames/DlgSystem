@@ -190,13 +190,13 @@ bool FDlgCondition::CheckBool(bool bValue, const UDlgContextInternal* DlgContext
 {
 	if (CompareType == EDlgCompareType::DlgCompareToVariable || CompareType == EDlgCompareType::DlgCompareToClassVariable)
 	{
-		bool bValueToCheckAgainst = bBoolValue;
 		const UObject* OtherParticipant = DlgContext->GetConstParticipant(OtherParticipantName);
 		if (!ValidateIsParticipantValid(OtherParticipant, TEXT("CheckBool")))
 		{
 			return false;
 		}
 
+		bool bValueToCheckAgainst;
 		if (CompareType == EDlgCompareType::DlgCompareToVariable)
 		{
 			bValueToCheckAgainst = IDlgDialogueParticipant::Execute_GetBoolValue(OtherParticipant, OtherVariableName);

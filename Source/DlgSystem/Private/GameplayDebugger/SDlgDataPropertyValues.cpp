@@ -1,7 +1,6 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "GameplayDebugger/SDlgDataPropertyValues.h"
 
-#include "Widgets/Layout/SBorder.h"
 #include "Widgets/Text/STextBlock.h"
 #include "Widgets/Layout/SMissingWidget.h"
 #include "Widgets/Input/SButton.h"
@@ -284,7 +283,7 @@ void SDlgDataTextPropertyValue::HandleTextChanged(const FText& NewText)
 {
 	if (bIsFNameProperty)
 	{
-		FText ErrorMessage = ValidateNameLength(NewText);
+		const FText ErrorMessage = ValidateNameLength(NewText);
 		if (!ErrorMessage.IsEmpty())
 		{
 			VariableNode->SetVariableValue(ErrorMessage.ToString());

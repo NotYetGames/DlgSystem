@@ -44,17 +44,13 @@ bool UDlgContextInternal::Initialize(UDlgDialogue* InDialogue, const TMap<FName,
 	}
 
 	if (bFireEnterEvents)
-	{
 		return EnterNode(StartIndex, {});
-	}
-	else
-	{
-		ActiveNodeIndex = StartIndex;
-		FDlgMemory::GetInstance()->SetNodeVisited(Dialogue->GetDlgGuid(), ActiveNodeIndex);
-		VisitedNodeIndices.Add(ActiveNodeIndex);
+	
+	ActiveNodeIndex = StartIndex;
+	FDlgMemory::GetInstance()->SetNodeVisited(Dialogue->GetDlgGuid(), ActiveNodeIndex);
+	VisitedNodeIndices.Add(ActiveNodeIndex);
 
-		return Node->ReevaluateChildren(this, {});
-	}
+	return Node->ReevaluateChildren(this, {});
 }
 
 

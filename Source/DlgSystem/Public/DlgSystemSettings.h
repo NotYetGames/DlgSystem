@@ -4,8 +4,6 @@
 #include "Engine/DeveloperSettings.h"
 #include "Layout/Margin.h"
 
-#include "DlgIDialogueEditorModule.h"
-
 #include "DlgSystemSettings.generated.h"
 
 /**

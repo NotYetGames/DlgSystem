@@ -5,7 +5,6 @@
 #include "Engine/ObjectLibrary.h"
 #include "Interfaces/IPluginManager.h"
 #include "Engine/Blueprint.h"
-#include "UObject/UObjectIterator.h"
 #include "EngineUtils.h"
 
 #include "IDlgSystemModule.h"

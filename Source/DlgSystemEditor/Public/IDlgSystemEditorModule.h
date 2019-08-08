@@ -20,7 +20,7 @@ public:
 	 *
 	 * @return Returns singleton instance, loading the module on demand if needed
 	 */
-	static inline IDlgSystemEditorModule& Get()
+	static IDlgSystemEditorModule& Get()
 	{
 		return FModuleManager::LoadModuleChecked<IDlgSystemEditorModule>(DIALOGUE_SYSTEM_EDITOR_PLUGIN_NAME);
 	}
@@ -30,7 +30,7 @@ public:
 	 *
 	 * @return True if the module is loaded and ready to use
 	 */
-	static inline bool IsAvailable()
+	static bool IsAvailable()
 	{
 		return FModuleManager::Get().IsModuleLoaded(DIALOGUE_SYSTEM_EDITOR_PLUGIN_NAME);
 	}

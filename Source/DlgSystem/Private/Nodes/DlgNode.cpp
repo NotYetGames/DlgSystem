@@ -3,7 +3,6 @@
 #include "DlgSystemPrivatePCH.h"
 #include "DlgContextInternal.h"
 #include "EngineUtils.h"
-#include "Nodes/DlgNode_End.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -13,7 +12,7 @@ void UDlgNode::Serialize(FArchive& Ar)
 	Super::Serialize(Ar);
 	if (Ar.UE4Ver() >= VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
 	{
-		FStripDataFlags StripFlags(Ar);
+		const FStripDataFlags StripFlags(Ar);
 #if WITH_EDITOR
 		if (!StripFlags.IsEditorDataStripped())
 		{

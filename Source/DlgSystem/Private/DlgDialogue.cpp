@@ -189,7 +189,7 @@ bool UDlgDialogue::Modify(bool bAlwaysMarkDirty)
 		return false;
 	}
 
-	bool bWasSaved = Super::Modify(bAlwaysMarkDirty);
+	const bool bWasSaved = Super::Modify(bAlwaysMarkDirty);
 	// if (StartNode)
 	// {
 	// 	bWasSaved = bWasSaved && StartNode->Modify(bAlwaysMarkDirty);
@@ -482,7 +482,7 @@ void UDlgDialogue::RefreshData()
 	};
 
 	// Adds conditions from the edges of this Node.
-	auto AddConditionsFromEdges = [this, &GetParticipantDataEntry](const UDlgNode* Node, const int32 NodeIndex)
+	const auto AddConditionsFromEdges = [this, &GetParticipantDataEntry](const UDlgNode* Node, const int32 NodeIndex)
 	{
 		const FString NodeContext = FString::Printf(TEXT("Node %s"), NodeIndex > INDEX_NONE ? *FString::FromInt(NodeIndex) : TEXT("Start") );
 		const FName FallbackNodeOwnerName = Node->GetNodeParticipantName();
@@ -692,7 +692,7 @@ FString UDlgDialogue::GetTextFilePathName(bool bAddExtension/* = true*/) const
 
 FString UDlgDialogue::GetTextFilePathNameFromAssetPathName(const FString& AssetPathName)
 {
-	static constexpr const TCHAR* Separator = TEXT("/");
+	static constexpr TCHAR* Separator = TEXT("/");
 
 	// Get rid of the extension from `filename.extension` from the end of the path
 	FString PathName = FPaths::GetBaseFilename(AssetPathName, false);

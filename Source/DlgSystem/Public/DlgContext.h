@@ -7,6 +7,7 @@
 
 class USoundWave;
 class UDialogueWave;
+class UTexture2D;
 
 /** Used to store temporary state of edges */
 struct FDlgEdgeData

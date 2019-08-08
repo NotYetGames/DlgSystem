@@ -251,9 +251,9 @@ protected:
 
 private:
 	// End of line
-	static constexpr const TCHAR* EOL_LF = TEXT("\n");
-	static constexpr const TCHAR* EOL_CRLF = TEXT("\r\n");
-	static constexpr const TCHAR* EOL = EOL_LF;
+	static constexpr TCHAR* EOL_LF = TEXT("\n");
+	static constexpr TCHAR* EOL_CRLF = TEXT("\r\n");
+	static constexpr TCHAR* EOL = EOL_LF;
 
 	// Helper strings
 	static const FString EOL_String;

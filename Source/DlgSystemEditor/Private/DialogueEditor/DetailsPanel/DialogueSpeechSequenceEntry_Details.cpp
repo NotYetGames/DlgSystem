@@ -4,7 +4,6 @@
 #include "IPropertyUtilities.h"
 #include "IDetailChildrenBuilder.h"
 
-#include "Nodes/DlgNode.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "STextPropertyPickList.h"

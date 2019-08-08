@@ -5,12 +5,14 @@
 #include "DlgDialogue.h"
 #include "DlgDialogueParticipant.h"
 #include "DlgHelper.h"
+#include "DlgMemory.h"
 
 #include "DlgManager.generated.h"
 
 class AActor;
 class UDlgContext;
 class UDlgDialogue;
+
 
 /**
  *  Class providing a collection of static functions to start a conversation and work with Dialogues.

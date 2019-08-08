@@ -81,10 +81,8 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 				// Instead we use it as a string, this should be similar as the parser can parse an int from string
 				return MakeShareable(new FJsonValueString(FString::Printf(TEXT("%lld"), NumericProperty->GetSignedIntPropertyValue(ValuePtr))));
 			}
-			else
-			{
-				return MakeShareable(new FJsonValueNumber(NumericProperty->GetSignedIntPropertyValue(ValuePtr)));
-			}
+			
+			return MakeShareable(new FJsonValueNumber(NumericProperty->GetSignedIntPropertyValue(ValuePtr)));
 		}
 		if (NumericProperty->IsFloatingPoint())
 		{

@@ -4,7 +4,6 @@
 #include "Templates/SubclassOf.h"
 
 #include "DlgIDialogueEditorModule.h"
-#include "DlgMemory.h"
 #include "DlgSystemSettings.h"
 #include "DlgDialogueParticipantData.h"
 

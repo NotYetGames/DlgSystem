@@ -7,7 +7,6 @@
 #include "UObject/UnrealType.h"
 #include "UObject/EnumProperty.h"
 #include "UObject/UObjectIterator.h"
-#include "UObject/ObjectMacros.h"
 #include "UObject/TextProperty.h"
 
 DEFINE_LOG_CATEGORY(LogDlgConfigParser);
@@ -247,8 +246,8 @@ bool FDlgConfigParser::IsNextWordString() const
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool FDlgConfigParser::IsActualWordString() const
 {
-	int32 Index = From - 1;
-	return (String.IsValidIndex(Index) && String[Index] == '"');
+	const int32 Index = From - 1;
+	return String.IsValidIndex(Index) && String[Index] == '"';
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

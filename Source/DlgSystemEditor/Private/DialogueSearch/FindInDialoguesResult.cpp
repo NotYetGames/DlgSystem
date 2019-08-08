@@ -2,7 +2,6 @@
 #include "FindInDialoguesResult.h"
 
 #include "Widgets/Images/SImage.h"
-#include "Widgets/Views/STreeView.h"
 #include "Toolkits/AssetEditorManager.h"
 
 #include "DialogueEditor/DialogueEditorUtilities.h"

@@ -2,7 +2,6 @@
 #include "DlgSystemEditorModule.h"
 
 #include "Extensions/ContentBrowserExtensions.h"
-#include "Engine/ObjectLibrary.h"
 #include "Engine/BlueprintCore.h"
 #include "Templates/SharedPointer.h"
 #include "AssetRegistryModule.h"
@@ -10,7 +9,6 @@
 #include "WorkspaceMenuStructureModule.h"
 #include "WorkspaceMenuStructure.h"
 #include "Widgets/Docking/SDockTab.h"
-#include "K2Node.h"
 #include "FileHelpers.h"
 #include "Framework/MultiBox/MultiBoxExtender.h"
 #include "LevelEditor.h"
@@ -33,9 +31,7 @@
 #include "DialogueEditor/DetailsPanel/DialogueEvent_Details.h"
 #include "DialogueEditor/DetailsPanel/DialogueTextArgument_Details.h"
 #include "DialogueEditor/DetailsPanel/DialogueSpeechSequenceEntry_Details.h"
-#include "DlgDialogueParticipant.h"
 #include "DlgManager.h"
-#include "DlgSystemModule.h"
 
 #include "IO/DlgConfigWriter.h"
 #include "IO/DlgConfigParser.h"
