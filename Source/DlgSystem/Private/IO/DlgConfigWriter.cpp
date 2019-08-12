@@ -8,7 +8,10 @@
 
 DEFINE_LOG_CATEGORY(LogDlgConfigWriter);
 
-const FString FDlgConfigWriter::EOL_String = EOL;
+const TCHAR* FDlgConfigWriter::EOL_LF = TEXT("\n");
+const TCHAR* FDlgConfigWriter::EOL_CRLF = TEXT("\r\n");
+const TCHAR* FDlgConfigWriter::EOL = EOL_LF;
+const FString FDlgConfigWriter::EOL_String{EOL};
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

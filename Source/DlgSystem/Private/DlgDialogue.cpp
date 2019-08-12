@@ -692,7 +692,7 @@ FString UDlgDialogue::GetTextFilePathName(bool bAddExtension/* = true*/) const
 
 FString UDlgDialogue::GetTextFilePathNameFromAssetPathName(const FString& AssetPathName)
 {
-	static constexpr TCHAR* Separator = TEXT("/");
+	static const TCHAR* Separator = TEXT("/");
 
 	// Get rid of the extension from `filename.extension` from the end of the path
 	FString PathName = FPaths::GetBaseFilename(AssetPathName, false);
