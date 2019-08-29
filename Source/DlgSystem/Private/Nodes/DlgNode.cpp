@@ -80,15 +80,20 @@ void UDlgNode::FireNodeEnterEvents(UDlgContextInternal* DlgContext)
 {
 	for (const FDlgEvent& Event : EnterEvents)
 	{
-		UObject* Particpant = DlgContext->GetParticipant(Event.ParticipantName);
+		UObject* Participant = DlgContext->GetParticipant(Event.ParticipantName);
 
 		// Try parent
-		if (!IsValid(Particpant))
+		if (!IsValid(Participant))
 		{
-			Particpant = DlgContext->GetParticipant(OwnerName);
+			Participant = DlgContext->GetParticipant(OwnerName);
 		}
 
-		Event.Call(Particpant);
+		if (Participant == nullptr)
+		{
+			UE_LOG(LogDlgSystem, Error, TEXT("FireNodeEnterEvents: Dialogue = `%s`, NodeIndex = %d. Got non existent Participant Name, event call will fail!"), *GetDialogue()->GetPathName(), DlgContext->GetActiveNodeIndex());
+		}
+
+		Event.Call(Participant);
 	}
 }
 

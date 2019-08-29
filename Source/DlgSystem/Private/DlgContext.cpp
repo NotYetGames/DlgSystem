@@ -240,13 +240,12 @@ FName UDlgContext::GetActiveParticipantName() const
 
 const UObject* UDlgContext::GetConstParticipant(FName DlgParticipantName) const
 {
-	const UObject* const* ParticipantPtr = Participants.Find(DlgParticipantName);
+	auto* ParticipantPtr = Participants.Find(DlgParticipantName);
 	if (ParticipantPtr != nullptr && IsValid(*ParticipantPtr))
 	{
 		return *ParticipantPtr;
 	}
 
-	UE_LOG(LogDlgSystem, Error, TEXT("Participant = %s does not exist, Dialogue = `%s`"), *DlgParticipantName.ToString(), *Dialogue->GetPathName());
 	return nullptr;
 }
 
