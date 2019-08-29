@@ -60,17 +60,6 @@ public:
 	//~ Begin FEditorUndoClient
 
 	/**
-	 * Called to see if the context of the current undo/redo operation is a match for the client
-	 * Default state matching old context-less undo is Context="" and PrimaryObject=NULL
-	 *
-	 * @param InContext		A text string providing context for the undo operation; can be the empty string
-	 * @param PrimaryObject	The object marked as the primary object for the undo operation; can be NULL
-	 *
-	 * @return	True if client wishes to handle the undo/redo operation for this context. False otherwise
-	 */
-	bool MatchesContext(const FString& InContext, UObject* PrimaryObject) const override { return true; }
-
-	/**
 	 * Signal that client should run any PostUndo code
 	 * @param bSuccess	If true than undo succeeded, false if undo failed
 	 */

@@ -2,7 +2,6 @@
 #pragma once
 
 #include "CoreTypes.h"
-#include "UObject/ObjectMacros.h"
 
 #include "DialogueGraphNode_Base.h"
 #include "DialogueGraphNode.h"

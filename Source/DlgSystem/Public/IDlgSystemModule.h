@@ -24,7 +24,7 @@ public:
 	 *
 	 * @return Returns singleton instance, loading the module on demand if needed
 	 */
-	static inline IDlgSystemModule& Get()
+	static IDlgSystemModule& Get()
 	{
 		return FModuleManager::LoadModuleChecked<IDlgSystemModule>(DIALOGUE_SYSTEM_PLUGIN_NAME);
 	}
@@ -34,7 +34,7 @@ public:
 	 *
 	 * @return True if the module is loaded and ready to use
 	 */
-	static inline bool IsAvailable()
+	static bool IsAvailable()
 	{
 		return FModuleManager::Get().IsModuleLoaded(DIALOGUE_SYSTEM_PLUGIN_NAME);
 	}

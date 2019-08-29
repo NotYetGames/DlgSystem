@@ -2,7 +2,6 @@
 #include "DlgHumanReadableTextCommandlet.h"
 
 #include "Misc/Paths.h"
-#include "Misc/FileHelper.h"
 #include "HAL/PlatformFilemanager.h"
 #include "GenericPlatform/GenericPlatformFile.h"
 #include "UObject/Package.h"
@@ -95,7 +94,7 @@ int32 UDlgHumanReadableTextCommandlet::Main(const FString& Params)
 
 	if (bExport)
 		return Export();
-	else if (bImport)
+	if (bImport)
 		return Import();
 
 	return 0;

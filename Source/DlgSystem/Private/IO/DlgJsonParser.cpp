@@ -12,7 +12,6 @@
 #include "JsonObjectWrapper.h"
 #include "UObject/TextProperty.h"
 #include "UObject/PropertyPortFlags.h"
-#include "Misc/TextBuffer.h"
 #include "Internationalization/CulturePointer.h"
 #include "Internationalization/Culture.h"
 #include "Misc/OutputDevice.h"
@@ -23,8 +22,8 @@ DEFINE_LOG_CATEGORY(LogDlgJsonParser);
 bool GetTextFromObject(const TSharedRef<FJsonObject>& Obj, FText& TextOut)
 {
 	// get the prioritized culture name list
-	FCultureRef CurrentCulture = FInternationalization::Get().GetCurrentCulture();
-	TArray<FString> CultureList = CurrentCulture->GetPrioritizedParentCultureNames();
+	const FCultureRef CurrentCulture = FInternationalization::Get().GetCurrentCulture();
+	const TArray<FString> CultureList = CurrentCulture->GetPrioritizedParentCultureNames();
 
 	// try to follow the fall back chain that the engine uses
 	FString TextString;
@@ -293,14 +292,12 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 
 			return bReturnStatus;
 		}
-		else
-		{
-			UE_LOG(LogDlgJsonParser,
-				   Error,
-				   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import TArray from non-array JSON key for property %s"),
-				   *Property->GetNameCPP());
-			return false;
-		}
+		
+		UE_LOG(LogDlgJsonParser,
+			   Error,
+			   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import TArray from non-array JSON key for property %s"),
+			   *Property->GetNameCPP());
+		return false;
 	}
 
 	// Set
@@ -337,14 +334,12 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 			Helper.Rehash();
 			return bReturnStatus;
 		}
-		else
-		{
-			UE_LOG(LogDlgJsonParser,
-				   Error,
-				   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import TSet from non-array (JsonValue->Type = `%s`) JSON key for property %s"),
-				   *GetStringForJsonType(JsonValue->Type), *Property->GetNameCPP());
-			return false;
-		}
+		
+		UE_LOG(LogDlgJsonParser,
+			   Error,
+			   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import TSet from non-array (JsonValue->Type = `%s`) JSON key for property %s"),
+			   *GetStringForJsonType(JsonValue->Type), *Property->GetNameCPP());
+		return false;
 	}
 
 	// TMap
@@ -387,14 +382,12 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 			Helper.Rehash();
 			return bReturnStatus;
 		}
-		else
-		{
-			UE_LOG(LogDlgJsonParser,
-				   Error,
-				   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import TMap from non-object JSON key for property %s"),
-				   *Property->GetNameCPP());
-			return false;
-		}
+		
+		UE_LOG(LogDlgJsonParser,
+			   Error,
+			   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import TMap from non-object JSON key for property %s"),
+			   *Property->GetNameCPP());
+		return false;
 	}
 
 	// UStruct

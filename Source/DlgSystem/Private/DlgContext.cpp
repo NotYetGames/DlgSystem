@@ -6,6 +6,7 @@
 #include "Nodes/DlgNode_End.h"
 #include "DlgDialogueParticipant.h"
 #include "DlgMemory.h"
+#include "Engine/Texture2D.h"
 
 bool UDlgContext::ChooseChildBasedOnAllOptionIndex(int32 Index)
 {
@@ -193,7 +194,7 @@ UTexture2D* UDlgContext::GetActiveParticipantIcon() const
 		return nullptr;
 	}
 
-	FName SpeakerName = Node->GetNodeParticipantName();
+	const FName SpeakerName = Node->GetNodeParticipantName();
 	UObject* const* Item = Participants.Find(SpeakerName);
 	if (Item == nullptr || !IsValid(*Item))
 	{
@@ -239,13 +240,12 @@ FName UDlgContext::GetActiveParticipantName() const
 
 const UObject* UDlgContext::GetConstParticipant(FName DlgParticipantName) const
 {
-	const UObject* const* ParticipantPtr = Participants.Find(DlgParticipantName);
+	auto* ParticipantPtr = Participants.Find(DlgParticipantName);
 	if (ParticipantPtr != nullptr && IsValid(*ParticipantPtr))
 	{
 		return *ParticipantPtr;
 	}
 
-	UE_LOG(LogDlgSystem, Error, TEXT("Participant = %s does not exist, Dialogue = `%s`"), *DlgParticipantName.ToString(), *Dialogue->GetPathName());
 	return nullptr;
 }
 
@@ -277,16 +277,14 @@ bool UDlgContext::IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory, 
 	{
 		return VisitedNodeIndices.Contains(TargetIndex);
 	}
-	else
+	
+	if (Dialogue == nullptr)
 	{
-		if (Dialogue == nullptr)
-		{
-			UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToVisitedNode called, but the context does not have a valid dialogue!"));
-			return false;
-		}
-
-		return FDlgMemory::GetInstance()->IsNodeVisited(Dialogue->GetDlgGuid(), TargetIndex);
+		UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToVisitedNode called, but the context does not have a valid dialogue!"));
+		return false;
 	}
+
+	return FDlgMemory::GetInstance()->IsNodeVisited(Dialogue->GetDlgGuid(), TargetIndex);
 }
 
 

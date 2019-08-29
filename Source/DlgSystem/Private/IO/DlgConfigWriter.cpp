@@ -8,7 +8,10 @@
 
 DEFINE_LOG_CATEGORY(LogDlgConfigWriter);
 
-const FString FDlgConfigWriter::EOL_String = EOL;
+const TCHAR* FDlgConfigWriter::EOL_LF = TEXT("\n");
+const TCHAR* FDlgConfigWriter::EOL_CRLF = TEXT("\r\n");
+const TCHAR* FDlgConfigWriter::EOL = EOL_LF;
+const FString FDlgConfigWriter::EOL_String{EOL};
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -197,7 +200,7 @@ bool FDlgConfigWriter::WritePrimitiveElementToString(const UProperty* Prop,
 		if (EnumProp != nullptr)
 		{
 			const void* Value = EnumProp->ContainerPtrToValuePtr<uint8>(Object);
-			FName EnumName = EnumProp->GetEnum()->GetNameByIndex(EnumProp->GetUnderlyingProperty()->GetSignedIntPropertyValue(Value));
+			const FName EnumName = EnumProp->GetEnum()->GetNameByIndex(EnumProp->GetUnderlyingProperty()->GetSignedIntPropertyValue(Value));
 			Target += PreS + Prop->GetName() + " " + NameToString(EnumName) + PostS;
 			return true;
 		}

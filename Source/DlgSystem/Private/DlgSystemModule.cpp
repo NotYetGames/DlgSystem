@@ -7,6 +7,7 @@
 #include "Widgets/Docking/SDockTab.h"
 #include "HAL/IConsoleManager.h"
 #include "HAL/FileManager.h"
+#include "GameFramework/Actor.h"
 
 #if WITH_GAMEPLAY_DEBUGGER
 #include "GameplayDebugger.h"

@@ -500,7 +500,7 @@ TSharedRef<ITableRow> SDlgDataDisplay::HandleGenerateRow(TSharedPtr<FDlgDataDisp
 {
 	// Build row
 	TSharedPtr<STableRow<TSharedPtr<FDlgDataDisplayTreeNode>>> TableRow;
-	FMargin RowPadding = FMargin(2.f, 2.f);
+	const FMargin RowPadding = FMargin(2.f, 2.f);
 	TableRow = SNew(STableRow<TSharedPtr<FDlgDataDisplayTreeNode>>, OwnerTable)
 		.Padding(1.0f);
 

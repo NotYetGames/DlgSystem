@@ -30,7 +30,7 @@ FText UDlgSystemSettings::GetSectionDescription() const
 
 bool UDlgSystemSettings::CanEditChange(const UProperty* InProperty) const
 {
-	bool bIsEditable = Super::CanEditChange(InProperty);
+	const bool bIsEditable = Super::CanEditChange(InProperty);
 	if (bIsEditable && InProperty)
 	{
 		const FName PropertyName = InProperty->GetFName();

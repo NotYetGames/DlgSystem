@@ -292,7 +292,7 @@ public:
 			return Result;
 		};
 
-		UPTRINT PtrVal = (UPTRINT)Ptr;
+		const UPTRINT PtrVal = (UPTRINT)Ptr;
 		// (void*) - 1 Is technically a valid address 0xffffffff, but is it?
 		return Ptr != nullptr && Ptr != ((void*) - 1) && PtrVal >= 0x1000 && CountByteValues(PtrVal, 0xCD) < sizeof(UPTRINT) / 2;
 	}

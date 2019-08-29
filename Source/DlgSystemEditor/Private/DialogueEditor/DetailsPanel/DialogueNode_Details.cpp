@@ -9,7 +9,6 @@
 
 #include "Nodes/DlgNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
-#include "STextPropertyPickList.h"
 
 #define LOCTEXT_NAMESPACE "DialogueNode_Details"
 
