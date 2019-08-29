@@ -1,7 +1,6 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "NewComment_DialogueGraphSchemaAction.h"
 
-#include "ScopedTransaction.h"
 #include "EdGraphNode_Comment.h"
 
 #include "DialogueEditor/DialogueEditorUtilities.h"

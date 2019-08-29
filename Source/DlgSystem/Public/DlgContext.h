@@ -7,6 +7,7 @@
 
 class USoundWave;
 class UDialogueWave;
+class UTexture2D;
 
 /** Used to store temporary state of edges */
 struct FDlgEdgeData
@@ -31,7 +32,6 @@ UCLASS(BlueprintType, Abstract)
 class DLGSYSTEM_API UDlgContext : public UObject
 {
 	GENERATED_BODY()
-	typedef UDlgContext Self;
 public:
 
 	/**
@@ -140,7 +140,7 @@ public:
 	}
 
 	const UObject* GetConstParticipant(FName DlgParticipantName) const;
-	const TMap<FName, UObject*>& GetParticipantMap() { return Participants; }
+	const TMap<FName, UObject*>& GetParticipantMap() const { return Participants; }
 
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	int32 GetActiveNodeIndex() const { return ActiveNodeIndex; }

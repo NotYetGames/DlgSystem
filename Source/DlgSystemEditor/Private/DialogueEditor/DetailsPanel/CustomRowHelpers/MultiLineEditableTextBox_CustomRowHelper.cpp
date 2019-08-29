@@ -71,7 +71,7 @@ namespace
 				if (PropertyHandle->GetPerObjectValue(InIndex, ObjectValue) == FPropertyAccess::Success)
 				{
 					FText TextValue;
-					if (FTextStringHelper::ReadFromString(*ObjectValue, TextValue))
+					if (FTextStringHelper::ReadFromBuffer(*ObjectValue, TextValue))
 					{
 						return TextValue;
 					}
@@ -86,10 +86,8 @@ namespace
 			if (PropertyHandle->IsValidHandle())
 			{
 				FString ObjectValue;
-				if (FTextStringHelper::WriteToString(ObjectValue, InText))
-				{
-					PropertyHandle->SetPerObjectValue(InIndex, ObjectValue);
-				}
+				FTextStringHelper::WriteToBuffer(ObjectValue, InText);
+				PropertyHandle->SetPerObjectValue(InIndex, ObjectValue);
 			}
 		}
 
@@ -132,13 +130,11 @@ namespace
 // FMultiLineEditableTextBox_CustomRowHelper
 FText FMultiLineEditableTextBox_CustomRowHelper::GetResetToolTip() const
 {
-	FString Tooltip;
-	Tooltip = NSLOCTEXT("PropertyEditor", "ResetToDefaultToolTip", "Reset to Default").ToString();
+	FString Tooltip = NSLOCTEXT("PropertyEditor", "ResetToDefaultToolTip", "Reset to Default").ToString();
 
 	if (PropertyHandle.IsValid() && !PropertyHandle->IsEditConst() && PropertyHandle->DiffersFromDefault())
 	{
-		FString DefaultLabel = PropertyHandle->GetResetToDefaultLabel().ToString();
-
+		const FString DefaultLabel = PropertyHandle->GetResetToDefaultLabel().ToString();
 		if (DefaultLabel.Len() > 0)
 		{
 			Tooltip += "\n";

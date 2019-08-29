@@ -2,7 +2,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/ObjectMacros.h"
 #include "ContentBrowserFrontEndFilterExtension.h"
 
 #include "ContentBrowserExtensions.generated.h"

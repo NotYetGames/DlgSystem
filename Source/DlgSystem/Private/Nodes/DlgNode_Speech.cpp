@@ -10,11 +10,17 @@ void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
 	const FName PropertyName = PropertyChangedEvent.Property != nullptr ? PropertyChangedEvent.Property->GetFName() : NAME_None;
-
+	const bool bTextChanged = PropertyName == UDlgNode_Speech::GetMemberNameText();
 	// rebuild text arguments
-	if (PropertyName == UDlgNode_Speech::GetMemberNameText() || PropertyName == UDlgNode_Speech::GetMemberNameTextArguments())
+	if (bTextChanged || PropertyName == UDlgNode_Speech::GetMemberNameTextArguments())
 	{
 		RebuildTextArguments();
+
+		if (bTextChanged)
+		{
+			// TODO: maybe store key in preeditchangeproperty to preserve it?!
+			UpdateTextNamespace(Text);
+		}
 	}
 }
 

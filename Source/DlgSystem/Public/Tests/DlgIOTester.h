@@ -3,7 +3,6 @@
 
 #include "CoreTypes.h"
 #include "Logging/LogMacros.h"
-#include "UObject/TextProperty.h"
 
 #include "DlgIOTesterTypes.h"
 

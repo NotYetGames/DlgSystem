@@ -8,7 +8,6 @@
 #include "UObject/UObjectIterator.h"
 
 #include "DlgSystemEditorPrivatePCH.h"
-#include "DlgDialogue.h"
 #include "DlgManager.h"
 #include "DialogueBlueprintUtilities.h"
 

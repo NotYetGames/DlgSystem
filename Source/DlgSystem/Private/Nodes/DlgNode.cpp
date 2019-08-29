@@ -3,7 +3,6 @@
 #include "DlgSystemPrivatePCH.h"
 #include "DlgContextInternal.h"
 #include "EngineUtils.h"
-#include "Nodes/DlgNode_End.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -13,7 +12,7 @@ void UDlgNode::Serialize(FArchive& Ar)
 	Super::Serialize(Ar);
 	if (Ar.UE4Ver() >= VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
 	{
-		FStripDataFlags StripFlags(Ar);
+		const FStripDataFlags StripFlags(Ar);
 #if WITH_EDITOR
 		if (!StripFlags.IsEditorDataStripped())
 		{
@@ -81,16 +80,44 @@ void UDlgNode::FireNodeEnterEvents(UDlgContextInternal* DlgContext)
 {
 	for (const FDlgEvent& Event : EnterEvents)
 	{
-		UObject* Particpant = DlgContext->GetParticipant(Event.ParticipantName);
+		UObject* Participant = DlgContext->GetParticipant(Event.ParticipantName);
 
 		// Try parent
-		if (!IsValid(Particpant))
+		if (!IsValid(Participant))
 		{
-			Particpant = DlgContext->GetParticipant(OwnerName);
+			Participant = DlgContext->GetParticipant(OwnerName);
 		}
 
-		Event.Call(Particpant);
+		if (Participant == nullptr)
+		{
+			UE_LOG(LogDlgSystem, Error, TEXT("FireNodeEnterEvents: Dialogue = `%s`, NodeIndex = %d. Got non existent Participant Name, event call will fail!"), *GetDialogue()->GetPathName(), DlgContext->GetActiveNodeIndex());
+		}
+
+		Event.Call(Participant);
 	}
+}
+
+void UDlgNode::UpdateTextNamespace(FText& Text)
+{
+	if (const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>())
+	{
+		if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::DlgIgnore)
+		{
+			return;
+		}
+
+		const auto Key = FTextInspector::GetKey(Text);
+		if (Key.IsSet())
+		{
+			FString Namespace = Settings->DialogueTextNamespaceName;
+			if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::DlgNamespacePerDialogue)
+			{
+				Namespace += GetOuter()->GetName();
+			}
+			Text = FInternationalization::ForUseOnlyByLocMacroAndGraphNodeTextLiterals_CreateText(*Text.ToString(), *Namespace, *Key.GetValue());
+		}
+	}
+	
 }
 
 bool UDlgNode::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated)

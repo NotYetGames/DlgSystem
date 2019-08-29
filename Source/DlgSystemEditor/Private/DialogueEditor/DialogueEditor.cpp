@@ -6,7 +6,6 @@
 #include "Widgets/Docking/SDockTab.h"
 #include "ScopedTransaction.h"
 #include "Framework/Application/SlateApplication.h"
-#include "Widgets/Input/SEditableTextBox.h"
 #include "PropertyEditorModule.h"
 #include "GraphEditor.h"
 #include "Toolkits/IToolkitHost.h"

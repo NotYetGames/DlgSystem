@@ -10,7 +10,6 @@
 #include "EditorStyleSet.h"
 
 #include "DlgSystemEditorPrivatePCH.h"
-#include "DlgDialogue.h"
 #include "DlgManager.h"
 #include "DialogueBlueprintUtilities.h"
 
@@ -394,7 +393,7 @@ void UDialogueK2Node_Select::NotifyPinConnectionListChanged(UEdGraphPin* Pin)
 	if (Pin != GetVariableNamePin())
 	{
 		// Grab references to all option pins and the return pin
-		TArray<UEdGraphPin*> OptionPins = GetOptionPins();
+		const TArray<UEdGraphPin*> OptionPins = GetOptionPins();
 		const UEdGraphPin* ReturnPin = GetReturnValuePin();
 		const UEdGraphPin* DefaultPin = GetDefaultValuePin();
 

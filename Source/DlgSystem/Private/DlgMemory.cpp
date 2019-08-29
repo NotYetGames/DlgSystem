@@ -1,5 +1,12 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "DlgMemory.h"
+#include "DlgHelper.h"
+
+
+bool FDlgHistory::operator==(const FDlgHistory& Other) const
+{
+	return FDlgHelper::IsSetEqual(VisitedNodeIndices, Other.VisitedNodeIndices);
+}
 
 void FDlgMemory::SetEntry(const FGuid& DlgGuid, const FDlgHistory& History)
 {

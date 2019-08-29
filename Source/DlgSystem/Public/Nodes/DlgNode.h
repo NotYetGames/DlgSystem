@@ -188,6 +188,8 @@ protected:
 
 	void FireNodeEnterEvents(UDlgContextInternal* DlgContext);
 
+	void UpdateTextNamespace(FText& Text);
+
 protected:
 
 #if WITH_EDITORONLY_DATA
