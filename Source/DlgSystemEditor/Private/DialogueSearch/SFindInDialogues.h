@@ -29,11 +29,11 @@ public:
 		SLATE_ARGUMENT(TSharedPtr<SDockTab>, ContainingTab)
 	SLATE_END_ARGS()
 
-	void Construct(const FArguments& InArgs, TSharedPtr<FDialogueEditor> InDialogueEditor = nullptr);
+	void Construct(const FArguments& InArgs, const TSharedPtr<FDialogueEditor>& InDialogueEditor = nullptr);
 	~SFindInDialogues();
 
 	/** Focuses this widget's search box, and changes the mode as well, and optionally the search terms */
-	void FocusForUse(const bool bSetFindWithinDialogue, const FDialogueSearchFilter& SearchFilter = FDialogueSearchFilter(), const bool bSelectFirstResult = false);
+	void FocusForUse(bool bSetFindWithinDialogue, const FDialogueSearchFilter& SearchFilter = FDialogueSearchFilter(), bool bSelectFirstResult = false);
 
 	/**
 	 * Submits a search query
@@ -41,7 +41,7 @@ public:
 	 * @param SearchFilter						Filter for search
 	 * @param bInIsFindWithinDialogue			TRUE if searching within the current Dialogue only
 	 */
-	void MakeSearchQuery(const FDialogueSearchFilter& SearchFilter, const bool bInIsFindWithinDialogue);
+	void MakeSearchQuery(const FDialogueSearchFilter& SearchFilter, bool bInIsFindWithinDialogue);
 
 	/** If this is a global find results widget, returns the host tab's unique ID. Otherwise, returns NAME_None. */
 	FName GetHostTabId() const;

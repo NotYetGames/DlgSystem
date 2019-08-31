@@ -154,7 +154,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	float FloatValue = 0.f;
 
-	/** FName the particpants name is checked against */
+	/** FName the participants name is checked against */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	FName NameValue;
 

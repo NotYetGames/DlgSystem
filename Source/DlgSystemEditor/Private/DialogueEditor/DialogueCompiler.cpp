@@ -34,7 +34,7 @@ void FDialogueCompilerContext::Compile()
 	// we simply walk the graph with a breath first search and reassign the indices as they appear.
 	// This also has the advantage that close nodes will also have indices close to each other.
 
-	// TODO(leyyin): Add checking and output errors for the nodes, like orphans
+	// TODO(vampy): Add checking and output errors for the nodes, like orphans
 	// Step 1. Find the root and set the start node
 	GraphNodeRoot = DialogueGraph->GetRootGraphNode();
 	check(GraphNodeRoot);
@@ -181,7 +181,7 @@ void FDialogueCompilerContext::CompileGraph()
 		// See children
 		CompileGraphNode(GraphNode);
 
-		// Accummulate for the Dialogue.Nodes array
+		// Accumulate for the Dialogue.Nodes array
 		const int32 NodeAddedIndex = ResultDialogueNodes.Add(GraphNode->GetMutableDialogueNode());
 
 		// Expect prediction to be true

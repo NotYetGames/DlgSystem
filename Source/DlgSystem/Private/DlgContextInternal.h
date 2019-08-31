@@ -68,12 +68,12 @@ public:
 	const TMap<FName, UObject*>& GetParticipants() const { return Participants; }
 
 	// Gets the Node at the NodeIndex index
-	UDlgNode* GetNode(int32 NodeIndex) 
-	{ 
+	UDlgNode* GetNode(int32 NodeIndex)
+	{
 		return const_cast<UDlgNode*>(const_cast<const Self*>(this)->GetNode(NodeIndex));
 	}
 	const UDlgNode* GetNode(int32 NodeIndex) const;
 
 	// Was node with NodeIndex visited?
-	bool WasNodeVisitedInThisContext(const int32 NodeIndex) const { return VisitedNodeIndices.Contains(NodeIndex); }
+	bool WasNodeVisitedInThisContext(int32 NodeIndex) const { return VisitedNodeIndices.Contains(NodeIndex); }
 };

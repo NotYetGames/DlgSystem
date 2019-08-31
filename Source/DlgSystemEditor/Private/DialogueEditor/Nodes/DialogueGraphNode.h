@@ -275,7 +275,7 @@ public:
 
 	// Specialization for the methods above  (by overloading) for the base type UDlgNode type so that we do not need to cast
 	const UDlgNode& GetDialogueNode() const { return *DialogueNode; }
-	UDlgNode* GetMutableDialogueNode() { return DialogueNode; }
+	UDlgNode* GetMutableDialogueNode() const { return DialogueNode; }
 
 	/** Tells us if the Dialogue Node is valid non null. */
 	bool IsDialogueNodeSet() const { return DialogueNode != nullptr; }
@@ -284,7 +284,7 @@ public:
 	virtual int32 GetDialogueNodeIndex() const { return NodeIndex; }
 
 	/** Gets the edge inside fromGraphNodeEdges for the ChildNodeIndex  */
-	int32 GetChildEdgeIndexForChildNodeIndex(const int32 ChildNodeIndex) const;
+	int32 GetChildEdgeIndexForChildNodeIndex(int32 ChildNodeIndex) const;
 
 	/** Sets a new TargetIndex for the Edge at location EdgeIndex.  */
 	void SetEdgeTargetIndexAt(int32 EdgeIndex, int32 NewTargetIndex);
@@ -314,10 +314,10 @@ public:
 	const TArray<UDialogueGraphNode*> GetChildNodes() const;
 
 	/** Gets the parent node edges that are connected from the input pin. This returns the proxy edge nodes. To surpass the proxy connection use GetParentNodes. */
-	const TArray<UDialogueGraphNode_Edge*> GetParentEdgeNodes(const bool bCheckChild = true) const;
+	const TArray<UDialogueGraphNode_Edge*> GetParentEdgeNodes(bool bCheckChild = true) const;
 
 	/** Gets the child node edges that are connected from the output pin. This returns the proxy edge nodes. To surpass the proxy connection use GetChildNodes. */
-	const TArray<UDialogueGraphNode_Edge*> GetChildEdgeNodes(const bool bCheckParent = true) const;
+	const TArray<UDialogueGraphNode_Edge*> GetChildEdgeNodes(bool bCheckParent = true) const;
 
 	/** Does this node have the child edge ChildEdgeToFind? */
 	bool HasChildEdgeNode(const UDialogueGraphNode_Edge* ChildEdgeToFind) const;

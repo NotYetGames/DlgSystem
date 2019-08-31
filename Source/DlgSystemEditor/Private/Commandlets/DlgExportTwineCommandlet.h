@@ -28,16 +28,16 @@ public:
 	//~ UCommandlet interface
 	int32 Main(const FString& Params) override;
 
-	FString CreateTwineStoryData(const FString& Name, const FGuid& DialogueGuid, const int32 StartNodeIndex, const FString& PassagesData);
+	FString CreateTwineStoryData(const FString& Name, const FGuid& DialogueGuid, int32 StartNodeIndex, const FString& PassagesData);
 
-	FString CreateTwinePassageDataFromNode(const UDlgDialogue& Dialogue, const UDlgNode& Node, const int32 NodeIndex);
-	FString CreateTwinePassageDataLinksFromEdges(const UDlgDialogue& Dialogue, const TArray<FDlgEdge>& Edges, const bool bNoTextOnEdges = false);
+	FString CreateTwinePassageDataFromNode(const UDlgDialogue& Dialogue, const UDlgNode& Node, int32 NodeIndex);
+	FString CreateTwinePassageDataLinksFromEdges(const UDlgDialogue& Dialogue, const TArray<FDlgEdge>& Edges, bool bNoTextOnEdges = false);
 
-	FString CreateTwinePassageData(const int32 Pid, const FString& Name, const FString& Tags, const FIntPoint& Position, const FIntPoint& Size, const FString& Content);
+	FString CreateTwinePassageData(int32 Pid, const FString& Name, const FString& Tags, const FIntPoint& Position, const FIntPoint& Size, const FString& Content);
 
 	FString CreateTwineCustomCss();
 
-	FORCEINLINE FIntPoint GraphNodeToTwineCanvas(const int32 PositionX, const int32 PositionY)
+	FORCEINLINE FIntPoint GraphNodeToTwineCanvas(int32 PositionX, int32 PositionY)
 	{
 		// Twine Graph canvas always starts from 0,0 - there is not negative position
 		const int32 NewX = FMath::Abs(MinimumGraphX) + PositionX;
@@ -50,7 +50,7 @@ public:
 
 	static FString CreateTwineTagColorsData();
 
-	FString GetNodeNameFromNode(const UDlgNode& Node, const int32 NodeIndex, const bool bIsRootNode = false);
+	FString GetNodeNameFromNode(const UDlgNode& Node, int32 NodeIndex, bool bIsRootNode = false);
 
 	FORCEINLINE static FString& EscapeHtml(FString& String)
 	{

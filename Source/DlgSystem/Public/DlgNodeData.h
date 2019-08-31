@@ -1,9 +1,6 @@
-// Copyright 2018 Csaba Molnar
-
+// Copyright 2017-2019 Csaba Molnar, Daniel Butum
 #pragma once
-
-#include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "UObject/Object.h"
 
 #include "DlgNodeData.generated.h"
 

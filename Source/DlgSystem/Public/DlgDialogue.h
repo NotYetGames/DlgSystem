@@ -64,7 +64,6 @@ UCLASS(BlueprintType, Meta = (DisplayThumbnail = "true"))
 class DLGSYSTEM_API UDlgDialogue : public UObject
 {
 	GENERATED_BODY()
-	typedef UDlgDialogue Self;
 public:
 
 	// Begin UObject Interface.
@@ -202,7 +201,7 @@ public:
 	void CompileDialogueNodesFromGraphNodes();
 
 	/** Sets the dialogue editor implementation. This is called in the constructor of the DlgDialogueGraph in the DlgSytemEditor module. */
-	static void SetDialogueEditorModule(TSharedPtr<IDlgDialogueEditorModule> InDialogueEditor)
+	static void SetDialogueEditorModule(const TSharedPtr<IDlgDialogueEditorModule>& InDialogueEditor)
 	{
 		check(!DialogueEditorModule.IsValid());
 		check(InDialogueEditor.IsValid());
@@ -417,7 +416,7 @@ public:
 	UDlgNode* GetMutableStartNode() { return StartNode; }
 
 	/** Gets the Node as a mutable pointer. */
-	UDlgNode* GetMutableNode(const int32 NodeIndex) { return Nodes.IsValidIndex(NodeIndex) ? Nodes[NodeIndex] : nullptr; }
+	UDlgNode* GetMutableNode(int32 NodeIndex) { return Nodes.IsValidIndex(NodeIndex) ? Nodes[NodeIndex] : nullptr; }
 
 	/** Sets a new Start Node. Use with care. */
 	void SetStartNode(UDlgNode* InStartNode) { StartNode = InStartNode; }
@@ -504,15 +503,19 @@ private:
 	UPROPERTY(VisibleAnywhere, AdvancedDisplay, Category = DialogueData, Meta = (DlgNoExport))
 	TSet<FName> DlgSpeakerStates;
 
-	/** Root node, Dialogue is started from the first child withf satisfied condition (like the SelectorFirst node) */
+	/**
+	 * Root node, Dialogue is started from the first child with satisfied condition (like the SelectorFirst node)
+	 * NOTE: Add VisibleAnywhere to make it easier to debug
+	 */
 	UPROPERTY(Instanced)
 	UDlgNode* StartNode;
 
 	/**
 	 * The new list of all nodes that belong to this Dialogue. Each nodes has children (edges) that have indices that point
 	 * to other nodes in this array.
+	 * NOTE: Add VisibleAnywhere to make it easier to debug
 	 */
-	UPROPERTY(VisibleAnywhere, AdvancedDisplay, EditFixedSize, Instanced, Category = DialogueData, Meta = (DlgWriteIndex))
+	UPROPERTY(AdvancedDisplay, EditFixedSize, Instanced, Meta = (DlgWriteIndex))
 	TArray<UDlgNode*> Nodes;
 
 	// Useful for syncing on the first run with the text file.

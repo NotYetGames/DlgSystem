@@ -13,7 +13,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FFindInDialoguesResult
-FFindInDialoguesResult::FFindInDialoguesResult(const FText& InDisplayText, TSharedPtr<Self> InParent)
+FFindInDialoguesResult::FFindInDialoguesResult(const FText& InDisplayText, const TSharedPtr<Self>& InParent)
 	: Super(InDisplayText, InParent)
 {
 }
@@ -50,7 +50,7 @@ FFindInDialoguesRootNode::FFindInDialoguesRootNode() :
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FFindInDialoguesDialogueNode
-FFindInDialoguesDialogueNode::FFindInDialoguesDialogueNode(const FText& InDisplayText, TSharedPtr<FFindInDialoguesResult> InParent) :
+FFindInDialoguesDialogueNode::FFindInDialoguesDialogueNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent) :
 	Super(InDisplayText, InParent)
 {
 	Category = LOCTEXT("FFindInDialoguesDialogueNodeCategory", "Dialogue");
@@ -90,7 +90,7 @@ TSharedRef<SWidget>	FFindInDialoguesDialogueNode::CreateIcon() const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FFindInDialoguesGraphNode
-FFindInDialoguesGraphNode::FFindInDialoguesGraphNode(const FText& InDisplayText, TSharedPtr<FFindInDialoguesResult> InParent) :
+FFindInDialoguesGraphNode::FFindInDialoguesGraphNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent) :
 	Super(InDisplayText, InParent)
 {
 }
@@ -123,7 +123,7 @@ TSharedRef<SWidget> FFindInDialoguesGraphNode::CreateIcon() const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FFindInDialoguesEdgeNode
-FFindInDialoguesEdgeNode::FFindInDialoguesEdgeNode(const FText& InDisplayText, TSharedPtr<FFindInDialoguesResult> InParent) :
+FFindInDialoguesEdgeNode::FFindInDialoguesEdgeNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent) :
 	FFindInDialoguesResult(InDisplayText, InParent)
 {
 }
@@ -155,7 +155,7 @@ TSharedRef<SWidget>	FFindInDialoguesEdgeNode::CreateIcon() const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FFindInDialoguesCommentNode
-FFindInDialoguesCommentNode::FFindInDialoguesCommentNode(const FText& InDisplayText, TSharedPtr<FFindInDialoguesResult> InParent) :
+FFindInDialoguesCommentNode::FFindInDialoguesCommentNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent) :
 	FFindInDialoguesResult(InDisplayText, InParent)
 {
 }

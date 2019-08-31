@@ -68,7 +68,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 				PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameOwnerName());
 			FDetailWidgetRow* DetailWidgetRow = &BaseDataCategory.AddCustomRow(LOCTEXT("ParticipantNameSearcKey", "Participant Name"));
 
-			ParticipantNamePropertyRow = MakeShareable(new FTextPropertyPickList_CustomRowHelper(DetailWidgetRow, ParticipantNamePropertyHandle));
+			ParticipantNamePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
 			ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
 				SNew(STextPropertyPickList)
 				.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
@@ -115,7 +115,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 
 				FDetailWidgetRow* DetailWidgetRow = &SpeechDataCategory.AddCustomRow(LOCTEXT("SpeakerStateSearchKey", "Speaker State"));
 
-				SpeakerStatePropertyRow = MakeShareable(new FTextPropertyPickList_CustomRowHelper(DetailWidgetRow, SpeakerStatePropertyHandle));
+				SpeakerStatePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, SpeakerStatePropertyHandle);
 				SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
 					SNew(STextPropertyPickList)
 					.AvailableSuggestions(this, &Self::GetAllDialoguesSpeakerStates)
@@ -131,7 +131,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 				TextPropertyHandle = PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameText());
 				FDetailWidgetRow* DetailWidgetRow = &SpeechDataCategory.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
 
-				TextPropertyRow = MakeShareable(new FMultiLineEditableTextBox_CustomRowHelper(DetailWidgetRow, TextPropertyHandle));
+				TextPropertyRow = MakeShared<FMultiLineEditableTextBox_CustomRowHelper>(DetailWidgetRow, TextPropertyHandle);
 				TextPropertyRow->SetMultiLineEditableTextBoxWidget(
 					SNew(SMultiLineEditableTextBox)
 					.Font(FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont")))

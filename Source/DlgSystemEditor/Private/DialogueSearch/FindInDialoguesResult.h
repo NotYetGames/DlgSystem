@@ -50,7 +50,7 @@ class FFindInDialoguesResult : public FDlgTreeViewNode<FFindInDialoguesResult>
 
 public:
 	/* Create a listing for a search result*/
-	FFindInDialoguesResult(const FText& InDisplayText, TSharedPtr<Self> InParent);
+	FFindInDialoguesResult(const FText& InDisplayText, const TSharedPtr<Self>& InParent);
 
 	/* Create an icon to represent the result */
 	virtual TSharedRef<SWidget>	CreateIcon() const;
@@ -89,7 +89,7 @@ class FFindInDialoguesDialogueNode : public FFindInDialoguesResult
 {
 	typedef FFindInDialoguesResult Super;
 public:
-	FFindInDialoguesDialogueNode(const FText& InDisplayText, TSharedPtr<FFindInDialoguesResult> InParent);
+	FFindInDialoguesDialogueNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent);
 
 	FReply OnClick() override;
 	TWeakObjectPtr<const UDlgDialogue> GetParentDialogue() const override;
@@ -109,7 +109,7 @@ class FFindInDialoguesGraphNode : public FFindInDialoguesResult
 {
 	typedef FFindInDialoguesResult Super;
 public:
-	FFindInDialoguesGraphNode(const FText& InDisplayText, TSharedPtr<FFindInDialoguesResult> InParent);
+	FFindInDialoguesGraphNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent);
 
 	FReply OnClick() override;
 	TSharedRef<SWidget> CreateIcon() const override;
@@ -128,7 +128,7 @@ class FFindInDialoguesEdgeNode : public FFindInDialoguesResult
 {
 	typedef FFindInDialoguesResult Super;
 public:
-	FFindInDialoguesEdgeNode(const FText& InDisplayText, TSharedPtr<FFindInDialoguesResult> InParent);
+	FFindInDialoguesEdgeNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent);
 
 	FReply OnClick() override;
 	TSharedRef<SWidget> CreateIcon() const override;
@@ -146,7 +146,7 @@ class FFindInDialoguesCommentNode : public FFindInDialoguesResult
 {
 	typedef FFindInDialoguesResult Super;
 public:
-	FFindInDialoguesCommentNode(const FText& InDisplayText, TSharedPtr<FFindInDialoguesResult> InParent);
+	FFindInDialoguesCommentNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent);
 
 	FReply OnClick() override;
 	TSharedRef<SWidget> CreateIcon() const override;

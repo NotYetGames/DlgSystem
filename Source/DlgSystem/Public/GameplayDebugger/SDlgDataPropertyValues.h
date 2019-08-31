@@ -19,7 +19,7 @@ public:
 	SLATE_BEGIN_ARGS(Self) {}
 	SLATE_END_ARGS()
 
-	void Construct(const FArguments& InArgs, TSharedPtr<FDlgDataDisplayTreeVariableNode> InVariableNode);
+	void Construct(const FArguments& InArgs, const TSharedPtr<FDlgDataDisplayTreeVariableNode>& InVariableNode);
 
 	// SWidget Interface
 
@@ -30,7 +30,7 @@ public:
 	 * @param  InCurrentTime  Current absolute real time
 	 * @param  InDeltaTime  Real time passed since last tick
 	 */
-	void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override;
+	void Tick(const FGeometry& AllottedGeometry, double InCurrentTime, float InDeltaTime) override;
 
 	/**
 	 * Checks to see if this widget supports keyboard focus.  Override this in derived classes.
@@ -90,7 +90,7 @@ public:
 	SLATE_BEGIN_ARGS(Self) {}
 	SLATE_END_ARGS()
 
-	void Construct(const FArguments& InArgs, TSharedPtr<FDlgDataDisplayTreeVariableNode> InVariableNode);
+	void Construct(const FArguments& InArgs, const TSharedPtr<FDlgDataDisplayTreeVariableNode>& InVariableNode);
 
 protected:
 	void HandleTextCommitted(const FText& NewText, ETextCommit::Type CommitInfo);
@@ -115,10 +115,10 @@ public:
 	SLATE_BEGIN_ARGS(Self) {}
 	SLATE_END_ARGS()
 
-	void Construct(const FArguments& InArgs, TSharedPtr<FDlgDataDisplayTreeVariableNode> InVariableNode);
+	void Construct(const FArguments& InArgs, const TSharedPtr<FDlgDataDisplayTreeVariableNode>& InVariableNode);
 
 	// SWidget Interface
-	void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override
+	void Tick(const FGeometry& AllottedGeometry, double InCurrentTime, float InDeltaTime) override
 	{
 		SCompoundWidget::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
 	}
@@ -136,7 +136,7 @@ public:
 	SLATE_BEGIN_ARGS(Self) {}
 	SLATE_END_ARGS()
 
-	void Construct(const FArguments& InArgs, TSharedPtr<FDlgDataDisplayTreeVariableNode> InVariableNode);
+	void Construct(const FArguments& InArgs, const TSharedPtr<FDlgDataDisplayTreeVariableNode>& InVariableNode);
 
 	// SWidget interface
 	bool HasKeyboardFocus() const override;

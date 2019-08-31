@@ -18,7 +18,7 @@ class FDialogueEdge_Details : public IPropertyTypeCustomization
 	typedef FDialogueEdge_Details Self;
 
 public:
-	static TSharedRef<IPropertyTypeCustomization> MakeInstance() { return MakeShareable(new Self); }
+	static TSharedRef<IPropertyTypeCustomization> MakeInstance() { return MakeShared<Self>(); }
 
 	/** IPropertyTypeCustomization interface */
 	/**

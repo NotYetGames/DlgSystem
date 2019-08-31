@@ -67,7 +67,7 @@ public:
 	void PrepareForCopying() override { Super::PrepareForCopying(); }
 
 	/** IGNORED. Removes the specified pin from the node, preserving remaining pin ordering. */
-	void RemovePinAt(const int32 PinIndex, const EEdGraphPinDirection PinDirection) override {}
+	void RemovePinAt(int32 PinIndex, const EEdGraphPinDirection PinDirection) override {}
 
 	/** Whether or not struct pins belonging to this node should be allowed to be split or not. */
 	bool CanSplitPin(const UEdGraphPin* Pin) const override { return false; }

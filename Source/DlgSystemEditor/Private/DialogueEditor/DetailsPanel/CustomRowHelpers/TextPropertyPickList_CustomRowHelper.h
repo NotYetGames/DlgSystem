@@ -16,11 +16,11 @@ class FTextPropertyPickList_CustomRowHelper : public FBase_CustomRowHelper
 	typedef FTextPropertyPickList_CustomRowHelper Self;
 	typedef FBase_CustomRowHelper Super;
 public:
-	FTextPropertyPickList_CustomRowHelper(FDetailWidgetRow* InDetailWidgetRow, const TSharedPtr<IPropertyHandle> InPropertyHandle)
+	FTextPropertyPickList_CustomRowHelper(FDetailWidgetRow* InDetailWidgetRow, const TSharedPtr<IPropertyHandle>& InPropertyHandle)
 		: FBase_CustomRowHelper(InDetailWidgetRow, InPropertyHandle) {}
 
 	/** Set the SPropertyPickList */
-	Self* SetTextPropertyPickListWidget(const TSharedRef<STextPropertyPickList> InWidget)
+	Self* SetTextPropertyPickListWidget(const TSharedRef<STextPropertyPickList>& InWidget)
 	{
 		TextPropertyPickListWidget = InWidget;
 		return this;

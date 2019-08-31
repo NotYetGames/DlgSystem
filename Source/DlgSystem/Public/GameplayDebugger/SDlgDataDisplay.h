@@ -42,11 +42,11 @@ private:
 	TSharedRef<SWidget> GetFilterTextBoxWidget();
 
 	/** Add the Variables as children to the Item */
-	void AddVariableChildrenToItem(TSharedPtr<FDlgDataDisplayTreeNode> Item, const TMap<FName, TSharedPtr<FDlgDataDisplayVariableProperties>>& Variables,
+	void AddVariableChildrenToItem(const TSharedPtr<FDlgDataDisplayTreeNode>& Item, const TMap<FName, TSharedPtr<FDlgDataDisplayVariableProperties>>& Variables,
 		const FText& DisplayTextFormat, const EDlgDataDisplayVariableTreeNodeType VariableType);
 
 	/** Recursively build the view item. */
-	void BuildTreeViewItem(TSharedPtr<FDlgDataDisplayTreeNode> Item);
+	void BuildTreeViewItem(const TSharedPtr<FDlgDataDisplayTreeNode>& Item);
 
 	/** Text search changed */
 	void HandleSearchTextCommited(const FText& InText, ETextCommit::Type InCommitType);
@@ -74,7 +74,7 @@ private:
 	void HandleSetExpansionRecursive(TSharedPtr<FDlgDataDisplayTreeNode> InItem, bool bInIsItemExpanded);
 
 	/** Compare two FDlgDataDisplayTreeNode */
-	static bool PredicateCompareDlgDataDisplayTreeNode(TSharedPtr<FDlgDataDisplayTreeNode> FirstNode, TSharedPtr<FDlgDataDisplayTreeNode> SecondNode)
+	static bool PredicateCompareDlgDataDisplayTreeNode(const TSharedPtr<FDlgDataDisplayTreeNode>& FirstNode, const TSharedPtr<FDlgDataDisplayTreeNode>& SecondNode)
 	{
 		if (!FirstNode.IsValid() || !SecondNode.IsValid())
 		{

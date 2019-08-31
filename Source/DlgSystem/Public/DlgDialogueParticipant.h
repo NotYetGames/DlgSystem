@@ -22,7 +22,7 @@ class DLGSYSTEM_API IDlgDialogueParticipant
 {
 	GENERATED_IINTERFACE_BODY()
 
-	// Participant informations:
+	// Participant information:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = DialogueCallback)
 	FName GetParticipantName() const;

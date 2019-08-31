@@ -26,7 +26,7 @@ public:
 
 	/** Restore the expansion state of the InTree with the ItemSource provided (usually the flattened tree) */
 	template<typename ItemType, typename ComparisonType>
-	static void RestoreTreeExpansionState(TSharedPtr<STreeView<ItemType>> InTree, const TArray<ItemType>& ItemSource,
+	static void RestoreTreeExpansionState(const TSharedPtr<STreeView<ItemType>>& InTree, const TArray<ItemType>& ItemSource,
 		const TSet<ItemType>& OldExpansionState, ComparisonType ComparisonFunction)
 	{
 		check(InTree.IsValid());

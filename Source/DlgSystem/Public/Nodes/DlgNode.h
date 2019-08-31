@@ -9,6 +9,7 @@
 #include "DlgEdge.h"
 #include "DlgCondition.h"
 #include "DlgEvent.h"
+#include "DlgNodeData.h"
 
 #include "DlgNode.generated.h"
 
@@ -17,7 +18,6 @@ class UDlgContextInternal;
 class UDlgNode;
 class USoundWave;
 class UDialogueWave;
-class UDlgNodeData;
 struct FDlgTextArgument;
 
 /**
@@ -224,6 +224,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	TArray<FDlgEvent> EnterEvents;
 
+	// Node data that you can customize yourself with your own data types
 	UPROPERTY(EditAnywhere, Instanced, Category = DialogueNodeData)
 	UDlgNodeData* NodeData;
 

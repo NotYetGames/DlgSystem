@@ -114,7 +114,7 @@ public:
 	 * @param	bIsDirectionVertical	Is direction vertical? If false it is horizontal
 	 */
 	static void AutoPositionGraphNodes(UDialogueGraphNode* RootNode, const TArray<UDialogueGraphNode*>& GraphNodes,
-									   const int32 OffsetBetweenColumnsX, const int32 OffsetBetweenRowsY, const bool bIsDirectionVertical);
+									int32 OffsetBetweenColumnsX, int32 OffsetBetweenRowsY, bool bIsDirectionVertical);
 
 	/**
 	 * Tells us if the selected nodes can be converted to a speech sequence node.
@@ -154,7 +154,7 @@ public:
 	 * Tries to open an Dialogue editor for the GraphNode and jumps to it. Returns true if the asset is opened in an editor.
 	 * If the file is already open in an editor, it will not create another editor window but instead bring it to front
 	 */
-	static bool OpenEditorAndJumpToGraphNode(const UEdGraphNode* GraphNode, const bool bFocusIfOpen = false);
+	static bool OpenEditorAndJumpToGraphNode(const UEdGraphNode* GraphNode, bool bFocusIfOpen = false);
 
 	/**
 	 * Copy all children of the FromNode to be also the children of ToNode.

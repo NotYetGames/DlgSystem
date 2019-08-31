@@ -45,15 +45,15 @@ public:
 	bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
 	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated) override;
 	void GetAssociatedParticipants(TArray<FName>& OutArray) const override;
-	const TArray<FDlgTextArgument>& GetTextArguments() const { return TextArguments; };
+	const TArray<FDlgTextArgument>& GetTextArguments() const override { return TextArguments; };
 
 	// Getters:
-	const FText& GetNodeText() const override { return (TextArguments.Num() > 0 && !ConstructedText.IsEmpty()) ? ConstructedText : Text; }
+	const FText& GetNodeText() const override { return TextArguments.Num() > 0 && !ConstructedText.IsEmpty() ? ConstructedText : Text; }
 	const FText& GetNodeUnformattedText() const override { return Text; }
 	USoundWave* GetNodeVoiceSoundWave() const override { return VoiceSoundWave; }
 	UDialogueWave* GetNodeVoiceDialogueWave() const override { return VoiceDialogueWave; }
 	FName GetSpeakerState() const override { return SpeakerState; }
-	void AddAllSpeakerStatesIntoSet(TSet<FName>& States) const { States.Add(SpeakerState); }
+	void AddAllSpeakerStatesIntoSet(TSet<FName>& States) const override { States.Add(SpeakerState); }
 	UObject* GetGenericData() const override { return GenericData; }
 
 #if WITH_EDITOR
@@ -100,7 +100,7 @@ protected:
 	UDialogueWave* VoiceDialogueWave;
 
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
-	class UObject* GenericData;
+	UObject* GenericData;
 
 	/** State of the speaker attached to this node. Passed to the GetParticipantIcon function. */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)

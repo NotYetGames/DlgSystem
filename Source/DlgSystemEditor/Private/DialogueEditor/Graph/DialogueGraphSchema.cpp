@@ -92,7 +92,7 @@ void UDialogueGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
 	DialogueGraph->LinkGraphNodesFromDialogue();
 	DialogueGraph->AutoPositionGraphNodes();
 
-	// TODO(leyyin): Fix editor crash
+	// TODO(vampy): Fix editor crash
 	//SetNodeMetaData(ResultRootNode, FNodeMetadata::DefaultGraphNode);
 }
 
