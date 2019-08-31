@@ -17,6 +17,7 @@ class UDlgContextInternal;
 class UDlgNode;
 class USoundWave;
 class UDialogueWave;
+class UDlgNodeData;
 struct FDlgTextArgument;
 
 /**
@@ -174,6 +175,8 @@ public:
 	/** Gets the generic data asset of this Node. */
 	virtual UObject* GetGenericData() const { return nullptr; }
 
+	virtual UDlgNodeData* GetNodeData() const { return NodeData; }
+
 	/** Helper method to get directly the Dialogue */
 	class UDlgDialogue* GetDialogue() const;
 
@@ -183,6 +186,7 @@ public:
 	static FName GetMemberNameEnterConditions() { return GET_MEMBER_NAME_CHECKED(UDlgNode, EnterConditions); }
 	static FName GetMemberNameEnterEvents() { return GET_MEMBER_NAME_CHECKED(UDlgNode, EnterEvents); }
 	static FName GetMemberNameChildren() { return GET_MEMBER_NAME_CHECKED(UDlgNode, Children); }
+	static FName GetMemberNameNodeData() { return GET_MEMBER_NAME_CHECKED(UDlgNode, NodeData); }
 
 protected:
 
@@ -219,6 +223,9 @@ protected:
 	/** Events fired when the node is reached in the dialogue */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	TArray<FDlgEvent> EnterEvents;
+
+	UPROPERTY(EditAnywhere, Instanced, Category = DialogueNodeData)
+	UDlgNodeData* NodeData;
 
 	/** Edges that point to Children of this Node */
 	UPROPERTY(EditAnywhere, EditFixedSize, AdvancedDisplay, Category = DialogueNodeData)

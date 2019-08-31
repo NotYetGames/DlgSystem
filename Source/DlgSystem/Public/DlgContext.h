@@ -8,6 +8,7 @@
 class USoundWave;
 class UDialogueWave;
 class UTexture2D;
+class UDlgNodeData;
 
 /** Used to store temporary state of edges */
 struct FDlgEdgeData
@@ -121,6 +122,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = DialogueData)
 	UObject* GetActiveNodeGenericData() const;
+
+	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UDlgNodeData* GetActiveNodeData() const;
 
 	/** Gets the Icon associated with the active node participant name (owner name). */
 	UFUNCTION(BlueprintPure, Category = DialogueData)
