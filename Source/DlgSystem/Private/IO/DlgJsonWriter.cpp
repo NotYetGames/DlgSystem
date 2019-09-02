@@ -271,7 +271,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 		auto returnNullptr = [this, &ObjectProperty]() -> TSharedPtr<FJsonValue>
 		{
 			// Save reference as empty string
-			if (CanSaveAsReference(ObjectProperty))
+			if (CanSaveAsReference(ObjectProperty, nullptr))
 			{
 				return MakeShared<FJsonValueString>(TEXT(""));
 			}
@@ -284,7 +284,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 		const UObject* ObjectPtr = ObjectProperty->GetObjectPropertyValue_InContainer(ValuePtr);
 
 		// Special case were we want just to save a reference to the object location
-		if (ObjectPtr != nullptr && CanSaveAsReference(ObjectProperty))
+		if (ObjectPtr != nullptr && CanSaveAsReference(ObjectProperty, ObjectPtr))
 		{
 			return MakeShared<FJsonValueString>(ObjectPtr->GetPathName());
 		}

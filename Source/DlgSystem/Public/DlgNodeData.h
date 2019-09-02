@@ -5,9 +5,9 @@
 #include "DlgNodeData.generated.h"
 
 /**
- *  Abstract base class for tasks
- *  A task can be either a single action or an action executed for a specified duration
+ *  Abstract base class for node data
  *  Defining class via inheriting from UNYTaskBase outside of the plugin is possible both in Blueprint and C++
+ *  Extend this class to define additional data you want to store on your nodes
  */
 UCLASS(BlueprintType, Blueprintable, EditInlineNew, Abstract)
 class DLGSYSTEM_API UDlgNodeData : public UObject

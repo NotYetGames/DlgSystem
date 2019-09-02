@@ -23,6 +23,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
 	FText Text;
 
+	/** Node data that you can customize yourself with your own data types */
+	UPROPERTY(EditAnywhere, Instanced, Category = DialogueNodeData)
+	UDlgNodeData* NodeData;
+
 	/** Voice attached to the entry. The Sound Wave variant. */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
 	USoundWave* VoiceSoundWave;
@@ -71,6 +75,7 @@ public:
 
 	// Getters
 	const FText& GetNodeText() const override;
+	UDlgNodeData* GetNodeData() const override;
 	USoundWave* GetNodeVoiceSoundWave() const override;
 	UDialogueWave* GetNodeVoiceDialogueWave() const override;
 	FName GetSpeakerState() const override;

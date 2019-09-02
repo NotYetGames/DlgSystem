@@ -77,10 +77,16 @@ public:
 	}
 
 	/** Decides if the path to the object should be serialized, or the object itself */
-	virtual bool CanSaveAsReference(const UProperty* Property)
+	virtual bool CanSaveAsReference(const UProperty* Property, const UObject* Object)
 	{
 		// UClass
 		if (Property->IsA<UClassProperty>())
+		{
+			return true;
+		}
+
+		// if outer is nullptr we assume this is something from content browser (texture, mesh, etc.)
+		if (Object != nullptr && (Object->GetOuter() == nullptr || Cast<UPackage>(Object->GetOuter()) != nullptr))
 		{
 			return true;
 		}

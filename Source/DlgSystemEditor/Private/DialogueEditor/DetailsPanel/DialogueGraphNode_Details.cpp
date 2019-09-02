@@ -85,9 +85,6 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 			.ShouldAutoExpand(true);
 		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameEnterEvents()))
 			.ShouldAutoExpand(true);
-
-		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameNodeData()))
-			.ShouldAutoExpand(true);
 	}
 	if (!bIsEndNode)
 	{
@@ -149,6 +146,9 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 
 			// text arguments
 			SpeechDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameTextArguments()))
+				.ShouldAutoExpand(true);
+
+			SpeechDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameNodeData()))
 				.ShouldAutoExpand(true);
 
 			// Voice
