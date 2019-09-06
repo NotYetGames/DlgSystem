@@ -24,7 +24,7 @@ private:
 	typedef FDialogueSearchFoundResult Self;
 
 public:
-	static TSharedPtr<FDialogueSearchFoundResult> Make() { return MakeShareable(new Self); }
+	static TSharedPtr<FDialogueSearchFoundResult> Make() { return MakeShared<Self>(); }
 
 public:
 	// Nodes that satisfy the search result.
@@ -163,7 +163,7 @@ public:
 	{
 		for (const FDlgCondition& Condition : Conditions)
 		{
-			if (Condition.ConditionType == ConditionType && 
+			if (Condition.ConditionType == ConditionType &&
 				(Condition.CallbackName == ConditionName || Condition.OtherVariableName == ConditionName))
 			{
 				return true;
@@ -205,7 +205,7 @@ private:
 																				const EDlgConditionType ConditionType);
 
 	static void GetGraphNodesForTextArgumentVariable(const FName& VariableName,
-													 const UDlgDialogue* Dialogue, 
-													 const EDlgTextArgumentType ArgumentType, 
-													 TSharedPtr<FDialogueSearchFoundResult> FoundResult);
+													 const UDlgDialogue* Dialogue,
+													 const EDlgTextArgumentType ArgumentType,
+													 TSharedPtr<FDialogueSearchFoundResult>& FoundResult);
 };

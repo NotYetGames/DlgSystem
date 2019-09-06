@@ -48,7 +48,7 @@ FFindInDialogueSearchManager::~FFindInDialogueSearchManager()
 }
 
 bool FFindInDialogueSearchManager::QueryDlgTextArgument(const FDialogueSearchFilter& SearchFilter, const FDlgTextArgument& InDlgTextArgument,
-	TSharedPtr<FFindInDialoguesResult> OutParentNode, const int32 ArgumentIndex)
+	const TSharedPtr<FFindInDialoguesResult>& OutParentNode, int32 ArgumentIndex)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid())
 	{
@@ -89,7 +89,7 @@ bool FFindInDialogueSearchManager::QueryDlgTextArgument(const FDialogueSearchFil
 }
 
 bool FFindInDialogueSearchManager::QueryDlgCondition(const FDialogueSearchFilter& SearchFilter, const FDlgCondition& InDlgCondition,
-													TSharedPtr<FFindInDialoguesResult> OutParentNode)
+													const TSharedPtr<FFindInDialoguesResult>& OutParentNode)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid())
 	{
@@ -181,7 +181,7 @@ bool FFindInDialogueSearchManager::QueryDlgCondition(const FDialogueSearchFilter
 }
 
 bool FFindInDialogueSearchManager::QueryDlgEvent(const FDialogueSearchFilter& SearchFilter, const FDlgEvent& InDlgEvent,
-												TSharedPtr<FFindInDialoguesResult> OutParentNode)
+												const TSharedPtr<FFindInDialoguesResult>& OutParentNode)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid())
 	{
@@ -251,7 +251,7 @@ bool FFindInDialogueSearchManager::QueryDlgEvent(const FDialogueSearchFilter& Se
 }
 
 bool FFindInDialogueSearchManager::QueryDlgEdge(const FDialogueSearchFilter& SearchFilter, const FDlgEdge& InDlgEdge,
-												TSharedPtr<FFindInDialoguesResult> OutParentNode)
+												const TSharedPtr<FFindInDialoguesResult>& OutParentNode)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid())
 	{
@@ -296,7 +296,7 @@ bool FFindInDialogueSearchManager::QueryDlgEdge(const FDialogueSearchFilter& Sea
 }
 
 bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& SearchFilter, const UDialogueGraphNode* InGraphNode,
-												TSharedPtr<FFindInDialoguesResult> OutParentNode)
+												const TSharedPtr<FFindInDialoguesResult>& OutParentNode)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || !IsValid(InGraphNode))
 	{
@@ -311,7 +311,7 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& S
 	// Create the GraphNode Node
 	const FText DisplayText = FText::Format(LOCTEXT("TreeGraphNodeCategory", "{0} Node at index {1}"),
 										 FText::FromString(NodeType), FText::AsNumber(NodeIndex));
-	TSharedPtr<FFindInDialoguesGraphNode> TreeGraphNode = MakeShareable(new FFindInDialoguesGraphNode(DisplayText, OutParentNode));
+	TSharedPtr<FFindInDialoguesGraphNode> TreeGraphNode = MakeShared<FFindInDialoguesGraphNode>(DisplayText, OutParentNode);
 	TreeGraphNode->SetCategory(FText::FromString(NodeType));
 	TreeGraphNode->SetGraphNode(InGraphNode);
 
@@ -342,7 +342,7 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& S
 	if (Node.GetNodeParticipantName().ToString().Contains(SearchFilter.SearchString))
 	{
 		bContainsSearchString = true;
-		MakeChildTextNode(TreeGraphNode, 
+		MakeChildTextNode(TreeGraphNode,
 			FText::FromName(Node.GetNodeParticipantName()),
 			LOCTEXT("ParticipantNameKey", "Participant Name"),
 			TEXT("Participant Name"));
@@ -437,7 +437,7 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& S
 }
 
 bool FFindInDialogueSearchManager::QueryEdgeNode(const FDialogueSearchFilter& SearchFilter, const UDialogueGraphNode_Edge* InEdgeNode,
-	TSharedPtr<FFindInDialoguesResult> OutParentNode)
+	const TSharedPtr<FFindInDialoguesResult>& OutParentNode)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || !IsValid(InEdgeNode))
 	{
@@ -458,7 +458,7 @@ bool FFindInDialogueSearchManager::QueryEdgeNode(const FDialogueSearchFilter& Se
 	}
 	const FText DisplayText = FText::Format(LOCTEXT("EdgeNodeDisplaytext", "Edge between {0} -> {1}"),
 		FText::AsNumber(FromParent), FText::AsNumber(ToChild));
-	TSharedPtr<FFindInDialoguesEdgeNode> TreeEdgeNode = MakeShareable(new FFindInDialoguesEdgeNode(DisplayText, OutParentNode));
+	TSharedPtr<FFindInDialoguesEdgeNode> TreeEdgeNode = MakeShared<FFindInDialoguesEdgeNode>(DisplayText, OutParentNode);
 	TreeEdgeNode->SetCategory(DisplayText);
 	TreeEdgeNode->SetEdgeNode(InEdgeNode);
 
@@ -475,7 +475,7 @@ bool FFindInDialogueSearchManager::QueryEdgeNode(const FDialogueSearchFilter& Se
 }
 
 bool FFindInDialogueSearchManager::QueryCommentNode(const FDialogueSearchFilter& SearchFilter, const UEdGraphNode_Comment* InCommentNode,
-	TSharedPtr<FFindInDialoguesResult> OutParentNode)
+	const TSharedPtr<FFindInDialoguesResult>& OutParentNode)
 {
 	if (!SearchFilter.bIncludeComments || SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || !IsValid(InCommentNode))
 	{
@@ -485,7 +485,7 @@ bool FFindInDialogueSearchManager::QueryCommentNode(const FDialogueSearchFilter&
 	if (InCommentNode->NodeComment.Contains(SearchFilter.SearchString))
 	{
 		const FText Category = LOCTEXT("TreeNodeCommentCategory", "Comment Node");
-		TSharedPtr<FFindInDialoguesCommentNode> TreeCommentNode = MakeShareable(new FFindInDialoguesCommentNode(Category, OutParentNode));
+		TSharedPtr<FFindInDialoguesCommentNode> TreeCommentNode = MakeShared<FFindInDialoguesCommentNode>(Category, OutParentNode);
 		TreeCommentNode->SetCategory(Category);
 		TreeCommentNode->SetCommentNode(InCommentNode);
 
@@ -501,7 +501,7 @@ bool FFindInDialogueSearchManager::QueryCommentNode(const FDialogueSearchFilter&
 }
 
 bool FFindInDialogueSearchManager::QuerySingleDialogue(const FDialogueSearchFilter& SearchFilter,
-							const UDlgDialogue* InDialogue, TSharedPtr<FFindInDialoguesResult> OutParentNode)
+							const UDlgDialogue* InDialogue, TSharedPtr<FFindInDialoguesResult>& OutParentNode)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || !IsValid(InDialogue))
 	{
@@ -509,8 +509,9 @@ bool FFindInDialogueSearchManager::QuerySingleDialogue(const FDialogueSearchFilt
 	}
 
 	const UDialogueGraph* Graph = CastChecked<UDialogueGraph>(InDialogue->GetGraph());
-	TSharedPtr<FFindInDialoguesDialogueNode> TreeDialogueNode = MakeShareable(
-			new FFindInDialoguesDialogueNode(FText::FromString(InDialogue->GetPathName()), OutParentNode));
+	TSharedPtr<FFindInDialoguesDialogueNode> TreeDialogueNode = MakeShared<FFindInDialoguesDialogueNode>(
+			FText::FromString(InDialogue->GetPathName()), OutParentNode
+	);
 	TreeDialogueNode->SetDialogue(InDialogue);
 
 	// TODO node comments
@@ -582,7 +583,7 @@ bool FFindInDialogueSearchManager::QuerySingleDialogue(const FDialogueSearchFilt
 }
 
 void FFindInDialogueSearchManager::QueryAllDialogues(const FDialogueSearchFilter& SearchFilter,
-	TSharedPtr<FFindInDialoguesResult> OutParentNode)
+	TSharedPtr<FFindInDialoguesResult>& OutParentNode)
 {
 	// Iterate over all cached dialogues
 	for (auto& Elem : SearchMap)
@@ -595,7 +596,7 @@ void FFindInDialogueSearchManager::QueryAllDialogues(const FDialogueSearchFilter
 	}
 }
 
-FText FFindInDialogueSearchManager::GetGlobalFindResultsTabLabel(const int32 TabIdx)
+FText FFindInDialogueSearchManager::GetGlobalFindResultsTabLabel(int32 TabIdx)
 {
 	// Count the number of opened global Dialogues
 	int32 NumOpenGlobalFindResultsTabs = 0;
@@ -636,8 +637,7 @@ void FFindInDialogueSearchManager::CloseGlobalFindResults(const TSharedRef<SFind
 	}
 }
 
-TSharedRef<SDockTab> FFindInDialogueSearchManager::SpawnGlobalFindResultsTab(
-	const FSpawnTabArgs& SpawnTabArgs, const int32 TabIdx)
+TSharedRef<SDockTab> FFindInDialogueSearchManager::SpawnGlobalFindResultsTab(const FSpawnTabArgs& SpawnTabArgs, int32 TabIdx)
 {
 	// Label is Dynamic depending on the number of global tabs
 	TAttribute<FText> Label = TAttribute<FText>::Create(

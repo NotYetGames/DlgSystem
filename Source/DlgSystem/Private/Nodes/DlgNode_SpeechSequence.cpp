@@ -66,6 +66,16 @@ const FText& UDlgNode_SpeechSequence::GetNodeText() const
 	return FText::GetEmpty();
 }
 
+UDlgNodeData* UDlgNode_SpeechSequence::GetNodeData() const
+{
+	if (SpeechSequence.IsValidIndex(ActualIndex))
+	{
+		return SpeechSequence[ActualIndex].NodeData;
+	}
+
+	return nullptr;
+}
+
 USoundWave* UDlgNode_SpeechSequence::GetNodeVoiceSoundWave() const
 {
 	if (SpeechSequence.IsValidIndex(ActualIndex))

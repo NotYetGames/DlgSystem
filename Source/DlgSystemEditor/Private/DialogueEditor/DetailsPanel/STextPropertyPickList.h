@@ -133,7 +133,7 @@ public:
 	void SetToolTipAttribute(const TAttribute<FText>& InNewText);
 
 	/** Sets the property handle this widget represents. */
-	void SetPropertyHandle(const TSharedPtr<IPropertyHandle> InPropertyHandle);
+	void SetPropertyHandle(const TSharedPtr<IPropertyHandle>& InPropertyHandle);
 
 private:
 	/** Gets the menu content widget that is shown once the text is clicked on */

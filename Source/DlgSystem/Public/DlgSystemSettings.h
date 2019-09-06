@@ -89,7 +89,7 @@ enum class EDlgTextLocalization : uint8
 	DlgNamespacePerDialogue		UMETA(DisplayName = "Namespace Per Dialogue"),
 
 	/** The system sets the Namespace for Text fields for each dialogue into the same value. Unique keys are also generated. */
-	DlgGlobalNamespace		UMETA(DisplayName = "Global Namespace")
+	DlgGlobalNamespace			UMETA(DisplayName = "Global Namespace")
 };
 
 // Config = DlgSystemPlugin, DefaultConfig

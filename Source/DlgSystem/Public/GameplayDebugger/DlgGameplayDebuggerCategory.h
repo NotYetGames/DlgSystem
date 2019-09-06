@@ -24,10 +24,7 @@ public:
 	FDlgGameplayDebuggerCategory();
 
 	/** Creates an instance of this category - will be used on module startup to include our category in the Editor */
-	static TSharedRef<FGameplayDebuggerCategory> MakeInstance()
-	{
-		return MakeShareable(new Self);
-	}
+	static TSharedRef<FGameplayDebuggerCategory> MakeInstance() { return MakeShared<Self>(); }
 
 	// Begin FGameplayDebuggerCategory Interface
 

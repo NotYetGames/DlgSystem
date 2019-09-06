@@ -99,7 +99,7 @@ class FDialogueBrowserTreeNode : public FDlgTreeViewNode<FDialogueBrowserTreeNod
 	typedef FDlgTreeViewNode Super;
 
 public:
-	FDialogueBrowserTreeNode(const FText& InDisplayText, TSharedPtr<Self> InParent);
+	FDialogueBrowserTreeNode(const FText& InDisplayText, const TSharedPtr<Self>& InParent);
 
 	/** Gets the Participant Name that this Node belongs to. This must always return a valid value. */
 	virtual const FName GetParentParticipantName() const;
@@ -128,7 +128,7 @@ public:
 		InlineChildren.Empty();
 	}
 
-	void AddInlineChild(const TSharedPtr<Self>& ChildNode, const bool bIsInline = false)
+	void AddInlineChild(const TSharedPtr<Self>& ChildNode, bool bIsInline = false)
 	{
 		ensure(!ChildNode->IsRoot());
 		ensure(!IsSeparator());
@@ -215,7 +215,7 @@ public:
 
 protected:
 	// FDlgTreeViewNode Interface
-	void PostFilterPathsToNodes(TSharedPtr<Self> Child) override
+	void PostFilterPathsToNodes(const TSharedPtr<Self>& Child) override
 	{
 		Super::PostFilterPathsToNodes(Child);
 
@@ -228,13 +228,13 @@ protected:
 		//Children[Index]->SetIsVisible(NumBefore != OutNodes.Num() || Children[Index]->TextContains(InSearch));
 	}
 
-	void PostBuildPathToTopMostParent(TSharedPtr<Self> CurrentParentNode) override
+	void PostBuildPathToTopMostParent(const TSharedPtr<Self>& CurrentParentNode) override
 	{
 		Super::PostBuildPathToTopMostParent(CurrentParentNode);
 		check(!CurrentParentNode->IsSeparator());
 	}
 
-	bool FilterIsChildVisible(TSharedPtr<Self> GrandChild) override
+	bool FilterIsChildVisible(const TSharedPtr<Self>& GrandChild) override
 	{
 		return !GrandChild->IsSeparator() && !GrandChild->IsCategory() && Super::FilterIsChildVisible(GrandChild);
 	}
@@ -270,7 +270,7 @@ class FDialogueBrowserTreeSeparatorNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeNode Super;
 public:
-	FDialogueBrowserTreeSeparatorNode(TSharedPtr<FDialogueBrowserTreeNode> InParent = nullptr);
+	FDialogueBrowserTreeSeparatorNode(const TSharedPtr<FDialogueBrowserTreeNode>& InParent = nullptr);
 	bool IsText() const override { return false; }
 	bool IsCategory() const  override { return false; }
 	bool IsSeparator() const override { return true; }
@@ -285,7 +285,7 @@ class FDialogueBrowserTreeCategoryNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeNode Super;
 public:
-	FDialogueBrowserTreeCategoryNode(const FText& InDisplayText, TSharedPtr<FDialogueBrowserTreeNode> InParent,
+	FDialogueBrowserTreeCategoryNode(const FText& InDisplayText, const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
 									const EDialogueTreeNodeCategoryType InCategoryType);
 
 	bool IsText() const override { return false; }
@@ -299,7 +299,7 @@ class FDialogueBrowserTreeParticipantNode : public FDialogueBrowserTreeNode
 	typedef FDialogueBrowserTreeParticipantNode Self;
 	typedef FDialogueBrowserTreeNode Super;
 public:
-	FDialogueBrowserTreeParticipantNode(const FText& InDisplayText, TSharedPtr<FDialogueBrowserTreeNode> InParent,
+	FDialogueBrowserTreeParticipantNode(const FText& InDisplayText, const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
 										const FName& InParticipantName);
 
 	// ParticipantName:
@@ -318,7 +318,7 @@ class FDialogueBrowserTreeVariableNode : public FDialogueBrowserTreeNode
 	typedef FDialogueBrowserTreeNode Super;
 
 public:
-	FDialogueBrowserTreeVariableNode(const FText& InDisplayText, TSharedPtr<FDialogueBrowserTreeNode> InParent,
+	FDialogueBrowserTreeVariableNode(const FText& InDisplayText, const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
 									const FName& InVariableName);
 
 	// VariableName:
@@ -335,7 +335,7 @@ class FDialogueBrowserTreeCategoryParticipantNode : public FDialogueBrowserTreeP
 {
 	typedef FDialogueBrowserTreeParticipantNode Super;
 public:
-	FDialogueBrowserTreeCategoryParticipantNode(const FText& InDisplayText, TSharedPtr<FDialogueBrowserTreeNode> InParent,
+	FDialogueBrowserTreeCategoryParticipantNode(const FText& InDisplayText, const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
 		const FName& InParticipantName);
 
 	bool IsText() const override { return false; }
@@ -349,7 +349,7 @@ class FDialogueBrowserTreeDialogueNode : public FDialogueBrowserTreeNode
 	typedef FDialogueBrowserTreeDialogueNode Self;
 	typedef FDialogueBrowserTreeNode Super;
 public:
-	FDialogueBrowserTreeDialogueNode(const FText& InDisplayText, TSharedPtr<FDialogueBrowserTreeNode> InParent,
+	FDialogueBrowserTreeDialogueNode(const FText& InDisplayText, const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
 									const TWeakObjectPtr<const UDlgDialogue>& InObject);
 
 	// Dialogue:
@@ -377,7 +377,7 @@ class FDialogueBrowserTreeGraphNode : public FDialogueBrowserTreeNode
 	typedef FDialogueBrowserTreeGraphNode Self;
 	typedef FDialogueBrowserTreeNode Super;
 public:
-	FDialogueBrowserTreeGraphNode(const FText& InDisplayText, TSharedPtr<FDialogueBrowserTreeNode> InParent,
+	FDialogueBrowserTreeGraphNode(const FText& InDisplayText, const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
 								const TWeakObjectPtr<const UDialogueGraphNode>& InObject);
 
 	// GraphNode:
@@ -405,7 +405,7 @@ class FDialogueBrowserTreeEdgeNode : public FDialogueBrowserTreeNode
 	typedef FDialogueBrowserTreeEdgeNode Self;
 	typedef FDialogueBrowserTreeNode Super;
 public:
-	FDialogueBrowserTreeEdgeNode(const FText& InDisplayText, TSharedPtr<FDialogueBrowserTreeNode> InParent,
+	FDialogueBrowserTreeEdgeNode(const FText& InDisplayText, const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
 								const TWeakObjectPtr<const UDialogueGraphNode_Edge>& InObject);
 
 	// EdgeNode:

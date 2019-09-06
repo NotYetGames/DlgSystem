@@ -177,7 +177,7 @@ private:
 	 *
 	 * @return the constructed config string
 	 */
-	static void ConstructConfigFileInternal(const UStruct* ReferenceType, const int32 TabCount, void* SourceObject, FString& OutString);
+	static void ConstructConfigFileInternal(const UStruct* ReferenceType, int32 TabCount, void* SourceObject, FString& OutString);
 
 
 	/** Tries to read the actual config value as a primitive property (all supported primitive is checked) */

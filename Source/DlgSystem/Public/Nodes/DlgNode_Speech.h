@@ -45,16 +45,20 @@ public:
 	bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
 	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated) override;
 	void GetAssociatedParticipants(TArray<FName>& OutArray) const override;
-	const TArray<FDlgTextArgument>& GetTextArguments() const { return TextArguments; };
+	const TArray<FDlgTextArgument>& GetTextArguments() const override { return TextArguments; };
 
 	// Getters:
-	const FText& GetNodeText() const override { return (TextArguments.Num() > 0 && !ConstructedText.IsEmpty()) ? ConstructedText : Text; }
+	const FText& GetNodeText() const override { return TextArguments.Num() > 0 && !ConstructedText.IsEmpty() ? ConstructedText : Text; }
 	const FText& GetNodeUnformattedText() const override { return Text; }
+	UDlgNodeData* GetNodeData() const override { return NodeData; }
+
+	/** stuff we have to keep for legacy reason (but would make more sense to remove them from the plugin as they could be created in NodeData): */
+	FName GetSpeakerState() const override { return SpeakerState; }
 	USoundWave* GetNodeVoiceSoundWave() const override { return VoiceSoundWave; }
 	UDialogueWave* GetNodeVoiceDialogueWave() const override { return VoiceDialogueWave; }
-	FName GetSpeakerState() const override { return SpeakerState; }
-	void AddAllSpeakerStatesIntoSet(TSet<FName>& States) const { States.Add(SpeakerState); }
 	UObject* GetGenericData() const override { return GenericData; }
+
+	void AddAllSpeakerStatesIntoSet(TSet<FName>& States) const override { States.Add(SpeakerState); }
 
 #if WITH_EDITOR
 	FString GetNodeTypeString() const override { return bIsVirtualParent ? TEXT("Virtual Parent") : TEXT("Speech"); }
@@ -74,9 +78,18 @@ public:
 		RebuildTextArguments();
 	}
 
+	void SetNodeData(UDlgNodeData* InNodeData) { NodeData = InNodeData; }
+	void SetSpeakerState(FName InSpeakerState) { SpeakerState = InSpeakerState; }
+	void SetVoiceSoundWave(USoundWave* InVoiceSoundWave) { VoiceSoundWave = InVoiceSoundWave; }
+	void SetVoiceDialogueWave(UDialogueWave* InVoiceDialogueWave) { VoiceDialogueWave = InVoiceDialogueWave; }
+	void SetGenericData(UObject* InGenericData) { GenericData = InGenericData; }
+
 	/** Helper functions to get the names of some properties. Used by the DlgSystemEditor module. */
 	static FName GetMemberNameText() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, Text); }
 	static FName GetMemberNameTextArguments() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, TextArguments); }
+	static FName GetMemberNameNodeData() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, NodeData); }
+
+	/** stuff we have to support: */
 	static FName GetMemberNameVoiceSoundWave() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, VoiceSoundWave); }
 	static FName GetMemberNameVoiceDialogueWave() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, VoiceDialogueWave); }
 	static FName GetMemberNameGenericData() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, GenericData); }
@@ -91,6 +104,12 @@ protected:
 	UPROPERTY(EditAnywhere, EditFixedSize, Category = DialogueNodeData)
 	TArray<FDlgTextArgument> TextArguments;
 
+
+	/** Node data that you can customize yourself with your own data types */
+	UPROPERTY(EditAnywhere, Instanced, Category = DialogueNodeData)
+	UDlgNodeData* NodeData;
+
+
 	/** Voice attached to this node. The Sound Wave variant. */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
 	USoundWave* VoiceSoundWave;
@@ -100,11 +119,12 @@ protected:
 	UDialogueWave* VoiceDialogueWave;
 
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
-	class UObject* GenericData;
+	UObject* GenericData;
 
 	/** State of the speaker attached to this node. Passed to the GetParticipantIcon function. */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	FName SpeakerState;
+
 
 	/**
 	 * Make this Node act like a fake parent (proxy) to other child nodes. (aka makes it get the grandchildren)

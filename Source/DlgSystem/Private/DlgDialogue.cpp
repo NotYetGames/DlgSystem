@@ -252,7 +252,7 @@ void UDlgDialogue::PostEditChangeChainProperty(struct FPropertyChangedChainEvent
 	const FName PropertyName = ActivePropertyNode && ActivePropertyNode->GetValue() ? ActivePropertyNode->GetValue()->GetFName() : NAME_None;
 
 	// Check if the participant UClass implements our interface
-	if (MemberPropertyName == GET_MEMBER_NAME_CHECKED(Self, DlgParticipantClasses))
+	if (MemberPropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, DlgParticipantClasses))
 	{
 		if (PropertyName == GET_MEMBER_NAME_CHECKED(FDlgParticipantClass, ParticipantClass))
 		{
@@ -353,7 +353,7 @@ void UDlgDialogue::ReloadFromFile()
 	const FString& TextFileName = GetTextFilePathName();
 	UE_LOG(LogDlgSystem, Log, TEXT("Reloading data for Dialogue = `%s` FROM file = `%s`"), *GetPathName(), *TextFileName);
 
-	// TODO(leyyin): Check for errors
+	// TODO(vampy): Check for errors
 	check(TextFormat != EDlgDialogueTextFormat::DlgDialogueNoTextFormat);
 	switch (TextFormat)
 	{
@@ -379,7 +379,7 @@ void UDlgDialogue::ReloadFromFile()
 		StartNode = ConstructDialogueNode<UDlgNode_Speech>();
 	}
 
-	// TODO(leyyin): validate if data is legit, indicies exist and that sort.
+	// TODO(vampy): validate if data is legit, indicies exist and that sort.
 	// Check if Guid is not a duplicate
 	const TArray<UDlgDialogue*> DuplicateDialogues = UDlgManager::GetDialoguesWithDuplicateGuid();
 	if (DuplicateDialogues.Num() > 0)
@@ -429,7 +429,7 @@ void UDlgDialogue::ExportToFile() const
 		return;
 	}
 
-	// TODO(leyyin): Check for errors
+	// TODO(vampy): Check for errors
 	const FString& TextFileName = GetTextFilePathName();
 	UE_LOG(LogDlgSystem, Log, TEXT("Exporting data for Dialogue = `%s` TO file = `%s`"), *GetPathName(), *TextFileName);
 
@@ -676,7 +676,7 @@ void UDlgDialogue::AutoFixGraph()
 FString UDlgDialogue::GetTextFilePathName(bool bAddExtension/* = true*/) const
 {
 	// Extract filename from path
-	// Note: this is not a filesystem path, it is an unreal path 'Outermost.[Outer:]Name'
+	// NOTE: this is not a filesystem path, it is an unreal path 'Outermost.[Outer:]Name'
 	// Usually GetPathName works, but the path name might be weird.
 	// FSoftObjectPath(this).ToString(); which does call this function GetPathName() but it returns a legit clean path
 	// if it is in the wrong format

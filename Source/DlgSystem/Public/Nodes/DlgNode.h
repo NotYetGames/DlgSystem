@@ -9,6 +9,7 @@
 #include "DlgEdge.h"
 #include "DlgCondition.h"
 #include "DlgEvent.h"
+#include "DlgNodeData.h"
 
 #include "DlgNode.generated.h"
 
@@ -173,6 +174,8 @@ public:
 
 	/** Gets the generic data asset of this Node. */
 	virtual UObject* GetGenericData() const { return nullptr; }
+
+	virtual UDlgNodeData* GetNodeData() const { return nullptr; }
 
 	/** Helper method to get directly the Dialogue */
 	class UDlgDialogue* GetDialogue() const;

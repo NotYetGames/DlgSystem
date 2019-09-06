@@ -21,7 +21,7 @@ class FDialogueSpeechSequenceEntry_Details : public IPropertyTypeCustomization
 	typedef FDialogueSpeechSequenceEntry_Details Self;
 
 public:
-	static TSharedRef<IPropertyTypeCustomization> MakeInstance() { return MakeShareable(new Self); }
+	static TSharedRef<IPropertyTypeCustomization> MakeInstance() { return MakeShared<Self>(); }
 
 	/** IPropertyTypeCustomization interface */
 	/**
@@ -122,6 +122,7 @@ private:
 	IDetailPropertyRow* VoiceSoundWavePropertyRow = nullptr;
 	IDetailPropertyRow* VoiceDialogueWavePropertyRow = nullptr;
 	IDetailPropertyRow* GenericDataPropertyRow = nullptr;
+	IDetailPropertyRow* NodeDataPropertyRow = nullptr;
 	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
 	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> EdgeTextPropertyRow;
 

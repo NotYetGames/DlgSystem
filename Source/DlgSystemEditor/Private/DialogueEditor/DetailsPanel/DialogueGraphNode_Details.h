@@ -22,7 +22,7 @@ class FDialogueGraphNode_Details : public IDetailCustomization
 
 public:
 	// Makes a new instance of this detail layout class for a specific detail view requesting it
-	static TSharedRef<IDetailCustomization> MakeInstance() { return MakeShareable(new Self); }
+	static TSharedRef<IDetailCustomization> MakeInstance() { return MakeShared<Self>(); }
 
 	// IDetailCustomization interface
 	/** Called when details should be customized */

@@ -181,6 +181,17 @@ UObject* UDlgContext::GetActiveNodeGenericData() const
 	return Node->GetGenericData();
 }
 
+UDlgNodeData* UDlgContext::GetActiveNodeData() const
+{
+	const UDlgNode* Node = GetActiveNode();
+	if (!IsValid(Node))
+	{
+		return nullptr;
+	}
+
+	return Node->GetNodeData();
+}
+
 UTexture2D* UDlgContext::GetActiveParticipantIcon() const
 {
 	if (!IsValid(Dialogue))

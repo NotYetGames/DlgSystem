@@ -31,7 +31,7 @@ public:
 class FFrontendFilter_DialogueParticipants : public FFrontendFilter
 {
 public:
-	FFrontendFilter_DialogueParticipants(TSharedPtr<FFrontendFilterCategory> InCategory)
+	FFrontendFilter_DialogueParticipants(const TSharedPtr<FFrontendFilterCategory>& InCategory)
 		: FFrontendFilter(InCategory)
 	{
 	}
@@ -90,10 +90,10 @@ void UDialogueSearchFilter::AddFrontEndFilterExtensions(TSharedPtr<FFrontendFilt
 	TArray<TSharedRef<FFrontendFilter>>& InOutFilterList) const
 {
 	TSharedPtr<FFrontendFilterCategory> DialogueCategory =
-		MakeShareable(new FFrontendFilterCategory(LOCTEXT("DlgSystemCategoryName", "Dialogue Filters"),
-												  LOCTEXT("DlgSystemCategoryTooltip", "Filter Dialogue System assets")));
+		MakeShared<FFrontendFilterCategory>(LOCTEXT("DlgSystemCategoryName", "Dialogue Filters"),
+											LOCTEXT("DlgSystemCategoryTooltip", "Filter Dialogue System assets"));
 
-	InOutFilterList.Add(MakeShareable(new FFrontendFilter_DialogueParticipants(DefaultCategory)));
+	InOutFilterList.Add(MakeShared<FFrontendFilter_DialogueParticipants>(DefaultCategory));
 }
 
 

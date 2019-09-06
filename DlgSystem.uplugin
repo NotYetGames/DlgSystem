@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 6,
-	"VersionName": "6.0",
+	"Version": 7,
+	"VersionName": "7.0",
 	"EngineVersion" : "4.21.0",
 	"FriendlyName": "DlgSystem",
 	"Description": "Dialogue system (with text based dialogues) and nice Editor for editing dialogues",

@@ -10,7 +10,7 @@ class FDlgTreeViewNode : public TSharedFromThis<SelfType>
 {
 public:
 	/* Create a listing for a search result*/
-	FDlgTreeViewNode(const FText& InDisplayText, TSharedPtr<SelfType> InParent)
+	FDlgTreeViewNode(const FText& InDisplayText, const TSharedPtr<SelfType>& InParent)
 		: Parent(InParent), DisplayText(InDisplayText) {}
 	virtual ~FDlgTreeViewNode() {}
 
@@ -76,7 +76,7 @@ public:
 
 	// bIsVisible:
 	bool IsVisible() const { return bIsVisible; }
-	void SetIsVisible(const bool InIsVisible) { bIsVisible = InIsVisible; }
+	void SetIsVisible(bool InIsVisible) { bIsVisible = InIsVisible; }
 
 	/** Is this the root node? Aka no parent. */
 	bool IsRoot() const { return !Parent.IsValid(); }
@@ -90,7 +90,7 @@ public:
 	 * @param  TreeView		The tree responsible for visualizing this node hierarchy.
 	 * @param  bRecursive	Determines if you want children/descendants to expand their children as well.
 	 */
-	void ExpandAllChildren(TSharedPtr<STreeView<TSharedPtr<SelfType>>> TreeView, bool bRecursive = true)
+	void ExpandAllChildren(const TSharedPtr<STreeView<TSharedPtr<SelfType>>>& TreeView, bool bRecursive = true)
 	{
 		static constexpr bool bShouldExpandItem = true;
 		if (!HasChildren())
@@ -99,7 +99,7 @@ public:
 		}
 
 		TreeView->SetItemExpansion(this->AsShared(), bShouldExpandItem);
-		for (TSharedPtr<SelfType>& ChildNode : Children)
+		for (const TSharedPtr<SelfType>& ChildNode : Children)
 		{
 			if (bRecursive)
 			{
@@ -148,13 +148,13 @@ public:
 
 protected:
 	/** Called inside FilterPathsToNodesThatContainText after we got the path for the current Child.  */
-	virtual void PostFilterPathsToNodes(TSharedPtr<SelfType> Child) {}
+	virtual void PostFilterPathsToNodes(const TSharedPtr<SelfType>& Child) {}
 
 	/** Called inside GetPathToChildThatContainsText after we advanced one parent in the path */
-	virtual void PostBuildPathToTopMostParent(TSharedPtr<SelfType> CurrentParentNode) {}
+	virtual void PostBuildPathToTopMostParent(const TSharedPtr<SelfType>& CurrentParentNode) {}
 
 	/** Called inside GetPathToChildThatContainsText after we got the path of the GrandChild  */
-	virtual bool FilterIsChildVisible(TSharedPtr<SelfType> GrandChild)
+	virtual bool FilterIsChildVisible(const TSharedPtr<SelfType>& GrandChild)
 	{
 		return GrandChild->IsLeaf();
 	}

@@ -17,6 +17,7 @@ class IDetailsView;
 class UDlgDialogue;
 class SDialoguePalette;
 class SFindInDialogues;
+class FTabManager;
 
 //////////////////////////////////////////////////////////////////////////
 // FDialogueEditor
@@ -32,8 +33,8 @@ public:
 	virtual ~FDialogueEditor();
 
 	//~ Begin IToolkit interface
-	void RegisterTabSpawners(const TSharedRef<class FTabManager>& TabManager) override;
-	void UnregisterTabSpawners(const TSharedRef<class FTabManager>& TabManager) override;
+	void RegisterTabSpawners(const TSharedRef<FTabManager>& TabManager) override;
+	void UnregisterTabSpawners(const TSharedRef<FTabManager>& TabManager) override;
 	FText GetBaseToolkitName() const override;
 	FText GetToolkitName() const override;
 	FName GetToolkitFName() const override { return FName(TEXT("DialogueEditor")); }

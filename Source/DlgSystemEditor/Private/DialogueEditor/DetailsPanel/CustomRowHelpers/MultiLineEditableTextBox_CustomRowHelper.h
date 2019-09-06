@@ -18,11 +18,11 @@ class FMultiLineEditableTextBox_CustomRowHelper : public FBase_CustomRowHelper,
 	typedef FMultiLineEditableTextBox_CustomRowHelper Self;
 	typedef FBase_CustomRowHelper Super;
 public:
-	FMultiLineEditableTextBox_CustomRowHelper(FDetailWidgetRow* InDetailWidgetRow, TSharedPtr<IPropertyHandle> InPropertyHandle)
+	FMultiLineEditableTextBox_CustomRowHelper(FDetailWidgetRow* InDetailWidgetRow, const TSharedPtr<IPropertyHandle>& InPropertyHandle)
 		: FBase_CustomRowHelper(InDetailWidgetRow, InPropertyHandle) {}
 
 	/** Sets the text box widget */
-	Self* SetMultiLineEditableTextBoxWidget(const TSharedRef<SMultiLineEditableTextBox> InWidget)
+	Self* SetMultiLineEditableTextBoxWidget(const TSharedRef<SMultiLineEditableTextBox>& InWidget)
 	{
 		MultiLineEditableTextBoxWidget = InWidget;
 		return this;

@@ -35,7 +35,7 @@ public:
 	}
 
 	/** Resets the numeric property to not have any limits */
-	static void ResetNumericPropertyLimits(TSharedPtr<IPropertyHandle> PropertyHandle)
+	static void ResetNumericPropertyLimits(const TSharedPtr<IPropertyHandle>& PropertyHandle)
 	{
 		if (!PropertyHandle.IsValid())
 		{
@@ -51,7 +51,7 @@ public:
 
 	/** Sets the limits of the numeric property. It can only have values in the range [Min, Max] */
 	template <typename NumericType>
-	static void SetNumericPropertyLimits(TSharedPtr<IPropertyHandle> PropertyHandle, const NumericType Min, const NumericType Max)
+	static void SetNumericPropertyLimits(const TSharedPtr<IPropertyHandle>& PropertyHandle, const NumericType Min, const NumericType Max)
 	{
 		if (!PropertyHandle.IsValid())
 		{
@@ -83,7 +83,7 @@ public:
 	}
 
 	/** Gets the Base GraphNode owner that belongs to this PropertyHandle. It could be an Edge or a GraphNode */
-	static UDialogueGraphNode_Base* GetGraphNodeBaseFromPropertyHandle(const TSharedRef<IPropertyHandle> PropertyHandle)
+	static UDialogueGraphNode_Base* GetGraphNodeBaseFromPropertyHandle(const TSharedRef<IPropertyHandle>& PropertyHandle)
 	{
 		TArray<UObject*> OuterObjects;
 		PropertyHandle->GetOuterObjects(OuterObjects);
@@ -109,7 +109,7 @@ public:
 	 * If the BaseGraphNode is an GraphNode then return that
 	 * If the BaseGraphNode is an Edge then return the ParentGraphNode
 	 */
-	static UDialogueGraphNode* GetClosestGraphNodeFromPropertyHandle(const TSharedRef<IPropertyHandle> PropertyHandle)
+	static UDialogueGraphNode* GetClosestGraphNodeFromPropertyHandle(const TSharedRef<IPropertyHandle>& PropertyHandle)
 	{
 		if (UDialogueGraphNode_Base* BaseGraphNode = GetGraphNodeBaseFromPropertyHandle(PropertyHandle))
 		{
@@ -134,13 +134,13 @@ public:
 	 * If the BaseGraphNode is an GraphNode then returns nullptr
 	 * If the BaseGraphNode is an Edge then returns that
 	 */
-	static UDialogueGraphNode_Edge* GetAsGraphNodeEdgeFromPropertyHandle(const TSharedRef<IPropertyHandle> PropertyHandle)
+	static UDialogueGraphNode_Edge* GetAsGraphNodeEdgeFromPropertyHandle(const TSharedRef<IPropertyHandle>& PropertyHandle)
 	{
 		return Cast<UDialogueGraphNode_Edge>(GetGraphNodeBaseFromPropertyHandle(PropertyHandle));
 	}
 
 	/** Gets the Dialogue that is the top most root owner of this PropertyHandle. used in the details panel. */
-	static UDlgDialogue* GetDialogueFromPropertyHandle(const TSharedRef<IPropertyHandle> PropertyHandle)
+	static UDlgDialogue* GetDialogueFromPropertyHandle(const TSharedRef<IPropertyHandle>& PropertyHandle)
 	{
 		UDlgDialogue* Dialogue = nullptr;
 
@@ -184,7 +184,7 @@ public:
 	 * 1. Tries to get the value from the ParticipantNamePropertyHandle of that struct.
 	 * 2. Gets the ParticipantName from the Node that has this property.
 	 */
-	static FName GetParticipantNameFromPropertyHandle(TSharedRef<IPropertyHandle> ParticipantNamePropertyHandle)
+	static FName GetParticipantNameFromPropertyHandle(const TSharedRef<IPropertyHandle>& ParticipantNamePropertyHandle)
 	{
 		FName ParticipantName = NAME_None;
 		if (ParticipantNamePropertyHandle->GetValue(ParticipantName) != FPropertyAccess::Success)

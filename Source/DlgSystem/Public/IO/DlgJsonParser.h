@@ -51,7 +51,7 @@ private: // JSON -> UStruct
 	 * Convert JSON to property, assuming either the property is not an array or the value is an individual array element
 	 * Used by JsonValueToUProperty
 	 */
-	bool ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> JsonValue, UProperty* Property, void* ContainerPtr, void* ValuePtr);
+	bool ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonValue>& JsonValue, UProperty* Property, void* ContainerPtr, void* ValuePtr);
 
 	/**
 	 * Converts a single JsonValue to the corresponding UProperty (this may recurse if the property is a UStruct for instance).
@@ -62,7 +62,7 @@ private: // JSON -> UStruct
 	 *
 	 * @return False if the property failed to serialize
 	 */
-	bool JsonValueToUProperty(const TSharedPtr<FJsonValue> JsonValue, UProperty* Property, void* ContainerPtr, void* ValuePtr);
+	bool JsonValueToUProperty(const TSharedPtr<FJsonValue>& JsonValue, UProperty* Property, void* ContainerPtr, void* ValuePtr);
 
 	/**
 	 * Converts a set of json attributes (possibly from within a JsonObject) to a UStruct, using importText

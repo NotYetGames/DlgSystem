@@ -20,7 +20,7 @@ const FName UDialogueK2Node_Select::PIN_DefaultValue(TEXT("DefaultValue"));
 
 //////////////////////////////////////////////////////////////////////////
 // FKCHandler_DialogueSelect
-// TODO(leyyin): Figure out why having the same name for a handler crashes things on linux and only some times in Windows
+// TODO(vampy): Figure out why having the same name for a handler crashes things on linux and only some times in Windows
 // For example if this is name FKCHandler_Select (like the normal K2Node_Select handler) the compiler confuses our node
 // for that node. The name should be irrelevant right? the handler is used as value in a TMap, right????
 class FKCHandler_DialogueSelect : public FNodeHandlingFunctor
