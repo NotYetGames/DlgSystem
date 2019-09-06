@@ -60,7 +60,7 @@ public:
 	static bool CanWriteOneLinePerItem(const UProperty* Property)
 	{
 #if WITH_EDITOR
-		return Property->HasMetaData(TEXT("DlgLinePerItem"));
+		return IsValid(Property) && Property->HasMetaData(TEXT("DlgLinePerItem"));
 #else
 		return false;
 #endif
@@ -70,23 +70,32 @@ public:
 	static bool CanWriteIndex(const UProperty* Property)
 	{
 #if WITH_EDITOR
-		return Property->HasMetaData(TEXT("DlgWriteIndex"));
+		return IsValid(Property) && Property->HasMetaData(TEXT("DlgWriteIndex"));
 #else
 		return false;
 #endif
 	}
 
 	/** Decides if the path to the object should be serialized, or the object itself */
-	virtual bool CanSaveAsReference(const UProperty* Property)
+	virtual bool CanSaveAsReference(const UProperty* Property, const UObject* Object)
 	{
 		// UClass
-		if (Property->IsA<UClassProperty>())
+		if (IsValid(Property) && Property->IsA<UClassProperty>())
 		{
 			return true;
 		}
 
+		// if outer is nullptr we assume this is something from content browser (texture, mesh, etc.)
+		if (IsValid(Object) && Object->IsValidLowLevelFast())
+		{
+			if (!IsValid(Object->GetOuter()) || Object->GetOuter()->IsA<UPackage>())
+			{
+				return true;
+			}
+		}
+
 #if WITH_EDITOR
-		return Property->HasMetaData(TEXT("DlgSaveOnlyReference"));
+		return IsValid(Property) && Property->HasMetaData(TEXT("DlgSaveOnlyReference"));
 #else
 		return false;
 #endif

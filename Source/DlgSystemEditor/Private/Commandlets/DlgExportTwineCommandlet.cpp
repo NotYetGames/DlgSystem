@@ -202,7 +202,7 @@ int32 UDlgExportTwineCommandlet::Main(const FString& Params)
 }
 
 
-FString UDlgExportTwineCommandlet::CreateTwineStoryData(const FString& Name, const FGuid& DialogueGuid, const int32 StartNodeIndex, const FString& PassagesData)
+FString UDlgExportTwineCommandlet::CreateTwineStoryData(const FString& Name, const FGuid& DialogueGuid, int32 StartNodeIndex, const FString& PassagesData)
 {
 	static const FString Creator = TEXT("UE-NotYetDlgSystem");
 	static const FString CreatorVersion = TEXT("5.0"); // TODO
@@ -272,7 +272,7 @@ FIntPoint UDlgExportTwineCommandlet::GetNonConflictingPointFor(const FIntPoint& 
 	return MinVector.IntPoint();
 }
 
-FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDialogue& Dialogue, const UDlgNode& Node, const int32 NodeIndex)
+FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDialogue& Dialogue, const UDlgNode& Node, int32 NodeIndex)
 {
 	const UDialogueGraphNode* DialogueGraphNode = Cast<UDialogueGraphNode>(Node.GetGraphNode());
 	if (DialogueGraphNode == nullptr)
@@ -395,12 +395,12 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataFromNode(const UDlgDial
 	return "";
 }
 
-FString UDlgExportTwineCommandlet::GetNodeNameFromNode(const UDlgNode& Node, const int32 NodeIndex, const bool bIsRootNode)
+FString UDlgExportTwineCommandlet::GetNodeNameFromNode(const UDlgNode& Node, int32 NodeIndex, bool bIsRootNode)
 {
 	return FString::Printf(TEXT("%d. %s"), NodeIndex, bIsRootNode ? TEXT("START") : *Node.GetNodeParticipantName().ToString());
 }
 
-FString UDlgExportTwineCommandlet::CreateTwinePassageDataLinksFromEdges(const UDlgDialogue& Dialogue, const TArray<FDlgEdge>& Edges, const bool bNoTextOnEdges)
+FString UDlgExportTwineCommandlet::CreateTwinePassageDataLinksFromEdges(const UDlgDialogue& Dialogue, const TArray<FDlgEdge>& Edges, bool bNoTextOnEdges)
 {
 	FString Links;
 	const TArray<UDlgNode*>& Nodes = Dialogue.GetNodes();
@@ -424,7 +424,7 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataLinksFromEdges(const UD
 }
 
 
-FString UDlgExportTwineCommandlet::CreateTwinePassageData(const int32 Pid, const FString& Name, const FString& Tags, const FIntPoint& Position, const FIntPoint& Size, const FString& Content)
+FString UDlgExportTwineCommandlet::CreateTwinePassageData(int32 Pid, const FString& Name, const FString& Tags, const FIntPoint& Position, const FIntPoint& Size, const FString& Content)
 {
 	return FString::Printf(
 		TEXT("<tw-passagedata pid=\"%d\" name=\"%s\" tags=\"%s\" position=\"%d, %d\" size=\"%d, %d\">%s</tw-passagedata>"),

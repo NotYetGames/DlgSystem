@@ -160,7 +160,8 @@ protected:
 		if (VariablePropsPtr == nullptr)
 		{
 			// Variable does not exist for participant, create it
-			VariableProps = MakeShareable(new VariablePropertyType({Dialogue}));
+			const TSet<TWeakObjectPtr<const UDlgDialogue>> SetArgument{Dialogue};
+			VariableProps = MakeShared<VariablePropertyType>(SetArgument);
 			VariableMap->Add(VariableName, VariableProps);
 		}
 		else

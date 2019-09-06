@@ -372,7 +372,7 @@ void UDialogueGraphNode::SetDialogueNodeDataChecked(int32 InIndex, UDlgNode* InN
 	SetDialogueNode(InNode);
 }
 
-int32 UDialogueGraphNode::GetChildEdgeIndexForChildNodeIndex(const int32 ChildNodeIndex) const
+int32 UDialogueGraphNode::GetChildEdgeIndexForChildNodeIndex(int32 ChildNodeIndex) const
 {
 	const TArray<UDialogueGraphNode_Edge*> GraphNodeEdges = GetChildEdgeNodes();
 	for (int32 EdgeIndex = 0; EdgeIndex < GraphNodeEdges.Num(); EdgeIndex++)
@@ -547,7 +547,7 @@ const TArray<UDialogueGraphNode*> UDialogueGraphNode::GetChildNodes() const
 	return ChildNodes;
 }
 
-const TArray<UDialogueGraphNode_Edge*> UDialogueGraphNode::GetParentEdgeNodes(const bool bCheckChild /*= true*/) const
+const TArray<UDialogueGraphNode_Edge*> UDialogueGraphNode::GetParentEdgeNodes(bool bCheckChild /*= true*/) const
 {
 	// (input pin) ParentNode (output pin) -> (input pin) EdgeNode aka ParentEdgeConnection (EdgeOutputPin) -> (input pin) ThisNode (output pin)
 	TArray<UDialogueGraphNode_Edge*> ParentEdgeNodes;
@@ -568,7 +568,7 @@ const TArray<UDialogueGraphNode_Edge*> UDialogueGraphNode::GetParentEdgeNodes(co
 	return ParentEdgeNodes;
 }
 
-const TArray<UDialogueGraphNode_Edge*> UDialogueGraphNode::GetChildEdgeNodes(const bool bCheckParent /*= true*/) const
+const TArray<UDialogueGraphNode_Edge*> UDialogueGraphNode::GetChildEdgeNodes(bool bCheckParent /*= true*/) const
 {
 	// (input pin) ThisNode (output pin) -> (EdgeInputPin) EdgeNode aka ChildEdgeConnection (output pin) -> (input pin) ChildNode (output pin)
 	TArray<UDialogueGraphNode_Edge*> ChildEdgeNodes;

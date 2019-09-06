@@ -30,7 +30,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 	if (ValuePtr == nullptr)
 	{
 		// Invalid
-		return MakeShareable(new FJsonValueNull());
+		return MakeShared<FJsonValueNull>();
 	}
 
 	//
@@ -44,7 +44,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 	auto GetJsonStringForEnum = [&ValuePtr](const UEnum* EnumDefinition, const UNumericProperty* NumericProperty) -> TSharedPtr<FJsonValue>
 	{
 		const FString StringValue = EnumDefinition->GetNameByIndex(NumericProperty->GetSignedIntPropertyValue(ValuePtr)).ToString();
-		return MakeShareable(new FJsonValueString(StringValue));
+		return MakeShared<FJsonValueString>(StringValue);
 	};
 
 	// Add Index Metadata to JsonObject
@@ -52,7 +52,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 	{
 		if (IndexInArray != INDEX_NONE && CanWriteIndex(Property))
 		{
-			JsonObject->SetField(TEXT("__index__"), MakeShareable(new FJsonValueNumber(IndexInArray)));
+			JsonObject->SetField(TEXT("__index__"), MakeShared<FJsonValueNumber>(IndexInArray));
 		}
 	};
 
@@ -79,30 +79,30 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 				// NOTE, because JSON only supports floats we do not use the FJsonValueNumber for map keys because integers
 				// are displayed as floats. For example '42' is displayed as '42.0'
 				// Instead we use it as a string, this should be similar as the parser can parse an int from string
-				return MakeShareable(new FJsonValueString(FString::Printf(TEXT("%lld"), NumericProperty->GetSignedIntPropertyValue(ValuePtr))));
+				return MakeShared<FJsonValueString>(FString::Printf(TEXT("%lld"), NumericProperty->GetSignedIntPropertyValue(ValuePtr)));
 			}
-			
-			return MakeShareable(new FJsonValueNumber(NumericProperty->GetSignedIntPropertyValue(ValuePtr)));
+
+			return MakeShared<FJsonValueNumber>(NumericProperty->GetSignedIntPropertyValue(ValuePtr));
 		}
 		if (NumericProperty->IsFloatingPoint())
 		{
-			return MakeShareable(new FJsonValueNumber(NumericProperty->GetFloatingPointPropertyValue(ValuePtr)));
+			return MakeShared<FJsonValueNumber>(NumericProperty->GetFloatingPointPropertyValue(ValuePtr));
 		}
 
 		// Invalid
-		return MakeShareable(new FJsonValueNull());
+		return MakeShared<FJsonValueNull>();
 	}
 
 	// Bool, Export bools as JSON bools
 	if (const UBoolProperty* BoolProperty = Cast<UBoolProperty>(Property))
 	{
-		return MakeShareable(new FJsonValueBoolean(BoolProperty->GetOptionalPropertyValue(ValuePtr)));
+		return MakeShared<FJsonValueBoolean>(BoolProperty->GetOptionalPropertyValue(ValuePtr));
 	}
 
 	// FString
 	if (const UStrProperty* StringProperty = Cast<UStrProperty>(Property))
 	{
-		return MakeShareable(new FJsonValueString(StringProperty->GetOptionalPropertyValue(ValuePtr)));
+		return MakeShared<FJsonValueString>(StringProperty->GetOptionalPropertyValue(ValuePtr));
 	}
 
 	// FName
@@ -115,21 +115,21 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 				   Error,
 				   TEXT("Got Property = `%s` of type UNameProperty but the Value it not an FName"),
 				   *NameProperty->GetName())
-			return MakeShareable(new FJsonValueNull());
+			return MakeShared<FJsonValueNull>();
 		}
 		if (!NamePtr->IsValidIndexFast() || !NamePtr->IsValid())
 		{
 			UE_LOG(LogDlgJsonWriter, Error, TEXT("Got Property = `%s` of type FName but it is not valid :("), *NameProperty->GetNameCPP())
-			return MakeShareable(new FJsonValueNull());
+			return MakeShared<FJsonValueNull>();
 		}
 		//check(NamePtr == NameProperty->GetPropertyValuePtr(Value));
-		return MakeShareable(new FJsonValueString(NamePtr->ToString()));
+		return MakeShared<FJsonValueString>(NamePtr->ToString());
 	}
 
 	// FText
 	if (const UTextProperty* TextProperty = Cast<UTextProperty>(Property))
 	{
-		return MakeShareable(new FJsonValueString(TextProperty->GetOptionalPropertyValue(ValuePtr).ToString()));
+		return MakeShared<FJsonValueString>(TextProperty->GetOptionalPropertyValue(ValuePtr).ToString());
 	}
 
 	// TArray
@@ -149,7 +149,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 		}
 
 		ResetState();
-		return MakeShareable(new FJsonValueArray(Array));
+		return MakeShared<FJsonValueArray>(Array);
 	}
 
 	// TSet
@@ -177,13 +177,13 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 		}
 
 		ResetState();
-		return MakeShareable(new FJsonValueArray(Array));
+		return MakeShared<FJsonValueArray>(Array);
 	}
 
 	// TMap
 	if (const UMapProperty* MapProperty = Cast<UMapProperty>(Property))
 	{
-		const TSharedRef<FJsonObject> OutObject = MakeShareable(new FJsonObject());
+		const TSharedRef<FJsonObject> OutObject = MakeShared<FJsonObject>();
 		const FDlgConstScriptMapHelper Helper(MapProperty, ValuePtr);
 
 		// GetMaxIndex() instead of Num() - the container is not contiguous
@@ -237,7 +237,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 		}
 
 		ResetState();
-		return MakeShareable(new FJsonValueObject(OutObject));
+		return MakeShared<FJsonValueObject>(OutObject);
 	}
 
 	// UStruct
@@ -250,19 +250,19 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 			// Export to native text
 			FString OutValueStr;
 			TheCppStructOps->ExportTextItem(OutValueStr, ValuePtr, ValuePtr, nullptr, PPF_None, nullptr);
-			return MakeShareable(new FJsonValueString(OutValueStr));
+			return MakeShared<FJsonValueString>(OutValueStr);
 		}
 
 		// Handle Struct
-		const TSharedRef<FJsonObject> OutObject = MakeShareable(new FJsonObject());
+		TSharedRef<FJsonObject> OutObject = MakeShared<FJsonObject>();
 		AddIndexMetadata(OutObject);
 		if (UStructToJsonObject(StructProperty->Struct, ValuePtr, OutObject))
 		{
-			return MakeShareable(new FJsonValueObject(OutObject));
+			return MakeShared<FJsonValueObject>(OutObject);
 		}
 
 		// Invalid
-		return MakeShareable(new FJsonValueNull());
+		return MakeShared<FJsonValueNull>();
 	}
 
 	// UObject
@@ -271,24 +271,18 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 		auto returnNullptr = [this, &ObjectProperty]() -> TSharedPtr<FJsonValue>
 		{
 			// Save reference as empty string
-			if (CanSaveAsReference(ObjectProperty))
+			if (CanSaveAsReference(ObjectProperty, nullptr))
 			{
-				return MakeShareable(new FJsonValueString(TEXT("")));
+				return MakeShared<FJsonValueString>(TEXT(""));
 			}
 
-			return MakeShareable(new FJsonValueNull());
+			return MakeShared<FJsonValueNull>();
 		};
 
 		// NOTE: The ValuePtr here should be a pointer to a pointer
 		// Because the UObjects are pointers, we must deference it. So instead of it being a void** we want it to be a void*
 		const UObject* ObjectPtr = ObjectProperty->GetObjectPropertyValue_InContainer(ValuePtr);
-
-		// Special case were we want just to save a reference to the object location
-		if (ObjectPtr != nullptr && CanSaveAsReference(ObjectProperty))
-		{
-			return MakeShareable(new FJsonValueString(ObjectPtr->GetPathName()));
-		}
-
+		
 		// To find out if in nested containers the object is nullptr we must go a level up
 		const UObject* ContainerObjectPtr = ObjectProperty->GetObjectPropertyValue_InContainer(ContainerPtr);
 		if (ObjectPtr == nullptr || ContainerObjectPtr == nullptr)
@@ -313,25 +307,31 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 			return returnNullptr();
 		}
 
+		// Special case were we want just to save a reference to the object location
+		if (ObjectPtr != nullptr && CanSaveAsReference(ObjectProperty, ObjectPtr))
+		{
+			return MakeShared<FJsonValueString>(ObjectPtr->GetPathName());
+		}
+
 		// Save as normal JSON Object
-		TSharedRef<FJsonObject> OutObject = MakeShareable(new FJsonObject());
+		TSharedRef<FJsonObject> OutObject = MakeShared<FJsonObject>();
 		AddIndexMetadata(OutObject);
 
 		// Set the uproperties of the object
 		const UClass* ObjectClass = ObjectProperty->PropertyClass;
 		if (UStructToJsonObject(ObjectClass, ObjectPtr, OutObject))
 		{
-			return MakeShareable(new FJsonValueObject(OutObject));
+			return MakeShared<FJsonValueObject>(OutObject);
 		}
 
 		// Invalid
-		return MakeShareable(new FJsonValueNull());
+		return MakeShared<FJsonValueNull>();
 	}
 
 	// Default, convert to string
 	FString ValueString;
 	Property->ExportTextItem(ValueString, ValuePtr, ValuePtr, nullptr, PPF_None);
-	return MakeShareable(new FJsonValueString(ValueString));
+	return MakeShared<FJsonValueString>(ValueString);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -365,7 +365,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::UPropertyToJsonValue(const UProperty* Pro
 				*PropertyClass->GetName(), *Property->GetNameCPP());
 		}
 
-		return MakeShareable(new FJsonValueNull());
+		return MakeShared<FJsonValueNull>();
 	}
 
 	// Scalar Only one property
@@ -391,7 +391,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::UPropertyToJsonValue(const UProperty* Pro
 	}
 
 	ResetState();
-	return MakeShareable(new FJsonValueArray(Array));
+	return MakeShared<FJsonValueArray>(Array);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -433,7 +433,7 @@ bool FDlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, co
 		}
 
 		// Write type, Objects because they can have inheritance
-		OutJsonAttributes.Add(TEXT("__type__"), MakeShareable(new FJsonValueString(UnrealObject->GetClass()->GetName())));
+		OutJsonAttributes.Add(TEXT("__type__"), MakeShared<FJsonValueString>(UnrealObject->GetClass()->GetName()));
 
 		// Structure points to the child
 		StructDefinition = UnrealObject->GetClass();
@@ -466,7 +466,7 @@ bool FDlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, co
 		}
 		if (CanSkipProperty(Property))
 		{
-			// Marke as skipped.
+			// Mark as skipped.
 			if (bLogVerbose)
 			{
 				UE_LOG(LogDlgJsonWriter, Verbose, TEXT("Property = `%s` Marked as skiped"), *Property->GetPathName());
@@ -538,7 +538,7 @@ bool UStructToJsonStringInternal(const TSharedRef<FJsonObject>& JsonObject, cons
 bool FDlgJsonWriter::UStructToJsonString(const UStruct* StructDefinition, const void* const ContainerPtr,
 	 const DlgJsonWriterOptions& Options, FString& OutJsonString)
 {
-	TSharedRef<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+	TSharedRef<FJsonObject> JsonObject = MakeShared<FJsonObject>();
 	if (UStructToJsonObject(StructDefinition, ContainerPtr, JsonObject))
 	{
 		bool bSuccess;

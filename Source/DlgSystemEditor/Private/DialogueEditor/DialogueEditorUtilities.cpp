@@ -297,8 +297,8 @@ bool FDialogueEditorUtilities::AreDialogueNodesInSyncWithGraphNodes(const UDlgDi
 }
 
 void FDialogueEditorUtilities::AutoPositionGraphNodes(UDialogueGraphNode* RootNode,
-	const TArray<UDialogueGraphNode*>& GraphNodes, const int32 OffsetBetweenColumnsX, const int32 OffsetBetweenRowsY,
-	const bool bIsDirectionVertical)
+	const TArray<UDialogueGraphNode*>& GraphNodes, int32 OffsetBetweenColumnsX, int32 OffsetBetweenRowsY,
+	bool bIsDirectionVertical)
 {
 	TSet<UDialogueGraphNode*> VisitedNodes;
 	VisitedNodes.Add(RootNode);
@@ -570,7 +570,7 @@ bool FDialogueEditorUtilities::CanConvertSpeechSequenceNodeToSpeechNodes(const T
 }
 
 bool FDialogueEditorUtilities::OpenEditorAndJumpToGraphNode(const UEdGraphNode* GraphNode,
-															const bool bFocusIfOpen /*= false*/)
+															bool bFocusIfOpen /*= false*/)
 {
 	if (!IsValid(GraphNode))
 	{

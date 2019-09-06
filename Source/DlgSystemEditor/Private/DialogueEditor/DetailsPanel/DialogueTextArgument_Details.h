@@ -18,7 +18,7 @@ class FDialogueTextArgument_Details : public IPropertyTypeCustomization
 	typedef FDialogueTextArgument_Details Self;
 
 public:
-	static TSharedRef<IPropertyTypeCustomization> MakeInstance() { return MakeShareable(new Self); }
+	static TSharedRef<IPropertyTypeCustomization> MakeInstance() { return MakeShared<Self>(); }
 
 	/** IPropertyTypeCustomization interface */
 	/**

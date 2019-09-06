@@ -123,7 +123,7 @@ void STextPropertyPickList::SetToolTipAttribute(const TAttribute<FText>& InNewTe
 	SetToolTipText(ToolTipAttribute);
 }
 
-void STextPropertyPickList::SetPropertyHandle(const TSharedPtr<IPropertyHandle> InPropertyHandle)
+void STextPropertyPickList::SetPropertyHandle(const TSharedPtr<IPropertyHandle>& InPropertyHandle)
 {
 	PropertyHandle = InPropertyHandle;
 	check(PropertyHandle.IsValid());
@@ -469,7 +469,7 @@ void STextPropertyPickList::UpdateSuggestionList()
 		{
 			if (Suggestion.ToString().Contains(TypedText))
 			{
-				Suggestions.Add(MakeShareable(new FName(Suggestion)));
+				Suggestions.Add(MakeShared<FName>(Suggestion));
 			}
 		}
 	}
@@ -478,7 +478,7 @@ void STextPropertyPickList::UpdateSuggestionList()
 		// Copy all
 		for (const FName& Suggestion : AllSuggestions)
 		{
-			Suggestions.Add(MakeShareable(new FName(Suggestion)));
+			Suggestions.Add(MakeShared<FName>(Suggestion));
 		}
 	}
 

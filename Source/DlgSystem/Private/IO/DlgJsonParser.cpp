@@ -102,7 +102,7 @@ void FDlgJsonParser::ReadAllProperty( const UStruct* ReferenceClass, void* Targe
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> JsonValue, UProperty* Property, void* ContainerPtr, void* ValuePtr)
+bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonValue>& JsonValue, UProperty* Property, void* ContainerPtr, void* ValuePtr)
 {
 	check(Property);
 	if (bLogVerbose)
@@ -292,7 +292,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 
 			return bReturnStatus;
 		}
-		
+
 		UE_LOG(LogDlgJsonParser,
 			   Error,
 			   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import TArray from non-array JSON key for property %s"),
@@ -334,7 +334,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 			Helper.Rehash();
 			return bReturnStatus;
 		}
-		
+
 		UE_LOG(LogDlgJsonParser,
 			   Error,
 			   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import TSet from non-array (JsonValue->Type = `%s`) JSON key for property %s"),
@@ -361,7 +361,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 
 					// NOTE if key is a UStructProperty no need to Import the text item here as it will do that below in UStruct
 					// Add key
-					const TSharedPtr<FJsonValueString> KeyAsString = MakeShareable(new FJsonValueString(Entry.Key));
+					const TSharedPtr<FJsonValueString> KeyAsString = MakeShared<FJsonValueString>(Entry.Key);
 					const bool bKeySuccess = JsonValueToUProperty(KeyAsString, Helper.GetKeyProperty(), ContainerPtr, Helper.GetKeyPtr(NewIndex));
 
 					// Add value
@@ -382,7 +382,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 			Helper.Rehash();
 			return bReturnStatus;
 		}
-		
+
 		UE_LOG(LogDlgJsonParser,
 			   Error,
 			   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import TMap from non-object JSON key for property %s"),
@@ -608,7 +608,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(TSharedPtr<FJsonValue> Js
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool FDlgJsonParser::JsonValueToUProperty(const TSharedPtr<FJsonValue> JsonValue, UProperty* Property, void* ContainerPtr, void* ValuePtr)
+bool FDlgJsonParser::JsonValueToUProperty(const TSharedPtr<FJsonValue>& JsonValue, UProperty* Property, void* ContainerPtr, void* ValuePtr)
 {
 	check(Property);
 	if (bLogVerbose)
@@ -696,7 +696,7 @@ bool FDlgJsonParser::JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJso
 	{
 		// Just copy it into the object
 		FJsonObjectWrapper* ProxyObject = (FJsonObjectWrapper *)ContainerPtr;
-		ProxyObject->JsonObject = MakeShareable(new FJsonObject());
+		ProxyObject->JsonObject = MakeShared<FJsonObject>();
 		ProxyObject->JsonObject->Values = JsonAttributes;
 		return true;
 	}

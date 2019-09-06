@@ -27,7 +27,7 @@ DEFINE_LOG_CATEGORY(LogDlgSystemDataDisplay)
 void SDlgDataDisplay::Construct(const FArguments& InArgs, TWeakObjectPtr<AActor> InReferenceActor)
 {
 	ReferenceActor = InReferenceActor;
-	RootTreeItem = MakeShareable(new FDlgDataDisplayTreeRootNode);
+	RootTreeItem = MakeShared<FDlgDataDisplayTreeRootNode>();
 	ActorsTreeView = SNew(STreeView<TSharedPtr<FDlgDataDisplayTreeNode>>)
 		.ItemHeight(32)
 		.TreeItemsSource(&RootChildren)
@@ -185,7 +185,7 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 
 		// Create Key in the ActorsProperties for this Actor.
 		TSharedPtr<FDlgDataDisplayActorProperties> ActorsPropertiesValue =
-			MakeShareable(new FDlgDataDisplayActorProperties(ActorDialogues));
+			MakeShared<FDlgDataDisplayActorProperties>(ActorDialogues);
 		ActorsProperties.Add(Actor, ActorsPropertiesValue);
 
 		// Gather Data from the Dialogues
@@ -297,7 +297,7 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 
 		AActor* Actor = Elem.Key.Get();
 		TSharedPtr<FDlgDataDisplayTreeNode> ActorItem =
-			MakeShareable(new FDlgDataDisplayTreeActorNode(FText::FromString(Actor->GetName()), RootTreeItem, Actor));
+			MakeShared<FDlgDataDisplayTreeActorNode>(FText::FromString(Actor->GetName()), RootTreeItem, Actor);
 		BuildTreeViewItem(ActorItem);
 		RootTreeItem->AddChild(ActorItem);
 	}
@@ -371,7 +371,7 @@ TSharedRef<SWidget> SDlgDataDisplay::GetFilterTextBoxWidget()
 	return GetFilterTextBoxWidget();
 }
 
-void SDlgDataDisplay::AddVariableChildrenToItem(TSharedPtr<FDlgDataDisplayTreeNode> Item, const TMap<FName, TSharedPtr<FDlgDataDisplayVariableProperties>>& Variables,
+void SDlgDataDisplay::AddVariableChildrenToItem(const TSharedPtr<FDlgDataDisplayTreeNode>& Item, const TMap<FName, TSharedPtr<FDlgDataDisplayVariableProperties>>& Variables,
 	const FText& DisplayTextFormat, const EDlgDataDisplayVariableTreeNodeType VariableType)
 {
 	if (!Item.IsValid())
@@ -387,13 +387,13 @@ void SDlgDataDisplay::AddVariableChildrenToItem(TSharedPtr<FDlgDataDisplayTreeNo
 		const FText DisplayText = FText::Format(DisplayTextFormat, Args);
 
 		// Create Node
-		const TSharedPtr<FDlgDataDisplayTreeVariableNode> ChildItem = MakeShareable(new FDlgDataDisplayTreeVariableNode(
-			DisplayText, Item, VariableName, VariableType));
+		const TSharedPtr<FDlgDataDisplayTreeVariableNode> ChildItem =
+			MakeShared<FDlgDataDisplayTreeVariableNode>(DisplayText, Item, VariableName, VariableType);
 		Item->AddChild(ChildItem);
 	}
 }
 
-void SDlgDataDisplay::BuildTreeViewItem(TSharedPtr<FDlgDataDisplayTreeNode> Item)
+void SDlgDataDisplay::BuildTreeViewItem(const TSharedPtr<FDlgDataDisplayTreeNode>& Item)
 {
 	TWeakObjectPtr<AActor> Actor = Item->GetParentActor();
 	if (!Actor.IsValid())
@@ -414,12 +414,12 @@ void SDlgDataDisplay::BuildTreeViewItem(TSharedPtr<FDlgDataDisplayTreeNode> Item
 		switch (Item->GetTextType())
 		{
 			case EDlgDataDisplayTextTreeNodeType::Actor:
-				Item->AddChild(MakeShareable(new FDlgDataDisplayTreeCategoryNode(
-					LOCTEXT("EventKey", "Events"), Item, EDlgDataDisplayCategoryTreeNodeType::Event)));
-				Item->AddChild(MakeShareable(new FDlgDataDisplayTreeCategoryNode(
-					LOCTEXT("ConditionKey", "Conditions"), Item, EDlgDataDisplayCategoryTreeNodeType::Condition)));
-				Item->AddChild(MakeShareable(new FDlgDataDisplayTreeCategoryNode(
-					LOCTEXT("VariablesKey", "Variables"), Item, EDlgDataDisplayCategoryTreeNodeType::Variables)));
+				Item->AddChild(MakeShared<FDlgDataDisplayTreeCategoryNode>(
+					LOCTEXT("EventKey", "Events"), Item, EDlgDataDisplayCategoryTreeNodeType::Event));
+				Item->AddChild(MakeShared<FDlgDataDisplayTreeCategoryNode>(
+					LOCTEXT("ConditionKey", "Conditions"), Item, EDlgDataDisplayCategoryTreeNodeType::Condition));
+				Item->AddChild(MakeShared<FDlgDataDisplayTreeCategoryNode>(
+					LOCTEXT("VariablesKey", "Variables"), Item, EDlgDataDisplayCategoryTreeNodeType::Variables));
 				break;
 
 			case EDlgDataDisplayTextTreeNodeType::Variable:
@@ -438,8 +438,9 @@ void SDlgDataDisplay::BuildTreeViewItem(TSharedPtr<FDlgDataDisplayTreeNode> Item
 			case EDlgDataDisplayCategoryTreeNodeType::Event:
 				for (const auto& Pair: ActorPropertiesValue->GetEvents())
 				{
-					const TSharedPtr<FDlgDataDisplayTreeNode> EventItem = MakeShareable(new FDlgDataDisplayTreeVariableNode(
-						FText::FromName(Pair.Key), Item, Pair.Key, EDlgDataDisplayVariableTreeNodeType::Event));
+					const TSharedPtr<FDlgDataDisplayTreeNode> EventItem = MakeShared<FDlgDataDisplayTreeVariableNode>(
+						FText::FromName(Pair.Key), Item, Pair.Key, EDlgDataDisplayVariableTreeNodeType::Event
+					);
 					Item->AddChild(EventItem);
 				}
 				break;
@@ -447,8 +448,9 @@ void SDlgDataDisplay::BuildTreeViewItem(TSharedPtr<FDlgDataDisplayTreeNode> Item
 			case EDlgDataDisplayCategoryTreeNodeType::Condition:
 				for (const auto& Pair: ActorPropertiesValue->GetConditions())
 				{
-					const TSharedPtr<FDlgDataDisplayTreeNode> ConditionItem = MakeShareable(new FDlgDataDisplayTreeVariableNode(
-						FText::FromName(Pair.Key), Item, Pair.Key, EDlgDataDisplayVariableTreeNodeType::Condition));
+					const TSharedPtr<FDlgDataDisplayTreeNode> ConditionItem = MakeShared<FDlgDataDisplayTreeVariableNode>(
+						FText::FromName(Pair.Key), Item, Pair.Key, EDlgDataDisplayVariableTreeNodeType::Condition
+					);
 					Item->AddChild(ConditionItem);
 				}
 				break;
@@ -630,7 +632,7 @@ void SDlgDataDisplay::HandleSetExpansionRecursive(TSharedPtr<FDlgDataDisplayTree
 	if (InItem.IsValid() && InItem->HasChildren())
 	{
 		ActorsTreeView->SetItemExpansion(InItem, bInIsItemExpanded);
-		for (const TSharedPtr<FDlgDataDisplayTreeNode> Child : InItem->GetChildren())
+		for (const TSharedPtr<FDlgDataDisplayTreeNode>& Child : InItem->GetChildren())
 		{
 			HandleSetExpansionRecursive(Child, bInIsItemExpanded);
 		}

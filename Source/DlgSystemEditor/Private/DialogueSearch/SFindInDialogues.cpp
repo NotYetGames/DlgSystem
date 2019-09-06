@@ -20,7 +20,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SFindInDialogues
-void SFindInDialogues::Construct(const FArguments& InArgs, TSharedPtr<FDialogueEditor> InDialogueEditor)
+void SFindInDialogues::Construct(const FArguments& InArgs, const TSharedPtr<FDialogueEditor>& InDialogueEditor)
 {
 	DialogueEditorPtr = InDialogueEditor;
 	HostTab = InArgs._ContainingTab;
@@ -154,7 +154,7 @@ SFindInDialogues::~SFindInDialogues()
 	// TODO clear all cache for this
 }
 
-void SFindInDialogues::FocusForUse(const bool bSetFindWithinDialogue, const FDialogueSearchFilter& SearchFilter, const bool bSelectFirstResult)
+void SFindInDialogues::FocusForUse(bool bSetFindWithinDialogue, const FDialogueSearchFilter& SearchFilter, bool bSelectFirstResult)
 {
 	// NOTE: Careful, GeneratePathToWidget can be reentrant in that it can call visibility delegates and such
 	FWidgetPath FilterTextBoxWidgetPath;
@@ -188,7 +188,7 @@ void SFindInDialogues::FocusForUse(const bool bSetFindWithinDialogue, const FDia
 	}
 }
 
-void SFindInDialogues::MakeSearchQuery(const FDialogueSearchFilter& SearchFilter, const bool bInIsFindWithinDialogue)
+void SFindInDialogues::MakeSearchQuery(const FDialogueSearchFilter& SearchFilter, bool bInIsFindWithinDialogue)
 {
 	SearchTextBoxWidget->SetText(FText::FromString(SearchFilter.SearchString));
 
@@ -206,7 +206,7 @@ void SFindInDialogues::MakeSearchQuery(const FDialogueSearchFilter& SearchFilter
 	}
 
 	HighlightText = FText::FromString(SearchFilter.SearchString);
-	RootSearchResult = MakeShareable(new FFindInDialoguesRootNode);
+	RootSearchResult = MakeShared<FFindInDialoguesRootNode>();
 
 	// TODO use threads extend FRunnable
 	if (bInIsFindWithinDialogue)
@@ -239,7 +239,7 @@ void SFindInDialogues::MakeSearchQuery(const FDialogueSearchFilter& SearchFilter
 	if (ItemsFound.Num() == 0)
 	{
 		// Some Items found
-		ItemsFound.Add(MakeShareable(new FFindInDialoguesResult(LOCTEXT("DialogueSearchNoResults", "No Results found"), RootSearchResult)));
+		ItemsFound.Add(MakeShared<FFindInDialoguesResult>(LOCTEXT("DialogueSearchNoResults", "No Results found"), RootSearchResult));
 		HighlightText = FText::GetEmpty();
 
 	}

@@ -120,7 +120,7 @@ int32 UDlgManager::LoadAllDialoguesIntoMemory()
 
 	// Add the current plugin dir
 	// TODO maybe add all the non engine plugin paths? IPluginManager::Get().GetEnabledPlugins()
-	TSharedPtr<IPlugin> ThisPlugin = IPluginManager::Get().FindPlugin(DIALOGUE_SYSTEM_PLUGIN_NAME.ToString());
+	const TSharedPtr<IPlugin> ThisPlugin = IPluginManager::Get().FindPlugin(DIALOGUE_SYSTEM_PLUGIN_NAME.ToString());
 	if (ThisPlugin.IsValid())
 	{
 		FString PluginPath = ThisPlugin->GetMountedAssetPath();

@@ -61,7 +61,7 @@ void FDialogueStyle::Initialize()
 		return;
 	}
 
-	StyleSet = MakeShareable(new FSlateStyleSet(GetStyleSetName()));
+	StyleSet = MakeShared<FSlateStyleSet>(GetStyleSetName());
 	EngineContentRoot = FPaths::EngineContentDir() / TEXT("Editor/Slate");
 	TSharedPtr<IPlugin> CurrentPlugin = IPluginManager::Get().FindPlugin(DIALOGUE_SYSTEM_PLUGIN_NAME.ToString());
 	if (CurrentPlugin.IsValid())
@@ -136,4 +136,3 @@ void FDialogueStyle::Shutdown()
 		StyleSet.Reset();
 	}
 }
-

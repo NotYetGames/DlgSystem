@@ -95,7 +95,7 @@ private: // UStruct -> JSON
 	 *
 	 * @return False if faile to fill properties
 	 */
-	bool UStructToJsonObject(const UStruct* StructDefinition, const void* const ContainerPtr, TSharedRef<FJsonObject> OutJsonObject)
+	bool UStructToJsonObject(const UStruct* StructDefinition, const void* const ContainerPtr, TSharedRef<FJsonObject>& OutJsonObject)
 	{
 		return UStructToJsonAttributes(StructDefinition, ContainerPtr, OutJsonObject->Values);
 	}

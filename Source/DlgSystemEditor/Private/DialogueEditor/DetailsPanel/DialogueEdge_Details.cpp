@@ -54,7 +54,7 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("SpeakerStateSearchKey", "Speaker State"));
 
-		SpeakerStatePropertyRow = MakeShareable(new FTextPropertyPickList_CustomRowHelper(DetailWidgetRow, SpeakerStatePropertyHandle));
+		SpeakerStatePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, SpeakerStatePropertyHandle);
 		SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
 			SNew(STextPropertyPickList)
 			.AvailableSuggestions(this, &Self::GetAllDialoguesSpeakerStates)
@@ -69,7 +69,7 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 	TextPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, Text));
 	FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
 
-	TextPropertyRow = MakeShareable(new FMultiLineEditableTextBox_CustomRowHelper(DetailWidgetRow, TextPropertyHandle));
+	TextPropertyRow = MakeShared<FMultiLineEditableTextBox_CustomRowHelper>(DetailWidgetRow, TextPropertyHandle);
 	TextPropertyRow->SetMultiLineEditableTextBoxWidget(
 		SNew(SMultiLineEditableTextBox)
 		.Font(FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont")))

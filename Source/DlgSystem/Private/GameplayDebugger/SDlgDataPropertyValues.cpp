@@ -36,7 +36,7 @@ static bool FStringToBool(const FString& Value)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SDlgDataProperty
-void SDlgDataPropertyValue::Construct(const FArguments& InArgs, TSharedPtr<FDlgDataDisplayTreeVariableNode> InVariableNode)
+void SDlgDataPropertyValue::Construct(const FArguments& InArgs, const TSharedPtr<FDlgDataDisplayTreeVariableNode>& InVariableNode)
 {
 	VariableNode = InVariableNode;
 	if (!VariableNode.IsValid())
@@ -53,7 +53,7 @@ void SDlgDataPropertyValue::Construct(const FArguments& InArgs, TSharedPtr<FDlgD
 	];
 }
 
-void SDlgDataPropertyValue::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
+void SDlgDataPropertyValue::Tick(const FGeometry& AllottedGeometry, double InCurrentTime, float InDeltaTime)
 {
 	Super::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
 
@@ -161,7 +161,7 @@ void SDlgDataPropertyValue::UpdateVariableNodeFromActor()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SDlgDataTextPropertyValue
-void SDlgDataTextPropertyValue::Construct(const FArguments& InArgs, TSharedPtr<FDlgDataDisplayTreeVariableNode> InVariableNode)
+void SDlgDataTextPropertyValue::Construct(const FArguments& InArgs, const TSharedPtr<FDlgDataDisplayTreeVariableNode>& InVariableNode)
 {
 	VariableNode = InVariableNode;
 	if (!VariableNode.IsValid())
@@ -294,7 +294,7 @@ void SDlgDataTextPropertyValue::HandleTextChanged(const FText& NewText)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SDlgDataEventPropertyValue
-void SDlgDataEventPropertyValue::Construct(const FArguments& InArgs, TSharedPtr<FDlgDataDisplayTreeVariableNode> InVariableNode)
+void SDlgDataEventPropertyValue::Construct(const FArguments& InArgs, const TSharedPtr<FDlgDataDisplayTreeVariableNode>& InVariableNode)
 {
 	VariableNode = InVariableNode;
 	if (!VariableNode.IsValid())
@@ -348,7 +348,7 @@ FReply SDlgDataEventPropertyValue::HandleTriggerEventClicked()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SDlgDataBoolPropertyValue
-void SDlgDataBoolPropertyValue::Construct(const FArguments& InArgs, TSharedPtr<FDlgDataDisplayTreeVariableNode> InVariableNode)
+void SDlgDataBoolPropertyValue::Construct(const FArguments& InArgs, const TSharedPtr<FDlgDataDisplayTreeVariableNode>& InVariableNode)
 {
 	VariableNode = InVariableNode;
 	if (!VariableNode.IsValid())

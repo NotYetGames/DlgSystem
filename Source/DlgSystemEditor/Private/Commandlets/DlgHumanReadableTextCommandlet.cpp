@@ -491,7 +491,7 @@ bool UDlgHumanReadableTextCommandlet::ImportHumanReadableFormatIntoDialogue(cons
 	return bModified;
 }
 
-bool UDlgHumanReadableTextCommandlet::SetGraphNodesNewEdgesText(UDialogueGraphNode* GraphNode, const TArray<FDlgEdge_FormatHumanReadable>& Edges, const int32 NodeIndex, const UDlgDialogue* Dialogue)
+bool UDlgHumanReadableTextCommandlet::SetGraphNodesNewEdgesText(UDialogueGraphNode* GraphNode, const TArray<FDlgEdge_FormatHumanReadable>& Edges, int32 NodeIndex, const UDlgDialogue* Dialogue)
 {
 	bool bModified = false;
 

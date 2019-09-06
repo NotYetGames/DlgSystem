@@ -13,7 +13,7 @@ class FBase_CustomRowHelper
 {
 	typedef FBase_CustomRowHelper Self;
 public:
-	FBase_CustomRowHelper(FDetailWidgetRow* InDetailWidgetRow, TSharedPtr<IPropertyHandle> InPropertyHandle);
+	FBase_CustomRowHelper(FDetailWidgetRow* InDetailWidgetRow, const TSharedPtr<IPropertyHandle>& InPropertyHandle);
 	virtual ~FBase_CustomRowHelper() {}
 
 	/** Sets the localized display name of the property. */
@@ -38,7 +38,7 @@ public:
 	}
 
 	/** Set the optional utils */
-	Self* SetPropertyUtils(TSharedPtr<IPropertyUtilities> Utils)
+	Self* SetPropertyUtils(const TSharedPtr<IPropertyUtilities>& Utils)
 	{
 		PropertyUtils = Utils;
 		return this;

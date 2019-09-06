@@ -59,6 +59,11 @@ UEdGraphNode* FConvertSpeechSequenceNodeToSpeechNodes_DialogueGraphSchemaAction:
 		// Copy data
 		Speech_DialogueNode->SetNodeParticipantName(SequenceEntry.Speaker);
 		Speech_DialogueNode->SetNodeUnformattedText(SequenceEntry.Text);
+		Speech_DialogueNode->SetNodeData(SequenceEntry.NodeData);
+		Speech_DialogueNode->SetSpeakerState(SequenceEntry.SpeakerState);
+		Speech_DialogueNode->SetVoiceSoundWave(SequenceEntry.VoiceSoundWave);
+		Speech_DialogueNode->SetVoiceDialogueWave(SequenceEntry.VoiceDialogueWave);
+		Speech_DialogueNode->SetGenericData(SequenceEntry.GenericData);
 
 		// Create edge to next node
 		if (NodeIndex + 1 < NodesNum)
