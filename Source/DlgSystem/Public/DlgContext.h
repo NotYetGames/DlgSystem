@@ -9,6 +9,7 @@ class USoundWave;
 class UDialogueWave;
 class UTexture2D;
 class UDlgNodeData;
+class UDlgNode;
 
 /** Used to store temporary state of edges */
 struct FDlgEdgeData
@@ -190,8 +191,8 @@ protected:
 	/** the Dialogue jumps to the defined node, or the function returns with false, if the conversation is over */
 	virtual bool EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep) { return false; }
 
-	virtual class UDlgNode* GetActiveNode() { return nullptr; }
-	virtual const class UDlgNode* GetActiveNode() const { return nullptr; }
+	virtual UDlgNode* GetActiveNode() { return nullptr; }
+	virtual const UDlgNode* GetActiveNode() const { return nullptr; }
 
 protected:
 	/** Current Dialogue used in this context at runtime. */

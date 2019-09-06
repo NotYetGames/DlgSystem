@@ -282,13 +282,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 		// NOTE: The ValuePtr here should be a pointer to a pointer
 		// Because the UObjects are pointers, we must deference it. So instead of it being a void** we want it to be a void*
 		const UObject* ObjectPtr = ObjectProperty->GetObjectPropertyValue_InContainer(ValuePtr);
-
-		// Special case were we want just to save a reference to the object location
-		if (ObjectPtr != nullptr && CanSaveAsReference(ObjectProperty, ObjectPtr))
-		{
-			return MakeShared<FJsonValueString>(ObjectPtr->GetPathName());
-		}
-
+		
 		// To find out if in nested containers the object is nullptr we must go a level up
 		const UObject* ContainerObjectPtr = ObjectProperty->GetObjectPropertyValue_InContainer(ContainerPtr);
 		if (ObjectPtr == nullptr || ContainerObjectPtr == nullptr)
@@ -311,6 +305,12 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 				TEXT("ObjectPtr.IsValidLowLevelFast is false for Property = `%s`. Memory corruption for UObjects?"),
 				*Property->GetPathName());
 			return returnNullptr();
+		}
+
+		// Special case were we want just to save a reference to the object location
+		if (ObjectPtr != nullptr && CanSaveAsReference(ObjectProperty, ObjectPtr))
+		{
+			return MakeShared<FJsonValueString>(ObjectPtr->GetPathName());
 		}
 
 		// Save as normal JSON Object
@@ -466,7 +466,7 @@ bool FDlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, co
 		}
 		if (CanSkipProperty(Property))
 		{
-			// Marke as skipped.
+			// Mark as skipped.
 			if (bLogVerbose)
 			{
 				UE_LOG(LogDlgJsonWriter, Verbose, TEXT("Property = `%s` Marked as skiped"), *Property->GetPathName());
