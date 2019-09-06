@@ -740,7 +740,11 @@ void FFindInDialogueSearchManager::EnableGlobalFindResults(TSharedPtr<FWorkspace
 		const FName TabID = GlobalFindResultsTabIDs[TabIdx];
 
 		// Tab not registered yet, good.
+#if ENGINE_MINOR_VERSION >= 23
+		if (!GlobalTabManager->HasTabSpawner(TabID))
+#else
 		if (!GlobalTabManager->CanSpawnTab(TabID))
+#endif
 		{
 			const FText DisplayName = FText::Format(LOCTEXT("GlobalFindResultsDisplayName", "Find in Dialogues {0}"),
 													FText::AsNumber(TabIdx + 1));
@@ -771,7 +775,12 @@ void FFindInDialogueSearchManager::DisableGlobalFindResults()
 	for (int32 TabIdx = 0; TabIdx < ARRAY_COUNT(GlobalFindResultsTabIDs); TabIdx++)
 	{
 		const FName TabID = GlobalFindResultsTabIDs[TabIdx];
-		if (GlobalTabManager->CanSpawnTab(TabID))
+
+#if ENGINE_MINOR_VERSION >= 23
+		if (!GlobalTabManager->HasTabSpawner(TabID))
+#else
+		if (!GlobalTabManager->CanSpawnTab(TabID))
+#endif
 		{
 			GlobalTabManager->UnregisterNomadTabSpawner(TabID);
 		}
