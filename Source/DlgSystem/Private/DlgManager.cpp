@@ -228,6 +228,7 @@ bool UDlgManager::DoesObjectImplementDialogueParticipantInterface(const UObject*
 	static const UClass* DialogueParticipantClass = UDlgDialogueParticipant::StaticClass();
 
 	// Apparently blueprints only work this way
+	// NOTE this is the blueprint assets, not an instance, used only by the custom graph nodes
 	if (const UBlueprint* Blueprint = Cast<UBlueprint>(Object))
 	{
 		if (const UClass* GeneratedClass = Cast<UClass>(Blueprint->GeneratedClass))
