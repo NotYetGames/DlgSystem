@@ -22,6 +22,7 @@
 #include "DlgDialogue.h"
 #include "GameplayDebugger/DlgGameplayDebuggerCategory.h"
 #include "GameplayDebugger/SDlgDataDisplay.h"
+#include "Logging/DlgLogger.h"
 
 #define LOCTEXT_NAMESPACE "FDlgSystemModule"
 
@@ -33,6 +34,8 @@ static const FName NAME_MODULE_AssetRegistry("AssetRegistry");
 
 void FDlgSystemModule::StartupModule()
 {
+	FDlgLogger::OnStart();
+	
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 	UE_LOG(LogDlgSystem, Log, TEXT("Started DlgSystemModule"));
 	OnPreLoadMapHandle = FCoreUObjectDelegates::PreLoadMap.AddRaw(this, &Self::HandlePreLoadMap);
@@ -116,6 +119,8 @@ void FDlgSystemModule::ShutdownModule()
 	}
 
 	UE_LOG(LogDlgSystem, Log, TEXT("Stopped DlgSystemModule"));
+
+	FDlgLogger::OnShutdown();
 }
 
 TSharedRef<SWidget> FDlgSystemModule::GetDialogueDataDisplayWindow()
