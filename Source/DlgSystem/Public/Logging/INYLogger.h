@@ -54,7 +54,7 @@ enum class ENYLoggerLogLevel : uint8
 
 	// Kills the program
 	// TODO use
-	Fatal,
+	// Fatal,
 
 	Error,
 	Warning,
@@ -182,6 +182,14 @@ public:
 
 	// Clears all the on screen messages
 	static void ClearAllOnScreenLogs();
+	FORCEINLINE static bool AreAllOnScreenMessagesEnabled() { return GAreScreenMessagesEnabled; }
+	FORCEINLINE static void SetAreAllOnScreenMessagesEnabled(bool bValue)
+	{
+		GAreScreenMessagesEnabled = bValue;
+	}
+	FORCEINLINE static void DisableAllOnScreenMessages() { SetAreAllOnScreenMessagesEnabled(false); }
+	FORCEINLINE static void EnableAllOnScreenMessages() { SetAreAllOnScreenMessagesEnabled(true); }
+	
 
 	//
 	// Output log
@@ -234,6 +242,15 @@ public:
 	Self& SetMessageLogSuppressLoggingToOutputLog(bool bValue)
 	{
 		bMessageLogSuppressLoggingToOutputLog = bValue;
+		return *this;
+	}
+
+	// For the sake of sanity we redirect all levels higher than RedirectMessageLogLevelsAfter to the output log
+	// SO that not to output for example debug output to the message log only to the output log
+	Self& DisableRedirectMessageLogLevels() { return SetRedirectMessageLogLevelsHigherThan(ENYLoggerLogLevel::NoLogging); }
+	Self& SetRedirectMessageLogLevelsHigherThan(ENYLoggerLogLevel AfterOrEqualLevel)
+	{
+		RedirectMessageLogLevelsHigherThan = AfterOrEqualLevel;
 		return *this;
 	}
 
@@ -293,7 +310,9 @@ public:
 
 	template <typename FmtType, typename... Types>
 	void Tracef(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Trace, Fmt, Args...); }
+
 	
+	// void Fatal(const ANSICHAR* File, int32 Line, const FString& Message);
 	void Log(ENYLoggerLogLevel Level, const FString& Message);
 
 	// TODO implement
@@ -320,8 +339,8 @@ protected:
 	{
 	 	switch (Level)
 		{
-		case ENYLoggerLogLevel::Fatal:
-			return ELogVerbosity::Fatal;
+		// case ENYLoggerLogLevel::Fatal:
+		// 	return ELogVerbosity::Fatal;
 
 		case ENYLoggerLogLevel::Error:
 			return ELogVerbosity::Error;
@@ -343,8 +362,8 @@ protected:
 	{
 		switch (Level)
 		{
-		case ENYLoggerLogLevel::Fatal:
-			return EMessageSeverity::CriticalError;
+		// case ENYLoggerLogLevel::Fatal:
+		// 	return EMessageSeverity::CriticalError;
 
 		case ENYLoggerLogLevel::Error:
 			return EMessageSeverity::Error;
@@ -361,8 +380,8 @@ protected:
 	{
 		switch (Level)
 		{
-		case ENYLoggerLogLevel::Fatal:
-			return ColorFatal;
+		// case ENYLoggerLogLevel::Fatal:
+		// 	return ColorFatal;
 
 		case ENYLoggerLogLevel::Error:
 			return ColorError;
@@ -424,6 +443,10 @@ protected:
 
 	// Should we mirror message log messages from this instance to the output log during flush?
 	bool bMessageLogSuppressLoggingToOutputLog = false;
+
+	// By default the message log does not support debug output, latest is info
+	// For the sake of sanity we redirect all levels higher than RedirectMessageLogLevelsHigherThan to the output log
+	ENYLoggerLogLevel RedirectMessageLogLevelsHigherThan = ENYLoggerLogLevel::Warning;
 
 	// Opens the log for display to the user given certain conditions.
 	bool bMessageLogOpen = true;

@@ -18,6 +18,7 @@
 #include "Nodes/DlgNode_Speech.h"
 #include "Nodes/DlgNode_End.h"
 #include "DlgManager.h"
+#include "Logging/DlgLogger.h"
 
 #define LOCTEXT_NAMESPACE "DlgDialogue"
 
@@ -88,10 +89,10 @@ void UDlgDialogue::PostLoad()
 	// Simply the number of nodes, VirtualParent Node is merged into Speech Node and SelectRandom and SelectorFirst are merged into one Selector Node
 	if (DialogueVersion < FDlgDialogueObjectVersion::MergeVirtualParentAndSelectorTypes)
 	{
-		UE_LOG(LogDlgSystem,
-			   Warning,
-			   TEXT("Dialogue = `%s` with Version MergeVirtualParentAndSelectorTypes will not be converted."
-				    "See https://gitlab.com/snippets/1691704 for manual conversion "), *GetTextFilePathName());
+		FDlgLogger::Get().Warningf(
+			TEXT("Dialogue = `%s` with Version MergeVirtualParentAndSelectorTypes will not be converted. See https://gitlab.com/snippets/1691704 for manual conversion"),
+			*GetTextFilePathName()
+		);
 	}
 
 	// Refresh the data, so that it is valid after loading.
@@ -104,8 +105,10 @@ void UDlgDialogue::PostLoad()
 	if (!DlgGuid.IsValid())
 	{
 		RegenerateGuid();
-		UE_LOG(LogDlgSystem, Verbose, TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because of of invalid DlgGuid."),
-			   *DlgGuid.ToString(), *GetPathName());
+		FDlgLogger::Get().Debugf(
+			TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because of of invalid DlgGuid."),
+			*DlgGuid.ToString(), *GetPathName()
+		);
 	}
 
 #if WITH_EDITOR
@@ -171,8 +174,10 @@ void UDlgDialogue::PostInitProperties()
 	if (DialogueVersion >= FDlgDialogueObjectVersion::AddGuid && !DlgGuid.IsValid())
 	{
 		RegenerateGuid();
-		UE_LOG(LogDlgSystem, Verbose, TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because of new created Dialogue."),
-			   *DlgGuid.ToString(), *GetPathName());
+		FDlgLogger::Get().Debugf(
+			TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because of new created Dialogue."),
+			*DlgGuid.ToString(), *GetPathName()
+		);
 	}
 }
 
@@ -210,8 +215,10 @@ void UDlgDialogue::PostDuplicate(bool bDuplicateForPIE)
 	// Used when duplicating dialogues.
 	// Make new guid for this copied Dialogue.
 	RegenerateGuid();
-	UE_LOG(LogDlgSystem, Verbose, TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because Dialogue was copied."),
-		   *DlgGuid.ToString(), *GetPathName());
+	FDlgLogger::Get().Debugf(
+		TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because Dialogue was copied."),
+		*DlgGuid.ToString(), *GetPathName()
+	);
 }
 
 void UDlgDialogue::PostEditImport()
@@ -221,8 +228,10 @@ void UDlgDialogue::PostEditImport()
 	// Used when duplicating dialogues.
 	// Make new guid for this copied Dialogue
 	RegenerateGuid();
-	UE_LOG(LogDlgSystem, Verbose, TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because Dialogue was copied."),
-		   *DlgGuid.ToString(), *GetPathName());
+	FDlgLogger::Get().Debugf(
+		TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because Dialogue was copied."),
+		*DlgGuid.ToString(), *GetPathName()
+	);
 }
 
 #if WITH_EDITOR
@@ -301,7 +310,7 @@ void UDlgDialogue::CreateGraph()
 		StartNode = ConstructDialogueNode<UDlgNode_Speech>();
 	}
 
-	UE_LOG(LogDlgSystem, Verbose, TEXT("Creating graph for Dialogue = `%s`"), *GetPathName());
+	FDlgLogger::Get().Debugf(TEXT("Creating graph for Dialogue = `%s`"), *GetPathName());
 	DlgGraph = GetDialogueEditorModule()->CreateNewDialogueGraph(this);
 
 	// Give the schema a chance to fill out any required nodes
@@ -316,7 +325,7 @@ void UDlgDialogue::ClearGraph()
 		return;
 	}
 
-	UE_LOG(LogDlgSystem, Verbose, TEXT("Clearing graph for Dialogue = `%s`"), *GetPathName());
+	FDlgLogger::Get().Debugf(TEXT("Clearing graph for Dialogue = `%s`"), *GetPathName());
 	GetDialogueEditorModule()->RemoveAllGraphNodes(this);
 
 	// Give the schema a chance to fill out any required nodes
@@ -331,7 +340,7 @@ void UDlgDialogue::CompileDialogueNodesFromGraphNodes()
 		return;
 	}
 
-	UE_LOG(LogDlgSystem, Log, TEXT("Compiling Dialogue = `%s` (Graph data -> Dialogue data)`"), *GetPathName());
+	FDlgLogger::Get().Infof(TEXT("Compiling Dialogue = `%s` (Graph data -> Dialogue data)`"), *GetPathName());
 	GetDialogueEditorModule()->CompileDialogueNodesFromGraphNodes(this);
 }
 #endif // #if WITH_EDITOR
@@ -351,8 +360,8 @@ void UDlgDialogue::ReloadFromFile()
 
 	// TODO handle DlgName == NAME_None or invalid filename
 	const FString& TextFileName = GetTextFilePathName();
-	UE_LOG(LogDlgSystem, Log, TEXT("Reloading data for Dialogue = `%s` FROM file = `%s`"), *GetPathName(), *TextFileName);
-
+	FDlgLogger::Get().Infof(TEXT("Reloading data for Dialogue = `%s` FROM file = `%s`"), *GetPathName(), *TextFileName);
+	
 	// TODO(vampy): Check for errors
 	check(TextFormat != EDlgDialogueTextFormat::DlgDialogueNoTextFormat);
 	switch (TextFormat)
@@ -388,18 +397,18 @@ void UDlgDialogue::ReloadFromFile()
 		{
 			// found duplicate of this Dialogue
 			RegenerateGuid();
-			UE_LOG(LogDlgSystem,
-				Warning,
+			FDlgLogger::Get().Warningf(
 				TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because the input file contained a duplicate GUID."),
-				*DlgGuid.ToString(), *GetPathName());
+				*DlgGuid.ToString(), *GetPathName()
+			);
 		}
 		else
 		{
 			// We have bigger problems on our hands
-			UE_LOG(LogDlgSystem,
-				Error,
+			FDlgLogger::Get().Errorf(
 				TEXT("Found Duplicate Dialogue that does not belong to this Dialogue = `%s`, DuplicateDialogues.Num = %d"),
-				*GetPathName(),  DuplicateDialogues.Num());
+				*GetPathName(),  DuplicateDialogues.Num()
+			);
 		}
 	}
 
@@ -431,7 +440,7 @@ void UDlgDialogue::ExportToFile() const
 
 	// TODO(vampy): Check for errors
 	const FString& TextFileName = GetTextFilePathName();
-	UE_LOG(LogDlgSystem, Log, TEXT("Exporting data for Dialogue = `%s` TO file = `%s`"), *GetPathName(), *TextFileName);
+	FDlgLogger::Get().Infof(TEXT("Exporting data for Dialogue = `%s` TO file = `%s`"), *GetPathName(), *TextFileName);
 
 	check(TextFormat != EDlgDialogueTextFormat::DlgDialogueNoTextFormat)
 	switch (TextFormat)
@@ -456,7 +465,8 @@ void UDlgDialogue::ExportToFile() const
 
 void UDlgDialogue::RefreshData()
 {
-	UE_LOG(LogDlgSystem, Log, TEXT("Refreshing data for Dialogue = `%s`"), *GetPathName());
+	FDlgLogger::Get().Infof(TEXT("Refreshing data for Dialogue = `%s`"), *GetPathName());
+	
 	DlgData.Empty();
 	DlgSpeakerStates.Empty();
 
@@ -473,7 +483,10 @@ void UDlgDialogue::RefreshData()
 		// Parent/child is not valid, simply do nothing
 		if (bCheckNone && ValidParticipantName == NAME_None)
 		{
-			UE_LOG(LogDlgSystem, Warning, TEXT("Ignoring ParticipantName = None, Context = %s. Either your node name is None or your participant name is None."), *ContextMessage);
+			FDlgLogger::Get().Warningf(
+				TEXT("Ignoring ParticipantName = None, Context = %s. Either your node name is None or your participant name is None."),
+				*ContextMessage
+			);
 			return BlackHoleParticipant;
 		}
 
@@ -610,7 +623,7 @@ void UDlgDialogue::RefreshData()
 		}
 		else
 		{
-			UE_LOG(LogDlgSystem, Warning, TEXT("Trying to fill DlgParticipantClasses, got a Participant name = None. Ignoring!"));
+			FDlgLogger::Get().Warning(TEXT("Trying to fill DlgParticipantClasses, got a Participant name = None. Ignoring!"));
 		}
 	}
 }

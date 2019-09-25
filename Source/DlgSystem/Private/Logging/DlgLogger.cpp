@@ -8,18 +8,19 @@ static const FName MESSAGE_LOG_NAME{TEXT("Dialogue Plugin")};
 
 FDlgLogger::FDlgLogger() : Super()
 {
-	EnableMessageLog();
-	EnableOutputLog();
-	EnableOnScreen();
+	EnableMessageLog(false);
+	DisableOutputLog();
+	DisableOnScreen();
 	DisableClientConsole();
 	
 	SetOutputLogCategory(LogDlgSystem);
 	SetMessageLogName(MESSAGE_LOG_NAME, false);
+	SetRedirectMessageLogLevelsHigherThan(ENYLoggerLogLevel::Warning);
 }
 
 void FDlgLogger::OnStart()
 {
-	MessageLogRegisterLogName(MESSAGE_LOG_NAME, LOCTEXT("dlg_key", "Dialogue Plugin"));
+	MessageLogRegisterLogName(MESSAGE_LOG_NAME, LOCTEXT("dlg_key", "Dialogue System Plugin"));
 }
 
 void FDlgLogger::OnShutdown()

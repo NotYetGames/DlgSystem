@@ -166,8 +166,28 @@ void INYLogger::LogfImplementation(ENYLoggerLogLevel Level, const TCHAR* Fmt, ..
 	NY_GROWABLE_LOGF(Log(Level, Buffer))
 }
 
+// void INYLogger::Fatal(const ANSICHAR* File, int32 Line, const FString& Message)
+// {
+// #if NO_LOGGING
+// 	LowLevelFatalErrorHandler(File, Line, *Message);
+// 	_DebugBreakAndPromptForRemote();
+// 	FDebug::AssertFailed("", File, Line, *Message);
+// #else
+// 	LowLevelFatalErrorHandler(File, Line, *Message);
+// 	_DebugBreakAndPromptForRemote();
+// 	FDebug::AssertFailed("", File, Line, *Message);
+// #endif // NO_LOGGING
+// }
+
 void INYLogger::Log(ENYLoggerLogLevel Level, const FString& Message)
 {
+	// Should not happen but just in case redirect to the fatal function
+	// if (Level == ENYLoggerLogLevel::Fatal)
+	// {
+	// 	Fatal(__FILE__, __LINE__, Message);
+	// 	return;
+	// }
+
 	// No logging, abort
 #if NO_LOGGING
 	return;
@@ -198,10 +218,10 @@ void INYLogger::LogScreen(ENYLoggerLogLevel Level, const FString& Message)
 		return;
 	}
 
-	const bool bPreviousValue = GAreScreenMessagesEnabled;
+	const bool bPreviousValue = AreAllOnScreenMessagesEnabled();
 	if (bForceEnableScreenMessages)
 	{
-		GAreScreenMessagesEnabled = true;
+		EnableAllOnScreenMessages();
 	}
 
 	const uint64 Key = INDEX_NONE;
@@ -210,7 +230,7 @@ void INYLogger::LogScreen(ENYLoggerLogLevel Level, const FString& Message)
 
 	if (bForceEnableScreenMessages)
 	{
-		GAreScreenMessagesEnabled = bPreviousValue;
+		SetAreAllOnScreenMessagesEnabled(bPreviousValue);
 	}
 }
 
@@ -229,6 +249,18 @@ void INYLogger::LogClientConsole(ENYLoggerLogLevel Level, const FString& Message
 
 void INYLogger::LogMessageLog(ENYLoggerLogLevel Level, const FString& Message)
 {
+	// Should we be redirecting this message log because 
+	if (RedirectMessageLogLevelsHigherThan != ENYLoggerLogLevel::NoLogging &&
+		Level > RedirectMessageLogLevelsHigherThan)
+	{
+		// Redirect to the output log if not enabled
+		if (!IsOutputLogEnabled())
+		{
+			LogOutputLog(Level, Message);
+		}
+		return;
+	}
+	
 	// TSharedRef<FTokenizedMessage> NewMessage = FTokenizedMessage::Create(Severity);
 	const EMessageSeverity::Type Severity = GetMessageSeverityForLogLevel(Level);
 	auto message = FMessageLog(MessageLogName);
@@ -237,7 +269,7 @@ void INYLogger::LogMessageLog(ENYLoggerLogLevel Level, const FString& Message)
 
 	if (bMessageLogOpen)
 	{
-		message.Open(Severity, true);
+		message.Open(Severity, false);
 	}
 }
 

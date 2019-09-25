@@ -8,6 +8,7 @@
 #include "DlgReflectionHelper.h"
 
 #include "DlgDialogueParticipant.h"
+#include "Logging/DlgLogger.h"
 
 bool FDlgCondition::EvaluateArray(const TArray<FDlgCondition>& DlgConditionArray, const UDlgContextInternal* DlgContext, FName DefaultParticipantName)
 {
@@ -134,7 +135,7 @@ bool FDlgCondition::CheckFloat(float Value, const UDlgContextInternal* DlgContex
 			return !FMath::IsNearlyEqual(Value, ValueToCheckAgainst);
 
 		default:
-			UE_LOG(LogDlgSystem, Error, TEXT("Invalid Operation in float based condition!"));
+			FDlgLogger::Get().Error(TEXT("Invalid Operation in float based condition!"));
 			return false;
 	}
 }
@@ -181,7 +182,7 @@ bool FDlgCondition::CheckInt(int32 Value, const UDlgContextInternal* DlgContext)
 			return Value != ValueToCheckAgainst;
 
 		default:
-			UE_LOG(LogDlgSystem, Error, TEXT("Invalid Operation in int based condition!"));
+			FDlgLogger::Get().Error(TEXT("Invalid Operation in int based condition!"));
 			return false;
 	}
 }
@@ -243,10 +244,10 @@ bool FDlgCondition::ValidateIsParticipantValid(const UObject* Participant, const
 		return true;
 	}
 
-	UE_LOG(LogDlgSystem,
-		Error,
+	FDlgLogger::Get().Errorf(
 		TEXT("Condition failed: invalid participant! ParticipantName = %s, ConditionName = %s with Context = %s"),
-		*ParticipantName.ToString(), *CallbackName.ToString(), *ContextMessage);
+		*ParticipantName.ToString(), *CallbackName.ToString(), *ContextMessage
+	);
 	return false;
 }
 

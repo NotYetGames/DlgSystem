@@ -3,6 +3,7 @@
 
 #include "DlgContextInternal.h"
 #include "DlgSystemPrivatePCH.h"
+#include "Logging/DlgLogger.h"
 
 #if WITH_EDITOR
 void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -60,8 +61,10 @@ bool UDlgNode_Speech::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<c
 		// stop endless loop
 		if (AlreadyEvaluated.Contains(this))
 		{
-			UE_LOG(LogDlgSystem, Warning, TEXT("Endless loop detected in ReevaluateChildren call: a virtual parent became his own parent!"
-												"This is not supposed to happen, the dialogue is terminated!"));
+			FDlgLogger::Get().Warning(
+				TEXT("Endless loop detected in ReevaluateChildren call: a virtual parent became his own parent!"
+							"This is not supposed to happen, the dialogue is terminated!")
+			);
 			return false;
 		}
 

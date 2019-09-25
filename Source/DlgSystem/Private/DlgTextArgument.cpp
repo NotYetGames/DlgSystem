@@ -7,6 +7,7 @@
 #include "DlgContextInternal.h"
 #include "DlgDialogueParticipant.h"
 #include "DlgReflectionHelper.h"
+#include "Logging/DlgLogger.h"
 
 
 FArchive& operator<<(FArchive &Ar, FDlgTextArgument& DlgCondition)
@@ -26,10 +27,10 @@ FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgCo
 	const UObject* Participant = DlgContext->GetConstParticipant(ValidParticipantName);
 	if (Participant == nullptr)
 	{
-		UE_LOG(LogDlgSystem,
-			Error,
+		FDlgLogger::Get().Errorf(
 			TEXT("Failed to construct text argument = %s, invalid owner name = %s, NodeOwner = %s"),
-			*DisplayString, *ValidParticipantName.ToString(), *NodeOwner.ToString());
+			*DisplayString, *ValidParticipantName.ToString(), *NodeOwner.ToString()
+		);
 		return FFormatArgumentValue(0);
 	}
 

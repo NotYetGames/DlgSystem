@@ -4,6 +4,7 @@
 #include "DlgSystemPrivatePCH.h"
 #include "DlgReflectionHelper.h"
 #include "DlgDialogueParticipant.h"
+#include "Logging/DlgLogger.h"
 
 void FDlgEvent::Call(UObject* TargetParticipant) const
 {
@@ -56,7 +57,10 @@ bool FDlgEvent::ValidateIsParticipantValid(const UObject* Participant) const
 		return true;
 	}
 
-	UE_LOG(LogDlgSystem, Error, TEXT("Event failed: invalid participant! ParticipantName = %s, EventName = %s"), *ParticipantName.ToString(), *EventName.ToString());
+	FDlgLogger::Get().Errorf(
+		TEXT("Event failed: invalid participant! ParticipantName = %s, EventName = %s"),
+		*ParticipantName.ToString(), *EventName.ToString()
+	);
 	return false;
 }
 

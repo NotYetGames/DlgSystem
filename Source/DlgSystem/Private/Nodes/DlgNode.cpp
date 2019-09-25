@@ -3,6 +3,7 @@
 #include "DlgSystemPrivatePCH.h"
 #include "DlgContextInternal.h"
 #include "EngineUtils.h"
+#include "Logging/DlgLogger.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +91,10 @@ void UDlgNode::FireNodeEnterEvents(UDlgContextInternal* DlgContext)
 
 		if (Participant == nullptr)
 		{
-			UE_LOG(LogDlgSystem, Error, TEXT("FireNodeEnterEvents: Dialogue = `%s`, NodeIndex = %d. Got non existent Participant Name, event call will fail!"), *GetDialogue()->GetPathName(), DlgContext->GetActiveNodeIndex());
+			FDlgLogger::Get().Errorf(
+				TEXT("FireNodeEnterEvents: Dialogue = `%s`, NodeIndex = %d. Got non existent Participant Name, event call will fail!"),
+				*GetDialogue()->GetPathName(), DlgContext->GetActiveNodeIndex()
+			);
 		}
 
 		Event.Call(Participant);
@@ -146,7 +150,10 @@ bool UDlgNode::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UD
 	// no child, but no end node?
 	if (AvailableChildren.Num() == 0)
 	{
-		UE_LOG(LogDlgSystem, Warning, TEXT("Dialogue stucked: no valid child for a node!"));
+		FDlgLogger::Get().Warningf(
+			TEXT("Dialogue = %s got stuck: no valid child for a node!"),
+			*DlgContext->GetDialoguePathName()
+		);
 		return false;
 	}
 
@@ -199,12 +206,10 @@ bool UDlgNode::OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext
 		return DlgContext->EnterNode(AvailableChildren[OptionIndex]->TargetIndex, {});
 	}
 
-	UE_LOG(LogDlgSystem,
-		   Error,
-		   TEXT("Failed to choose option index = %d - it only has %d valid options!"),
-		   OptionIndex,
-		   AvailableChildren.Num());
-
+	FDlgLogger::Get().Errorf(
+		TEXT("Failed to choose option index = %d - it only has %d valid options!"),
+		OptionIndex, AvailableChildren.Num()
+	);
 	return false;
 }
 
