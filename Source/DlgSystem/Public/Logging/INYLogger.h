@@ -12,6 +12,41 @@ class FMessageLogModule;
 class IMessageLogListing;
 
 
+/**
+ * Options for setting up a message log's UI
+ */
+struct FNYMessageLogInitializationOptions
+{
+	FNYMessageLogInitializationOptions() {}
+
+	/** Whether to show the filters menu */
+	bool bShowFilters = false;
+
+	/** 
+	 * Whether to initially  show the pages widget. Setting this to false will allow the user to manually clear the log.
+	 * If this is not set & NewPage() is called on the log, the pages widget will show itself
+	 */
+	bool bShowPages = false;
+
+	/**
+	* Whether to allow the user to clear this log.
+	*/
+	bool bAllowClear = true;
+
+	/**
+	 * Whether to check for duplicate messages & discard them
+	 */
+	bool bDiscardDuplicates = false;
+
+	/** The maximum number of pages this log can hold. Pages are managed in a first in, last out manner */
+	uint32 MaxPageCount = 20;
+
+	/** Whether to show this log in the main log window */
+	bool bShowInLogWindow = true;
+};
+
+
+
 UENUM()
 enum class ENYLoggerLogLevel : uint8
 {
@@ -49,25 +84,68 @@ enum class ENYLoggerLogLevel : uint8
 class DLGSYSTEM_API INYLogger
 {
 	typedef INYLogger Self;
-public:
+protected:
 	INYLogger() {}
+	
+public:
 	virtual ~INYLogger() {}
 
 	// Create a new logger
 	static INYLogger New() { return Self{}; }
+	static INYLogger& Get()
+	{
+		static INYLogger Instance;
+		return Instance;
+	}
 
+	// Exclusive enables
+	Self& OnlyEnableClientConsole(APlayerController* PC)
+	{
+		EnableClientConsole(PC);
+		DisableOnScreen();
+		DisableMessageLog();
+		DisableOutputLog();
+		return *this;
+	}
+	Self& OnlyEnableOnScreen(bool bInForceEnableScreenMessages = false)
+	{
+		EnableOnScreen(bInForceEnableScreenMessages);
+		DisableClientConsole();
+		DisableMessageLog();
+		DisableOutputLog();
+		return *this;
+	}
+	Self& OnlyEnableOutputLog()
+	{
+		EnableOutputLog();
+		DisableOnScreen();
+		DisableClientConsole();
+		DisableMessageLog();
+		return *this;
+	}
+
+	Self& OnlyEnableMessageLog(bool bSuppressLoggingToOutputLog = false)
+	{
+		EnableMessageLog(bSuppressLoggingToOutputLog);
+		DisableOnScreen();
+		DisableClientConsole();
+		DisableOutputLog();
+		return *this;
+	}
+	
+	
 	//
 	// Client console
 	//
 	
 	Self& EnableClientConsole(APlayerController* PC)
 	{
-		SetUseClientConsole(true);
+		UseClientConsole(true);
 		SetClientConsolePlayerController(PC);
 		return *this;
 	}
-	Self& DisableClientConsole() { return SetUseClientConsole(false); }
-	Self& SetUseClientConsole(bool bValue)
+	Self& DisableClientConsole() { return UseClientConsole(false); }
+	Self& UseClientConsole(bool bValue)
 	{
 		bClientConsole = bValue;
 		return *this;
@@ -79,9 +157,9 @@ public:
 	//
 	
 	// bInForceEnableScreenMessages - if true, even if the screen messages are disabled we will force display it
-	Self& EnableOnScreen(bool bInForceEnableScreenMessages = false) { return SetUseOnScreen(true, bInForceEnableScreenMessages); }
-	Self& DisableOnScreen() { return SetUseOnScreen(false); }
-	Self& SetUseOnScreen(bool bValue, bool bInForceEnableScreenMessages = false)
+	Self& EnableOnScreen(bool bInForceEnableScreenMessages = false) { return UseOnScreen(true, bInForceEnableScreenMessages); }
+	Self& DisableOnScreen() { return UseOnScreen(false); }
+	Self& UseOnScreen(bool bValue, bool bInForceEnableScreenMessages = false)
 	{
 		bOnScreen = bValue;
 		bForceEnableScreenMessages = bInForceEnableScreenMessages;
@@ -109,15 +187,18 @@ public:
 	// Output log
 	//
 	
-	Self& EnableOutputLog() { return SetUseOutputLog(true); }
-	Self& DisableOutputLog() { return SetUseOutputLog(false); }
-	Self& SetUseOutputLog(bool bValue)
+	Self& EnableOutputLog() { return UseOutputLog(true); }
+	Self& DisableOutputLog() { return UseOutputLog(false); }
+	Self& UseOutputLog(bool bValue)
 	{
 		bOutputLog = bValue;
 		return *this;
 	}
 	
 	// The log category must exist
+	Self& SetNoOutputLogCategory() { return SetOutputLogCategory(NAME_None); }
+	Self& WithOutputLogCategory(const FLogCategoryBase& NewCategory) { return SetOutputLogCategory(NewCategory); }
+	Self& WithOutputLogCategory(FName NewCategory) { return SetOutputLogCategory(NewCategory); }
 	Self& SetOutputLogCategory(const FLogCategoryBase& NewCategory)
 	{
 		OutputLogCategory = NewCategory.GetCategoryName();
@@ -134,12 +215,12 @@ public:
 	// Message log
 	//
 	
-	Self& EnableMessageLog() { return SetUseMessageLog(true); }
-	Self& DisableMessageLog() { return SetUseMessageLog(true); }
-	Self& SetUseMessageLog(bool bValue)
+	Self& EnableMessageLog(bool bSuppressLoggingToOutputLog = false) { return UseMessageLog(true, bSuppressLoggingToOutputLog); }
+	Self& DisableMessageLog() { return UseMessageLog(true); }
+	Self& UseMessageLog(bool bValue, bool bSuppressLoggingToOutputLog = false)
 	{
 		bMessageLog = bValue;
-		return *this;
+		return SetMessageLogSuppressLoggingToOutputLog(bSuppressLoggingToOutputLog);
 	}
 
 	// Opens the log for display to the user given certain conditions.
@@ -158,7 +239,7 @@ public:
 
 	static bool IsMessageLogNameRegistered(FName LogName);
 	static bool MessageLogUnregisterLogName(FName LogName);
-	static void MessageLogRegisterLogName(FName LogName, const FText& LogLabel);
+	static void MessageLogRegisterLogName(FName LogName, const FText& LogLabel, const FNYMessageLogInitializationOptions& InitOptions = {});
 #if WITH_UNREAL_DEVELOPER_TOOLS
 	static TSharedPtr<IMessageLogListing> MessageLogGetLogNameListing(FName LogName);
 #endif // WITH_UNREAL_DEVELOPER_TOOLS
@@ -167,10 +248,10 @@ public:
 
 	// Registers the new Message log name
 	// NOTE: Call MessageLogRegisterLogName before calling this
-	Self& SetMessageLogName(FName LogName)
+	Self& SetMessageLogName(FName LogName, bool bVerify = true)
 	{
 #if WITH_UNREAL_DEVELOPER_TOOLS
-		if (!IsMessageLogNameRegistered(LogName))
+		if (bVerify && !IsMessageLogNameRegistered(LogName))
 		{
 			Warning(TEXT("SetMessageLogName: Failed to register the message log name"));
 		}
@@ -185,11 +266,34 @@ public:
 	//
 
 	FORCEINLINE FName GetOutputLogCategory() const { return OutputLogCategory; }
-	FORCEINLINE bool UseClientConsole() const { return bClientConsole; }
-	FORCEINLINE bool UseOnScreen() const { return bOnScreen; }
-	FORCEINLINE bool UseOutputLog() const { return bOutputLog; }
-	FORCEINLINE bool UseMessageLog() const { return bMessageLog; }
+	FORCEINLINE bool IsClientConsoleEnabled() const { return bClientConsole; }
+	FORCEINLINE bool IsOnScreenEnabled() const { return bOnScreen; }
+	FORCEINLINE bool IsOutputLogEnabled() const { return bOutputLog; }
+	FORCEINLINE bool IsMessageLogEnabled() const { return bMessageLog; }
 
+	template <typename FmtType, typename... Types>
+	void Logf(ENYLoggerLogLevel Level, const FmtType& Fmt, Types... Args)
+	{
+		static_assert(TIsArrayOrRefOfType<FmtType, TCHAR>::Value, "Formatting string must be a TCHAR array.");
+		static_assert(TAnd<TIsValidVariadicFunctionArg<Types>...>::Value, "Invalid argument(s) passed to INYLogger::Logf");
+		LogfImplementation(Level, Fmt, Args...);
+	}
+
+	template <typename FmtType, typename... Types>
+	void Errorf(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Error, Fmt, Args...); }
+
+	template <typename FmtType, typename... Types>
+	void Warningf(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Warning, Fmt, Args...); }
+
+	template <typename FmtType, typename... Types>
+	void Infof(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Info, Fmt, Args...); }
+
+	template <typename FmtType, typename... Types>
+	void Debugf(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Debug, Fmt, Args...); }
+
+	template <typename FmtType, typename... Types>
+	void Tracef(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Trace, Fmt, Args...); }
+	
 	void Log(ENYLoggerLogLevel Level, const FString& Message);
 
 	// TODO implement
@@ -201,11 +305,12 @@ public:
 	FORCEINLINE void Trace(const FString& Message) { Log(ENYLoggerLogLevel::Trace, Message); }
 
 protected:
+	void VARARGS LogfImplementation(ENYLoggerLogLevel Level, const TCHAR* Fmt, ...);
+	
 #if WITH_UNREAL_DEVELOPER_TOOLS
 	static FMessageLogModule* GetMessageLogModule();
 #endif // WITH_UNREAL_DEVELOPER_TOOLS
 
-	
 	virtual void LogScreen(ENYLoggerLogLevel Level, const FString& Message);
 	virtual void LogOutputLog(ENYLoggerLogLevel Level, const FString& Message);
 	virtual void LogMessageLog(ENYLoggerLogLevel Level, const FString& Message);
@@ -278,9 +383,8 @@ protected:
 	static FOutputDevice* GetOutputDeviceFromLogLevel(ENYLoggerLogLevel Level);
 
 protected:
-	// If set to false, the class will use GLog/GWarn to log to the log file
-	// Instead of the own implementation of the category
-	// bool bUseLogCategory = false;
+	//
+	// On screen
 	//
 	
 	// Output to the screen
@@ -297,14 +401,20 @@ protected:
 
 	// If bScreen == true and this is true, we force enable the screen messages
 	bool bForceEnableScreenMessages = false;
-	
+
+	//
+	// Output log
+	//
 	
 	// Output to the output log and log file
-	bool bOutputLog = true;
+	bool bOutputLog = false;
 
 	// Category for output l og
-	FName OutputLogCategory = TEXT("LogTemp");
+	FName OutputLogCategory = NAME_None;
 
+	//
+	// Message log
+	//
 	
 	// Output to the message log
 	bool bMessageLog = true;
@@ -317,7 +427,10 @@ protected:
 
 	// Opens the log for display to the user given certain conditions.
 	bool bMessageLogOpen = true;
-	
+
+	//
+	// Client console
+	//
 
 	// Output to the dropdown ingame console, requires the PlayerController to be set
 	bool bClientConsole = false;
@@ -325,7 +438,10 @@ protected:
 	// Required to print to client console
 	APlayerController* PlayerController = nullptr;
 
+	//
 	// Colors
+	//
+	//
 	FColor ColorFatal = FColor::Red;
 	FColor ColorError = FColor::Red;
 	FColor ColorWarning = FColor::Yellow;

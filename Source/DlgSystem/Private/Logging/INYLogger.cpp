@@ -14,6 +14,39 @@
 
 #include "Modules/ModuleManager.h"
 
+// Pulled the two FOutputDevice::Logf functions into shared code. Needs to be a #define
+// since it uses GET_VARARGS_RESULT which uses the va_list stuff which operates on the
+// current function, so we can't easily call a function
+#define NY_GROWABLE_LOGF(SerializeFunc) \
+	int32	BufferSize	= 1024; \
+	TCHAR*	Buffer		= NULL; \
+	int32	Result		= -1; \
+	/* allocate some stack space to use on the first pass, which matches most strings */ \
+	TCHAR	StackBuffer[512]; \
+	TCHAR*	AllocatedBuffer = NULL; \
+\
+	/* first, try using the stack buffer */ \
+	Buffer = StackBuffer; \
+	GET_VARARGS_RESULT( Buffer, ARRAY_COUNT(StackBuffer), ARRAY_COUNT(StackBuffer) - 1, Fmt, Fmt, Result ); \
+\
+	/* if that fails, then use heap allocation to make enough space */ \
+	while(Result == -1) \
+	{ \
+		FMemory::SystemFree(AllocatedBuffer); \
+		/* We need to use malloc here directly as GMalloc might not be safe. */ \
+		Buffer = AllocatedBuffer = (TCHAR*) FMemory::SystemMalloc( BufferSize * sizeof(TCHAR) ); \
+		GET_VARARGS_RESULT( Buffer, BufferSize, BufferSize-1, Fmt, Fmt, Result ); \
+		BufferSize *= 2; \
+	}; \
+	Buffer[Result] = 0; \
+	; \
+\
+	SerializeFunc; \
+	FMemory::SystemFree(AllocatedBuffer);
+
+
+
+
 INYLogger& INYLogger::SetClientConsolePlayerController(APlayerController* PC)
 {
 	PlayerController = PC;
@@ -62,7 +95,7 @@ bool INYLogger::IsMessageLogNameRegistered(FName LogName)
 #endif // WITH_UNREAL_DEVELOPER_TOOLS
 }
 
-void INYLogger::MessageLogRegisterLogName(FName LogName, const FText& LogLabel)
+void INYLogger::MessageLogRegisterLogName(FName LogName, const FText& LogLabel, const FNYMessageLogInitializationOptions& InitOptions)
 {
 #if WITH_UNREAL_DEVELOPER_TOOLS
 	FMessageLogModule* MessageLogModule = GetMessageLogModule();
@@ -71,8 +104,15 @@ void INYLogger::MessageLogRegisterLogName(FName LogName, const FText& LogLabel)
 		return;
 	}
 
-	FMessageLogInitializationOptions InitOptions;
-	MessageLogModule->RegisterLogListing(LogName, LogLabel, InitOptions);
+	FMessageLogInitializationOptions UnrealInitOptions;
+	UnrealInitOptions.bShowFilters = InitOptions.bShowFilters;
+	UnrealInitOptions.bShowPages = InitOptions.bShowPages;
+	UnrealInitOptions.bAllowClear = InitOptions.bAllowClear;
+	UnrealInitOptions.bDiscardDuplicates = InitOptions.bDiscardDuplicates;
+	UnrealInitOptions.MaxPageCount = InitOptions.MaxPageCount;
+	UnrealInitOptions.bShowInLogWindow = InitOptions.bShowInLogWindow;
+	
+	MessageLogModule->RegisterLogListing(LogName, LogLabel, UnrealInitOptions);
 #endif // WITH_UNREAL_DEVELOPER_TOOLS
 }
 
@@ -117,6 +157,15 @@ void INYLogger::MessageLogOpenLogName(FName LogName)
 #endif // WITH_UNREAL_DEVELOPER_TOOLS
 }
 
+void INYLogger::LogfImplementation(ENYLoggerLogLevel Level, const TCHAR* Fmt, ...)
+{
+#if NO_LOGGING
+	return;
+#endif
+
+	NY_GROWABLE_LOGF(Log(Level, Buffer))
+}
+
 void INYLogger::Log(ENYLoggerLogLevel Level, const FString& Message)
 {
 	// No logging, abort
@@ -124,19 +173,19 @@ void INYLogger::Log(ENYLoggerLogLevel Level, const FString& Message)
 	return;
 #endif
 
-	if (UseClientConsole())
+	if (IsClientConsoleEnabled())
 	{
 		LogClientConsole(Level, Message);
 	}
-	if (UseOnScreen())
+	if (IsOnScreenEnabled())
 	{
 		LogScreen(Level, Message);
 	}
-	if (UseOutputLog())
+	if (IsOutputLogEnabled())
 	{
 		LogOutputLog(Level, Message);
 	}
-	if (UseMessageLog())
+	if (IsMessageLogEnabled())
 	{
 		LogMessageLog(Level, Message);
 	}
@@ -182,7 +231,7 @@ void INYLogger::LogMessageLog(ENYLoggerLogLevel Level, const FString& Message)
 {
 	// TSharedRef<FTokenizedMessage> NewMessage = FTokenizedMessage::Create(Severity);
 	const EMessageSeverity::Type Severity = GetMessageSeverityForLogLevel(Level);
-	auto message = FMessageLog("Dialogue Plugin");
+	auto message = FMessageLog(MessageLogName);
 	message.SuppressLoggingToOutputLog(bMessageLogSuppressLoggingToOutputLog);
 	message.Message(Severity, FText::FromString(Message));
 
