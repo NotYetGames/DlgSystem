@@ -279,7 +279,7 @@ void FDlgSystemModule::HandleDialogueDeleted(UDlgDialogue* DeletedDialogue)
 			   TextFormatIndex < TextFormatsNum; TextFormatIndex++)
 	{
 		const EDlgDialogueTextFormat CurrentTextFormat = static_cast<EDlgDialogueTextFormat>(TextFormatIndex);
-		const FString FullPathName = TextFilePathName + UDlgDialogue::GetTextFileExtension(CurrentTextFormat);
+		const FString FullPathName = TextFilePathName + UDlgSystemSettings::GetTextFileExtension(CurrentTextFormat);
 		DeleteTextFileIfItExists(*FullPathName);
 	}
 }
@@ -346,7 +346,7 @@ void FDlgSystemModule::HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, cons
 			   TextFormatIndex < TextFormatsNum; TextFormatIndex++)
 	{
 		const EDlgDialogueTextFormat CurrentTextFormat = static_cast<EDlgDialogueTextFormat>(TextFormatIndex);
-		const FString FileExtension = UDlgDialogue::GetTextFileExtension(CurrentTextFormat);
+		const FString FileExtension = UDlgSystemSettings::GetTextFileExtension(CurrentTextFormat);
 		RenameFileIfItExists(*(OldTextFilePathName + FileExtension), *(CurrentTextFilePathName + FileExtension));
 	}
 }
@@ -359,14 +359,13 @@ void FDlgSystemModule::HandlePreLoadMap(const FString& MapName)
 	}
 	if (const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>())
 	{
-		if (!Settings->bClearDialogueHistoryAutomatically)
+		if (Settings->bClearDialogueHistoryAutomatically)
 		{
-			return;
+			UE_LOG(LogDlgSystem, Verbose, TEXT("PreLoadMap = %s. Clearing Dialogue History"), *MapName);
+			UDlgManager::ClearDialogueHistory();
 		}
 	}
 
-	UE_LOG(LogDlgSystem, Verbose, TEXT("PreLoadMap = %s. Clearing Dialogue History"), *MapName);
-	UDlgManager::ClearDialogueHistory();
 }
 
 #undef LOCTEXT_NAMESPACE

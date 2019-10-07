@@ -14,6 +14,9 @@ enum class EDlgDialogueTextFormat : uint8
 {
 	/** No Text Format used. */
 	None			UMETA(DisplayName = "No Text Format"),
+
+	// Output all text formats, mostly used for debugging
+	All            UMETA(Hidden),
 	
 	/**
 	 * DEPRECATED. The own Dialogue Text format. DEPRECATED.
@@ -166,6 +169,11 @@ public:
 		}
 	}
 
+	/** @return the extension of the text file depending on the InTextFormat. */
+	static FString GetTextFileExtension(EDlgDialogueTextFormat TextFormat);
+	static bool HasTextFileExtension(EDlgDialogueTextFormat TextFormat) { return !GetTextFileExtension(TextFormat).IsEmpty(); }
+
+	
 public:
 	// Some constants used. TODO make these configurable
 	static const FText EdgeTextFinish;

@@ -427,8 +427,8 @@ public:
 	/** Sets the Node at index NodeIndex. Use with care. */
 	void SetNode(int32 NodeIndex, UDlgNode* InNode) { Nodes[NodeIndex] = InNode; }
 
-	/** Check if a ".dlg" text file in the same folder with the same name (DlgName) exists and loads the data from that file. */
-	void ReloadFromFile();
+	/** Check if a text file in the same folder with the same name (DlgName) exists and loads the data from that file. */
+	void ImportFromFile();
 
 	/** Method to handle when this asset is going to be saved. Compiles the dialogue and saves to the text file. */
 	void OnAssetSaved();
@@ -441,7 +441,7 @@ public:
 			return;
 		}
 
-		ReloadFromFile();
+		ImportFromFile();
 		bIsSyncedWithTextFile = true;
 	}
 
@@ -459,6 +459,7 @@ public:
 	 * @return The path (as a relative path) and name of the text file, or empty string if something is wrong.
 	 */
 	FString GetTextFilePathName(bool bAddExtension = true) const;
+	FString GetTextFilePathName(EDlgDialogueTextFormat TextFormat, bool bAddExtension = true) const;
 
 	/**
 	 * @return the text file path name (as a relative path) from the asset path name.
@@ -466,10 +467,10 @@ public:
 	 */
 	static FString GetTextFilePathNameFromAssetPathName(const FString& AssetPathName);
 
-	/** @return the extension of the text file depending on the InTextFormat. */
-	static FString GetTextFileExtension(EDlgDialogueTextFormat InTextFormat);
-
 private:
+	void ImportFromFileFormat(EDlgDialogueTextFormat TextFormat);
+	void ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const;
+	
 	/**
 	 * Tries to fix the internal graph of this Dialogue in the following ways:
 	 * 1. If there is no start node, we create one pointing to the first node

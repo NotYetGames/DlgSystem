@@ -55,4 +55,23 @@ void UDlgSystemSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 }
 #endif // WITH_EDITOR
 
+FString UDlgSystemSettings::GetTextFileExtension(EDlgDialogueTextFormat TextFormat)
+{
+	switch (TextFormat)
+	{
+		// JSON has the .json added at the end
+		case EDlgDialogueTextFormat::JSON:
+			return TEXT(".dlg.json");
+
+		case EDlgDialogueTextFormat::DialogueDEPRECATED:
+			return TEXT(".dlg");
+
+		// Empty
+		case EDlgDialogueTextFormat::None:
+		default:
+			return FString();
+	}
+}
+
+
 #undef LOCTEXT_NAMESPACE

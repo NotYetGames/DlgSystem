@@ -345,7 +345,7 @@ void UDlgDialogue::CompileDialogueNodesFromGraphNodes()
 }
 #endif // #if WITH_EDITOR
 
-void UDlgDialogue::ReloadFromFile()
+void UDlgDialogue::ImportFromFile()
 {
 	// Simply ignore reloading
 	const EDlgDialogueTextFormat TextFormat = GetDefault<UDlgSystemSettings>()->DialogueTextFormat;
@@ -355,11 +355,49 @@ void UDlgDialogue::ReloadFromFile()
 		return;
 	}
 
+	ImportFromFileFormat(TextFormat);
+}
+
+void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
+{
+	const bool bHasExtension = UDlgSystemSettings::HasTextFileExtension(TextFormat);
+	const FString& TextFileName = GetTextFilePathName(TextFormat);
+
+	// Nothing to do
+	IFileManager& FileManager = IFileManager::Get();
+	if (!bHasExtension)
+	{
+		// Useful For debugging
+		if (TextFormat == EDlgDialogueTextFormat::All)
+		{
+			// Import from all
+			const int32 TextFormatsNum = static_cast<int32>(EDlgDialogueTextFormat::NumTextFormats);
+			for (int32 TextFormatIndex = static_cast<int32>(EDlgDialogueTextFormat::StartTextFormats);
+					   TextFormatIndex < TextFormatsNum; TextFormatIndex++)
+			{
+				const EDlgDialogueTextFormat CurrentTextFormat = static_cast<EDlgDialogueTextFormat>(TextFormatIndex);
+				const FString& CurrentTextFileName = GetTextFilePathName(CurrentTextFormat);
+				if (FileManager.FileExists(*CurrentTextFileName))
+				{
+					ImportFromFileFormat(CurrentTextFormat);
+				}
+			}
+		}
+		return;
+	}
+
+	// File does not exist abort
+	if (!FileManager.FileExists(*TextFileName))
+	{
+		FDlgLogger::Get().Errorf(TEXT("Reloading data for Dialogue = `%s` FROM file = `%s` FAILED, because the file does not exist"), *GetPathName(), *TextFileName);
+		return;
+	}
+
+	// Clear data first
 	StartNode = nullptr;
 	Nodes.Empty();
 
 	// TODO handle DlgName == NAME_None or invalid filename
-	const FString& TextFileName = GetTextFilePathName();
 	FDlgLogger::Get().Infof(TEXT("Reloading data for Dialogue = `%s` FROM file = `%s`"), *GetPathName(), *TextFileName);
 	
 	// TODO(vampy): Check for errors
@@ -374,13 +412,16 @@ void UDlgDialogue::ReloadFromFile()
 			break;
 		}
 		case EDlgDialogueTextFormat::DialogueDEPRECATED:
-		default:
 		{
 			FDlgConfigParser Parser(TEXT("Dlg"));
 			Parser.InitializeParser(TextFileName);
 			Parser.ReadAllProperty(GetClass(), this, this);
 			break;
 		}
+		default:
+			checkNoEntry();
+			break;
+		
 	}
 
 	if (!IsValid(StartNode))
@@ -438,11 +479,19 @@ void UDlgDialogue::ExportToFile() const
 		return;
 	}
 
-	// TODO(vampy): Check for errors
-	const FString& TextFileName = GetTextFilePathName();
-	FDlgLogger::Get().Infof(TEXT("Exporting data for Dialogue = `%s` TO file = `%s`"), *GetPathName(), *TextFileName);
+	ExportToFileFormat(TextFormat);
+}
 
-	check(TextFormat != EDlgDialogueTextFormat::None)
+void UDlgDialogue::ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const
+{
+	// TODO(vampy): Check for errors
+	const bool bHasExtension = UDlgSystemSettings::HasTextFileExtension(TextFormat);
+	const FString& TextFileName = GetTextFilePathName(TextFormat);
+	if (bHasExtension)
+	{
+		FDlgLogger::Get().Infof(TEXT("Exporting data for Dialogue = `%s` TO file = `%s`"), *GetPathName(), *TextFileName);
+	}
+	
 	switch (TextFormat)
 	{
 		case EDlgDialogueTextFormat::JSON:
@@ -453,13 +502,29 @@ void UDlgDialogue::ExportToFile() const
 			break;
 		}
 		case EDlgDialogueTextFormat::DialogueDEPRECATED:
-		default:
 		{
 			FDlgConfigWriter DlgWriter(TEXT("Dlg"));
 			DlgWriter.Write(GetClass(), this);
 			DlgWriter.ExportToFile(TextFileName);
 			break;
 		}
+		case EDlgDialogueTextFormat::All:
+		{
+			// Useful for debugging
+			// Export to all  formats
+			const int32 TextFormatsNum = static_cast<int32>(EDlgDialogueTextFormat::NumTextFormats);
+			for (int32 TextFormatIndex = static_cast<int32>(EDlgDialogueTextFormat::StartTextFormats);
+					   TextFormatIndex < TextFormatsNum; TextFormatIndex++)
+			{
+				const EDlgDialogueTextFormat CurrentTextFormat = static_cast<EDlgDialogueTextFormat>(TextFormatIndex);
+				ExportToFileFormat(CurrentTextFormat);
+			}
+			break;
+		}
+		default:
+			// It Should not have any extension
+			check(!bHasExtension);
+			break;
 	}
 }
 
@@ -688,7 +753,12 @@ void UDlgDialogue::AutoFixGraph()
 
 FString UDlgDialogue::GetTextFilePathName(bool bAddExtension/* = true*/) const
 {
-	// Extract filename from path
+	return GetTextFilePathName(GetDefault<UDlgSystemSettings>()->DialogueTextFormat, bAddExtension);
+}
+
+FString UDlgDialogue::GetTextFilePathName(EDlgDialogueTextFormat TextFormat, bool bAddExtension/* = true*/) const
+{
+		// Extract filename from path
 	// NOTE: this is not a filesystem path, it is an unreal path 'Outermost.[Outer:]Name'
 	// Usually GetPathName works, but the path name might be weird.
 	// FSoftObjectPath(this).ToString(); which does call this function GetPathName() but it returns a legit clean path
@@ -697,7 +767,7 @@ FString UDlgDialogue::GetTextFilePathName(bool bAddExtension/* = true*/) const
 	if (bAddExtension)
 	{
 		// Modify the extension of the base text file depending on the extension
-		TextFileName += GetTextFileExtension(GetDefault<UDlgSystemSettings>()->DialogueTextFormat);
+		TextFileName += UDlgSystemSettings::GetTextFileExtension(TextFormat);
 	}
 
 	return TextFileName;
@@ -738,23 +808,6 @@ FString UDlgDialogue::GetTextFilePathNameFromAssetPathName(const FString& AssetP
 	return ContentDir + PathName;
 }
 
-FString UDlgDialogue::GetTextFileExtension(EDlgDialogueTextFormat InTextFormat)
-{
-	switch (InTextFormat)
-	{
-		// Empty
-		case EDlgDialogueTextFormat::None:
-			return FString();
-
-		// JSON has the .json added at the end
-		case EDlgDialogueTextFormat::JSON:
-			return TEXT(".dlg.json");
-
-		case EDlgDialogueTextFormat::DialogueDEPRECATED:
-		default:
-			return TEXT(".dlg");
-	}
-}
 
 // End own functions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

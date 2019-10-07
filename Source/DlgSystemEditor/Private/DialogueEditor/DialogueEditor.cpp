@@ -1060,7 +1060,7 @@ void FDialogueEditor::OnCommandDialogueReload() const
 
 	// Opposite of this steps are in the SaveAsset_Execute
 	// Reload data, text file -> dialogue data
-	DialogueBeingEdited->ReloadFromFile();
+	DialogueBeingEdited->ImportFromFile();
 
 	// Update graph, dialogue data -> graph
 	DialogueBeingEdited->ClearGraph(); // triggers create default graph nodes
