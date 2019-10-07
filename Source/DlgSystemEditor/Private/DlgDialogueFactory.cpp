@@ -11,6 +11,8 @@ UDlgDialogueFactory::UDlgDialogueFactory(const FObjectInitializer& ObjectInitial
 	: Super(ObjectInitializer)
 {
 	bCreateNew = true;
+
+	// true if the associated editor should be opened after creating a new object.
 	bEditAfterNew = true;
 	SupportedClass = UDlgDialogue::StaticClass();
 }

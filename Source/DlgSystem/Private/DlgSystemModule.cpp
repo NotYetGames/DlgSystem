@@ -37,7 +37,8 @@ void FDlgSystemModule::StartupModule()
 	FDlgLogger::OnStart();
 	
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
-	UE_LOG(LogDlgSystem, Log, TEXT("Started DlgSystemModule"));
+	FDlgLogger::Get().Info(TEXT("Started DlgSystemModule"));
+	
 	OnPreLoadMapHandle = FCoreUObjectDelegates::PreLoadMap.AddRaw(this, &Self::HandlePreLoadMap);
 
 	// Listen for deleted assets
@@ -118,8 +119,7 @@ void FDlgSystemModule::ShutdownModule()
 		FCoreUObjectDelegates::PreLoadMap.Remove(OnPreLoadMapHandle);
 	}
 
-	UE_LOG(LogDlgSystem, Log, TEXT("Stopped DlgSystemModule"));
-
+	FDlgLogger::Get().Info(TEXT("Stopped DlgSystemModule"));
 	FDlgLogger::OnShutdown();
 }
 
@@ -171,7 +171,7 @@ void FDlgSystemModule::DisplayDialogueDataWindow()
 {
 	if (!bHasRegisteredTabSpawners)
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("Did not Initialize the tab spawner for the DisplayDialogueDataWindow"));
+		FDlgLogger::Get().Error(TEXT("Did not Initialize the tab spawner for the DisplayDialogueDataWindow"));
 		return;
 	}
 
@@ -246,10 +246,10 @@ void FDlgSystemModule::HandleDialogueDeleted(UDlgDialogue* DeletedDialogue)
 	if (TextFilePathName.IsEmpty())
 	{
 		// Memory corruption? tread carefully here
-		UE_LOG(LogDlgSystem,
-			   Error,
-			   TEXT("Can't delete text file for Dialogue = `%s` because the file path name is empty :O"),
-			   *DeletedDialogue->GetPathName());
+		FDlgLogger::Get().Errorf(
+			TEXT("Can't delete text file for Dialogue = `%s` because the file path name is empty :O"),
+			*DeletedDialogue->GetPathName()
+		);
 		return;
 	}
 
@@ -259,18 +259,19 @@ void FDlgSystemModule::HandleDialogueDeleted(UDlgDialogue* DeletedDialogue)
 		// Text file does not exist, ignore
 		if (!FileManager.FileExists(Filename))
 		{
-			UE_LOG(LogDlgSystem, Warning, TEXT("Text file does not exist at path = `%s`. Can't delete."), Filename);
+			FDlgLogger::Get().Warningf(TEXT("Text file does not exist at path = `%s`. Can't delete."), Filename);
 			return;
 		}
 
 		// Delete the text file
 		if (!FileManager.Delete(Filename))
 		{
-			UE_LOG(LogDlgSystem, Error, TEXT("Can't delete text file at path = `%s`"), Filename);
+			FDlgLogger::Get().Errorf(TEXT("Can't delete text file at path = `%s`"), Filename);
 			return;
 		}
 
-		UE_LOG(LogDlgSystem, Log, TEXT("Deleted file %s"), Filename);
+
+		FDlgLogger::Get().Infof(TEXT("Deleted file %s"), *Filename);
 	};
 
 	// Iterate over all possible text formats
@@ -295,7 +296,7 @@ void FDlgSystemModule::HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, cons
 	const FString OldTextFilePathName = UDlgDialogue::GetTextFilePathNameFromAssetPathName(OldObjectPath);
 	if (OldTextFilePathName.IsEmpty())
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("OldTextFilePathName is empty. This should never happen"));
+		FDlgLogger::Get().Error(TEXT("OldTextFilePathName is empty. This should never happen"));
 		return;
 	}
 
@@ -303,10 +304,10 @@ void FDlgSystemModule::HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, cons
 	const FString CurrentTextFilePathName = RenamedDialogue->GetTextFilePathName(false);
 	if (OldTextFilePathName == CurrentTextFilePathName)
 	{
-		UE_LOG(LogDlgSystem,
-			   Error,
-			   TEXT("Dialogue was renamed but the paths before and after are equal :O | `%s` == `%s`"),
-			   *OldTextFilePathName, *CurrentTextFilePathName);
+		FDlgLogger::Get().Errorf(
+			TEXT("Dialogue was renamed but the paths before and after are equal :O | `%s` == `%s`"),
+			*OldTextFilePathName, *CurrentTextFilePathName
+		);
 		return;
 	}
 
@@ -316,28 +317,28 @@ void FDlgSystemModule::HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, cons
 		// Text file we want to rename does not exist anymore
 		if (!FileManager.FileExists(OldFileName))
 		{
-			UE_LOG(LogDlgSystem, Warning, TEXT("Text file before rename at path = `%s` does not exist. Can't Rename."), OldFileName);
+			FDlgLogger::Get().Warningf(TEXT("Text file before rename at path = `%s` does not exist. Can't Rename."), OldFileName);
 			return;
 		}
 
 		// Text file at destination already exists, conflict :/
 		if (FileManager.FileExists(NewFileName))
 		{
-			UE_LOG(LogDlgSystem,
-				Error,
+			FDlgLogger::Get().Errorf(
 				TEXT("Text file at destination (after rename) at path = `%s` already exists. Current text file at path = `%s` won't be moved/renamed."),
-				NewFileName, OldFileName);
+				NewFileName, OldFileName
+			);
 			return;
 		}
 
 		// Finally Move/Rename
 		if (!FileManager.Move(/*Dest=*/ NewFileName, /*Src=*/ OldFileName, /*bReplace=*/ false))
 		{
-			UE_LOG(LogDlgSystem, Error, TEXT("Failure to move/rename file from `%s` to `%s`"), OldFileName, NewFileName);
+			FDlgLogger::Get().Errorf(TEXT("Failure to move/rename file from `%s` to `%s`"),OldFileName, NewFileName);
 			return;
 		}
 
-		UE_LOG(LogDlgSystem, Log, TEXT("Text file moved/renamed from `%s` to `%s`"), OldFileName, NewFileName);
+		FDlgLogger::Get().Infof(TEXT("Text file moved/renamed from `%s` to `%s`"),OldFileName, NewFileName);
 	};
 
 	// Iterate over all possible text formats
@@ -361,7 +362,7 @@ void FDlgSystemModule::HandlePreLoadMap(const FString& MapName)
 	{
 		if (Settings->bClearDialogueHistoryAutomatically)
 		{
-			UE_LOG(LogDlgSystem, Verbose, TEXT("PreLoadMap = %s. Clearing Dialogue History"), *MapName);
+			FDlgLogger::Get().Debugf(TEXT("PreLoadMap = %s. Clearing Dialogue History"), *MapName);
 			UDlgManager::ClearDialogueHistory();
 		}
 	}

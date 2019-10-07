@@ -205,16 +205,10 @@ public:
 	
 	// The log category must exist
 	Self& SetNoOutputLogCategory() { return SetOutputLogCategory(NAME_None); }
-	Self& WithOutputLogCategory(const FLogCategoryBase& NewCategory) { return SetOutputLogCategory(NewCategory); }
-	Self& WithOutputLogCategory(FName NewCategory) { return SetOutputLogCategory(NewCategory); }
-	Self& SetOutputLogCategory(const FLogCategoryBase& NewCategory)
-	{
-		OutputLogCategory = NewCategory.GetCategoryName();
-		return *this;
-	}
-
+	Self& SetOutputLogCategory(const FLogCategoryBase& NewCategory) { return SetOutputLogCategory(NewCategory.GetCategoryName()); }
 	Self& SetOutputLogCategory(FName NewCategory)
 	{
+		PreviousOutputLogCategory = OutputLogCategory;
 		OutputLogCategory = NewCategory;
 		return *this;
 	}
@@ -299,42 +293,42 @@ public:
 	FORCEINLINE bool IsMessageLogEnabled() const { return bMessageLog; }
 
 	template <typename FmtType, typename... Types>
-	void Logf(ENYLoggerLogLevel Level, const FmtType& Fmt, Types... Args)
+	Self& Logf(ENYLoggerLogLevel Level, const FmtType& Fmt, Types... Args)
 	{
 		static_assert(TIsArrayOrRefOfType<FmtType, TCHAR>::Value, "Formatting string must be a TCHAR array.");
 		static_assert(TAnd<TIsValidVariadicFunctionArg<Types>...>::Value, "Invalid argument(s) passed to INYLogger::Logf");
-		LogfImplementation(Level, Fmt, Args...);
+		return LogfImplementation(Level, Fmt, Args...);
 	}
 
 	template <typename FmtType, typename... Types>
-	void Errorf(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Error, Fmt, Args...); }
+	Self& Errorf(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Error, Fmt, Args...); }
 
 	template <typename FmtType, typename... Types>
-	void Warningf(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Warning, Fmt, Args...); }
+	Self& Warningf(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Warning, Fmt, Args...); }
 
 	template <typename FmtType, typename... Types>
-	void Infof(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Info, Fmt, Args...); }
+	Self& Infof(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Info, Fmt, Args...); }
 
 	template <typename FmtType, typename... Types>
-	void Debugf(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Debug, Fmt, Args...); }
+	Self& Debugf(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Debug, Fmt, Args...); }
 
 	template <typename FmtType, typename... Types>
-	void Tracef(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Trace, Fmt, Args...); }
+	Self& Tracef(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Trace, Fmt, Args...); }
 
 	
 	// void Fatal(const ANSICHAR* File, int32 Line, const FString& Message);
-	void Log(ENYLoggerLogLevel Level, const FString& Message);
+	Self& Log(ENYLoggerLogLevel Level, const FString& Message);
 
 	// TODO implement
 	// void Fatal(const FString& Message) { Log(ENYLoggerLogLevel::Fatal, Message); }
-	FORCEINLINE void Error(const FString& Message) { Log(ENYLoggerLogLevel::Error, Message); }
-	FORCEINLINE void Warning(const FString& Message) { Log(ENYLoggerLogLevel::Warning, Message); }
-	FORCEINLINE void Info(const FString& Message) { Log(ENYLoggerLogLevel::Info, Message); }
-	FORCEINLINE void Debug(const FString& Message) { Log(ENYLoggerLogLevel::Debug, Message); }
-	FORCEINLINE void Trace(const FString& Message) { Log(ENYLoggerLogLevel::Trace, Message); }
+	FORCEINLINE Self& Error(const FString& Message) { return Log(ENYLoggerLogLevel::Error, Message); }
+	FORCEINLINE Self& Warning(const FString& Message) { return Log(ENYLoggerLogLevel::Warning, Message); }
+	FORCEINLINE Self& Info(const FString& Message) { return Log(ENYLoggerLogLevel::Info, Message); }
+	FORCEINLINE Self& Debug(const FString& Message) { return Log(ENYLoggerLogLevel::Debug, Message); }
+	FORCEINLINE Self& Trace(const FString& Message) { return Log(ENYLoggerLogLevel::Trace, Message); }
 
 protected:
-	void VARARGS LogfImplementation(ENYLoggerLogLevel Level, const TCHAR* Fmt, ...);
+	Self& VARARGS LogfImplementation(ENYLoggerLogLevel Level, const TCHAR* Fmt, ...);
 	
 #if WITH_UNREAL_DEVELOPER_TOOLS
 	static FMessageLogModule* GetMessageLogModule();
@@ -440,6 +434,9 @@ protected:
 
 	// Category for output log
 	FName OutputLogCategory = NAME_None;
+
+	// Useful when temporarily using another category
+	FName PreviousOutputLogCategory = NAME_None;
 
 	//
 	// Message log

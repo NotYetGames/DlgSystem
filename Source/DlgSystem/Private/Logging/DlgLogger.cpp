@@ -12,9 +12,11 @@ FDlgLogger::FDlgLogger() : Super()
 	DisableOutputLog();
 	DisableOnScreen();
 	DisableClientConsole();
-	
+
+	// We mirror everything to the output log so that is why we disabled the output log above
 	SetOutputLogCategory(LogDlgSystem);
 	SetMessageLogName(MESSAGE_LOG_NAME, false);
+	SetMessageLogMirrorToOutputLog(true);
 	SetRedirectMessageLogLevelsHigherThan(ENYLoggerLogLevel::Warning);
 }
 

@@ -157,12 +157,12 @@ void INYLogger::MessageLogOpenLogName(FName LogName)
 #endif // WITH_UNREAL_DEVELOPER_TOOLS
 }
 
-void INYLogger::LogfImplementation(ENYLoggerLogLevel Level, const TCHAR* Fmt, ...)
+INYLogger& INYLogger::LogfImplementation(ENYLoggerLogLevel Level, const TCHAR* Fmt, ...)
 {
 #if !NO_LOGGING
 	NY_GROWABLE_LOGF(Log(Level, Buffer))
 #endif // !NO_LOGGING
-	
+	return *this;
 }
 
 // void INYLogger::Fatal(const ANSICHAR* File, int32 Line, const FString& Message)
@@ -178,7 +178,7 @@ void INYLogger::LogfImplementation(ENYLoggerLogLevel Level, const TCHAR* Fmt, ..
 // #endif // NO_LOGGING
 // }
 
-void INYLogger::Log(ENYLoggerLogLevel Level, const FString& Message)
+INYLogger& INYLogger::Log(ENYLoggerLogLevel Level, const FString& Message)
 {
 	// Should not happen but just in case redirect to the fatal function
 	// if (Level == ENYLoggerLogLevel::Fatal)
@@ -206,6 +206,7 @@ void INYLogger::Log(ENYLoggerLogLevel Level, const FString& Message)
 		LogMessageLog(Level, Message);
 	}
 #endif // !NO_LOGGING
+	return *this;
 }
 
 void INYLogger::LogScreen(ENYLoggerLogLevel Level, const FString& Message)
