@@ -159,11 +159,10 @@ void INYLogger::MessageLogOpenLogName(FName LogName)
 
 void INYLogger::LogfImplementation(ENYLoggerLogLevel Level, const TCHAR* Fmt, ...)
 {
-#if NO_LOGGING
-	return;
-#endif
-
+#if !NO_LOGGING
 	NY_GROWABLE_LOGF(Log(Level, Buffer))
+#endif // !NO_LOGGING
+	
 }
 
 // void INYLogger::Fatal(const ANSICHAR* File, int32 Line, const FString& Message)
@@ -189,10 +188,7 @@ void INYLogger::Log(ENYLoggerLogLevel Level, const FString& Message)
 	// }
 
 	// No logging, abort
-#if NO_LOGGING
-	return;
-#endif
-
+#if !NO_LOGGING
 	if (IsClientConsoleEnabled())
 	{
 		LogClientConsole(Level, Message);
@@ -209,6 +205,7 @@ void INYLogger::Log(ENYLoggerLogLevel Level, const FString& Message)
 	{
 		LogMessageLog(Level, Message);
 	}
+#endif // !NO_LOGGING
 }
 
 void INYLogger::LogScreen(ENYLoggerLogLevel Level, const FString& Message)
@@ -264,7 +261,7 @@ void INYLogger::LogMessageLog(ENYLoggerLogLevel Level, const FString& Message)
 	// TSharedRef<FTokenizedMessage> NewMessage = FTokenizedMessage::Create(Severity);
 	const EMessageSeverity::Type Severity = GetMessageSeverityForLogLevel(Level);
 	auto message = FMessageLog(MessageLogName);
-	message.SuppressLoggingToOutputLog(bMessageLogSuppressLoggingToOutputLog);
+	message.SuppressLoggingToOutputLog(!bMessageLogMirrorToOutputLog);
 	message.Message(Severity, FText::FromString(Message));
 
 	if (bMessageLogOpen)

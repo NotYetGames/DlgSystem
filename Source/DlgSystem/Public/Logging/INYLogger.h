@@ -219,6 +219,16 @@ public:
 		return *this;
 	}
 
+	// Special case for no logging, aka shipping build
+#if NO_LOGGING
+	Self& SetOutputLogCategory(FNoLoggingCategory NoLogging)
+	{
+		OutputLogCategory = NAME_None;
+		bOutputLog = false;
+		return *this;
+	}
+#endif // NO_LOGGING
+	
 	//
 	// Message log
 	//
@@ -228,7 +238,7 @@ public:
 	Self& UseMessageLog(bool bValue, bool bSuppressLoggingToOutputLog = false)
 	{
 		bMessageLog = bValue;
-		return SetMessageLogSuppressLoggingToOutputLog(bSuppressLoggingToOutputLog);
+		return SetMessageLogMirrorToOutputLog(bSuppressLoggingToOutputLog);
 	}
 
 	// Opens the log for display to the user given certain conditions.
@@ -239,9 +249,9 @@ public:
 	}
 
 	// Should we mirror message log messages from this instance to the output log during flush?
-	Self& SetMessageLogSuppressLoggingToOutputLog(bool bValue)
+	Self& SetMessageLogMirrorToOutputLog(bool bValue)
 	{
-		bMessageLogSuppressLoggingToOutputLog = bValue;
+		bMessageLogMirrorToOutputLog = bValue;
 		return *this;
 	}
 
@@ -428,7 +438,7 @@ protected:
 	// Output to the output log and log file
 	bool bOutputLog = false;
 
-	// Category for output l og
+	// Category for output log
 	FName OutputLogCategory = NAME_None;
 
 	//
@@ -442,10 +452,11 @@ protected:
 	FName MessageLogName = TEXT("PIE");
 
 	// Should we mirror message log messages from this instance to the output log during flush?
-	bool bMessageLogSuppressLoggingToOutputLog = false;
+	bool bMessageLogMirrorToOutputLog = true;
 
 	// By default the message log does not support debug output, latest is info
 	// For the sake of sanity we redirect all levels higher than RedirectMessageLogLevelsHigherThan to the output log
+	// even if the output log is disabled
 	ENYLoggerLogLevel RedirectMessageLogLevelsHigherThan = ENYLoggerLogLevel::Warning;
 
 	// Opens the log for display to the user given certain conditions.
