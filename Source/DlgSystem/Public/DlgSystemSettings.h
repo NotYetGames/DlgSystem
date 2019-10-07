@@ -14,15 +14,21 @@ enum class EDlgDialogueTextFormat : uint8
 {
 	/** No Text Format used. Only the uasset */
 	DlgDialogueNoTextFormat			UMETA(DisplayName = "No Text Format"),
+	
+	/**
+	 * DEPRECATED. The own Dialogue Text format
+	 * NOTE: this format is deprecated AND in the next version it will be removed
+	 */
+	DlgDialogueTextFormatDialogue	UMETA(DisplayName = "[DEPRECATED] DlgText"),
 
-	/** The own Dialogue Text format */
-	DlgDialogueTextFormatDialogue	UMETA(DisplayName = "DlgText"),
-
+	// Hidden represents the start of the text formats index
+	StartTextFormats = DlgDialogueTextFormatDialogue 	UMETA(Hidden),
+	
 	/** The JSON format. */
 	DlgDialogueTextFormatJson		UMETA(DisplayName = "JSON"),
 
 	/** Hidden, represents the number of text formats */
-	DlgDialogueTextFormat_Num 		UMETA(Hidden),
+	NumTextFormats 		UMETA(Hidden),
 };
 
 /**
@@ -174,7 +180,7 @@ public:
 
 	/** The dialogue text format used for saving and reloading from text files. */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Format")
-	EDlgDialogueTextFormat DialogueTextFormat = EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue;
+	EDlgDialogueTextFormat DialogueTextFormat = EDlgDialogueTextFormat::DlgDialogueNoTextFormat;
 
 	/** What Voice fields to show in the Dialogue Editor, if any. */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Displayed Voice Fields")

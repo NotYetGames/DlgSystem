@@ -274,8 +274,8 @@ void FDlgSystemModule::HandleDialogueDeleted(UDlgDialogue* DeletedDialogue)
 	};
 
 	// Iterate over all possible text formats
-	const int32 TextFormatsNum = static_cast<int32>(EDlgDialogueTextFormat::DlgDialogueTextFormat_Num);
-	for (int32 TextFormatIndex = static_cast<int32>(EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue);
+	const int32 TextFormatsNum = static_cast<int32>(EDlgDialogueTextFormat::NumTextFormats);
+	for (int32 TextFormatIndex = static_cast<int32>(EDlgDialogueTextFormat::StartTextFormats);
 			   TextFormatIndex < TextFormatsNum; TextFormatIndex++)
 	{
 		const EDlgDialogueTextFormat CurrentTextFormat = static_cast<EDlgDialogueTextFormat>(TextFormatIndex);
@@ -341,8 +341,8 @@ void FDlgSystemModule::HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, cons
 	};
 
 	// Iterate over all possible text formats
-	const int32 TextFormatsNum = static_cast<int32>(EDlgDialogueTextFormat::DlgDialogueTextFormat_Num);
-	for (int32 TextFormatIndex = static_cast<int32>(EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue);
+	const int32 TextFormatsNum = static_cast<int32>(EDlgDialogueTextFormat::NumTextFormats);
+	for (int32 TextFormatIndex = static_cast<int32>(EDlgDialogueTextFormat::StartTextFormats);
 			   TextFormatIndex < TextFormatsNum; TextFormatIndex++)
 	{
 		const EDlgDialogueTextFormat CurrentTextFormat = static_cast<EDlgDialogueTextFormat>(TextFormatIndex);
