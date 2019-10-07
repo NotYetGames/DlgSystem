@@ -70,16 +70,16 @@ private:
 	EVisibility GetVoiceSoundWaveVisibility() const
 	{
 		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWave ||
-			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWaveAndDialogueWave
+		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::SoundWave ||
+			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::SoundWaveAndDialogueWave
 			   ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetVoiceDialogueWaveVisibility() const
 	{
 		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedDialogueWave ||
-			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWaveAndDialogueWave
+		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DialogueWave ||
+			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::SoundWaveAndDialogueWave
 			   ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
@@ -91,8 +91,8 @@ private:
 	EVisibility GetSpeakerStateVisibility() const
 	{
 		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnNode ||
-			   Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnNodeAndEdge
+		return Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnNode ||
+			   Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnNodeAndEdge
 			   ? EVisibility::Visible : EVisibility::Hidden;
 	}
 

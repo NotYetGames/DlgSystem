@@ -69,8 +69,8 @@ private:
 		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 
 		return bShowTextProperty &&
-			  (Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnEdge ||
-			   Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnNodeAndEdge)
+			  (Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnEdge ||
+			   Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnNodeAndEdge)
 			   ? EVisibility::Visible : EVisibility::Hidden;
 	}
 

@@ -105,7 +105,7 @@ void UDlgNode::UpdateTextNamespace(FText& Text)
 {
 	if (const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>())
 	{
-		if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::DlgIgnore)
+		if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::Ignore)
 		{
 			return;
 		}
@@ -114,7 +114,7 @@ void UDlgNode::UpdateTextNamespace(FText& Text)
 		if (Key.IsSet())
 		{
 			FString Namespace = Settings->DialogueTextNamespaceName;
-			if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::DlgNamespacePerDialogue)
+			if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::NamespacePerDialogue)
 			{
 				Namespace += GetOuter()->GetName();
 			}

@@ -35,10 +35,10 @@ bool UDlgSystemSettings::CanEditChange(const UProperty* InProperty) const
 	{
 		const FName PropertyName = InProperty->GetFName();
 
-		// Do now allow to change the bDrawPrimaryEdges,bDrawSecondaryEdges if we aren't even showing them
+		// Do now allow to change the bDrawPrimaryEdges, bDrawSecondaryEdges if we aren't even showing them
 		if (!bShowPrimarySecondaryEdges &&
-			(PropertyName == GET_MEMBER_NAME_CHECKED(Self, bDrawPrimaryEdges) ||
-			 PropertyName == GET_MEMBER_NAME_CHECKED(Self, bDrawSecondaryEdges)))
+			(PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, bDrawPrimaryEdges) ||
+			 PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, bDrawSecondaryEdges)))
 		{
 			return false;
 		}

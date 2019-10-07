@@ -500,7 +500,7 @@ void FDialogueEditor::BindEditorCommands()
 		FExecuteAction::CreateSP(this, &Self::OnCommandDialogueReload),
 		FCanExecuteAction::CreateLambda([this]
 		{
-			return GetSettings().DialogueTextFormat != EDlgDialogueTextFormat::DlgDialogueNoTextFormat;
+			return GetSettings().DialogueTextFormat != EDlgDialogueTextFormat::None;
 		})
 	);
 
@@ -1042,7 +1042,7 @@ void FDialogueEditor::OnCommandUnHideAllNodes()
 void FDialogueEditor::OnCommandDialogueReload() const
 {
 	// Ignore
-	if (GetSettings().DialogueTextFormat == EDlgDialogueTextFormat::DlgDialogueNoTextFormat)
+	if (GetSettings().DialogueTextFormat == EDlgDialogueTextFormat::None)
 	{
 		return;
 	}

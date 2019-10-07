@@ -12,20 +12,20 @@
 UENUM()
 enum class EDlgDialogueTextFormat : uint8
 {
-	/** No Text Format used. Only the uasset */
-	DlgDialogueNoTextFormat			UMETA(DisplayName = "No Text Format"),
+	/** No Text Format used. */
+	None			UMETA(DisplayName = "No Text Format"),
 	
 	/**
-	 * DEPRECATED. The own Dialogue Text format
+	 * DEPRECATED. The own Dialogue Text format. DEPRECATED.
 	 * NOTE: this format is deprecated AND in the next version it will be removed
 	 */
-	DlgDialogueTextFormatDialogue	UMETA(DisplayName = "[DEPRECATED] DlgText"),
+	DialogueDEPRECATED	UMETA(DisplayName = "[DEPRECATED] DlgText"),
 
 	// Hidden represents the start of the text formats index
-	StartTextFormats = DlgDialogueTextFormatDialogue 	UMETA(Hidden),
+	StartTextFormats = DialogueDEPRECATED 	UMETA(Hidden),
 	
 	/** The JSON format. */
-	DlgDialogueTextFormatJson		UMETA(DisplayName = "JSON"),
+	JSON				UMETA(DisplayName = "JSON"),
 
 	/** Hidden, represents the number of text formats */
 	NumTextFormats 		UMETA(Hidden),
@@ -38,16 +38,16 @@ UENUM()
 enum class EDlgVoiceDisplayedFields : uint8
 {
 	/** No Voice fields are displayed. */
-	DlgVoiceDisplayedNoVoice					UMETA(DisplayName = "No Voice"),
+	None					UMETA(DisplayName = "No Voice"),
 
 	/** Only display the SoundWave voice fields. */
-	DlgVoiceDisplayedSoundWave					UMETA(DisplayName = "Sound Wave"),
+	SoundWave					UMETA(DisplayName = "Sound Wave"),
 
 	/** Only display the DialogueWave voice fields. */
-	DlgVoiceDisplayedDialogueWave				UMETA(DisplayName = "Dialogue Wave"),
+	DialogueWave				UMETA(DisplayName = "Dialogue Wave"),
 
 	/** Display both SoundWave and DialogueWave fields. */
-	DlgVoiceDisplayedSoundWaveAndDialogueWave	UMETA(DisplayName = "Sound Wave & Dialogue Wave")
+	SoundWaveAndDialogueWave	UMETA(DisplayName = "Sound Wave & Dialogue Wave")
 };
 
 /**
@@ -57,16 +57,16 @@ UENUM()
 enum class EDlgSpeakerStateVisibility : uint8
 {
 	/** No visibility fields are displayed. */
-	DlgHideAll					UMETA(DisplayName = "Hide All"),
+	HideAll					UMETA(DisplayName = "Hide All"),
 
 	/** Only display the SoundWave voice fields. */
-	DlgShowOnEdge				UMETA(DisplayName = "Show On Edge"),
+	ShowOnEdge				UMETA(DisplayName = "Show On Edge"),
 
 	/** Only display the DialogueWave voice fields. */
-	DlgShowOnNode				UMETA(DisplayName = "Show On Node"),
+	ShowOnNode				UMETA(DisplayName = "Show On Node"),
 
 	/** Display both SoundWave and DialogueWave fields. */
-	DlgShowOnNodeAndEdge		UMETA(DisplayName = "Show On Both")
+	ShowOnNodeAndEdge		UMETA(DisplayName = "Show On Both (Edge + Node)")
 };
 
 /**
@@ -76,10 +76,10 @@ UENUM()
 enum class EDlgTextInputKeyForNewLine : uint8
 {
 	/** Press 'Enter' to add a new line. */
-	DlgTextInputKeyForNewLineEnter					UMETA(DisplayName = "Enter"),
+	Enter					UMETA(DisplayName = "Enter"),
 
-	/** Presst 'Shift + Enter' to add a new line. (like in blueprints) */
-	DlgTextInputKeyForNewLineShiftPlusEnter			UMETA(DisplayName = "Shift + Enter"),
+	/** Preset 'Shift + Enter' to add a new line. (like in blueprints) */
+	ShiftPlusEnter			UMETA(DisplayName = "Shift + Enter"),
 };
 
 /**
@@ -89,32 +89,30 @@ UENUM()
 enum class EDlgTextLocalization : uint8
 {
 	/** The system does not modify the Namespace and Key values of the Text fields. */
-	DlgIgnore					UMETA(DisplayName = "Ignore"),
+	Ignore					UMETA(DisplayName = "Ignore"),
 
 	/** The system sets the Namespace for Text fields for each dialogue separately. Unique keys are also generated. */
-	DlgNamespacePerDialogue		UMETA(DisplayName = "Namespace Per Dialogue"),
+	NamespacePerDialogue		UMETA(DisplayName = "Namespace Per Dialogue"),
 
 	/** The system sets the Namespace for Text fields for each dialogue into the same value. Unique keys are also generated. */
-	DlgGlobalNamespace			UMETA(DisplayName = "Global Namespace")
+	GlobalNamespace			UMETA(DisplayName = "Global Namespace")
 };
 
 // Config = DlgSystemPlugin, DefaultConfig
-// UDeveloperSettings classes are autodiscovered https://wiki.unrealengine.com/CustomSettings
+// UDeveloperSettings classes are auto discovered https://wiki.unrealengine.com/CustomSettings
 UCLASS(Config = EditorPerProjectUserSettings, DefaultConfig, meta = (DisplayName = "Dialogue Editor Settings"))
 class DLGSYSTEM_API UDlgSystemSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
-
-	typedef UDlgSystemSettings Self;
 
 public:
 	UDlgSystemSettings();
 
 	// UDeveloperSettings interface
 	/** Gets the settings container name for the settings, either Project or Editor */
-	FName GetContainerName() const override { return "Project"; }
+	FName GetContainerName() const override { return TEXT("Project"); }
 	/** Gets the category for the settings, some high level grouping like, Editor, Engine, Game...etc. */
-	FName GetCategoryName() const override { return "Editor"; };
+	FName GetCategoryName() const override { return TEXT("Editor"); };
 	/** The unique name for your section of settings, uses the class's FName. */
 	FName GetSectionName() const override { return Super::GetSectionName(); };
 
@@ -180,36 +178,43 @@ public:
 
 	/** The dialogue text format used for saving and reloading from text files. */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Format")
-	EDlgDialogueTextFormat DialogueTextFormat = EDlgDialogueTextFormat::DlgDialogueNoTextFormat;
+	EDlgDialogueTextFormat DialogueTextFormat = EDlgDialogueTextFormat::None;
 
 	/** What Voice fields to show in the Dialogue Editor, if any. */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Displayed Voice Fields")
-	EDlgVoiceDisplayedFields DialogueDisplayedVoiceFields = EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWave;
+	EDlgVoiceDisplayedFields DialogueDisplayedVoiceFields = EDlgVoiceDisplayedFields::SoundWave;
 
 	/** Where to display the SpeakerState FName property */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "SpeakerState Visibility")
-	EDlgSpeakerStateVisibility DialogueSpeakerStateVisibility = EDlgSpeakerStateVisibility::DlgHideAll;
+	EDlgSpeakerStateVisibility DialogueSpeakerStateVisibility = EDlgSpeakerStateVisibility::HideAll;
 
 	/** Generic data is an UObject* which can be assigned to nodes and can be asked from the active one */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Generic Data Visibility")
 	bool bShowGenericData = false;
 
-	/** Defines what the system should do with Text Namespaces and Keys for localization */
-	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Localization Method")
-	EDlgTextLocalization DialogueTextLocalizationMode = EDlgTextLocalization::DlgIgnore;
-
-	/** Depending on DialogueTextLocalizationMode it can be used as the namespace for all dialogue text fields or as their prefix */
-	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Generic Data Visibility")
-	FString DialogueTextNamespaceName = "Dialogue";
-
 	/** What key combination to press to add a new line for FText fields in the Dialogue Editor. */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Input Key for NewLine")
-	EDlgTextInputKeyForNewLine DialogueTextInputKeyForNewLine = EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineEnter;
+	EDlgTextInputKeyForNewLine DialogueTextInputKeyForNewLine = EDlgTextInputKeyForNewLine::Enter;
 
 	/** Any properties that belong to these classes wont't be shown in the suggestion list when you use the reflection system (class variables). */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
 	TArray<UClass*> BlacklistedReflectionClasses;
 
+	
+	/** Defines what the system should do with Text Namespaces and Keys for localization */
+	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Localization Method")
+	EDlgTextLocalization DialogueTextLocalizationMode = EDlgTextLocalization::Ignore;
+
+	/** Depending on DialogueTextLocalizationMode it can be used as the namespace for all dialogue text fields or as their prefix */
+	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Namespace Name")
+	FString DialogueTextNamespaceName = "Dialogue";
+
+
+	/** Should we hide the categories in the Dialogue browser that do not have any children? */
+	UPROPERTY(Category = "Browser", Config, EditAnywhere)
+	bool bHideEmptyDialogueBrowserCategories = true;
+
+	
 	/** Whether the description text wraps onto a new line when it's length exceeds this width; if this value is zero or negative, no wrapping occurs. */
 	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
 	float DescriptionWrapTextAt = 256.f;
@@ -331,10 +336,6 @@ public:
 	 /** The Color of the wire when the edge is secondary. */
 	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
 	FLinearColor WireSecondaryEdgeColor = FLinearColor{0.101961f, 0.137255f, 0.494118f, 1.f}; // blueish
-
-	/** Should we hide the categories in the Dialogue browser that do not have any children? */
-	UPROPERTY(Category = "Browser", Config, EditAnywhere)
-	bool bHideEmptyDialogueBrowserCategories = true;
 
 	// Advanced Section
 	/**  The offset on the X axis (left/right) to use when automatically positioning nodes. */

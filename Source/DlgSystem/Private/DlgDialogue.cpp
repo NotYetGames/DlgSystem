@@ -349,7 +349,7 @@ void UDlgDialogue::ReloadFromFile()
 {
 	// Simply ignore reloading
 	const EDlgDialogueTextFormat TextFormat = GetDefault<UDlgSystemSettings>()->DialogueTextFormat;
-	if (TextFormat == EDlgDialogueTextFormat::DlgDialogueNoTextFormat)
+	if (TextFormat == EDlgDialogueTextFormat::None)
 	{
 		RefreshData();
 		return;
@@ -363,17 +363,17 @@ void UDlgDialogue::ReloadFromFile()
 	FDlgLogger::Get().Infof(TEXT("Reloading data for Dialogue = `%s` FROM file = `%s`"), *GetPathName(), *TextFileName);
 	
 	// TODO(vampy): Check for errors
-	check(TextFormat != EDlgDialogueTextFormat::DlgDialogueNoTextFormat);
+	check(TextFormat != EDlgDialogueTextFormat::None);
 	switch (TextFormat)
 	{
-		case EDlgDialogueTextFormat::DlgDialogueTextFormatJson:
+		case EDlgDialogueTextFormat::JSON:
 		{
 			FDlgJsonParser JsonParser;
 			JsonParser.InitializeParser(TextFileName);
 			JsonParser.ReadAllProperty(GetClass(), this, this);
 			break;
 		}
-		case EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue:
+		case EDlgDialogueTextFormat::DialogueDEPRECATED:
 		default:
 		{
 			FDlgConfigParser Parser(TEXT("Dlg"));
@@ -432,7 +432,7 @@ void UDlgDialogue::OnAssetSaved()
 void UDlgDialogue::ExportToFile() const
 {
 	const EDlgDialogueTextFormat TextFormat = GetDefault<UDlgSystemSettings>()->DialogueTextFormat;
-	if (TextFormat == EDlgDialogueTextFormat::DlgDialogueNoTextFormat)
+	if (TextFormat == EDlgDialogueTextFormat::None)
 	{
 		// Simply ignore saving
 		return;
@@ -442,17 +442,17 @@ void UDlgDialogue::ExportToFile() const
 	const FString& TextFileName = GetTextFilePathName();
 	FDlgLogger::Get().Infof(TEXT("Exporting data for Dialogue = `%s` TO file = `%s`"), *GetPathName(), *TextFileName);
 
-	check(TextFormat != EDlgDialogueTextFormat::DlgDialogueNoTextFormat)
+	check(TextFormat != EDlgDialogueTextFormat::None)
 	switch (TextFormat)
 	{
-		case EDlgDialogueTextFormat::DlgDialogueTextFormatJson:
+		case EDlgDialogueTextFormat::JSON:
 		{
 			FDlgJsonWriter JsonWriter;
 			JsonWriter.Write(GetClass(), this);
 			JsonWriter.ExportToFile(TextFileName);
 			break;
 		}
-		case EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue:
+		case EDlgDialogueTextFormat::DialogueDEPRECATED:
 		default:
 		{
 			FDlgConfigWriter DlgWriter(TEXT("Dlg"));
@@ -743,14 +743,14 @@ FString UDlgDialogue::GetTextFileExtension(EDlgDialogueTextFormat InTextFormat)
 	switch (InTextFormat)
 	{
 		// Empty
-		case EDlgDialogueTextFormat::DlgDialogueNoTextFormat:
+		case EDlgDialogueTextFormat::None:
 			return FString();
 
 		// JSON has the .json added at the end
-		case EDlgDialogueTextFormat::DlgDialogueTextFormatJson:
+		case EDlgDialogueTextFormat::JSON:
 			return TEXT(".dlg.json");
 
-		case EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue:
+		case EDlgDialogueTextFormat::DialogueDEPRECATED:
 		default:
 			return TEXT(".dlg");
 	}

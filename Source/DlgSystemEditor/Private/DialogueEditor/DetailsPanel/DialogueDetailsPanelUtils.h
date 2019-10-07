@@ -25,10 +25,10 @@ public:
 	{
 		switch (GetDefault<UDlgSystemSettings>()->DialogueTextInputKeyForNewLine)
 		{
-		case EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineShiftPlusEnter:
+		case EDlgTextInputKeyForNewLine::ShiftPlusEnter:
 			return EModifierKey::Shift;
 
-		case EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineEnter:
+		case EDlgTextInputKeyForNewLine::Enter:
 		default:
 			return EModifierKey::None;
 		}
