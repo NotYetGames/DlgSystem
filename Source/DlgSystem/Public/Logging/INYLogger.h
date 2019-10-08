@@ -20,7 +20,7 @@ struct FNYMessageLogInitializationOptions
 	FNYMessageLogInitializationOptions() {}
 
 	/** Whether to show the filters menu */
-	bool bShowFilters = false;
+	bool bShowFilters = true;
 
 	/** 
 	 * Whether to initially  show the pages widget. Setting this to false will allow the user to manually clear the log.
@@ -229,13 +229,14 @@ public:
 	
 	Self& EnableMessageLog(bool bSuppressLoggingToOutputLog = false) { return UseMessageLog(true, bSuppressLoggingToOutputLog); }
 	Self& DisableMessageLog() { return UseMessageLog(true); }
-	Self& UseMessageLog(bool bValue, bool bSuppressLoggingToOutputLog = false)
+	Self& UseMessageLog(bool bValue, bool bInMessageLogMirrorToOutputLog = true)
 	{
 		bMessageLog = bValue;
-		return SetMessageLogMirrorToOutputLog(bSuppressLoggingToOutputLog);
+		return SetMessageLogMirrorToOutputLog(bInMessageLogMirrorToOutputLog);
 	}
 
 	// Opens the log for display to the user given certain conditions.
+	// Set filter with SetOpenMessageLogLevelsHigherThan
 	Self& SetMessageLogOpenOnNewMessage(bool bValue)
 	{
 		bMessageLogOpen = bValue;
@@ -249,12 +250,17 @@ public:
 		return *this;
 	}
 
-	// For the sake of sanity we redirect all levels higher than RedirectMessageLogLevelsAfter to the output log
-	// SO that not to output for example debug output to the message log only to the output log
 	Self& DisableRedirectMessageLogLevels() { return SetRedirectMessageLogLevelsHigherThan(ENYLoggerLogLevel::NoLogging); }
 	Self& SetRedirectMessageLogLevelsHigherThan(ENYLoggerLogLevel AfterOrEqualLevel)
 	{
 		RedirectMessageLogLevelsHigherThan = AfterOrEqualLevel;
+		return *this;
+	}
+
+	// Only useful if bMessageLogOpen is set to true
+	Self& SetOpenMessageLogLevelsHigherThan(ENYLoggerLogLevel AfterOrEqualLevel)
+	{
+		OpenMessageLogLevelsHigherThan = AfterOrEqualLevel;
 		return *this;
 	}
 
@@ -451,13 +457,20 @@ protected:
 	// Should we mirror message log messages from this instance to the output log during flush?
 	bool bMessageLogMirrorToOutputLog = true;
 
-	// By default the message log does not support debug output, latest is info
+	// By default the message log does not support debug output, latest is info.
 	// For the sake of sanity we redirect all levels higher than RedirectMessageLogLevelsHigherThan to the output log
-	// even if the output log is disabled
+	// even if the output log is disabled.
+	// So that not to output for example debug output to the message log only to the output log.
+	// NOTE: A value of ENYLoggerLogLevel::NoLogging means no log level will get redirected
 	ENYLoggerLogLevel RedirectMessageLogLevelsHigherThan = ENYLoggerLogLevel::Warning;
 
 	// Opens the log for display to the user given certain conditions.
+	// See OpenMessageLogLevelsHigherThan for the filter
 	bool bMessageLogOpen = true;
+
+	// All the log levels messages that will open the message log window if bMessageLogOpen is true
+	// NOTE: A value of  ENYLoggerLogLevel::NoLogging means all log levels will be opened if bMessageLogOpen is true
+	ENYLoggerLogLevel OpenMessageLogLevelsHigherThan = ENYLoggerLogLevel::NoLogging;
 
 	//
 	// Client console

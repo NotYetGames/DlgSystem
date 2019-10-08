@@ -16,6 +16,9 @@ protected:
 public:
 	virtual ~FDlgLogger() {}
 
+	// Sync values with system UDlgSystemSettings values
+	Self& SyncWithSettings();
+	
 	// Create a new logger
 	static FDlgLogger New() { return Self{}; }
 	static FDlgLogger& Get()

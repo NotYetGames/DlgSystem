@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
 #include "Layout/Margin.h"
+#include "Logging/INYLogger.h"
 
 #include "DlgSystemSettings.generated.h"
 
@@ -213,6 +214,7 @@ public:
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
 	TArray<UClass*> BlacklistedReflectionClasses;
 
+	
 	/** Should we only process batch dialogues that are only in the /Game folder. This is used for saving all dialogues or deleting all text files. */
 	UPROPERTY(Category = "Batch", Config, EditAnywhere)
 	bool bBatchOnlyInGameDialogues = true;
@@ -223,7 +225,8 @@ public:
 	 */
 	UPROPERTY(Category = "Batch", Config, EditAnywhere)
 	TSet<FString> AdditionalTextFormatFileExtensionsToLookFor;
-
+	
+	
 	/** Defines what the system should do with Text Namespaces and Keys for localization */
 	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Localization Method")
 	EDlgTextLocalization DialogueTextLocalizationMode = EDlgTextLocalization::Ignore;
@@ -232,7 +235,39 @@ public:
 	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Namespace Name")
 	FString DialogueTextNamespaceName = "Dialogue";
 
+	
+	// Enables the message log to output info/errors/warnings to it
+	UPROPERTY(Category = "Logger", Config, EditAnywhere)
+	bool bEnableMessageLog = true;
 
+	// Should the message log mirror the message with the output log, used even if the output log is disabled.
+	UPROPERTY(Category = "Logger", Config, EditAnywhere)
+	bool bMessageLogMirrorToOutputLog = true;
+
+	// Opens the message log in front of the user if messages are displayed
+	// See OpenMessageLogLevelsHigherThan for the filter
+	UPROPERTY(Category = "Logger", Config, EditAnywhere)
+	bool bMessageLogOpen = true;
+
+	// NOTE: Not editable if intended so that not to allow the user to disable logging completely
+	UPROPERTY(Config)
+	bool bEnableOutputLog = false;
+
+	// By default the message log does not support debug output, latest is info.
+	// For the sake of sanity we redirect all levels higher than RedirectMessageLogLevelsHigherThan to the output log
+	// even if the output log is disabled.
+	// So that not to output for example debug output to the message log only to the output log.
+	// NOTE: A value of ENYLoggerLogLevel::NoLogging means no log level will get redirected
+	UPROPERTY(Category = "Logger", Config, EditAnywhere, AdvancedDisplay)
+	ENYLoggerLogLevel RedirectMessageLogLevelsHigherThan = ENYLoggerLogLevel::Warning;
+
+
+	// All the log levels messages that will open the message log window if bMessageLogOpen is true
+	// NOTE: A value of  ENYLoggerLogLevel::NoLogging means all log levels will be opened if bMessageLogOpen is true
+	UPROPERTY(Category = "Logger", Config, EditAnywhere, AdvancedDisplay)
+	ENYLoggerLogLevel OpenMessageLogLevelsHigherThan = ENYLoggerLogLevel::NoLogging;
+
+	
 	/** Should we hide the categories in the Dialogue browser that do not have any children? */
 	UPROPERTY(Category = "Browser", Config, EditAnywhere)
 	bool bHideEmptyDialogueBrowserCategories = true;

@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 
 #include "DlgManager.h"
+#include "Logging/DlgLogger.h"
 
 #define LOCTEXT_NAMESPACE "DlgSystemSettings"
 
@@ -53,6 +54,23 @@ void UDlgSystemSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
 	const FName PropertyName = PropertyChangedEvent.Property != nullptr ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, bEnableMessageLog))
+	{
+		// Prevent no logging at all
+		bEnableOutputLog = !bEnableMessageLog;
+	}
+
+	// Check category
+	if (PropertyChangedEvent.Property != nullptr && PropertyChangedEvent.Property->HasMetaData(TEXT("Category")))
+	{
+		const FString& Category = PropertyChangedEvent.Property->GetMetaData(TEXT("Category"));
+
+		// Sync logger settings
+		if (Category.Equals(TEXT("Logger"), ESearchCase::IgnoreCase))
+		{
+			FDlgLogger::Get().SyncWithSettings();
+		}
+	}
 }
 #endif // WITH_EDITOR
 

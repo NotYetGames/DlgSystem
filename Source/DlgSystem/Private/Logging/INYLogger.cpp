@@ -259,13 +259,14 @@ void INYLogger::LogMessageLog(ENYLoggerLogLevel Level, const FString& Message)
 	
 	// TSharedRef<FTokenizedMessage> NewMessage = FTokenizedMessage::Create(Severity);
 	const EMessageSeverity::Type Severity = GetMessageSeverityForLogLevel(Level);
-	auto message = FMessageLog(MessageLogName);
-	message.SuppressLoggingToOutputLog(!bMessageLogMirrorToOutputLog);
-	message.Message(Severity, FText::FromString(Message));
+	auto MessageLog = FMessageLog(MessageLogName);
+	MessageLog.SuppressLoggingToOutputLog(!bMessageLogMirrorToOutputLog);
+	MessageLog.Message(Severity, FText::FromString(Message));
 
-	if (bMessageLogOpen)
+	// Open message log
+	if (bMessageLogOpen && Level > OpenMessageLogLevelsHigherThan)
 	{
-		message.Open(Severity, false);
+		MessageLog.Open(Severity, false);
 	}
 }
 
