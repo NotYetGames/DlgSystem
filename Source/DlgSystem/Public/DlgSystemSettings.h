@@ -194,21 +194,22 @@ public:
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Format")
 	EDlgDialogueTextFormat DialogueTextFormat = EDlgDialogueTextFormat::None;
 
-	/** What Voice fields to show in the Dialogue Editor, if any. */
-	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Displayed Voice Fields")
-	EDlgVoiceDisplayedFields DialogueDisplayedVoiceFields = EDlgVoiceDisplayedFields::SoundWave;
-
-	/** Where to display the SpeakerState FName property */
-	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "SpeakerState Visibility")
-	EDlgSpeakerStateVisibility DialogueSpeakerStateVisibility = EDlgSpeakerStateVisibility::HideAll;
-
-	/** Generic data is an UObject* which can be assigned to nodes and can be asked from the active one */
-	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Generic Data Visibility")
-	bool bShowGenericData = false;
-
 	/** What key combination to press to add a new line for FText fields in the Dialogue Editor. */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Input Key for NewLine")
 	EDlgTextInputKeyForNewLine DialogueTextInputKeyForNewLine = EDlgTextInputKeyForNewLine::Enter;
+
+	/** Where to display the SpeakerState FName property */
+	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere, DisplayName = "SpeakerState Visibility")
+	EDlgSpeakerStateVisibility DialogueSpeakerStateVisibility = EDlgSpeakerStateVisibility::ShowOnNodeAndEdge;
+
+	/** What Voice fields to show in the Dialogue Editor, if any. */
+	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere, DisplayName = "Displayed Voice Fields")
+	EDlgVoiceDisplayedFields DialogueDisplayedVoiceFields = EDlgVoiceDisplayedFields::None;
+
+	/** Generic data is an UObject* which can be assigned to nodes and can be asked from the active one */
+	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere, DisplayName = "Generic Data Visibility")
+	bool bShowGenericData = false;
+	
 
 	/** Any properties that belong to these classes wont't be shown in the suggestion list when you use the reflection system (class variables). */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
@@ -304,39 +305,39 @@ public:
 	// Colors based on https://material.io/guidelines/style/color.html#color-color-palette
 
 	/** The background color of the normal speech node. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor SpeechNodeColor = FLinearColor{0.050980f, 0.278431f, 0.631373f, 1.f}; // blueish
 
 	/** The background color of the root node. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor RootNodeColor = FLinearColor{0.105882f, 0.368627f, 0.125490f, 1.f}; // greenish
 
 	/** The background color of the end node. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor EndNodeColor = FLinearColor{0.835294f, 0.f, 0.f, 1.f}; // redish
 
 	/** The background color of the virtual parent node. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor VirtualParentNodeColor = FLinearColor{0.129412f, 0.129412f, 0.129412f, 1.0f}; // dark gray
 
 	/** The background color of the selector first node. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor SelectorFirstNodeColor = FLinearColor{0.f, 0.721569f, 0.831373f, 1.f};  // cyan
 
 	/** The background color of the selector random node. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor SelectorRandomNodeColor = FLinearColor{1.f, 0.839216f, 0.f, 1.f}; // yellow
 
 	/** The background color of the selector random node. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor SpeechSequenceNodeColor = FLinearColor{0.050980f, 0.278431f, 0.631373f, 1.f}; // blueish
 
 	/** The background color of the node borders. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor BorderBackgroundColor = FLinearColor::Black;
 
 	/** The background color of the node borders when hovered over */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor BorderHoveredBackgroundColor = FLinearColor(0.380392f, 0.380392f, 0.380392f, 1.0f); // gray
 
 	/** The amount of blank space left around the edges of the speaker text area in case of speech sequence nodes. */
@@ -360,19 +361,19 @@ public:
 	bool bShowEdgeHasConditionsIcon = true;
 
 	/** The base color of the wire. */
-	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
 	FLinearColor WireBaseColor = FLinearColor{1.0f, 1.0f, 1.0f, 1.0f}; // white
 
 	/** Does the wire use the condition color (if it has conditions) in the normal mode? */
-	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
 	bool bShowDifferentColorForConditionWires = true;
 
 	/** The color of the wire if the edge has any conditions. */
-	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
 	FLinearColor WireWithConditionsColor = FLinearColor{1.f, 0.341176f, 0.133333f, 1.0f}; // orangeish
 
 	/** The color of the wire when hovered over */
-	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
 	FLinearColor WireHoveredColor = FLinearColor{1.0f, 0.596078f, 0.0f, 1.0f}; // orange
 
 	/** Is the the viewing of primary/secondary edges enabled? */
@@ -388,11 +389,11 @@ public:
 	bool bDrawSecondaryEdges = true;
 
 	/** The Color of the wire when the edge is primary. */
-	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
 	FLinearColor WirePrimaryEdgeColor = FLinearColor{0.717647f, 0.109804f, 0.109804f, 1.0f}; // redish
 
 	 /** The Color of the wire when the edge is secondary. */
-	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
 	FLinearColor WireSecondaryEdgeColor = FLinearColor{0.101961f, 0.137255f, 0.494118f, 1.f}; // blueish
 
 	// Advanced Section

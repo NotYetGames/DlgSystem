@@ -138,7 +138,7 @@ const FText& UDlgContext::GetActiveNodeText() const
 	return Node->GetNodeText();
 }
 
-FName UDlgContext::GetActiveSpeakerState() const
+FName UDlgContext::GetActiveNodeSpeakerState() const
 {
 	const UDlgNode* Node = GetActiveNode();
 	if (!IsValid(Node))
@@ -193,7 +193,7 @@ UDlgNodeData* UDlgContext::GetActiveNodeData() const
 	return Node->GetNodeData();
 }
 
-UTexture2D* UDlgContext::GetActiveParticipantIcon() const
+UTexture2D* UDlgContext::GetActiveNodeParticipantIcon() const
 {
 	if (!IsValid(Dialogue))
 	{
@@ -216,7 +216,7 @@ UTexture2D* UDlgContext::GetActiveParticipantIcon() const
 	return IDlgDialogueParticipant::Execute_GetParticipantIcon(*Item, SpeakerName, Node->GetSpeakerState());
 }
 
-UObject* UDlgContext::GetActiveParticipant() const
+UObject* UDlgContext::GetActiveNodeParticipant() const
 {
 	if (!IsValid(Dialogue))
 	{
@@ -233,7 +233,7 @@ UObject* UDlgContext::GetActiveParticipant() const
 	return Item == nullptr ? nullptr : *Item;
 }
 
-FName UDlgContext::GetActiveParticipantName() const
+FName UDlgContext::GetActiveNodeParticipantName() const
 {
 	if (!IsValid(Dialogue))
 	{

@@ -67,7 +67,7 @@ void UDialogueK2Node_SwitchDialogueCallback::GetMenuActions(FBlueprintActionData
 
 FText UDialogueK2Node_SwitchDialogueCallback::GetMenuCategory() const
 {
-	return LOCTEXT("DlgCallbackSwitch_MenuCategory", "Dialogue Switch");
+	return LOCTEXT("DlgCallbackSwitch_MenuCategory", "Dialogue|Switch");
 }
 
 void UDialogueK2Node_SwitchDialogueCallback::CreateSelectionPin()

@@ -23,26 +23,30 @@ public:
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
 	FText Text;
 
-	/** Node data that you can customize yourself with your own data types */
-	UPROPERTY(EditAnywhere, Instanced, Category = DialogueNodeData)
-	UDlgNodeData* NodeData;
-
-	/** Voice attached to the entry. The Sound Wave variant. */
-	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
-	USoundWave* VoiceSoundWave;
-
-	/** Voice attached to the entry. The Dialogue Wave variant. Only the first wave from the dialogue context array should be used. */
-	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
-	UDialogueWave* VoiceDialogueWave;
-
-	/** State of the speaker attached to the entry. Passed to the GetParticipantIcon function. */
-	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
-	FName SpeakerState;
-
 	/** Text that will appear when you want to continue down this edge to the next conversation. Usually "Next". */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
 	FText EdgeText = UDlgSystemSettings::EdgeTextNext;
 
+	/** State of the speaker attached to the entry. Passed to the GetParticipantIcon function. */
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
+	FName SpeakerState;
+	
+	/** Node data that you can customize yourself with your own data types */
+	UPROPERTY(EditAnywhere, Instanced, Category = DialogueNodeData)
+	UDlgNodeData* NodeData;
+
+	// Voice attached to this node. The Sound Wave variant.
+	// NOTE: You should probably use the NodeData
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
+	USoundWave* VoiceSoundWave;
+
+	// Voice attached to this node. The Dialogue Wave variant. Only the first wave from the dialogue context array should be used.
+	// NOTE: You should probably use the NodeData
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
+	UDialogueWave* VoiceDialogueWave;
+
+	// Any generic object you would like
+	// NOTE: You should probably use the NodeData
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
 	UObject* GenericData;
 };

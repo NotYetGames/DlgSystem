@@ -443,7 +443,7 @@ void UDialogueK2Node_Select::GetMenuActions(FBlueprintActionDatabaseRegistrar& A
 
 FText UDialogueK2Node_Select::GetMenuCategory() const
 {
-	return LOCTEXT("DlgGetMenuCategory", "Dialogue Select");
+	return LOCTEXT("DlgGetMenuCategory", "Dialogue|Select");
 }
 
 void UDialogueK2Node_Select::PostReconstructNode()
