@@ -242,47 +242,7 @@ void FDlgSystemModule::HandleDialogueDeleted(UDlgDialogue* DeletedDialogue)
 		return;
 	}
 
-	const FString& TextFilePathName = DeletedDialogue->GetTextFilePathName(false);
-	if (TextFilePathName.IsEmpty())
-	{
-		// Memory corruption? tread carefully here
-		FDlgLogger::Get().Errorf(
-			TEXT("Can't delete text file for Dialogue = `%s` because the file path name is empty :O"),
-			*DeletedDialogue->GetPathName()
-		);
-		return;
-	}
-
-	IFileManager& FileManager = IFileManager::Get();
-	auto DeleteTextFileIfItExists = [&FileManager](const TCHAR* Filename)
-	{
-		// Text file does not exist, ignore
-		if (!FileManager.FileExists(Filename))
-		{
-			FDlgLogger::Get().Warningf(TEXT("Text file does not exist at path = `%s`. Can't delete."), Filename);
-			return;
-		}
-
-		// Delete the text file
-		if (!FileManager.Delete(Filename))
-		{
-			FDlgLogger::Get().Errorf(TEXT("Can't delete text file at path = `%s`"), Filename);
-			return;
-		}
-
-
-		FDlgLogger::Get().Infof(TEXT("Deleted file %s"), *Filename);
-	};
-
-	// Iterate over all possible text formats
-	const int32 TextFormatsNum = static_cast<int32>(EDlgDialogueTextFormat::NumTextFormats);
-	for (int32 TextFormatIndex = static_cast<int32>(EDlgDialogueTextFormat::StartTextFormats);
-			   TextFormatIndex < TextFormatsNum; TextFormatIndex++)
-	{
-		const EDlgDialogueTextFormat CurrentTextFormat = static_cast<EDlgDialogueTextFormat>(TextFormatIndex);
-		const FString FullPathName = TextFilePathName + UDlgSystemSettings::GetTextFileExtension(CurrentTextFormat);
-		DeleteTextFileIfItExists(*FullPathName);
-	}
+	DeletedDialogue->DeleteAllTextFiles();
 }
 
 void FDlgSystemModule::HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, const FString& OldObjectPath)
@@ -311,44 +271,12 @@ void FDlgSystemModule::HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, cons
 		return;
 	}
 
-	IFileManager& FileManager = IFileManager::Get();
-	auto RenameFileIfItExists = [&FileManager](const TCHAR* OldFileName, const TCHAR* NewFileName)
-	{
-		// Text file we want to rename does not exist anymore
-		if (!FileManager.FileExists(OldFileName))
-		{
-			FDlgLogger::Get().Warningf(TEXT("Text file before rename at path = `%s` does not exist. Can't Rename."), OldFileName);
-			return;
-		}
-
-		// Text file at destination already exists, conflict :/
-		if (FileManager.FileExists(NewFileName))
-		{
-			FDlgLogger::Get().Errorf(
-				TEXT("Text file at destination (after rename) at path = `%s` already exists. Current text file at path = `%s` won't be moved/renamed."),
-				NewFileName, OldFileName
-			);
-			return;
-		}
-
-		// Finally Move/Rename
-		if (!FileManager.Move(/*Dest=*/ NewFileName, /*Src=*/ OldFileName, /*bReplace=*/ false))
-		{
-			FDlgLogger::Get().Errorf(TEXT("Failure to move/rename file from `%s` to `%s`"),OldFileName, NewFileName);
-			return;
-		}
-
-		FDlgLogger::Get().Infof(TEXT("Text file moved/renamed from `%s` to `%s`"),OldFileName, NewFileName);
-	};
-
 	// Iterate over all possible text formats
-	const int32 TextFormatsNum = static_cast<int32>(EDlgDialogueTextFormat::NumTextFormats);
-	for (int32 TextFormatIndex = static_cast<int32>(EDlgDialogueTextFormat::StartTextFormats);
-			   TextFormatIndex < TextFormatsNum; TextFormatIndex++)
+	for (const FString& FileExtension : GetDefault<UDlgSystemSettings>()->GetAllTextFileExtensions())
 	{
-		const EDlgDialogueTextFormat CurrentTextFormat = static_cast<EDlgDialogueTextFormat>(TextFormatIndex);
-		const FString FileExtension = UDlgSystemSettings::GetTextFileExtension(CurrentTextFormat);
-		RenameFileIfItExists(*(OldTextFilePathName + FileExtension), *(CurrentTextFilePathName + FileExtension));
+		const FString OldFileName = OldTextFilePathName + FileExtension;
+		const FString NewFileName = CurrentTextFilePathName + FileExtension;
+		FDlgHelper::RenameFile(OldFileName, NewFileName, true);
 	}
 }
 

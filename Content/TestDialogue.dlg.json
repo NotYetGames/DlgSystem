@@ -1,12 +1,27 @@
 {
 	"__type__": "DlgDialogue",
-	"DlgVersion": 5,
+	"DlgVersion": 7,
 	"DlgName": "TestDialogue",
 	"DlgGuid": "D3B6003044F0EC3A430C03B963F09C88",
+	"DlgParticipantClasses": [
+		{
+			"ParticipantName": "TestOwner",
+			"ParticipantClass": ""
+		},
+		{
+			"ParticipantName": "Cat",
+			"ParticipantClass": ""
+		}
+	],
 	"StartNode":
 	{
 		"__type__": "DlgNode_Speech",
 		"Text": "",
+		"TextArguments": [],
+		"NodeData": null,
+		"VoiceSoundWave": "",
+		"VoiceDialogueWave": "",
+		"GenericData": "",
 		"SpeakerState": "None",
 		"bIsVirtualParent": false,
 		"OwnerName": "None",
@@ -18,13 +33,17 @@
 				"TargetIndex": 0,
 				"Conditions": [],
 				"Text": "Next",
-				"SpeakerState": "None"
+				"TextArguments": [],
+				"SpeakerState": "None",
+				"bIncludeInAllOptionListIfUnsatisfied": true
 			},
 			{
 				"TargetIndex": 1,
 				"Conditions": [],
 				"Text": "",
-				"SpeakerState": "None"
+				"TextArguments": [],
+				"SpeakerState": "None",
+				"bIncludeInAllOptionListIfUnsatisfied": true
 			}
 		]
 	},
@@ -33,17 +52,25 @@
 			"__index__": 0,
 			"__type__": "DlgNode_Speech",
 			"Text": "I can talk!",
+			"TextArguments": [],
+			"NodeData": null,
+			"VoiceSoundWave": "",
+			"VoiceDialogueWave": "",
+			"GenericData": "",
 			"SpeakerState": "None",
 			"bIsVirtualParent": false,
 			"OwnerName": "TestOwner",
 			"bCheckChildrenOnEvaluation": false,
 			"EnterConditions": [
 				{
-					"Strength": "EDlgConditionStrength::DlgConditionStrengthStrong",
-					"ConditionType": "EDlgConditionType::DlgConditionIntCall",
+					"Strength": "EDlgConditionStrength::Strong",
+					"ConditionType": "EDlgConditionType::IntCall",
 					"ParticipantName": "None",
 					"CallbackName": "NodeVariable",
-					"Operation": "EDlgOperation::DlgEqual",
+					"Operation": "EDlgOperation::Equal",
+					"CompareType": "EDlgCompare::ToConst",
+					"OtherParticipantName": "None",
+					"OtherVariableName": "None",
 					"IntValue": 0,
 					"FloatValue": 0,
 					"NameValue": "None",
@@ -54,7 +81,7 @@
 			"EnterEvents": [
 				{
 					"ParticipantName": "None",
-					"EventType": "EDlgEventType::DlgEventModifyInt",
+					"EventType": "EDlgEventType::ModifyInt",
 					"EventName": "NodeVariable",
 					"IntValue": 0,
 					"FloatValue": 0,
@@ -68,11 +95,14 @@
 					"TargetIndex": 2,
 					"Conditions": [
 						{
-							"Strength": "EDlgConditionStrength::DlgConditionStrengthStrong",
-							"ConditionType": "EDlgConditionType::DlgConditionIntCall",
+							"Strength": "EDlgConditionStrength::Strong",
+							"ConditionType": "EDlgConditionType::IntCall",
 							"ParticipantName": "None",
 							"CallbackName": "EdgeVariable",
-							"Operation": "EDlgOperation::DlgEqual",
+							"Operation": "EDlgOperation::Equal",
+							"CompareType": "EDlgCompare::ToConst",
+							"OtherParticipantName": "None",
+							"OtherVariableName": "None",
 							"IntValue": 100,
 							"FloatValue": 0,
 							"NameValue": "None",
@@ -81,7 +111,9 @@
 						}
 					],
 					"Text": "Next",
-					"SpeakerState": "None"
+					"TextArguments": [],
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true
 				}
 			]
 		},
@@ -89,6 +121,11 @@
 			"__index__": 1,
 			"__type__": "DlgNode_Speech",
 			"Text": "Meow. Yeah I can speak too",
+			"TextArguments": [],
+			"NodeData": null,
+			"VoiceSoundWave": "",
+			"VoiceDialogueWave": "",
+			"GenericData": "",
 			"SpeakerState": "None",
 			"bIsVirtualParent": false,
 			"OwnerName": "Cat",
@@ -100,7 +137,9 @@
 					"TargetIndex": 2,
 					"Conditions": [],
 					"Text": "Next",
-					"SpeakerState": "None"
+					"TextArguments": [],
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true
 				}
 			]
 		},
@@ -108,6 +147,11 @@
 			"__index__": 2,
 			"__type__": "DlgNode_Speech",
 			"Text": "You don't say?",
+			"TextArguments": [],
+			"NodeData": null,
+			"VoiceSoundWave": "",
+			"VoiceDialogueWave": "",
+			"GenericData": "",
 			"SpeakerState": "None",
 			"bIsVirtualParent": false,
 			"OwnerName": "TestOwner",
@@ -116,7 +160,7 @@
 			"EnterEvents": [
 				{
 					"ParticipantName": "None",
-					"EventType": "EDlgEventType::DlgEventModifyInt",
+					"EventType": "EDlgEventType::ModifyInt",
 					"EventName": "DefaultValue",
 					"IntValue": 0,
 					"FloatValue": 0,
@@ -126,7 +170,7 @@
 				},
 				{
 					"ParticipantName": "None",
-					"EventType": "EDlgEventType::DlgEventModifyInt",
+					"EventType": "EDlgEventType::ModifyInt",
 					"EventName": "Default",
 					"IntValue": 0,
 					"FloatValue": 0,
@@ -140,7 +184,9 @@
 					"TargetIndex": 3,
 					"Conditions": [],
 					"Text": "Finish",
-					"SpeakerState": "None"
+					"TextArguments": [],
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true
 				}
 			]
 		},

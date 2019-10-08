@@ -36,10 +36,10 @@ public:
 	static bool SaveAllDialogues();
 
 	/**
-	 * Deletes all teh diualogues text files
+	 * Deletes all teh dialogues text files
 	 * @return True on success or false on failure.
 	 */
-	static bool DeleteAllDialoguesTextFiles(const TArray<FString>& TextFileExtensions);
+	static bool DeleteAllDialoguesTextFiles(const TSet<FString>& TextFileExtensions);
 
 private:
 	/** Handle clicking on save all dialogues. */

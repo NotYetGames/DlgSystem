@@ -35,6 +35,7 @@
 
 #include "IO/DlgConfigWriter.h"
 #include "IO/DlgConfigParser.h"
+#include "Logging/DlgLogger.h"
 
 #define LOCTEXT_NAMESPACE "DlgSystemEditor"
 
@@ -217,8 +218,7 @@ bool FDlgSystemEditorModule::SaveAllDialogues()
 	for (UDlgDialogue* Dialogue : Dialogues)
 	{
 		// Ignore, not in game directory
-		const FString DialoguePah = Dialogue->GetPathName();
-		if (bBatchOnlyInGameDialogues && !FDlgHelper::IsPathInProjectDirectory(DialoguePah))
+		if (bBatchOnlyInGameDialogues && !Dialogue->IsInProjectDirectory())
 		{
 			continue;
 		}
@@ -242,7 +242,7 @@ void FDlgSystemEditorModule::HandleOnSaveAllDialogues()
 		return;
 	}
 
-	if (!Self::SaveAllDialogues())
+	if (!SaveAllDialogues())
 	{
 		UE_LOG(LogDlgSystemEditor, Error, TEXT("Failed To save all Dialogues. An error occurred."));
 	}
@@ -250,18 +250,41 @@ void FDlgSystemEditorModule::HandleOnSaveAllDialogues()
 
 void FDlgSystemEditorModule::HandleOnDeleteAllDialoguesTextFiles()
 {
-	const EAppReturnType::Type Response = FPlatformMisc::MessageBoxExt(EAppMsgType::YesNo,
-		TEXT("Delete all Dialogues text files? Delete all dialogues text files on the disk from all existing known text formats and from the Dialogue Settings AdditionalTextFormatFileExtensionsToLookFor"),
-		TEXT("Delete ALl Dialogues text files?"));
+	const TSet<FString> AllFileExtensions = GetDefault<UDlgSystemSettings>()->GetAllTextFileExtensions();
+	const FString StringAllFileExtensions = FString::Join(AllFileExtensions, TEXT(","));
+	const FString Text = FString::Printf(
+		TEXT("Delete all Dialogues text files? Delete all dialogues text files on the disk with the following extensions: %s"),
+		*StringAllFileExtensions
+	);
+	
+	const EAppReturnType::Type Response = FPlatformMisc::MessageBoxExt(EAppMsgType::YesNo, *Text, TEXT("Delete All Dialogues text files?"));
 	if (Response == EAppReturnType::No)
 	{
 		return;
 	}
+
+	if (!DeleteAllDialoguesTextFiles(AllFileExtensions))
+	{
+		UE_LOG(LogDlgSystemEditor, Error, TEXT("Failed To delete all Dialogues text files. An error occurred."));
+	}
 }
 
-bool FDlgSystemEditorModule::DeleteAllDialoguesTextFiles(const TArray<FString>& TextFileExtensions)
+bool FDlgSystemEditorModule::DeleteAllDialoguesTextFiles(const TSet<FString>& TextFileExtensions)
 {
-	return false;
+	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
+	const bool bBatchOnlyInGameDialogues = GetDefault<UDlgSystemSettings>()->bBatchOnlyInGameDialogues;
+	for (const UDlgDialogue* Dialogue : Dialogues)
+	{
+		// Ignore, not in game directory
+		if (bBatchOnlyInGameDialogues && !Dialogue->IsInProjectDirectory())
+		{
+			continue;
+		}
+
+		Dialogue->DeleteAllTextFiles();
+	}
+
+	return true;
 }
 
 void FDlgSystemEditorModule::HandleOnPostEngineInit()

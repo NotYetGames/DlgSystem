@@ -73,6 +73,42 @@ FString UDlgSystemSettings::GetTextFileExtension(EDlgDialogueTextFormat TextForm
 			return FString();
 	}
 }
+ 
+const TSet<FString>& UDlgSystemSettings::GetAllCurrentTextFileExtensions()
+{
+	static TSet<FString> Extensions;
+	if (Extensions.Num() == 0)
+	{
+		// Iterate over all possible text formats
+		const int32 TextFormatsNum = static_cast<int32>(EDlgDialogueTextFormat::NumTextFormats);
+		for (int32 TextFormatIndex = static_cast<int32>(EDlgDialogueTextFormat::StartTextFormats);
+				   TextFormatIndex < TextFormatsNum; TextFormatIndex++)
+		{
+			const EDlgDialogueTextFormat CurrentTextFormat = static_cast<EDlgDialogueTextFormat>(TextFormatIndex);
+			Extensions.Add(GetTextFileExtension(CurrentTextFormat));
+		}
+	}
+
+	return Extensions;
+}
+
+TSet<FString> UDlgSystemSettings::GetAllTextFileExtensions() const
+{
+	TSet<FString> CurrentFileExtensions = GetAllCurrentTextFileExtensions();
+
+	// Look for additional file extensions
+	for (const FString& Ext : AdditionalTextFormatFileExtensionsToLookFor)
+	{
+		// Only allow file extension that start with dot, also ignore uasset
+		if (Ext.StartsWith(".") && Ext != ".uasset")
+		{
+			CurrentFileExtensions.Add(Ext);
+		}
+	}
+
+	return CurrentFileExtensions;
+}
+
 
 
 #undef LOCTEXT_NAMESPACE

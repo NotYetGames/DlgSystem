@@ -461,6 +461,14 @@ public:
 	FString GetTextFilePathName(bool bAddExtension = true) const;
 	FString GetTextFilePathName(EDlgDialogueTextFormat TextFormat, bool bAddExtension = true) const;
 
+	// Perform deletion on the text files
+	bool DeleteTextFileForTextFormat(EDlgDialogueTextFormat TextFormat) const;
+	bool DeleteTextFileForExtension(const FString& FileExtension) const;
+	bool DeleteAllTextFiles() const;
+
+	// Is this dialogue located inside the project directory
+	bool IsInProjectDirectory() const;
+	
 	/**
 	 * @return the text file path name (as a relative path) from the asset path name.
 	 * NOTE: does not have extension, call GetTextFileExtension for that.

@@ -203,6 +203,10 @@ public:
 		}
 		return Object->GetClass()->GetName();
 	}
+
+	// FileSystem
+	static bool DeleteFile(const FString& PathName, bool bVerbose = true);
+	static bool RenameFile(const FString& OldPathName, const FString& NewPathName, bool bOverWrite = false, bool bVerbose = true);
 	
 	
 	// Is FirstSet == SecondSet

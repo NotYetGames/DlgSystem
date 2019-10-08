@@ -13,10 +13,10 @@ UENUM()
 enum class EDlgDialogueTextFormat : uint8
 {
 	/** No Text Format used. */
-	None			UMETA(DisplayName = "No Text Format"),
+	None	UMETA(DisplayName = "No Text Format"),
 
 	// Output all text formats, mostly used for debugging
-	All            UMETA(Hidden),
+	All     UMETA(Hidden),
 	
 	/**
 	 * DEPRECATED. The own Dialogue Text format. DEPRECATED.
@@ -41,7 +41,7 @@ UENUM()
 enum class EDlgVoiceDisplayedFields : uint8
 {
 	/** No Voice fields are displayed. */
-	None					UMETA(DisplayName = "No Voice"),
+	None						UMETA(DisplayName = "No Voice"),
 
 	/** Only display the SoundWave voice fields. */
 	SoundWave					UMETA(DisplayName = "Sound Wave"),
@@ -79,10 +79,10 @@ UENUM()
 enum class EDlgTextInputKeyForNewLine : uint8
 {
 	/** Press 'Enter' to add a new line. */
-	Enter					UMETA(DisplayName = "Enter"),
+	Enter				UMETA(DisplayName = "Enter"),
 
 	/** Preset 'Shift + Enter' to add a new line. (like in blueprints) */
-	ShiftPlusEnter			UMETA(DisplayName = "Shift + Enter"),
+	ShiftPlusEnter		UMETA(DisplayName = "Shift + Enter"),
 };
 
 /**
@@ -173,6 +173,11 @@ public:
 	static FString GetTextFileExtension(EDlgDialogueTextFormat TextFormat);
 	static bool HasTextFileExtension(EDlgDialogueTextFormat TextFormat) { return !GetTextFileExtension(TextFormat).IsEmpty(); }
 
+	// Only the current ones from the enum
+	static const TSet<FString>& GetAllCurrentTextFileExtensions();
+
+	// GetAllCurrentTextFileExtensions() + AdditionalTextFormatFileExtensionsToLookFor
+	TSet<FString> GetAllTextFileExtensions() const;
 	
 public:
 	// Some constants used. TODO make these configurable
@@ -210,11 +215,14 @@ public:
 
 	/** Should we only process batch dialogues that are only in the /Game folder. This is used for saving all dialogues or deleting all text files. */
 	UPROPERTY(Category = "Batch", Config, EditAnywhere)
-	bool bBatchOnlyInGameDialogues = false;
+	bool bBatchOnlyInGameDialogues = true;
 	
-	/** Additional file extension to look for when doing operations with dialogue text formats, like: deleting/renaming */
+	/**
+	 * Additional file extension to look for when doing operations with dialogue text formats, like: deleting/renaming.
+	 * NOTE: file extensions must start with a full stop
+	 */
 	UPROPERTY(Category = "Batch", Config, EditAnywhere)
-	TArray<FString> AdditionalTextFormatFileExtensionsToLookFor;
+	TSet<FString> AdditionalTextFormatFileExtensionsToLookFor;
 
 	/** Defines what the system should do with Text Namespaces and Keys for localization */
 	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Localization Method")

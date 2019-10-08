@@ -19,6 +19,7 @@
 #include "Nodes/DlgNode_End.h"
 #include "DlgManager.h"
 #include "Logging/DlgLogger.h"
+#include "DlgHelper.h"
 
 #define LOCTEXT_NAMESPACE "DlgDialogue"
 
@@ -771,6 +772,43 @@ FString UDlgDialogue::GetTextFilePathName(EDlgDialogueTextFormat TextFormat, boo
 	}
 
 	return TextFileName;
+}
+
+bool UDlgDialogue::DeleteTextFileForTextFormat(EDlgDialogueTextFormat TextFormat) const
+{
+	return DeleteTextFileForExtension(UDlgSystemSettings::GetTextFileExtension(TextFormat));
+}
+
+bool UDlgDialogue::DeleteTextFileForExtension(const FString& FileExtension) const
+{
+	const FString TextFilePathName = GetTextFilePathName(false);
+	if (TextFilePathName.IsEmpty())
+	{
+		// Memory corruption? tread carefully here
+		FDlgLogger::Get().Errorf(
+			TEXT("Can't delete text file for Dialogue = `%s` because the file path name is empty :O"),
+			*GetPathName()
+		);
+		return false;
+	}
+
+	const FString FullPathName = TextFilePathName + FileExtension;
+	return FDlgHelper::DeleteFile(FullPathName);
+}
+
+bool UDlgDialogue::DeleteAllTextFiles() const
+{
+	bool bStatus = true;
+	for (const FString& FileExtension : GetDefault<UDlgSystemSettings>()->GetAllTextFileExtensions())
+	{
+		bStatus &= DeleteTextFileForExtension(FileExtension);
+	}
+	return bStatus;
+}
+
+bool UDlgDialogue::IsInProjectDirectory() const
+{
+	return FDlgHelper::IsPathInProjectDirectory(GetPathName());
 }
 
 FString UDlgDialogue::GetTextFilePathNameFromAssetPathName(const FString& AssetPathName)
