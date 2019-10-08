@@ -45,7 +45,7 @@ graph TD;
     A[DlgSystemEditor]-->B[UnrealEd];
     A-->C[DlgSystem];
     C-. WITH_EDITOR .->B;
-    C-. WITH_EDITOR using IDlgDialogueEditorModule .->A
+    C-. WITH_EDITOR using IDlgDialogueEditorAccess .->A
 ```
 
 ## Conventions

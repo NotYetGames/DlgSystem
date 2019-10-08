@@ -45,7 +45,7 @@ void UpdateDialogueToVersion_ConvertedNodesToUObject(UDlgDialogue* Dialogue)
 void UpdateDialogueToVersion_UseOnlyOneOutputAndInputPin(UDlgDialogue* Dialogue)
 {
 #if WITH_EDITOR
-	Dialogue->GetDialogueEditorModule()->UpdateDialogueToVersion_UseOnlyOneOutputAndInputPin(Dialogue);
+	Dialogue->GetDialogueEditorAccess()->UpdateDialogueToVersion_UseOnlyOneOutputAndInputPin(Dialogue);
 #endif
 }
 
@@ -113,10 +113,10 @@ void UDlgDialogue::PostLoad()
 	}
 
 #if WITH_EDITOR
-	const bool bHasDialogueEditorModule = GetDialogueEditorModule().IsValid();
+	const bool bHasDialogueEditorModule = GetDialogueEditorAccess().IsValid();
 	// If this is false it means the graph nodes are not even created? Check for old files that were saved
 	// before graph editor was even implemented. The editor will popup a prompt from FDialogueEditorUtilities::TryToCreateDefaultGraph
-	if (bHasDialogueEditorModule && !GetDialogueEditorModule()->AreDialogueNodesInSyncWithGraphNodes(this))
+	if (bHasDialogueEditorModule && !GetDialogueEditorAccess()->AreDialogueNodesInSyncWithGraphNodes(this))
 	{
 		return;
 	}
@@ -161,7 +161,7 @@ void UDlgDialogue::PostInitProperties()
 
 #if WITH_EDITOR
 	// Wait for the editor module to be set by the editor in UDialogueGraph constructor
-	if (GetDialogueEditorModule().IsValid())
+	if (GetDialogueEditorAccess().IsValid())
 	{
 		CreateGraph();
 	}
@@ -236,7 +236,7 @@ void UDlgDialogue::PostEditImport()
 }
 
 #if WITH_EDITOR
-TSharedPtr<IDlgDialogueEditorModule> UDlgDialogue::DialogueEditorModule = nullptr;
+TSharedPtr<IDlgDialogueEditorAccess> UDlgDialogue::DialogueEditorAccess = nullptr;
 
 bool UDlgDialogue::CanEditChange(const UProperty* InProperty) const
 {
@@ -312,7 +312,7 @@ void UDlgDialogue::CreateGraph()
 	}
 
 	FDlgLogger::Get().Debugf(TEXT("Creating graph for Dialogue = `%s`"), *GetPathName());
-	DlgGraph = GetDialogueEditorModule()->CreateNewDialogueGraph(this);
+	DlgGraph = GetDialogueEditorAccess()->CreateNewDialogueGraph(this);
 
 	// Give the schema a chance to fill out any required nodes
 	DlgGraph->GetSchema()->CreateDefaultNodesForGraph(*DlgGraph);
@@ -327,7 +327,7 @@ void UDlgDialogue::ClearGraph()
 	}
 
 	FDlgLogger::Get().Debugf(TEXT("Clearing graph for Dialogue = `%s`"), *GetPathName());
-	GetDialogueEditorModule()->RemoveAllGraphNodes(this);
+	GetDialogueEditorAccess()->RemoveAllGraphNodes(this);
 
 	// Give the schema a chance to fill out any required nodes
 	DlgGraph->GetSchema()->CreateDefaultNodesForGraph(*DlgGraph);
@@ -342,7 +342,7 @@ void UDlgDialogue::CompileDialogueNodesFromGraphNodes()
 	}
 
 	FDlgLogger::Get().Infof(TEXT("Compiling Dialogue = `%s` (Graph data -> Dialogue data)`"), *GetPathName());
-	GetDialogueEditorModule()->CompileDialogueNodesFromGraphNodes(this);
+	GetDialogueEditorAccess()->CompileDialogueNodesFromGraphNodes(this);
 }
 #endif // #if WITH_EDITOR
 

@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "DlgDialogueEditorModule.h"
+#include "DlgDialogueEditorAccess.h"
 
 #include "DlgDialogue.h"
 #include "DialogueEditor/Graph/DialogueGraph.h"
@@ -11,8 +11,8 @@
 #include "Nodes/DlgNode.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FDlgDialogueEditorModule
-UEdGraph* FDlgDialogueEditorModule::CreateNewDialogueGraph(UDlgDialogue* Dialogue) const
+// FDlgDialogueEditorAccess
+UEdGraph* FDlgDialogueEditorAccess::CreateNewDialogueGraph(UDlgDialogue* Dialogue) const
 {
 	UDialogueGraph* DialogueGraph = CastChecked<UDialogueGraph>(FDialogueEditorUtilities::CreateNewGraph(Dialogue, NAME_None,
 										UDialogueGraph::StaticClass(), UDialogueGraphSchema::StaticClass()));
@@ -22,7 +22,7 @@ UEdGraph* FDlgDialogueEditorModule::CreateNewDialogueGraph(UDlgDialogue* Dialogu
 }
 
 /** Compiles the dialogue nodes from the graph nodes. Meaning it transforms the graph data -> (into) dialogue data. */
-void FDlgDialogueEditorModule::CompileDialogueNodesFromGraphNodes(UDlgDialogue* Dialogue) const
+void FDlgDialogueEditorAccess::CompileDialogueNodesFromGraphNodes(UDlgDialogue* Dialogue) const
 {
 	FCompilerResultsLog MessageLog;
 	FDialogueCompilerContext CompilerContext(Dialogue, MessageLog);
@@ -31,7 +31,7 @@ void FDlgDialogueEditorModule::CompileDialogueNodesFromGraphNodes(UDlgDialogue* 
 }
 
 /** Removes all nodes from the graph. */
-void FDlgDialogueEditorModule::RemoveAllGraphNodes(UDlgDialogue* Dialogue) const
+void FDlgDialogueEditorAccess::RemoveAllGraphNodes(UDlgDialogue* Dialogue) const
 {
 	CastChecked<UDialogueGraph>(Dialogue->GetGraph())->RemoveAllNodes();
 
@@ -46,7 +46,7 @@ void FDlgDialogueEditorModule::RemoveAllGraphNodes(UDlgDialogue* Dialogue) const
 }
 
 /** Updates the Dialogue to match the version UseOnlyOneOutputAndInputPin */
-void FDlgDialogueEditorModule::UpdateDialogueToVersion_UseOnlyOneOutputAndInputPin(UDlgDialogue* Dialogue) const
+void FDlgDialogueEditorAccess::UpdateDialogueToVersion_UseOnlyOneOutputAndInputPin(UDlgDialogue* Dialogue) const
 {
 	Dialogue->DisableCompileDialogue();
 	UDialogueGraph* DialogueGraph = CastChecked<UDialogueGraph>(Dialogue->GetGraph());

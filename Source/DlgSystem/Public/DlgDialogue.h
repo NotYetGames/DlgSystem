@@ -3,7 +3,7 @@
 
 #include "Templates/SubclassOf.h"
 
-#include "DlgIDialogueEditorModule.h"
+#include "IDlgDialogueEditorAccess.h"
 #include "DlgSystemSettings.h"
 #include "DlgDialogueParticipantData.h"
 
@@ -201,15 +201,15 @@ public:
 	void CompileDialogueNodesFromGraphNodes();
 
 	/** Sets the dialogue editor implementation. This is called in the constructor of the DlgDialogueGraph in the DlgSytemEditor module. */
-	static void SetDialogueEditorModule(const TSharedPtr<IDlgDialogueEditorModule>& InDialogueEditor)
+	static void SetDialogueEditorAccess(const TSharedPtr<IDlgDialogueEditorAccess>& InDialogueEditor)
 	{
-		check(!DialogueEditorModule.IsValid());
+		check(!DialogueEditorAccess.IsValid());
 		check(InDialogueEditor.IsValid());
-		DialogueEditorModule = InDialogueEditor;
+		DialogueEditorAccess = InDialogueEditor;
 	}
 
 	/** Gets the dialogue editor implementation. */
-	static TSharedPtr<IDlgDialogueEditorModule> GetDialogueEditorModule() { return DialogueEditorModule; }
+	static TSharedPtr<IDlgDialogueEditorAccess> GetDialogueEditorAccess() { return DialogueEditorAccess; }
 
 	// Enables/disables the compilation of the dialogues in the editor, use with care. Mainly used for optimization.
 	void EnableCompileDialogue() { bCompileDialogue = true; }
@@ -535,8 +535,8 @@ private:
 	UPROPERTY(Meta = (DlgNoExport))
 	UEdGraph* DlgGraph;
 
-	// Ptr to interface to dialogue editor operations. See function SetDialogueEditorModule for more details.
-	static TSharedPtr<IDlgDialogueEditorModule> DialogueEditorModule;
+	// Ptr to interface to dialogue editor operations. See function SetDialogueEditorAccess for more details.
+	static TSharedPtr<IDlgDialogueEditorAccess> DialogueEditorAccess;
 
 	/** Flag used for optimization, used to enable/disable compiling of the dialogue for bulk operations. */
 	bool bCompileDialogue = true;

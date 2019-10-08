@@ -1,18 +1,18 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #pragma once
 
-#include "DlgIDialogueEditorModule.h"
+#include "IDlgDialogueEditorAccess.h"
 #include "DialogueEditor/DialogueEditorUtilities.h"
 
 /**
  * Implementation of the interface for dialogue graph interaction between DlgSystem module <-> DlgSystemEditor module.
  * Set in UDialogueGraph constructor for Each Dialogue
  */
-class DLGSYSTEMEDITOR_API FDlgDialogueEditorModule : public IDlgDialogueEditorModule
+class DLGSYSTEMEDITOR_API FDlgDialogueEditorAccess : public IDlgDialogueEditorAccess
 {
 public:
-	FDlgDialogueEditorModule() {}
-	~FDlgDialogueEditorModule() {}
+	FDlgDialogueEditorAccess() {}
+	~FDlgDialogueEditorAccess() {}
 
 	UEdGraph* CreateNewDialogueGraph(UDlgDialogue* Dialogue) const override;
 	void CompileDialogueNodesFromGraphNodes(UDlgDialogue* Dialogue) const override;
