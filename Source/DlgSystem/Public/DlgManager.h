@@ -4,7 +4,6 @@
 
 #include "DlgDialogue.h"
 #include "DlgDialogueParticipant.h"
-#include "DlgHelper.h"
 #include "DlgMemory.h"
 
 #include "DlgManager.generated.h"

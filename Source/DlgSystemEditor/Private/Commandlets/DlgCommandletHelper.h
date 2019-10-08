@@ -37,9 +37,4 @@ public:
 		static constexpr bool bCheckDirty = false;
 		return UEditorLoadingAndSavingUtils::SavePackages(PackagesToSave, bCheckDirty);
 	}
-
-	static bool IsDialoguePathInProjectDirectory(const FString& DialoguePath)
-	{
-		return DialoguePath.StartsWith(TEXT("/Game"));
-	}
 };

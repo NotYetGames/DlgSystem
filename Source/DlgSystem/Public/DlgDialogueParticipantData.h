@@ -3,6 +3,9 @@
 
 #include "DlgDialogueParticipantData.generated.h"
 
+struct FDlgCondition;
+struct FDlgEvent;
+struct FDlgTextArgument;
 
 /** Structure useful to cache all the names used by a participant */
 USTRUCT(BlueprintType)
@@ -11,16 +14,14 @@ struct DLGSYSTEM_API FDlgParticipantData
 	GENERATED_USTRUCT_BODY()
 
 public:
-
 	/** Helper functions to fill the data */
-	void AddConditionPrimaryData(const struct FDlgCondition& Condition);
-	void AddConditionSecondaryData(const struct FDlgCondition& Condition);
-	void AddEventData(const struct FDlgEvent& Event);
-	void AddTextArgumentData(const struct FDlgTextArgument& TextArgument);
+	void AddConditionPrimaryData(const FDlgCondition& Condition);
+	void AddConditionSecondaryData(const FDlgCondition& Condition);
+	void AddEventData(const FDlgEvent& Event);
+	void AddTextArgumentData(const FDlgTextArgument& TextArgument);
 
 public:
-
-	/** FName based conditions (aka conditions of type DlgConditionEventCall). */
+	/** FName based conditions (aka conditions of type EventCall). */
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = DialogueParticipantData)
 	TSet<FName> Conditions;
 

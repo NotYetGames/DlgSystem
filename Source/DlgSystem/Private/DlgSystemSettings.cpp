@@ -15,6 +15,7 @@ const FText UDlgSystemSettings::EdgeTextNext = LOCTEXT("edge_next", "Next");
 UDlgSystemSettings::UDlgSystemSettings()
 {
 	BlacklistedReflectionClasses = {AActor::StaticClass(), APawn::StaticClass(),  ACharacter::StaticClass()};
+	// AdditionalTextFormatFileExtensionsToLookFor = {""};
 }
 
 #if WITH_EDITOR

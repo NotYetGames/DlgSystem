@@ -666,7 +666,7 @@ void FDialogueEditorUtilities::ReplaceReferencesToOldIndiciesWithNew(const TArra
 		return false;
 	};
 
-	// Fix the weak references in the FDlgCondition::IntValue if it is of type DlgConditionNodeVisited
+	// Fix the weak references in the FDlgCondition::IntValue if it is of type WasNodeVisited
 	for (UDialogueGraphNode* GraphNode : GraphNodes)
 	{
 		UDlgNode* DialogueNode = GraphNode->GetMutableDialogueNode();
@@ -676,8 +676,8 @@ void FDialogueEditorUtilities::ReplaceReferencesToOldIndiciesWithNew(const TArra
 		for (int32 ConditionIndex = 0, ConditionNum = DialogueNode->GetNodeEnterConditions().Num(); ConditionIndex < ConditionNum; ConditionIndex++)
 		{
 			FDlgCondition* EnterCondition = DialogueNode->GetMutableEnterConditionAt(ConditionIndex);
-			if (EnterCondition->ConditionType == EDlgConditionType::DlgConditionNodeVisited ||
-				EnterCondition->ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild)
+			if (EnterCondition->ConditionType == EDlgConditionType::WasNodeVisited ||
+				EnterCondition->ConditionType == EDlgConditionType::HasSatisfiedChild)
 			{
 				UpdateConditionIndex(EnterCondition);
 			}
@@ -691,8 +691,8 @@ void FDialogueEditorUtilities::ReplaceReferencesToOldIndiciesWithNew(const TArra
 
 			for (FDlgCondition& Condition : DialogueEdge->Conditions)
 			{
-				if (Condition.ConditionType == EDlgConditionType::DlgConditionNodeVisited ||
-					Condition.ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild)
+				if (Condition.ConditionType == EDlgConditionType::WasNodeVisited ||
+					Condition.ConditionType == EDlgConditionType::HasSatisfiedChild)
 				{
 					bModifiedConditions = bModifiedConditions || UpdateConditionIndex(&Condition);
 				}

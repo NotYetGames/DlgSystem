@@ -11,10 +11,10 @@ UENUM()
 enum class EDlgNodeSelectorType : uint8
 {
 	/** As soon as it is entered it selects its first satisfied child. */
-	DlgNodeSelectorFirst		UMETA(DisplayName = "First"),
+	First		UMETA(DisplayName = "First"),
 
 	/** As soon as it is entered it selects a satisfied child randomly. */
-	DlgNodeSelectorRandom		UMETA(DisplayName = "Random"),
+	Random		UMETA(DisplayName = "Random"),
 };
 
 /**
@@ -34,9 +34,9 @@ public:
 	{
 		switch (SelectorType)
 		{
-		case EDlgNodeSelectorType::DlgNodeSelectorFirst:
+		case EDlgNodeSelectorType::First:
 			return TEXT("Node without text and as soon as entered it selects its first satisfied child.\n It should have at least one (satisfied child), otherwise the Dialogue is terminated.");
-		case EDlgNodeSelectorType::DlgNodeSelectorRandom:
+		case EDlgNodeSelectorType::Random:
 			return TEXT("Node without text and as soon as entered it selects a satisfied child randomly.\nIt should have at least one (satisfied child), otherwise the Dialogue is terminated.");
 		default:
 			return TEXT("UNHANDLED");
@@ -63,5 +63,5 @@ public:
 private:
 	/** Defines the type of selector this node represents */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
-	EDlgNodeSelectorType SelectorType = EDlgNodeSelectorType::DlgNodeSelectorFirst;
+	EDlgNodeSelectorType SelectorType = EDlgNodeSelectorType::First;
 };

@@ -10,17 +10,17 @@ UENUM()
 enum class EDlgDialogueCallback : uint8
 {
 	/** Normal dialogue event during the conversation */
-	DlgEvent UMETA(DisplayName = "Dialogue Event"),
+	Event UMETA(DisplayName = "Dialogue Event"),
 	/** Function call to check a condition */
-	DlgCondition UMETA(DisplayName = "Dialogue Condition"),
+	Condition UMETA(DisplayName = "Dialogue Condition"),
 
-	DlgFloatValue UMETA(DisplayName = "Condition asking for a float value"),
+	FloatValue UMETA(DisplayName = "Condition asking for a float value"),
 
-	DlgIntValue UMETA(DisplayName = "Condition asking for an int value"),
+	IntValue UMETA(DisplayName = "Condition asking for an int value"),
 
-	DlgBoolValue UMETA(DisplayName = "Condition asking for a bool value"),
+	BoolValue UMETA(DisplayName = "Condition asking for a bool value"),
 
-	DlgNameValue UMETA(DisplayName = "Condition asking for a name value"),
+	NameValue UMETA(DisplayName = "Condition asking for a name value"),
 };
 
 /**

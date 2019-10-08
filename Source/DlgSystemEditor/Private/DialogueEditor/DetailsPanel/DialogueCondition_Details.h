@@ -58,86 +58,86 @@ private:
 	// Getters for the visibility of some properties
 	EVisibility GetParticipantNameVisibility() const
 	{
-		return ConditionType != EDlgConditionType::DlgConditionNodeVisited
-			&& ConditionType != EDlgConditionType::DlgConditionHasSatisfiedChild
+		return ConditionType != EDlgConditionType::WasNodeVisited
+			&& ConditionType != EDlgConditionType::HasSatisfiedChild
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetOtherParticipantNameAndVariableVisibility() const
 	{
-		return ConditionType != EDlgConditionType::DlgConditionNodeVisited
-			&& ConditionType != EDlgConditionType::DlgConditionHasSatisfiedChild
-			&& CompareType != EDlgCompareType::DlgCompareToConst
+		return ConditionType != EDlgConditionType::WasNodeVisited
+			&& ConditionType != EDlgConditionType::HasSatisfiedChild
+			&& CompareType != EDlgCompare::ToConst
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetCallbackNameVisibility() const
 	{
-		return ConditionType != EDlgConditionType::DlgConditionNodeVisited
-			&& ConditionType != EDlgConditionType::DlgConditionHasSatisfiedChild
+		return ConditionType != EDlgConditionType::WasNodeVisited
+			&& ConditionType != EDlgConditionType::HasSatisfiedChild
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetIntValueVisibility() const
 	{
-		return ((CompareType == EDlgCompareType::DlgCompareToConst)
-				&& (ConditionType == EDlgConditionType::DlgConditionIntCall || ConditionType == EDlgConditionType::DlgConditionClassIntVariable))
-				|| ConditionType == EDlgConditionType::DlgConditionNodeVisited
-				|| ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild
+		return ((CompareType == EDlgCompare::ToConst)
+				&& (ConditionType == EDlgConditionType::IntCall || ConditionType == EDlgConditionType::ClassIntVariable))
+				|| ConditionType == EDlgConditionType::WasNodeVisited
+				|| ConditionType == EDlgConditionType::HasSatisfiedChild
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetFloatValueVisibility() const
 	{
-		return (CompareType == EDlgCompareType::DlgCompareToConst) &&
-			(ConditionType == EDlgConditionType::DlgConditionFloatCall || ConditionType == EDlgConditionType::DlgConditionClassFloatVariable)
+		return (CompareType == EDlgCompare::ToConst) &&
+			(ConditionType == EDlgConditionType::FloatCall || ConditionType == EDlgConditionType::FloatVariable)
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetNameValueVisibility() const
 	{
-		return(CompareType == EDlgCompareType::DlgCompareToConst) &&
-			  (ConditionType == EDlgConditionType::DlgConditionNameCall || ConditionType == EDlgConditionType::DlgConditionClassNameVariable)
+		return(CompareType == EDlgCompare::ToConst) &&
+			  (ConditionType == EDlgConditionType::NameCall || ConditionType == EDlgConditionType::ClassNameVariable)
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetBoolValueVisibility() const
 	{
-		return ConditionType == EDlgConditionType::DlgConditionEventCall
-			|| ConditionType == EDlgConditionType::DlgConditionNameCall
-			|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable
-			|| ConditionType == EDlgConditionType::DlgConditionNodeVisited
-			|| ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild
-			|| ConditionType == EDlgConditionType::DlgConditionBoolCall
-			|| ConditionType == EDlgConditionType::DlgConditionClassBoolVariable
+		return ConditionType == EDlgConditionType::EventCall
+			|| ConditionType == EDlgConditionType::NameCall
+			|| ConditionType == EDlgConditionType::ClassNameVariable
+			|| ConditionType == EDlgConditionType::WasNodeVisited
+			|| ConditionType == EDlgConditionType::HasSatisfiedChild
+			|| ConditionType == EDlgConditionType::BoolCall
+			|| ConditionType == EDlgConditionType::ClassBoolVariable
 
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetLongTermMemoryVisibility() const
 	{
-		return ConditionType == EDlgConditionType::DlgConditionNodeVisited ? EVisibility::Visible : EVisibility::Hidden;
+		return ConditionType == EDlgConditionType::WasNodeVisited ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetOperationVisibility() const
 	{
-		return ConditionType == EDlgConditionType::DlgConditionFloatCall
-			|| ConditionType == EDlgConditionType::DlgConditionIntCall
-			|| ConditionType == EDlgConditionType::DlgConditionClassIntVariable
-			|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
+		return ConditionType == EDlgConditionType::FloatCall
+			|| ConditionType == EDlgConditionType::IntCall
+			|| ConditionType == EDlgConditionType::ClassIntVariable
+			|| ConditionType == EDlgConditionType::FloatVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetCompareTypeVisibility() const
 	{
-		return ConditionType == EDlgConditionType::DlgConditionFloatCall
-			|| ConditionType == EDlgConditionType::DlgConditionIntCall
-			|| ConditionType == EDlgConditionType::DlgConditionBoolCall
-			|| ConditionType == EDlgConditionType::DlgConditionNameCall
-			|| ConditionType == EDlgConditionType::DlgConditionClassIntVariable
-			|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
-			|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable
-			|| ConditionType == EDlgConditionType::DlgConditionClassBoolVariable
+		return ConditionType == EDlgConditionType::FloatCall
+			|| ConditionType == EDlgConditionType::IntCall
+			|| ConditionType == EDlgConditionType::BoolCall
+			|| ConditionType == EDlgConditionType::NameCall
+			|| ConditionType == EDlgConditionType::ClassIntVariable
+			|| ConditionType == EDlgConditionType::FloatVariable
+			|| ConditionType == EDlgConditionType::ClassNameVariable
+			|| ConditionType == EDlgConditionType::ClassBoolVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
@@ -190,8 +190,8 @@ private:
 
 private:
 	// The current Condition type of the struct.
-	EDlgConditionType ConditionType = EDlgConditionType::DlgConditionEventCall;
-	EDlgCompareType CompareType = EDlgCompareType::DlgCompareToConst;
+	EDlgConditionType ConditionType = EDlgConditionType::EventCall;
+	EDlgCompare CompareType = EDlgCompare::ToConst;
 
 	// Cache the Struct property handle
 	TSharedPtr<IPropertyHandle> StructPropertyHandle;

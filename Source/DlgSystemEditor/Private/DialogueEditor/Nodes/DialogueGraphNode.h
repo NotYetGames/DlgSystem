@@ -199,7 +199,7 @@ public:
 	{
 		if (const UDlgNode_Selector* Node = Cast<UDlgNode_Selector>(DialogueNode))
 		{
-			return Node->GetSelectorType() == EDlgNodeSelectorType::DlgNodeSelectorFirst;
+			return Node->GetSelectorType() == EDlgNodeSelectorType::First;
 		}
 
 		return false;
@@ -210,7 +210,7 @@ public:
 	{
 		if (const UDlgNode_Selector* Node = Cast<UDlgNode_Selector>(DialogueNode))
 		{
-			return Node->GetSelectorType() == EDlgNodeSelectorType::DlgNodeSelectorRandom;
+			return Node->GetSelectorType() == EDlgNodeSelectorType::Random;
 		}
 
 		return false;

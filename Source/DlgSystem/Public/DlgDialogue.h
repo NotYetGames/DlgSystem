@@ -45,7 +45,7 @@ struct DLGSYSTEM_API FDlgParticipantClass
 {
 	GENERATED_USTRUCT_BODY()
 
-	/** FName based conditions (aka conditions of type DlgConditionEventCall). */
+	/** FName based conditions (aka conditions of type EventCall). */
 	UPROPERTY(VisibleAnywhere, Category = DialogueParticipantData)
 	FName ParticipantName = NAME_None;
 
@@ -466,7 +466,7 @@ public:
 	 * NOTE: does not have extension, call GetTextFileExtension for that.
 	 */
 	static FString GetTextFilePathNameFromAssetPathName(const FString& AssetPathName);
-
+	
 private:
 	void ImportFromFileFormat(EDlgDialogueTextFormat TextFormat);
 	void ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const;

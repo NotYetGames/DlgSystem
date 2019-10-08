@@ -14,6 +14,7 @@
 #include "DlgMemory.h"
 #include "DlgContextInternal.h"
 #include "Logging/DlgLogger.h"
+#include "DlgHelper.h"
 
 UDlgContext* UDlgManager::StartDialogue(UDlgDialogue* Dialogue, const TArray<UObject*>& Participants)
 {

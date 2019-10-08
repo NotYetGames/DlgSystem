@@ -54,38 +54,38 @@ private:
 	// Getters for the visibility of some properties
 	EVisibility GetIntValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyInt
-			|| EventType == EDlgEventType::DlgEventModifyClassIntVariable
+		return EventType == EDlgEventType::ModifyInt
+			|| EventType == EDlgEventType::ModifyClassIntVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetFloatValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyFloat
-			|| EventType == EDlgEventType::DlgEventModifyClassFloatVariable
+		return EventType == EDlgEventType::ModifyFloat
+			|| EventType == EDlgEventType::ModifyClassFloatVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetNameValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyName
-			|| EventType == EDlgEventType::DlgEventModifyClassNameVariable
+		return EventType == EDlgEventType::ModifyName
+			|| EventType == EDlgEventType::ModifyClassNameVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetBoolDeltaVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyInt
-			|| EventType == EDlgEventType::DlgEventModifyFloat
-			|| EventType == EDlgEventType::DlgEventModifyClassIntVariable
-			|| EventType == EDlgEventType::DlgEventModifyClassFloatVariable
+		return EventType == EDlgEventType::ModifyInt
+			|| EventType == EDlgEventType::ModifyFloat
+			|| EventType == EDlgEventType::ModifyClassIntVariable
+			|| EventType == EDlgEventType::ModifyClassFloatVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetBoolValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyBool
-			|| EventType == EDlgEventType::DlgEventModifyClassBoolVariable
+		return EventType == EDlgEventType::ModifyBool
+			|| EventType == EDlgEventType::ModifyClassBoolVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
@@ -120,7 +120,7 @@ private:
 
 private:
 	// The current Event type of the struct.
-	EDlgEventType EventType = EDlgEventType::DlgEventEvent;
+	EDlgEventType EventType = EDlgEventType::Event;
 
 	// Cache the some property handles
 	TSharedPtr<IPropertyHandle> StructPropertyHandle;

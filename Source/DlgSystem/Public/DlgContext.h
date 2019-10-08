@@ -14,6 +14,7 @@ class UDlgNode;
 /** Used to store temporary state of edges */
 struct FDlgEdgeData
 {
+public:
 	bool bSatisfied = false;
 	const FDlgEdge* EdgePtr = nullptr;
 

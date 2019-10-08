@@ -14,6 +14,7 @@
 #include "Nodes/DlgNode_SpeechSequence.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DlgCommandletHelper.h"
+#include "DlgHelper.h"
 
 
 DEFINE_LOG_CATEGORY(LogDlgExportTwineCommandlet);
@@ -108,7 +109,7 @@ int32 UDlgExportTwineCommandlet::Main(const FString& Params)
 		FString DialoguePath = OriginalDialoguePath;
 
 		// Only export game dialogues
-		if (!FDlgCommandletHelper::IsDialoguePathInProjectDirectory(DialoguePath))
+		if (!FDlgHelper::IsPathInProjectDirectory(DialoguePath))
 		{
 			UE_LOG(LogDlgExportTwineCommandlet, Warning, TEXT("Dialogue = `%s` is not in the game directory, ignoring"), *DialoguePath);
 			continue;

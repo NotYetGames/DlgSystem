@@ -116,7 +116,7 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 
 	switch (ArgumentType)
 	{
-		case EDlgTextArgumentType::DlgTextArgumentDialogueInt:
+		case EDlgTextArgumentType::DialogueInt:
 			if (bCurrentOnly && Dialogue)
 			{
 				TSet<FName> SuggestionsSet;
@@ -129,11 +129,11 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 			}
 			break;
 
-		case EDlgTextArgumentType::DlgTextArgumentClassInt:
+		case EDlgTextArgumentType::ClassInt:
 			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
 			break;
 
-		case EDlgTextArgumentType::DlgTextArgumentDialogueFloat:
+		case EDlgTextArgumentType::DialogueFloat:
 			if (bCurrentOnly && Dialogue)
 			{
 				TSet<FName> SuggestionsSet;
@@ -146,21 +146,21 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 			}
 			break;
 
-		case EDlgTextArgumentType::DlgTextArgumentClassFloat:
+		case EDlgTextArgumentType::ClassFloat:
 			if (Dialogue)
 			{
 				UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
 			}
 			break;
 
-		case EDlgTextArgumentType::DlgTextArgumentClassText:
+		case EDlgTextArgumentType::ClassText:
 			if (Dialogue)
 			{
 				UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UTextProperty::StaticClass(), Suggestions);
 			}
 			break;
 
-		case EDlgTextArgumentType::DlgTextArgumentDisplayName:
+		case EDlgTextArgumentType::DisplayName:
 		default:
 			break;
 	}

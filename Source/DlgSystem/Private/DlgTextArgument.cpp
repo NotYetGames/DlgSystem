@@ -36,25 +36,25 @@ FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgCo
 
 	switch (Type)
 	{
-		case EDlgTextArgumentType::DlgTextArgumentDialogueInt:
+		case EDlgTextArgumentType::DialogueInt:
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetIntValue(Participant, VariableName));
 
-		case EDlgTextArgumentType::DlgTextArgumentClassInt:
+		case EDlgTextArgumentType::ClassInt:
 			return FFormatArgumentValue(UDlgReflectionHelper::GetVariable<UIntProperty, int32>(Participant, VariableName));
 
-		case EDlgTextArgumentType::DlgTextArgumentDialogueFloat:
+		case EDlgTextArgumentType::DialogueFloat:
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetFloatValue(Participant, VariableName));
 
-		case EDlgTextArgumentType::DlgTextArgumentClassFloat:
+		case EDlgTextArgumentType::ClassFloat:
 			return FFormatArgumentValue(UDlgReflectionHelper::GetVariable<UFloatProperty, float>(Participant, VariableName));
 
-		case EDlgTextArgumentType::DlgTextArgumentClassText:
+		case EDlgTextArgumentType::ClassText:
 			return FFormatArgumentValue(UDlgReflectionHelper::GetVariable<UTextProperty, FText>(Participant, VariableName));
 
-		case EDlgTextArgumentType::DlgTextArgumentDisplayName:
+		case EDlgTextArgumentType::DisplayName:
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetParticipantDisplayName(Participant, NodeOwner));
 
-		case EDlgTextArgumentType::DlgTextArgumentGender:
+		case EDlgTextArgumentType::Gender:
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetParticipantGender(Participant));
 
 		default:

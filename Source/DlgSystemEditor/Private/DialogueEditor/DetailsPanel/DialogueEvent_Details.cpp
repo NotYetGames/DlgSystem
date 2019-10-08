@@ -138,7 +138,7 @@ void FDialogueEvent_Details::OnEventTypeChanged(bool bForceRefresh)
 	// Update the display name/tooltips
 	FText EventNameDisplayName = LOCTEXT("EventNameDisplayName", "Variable Name");
 	FText EventNameToolTip = LOCTEXT("EventNameToolTip", "Name of the relevant variable");
-	if (EventType == EDlgEventType::DlgEventEvent)
+	if (EventType == EDlgEventType::Event)
 	{
 		EventNameDisplayName = LOCTEXT("DlgEvent_EventNameDisplayName", "Event Name");
 		EventNameToolTip = LOCTEXT("DlgEvent_EventNameToolTip", "Name of the relevant event");
@@ -162,23 +162,23 @@ TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
 
 	switch (EventType)
 	{
-	case EDlgEventType::DlgEventModifyBool:
+	case EDlgEventType::ModifyBool:
 		UDlgManager::GetAllDialoguesBoolNames(ParticipantName, Suggestions);
 		break;
 
-	case EDlgEventType::DlgEventModifyFloat:
+	case EDlgEventType::ModifyFloat:
 		UDlgManager::GetAllDialoguesFloatNames(ParticipantName, Suggestions);
 		break;
 
-	case EDlgEventType::DlgEventModifyInt:
+	case EDlgEventType::ModifyInt:
 		UDlgManager::GetAllDialoguesIntNames(ParticipantName, Suggestions);
 		break;
 
-	case EDlgEventType::DlgEventModifyName:
+	case EDlgEventType::ModifyName:
 		UDlgManager::GetAllDialoguesNameNames(ParticipantName, Suggestions);
 		break;
 
-	case EDlgEventType::DlgEventModifyClassIntVariable:
+	case EDlgEventType::ModifyClassIntVariable:
 		if (Dialogue)
 		{
 			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
@@ -186,7 +186,7 @@ TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
 		}
 		break;
 
-	case EDlgEventType::DlgEventModifyClassFloatVariable:
+	case EDlgEventType::ModifyClassFloatVariable:
 		if (Dialogue)
 		{
 			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
@@ -194,7 +194,7 @@ TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
 		}
 		break;
 
-	case EDlgEventType::DlgEventModifyClassBoolVariable:
+	case EDlgEventType::ModifyClassBoolVariable:
 		if (Dialogue)
 		{
 			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
@@ -202,7 +202,7 @@ TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
 		}
 		break;
 
-	case EDlgEventType::DlgEventModifyClassNameVariable:
+	case EDlgEventType::ModifyClassNameVariable:
 		if (Dialogue)
 		{
 			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
@@ -211,7 +211,7 @@ TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
 		break;
 
 
-	case EDlgEventType::DlgEventEvent:
+	case EDlgEventType::Event:
 	default:
 		UDlgManager::GetAllDialoguesEventNames(ParticipantName, Suggestions);
 		break;
@@ -232,39 +232,39 @@ TArray<FName> FDialogueEvent_Details::GetCurrentDialogueEventNames() const
 
 	switch (EventType)
 	{
-	case EDlgEventType::DlgEventModifyBool:
+	case EDlgEventType::ModifyBool:
 		Dialogue->GetBoolNames(ParticipantName, Suggestions);
 		break;
 
-	case EDlgEventType::DlgEventModifyName:
+	case EDlgEventType::ModifyName:
 		Dialogue->GetNameNames(ParticipantName, Suggestions);
 		break;
 
-	case EDlgEventType::DlgEventModifyFloat:
+	case EDlgEventType::ModifyFloat:
 		Dialogue->GetFloatNames(ParticipantName, Suggestions);
 		break;
 
-	case EDlgEventType::DlgEventModifyInt:
+	case EDlgEventType::ModifyInt:
 		Dialogue->GetIntNames(ParticipantName, Suggestions);
 		break;
 
-	case EDlgEventType::DlgEventModifyClassIntVariable:
+	case EDlgEventType::ModifyClassIntVariable:
 		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
 		break;
 
-	case EDlgEventType::DlgEventModifyClassFloatVariable:
+	case EDlgEventType::ModifyClassFloatVariable:
 		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
 		break;
 
-	case EDlgEventType::DlgEventModifyClassBoolVariable:
+	case EDlgEventType::ModifyClassBoolVariable:
 		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
 		break;
 
-	case EDlgEventType::DlgEventModifyClassNameVariable:
+	case EDlgEventType::ModifyClassNameVariable:
 		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
 		break;
 
-	case EDlgEventType::DlgEventEvent:
+	case EDlgEventType::Event:
 	default:
 		Dialogue->GetEvents(ParticipantName, Suggestions);
 		break;

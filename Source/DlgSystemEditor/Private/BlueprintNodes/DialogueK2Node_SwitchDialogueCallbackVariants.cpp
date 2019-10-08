@@ -4,7 +4,7 @@
 UDialogueK2Node_SwitchDialogueCallbackEvent::UDialogueK2Node_SwitchDialogueCallbackEvent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	CallbackType = EDlgDialogueCallback::DlgEvent;
+	CallbackType = EDlgDialogueCallback::Event;
 }
 
 FText UDialogueK2Node_SwitchDialogueCallbackEvent::GetNodeTitle(ENodeTitleType::Type TitleType) const
@@ -20,7 +20,7 @@ FText UDialogueK2Node_SwitchDialogueCallbackEvent::GetTooltipText() const
 UDialogueK2Node_SwitchDialogueCallbackCondition::UDialogueK2Node_SwitchDialogueCallbackCondition(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	CallbackType = EDlgDialogueCallback::DlgCondition;
+	CallbackType = EDlgDialogueCallback::Condition;
 }
 
 FText UDialogueK2Node_SwitchDialogueCallbackCondition::GetNodeTitle(ENodeTitleType::Type TitleType) const
@@ -37,7 +37,7 @@ FText UDialogueK2Node_SwitchDialogueCallbackCondition::GetTooltipText() const
 UDialogueK2Node_SwitchDialogueCallbackFloatValue::UDialogueK2Node_SwitchDialogueCallbackFloatValue(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	CallbackType = EDlgDialogueCallback::DlgFloatValue;
+	CallbackType = EDlgDialogueCallback::FloatValue;
 }
 
 FText UDialogueK2Node_SwitchDialogueCallbackFloatValue::GetNodeTitle(ENodeTitleType::Type TitleType) const
@@ -54,7 +54,7 @@ FText UDialogueK2Node_SwitchDialogueCallbackFloatValue::GetTooltipText() const
 UDialogueK2Node_SwitchDialogueCallbackIntValue::UDialogueK2Node_SwitchDialogueCallbackIntValue(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	CallbackType = EDlgDialogueCallback::DlgIntValue;
+	CallbackType = EDlgDialogueCallback::IntValue;
 }
 
 FText UDialogueK2Node_SwitchDialogueCallbackIntValue::GetNodeTitle(ENodeTitleType::Type TitleType) const
@@ -71,7 +71,7 @@ FText UDialogueK2Node_SwitchDialogueCallbackIntValue::GetTooltipText() const
 UDialogueK2Node_SwitchDialogueCallbackBoolValue::UDialogueK2Node_SwitchDialogueCallbackBoolValue(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	CallbackType = EDlgDialogueCallback::DlgBoolValue;
+	CallbackType = EDlgDialogueCallback::BoolValue;
 }
 
 FText UDialogueK2Node_SwitchDialogueCallbackBoolValue::GetNodeTitle(ENodeTitleType::Type TitleType) const
@@ -88,7 +88,7 @@ FText UDialogueK2Node_SwitchDialogueCallbackBoolValue::GetTooltipText() const
 UDialogueK2Node_SwitchDialogueCallbackNameValue::UDialogueK2Node_SwitchDialogueCallbackNameValue(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	CallbackType = EDlgDialogueCallback::DlgNameValue;
+	CallbackType = EDlgDialogueCallback::NameValue;
 }
 
 FText UDialogueK2Node_SwitchDialogueCallbackNameValue::GetNodeTitle(ENodeTitleType::Type TitleType) const

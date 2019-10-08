@@ -188,7 +188,7 @@ public:
 
 	/**
 	 * Replaces all references to old Node indices from the provided GraphNodes with new indices.
-	 * This can happen inside Conditions of type DlgConditionNodeVisited and DlgConditionHasSatisfiedChild because the NodeIndex is a weak reference.
+	 * This can happen inside Conditions of type WasNodeVisited and HasSatisfiedChild because the NodeIndex is a weak reference.
 	 *
 	 * @param	GraphNodes			The nodes we are replacing the old references
 	 * @param	OldToNewIndexMap	Map that tells us the mapping from old index to new index. Maps from old index -> new index

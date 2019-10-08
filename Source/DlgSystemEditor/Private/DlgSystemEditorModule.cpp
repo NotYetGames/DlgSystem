@@ -129,10 +129,10 @@ void FDlgSystemEditorModule::StartupModule()
 	FEdGraphUtilities::RegisterVisualPinFactory(DialogueGraphPinFactory);
 
 	// Bind Editor commands
-	GlobalEditorCommands = MakeShared<FUICommandList>();
-	GlobalEditorCommands->MapAction(FDialogueEditorCommands::Get().SaveAllDialogues,
-		FExecuteAction::CreateStatic(&Self::HandleOnSaveAllDialogues));
-
+	FileMenuEditorCommands = MakeShared<FUICommandList>();
+	FileMenuEditorCommands->MapAction(FDialogueEditorCommands::Get().SaveAllDialogues, FExecuteAction::CreateStatic(&Self::HandleOnSaveAllDialogues));
+	FileMenuEditorCommands->MapAction(FDialogueEditorCommands::Get().DeleteAllDialoguesTextFiles, FExecuteAction::CreateStatic(&Self::HandleOnDeleteAllDialoguesTextFiles));
+	
 	// Content Browser extension
 	FDlgContentBrowserExtensions::InstallHooks();
 
@@ -210,10 +210,19 @@ void FDlgSystemEditorModule::ShutdownModule()
 
 bool FDlgSystemEditorModule::SaveAllDialogues()
 {
-	TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
+	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
 	TArray<UPackage*> PackagesToSave;
+	const bool bBatchOnlyInGameDialogues = GetDefault<UDlgSystemSettings>()->bBatchOnlyInGameDialogues;
+	
 	for (UDlgDialogue* Dialogue : Dialogues)
 	{
+		// Ignore, not in game directory
+		const FString DialoguePah = Dialogue->GetPathName();
+		if (bBatchOnlyInGameDialogues && !FDlgHelper::IsPathInProjectDirectory(DialoguePah))
+		{
+			continue;
+		}
+		
 		Dialogue->MarkPackageDirty();
 		PackagesToSave.Add(Dialogue->GetOutermost());
 	}
@@ -237,6 +246,22 @@ void FDlgSystemEditorModule::HandleOnSaveAllDialogues()
 	{
 		UE_LOG(LogDlgSystemEditor, Error, TEXT("Failed To save all Dialogues. An error occurred."));
 	}
+}
+
+void FDlgSystemEditorModule::HandleOnDeleteAllDialoguesTextFiles()
+{
+	const EAppReturnType::Type Response = FPlatformMisc::MessageBoxExt(EAppMsgType::YesNo,
+		TEXT("Delete all Dialogues text files? Delete all dialogues text files on the disk from all existing known text formats and from the Dialogue Settings AdditionalTextFormatFileExtensionsToLookFor"),
+		TEXT("Delete ALl Dialogues text files?"));
+	if (Response == EAppReturnType::No)
+	{
+		return;
+	}
+}
+
+bool FDlgSystemEditorModule::DeleteAllDialoguesTextFiles(const TArray<FString>& TextFileExtensions)
+{
+	return false;
 }
 
 void FDlgSystemEditorModule::HandleOnPostEngineInit()
@@ -290,12 +315,9 @@ void FDlgSystemEditorModule::HandleOnBeginPIE(bool bIsSimulating)
 	{
 		return;
 	}
-	if (const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>())
+	if (!GetDefault<UDlgSystemSettings>()->bClearDialogueHistoryAutomatically)
 	{
-		if (!Settings->bClearDialogueHistoryAutomatically)
-		{
-			return;
-		}
+		return;
 	}
 
 	UE_LOG(LogDlgSystemEditor, Verbose, TEXT("BeginPIE: Clearing Dialogue History"));
@@ -318,13 +340,14 @@ void FDlgSystemEditorModule::ExtendMenu()
 		FileMenuExtender->AddMenuExtension(
 			"FileLoadAndSave",
 			EExtensionHook::After,
-			GlobalEditorCommands.ToSharedRef(),
+			FileMenuEditorCommands.ToSharedRef(),
 			FMenuExtensionDelegate::CreateLambda([this](FMenuBuilder& MenuBuilder)
 			{
 				// Save Dialogues
 				MenuBuilder.BeginSection("DialogueFileLoadAndSave", LOCTEXT("DialogueKeyFileAndSearch", "Dialogue"));
 				{
 					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().SaveAllDialogues);
+					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().DeleteAllDialoguesTextFiles);
 				}
 				MenuBuilder.EndSection();
 			}));

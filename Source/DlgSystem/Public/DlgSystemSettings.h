@@ -95,7 +95,7 @@ enum class EDlgTextLocalization : uint8
 	Ignore					UMETA(DisplayName = "Ignore"),
 
 	/** The system sets the Namespace for Text fields for each dialogue separately. Unique keys are also generated. */
-	NamespacePerDialogue		UMETA(DisplayName = "Namespace Per Dialogue"),
+	NamespacePerDialogue	UMETA(DisplayName = "Namespace Per Dialogue"),
 
 	/** The system sets the Namespace for Text fields for each dialogue into the same value. Unique keys are also generated. */
 	GlobalNamespace			UMETA(DisplayName = "Global Namespace")
@@ -208,7 +208,14 @@ public:
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
 	TArray<UClass*> BlacklistedReflectionClasses;
 
+	/** Should we only process batch dialogues that are only in the /Game folder. This is used for saving all dialogues or deleting all text files. */
+	UPROPERTY(Category = "Batch", Config, EditAnywhere)
+	bool bBatchOnlyInGameDialogues = false;
 	
+	/** Additional file extension to look for when doing operations with dialogue text formats, like: deleting/renaming */
+	UPROPERTY(Category = "Batch", Config, EditAnywhere)
+	TArray<FString> AdditionalTextFormatFileExtensionsToLookFor;
+
 	/** Defines what the system should do with Text Namespaces and Keys for localization */
 	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Localization Method")
 	EDlgTextLocalization DialogueTextLocalizationMode = EDlgTextLocalization::Ignore;

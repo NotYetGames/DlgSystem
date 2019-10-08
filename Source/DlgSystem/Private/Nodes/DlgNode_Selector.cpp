@@ -24,7 +24,7 @@ bool UDlgNode_Selector::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<co
 
 	switch (SelectorType)
 	{
-	case EDlgNodeSelectorType::DlgNodeSelectorFirst:
+	case EDlgNodeSelectorType::First:
 		{
 			// Find first child with satisfies conditions
 			for (const FDlgEdge& Edge : Children)
@@ -34,7 +34,7 @@ bool UDlgNode_Selector::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<co
 			break;
 		}
 
-	case EDlgNodeSelectorType::DlgNodeSelectorRandom:
+	case EDlgNodeSelectorType::Random:
 		{
 			// Build the list of all valid children
 			TArray<int32> Candidates;

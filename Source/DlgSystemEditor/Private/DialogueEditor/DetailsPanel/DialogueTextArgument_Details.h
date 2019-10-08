@@ -51,7 +51,7 @@ private:
 	// Getters for the visibility of some properties
 	EVisibility GetVariableNameVisibility() const
 	{
-		return (ArgumentType != EDlgTextArgumentType::DlgTextArgumentDisplayName && ArgumentType != EDlgTextArgumentType::DlgTextArgumentGender)
+		return (ArgumentType != EDlgTextArgumentType::DisplayName && ArgumentType != EDlgTextArgumentType::Gender)
 			   ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
@@ -95,7 +95,7 @@ private:
 
 private:
 	// The current Event type of the struct.
-	EDlgTextArgumentType ArgumentType = EDlgTextArgumentType::DlgTextArgumentDisplayName;
+	EDlgTextArgumentType ArgumentType = EDlgTextArgumentType::DisplayName;
 
 	// Cache the some property handles
 	TSharedPtr<IPropertyHandle> StructPropertyHandle;

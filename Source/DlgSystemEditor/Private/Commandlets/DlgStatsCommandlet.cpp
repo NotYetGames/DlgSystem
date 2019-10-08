@@ -6,6 +6,7 @@
 #include "DlgCommandletHelper.h"
 #include "Nodes/DlgNode_SpeechSequence.h"
 #include "Nodes/DlgNode_Speech.h"
+#include "DlgHelper.h"
 
 
 DEFINE_LOG_CATEGORY(LogDlgStatsCommandlet);
@@ -41,12 +42,11 @@ int32 UDlgStatsCommandlet::Main(const FString& Params)
 		const FString OriginalDialoguePath = Package->GetPathName();
 
 		// Only count game dialogues
-		if (!FDlgCommandletHelper::IsDialoguePathInProjectDirectory(OriginalDialoguePath))
+		if (!FDlgHelper::IsPathInProjectDirectory(OriginalDialoguePath))
 		{
 			UE_LOG(LogDlgStatsCommandlet, Warning, TEXT("Dialogue = `%s` is not in the game directory, ignoring"), *OriginalDialoguePath);
 			continue;
 		}
-
 
 		FDlgStatsDialogue DialogueStats;
 		GetStatsForDialogue(*Dialogue, DialogueStats);
