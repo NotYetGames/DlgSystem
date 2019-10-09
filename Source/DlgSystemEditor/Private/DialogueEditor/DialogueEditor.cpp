@@ -406,14 +406,14 @@ void FDialogueEditor::CreateInternalWidgets()
 	// Pallete view
 	PaletteView = SNew(SDialoguePalette);
 
-	// Find Resulsts
+	// Find Results
 	FindResultsView = SNew(SFindInDialogues, SharedThis(this));
 }
 
 TSharedRef<SGraphEditor> FDialogueEditor::CreateGraphEditorWidget()
 {
 	check(DialogueBeingEdited);
-	// Customize the appereance of the graph.
+	// Customize the appearance of the graph.
 	FGraphAppearanceInfo AppearanceInfo;
 	// The text that appears on the bottom right corner in the graph view.
 	AppearanceInfo.CornerText = LOCTEXT("AppearanceCornerText_DlgDialogue", "DIALOGUE");

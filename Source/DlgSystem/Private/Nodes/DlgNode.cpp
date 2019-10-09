@@ -103,23 +103,26 @@ void UDlgNode::FireNodeEnterEvents(UDlgContextInternal* DlgContext)
 
 void UDlgNode::UpdateTextNamespace(FText& Text)
 {
-	if (const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>())
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+	if (!Settings)
 	{
-		if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::Ignore)
-		{
-			return;
-		}
+		return;
+	}
+	
+	if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::Ignore)
+	{
+		return;
+	}
 
-		const auto Key = FTextInspector::GetKey(Text);
-		if (Key.IsSet())
+	const auto Key = FTextInspector::GetKey(Text);
+	if (Key.IsSet())
+	{
+		FString Namespace = Settings->DialogueTextNamespaceName;
+		if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::NamespacePerDialogue)
 		{
-			FString Namespace = Settings->DialogueTextNamespaceName;
-			if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::NamespacePerDialogue)
-			{
-				Namespace += GetOuter()->GetName();
-			}
-			Text = FInternationalization::ForUseOnlyByLocMacroAndGraphNodeTextLiterals_CreateText(*Text.ToString(), *Namespace, *Key.GetValue());
+			Namespace += GetOuter()->GetName();
 		}
+		Text = FInternationalization::ForUseOnlyByLocMacroAndGraphNodeTextLiterals_CreateText(*Text.ToString(), *Namespace, *Key.GetValue());
 	}
 	
 }

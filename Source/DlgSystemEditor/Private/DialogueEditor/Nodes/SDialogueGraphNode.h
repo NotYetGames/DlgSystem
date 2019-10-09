@@ -8,18 +8,17 @@
 #include "SGraphPanel.h"
 
 #include "DialogueGraphNode.h"
-#include "DlgSystemSettings.h"
-#include "SGraphNode_DialogueBase.h"
+#include "SDialogueGraphNode_Base.h"
 
 class SVerticalBox;
 
 /**
  * Widget for UDialogueGraphNode
  */
-class SGraphNode_DialogueNode : public SGraphNode_DialogueBase
+class SDialogueGraphNode : public SDialogueGraphNode_Base
 {
-	typedef SGraphNode_DialogueBase Super;
-	typedef SGraphNode_DialogueNode Self;
+	typedef SDialogueGraphNode_Base Super;
+	typedef SDialogueGraphNode Self;
 
 public:
 	SLATE_BEGIN_ARGS(Self) {}
@@ -68,12 +67,12 @@ public:
 	void UpdateGraphNode() override;
 	// End SGraphNode Interface
 
-	// Begin SGraphNode_DialogueBase Interface
+	// Begin SDialogueGraphNode_Base Interface
 	EVisibility GetNodeVisibility() const override
 	{
 		return DialogueGraphNode && DialogueGraphNode->ShouldDrawNode() ? EVisibility::Visible : EVisibility::Hidden;
 	}
-	// End SGraphNode_DialogueBase Interface
+	// End SDialogueGraphNode_Base Interface
 
 protected:
 	// SGraphNode Interface

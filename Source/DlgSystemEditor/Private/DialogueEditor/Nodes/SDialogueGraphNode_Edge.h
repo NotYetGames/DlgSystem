@@ -5,15 +5,15 @@
 #include "SGraphNode.h"
 
 #include "DialogueGraphNode_Edge.h"
-#include "SGraphNode_DialogueBase.h"
+#include "SDialogueGraphNode_Base.h"
 
 /**
  * Widget for UDialogueGraphNode_Edge
  */
-class SGraphNode_DialogueEdge : public SGraphNode_DialogueBase
+class SDialogueGraphNode_Edge : public SDialogueGraphNode_Base
 {
-	typedef SGraphNode_DialogueBase Super;
-	typedef SGraphNode_DialogueEdge Self;
+	typedef SDialogueGraphNode_Base Super;
+	typedef SDialogueGraphNode_Edge Self;
 
 public:
 	SLATE_BEGIN_ARGS(Self) {}
@@ -63,12 +63,12 @@ public:
 	void UpdateGraphNode() override;
 	// End SGraphNode Interface
 
-	// Begin SGraphNode_DialogueBase Interface
+	// Begin SDialogueGraphNode_Base Interface
 	EVisibility GetNodeVisibility() const override
 	{
 		return DialogueGraphNode_Edge && DialogueGraphNode_Edge->ShouldDrawEdge() ? EVisibility::Visible : EVisibility::Hidden;
 	}
-	// End SGraphNode_DialogueBase Interface
+	// End SDialogueGraphNode_Base Interface
 
 	// Begin own functions
 	/** Calculate position for multiple nodes to be placed between a start and end point, by providing this nodes index and max expected nodes */
@@ -80,7 +80,7 @@ public:
 	// End own functions
 
 protected:
-	/** Gets the tooltip for the condition overelay. */
+	/** Gets the tooltip for the condition overlay. */
 	FText GetConditionOverlayTooltipText() const;
 
 	/** Get the visibility of the overlay widgets. */

@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "SGraphNode_DialogueEdge.h"
+#include "SDialogueGraphNode_Edge.h"
 
 #include "IDocumentation.h"
 #include "SGraphPanel.h"
@@ -14,8 +14,8 @@
 #define LOCTEXT_NAMESPACE "DialogueEditor"
 
 /////////////////////////////////////////////////////
-// SGraphNode_DialogueEdge
-void SGraphNode_DialogueEdge::Construct(const FArguments& InArgs, UDialogueGraphNode_Edge* InNode)
+// SDialogueGraphNode_Edge
+void SDialogueGraphNode_Edge::Construct(const FArguments& InArgs, UDialogueGraphNode_Edge* InNode)
 {
 	Super::Construct(Super::FArguments(), InNode);
 	DialogueGraphNode_Edge = InNode;
@@ -25,7 +25,7 @@ void SGraphNode_DialogueEdge::Construct(const FArguments& InArgs, UDialogueGraph
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin SWidget interface
-void SGraphNode_DialogueEdge::OnMouseEnter(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+void SDialogueGraphNode_Edge::OnMouseEnter(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
 	// NOTE: adding the OutputPin to the hover set will not work, only the input pin makes the connection
 	// to be hovered
@@ -34,7 +34,7 @@ void SGraphNode_DialogueEdge::OnMouseEnter(const FGeometry& MyGeometry, const FP
 	Super::OnMouseEnter(MyGeometry, MouseEvent);
 }
 
-void SGraphNode_DialogueEdge::OnMouseLeave(const FPointerEvent& MouseEvent)
+void SDialogueGraphNode_Edge::OnMouseLeave(const FPointerEvent& MouseEvent)
 {
 	TSharedPtr<SGraphPanel> GraphPanel = GetOwnerPanel();
 	GraphPanel->RemovePinFromHoverSet(DialogueGraphNode_Edge->GetInputPin());
@@ -45,12 +45,12 @@ void SGraphNode_DialogueEdge::OnMouseLeave(const FPointerEvent& MouseEvent)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin SNodePanel::SNode Interface
-void SGraphNode_DialogueEdge::MoveTo(const FVector2D& NewPosition, FNodeSet& NodeFilter)
+void SDialogueGraphNode_Edge::MoveTo(const FVector2D& NewPosition, FNodeSet& NodeFilter)
 {
 	// Ignored; position is set by the location of the attached nodes
 }
 
-void SGraphNode_DialogueEdge::PerformSecondPassLayout(const TMap<UObject*, TSharedRef<SNode>>& NodeToWidgetLookup) const
+void SDialogueGraphNode_Edge::PerformSecondPassLayout(const TMap<UObject*, TSharedRef<SNode>>& NodeToWidgetLookup) const
 {
 	// Find the geometry of the nodes we're connecting
 	FGeometry StartGeom;
@@ -86,7 +86,7 @@ void SGraphNode_DialogueEdge::PerformSecondPassLayout(const TMap<UObject*, TShar
 	PositionBetweenTwoNodesWithOffset(StartGeom, EndGeom, NodeIndex, NumberOfEdges);
 }
 
-TArray<FOverlayWidgetInfo> SGraphNode_DialogueEdge::GetOverlayWidgets(bool bSelected, const FVector2D& WidgetSize) const
+TArray<FOverlayWidgetInfo> SDialogueGraphNode_Edge::GetOverlayWidgets(bool bSelected, const FVector2D& WidgetSize) const
 {
 	// This is called after PerformSecondPassLayout, so the Edge should be in it's final Position Already
 	TArray<FOverlayWidgetInfo> Widgets;
@@ -110,7 +110,7 @@ TArray<FOverlayWidgetInfo> SGraphNode_DialogueEdge::GetOverlayWidgets(bool bSele
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin SGraphNode Interface
-void SGraphNode_DialogueEdge::UpdateGraphNode()
+void SDialogueGraphNode_Edge::UpdateGraphNode()
 {
 	Super::UpdateGraphNode();
 
@@ -179,7 +179,7 @@ void SGraphNode_DialogueEdge::UpdateGraphNode()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin own functions
-void SGraphNode_DialogueEdge::PositionBetweenTwoNodesWithOffset(const FGeometry& StartGeom, const FGeometry& EndGeom, int32 NodeIndex, int32 MaxNodes) const
+void SDialogueGraphNode_Edge::PositionBetweenTwoNodesWithOffset(const FGeometry& StartGeom, const FGeometry& EndGeom, int32 NodeIndex, int32 MaxNodes) const
 {
 	check(NodeIndex >= 0);
 	check(MaxNodes > 0);
@@ -224,12 +224,12 @@ void SGraphNode_DialogueEdge::PositionBetweenTwoNodesWithOffset(const FGeometry&
 	GraphNode->NodePosY = NewCorner.Y;
 }
 
-FText SGraphNode_DialogueEdge::GetConditionOverlayTooltipText() const
+FText SDialogueGraphNode_Edge::GetConditionOverlayTooltipText() const
 {
 	return LOCTEXT("NodeConditionTooltip", "Edge has conditions.\nOnly if these conditions are satisfied then this edge is considered as an option.");
 }
 
-EVisibility SGraphNode_DialogueEdge::GetOverlayWidgetVisibility() const
+EVisibility SDialogueGraphNode_Edge::GetOverlayWidgetVisibility() const
 {
 	// LOD this out once things get too small
 	TSharedPtr<SGraphPanel> MyOwnerPanel = GetOwnerPanel();

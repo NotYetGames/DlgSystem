@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "SGraphNode_Dialogue.h"
+#include "SDialogueGraphNode.h"
 
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Images/SImage.h"
@@ -18,8 +18,8 @@
 
 
 /////////////////////////////////////////////////////
-// SGraphNode_DialogueNode
-void SGraphNode_DialogueNode::Construct(const FArguments& InArgs, UDialogueGraphNode* InNode)
+// SDialogueGraphNode
+void SDialogueGraphNode::Construct(const FArguments& InArgs, UDialogueGraphNode* InNode)
 {
 	Super::Construct(Super::FArguments(), InNode);
 	DialogueGraphNode = InNode;
@@ -28,7 +28,7 @@ void SGraphNode_DialogueNode::Construct(const FArguments& InArgs, UDialogueGraph
 	UpdateGraphNode();
 }
 
-FReply SGraphNode_DialogueNode::OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent)
+FReply SDialogueGraphNode::OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent)
 {
 //	const bool bReadOnly = OwnerGraphPanelPtr.IsValid() ? !OwnerGraphPanelPtr.Pin()->IsGraphEditable() : false;
 //	const TSharedPtr<FDragDropOperation> Operation = DragDropEvent.GetOperation();
@@ -46,7 +46,7 @@ FReply SGraphNode_DialogueNode::OnDrop(const FGeometry& MyGeometry, const FDragD
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin SNodePanel::SNode Interface
-TArray<FOverlayWidgetInfo> SGraphNode_DialogueNode::GetOverlayWidgets(bool bSelected, const FVector2D& WidgetSize) const
+TArray<FOverlayWidgetInfo> SDialogueGraphNode::GetOverlayWidgets(bool bSelected, const FVector2D& WidgetSize) const
 {
 	check(IndexOverlayWidget.IsValid());
 	check(ConditionOverlayWidget.IsValid());
@@ -111,7 +111,7 @@ TArray<FOverlayWidgetInfo> SGraphNode_DialogueNode::GetOverlayWidgets(bool bSele
 	return Widgets;
 }
 
-void SGraphNode_DialogueNode::GetOverlayBrushes(bool bSelected, const FVector2D WidgetSize, TArray<FOverlayBrushInfo>& Brushes) const
+void SDialogueGraphNode::GetOverlayBrushes(bool bSelected, const FVector2D WidgetSize, TArray<FOverlayBrushInfo>& Brushes) const
 {
 	Super::GetOverlayBrushes(bSelected, WidgetSize, Brushes);
 }
@@ -121,7 +121,7 @@ void SGraphNode_DialogueNode::GetOverlayBrushes(bool bSelected, const FVector2D 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin SGraphNode interface
-void SGraphNode_DialogueNode::UpdateGraphNode()
+void SDialogueGraphNode::UpdateGraphNode()
 {
 	Super::UpdateGraphNode();
 	SetupErrorReporting();
@@ -284,7 +284,7 @@ void SGraphNode_DialogueNode::UpdateGraphNode()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin own functions
-TSharedRef<SWidget> SGraphNode_DialogueNode::GetNodeBodyWidget()
+TSharedRef<SWidget> SDialogueGraphNode::GetNodeBodyWidget()
 {
 	if (NodeBodyWidget.IsValid())
 	{
@@ -329,7 +329,7 @@ TSharedRef<SWidget> SGraphNode_DialogueNode::GetNodeBodyWidget()
 	return NodeBodyWidget.ToSharedRef();
 }
 
-TSharedRef<SWidget> SGraphNode_DialogueNode::GetTitleWidget()
+TSharedRef<SWidget> SDialogueGraphNode::GetTitleWidget()
 {
 	if (TitleWidget.IsValid())
 	{
@@ -434,7 +434,7 @@ TSharedRef<SWidget> SGraphNode_DialogueNode::GetTitleWidget()
 	return TitleWidget.ToSharedRef();
 }
 
-TSharedRef<SWidget> SGraphNode_DialogueNode::GetDescriptionWidget()
+TSharedRef<SWidget> SDialogueGraphNode::GetDescriptionWidget()
 {
 	if (DescriptionWidget.IsValid())
 	{
@@ -499,7 +499,7 @@ TSharedRef<SWidget> SGraphNode_DialogueNode::GetDescriptionWidget()
 	return DescriptionWidget.ToSharedRef();
 }
 
-EVisibility SGraphNode_DialogueNode::GetOverlayWidgetVisibility() const
+EVisibility SDialogueGraphNode::GetOverlayWidgetVisibility() const
 {
 	// always hide the index on the root node
 	if (DialogueGraphNode->IsRootNode())
@@ -513,32 +513,32 @@ EVisibility SGraphNode_DialogueNode::GetOverlayWidgetVisibility() const
 }
 
 
-FText SGraphNode_DialogueNode::GetIndexOverlayTooltipText() const
+FText SDialogueGraphNode::GetIndexOverlayTooltipText() const
 {
 	return LOCTEXT("NodeIndexTooltip", "Node index: this shows the node index in the Dialogue.Nodes Array");
 }
 
-FText SGraphNode_DialogueNode::GetConditionOverlayTooltipText() const
+FText SDialogueGraphNode::GetConditionOverlayTooltipText() const
 {
 	return LOCTEXT("NodeConditionTooltip", "Node has enter conditions.\nOnly if these conditions are satisfied the node is entered.");
 }
 
-FText SGraphNode_DialogueNode::GetEventOverlayTooltipText() const
+FText SDialogueGraphNode::GetEventOverlayTooltipText() const
 {
 	return LOCTEXT("NodeEventTooltip", "Node has enter events.\nOn node enter this events are executed.");
 }
 
-FText SGraphNode_DialogueNode::GetVoiceOverlayTooltipText() const
+FText SDialogueGraphNode::GetVoiceOverlayTooltipText() const
 {
 	return LOCTEXT("NodeVoiceTooltip", "Node has some voice variables set. Either the SoundWave or the DialogueWave.");
 }
 
-FText SGraphNode_DialogueNode::GetGenericOverlayTooltipText() const
+FText SDialogueGraphNode::GetGenericOverlayTooltipText() const
 {
 	return LOCTEXT("NodeGenericTooltip", "Node has the generic data variable set.");
 }
 
-void SGraphNode_DialogueNode::OnIndexHoverStateChanged(bool bHovered)
+void SDialogueGraphNode::OnIndexHoverStateChanged(bool bHovered)
 {
 
 }

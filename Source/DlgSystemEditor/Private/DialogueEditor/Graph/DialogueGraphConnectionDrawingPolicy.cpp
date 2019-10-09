@@ -6,7 +6,7 @@
 
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
-#include "DialogueEditor/Nodes/SGraphNode_DialogueEdge.h"
+#include "DialogueEditor/Nodes/SDialogueGraphNode_Edge.h"
 
 /////////////////////////////////////////////////////
 // FDialogueGraphConnectionDrawingPolicy

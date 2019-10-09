@@ -203,7 +203,7 @@ FReply SDialogueGraphPin::OnCtrlAndLeftMouseButtonDown(const FGeometry& SenderGe
 	TArray<TSharedRef<SGraphPin>> DragPinArray;
 	DragPinArray.Add(SharedThis(this));
 
-	// Find the appropriate pin, if there are mutliple children
+	// Find the appropriate pin, if there are multiple children
 	UEdGraphPin* ToPin = GraphPinObj->LinkedTo[0];
 	if (GraphPinObj->LinkedTo.Num() > 1)
 	{

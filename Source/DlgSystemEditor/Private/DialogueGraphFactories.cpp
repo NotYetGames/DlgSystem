@@ -6,9 +6,9 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode_Base.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Root.h"
-#include "DialogueEditor/Nodes/SGraphNode_Dialogue.h"
-#include "DialogueEditor/Nodes/SGraphNode_DialogueRoot.h"
-#include "DialogueEditor/Nodes/SGraphNode_DialogueEdge.h"
+#include "DialogueEditor/Nodes/SDialogueGraphNode.h"
+#include "DialogueEditor/Nodes/SDialogueGraphNode_Root.h"
+#include "DialogueEditor/Nodes/SDialogueGraphNode_Edge.h"
 #include "DialogueEditor/Nodes/SDialogueGraphPin.h"
 #include "BlueprintNodes/DialogueK2Node_Select.h"
 #include "BlueprintNodes/SGraphNode_DialogueK2Select.h"
@@ -25,16 +25,16 @@ TSharedPtr<class SGraphNode> FDialogueGraphNodeFactory::CreateNode(class UEdGrap
 		{
 			if (UDialogueGraphNode_Root* DialogueStartNode = Cast<UDialogueGraphNode_Root>(DialogueNode))
 			{
-				return SNew(SGraphNode_DialogueRoot, DialogueStartNode);
+				return SNew(SDialogueGraphNode_Root, DialogueStartNode);
 			}
 
-			return SNew(SGraphNode_DialogueNode, DialogueNode);
+			return SNew(SDialogueGraphNode, DialogueNode);
 		}
 
 		// Edge
 		if (UDialogueGraphNode_Edge* DialogueEdge = Cast<UDialogueGraphNode_Edge>(DialogueNode_Base))
 		{
-			return SNew(SGraphNode_DialogueEdge, DialogueEdge);
+			return SNew(SDialogueGraphNode_Edge, DialogueEdge);
 		}
 	}
 

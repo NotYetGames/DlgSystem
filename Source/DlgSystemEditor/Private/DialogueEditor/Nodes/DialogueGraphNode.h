@@ -295,7 +295,7 @@ public:
 	/** Sets all the node children (edges). USE WITH CAUTION */
 	void SetEdges(const TArray<FDlgEdge>& InEdges);
 
-	/** Checks the node for warnings and applies the compiler wanings messages */
+	/** Checks the node for warnings and applies the compiler warnings messages */
 	void ApplyCompilerWarnings();
 
 	/** Estimate the width of this Node from the length of its content */

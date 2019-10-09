@@ -18,7 +18,7 @@ enum class EDlgDialogueTextFormat : uint8
 
 	// Output all text formats, mostly used for debugging
 	All     UMETA(Hidden),
-	
+
 	/**
 	 * DEPRECATED. The own Dialogue Text format. DEPRECATED.
 	 * NOTE: this format is deprecated AND in the next version it will be removed
@@ -27,7 +27,7 @@ enum class EDlgDialogueTextFormat : uint8
 
 	// Hidden represents the start of the text formats index
 	StartTextFormats = DialogueDEPRECATED 	UMETA(Hidden),
-	
+
 	/** The JSON format. */
 	JSON				UMETA(DisplayName = "JSON"),
 
@@ -179,7 +179,7 @@ public:
 
 	// GetAllCurrentTextFileExtensions() + AdditionalTextFormatFileExtensionsToLookFor
 	TSet<FString> GetAllTextFileExtensions() const;
-	
+
 public:
 	// Some constants used. TODO make these configurable
 	static const FText EdgeTextFinish;
@@ -209,25 +209,25 @@ public:
 	/** Generic data is an UObject* which can be assigned to nodes and can be asked from the active one */
 	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere, DisplayName = "Generic Data Visibility")
 	bool bShowGenericData = false;
-	
 
-	/** Any properties that belong to these classes wont't be shown in the suggestion list when you use the reflection system (class variables). */
+
+	/** Any properties that belong to these classes won't be shown in the suggestion list when you use the reflection system (class variables). */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
 	TArray<UClass*> BlacklistedReflectionClasses;
 
-	
+
 	/** Should we only process batch dialogues that are only in the /Game folder. This is used for saving all dialogues or deleting all text files. */
 	UPROPERTY(Category = "Batch", Config, EditAnywhere)
 	bool bBatchOnlyInGameDialogues = true;
-	
+
 	/**
 	 * Additional file extension to look for when doing operations with dialogue text formats, like: deleting/renaming.
 	 * NOTE: file extensions must start with a full stop
 	 */
 	UPROPERTY(Category = "Batch", Config, EditAnywhere)
 	TSet<FString> AdditionalTextFormatFileExtensionsToLookFor;
-	
-	
+
+
 	/** Defines what the system should do with Text Namespaces and Keys for localization */
 	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Localization Method")
 	EDlgTextLocalization DialogueTextLocalizationMode = EDlgTextLocalization::Ignore;
@@ -236,7 +236,7 @@ public:
 	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Namespace Name")
 	FString DialogueTextNamespaceName = "Dialogue";
 
-	
+
 	// Enables the message log to output info/errors/warnings to it
 	UPROPERTY(Category = "Logger", Config, EditAnywhere)
 	bool bEnableMessageLog = true;
@@ -268,12 +268,12 @@ public:
 	UPROPERTY(Category = "Logger", Config, EditAnywhere, AdvancedDisplay)
 	ENYLoggerLogLevel OpenMessageLogLevelsHigherThan = ENYLoggerLogLevel::NoLogging;
 
-	
+
 	/** Should we hide the categories in the Dialogue browser that do not have any children? */
 	UPROPERTY(Category = "Browser", Config, EditAnywhere)
 	bool bHideEmptyDialogueBrowserCategories = true;
 
-	
+
 	/** Whether the description text wraps onto a new line when it's length exceeds this width; if this value is zero or negative, no wrapping occurs. */
 	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
 	float DescriptionWrapTextAt = 256.f;

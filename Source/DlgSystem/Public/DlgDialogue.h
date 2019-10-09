@@ -197,7 +197,7 @@ public:
 		bWasCompiledAtLeastOnce = true;
 	}
 
-	/** Compiles the dialogue nodes from the graph nodes. Meaning it transofrms the graph data -> (into) dialogue data. */
+	/** Compiles the dialogue nodes from the graph nodes. Meaning it transforms the graph data -> (into) dialogue data. */
 	void CompileDialogueNodesFromGraphNodes();
 
 	/** Sets the dialogue editor implementation. This is called in the constructor of the DlgDialogueGraph in the DlgSytemEditor module. */
@@ -468,17 +468,17 @@ public:
 
 	// Is this dialogue located inside the project directory
 	bool IsInProjectDirectory() const;
-	
+
 	/**
 	 * @return the text file path name (as a relative path) from the asset path name.
 	 * NOTE: does not have extension, call GetTextFileExtension for that.
 	 */
 	static FString GetTextFilePathNameFromAssetPathName(const FString& AssetPathName);
-	
+
 private:
 	void ImportFromFileFormat(EDlgDialogueTextFormat TextFormat);
 	void ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const;
-	
+
 	/**
 	 * Tries to fix the internal graph of this Dialogue in the following ways:
 	 * 1. If there is no start node, we create one pointing to the first node

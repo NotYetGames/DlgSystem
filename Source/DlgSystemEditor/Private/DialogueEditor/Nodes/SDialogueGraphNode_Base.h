@@ -14,10 +14,10 @@ class SVerticalBox;
 /**
  * Widget for UDialogueGraphNode_Base
  */
-class SGraphNode_DialogueBase : public SGraphNode
+class SDialogueGraphNode_Base : public SGraphNode
 {
 	typedef SGraphNode Super;
-	typedef SGraphNode_DialogueBase Self;
+	typedef SDialogueGraphNode_Base Self;
 
 public:
 	SLATE_BEGIN_ARGS(Self) {}

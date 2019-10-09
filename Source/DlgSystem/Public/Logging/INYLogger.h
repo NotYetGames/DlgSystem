@@ -22,7 +22,7 @@ struct FNYMessageLogInitializationOptions
 	/** Whether to show the filters menu */
 	bool bShowFilters = true;
 
-	/** 
+	/**
 	 * Whether to initially  show the pages widget. Setting this to false will allow the user to manually clear the log.
 	 * If this is not set & NewPage() is called on the log, the pages widget will show itself
 	 */
@@ -86,7 +86,7 @@ class DLGSYSTEM_API INYLogger
 	typedef INYLogger Self;
 protected:
 	INYLogger() {}
-	
+
 public:
 	virtual ~INYLogger() {}
 
@@ -132,12 +132,12 @@ public:
 		DisableOutputLog();
 		return *this;
 	}
-	
-	
+
+
 	//
 	// Client console
 	//
-	
+
 	Self& EnableClientConsole(APlayerController* PC)
 	{
 		UseClientConsole(true);
@@ -155,7 +155,7 @@ public:
 	//
 	// On screen
 	//
-	
+
 	// bInForceEnableScreenMessages - if true, even if the screen messages are disabled we will force display it
 	Self& EnableOnScreen(bool bInForceEnableScreenMessages = false) { return UseOnScreen(true, bInForceEnableScreenMessages); }
 	Self& DisableOnScreen() { return UseOnScreen(false); }
@@ -189,12 +189,12 @@ public:
 	}
 	FORCEINLINE static void DisableAllOnScreenMessages() { SetAreAllOnScreenMessagesEnabled(false); }
 	FORCEINLINE static void EnableAllOnScreenMessages() { SetAreAllOnScreenMessagesEnabled(true); }
-	
+
 
 	//
 	// Output log
 	//
-	
+
 	Self& EnableOutputLog() { return UseOutputLog(true); }
 	Self& DisableOutputLog() { return UseOutputLog(false); }
 	Self& UseOutputLog(bool bValue)
@@ -202,7 +202,7 @@ public:
 		bOutputLog = bValue;
 		return *this;
 	}
-	
+
 	// The log category must exist
 	Self& SetNoOutputLogCategory() { return SetOutputLogCategory(NAME_None); }
 	Self& SetOutputLogCategory(const FLogCategoryBase& NewCategory) { return SetOutputLogCategory(NewCategory.GetCategoryName()); }
@@ -222,11 +222,11 @@ public:
 		return *this;
 	}
 #endif // NO_LOGGING
-	
+
 	//
 	// Message log
 	//
-	
+
 	Self& EnableMessageLog(bool bSuppressLoggingToOutputLog = false) { return UseMessageLog(true, bSuppressLoggingToOutputLog); }
 	Self& DisableMessageLog() { return UseMessageLog(true); }
 	Self& UseMessageLog(bool bValue, bool bInMessageLogMirrorToOutputLog = true)
@@ -271,7 +271,7 @@ public:
 	static TSharedPtr<IMessageLogListing> MessageLogGetLogNameListing(FName LogName);
 #endif // WITH_UNREAL_DEVELOPER_TOOLS
 	static void MessageLogOpenLogName(FName LogName);
-	
+
 
 	// Registers the new Message log name
 	// NOTE: Call MessageLogRegisterLogName before calling this
@@ -283,7 +283,7 @@ public:
 			Warning(TEXT("SetMessageLogName: Failed to register the message log name"));
 		}
 #endif // WITH_UNREAL_DEVELOPER_TOOLS
-		
+
 		MessageLogName = LogName;
 		return *this;
 	}
@@ -321,7 +321,7 @@ public:
 	template <typename FmtType, typename... Types>
 	void Tracef(const FmtType& Fmt, Types... Args) { Logf(ENYLoggerLogLevel::Trace, Fmt, Args...); }
 
-	
+
 	// void Fatal(const ANSICHAR* File, int32 Line, const FString& Message);
 	void Log(ENYLoggerLogLevel Level, const FString& Message);
 
@@ -335,7 +335,7 @@ public:
 
 protected:
 	void VARARGS LogfImplementation(ENYLoggerLogLevel Level, const TCHAR* Fmt, ...);
-	
+
 #if WITH_UNREAL_DEVELOPER_TOOLS
 	static FMessageLogModule* GetMessageLogModule();
 #endif // WITH_UNREAL_DEVELOPER_TOOLS
@@ -415,10 +415,10 @@ protected:
 	//
 	// On screen
 	//
-	
+
 	// Output to the screen
 	bool bOnScreen = false;
-	
+
 	// Time to stay on screen
 	float ScreenLogDisplayTimeSeconds = 5.f;
 
@@ -434,7 +434,7 @@ protected:
 	//
 	// Output log
 	//
-	
+
 	// Output to the output log and log file
 	bool bOutputLog = false;
 
@@ -447,7 +447,7 @@ protected:
 	//
 	// Message log
 	//
-	
+
 	// Output to the message log
 	bool bMessageLog = true;
 
@@ -476,7 +476,7 @@ protected:
 	// Client console
 	//
 
-	// Output to the dropdown ingame console, requires the PlayerController to be set
+	// Output to the dropdown in game console, requires the PlayerController to be set
 	bool bClientConsole = false;
 
 	// Required to print to client console
