@@ -4,6 +4,7 @@
 #include "IPropertyTypeCustomization.h"
 #include "Layout/Visibility.h"
 #include "DialogueDetailsPanelUtils.h"
+#include "DlgManager.h"
 
 class UDlgDialogue;
 class FMultiLineEditableTextBox_CustomRowHelper;
@@ -44,8 +45,6 @@ public:
 		IDetailChildrenBuilder& StructBuilder,
 		IPropertyTypeCustomizationUtils& StructCustomizationUtils) override;
 
-
-
 	/** Gets the Speaker States from all Dialogues. */
 	TArray<FName> GetAllDialoguesSpeakerStates() const
 	{
@@ -67,11 +66,11 @@ private:
 	EVisibility GetSpeakerStateVisibility() const
 	{
 		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-
-		return bShowTextProperty &&
-			  (Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnEdge ||
-			   Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnNodeAndEdge)
-			   ? EVisibility::Visible : EVisibility::Hidden;
+		const bool bSettingsShow =
+			Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnEdge ||
+			Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnNodeAndEdge;
+		
+		return bShowTextProperty && bSettingsShow ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 private:

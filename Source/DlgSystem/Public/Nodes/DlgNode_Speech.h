@@ -107,6 +107,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
 	FText Text;
 
+	// If you want replaceable portions inside your Text nodes just add {identifier} inside it and set the value it should have at runtime.
 	UPROPERTY(EditAnywhere, EditFixedSize, Category = DialogueNodeData)
 	TArray<FDlgTextArgument> TextArguments;
 

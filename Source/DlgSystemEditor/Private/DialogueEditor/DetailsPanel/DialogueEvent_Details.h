@@ -5,7 +5,6 @@
 #include "Layout/Visibility.h"
 #include "IDetailPropertyRow.h"
 
-#include "DlgDialogue.h"
 #include "DlgEvent.h"
 #include "DlgManager.h"
 #include "DialogueDetailsPanelUtils.h"

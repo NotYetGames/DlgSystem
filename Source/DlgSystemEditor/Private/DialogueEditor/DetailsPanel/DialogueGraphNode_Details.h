@@ -66,36 +66,6 @@ private:
 	// The IsVirtualParent property changed
 	void OnIsVirtualParentChanged();
 
-	// Getters for visibility of some properties
-	EVisibility GetVoiceSoundWaveVisibility() const
-	{
-		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::SoundWave ||
-			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::SoundWaveAndDialogueWave
-			   ? EVisibility::Visible : EVisibility::Hidden;
-	}
-
-	EVisibility GetVoiceDialogueWaveVisibility() const
-	{
-		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DialogueWave ||
-			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::SoundWaveAndDialogueWave
-			   ? EVisibility::Visible : EVisibility::Hidden;
-	}
-
-	EVisibility GetGenericDataVisibility() const
-	{
-		return GetDefault<UDlgSystemSettings>()->bShowGenericData ? EVisibility::Visible : EVisibility::Hidden;
-	}
-
-	EVisibility GetSpeakerStateVisibility() const
-	{
-		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnNode ||
-			   Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnNodeAndEdge
-			   ? EVisibility::Visible : EVisibility::Hidden;
-	}
-
 private:
 	/** Hold the reference to the Graph Node this represents */
 	UDialogueGraphNode* GraphNode = nullptr;
@@ -109,6 +79,7 @@ private:
 	TSharedPtr<FTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
 	TSharedPtr<FTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
 	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
+	IDetailPropertyRow* NodeDataPropertyRow = nullptr;
 	IDetailPropertyRow* VoiceSoundWavePropertyRow = nullptr;
 	IDetailPropertyRow* VoiceDialogueWavePropertyRow = nullptr;
 	IDetailPropertyRow* GenericDataPropertyRow = nullptr;

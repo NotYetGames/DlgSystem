@@ -6,6 +6,7 @@
 
 #include "DlgTextArgument.h"
 #include "DialogueDetailsPanelUtils.h"
+#include "DlgManager.h"
 
 class FTextPropertyPickList_CustomRowHelper;
 

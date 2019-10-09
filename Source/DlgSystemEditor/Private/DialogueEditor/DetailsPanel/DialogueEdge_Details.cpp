@@ -44,32 +44,17 @@ void FDialogueEdge_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InStruct
 void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStructPropertyHandle,
 	IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
+	// TargetIndex
 	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, TargetIndex)).ToSharedRef());
+
+	// Conditions
 	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, Conditions)).ToSharedRef());
-
-	// Speaker State
-	{
-		const TSharedPtr<IPropertyHandle> SpeakerStatePropertyHandle =
-			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, SpeakerState));
-
-		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("SpeakerStateSearchKey", "Speaker State"));
-
-		SpeakerStatePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, SpeakerStatePropertyHandle);
-		SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
-			SNew(STextPropertyPickList)
-			.AvailableSuggestions(this, &Self::GetAllDialoguesSpeakerStates)
-			.OnTextCommitted(this, &Self::HandleSpeakerStateCommitted)
-			.HasContextCheckbox(false)
-		)
-		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetSpeakerStateVisibility))
-		->Update();
-	}
 
 	// Text
 	TextPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, Text));
-	FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
+	FDetailWidgetRow* TextDetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
 
-	TextPropertyRow = MakeShared<FMultiLineEditableTextBox_CustomRowHelper>(DetailWidgetRow, TextPropertyHandle);
+	TextPropertyRow = MakeShared<FMultiLineEditableTextBox_CustomRowHelper>(TextDetailWidgetRow, TextPropertyHandle);
 	TextPropertyRow->SetMultiLineEditableTextBoxWidget(
 		SNew(SMultiLineEditableTextBox)
 		.Font(FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont")))
@@ -85,9 +70,29 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 	->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility))
 	->Update();
 
+	// Text Arguments
 	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, TextArguments)).ToSharedRef())
 		.Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility));
+	
+	// Speaker State
+	{
+		const TSharedPtr<IPropertyHandle> SpeakerStatePropertyHandle =
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, SpeakerState));
 
+		FDetailWidgetRow* SpeakerStateDetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("SpeakerStateSearchKey", "Speaker State"));
+
+		SpeakerStatePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(SpeakerStateDetailWidgetRow, SpeakerStatePropertyHandle);
+		SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
+			SNew(STextPropertyPickList)
+			.AvailableSuggestions(this, &Self::GetAllDialoguesSpeakerStates)
+			.OnTextCommitted(this, &Self::HandleSpeakerStateCommitted)
+			.HasContextCheckbox(false)
+		)
+		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetSpeakerStateVisibility))
+		->Update();
+	}
+
+	// bIncludeInAllOptionListIfUnsatisfied
 	IDetailPropertyRow& BoolPropertyRow = StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(
 		GET_MEMBER_NAME_CHECKED(FDlgEdge, bIncludeInAllOptionListIfUnsatisfied)).ToSharedRef()
 	);

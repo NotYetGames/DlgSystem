@@ -109,7 +109,7 @@ public:
 	static FName GetMemberNameSpeechSequence() { return GET_MEMBER_NAME_CHECKED(UDlgNode_SpeechSequence, SpeechSequence); }
 
 protected:
-	/** array of important stuff to say */
+	/** Array of important stuff to say */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	TArray<FDlgSpeechSequenceEntry> SpeechSequence;
 

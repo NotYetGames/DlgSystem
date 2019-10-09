@@ -5,7 +5,6 @@
 #include "Layout/Visibility.h"
 #include "IDetailPropertyRow.h"
 
-#include "DlgDialogue.h"
 #include "DlgManager.h"
 #include "DialogueDetailsPanelUtils.h"
 
@@ -77,36 +76,6 @@ private:
 		{
 			Dialogue->RefreshData();
 		}
-	}
-
-	// Getters for visibility of some properties
-	EVisibility GetVoiceSoundWaveVisibility() const
-	{
-		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::SoundWave ||
-			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::SoundWaveAndDialogueWave
-			   ? EVisibility::Visible : EVisibility::Hidden;
-	}
-
-	EVisibility GetVoiceDialogueWaveVisibility() const
-	{
-		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DialogueWave ||
-			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::SoundWaveAndDialogueWave
-			   ? EVisibility::Visible : EVisibility::Hidden;
-	}
-
-	EVisibility GetSpeakerStateVisibility() const
-	{
-		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnNode ||
-			   Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnNodeAndEdge
-			   ? EVisibility::Visible : EVisibility::Hidden;
-	}
-
-	EVisibility GetGenericDataVisibility() const
-	{
-		return GetDefault<UDlgSystemSettings>()->bShowGenericData ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 private:

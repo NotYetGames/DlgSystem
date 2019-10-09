@@ -21,7 +21,7 @@ FArchive& operator<<(FArchive &Ar, FDlgTextArgument& DlgCondition)
 
 FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgContextInternal* DlgContext, FName NodeOwner) const
 {
-	// If participant name is not valid we use the node owner namne
+	// If participant name is not valid we use the node owner name
 	const FName ValidParticipantName = ParticipantName == NAME_None ? NodeOwner : ParticipantName;
 
 	const UObject* Participant = DlgContext->GetConstParticipant(ValidParticipantName);

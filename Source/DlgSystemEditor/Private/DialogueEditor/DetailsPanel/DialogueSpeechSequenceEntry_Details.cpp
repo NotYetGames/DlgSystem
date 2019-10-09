@@ -53,24 +53,6 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 		->Update();
 	}
 
-	// Speaker State
-	{
-		const TSharedPtr<IPropertyHandle> SpeakerStatePropertyHandle =
-			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, SpeakerState));
-
-		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("SpeakerStateSearchKey", "Speaker State"));
-
-		SpeakerStatePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, SpeakerStatePropertyHandle);
-		SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
-			SNew(STextPropertyPickList)
-			.AvailableSuggestions(this, &Self::GetAllDialoguesSpeakerStates)
-			.OnTextCommitted(this, &Self::HandleTextCommitted)
-			.HasContextCheckbox(false)
-		)
-		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetSpeakerStateVisibility))
-		->Update();
-	}
-
 	// Text
 	{
 		TextPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, Text));
@@ -92,19 +74,7 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 		->Update();
 	}
 
-	// Node Data
-	NodeDataPropertyRow = &StructBuilder.AddProperty(
-		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, NodeData)).ToSharedRef());
-
-	// Voice
-	VoiceSoundWavePropertyRow = &StructBuilder.AddProperty(
-		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, VoiceSoundWave)).ToSharedRef());
-	VoiceSoundWavePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetVoiceSoundWaveVisibility));
-
-	VoiceDialogueWavePropertyRow = &StructBuilder.AddProperty(
-		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, VoiceDialogueWave)).ToSharedRef());
-	VoiceDialogueWavePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetVoiceDialogueWaveVisibility));
-
+	
 	// Edge Text
 	{
 		EdgeTextPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, EdgeText));
@@ -126,10 +96,46 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 		->Update();
 	}
 
-	// Generic Data
+	//
+	// Data
+	//
+	
+	// Speaker State
+	{
+		const TSharedPtr<IPropertyHandle> SpeakerStatePropertyHandle =
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, SpeakerState));
+
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("SpeakerStateSearchKey", "Speaker State"));
+
+		SpeakerStatePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, SpeakerStatePropertyHandle);
+		SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
+			SNew(STextPropertyPickList)
+			.AvailableSuggestions(this, &Self::GetAllDialoguesSpeakerStates)
+			.OnTextCommitted(this, &Self::HandleTextCommitted)
+			.HasContextCheckbox(false)
+		)
+		->SetVisibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetSpeakerStateNodeVisibility))
+		->Update();
+	}
+
+	// Node Data that can be anything set by the user
+	NodeDataPropertyRow = &StructBuilder.AddProperty(
+		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, NodeData)).ToSharedRef());
+
+	// SoundWave
+	VoiceSoundWavePropertyRow = &StructBuilder.AddProperty(
+		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, VoiceSoundWave)).ToSharedRef());
+	VoiceSoundWavePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetVoiceSoundWaveVisibility));
+
+	// DialogueWave
+	VoiceDialogueWavePropertyRow = &StructBuilder.AddProperty(
+		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, VoiceDialogueWave)).ToSharedRef());
+	VoiceDialogueWavePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetVoiceDialogueWaveVisibility));
+
+	// Generic Data, can be FMOD sound
 	GenericDataPropertyRow = &StructBuilder.AddProperty(
 		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, GenericData)).ToSharedRef());
-	GenericDataPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetGenericDataVisibility));
+	GenericDataPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetGenericDataVisibility));
 }
 
 #undef LOCTEXT_NAMESPACE
