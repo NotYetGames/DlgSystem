@@ -9,7 +9,7 @@
 #include "DlgManager.h"
 #include "DialogueDetailsPanelUtils.h"
 
-class FTextPropertyPickList_CustomRowHelper;
+class FDialogueTextPropertyPickList_CustomRowHelper;
 
 /**
  * How the details panel renders the FDlgEvent
@@ -132,8 +132,8 @@ private:
 	TSharedPtr<IPropertyUtilities> PropertyUtils;
 
 	// Cache the rows of the properties, created in CustomizeChildren
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> EventNamePropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> EventNamePropertyRow;
 	IDetailPropertyRow* IntValuePropertyRow = nullptr;
 	IDetailPropertyRow* FloatValuePropertyRow = nullptr;
 	IDetailPropertyRow* NameValuePropertyRow = nullptr;

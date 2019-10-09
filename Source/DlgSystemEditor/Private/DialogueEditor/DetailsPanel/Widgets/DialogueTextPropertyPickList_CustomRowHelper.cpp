@@ -1,15 +1,15 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "TextPropertyPickList_CustomRowHelper.h"
+#include "DialogueTextPropertyPickList_CustomRowHelper.h"
 
 #include "DetailWidgetRow.h"
 
-#include "DialogueEditor/DetailsPanel/STextPropertyPickList.h"
+#include "DialogueEditor/DetailsPanel/Widgets/SDialogueTextPropertyPickList.h"
 
 #define LOCTEXT_NAMESPACE "TextPropertyPickList_CustomRowHelper"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FTextPropertyPickList_CustomRowHelper
-void FTextPropertyPickList_CustomRowHelper::UpdateInternal()
+// FDialogueTextPropertyPickList_CustomRowHelper
+void FDialogueTextPropertyPickList_CustomRowHelper::UpdateInternal()
 {
 	check(TextPropertyPickListWidget.IsValid());
 	TextPropertyPickListWidget->SetToolTipAttribute(ToolTip);

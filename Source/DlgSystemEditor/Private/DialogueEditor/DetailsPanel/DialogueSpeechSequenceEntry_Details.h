@@ -8,8 +8,8 @@
 #include "DlgManager.h"
 #include "DialogueDetailsPanelUtils.h"
 
-class FTextPropertyPickList_CustomRowHelper;
-class FMultiLineEditableTextBox_CustomRowHelper;
+class FDialogueTextPropertyPickList_CustomRowHelper;
+class FDialogueMultiLineEditableTextBox_CustomRowHelper;
 
 /**
 * How the details customization panel looks for the FDlgSpeechSequenceEntry
@@ -86,14 +86,14 @@ private:
 	TSharedPtr<IPropertyHandle> TextPropertyHandle;
 	TSharedPtr<IPropertyHandle> EdgeTextPropertyHandle;
 
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
 	IDetailPropertyRow* VoiceSoundWavePropertyRow = nullptr;
 	IDetailPropertyRow* VoiceDialogueWavePropertyRow = nullptr;
 	IDetailPropertyRow* GenericDataPropertyRow = nullptr;
 	IDetailPropertyRow* NodeDataPropertyRow = nullptr;
-	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
-	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> EdgeTextPropertyRow;
+	TSharedPtr<FDialogueMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
+	TSharedPtr<FDialogueMultiLineEditableTextBox_CustomRowHelper> EdgeTextPropertyRow;
 
 	/** Hold a reference to dialogue we are displaying. */
 	UDlgDialogue* Dialogue = nullptr;

@@ -8,8 +8,8 @@
 #include "DlgReflectionHelper.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
-#include "STextPropertyPickList.h"
-#include "CustomRowHelpers/TextPropertyPickList_CustomRowHelper.h"
+#include "Widgets/SDialogueTextPropertyPickList.h"
+#include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueTextArgument_Details"
 
@@ -54,9 +54,9 @@ void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle
 	{
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("ParticipantNameSearchKey", "Participant Name"));
 
-		ParticipantNamePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
+		ParticipantNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
 		ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
-			SNew(STextPropertyPickList)
+			SNew(SDialogueTextPropertyPickList)
 			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(bHasDialogue)
@@ -75,9 +75,9 @@ void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgTextArgument, VariableName));
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("VariableNameSearchKey", "Variable Name"));
 
-		VariableNamePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, VariableNamePropertyHandle);
+		VariableNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, VariableNamePropertyHandle);
 		VariableNamePropertyRow->SetTextPropertyPickListWidget(
-				SNew(STextPropertyPickList)
+				SNew(SDialogueTextPropertyPickList)
 				.AvailableSuggestions(this, &Self::GetAllDialoguesVariableNames)
 				.OnTextCommitted(this, &Self::HandleTextCommitted)
 				.HasContextCheckbox(bHasDialogue)

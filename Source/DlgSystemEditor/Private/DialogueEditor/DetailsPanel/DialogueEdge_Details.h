@@ -7,8 +7,8 @@
 #include "DlgManager.h"
 
 class UDlgDialogue;
-class FMultiLineEditableTextBox_CustomRowHelper;
-class FTextPropertyPickList_CustomRowHelper;
+class FDialogueMultiLineEditableTextBox_CustomRowHelper;
+class FDialogueTextPropertyPickList_CustomRowHelper;
 
 /**
  * How the details customization panel looks for the FDlgEdge
@@ -82,8 +82,8 @@ private:
 
 	/** Cache some properties */
 	TSharedPtr<IPropertyHandle> TextPropertyHandle;
-	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
+	TSharedPtr<FDialogueMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
 
 	/** Hold a reference to dialogue we are displaying. */
 	UDlgDialogue* Dialogue = nullptr;

@@ -9,9 +9,9 @@
 #include "Nodes/DlgNode_Speech.h"
 #include "Nodes/DlgNode_Selector.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
-#include "STextPropertyPickList.h"
-#include "CustomRowHelpers/TextPropertyPickList_CustomRowHelper.h"
-#include "CustomRowHelpers/MultiLineEditableTextBox_CustomRowHelper.h"
+#include "Widgets/SDialogueTextPropertyPickList.h"
+#include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
+#include "Widgets/DialogueMultiLineEditableTextBox_CustomRowHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialoguGraphNode_Details"
 
@@ -68,9 +68,9 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 				PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameOwnerName());
 			FDetailWidgetRow* DetailWidgetRow = &BaseDataCategory.AddCustomRow(LOCTEXT("ParticipantNameSearcKey", "Participant Name"));
 
-			ParticipantNamePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
+			ParticipantNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
 			ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
-				SNew(STextPropertyPickList)
+				SNew(SDialogueTextPropertyPickList)
 				.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
 				.OnTextCommitted(this, &Self::HandleParticipantTextCommitted)
 				.HasContextCheckbox(true)
@@ -114,7 +114,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 			TextPropertyHandle = PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameText());
 			FDetailWidgetRow* DetailWidgetRow = &SpeechCategory.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
 
-			TextPropertyRow = MakeShared<FMultiLineEditableTextBox_CustomRowHelper>(DetailWidgetRow, TextPropertyHandle);
+			TextPropertyRow = MakeShared<FDialogueMultiLineEditableTextBox_CustomRowHelper>(DetailWidgetRow, TextPropertyHandle);
 			TextPropertyRow->SetMultiLineEditableTextBoxWidget(
 				SNew(SMultiLineEditableTextBox)
 				.Font(FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont")))
@@ -123,8 +123,8 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 				.SelectAllTextOnCommit(false)
 				.AutoWrapText(true)
 				.ModiferKeyForNewLine(FDialogueDetailsPanelUtils::GetModifierKeyFromDialogueSettings())
-				.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
-				.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
+				.Text(TextPropertyRow.ToSharedRef(), &FDialogueMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
+				.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FDialogueMultiLineEditableTextBox_CustomRowHelper::HandleTextCommitted)
 			)
 			->SetPropertyUtils(DetailBuilder.GetPropertyUtilities())
 			->Update();
@@ -139,7 +139,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 		// Data
 		//
 		//
-		
+
 		IDetailCategoryBuilder& SpeechDataCategory = DetailLayoutBuilder->EditCategory(TEXT("Speech Node Data"));
 		SpeechDataCategory.InitiallyCollapsed(false);
 
@@ -150,9 +150,9 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 
 			FDetailWidgetRow* DetailWidgetRow = &SpeechDataCategory.AddCustomRow(LOCTEXT("SpeakerStateSearchKey", "Speaker State"));
 
-			SpeakerStatePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, SpeakerStatePropertyHandle);
+			SpeakerStatePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, SpeakerStatePropertyHandle);
 			SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
-				SNew(STextPropertyPickList)
+				SNew(SDialogueTextPropertyPickList)
 				.AvailableSuggestions(this, &Self::GetAllDialoguesSpeakerStates)
 				.OnTextCommitted(this, &Self::HandleSpeakerStateCommitted)
 				.HasContextCheckbox(false)

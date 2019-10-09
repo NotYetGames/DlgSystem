@@ -9,9 +9,9 @@
 #include "DlgCondition.h"
 #include "DlgManager.h"
 #include "DialogueDetailsPanelUtils.h"
-#include "CustomRowHelpers/TextPropertyPickList_CustomRowHelper.h"
+#include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
 
-class FTextPropertyPickList_CustomRowHelper;
+class FDialogueTextPropertyPickList_CustomRowHelper;
 
 /**
 * How the details panel renders the FDlgCondition
@@ -207,8 +207,8 @@ private:
 	TSharedPtr<IPropertyUtilities> PropertyUtils;
 
 	// Cache the rows of the properties, created in CustomizeChildren
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> CallbackNamePropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> CallbackNamePropertyRow;
 	IDetailPropertyRow* IntValuePropertyRow = nullptr;
 	IDetailPropertyRow* FloatValuePropertyRow = nullptr;
 	IDetailPropertyRow* NameValuePropertyRow = nullptr;
@@ -216,8 +216,8 @@ private:
 	IDetailPropertyRow* LongTermMemoryPropertyRow = nullptr;
 	IDetailPropertyRow* OperationPropertyRow = nullptr;
 	IDetailPropertyRow* CompareTypePropertyRow = nullptr;
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> OtherParticipantNamePropertyRow;
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> OtherVariableNamePropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> OtherParticipantNamePropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> OtherVariableNamePropertyRow;
 
 	/** Hold a reference to dialogue we are displaying. */
 	UDlgDialogue* Dialogue = nullptr;
