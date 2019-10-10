@@ -68,8 +68,6 @@ public:
 	
 #undef CREATE_OPTIONS_SETTER
 	
-	// void HandleTextCommitted(const FText& NewText, ETextCommit::Type CommitInfo);
-
 	/** Gets the value of the text property. */
 	FText GetTextValue() const;
 

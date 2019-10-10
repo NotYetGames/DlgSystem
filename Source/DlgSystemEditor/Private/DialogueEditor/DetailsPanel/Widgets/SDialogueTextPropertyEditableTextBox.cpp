@@ -465,6 +465,14 @@ FText SDialogueTextPropertyEditableTextBox::GetTextValue() const
 	return TextValue;
 }
 
+void SDialogueTextPropertyEditableTextBox::SetTextValue(const FText& NewValue)
+{
+	if (MultiLineWidget.IsValid())
+	{
+		MultiLineWidget->SetText(NewValue);
+	}
+}
+
 void SDialogueTextPropertyEditableTextBox::OnTextChanged(const FText& NewText)
 {
 	const int32 NumTexts = EditableTextProperty->GetNumTexts();

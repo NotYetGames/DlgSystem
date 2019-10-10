@@ -76,6 +76,7 @@ public:
 	void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override;
 
 	FText GetTextValue() const;
+	void SetTextValue(const FText& NewValue);
 
 	FDialogueTextCommitedDelegate& OnTextCommittedEvent() { return TextCommittedEvent; }
 	FDialogueTextChangedDelegate& OnTextChangedEvent() { return TextChangedEvent; }
