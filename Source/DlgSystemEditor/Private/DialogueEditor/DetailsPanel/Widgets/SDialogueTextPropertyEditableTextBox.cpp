@@ -479,6 +479,7 @@ void SDialogueTextPropertyEditableTextBox::OnTextChanged(const FText& NewText)
 
 	// Update or clear the error message
 	SetTextError(TextErrorMsg);
+	TextChangedEvent.Broadcast(NewText);
 }
 
 void SDialogueTextPropertyEditableTextBox::OnTextCommitted(const FText& NewText, ETextCommit::Type CommitInfo)
@@ -559,7 +560,9 @@ void SDialogueTextPropertyEditableTextBox::OnTextCommitted(const FText& NewText,
 			}
 #endif	// USE_STABLE_LOCALIZATION_KEYS
 
-			EditableTextProperty->SetText(TextIndex, FText::ChangeKey(NewNamespace, NewKey, NewText));
+			const FText FinalText = FText::ChangeKey(NewNamespace, NewKey, NewText);
+			EditableTextProperty->SetText(TextIndex, FinalText);
+			TextCommittedEvent.Broadcast(FinalText, CommitInfo);
 		}
 	}
 }

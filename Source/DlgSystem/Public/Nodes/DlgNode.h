@@ -19,6 +19,7 @@ class UDlgNode;
 class USoundWave;
 class UDialogueWave;
 struct FDlgTextArgument;
+class UDlgDialogue;
 
 /**
  *  Abstract base class for Dialogue nodes
@@ -44,7 +45,7 @@ public:
 	 *
 	 * @param PropertyChangedEvent the property that was modified
 	 */
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	/**
 	 * This alternate version of PostEditChange is called when properties inside structs are modified.  The property that was actually modified
@@ -110,7 +111,10 @@ public:
 	/** Gets this nodes children (edges) as a const/mutable array */
 	virtual const TArray<FDlgEdge>& GetNodeChildren() const { return Children; }
 	virtual void SetNodeChildren(const TArray<FDlgEdge>& InChildren) { Children = InChildren; }
-
+	virtual int32 GetNumNodeChildren() const { return Children.Num(); }
+	virtual const FDlgEdge& GetNodeChildAt(int32 EdgeIndex) const { return Children[EdgeIndex]; }
+	
+	
 	/** Adds an Edge to the end of the Children Array. */
 	virtual void AddNodeChild(const FDlgEdge& InChild) { Children.Add(InChild); }
 
@@ -146,6 +150,13 @@ public:
 	/** Gathers associated participants, they are only added to the array if they are not yet there */
 	virtual void GetAssociatedParticipants(TArray<FName>& OutArray) const;
 
+	// Rebuilds ConstructedText
+	virtual void RebuildTextArguments() {}
+	virtual void RebuildTextArgumentsFromPreview(const FText& Preview) {}
+
+	// Constructs the ConstructedText.
+	virtual void RebuildConstructedText(const UDlgContextInternal* DlgContext) {}
+	
 	/** Gets the text arguments for this Node (if any). Used for FText::Format */
 	virtual const TArray<FDlgTextArgument>& GetTextArguments() const
 	{
@@ -170,7 +181,7 @@ public:
 
 	/** Gets the speaker state ordered to this node (can be used e.g. for icon selection) */
 	virtual FName GetSpeakerState() const { return NAME_None; }
-	virtual void AddAllSpeakerStatesIntoSet(TSet<FName>& States) const {};
+	virtual void AddAllSpeakerStatesIntoSet(TSet<FName>& OutStates) const {};
 
 	/** Gets the generic data asset of this Node. */
 	virtual UObject* GetGenericData() const { return nullptr; }
@@ -178,7 +189,7 @@ public:
 	virtual UDlgNodeData* GetNodeData() const { return nullptr; }
 
 	/** Helper method to get directly the Dialogue */
-	class UDlgDialogue* GetDialogue() const;
+	UDlgDialogue* GetDialogue() const;
 
 	/** Helper functions to get the names of some properties. Used by the DlgSystemEditor module. */
 	static FName GetMemberNameOwnerName() { return GET_MEMBER_NAME_CHECKED(UDlgNode, OwnerName); }
@@ -188,7 +199,6 @@ public:
 	static FName GetMemberNameChildren() { return GET_MEMBER_NAME_CHECKED(UDlgNode, Children); }
 
 protected:
-
 	void FireNodeEnterEvents(UDlgContextInternal* DlgContext);
 
 	void UpdateTextNamespace(FText& Text);

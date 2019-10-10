@@ -83,7 +83,7 @@ public:
 	USoundWave* GetNodeVoiceSoundWave() const override;
 	UDialogueWave* GetNodeVoiceDialogueWave() const override;
 	FName GetSpeakerState() const override;
-	void AddAllSpeakerStatesIntoSet(TSet<FName>& States) const override;
+	void AddAllSpeakerStatesIntoSet(TSet<FName>& OutStates) const override;
 	UObject* GetGenericData() const override;
 	FName GetNodeParticipantName() const override;
 	void GetAssociatedParticipants(TArray<FName>& OutArray) const override;

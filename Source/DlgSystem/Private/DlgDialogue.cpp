@@ -597,8 +597,11 @@ void UDlgDialogue::RefreshData()
 	for (int32 NodeIndex = 0; NodeIndex < NodesNum; NodeIndex++)
 	{
 		const FString NodeContext = FString::Printf(TEXT("Node %d"), NodeIndex);
-		const UDlgNode* Node = Nodes[NodeIndex];
+		UDlgNode* Node = Nodes[NodeIndex];
 		const FName NodeParticipantName = Node->GetNodeParticipantName();
+
+		// Rebuild
+		Node->RebuildTextArguments();
 
 		// participant names
 		TArray<FName> Participants;
@@ -629,11 +632,25 @@ void UDlgDialogue::RefreshData()
 		// Gather Edge Data
 		AddConditionsFromEdges(Node, NodeIndex);
 
-		for (const FDlgEdge& Edge : Node->GetNodeChildren())
+		// Walk over edges of speaker nodes
+		// NOTE: for speaker sequence nodes, the inner edges are handled by AddAllSpeakerStatesIntoSet
+		// so no need to special case handle it
+		const int32 NumNodeChildren = Node->GetNumNodeChildren();
+		for (int32 EdgeIndex = 0; EdgeIndex < NumNodeChildren; EdgeIndex++)
 		{
+			FDlgEdge* EdgePtr = Node->GetMutableNodeChildAt(EdgeIndex);
+			if (EdgePtr == nullptr)
+			{
+				continue;
+			}
+			const FDlgEdge& Edge = *EdgePtr; // Node->GetNodeChildAt(EdgeIndex);
 			const int32 TargetIndex = Edge.TargetIndex;
+
+			// Speaker states
 			DlgSpeakerStates.Add(Edge.SpeakerState);
 
+			// Text arguments
+			EdgePtr->RebuildTextArguments();
 			for (const FDlgTextArgument& TextArgument : Edge.GetTextArguments())
 			{
 				const FString ContextMessage = FString::Printf(TEXT("Adding Edge text arguments data from %s, to Node %d"), *NodeContext, TargetIndex);
@@ -742,11 +759,11 @@ void UDlgDialogue::AutoFixGraph()
 			UDlgNode* NextNode = Nodes[NodeChildren[0].TargetIndex];
 			if (NextNode->IsA<UDlgNode_End>())
 			{
-				Node->GetSafeMutableNodeChildAt(0)->SetRawText(UDlgSystemSettings::EdgeTextFinish);
+				Node->GetSafeMutableNodeChildAt(0)->SetUnformattedText(UDlgSystemSettings::EdgeTextFinish);
 			}
 			else
 			{
-				Node->GetSafeMutableNodeChildAt(0)->SetRawText(UDlgSystemSettings::EdgeTextNext);
+				Node->GetSafeMutableNodeChildAt(0)->SetUnformattedText(UDlgSystemSettings::EdgeTextNext);
 			}
 		}
 	}

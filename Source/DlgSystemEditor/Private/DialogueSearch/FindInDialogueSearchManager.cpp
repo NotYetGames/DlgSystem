@@ -260,11 +260,11 @@ bool FFindInDialogueSearchManager::QueryDlgEdge(const FDialogueSearchFilter& Sea
 	bool bContainsSearchString = false;
 
 	// Test Text
-	if (InDlgEdge.GetRawText().ToString().Contains(SearchFilter.SearchString))
+	if (InDlgEdge.GetUnformattedText().ToString().Contains(SearchFilter.SearchString))
 	{
 		bContainsSearchString = true;
 		MakeChildTextNode(OutParentNode,
-						  InDlgEdge.GetRawText(),
+						  InDlgEdge.GetUnformattedText(),
 						  LOCTEXT("DlgEdgText", "DlgEdge Text"),
 						  TEXT("DlgEdge.Text"));
 	}

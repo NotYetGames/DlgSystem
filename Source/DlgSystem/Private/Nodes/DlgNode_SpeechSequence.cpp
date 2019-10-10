@@ -116,11 +116,11 @@ FName UDlgNode_SpeechSequence::GetSpeakerState() const
 	return NAME_None;
 }
 
-void UDlgNode_SpeechSequence::AddAllSpeakerStatesIntoSet(TSet<FName>& States) const
+void UDlgNode_SpeechSequence::AddAllSpeakerStatesIntoSet(TSet<FName>& OutStates) const
 {
 	for (const auto& SpeechEntry : SpeechSequence)
 	{
-		States.Add(SpeechEntry.SpeakerState);
+		OutStates.Add(SpeechEntry.SpeakerState);
 	}
 }
 
@@ -153,7 +153,7 @@ void UDlgNode_SpeechSequence::AutoGenerateInnerEdges()
 	for (const FDlgSpeechSequenceEntry& Entry : SpeechSequence)
 	{
 		FDlgEdge Edge;
-		Edge.SetRawText(Entry.EdgeText);
+		Edge.SetUnformattedText(Entry.EdgeText);
 		InnerEdges.Add(Edge);
 	}
 }

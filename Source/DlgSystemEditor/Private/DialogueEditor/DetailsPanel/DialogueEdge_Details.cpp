@@ -58,10 +58,9 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 	TextPropertyRow->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities())
 		.SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility))
 		.Update();
-
-	// TODO
-	// .OnTextCommitted(this, &Self::HandleTextCommitted)
-
+	TextPropertyRow->OnTextCommittedEvent().AddRaw(this, &Self::HandleTextCommitted);
+	TextPropertyRow->OnTextChangedEvent().AddRaw(this, &Self::HandleTextChanged);
+	
 	// Text Arguments
 	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(FDlgEdge::GetMemberNameTextArguments()).ToSharedRef())
 		.Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility));
@@ -101,18 +100,24 @@ void FDialogueEdge_Details::HandleSpeakerStateCommitted(const FText& InSearchTex
 
 void FDialogueEdge_Details::HandleTextCommitted(const FText& InText, ETextCommit::Type CommitInfo)
 {
-	// TODO fix
-	//TextPropertyRow->HandleTextCommitted(InText, CommitInfo);
-
 	if (UDialogueGraphNode_Edge* GraphEdge = FDialogueDetailsPanelUtils::GetAsGraphNodeEdgeFromPropertyHandle(StructPropertyHandle.ToSharedRef()))
 	{
-		GraphEdge->GetDialogueEdge().RebuildTextArgumentsArray();
-
 		if (Dialogue)
 		{
 			Dialogue->RefreshData();
 		}
+
+		GraphEdge->GetDialogueEdge().RebuildTextArguments();
 	}
 }
+
+void FDialogueEdge_Details::HandleTextChanged(const FText& InText)
+{
+	if (UDialogueGraphNode_Edge* GraphEdge = FDialogueDetailsPanelUtils::GetAsGraphNodeEdgeFromPropertyHandle(StructPropertyHandle.ToSharedRef()))
+	{
+		GraphEdge->GetDialogueEdge().RebuildTextArgumentsFromPreview(InText);
+	}
+}
+
 
 #undef LOCTEXT_NAMESPACE

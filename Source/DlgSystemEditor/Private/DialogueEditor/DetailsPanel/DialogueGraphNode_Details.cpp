@@ -32,14 +32,13 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 		return;
 	}
 
-	UDialogueGraphNode* TempGraphNode = WeakGraphNode.Get();
-	if (!IsValid(TempGraphNode))
+	GraphNode = WeakGraphNode.Get();
+	if (!IsValid(GraphNode))
 	{
 		return;
 	}
 
 	DetailLayoutBuilder = &DetailBuilder;
-	GraphNode = TempGraphNode;
 	Dialogue = GraphNode->GetDialogue();
 	const UDlgNode& DialogueNode = GraphNode->GetDialogueNode();
 	const bool bIsRootNode = GraphNode->IsRootNode();
@@ -117,16 +116,17 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 			TextPropertyRow = MakeShared<FDialogueMultiLineEditableTextBox_CustomRowHelper>(DetailWidgetRow, TextPropertyHandle);
 			TextPropertyRow->SetPropertyUtils(DetailBuilder.GetPropertyUtilities());
 			TextPropertyRow->Update();
+
+			TextPropertyRow->OnTextCommittedEvent().AddRaw(this, &Self::HandleTextCommitted);
+			TextPropertyRow->OnTextChangedEvent().AddRaw(this, &Self::HandleTextChanged);
 		}
 
 		// Text arguments
 		SpeechCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameTextArguments()))
 			.ShouldAutoExpand(true);
 
-
 		//
 		// Data
-		//
 		//
 
 		IDetailCategoryBuilder& SpeechDataCategory = DetailLayoutBuilder->EditCategory(TEXT("Speech Node Data"));
@@ -189,6 +189,20 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 			.ShouldAutoExpand(true);;
 	}
 }
+
+void FDialogueGraphNode_Details::HandleTextCommitted(const FText& InText, ETextCommit::Type CommitInfo)
+{
+	// Text arguments already handled in node post change properties
+}
+
+void FDialogueGraphNode_Details::HandleTextChanged(const FText& InText)
+{
+	if (GraphNode)
+	{
+		GraphNode->GetMutableDialogueNode()->RebuildTextArgumentsFromPreview(InText);
+	}
+}
+
 
 void FDialogueGraphNode_Details::OnIsVirtualParentChanged()
 {

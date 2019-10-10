@@ -35,20 +35,28 @@ public:
 	 *
 	 * @param PropertyChangedEvent the property that was modified
 	 */
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
-
-	// Rebuilds ConstructedText
-	void RebuildTextArguments();
 
 	// Begin UDlgNode Interface.
 	bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
 	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated) override;
 	void GetAssociatedParticipants(TArray<FName>& OutArray) const override;
+
+	void RebuildConstructedText(const UDlgContextInternal* DlgContext);
+	void RebuildTextArguments() override { FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments); }
+	void RebuildTextArgumentsFromPreview(const FText& Preview) override { FDlgTextArgument::UpdateTextArgumentArray(Preview, TextArguments); }
 	const TArray<FDlgTextArgument>& GetTextArguments() const override { return TextArguments; };
 
 	// Getters:
-	const FText& GetNodeText() const override { return TextArguments.Num() > 0 && !ConstructedText.IsEmpty() ? ConstructedText : Text; }
+	const FText& GetNodeText() const override
+	{
+		if (TextArguments.Num() > 0 && !ConstructedText.IsEmpty())
+		{
+			return ConstructedText;
+		}
+		return Text;
+	}
 	const FText& GetNodeUnformattedText() const override { return Text; }
 	UDlgNodeData* GetNodeData() const override { return NodeData; }
 
@@ -58,7 +66,7 @@ public:
 	UDialogueWave* GetNodeVoiceDialogueWave() const override { return VoiceDialogueWave; }
 	UObject* GetGenericData() const override { return GenericData; }
 
-	void AddAllSpeakerStatesIntoSet(TSet<FName>& States) const override { States.Add(SpeakerState); }
+	void AddAllSpeakerStatesIntoSet(TSet<FName>& OutStates) const override { OutStates.Add(SpeakerState); }
 
 #if WITH_EDITOR
 	FString GetNodeTypeString() const override { return bIsVirtualParent ? TEXT("Virtual Parent") : TEXT("Speech"); }
@@ -71,8 +79,8 @@ public:
 	/** Sets the virtual parent status */
 	virtual void SetIsVirtualParent(bool bValue) { bIsVirtualParent = bValue; }
 
-	/** Sets the RawNodeText of the Node. */
-	virtual void SetNodeUnformattedText(const FText& InText)
+	// Sets the RawNodeText of the Node and rebuilds the constructed text
+	virtual void SetNodeText(const FText& InText)
 	{
 		Text = InText;
 		RebuildTextArguments();

@@ -103,7 +103,7 @@ int32 UDlgStatsCommandlet::GetNodeWordCount(const UDlgNode& Node) const
 	// Edges
 	for (const FDlgEdge& Edge : Node.GetNodeChildren())
 	{
-		WordCount += GetTextWordCount(Edge.GetRawText());
+		WordCount += GetTextWordCount(Edge.GetUnformattedText());
 	}
 
 	return WordCount;

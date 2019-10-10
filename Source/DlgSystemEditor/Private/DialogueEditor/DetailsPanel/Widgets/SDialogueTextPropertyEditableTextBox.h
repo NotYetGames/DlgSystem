@@ -6,6 +6,10 @@
 #include "STextPropertyEditableTextBox.h"
 
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FDialogueTextCommitedDelegate, const FText&, ETextCommit::Type);
+DECLARE_MULTICAST_DELEGATE_OneParam(FDialogueTextChangedDelegate, const FText&);
+
+
 // From STextPropertyEditableTextBox but only the localization editing stuff
 // Used to edit FText multiline FText instances
 class SDialogueTextPropertyEditableTextBox : public SCompoundWidget
@@ -72,6 +76,9 @@ public:
 	void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override;
 
 	FText GetTextValue() const;
+
+	FDialogueTextCommitedDelegate& OnTextCommittedEvent() { return TextCommittedEvent; }
+	FDialogueTextChangedDelegate& OnTextChangedEvent() { return TextChangedEvent; }
 	
 private:
 	void GetDesiredWidth(float& OutMinDesiredWidth, float& OutMaxDesiredWidth);
@@ -107,6 +114,10 @@ private:
 	bool IsValidIdentity(const FText& InIdentity, FText* OutReason = nullptr, const FText* InErrorCtx = nullptr) const;
 
 protected:
+	// Events
+	FDialogueTextCommitedDelegate TextCommittedEvent;
+	FDialogueTextChangedDelegate TextChangedEvent;	
+	
 	TSharedPtr<IEditableTextProperty> EditableTextProperty;
 
 	TSharedPtr<class SWidget> PrimaryWidget;

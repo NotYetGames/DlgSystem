@@ -58,7 +58,8 @@ public:
 
 	/** Handler for when the text is changed */
 	void HandleTextCommitted(const FText& InText, ETextCommit::Type CommitInfo);
-
+	void HandleTextChanged(const FText& InText);
+	
 private:
 	// Getters for the visibility of some properties
 	EVisibility GetTextVisibility() const { return bShowTextProperty ? EVisibility::Visible : EVisibility::Hidden; }

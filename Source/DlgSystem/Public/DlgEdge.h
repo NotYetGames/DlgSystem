@@ -41,26 +41,27 @@ public:
 	FDlgEdge(int32 InTargetIndex = INDEX_NONE) : TargetIndex(InTargetIndex) {}
 
 	// Rebuilds TextArguments
-	void RebuildTextArgumentsArray() { FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments); }
-
+	void RebuildTextArguments() { FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments); }
+	void RebuildTextArgumentsFromPreview(const FText& Preview) { FDlgTextArgument::UpdateTextArgumentArray(Preview, TextArguments); }
+	
 	/** Returns with true if every condition attached to the edge and every enter condition of the target node are satisfied */
 	bool Evaluate(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
 	/** Constructs the ConstructedText. */
-	void ConstructTextFromArguments(const UDlgContextInternal* DlgContext, FName NodeOwnerName);
+	void RebuildConstructedText(const UDlgContextInternal* DlgContext, FName NodeOwnerName);
 
 	const TArray<FDlgTextArgument>& GetTextArguments() const { return TextArguments; }
 	
 	// Sets the text and rebuilds the formatted constructed text
 	void SetText(const FText& NewText)
 	{
-		SetRawText(NewText);
-		RebuildTextArgumentsArray();
+		SetUnformattedText(NewText);
+		RebuildTextArguments();
 	}
 
 	// Sets the unformatted text, this is the text that includes the {identifier}
-	// NOTE: this is not call RebuildTextArgumentsArray(), use SetText for that
-	void SetRawText(const FText& NewText)
+	// NOTE: this is not call RebuildTextArguments(), use SetText for that
+	void SetUnformattedText(const FText& NewText)
 	{
 		Text = NewText;
 	}
@@ -72,12 +73,11 @@ public:
 		{
 			return ConstructedText;
 		}
-		
 		return Text;
 	}
 
 	// This always returns the unformatted text, if you want the formatted text use GetText()
-	const FText& GetRawText() const { return Text; }
+	const FText& GetUnformattedText() const { return Text; }
 	
 	/** Returns if the Edge is valid, has the TargetIndex non negative  */
 	bool IsValid() const

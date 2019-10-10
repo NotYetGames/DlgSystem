@@ -11,15 +11,14 @@ void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
 	const FName PropertyName = PropertyChangedEvent.Property != nullptr ? PropertyChangedEvent.Property->GetFName() : NAME_None;
-	const bool bTextChanged = PropertyName == UDlgNode_Speech::GetMemberNameText();
+	const bool bTextChanged = PropertyName == GetMemberNameText();
+
 	// rebuild text arguments
-	if (bTextChanged || PropertyName == UDlgNode_Speech::GetMemberNameTextArguments())
+	if (bTextChanged || PropertyName == GetMemberNameTextArguments())
 	{
 		RebuildTextArguments();
-
 		if (bTextChanged)
 		{
-			// TODO: maybe store key in preeditchangeproperty to preserve it?!
 			UpdateTextNamespace(Text);
 		}
 	}
@@ -27,26 +26,24 @@ void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 
 #endif
 
-void UDlgNode_Speech::RebuildTextArguments()
+void UDlgNode_Speech::RebuildConstructedText(const UDlgContextInternal* DlgContext)
 {
-	FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments);
-	ConstructedText = Text;
+	if (TextArguments.Num() <= 0)
+	{
+		return;
+	}
+
+	FFormatNamedArguments OrderedArguments;
+	for (const FDlgTextArgument& DlgArgument : TextArguments)
+	{
+		OrderedArguments.Add(DlgArgument.DisplayString, DlgArgument.ConstructFormatArgumentValue(DlgContext, OwnerName));
+	}
+	ConstructedText = FText::Format(Text, OrderedArguments);
 }
 
 bool UDlgNode_Speech::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
-	if (TextArguments.Num() > 0)
-	{
-		FFormatNamedArguments OrderedArguments;
-
-		for (const FDlgTextArgument& DlgArgument : TextArguments)
-		{
-			OrderedArguments.Add(DlgArgument.DisplayString, DlgArgument.ConstructFormatArgumentValue(DlgContext, OwnerName));
-		}
-
-		ConstructedText = FText::Format(Text, OrderedArguments);
-	}
-
+	RebuildConstructedText(DlgContext);
 	return Super::HandleNodeEnter(DlgContext, NodesEnteredWithThisStep);
 }
 

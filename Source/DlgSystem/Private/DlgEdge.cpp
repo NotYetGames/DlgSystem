@@ -26,19 +26,19 @@ bool FDlgEdge::Evaluate(const UDlgContextInternal* DlgContext, TSet<const UDlgNo
 	return FDlgCondition::EvaluateArray(Conditions, DlgContext);
 }
 
-void FDlgEdge::ConstructTextFromArguments(const UDlgContextInternal* DlgContext, FName NodeOwnerName)
+void FDlgEdge::RebuildConstructedText(const UDlgContextInternal* DlgContext, FName NodeOwnerName)
 {
-	if (TextArguments.Num() > 0)
+	if (TextArguments.Num() <= 0)
 	{
-		FFormatNamedArguments OrderedArguments;
-
-		for (const FDlgTextArgument& DlgArgument : TextArguments)
-		{
-			OrderedArguments.Add(DlgArgument.DisplayString, DlgArgument.ConstructFormatArgumentValue(DlgContext, NodeOwnerName));
-		}
-
-		ConstructedText = FText::Format(Text, OrderedArguments);
+		return;
 	}
+	
+	FFormatNamedArguments OrderedArguments;
+	for (const FDlgTextArgument& DlgArgument : TextArguments)
+	{
+		OrderedArguments.Add(DlgArgument.DisplayString, DlgArgument.ConstructFormatArgumentValue(DlgContext, NodeOwnerName));
+	}
+	ConstructedText = FText::Format(Text, OrderedArguments);
 }
 
 

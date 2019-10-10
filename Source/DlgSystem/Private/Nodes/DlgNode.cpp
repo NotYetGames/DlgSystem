@@ -71,7 +71,7 @@ bool UDlgNode::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgN
 
 	for (FDlgEdge& Edge : Children)
 	{
-		Edge.ConstructTextFromArguments(DlgContext, OwnerName);
+		Edge.RebuildConstructedText(DlgContext, OwnerName);
 	}
 
 	return ReevaluateChildren(DlgContext, {});

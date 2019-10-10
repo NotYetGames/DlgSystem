@@ -66,7 +66,6 @@ public:
 	CREATE_OPTIONS_SETTER(WrapTextAt, float, WrapTextAt)
 	CREATE_OPTIONS_SETTER(ModiferKeyForNewLine, EModifierKey::Type, ModiferKeyForNewLine)
 	
-	
 #undef CREATE_OPTIONS_SETTER
 	
 	// void HandleTextCommitted(const FText& NewText, ETextCommit::Type CommitInfo);
@@ -74,16 +73,23 @@ public:
 	/** Gets the value of the text property. */
 	FText GetTextValue() const;
 
+	// NOTE: only call these after Update()
+	FDialogueTextCommitedDelegate& OnTextCommittedEvent();
+	FDialogueTextChangedDelegate& OnTextChangedEvent();
+
+	
 protected:
 	// Reset to default
 	FText GetResetToolTip() const;
 	EVisibility GetDiffersFromDefaultAsVisibility() const;
 	FReply OnResetClicked();
 
-
 	void UpdateInternal() override;
 
 private:
+	// Events
+	FDialogueTextCommitedDelegate TextCommittedEvent;
+	
 	// The text box Widget.
 	TSharedPtr<SDialogueTextPropertyEditableTextBox> TextBoxWidget;
 

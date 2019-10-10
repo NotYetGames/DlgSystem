@@ -418,13 +418,13 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataLinksFromEdges(const UD
 		}
 
 		FString EdgeText;
-		if (bNoTextOnEdges || Edge.GetRawText().IsEmpty())
+		if (bNoTextOnEdges || Edge.GetUnformattedText().IsEmpty())
 		{
 			EdgeText = FString::Printf(TEXT("~ignore~ To Node %d"), Edge.TargetIndex);
 		}
 		else
 		{
-			EdgeText = EscapeHtml(Edge.GetRawText().ToString());
+			EdgeText = EscapeHtml(Edge.GetUnformattedText().ToString());
 		}
 		Links += FString::Printf(TEXT("[[%s|%s]]\n"), *EdgeText, *GetNodeNameFromNode(*Nodes[Edge.TargetIndex], Edge.TargetIndex, false));
 	}

@@ -81,7 +81,7 @@ void FDialogueCompilerContext::PostCompileGraphNode(UDialogueGraphNode* GraphNod
 		const TArray<FDlgEdge>& NodeEdges = GraphNode->GetDialogueNode().GetNodeChildren();;
 		check(NodeEdges.Num() == 1);
 		// there is only one child and that child does not have any text on the edges
-		if (NodeEdges[0].GetRawText().IsEmpty())
+		if (NodeEdges[0].GetUnformattedText().IsEmpty())
 		{
 			UDialogueGraphNode* ChildGraphNode = GraphNode->GetChildNodes()[0];
 			// TODO add graph nodes for each type

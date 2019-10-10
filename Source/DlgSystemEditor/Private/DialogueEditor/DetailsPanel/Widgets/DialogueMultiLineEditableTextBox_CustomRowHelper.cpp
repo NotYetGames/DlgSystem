@@ -143,6 +143,18 @@ void FDialogueMultiLineEditableTextBox_CustomRowHelper::UpdateInternal()
 	// ];
 }
 
+FDialogueTextCommitedDelegate& FDialogueMultiLineEditableTextBox_CustomRowHelper::OnTextCommittedEvent()
+{
+	check(TextBoxWidget.IsValid());
+	return TextBoxWidget->OnTextCommittedEvent();
+}
+
+FDialogueTextChangedDelegate& FDialogueMultiLineEditableTextBox_CustomRowHelper::OnTextChangedEvent()
+{
+	check(TextBoxWidget.IsValid());
+	return TextBoxWidget->OnTextChangedEvent();
+}
+
 // void FDialogueMultiLineEditableTextBox_CustomRowHelper::HandleTextCommitted(const FText& NewText, ETextCommit::Type CommitInfo)
 // {
 // 	FText CurrentText;

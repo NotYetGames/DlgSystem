@@ -82,7 +82,9 @@ public:
 	}
 
 #if USE_STABLE_LOCALIZATION_KEYS
-	void GetStableTextId(const int32 InIndex, const ETextPropertyEditAction InEditAction, const FString& InTextSource, const FString& InProposedNamespace, const FString& InProposedKey, FString& OutStableNamespace, FString& OutStableKey) const override
+	void GetStableTextId(const int32 InIndex, const ETextPropertyEditAction InEditAction,
+		const FString& InTextSource, const FString& InProposedNamespace, const FString& InProposedKey,
+		FString& OutStableNamespace, FString& OutStableKey) const override
 	{
 		if (PropertyHandle->IsValidHandle())
 		{
