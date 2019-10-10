@@ -154,6 +154,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 		NodeDataPropertyRow = &SpeechDataCategory.AddProperty(
 			PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameNodeData())
 		);
+		NodeDataPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetNodeDataVisibility));
 		NodeDataPropertyRow->ShouldAutoExpand(true);
 
 		// SoundWave

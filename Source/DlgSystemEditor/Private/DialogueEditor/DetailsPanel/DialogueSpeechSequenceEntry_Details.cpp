@@ -99,7 +99,8 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 	// Node Data that can be anything set by the user
 	NodeDataPropertyRow = &StructBuilder.AddProperty(
 		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, NodeData)).ToSharedRef());
-
+	NodeDataPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetNodeDataVisibility));
+	
 	// SoundWave
 	VoiceSoundWavePropertyRow = &StructBuilder.AddProperty(
 		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, VoiceSoundWave)).ToSharedRef());

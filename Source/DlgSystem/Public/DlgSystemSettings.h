@@ -198,6 +198,11 @@ public:
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Input Key for NewLine")
 	EDlgTextInputKeyForNewLine DialogueTextInputKeyForNewLine = EDlgTextInputKeyForNewLine::Enter;
 
+	
+	// Shows the NodeData that you can customize yourself
+	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere, DisplayName = "Node Data Visibility")
+	bool bShowNodeData = true;
+	
 	/** Where to display the SpeakerState FName property */
 	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere, DisplayName = "SpeakerState Visibility")
 	EDlgSpeakerStateVisibility DialogueSpeakerStateVisibility = EDlgSpeakerStateVisibility::ShowOnNodeAndEdge;
