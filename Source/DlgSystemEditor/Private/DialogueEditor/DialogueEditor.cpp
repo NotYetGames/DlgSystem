@@ -139,7 +139,7 @@ void FDialogueEditor::PostUndo(bool bSuccess)
 {
 	if (bSuccess)
 	{
-		Refresh();
+		Refresh(false);
 		CheckAll();
 	}
 }
@@ -148,7 +148,7 @@ void FDialogueEditor::PostRedo(bool bSuccess)
 {
 	if (bSuccess)
 	{
-		Refresh();
+		Refresh(false);
 		CheckAll();
 	}
 }
@@ -157,11 +157,57 @@ void FDialogueEditor::PostRedo(bool bSuccess)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin IDialogueEditor
-void FDialogueEditor::Refresh()
+
+void FDialogueEditor::RefreshDetailsView(bool bRestorePreviousSelection)
+{
+	if (DetailsView.IsValid())
+	{
+		if (DialogueBeingEdited)
+		{
+			DetailsView->SetObject(DialogueBeingEdited, true);
+		}
+		else
+		{
+			DetailsView->ForceRefresh();
+		}
+		DetailsView->ClearSearch();
+	}
+
+	if (bRestorePreviousSelection)
+	{
+		// Create local copy because this can be changed by node selection again
+		TArray<TWeakObjectPtr<UObject>> ArrayCopy = PreviousSelectedNodeObjects;
+
+		// Select all previous nodes
+		for (const TWeakObjectPtr<UObject>& WeakObj : ArrayCopy)
+		{
+			if (!WeakObj.IsValid(false))
+			{
+				continue;
+			}
+
+			UObject* Object = WeakObj.Get();
+			if (!IsValid(Object))
+			{
+				continue;
+			}
+
+			UEdGraphNode* GraphNode = Cast<UEdGraphNode>(Object);
+			if (!IsValid(GraphNode))
+			{
+				continue;
+			}
+
+			GraphEditorView->SetNodeSelection(const_cast<UEdGraphNode*>(GraphNode), true);
+		}
+	}
+}
+
+void FDialogueEditor::Refresh(bool bRestorePreviousSelection)
 {
 	ClearViewportSelection();
 	RefreshViewport();
-	RefreshDetailsView();
+	RefreshDetailsView(bRestorePreviousSelection);
 	FSlateApplication::Get().DismissAllMenus();
 }
 
@@ -195,7 +241,7 @@ void FDialogueEditor::JumpToObject(const UObject* Object)
 	// Jump to the node
 	static constexpr bool bRequestRename = false;
 	static constexpr bool bSelectNode = true;
-	Refresh();
+	Refresh(false);
 	GraphEditorView->JumpToNode(GraphNode, bRequestRename, bSelectNode);
 
 	// Select from JumpNode seems to be buggy sometimes, WE WILL DO IT OURSELFS!
@@ -1067,14 +1113,16 @@ void FDialogueEditor::OnCommandDialogueReload() const
 	DialogueBeingEdited->MarkPackageDirty();
 }
 
-void FDialogueEditor::OnSelectedNodesChanged(const TSet<UObject*>& NewSelection) const
+void FDialogueEditor::OnSelectedNodesChanged(const TSet<UObject*>& NewSelection)
 {
 	TArray<UObject*> ViewSelection;
 
+	PreviousSelectedNodeObjects.Empty();
 	if (NewSelection.Num())
 	{
 		for (UObject* Selected : NewSelection)
 		{
+			PreviousSelectedNodeObjects.Add(Selected);
 			ViewSelection.Add(Selected);
 		}
 	}
@@ -1109,7 +1157,7 @@ void FDialogueEditor::OnGraphActionMenuClosed(bool bActionExecuted, bool bGraphP
 {
 	if (!bActionExecuted)
 	{
-		// reset previous drang and drop saved edges.
+		// reset previous drag and drop saved edges.
 		LastTargetGraphEdgeBeforeDrag = nullptr;
 	}
 }

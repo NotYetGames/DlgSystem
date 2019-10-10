@@ -63,7 +63,7 @@ public:
 	static bool GetBoundsForSelectedNodes(const UEdGraph* Graph, class FSlateRect& Rect, float Padding = 0.0f);
 
 	/** Refreshes the details panel for the editor of the specified Graph. */
-	static void RefreshDetailsView(const UEdGraph* Graph);
+	static void RefreshDetailsView(const UEdGraph* Graph, bool bRestorePreviousSelection);
 
 	/** Useful for setting the last target edge on drap operations. */
 	static UDialogueGraphNode_Edge* GetLastTargetGraphEdgeBeforeDrag(const UEdGraph* Graph);

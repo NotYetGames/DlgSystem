@@ -27,7 +27,7 @@ void FDlgDialogueEditorAccess::CompileDialogueNodesFromGraphNodes(UDlgDialogue* 
 	FCompilerResultsLog MessageLog;
 	FDialogueCompilerContext CompilerContext(Dialogue, MessageLog);
 	CompilerContext.Compile();
-	FDialogueEditorUtilities::RefreshDetailsView(Dialogue->GetGraph());
+	//FDialogueEditorUtilities::RefreshDetailsView(Dialogue->GetGraph(), true);
 }
 
 /** Removes all nodes from the graph. */

@@ -48,12 +48,12 @@ bool FDialogueEditorUtilities::GetBoundsForSelectedNodes(const UEdGraph* Graph, 
 	return false;
 }
 
-void FDialogueEditorUtilities::RefreshDetailsView(const UEdGraph* Graph)
+void FDialogueEditorUtilities::RefreshDetailsView(const UEdGraph* Graph, bool bRestorePreviousSelection)
 {
 	TSharedPtr<IDialogueEditor> DialogueEditor = GetDialogueEditorForGraph(Graph);
 	if (DialogueEditor.IsValid())
 	{
-		DialogueEditor->RefreshDetailsView();
+		DialogueEditor->RefreshDetailsView(bRestorePreviousSelection);
 	}
 }
 
