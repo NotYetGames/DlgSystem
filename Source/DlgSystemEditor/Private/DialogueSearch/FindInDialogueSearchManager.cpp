@@ -260,11 +260,11 @@ bool FFindInDialogueSearchManager::QueryDlgEdge(const FDialogueSearchFilter& Sea
 	bool bContainsSearchString = false;
 
 	// Test Text
-	if (InDlgEdge.Text.ToString().Contains(SearchFilter.SearchString))
+	if (InDlgEdge.GetRawText().ToString().Contains(SearchFilter.SearchString))
 	{
 		bContainsSearchString = true;
 		MakeChildTextNode(OutParentNode,
-						  InDlgEdge.Text,
+						  InDlgEdge.GetRawText(),
 						  LOCTEXT("DlgEdgText", "DlgEdge Text"),
 						  TEXT("DlgEdge.Text"));
 	}
@@ -287,9 +287,10 @@ bool FFindInDialogueSearchManager::QueryDlgEdge(const FDialogueSearchFilter& Sea
 	}
 
 	// Test TextArguments
-	for (int32 Index = 0, Num = InDlgEdge.TextArguments.Num(); Index < Num; Index++)
+	const TArray<FDlgTextArgument>&  TextArguments = InDlgEdge.GetTextArguments();
+	for (int32 Index = 0, Num = TextArguments.Num(); Index < Num; Index++)
 	{
-		bContainsSearchString |= QueryDlgTextArgument(SearchFilter, InDlgEdge.TextArguments[Index], OutParentNode, Index);
+		bContainsSearchString |= QueryDlgTextArgument(SearchFilter, TextArguments[Index], OutParentNode, Index);
 	}
 
 	return bContainsSearchString;

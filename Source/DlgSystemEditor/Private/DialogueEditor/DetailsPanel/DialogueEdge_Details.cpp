@@ -51,27 +51,19 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, Conditions)).ToSharedRef());
 
 	// Text
-	TextPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, Text));
+	TextPropertyHandle = StructPropertyHandle->GetChildHandle(FDlgEdge::GetMemberNameText());
 	FDetailWidgetRow* TextDetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
 
 	TextPropertyRow = MakeShared<FDialogueMultiLineEditableTextBox_CustomRowHelper>(TextDetailWidgetRow, TextPropertyHandle);
-	TextPropertyRow->SetMultiLineEditableTextBoxWidget(
-		SNew(SMultiLineEditableTextBox)
-		.Font(FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont")))
-		.SelectAllTextWhenFocused(false)
-		.ClearKeyboardFocusOnCommit(false)
-		.SelectAllTextOnCommit(false)
-		.AutoWrapText(true)
-		.ModiferKeyForNewLine(FDialogueDetailsPanelUtils::GetModifierKeyFromDialogueSettings())
-		.Text(TextPropertyRow.ToSharedRef(), &FDialogueMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
-		.OnTextCommitted(this, &Self::HandleTextCommitted)
-	)
-	->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities())
-	->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility))
-	->Update();
+	TextPropertyRow->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities())
+		.SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility))
+		.Update();
+
+	// TODO
+	// .OnTextCommitted(this, &Self::HandleTextCommitted)
 
 	// Text Arguments
-	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEdge, TextArguments)).ToSharedRef())
+	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(FDlgEdge::GetMemberNameTextArguments()).ToSharedRef())
 		.Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility));
 
 	// Speaker State
@@ -88,8 +80,8 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 			.OnTextCommitted(this, &Self::HandleSpeakerStateCommitted)
 			.HasContextCheckbox(false)
 		)
-		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetSpeakerStateVisibility))
-		->Update();
+		.SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetSpeakerStateVisibility))
+		.Update();
 	}
 
 	// bIncludeInAllOptionListIfUnsatisfied
@@ -109,7 +101,8 @@ void FDialogueEdge_Details::HandleSpeakerStateCommitted(const FText& InSearchTex
 
 void FDialogueEdge_Details::HandleTextCommitted(const FText& InText, ETextCommit::Type CommitInfo)
 {
-	TextPropertyRow->HandleTextCommitted(InText, CommitInfo);
+	// TODO fix
+	//TextPropertyRow->HandleTextCommitted(InText, CommitInfo);
 
 	if (UDialogueGraphNode_Edge* GraphEdge = FDialogueDetailsPanelUtils::GetAsGraphNodeEdgeFromPropertyHandle(StructPropertyHandle.ToSharedRef()))
 	{

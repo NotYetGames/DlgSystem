@@ -153,7 +153,7 @@ void UDlgNode_SpeechSequence::AutoGenerateInnerEdges()
 	for (const FDlgSpeechSequenceEntry& Entry : SpeechSequence)
 	{
 		FDlgEdge Edge;
-		Edge.Text = Entry.EdgeText;
+		Edge.SetRawText(Entry.EdgeText);
 		InnerEdges.Add(Edge);
 	}
 }

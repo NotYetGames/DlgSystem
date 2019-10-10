@@ -17,31 +17,31 @@ public:
 	virtual ~FDialogueBase_CustomRowHelper() {}
 
 	/** Sets the localized display name of the property. */
-	Self* SetDisplayName(const FText& InDisplayName)
+	Self& SetDisplayName(const FText& InDisplayName)
 	{
 		DisplayName = InDisplayName;
-		return this;
+		return *this;
 	}
 
 	/** Sets the localized tooltip of the property. */
-	Self* SetToolTip(const FText& InToolTip)
+	Self& SetToolTip(const FText& InToolTip)
 	{
 		ToolTip = InToolTip;
-		return this;
+		return *this;
 	}
 
 	/** Sets the visibility of this property. */
-	Self* SetVisibility(const TAttribute<EVisibility>& InVisibility)
+	Self& SetVisibility(const TAttribute<EVisibility>& InVisibility)
 	{
 		DetailWidgetRow->Visibility(InVisibility);
-		return this;
+		return *this;
 	}
 
 	/** Set the optional utils */
-	Self* SetPropertyUtils(const TSharedPtr<IPropertyUtilities>& Utils)
+	Self& SetPropertyUtils(const TSharedPtr<IPropertyUtilities>& Utils)
 	{
 		PropertyUtils = Utils;
-		return this;
+		return *this;
 	}
 
 	/** Update the full property row. */

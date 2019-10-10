@@ -11,6 +11,7 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "Widgets/SDialogueTextPropertyPickList.h"
 #include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
+#include "DlgHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueEvent_Details"
 
@@ -62,7 +63,7 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 			.IsContextCheckBoxChecked(true)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueParticipantNames)
 		)
-		->Update();
+		.Update();
 	}
 
 	// EventType
@@ -145,8 +146,8 @@ void FDialogueEvent_Details::OnEventTypeChanged(bool bForceRefresh)
 	}
 
 	EventNamePropertyRow->SetDisplayName(EventNameDisplayName)
-		->SetToolTip(EventNameToolTip)
-		->Update();
+		.SetToolTip(EventNameToolTip)
+		.Update();
 
 	// Refresh the view, without this some names/tooltips won't get refreshed
 	if (bForceRefresh && PropertyUtils.IsValid())

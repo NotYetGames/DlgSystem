@@ -4,12 +4,14 @@
 #include "IDetailPropertyRow.h"
 #include "IPropertyUtilities.h"
 #include "IDetailChildrenBuilder.h"
+#include "UObject/TextProperty.h"
 
 #include "DlgReflectionHelper.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "Widgets/SDialogueTextPropertyPickList.h"
 #include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
+#include "DlgHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueTextArgument_Details"
 
@@ -63,7 +65,7 @@ void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle
 			.IsContextCheckBoxChecked(true)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueParticipantNames)
 		)
-		->Update();
+		.Update();
 	}
 
 	// ArgumentType

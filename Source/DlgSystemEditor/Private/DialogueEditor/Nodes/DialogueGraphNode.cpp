@@ -410,8 +410,7 @@ void UDialogueGraphNode::SetEdgeTextAt(int32 EdgeIndex, const FText& NewText)
 	check(GraphNodeEdges.IsValidIndex(EdgeIndex));
 
 	FDlgEdge* Edge = DialogueNode->GetSafeMutableNodeChildAt(EdgeIndex);
-	Edge->Text = NewText;
-	Edge->RebuildTextArgumentsArray();
+	Edge->SetText(NewText);
 	GraphNodeEdges[EdgeIndex]->SetDialogueEdgeText(NewText);
 }
 

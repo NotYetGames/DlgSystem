@@ -634,7 +634,7 @@ void UDlgDialogue::RefreshData()
 			const int32 TargetIndex = Edge.TargetIndex;
 			DlgSpeakerStates.Add(Edge.SpeakerState);
 
-			for (const FDlgTextArgument& TextArgument : Edge.TextArguments)
+			for (const FDlgTextArgument& TextArgument : Edge.GetTextArguments())
 			{
 				const FString ContextMessage = FString::Printf(TEXT("Adding Edge text arguments data from %s, to Node %d"), *NodeContext, TargetIndex);
 				GetParticipantDataEntry(TextArgument.ParticipantName, NodeParticipantName, true, ContextMessage)
@@ -742,11 +742,11 @@ void UDlgDialogue::AutoFixGraph()
 			UDlgNode* NextNode = Nodes[NodeChildren[0].TargetIndex];
 			if (NextNode->IsA<UDlgNode_End>())
 			{
-				Node->GetSafeMutableNodeChildAt(0)->Text = UDlgSystemSettings::EdgeTextFinish;
+				Node->GetSafeMutableNodeChildAt(0)->SetRawText(UDlgSystemSettings::EdgeTextFinish);
 			}
 			else
 			{
-				Node->GetSafeMutableNodeChildAt(0)->Text = UDlgSystemSettings::EdgeTextNext;
+				Node->GetSafeMutableNodeChildAt(0)->SetRawText(UDlgSystemSettings::EdgeTextNext);
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Csaba Molnar, Daniel Butum
 #pragma once
 #include "CoreMinimal.h"
-#include "STextPropertyEditableTextBox.h"
+#include "SDialogueTextPropertyEditableTextBox.h"
 #include "IPropertyUtilities.h"
 #include "PropertyHandle.h"
 

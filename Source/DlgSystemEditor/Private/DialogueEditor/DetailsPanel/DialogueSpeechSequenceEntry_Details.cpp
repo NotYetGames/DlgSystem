@@ -50,7 +50,7 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 			.IsContextCheckBoxChecked(true)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueParticipantNames)
 		)
-		->Update();
+		.Update();
 	}
 
 	// Text
@@ -59,19 +59,8 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
 
 		TextPropertyRow = MakeShared<FDialogueMultiLineEditableTextBox_CustomRowHelper>(DetailWidgetRow, TextPropertyHandle);
-		TextPropertyRow->SetMultiLineEditableTextBoxWidget(
-			SNew(SMultiLineEditableTextBox)
-			.Font(FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont")))
-			.SelectAllTextWhenFocused(false)
-			.ClearKeyboardFocusOnCommit(false)
-			.SelectAllTextOnCommit(false)
-			.AutoWrapText(true)
-			.ModiferKeyForNewLine(FDialogueDetailsPanelUtils::GetModifierKeyFromDialogueSettings())
-			.Text(TextPropertyRow.ToSharedRef(), &FDialogueMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
-			.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FDialogueMultiLineEditableTextBox_CustomRowHelper::HandleTextCommitted)
-		)
-		->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities())
-		->Update();
+		TextPropertyRow->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities());
+		TextPropertyRow->Update();
 	}
 
 
@@ -81,19 +70,8 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("EdgeTextSearchKey", "Edge Text"));
 
 		EdgeTextPropertyRow = MakeShared<FDialogueMultiLineEditableTextBox_CustomRowHelper>(DetailWidgetRow, EdgeTextPropertyHandle);
-		EdgeTextPropertyRow->SetMultiLineEditableTextBoxWidget(
-			SNew(SMultiLineEditableTextBox)
-			.Font(FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont")))
-			.SelectAllTextWhenFocused(false)
-			.ClearKeyboardFocusOnCommit(false)
-			.SelectAllTextOnCommit(false)
-			.AutoWrapText(true)
-			.ModiferKeyForNewLine(FDialogueDetailsPanelUtils::GetModifierKeyFromDialogueSettings())
-			.Text(EdgeTextPropertyRow.ToSharedRef(), &FDialogueMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
-			.OnTextCommitted(EdgeTextPropertyRow.ToSharedRef(), &FDialogueMultiLineEditableTextBox_CustomRowHelper::HandleTextCommitted)
-		)
-		->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities())
-		->Update();
+		TextPropertyRow->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities());
+		TextPropertyRow->Update();
 	}
 
 	//
@@ -114,8 +92,8 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(false)
 		)
-		->SetVisibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetSpeakerStateNodeVisibility))
-		->Update();
+		.SetVisibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetSpeakerStateNodeVisibility))
+		.Update();
 	}
 
 	// Node Data that can be anything set by the user

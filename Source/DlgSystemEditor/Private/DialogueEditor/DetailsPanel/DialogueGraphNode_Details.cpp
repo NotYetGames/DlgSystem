@@ -77,7 +77,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 				.IsContextCheckBoxChecked(true)
 				.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueParticipantNames)
 			)
-			->Update();
+			.Update();
 		}
 
 		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameCheckChildrenOnEvaluation()));
@@ -115,19 +115,8 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 			FDetailWidgetRow* DetailWidgetRow = &SpeechCategory.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
 
 			TextPropertyRow = MakeShared<FDialogueMultiLineEditableTextBox_CustomRowHelper>(DetailWidgetRow, TextPropertyHandle);
-			TextPropertyRow->SetMultiLineEditableTextBoxWidget(
-				SNew(SMultiLineEditableTextBox)
-				.Font(FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont")))
-				.SelectAllTextWhenFocused(false)
-				.ClearKeyboardFocusOnCommit(false)
-				.SelectAllTextOnCommit(false)
-				.AutoWrapText(true)
-				.ModiferKeyForNewLine(FDialogueDetailsPanelUtils::GetModifierKeyFromDialogueSettings())
-				.Text(TextPropertyRow.ToSharedRef(), &FDialogueMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
-				.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FDialogueMultiLineEditableTextBox_CustomRowHelper::HandleTextCommitted)
-			)
-			->SetPropertyUtils(DetailBuilder.GetPropertyUtilities())
-			->Update();
+			TextPropertyRow->SetPropertyUtils(DetailBuilder.GetPropertyUtilities());
+			TextPropertyRow->Update();
 		}
 
 		// Text arguments
@@ -157,8 +146,8 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 				.OnTextCommitted(this, &Self::HandleSpeakerStateCommitted)
 				.HasContextCheckbox(false)
 			)
-			->SetVisibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetSpeakerStateNodeVisibility))
-			->Update();
+			.SetVisibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetSpeakerStateNodeVisibility))
+			.Update();
 		}
 
 		// Node Data that can be anything set by the user

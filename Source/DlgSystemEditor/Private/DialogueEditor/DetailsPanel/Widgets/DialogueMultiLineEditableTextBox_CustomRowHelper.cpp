@@ -10,10 +10,29 @@
 #include "Internationalization/TextNamespaceUtil.h"
 #include "IPropertyUtilities.h"
 #include "DialogueEditableTextPropertyHandle.h"
+#include "DialogueEditor/DetailsPanel/DialogueDetailsPanelUtils.h"
 
 #define LOCTEXT_NAMESPACE "MultiLineEditableTextBox_CustomRowHelper"
 
-const FText FDialogueMultiLineEditableTextBox_CustomRowHelper::MultipleValuesText = NSLOCTEXT("PropertyEditor", "MultipleValues", "Multiple Values");
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// FDialogueMultiLineEditableTextBoxOptions
+void FDialogueMultiLineEditableTextBoxOptions::SetDefaults()
+{
+	const auto DefaultValues = Self{};
+
+	// Set default values
+	bSelectAllTextWhenFocused = DefaultValues.bSelectAllTextWhenFocused;
+	bClearKeyboardFocusOnCommit = DefaultValues.bClearKeyboardFocusOnCommit;
+	bSelectAllTextOnCommit = DefaultValues.bSelectAllTextOnCommit;
+	bAutoWrapText = DefaultValues.bAutoWrapText;
+	WrapTextAt = DefaultValues.WrapTextAt;
+	ModiferKeyForNewLine = FDialogueDetailsPanelUtils::GetModifierKeyFromDialogueSettings();
+
+	// Set values that can't be set in the class definition
+	Style = FCoreStyle::Get().GetWidgetStyle<FEditableTextBoxStyle>("NormalEditableTextBox");
+	Font = FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont"));
+	// ForegroundColor = 
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueMultiLineEditableTextBox_CustomRowHelper
@@ -50,12 +69,10 @@ FReply FDialogueMultiLineEditableTextBox_CustomRowHelper::OnResetClicked()
 
 void FDialogueMultiLineEditableTextBox_CustomRowHelper::UpdateInternal()
 {
-	check(MultiLineEditableTextBoxWidget.IsValid());
 	check(PropertyHandle.IsValid());
 	check(PropertyUtils.IsValid());
-	MultiLineEditableTextBoxWidget->SetToolTipText(ToolTip);
 
-	PropertyHandle->MarkResetToDefaultCustomized(true);
+	//PropertyHandle->MarkResetToDefaultCustomized(true);
 	EditableTextProperty = MakeShared<FDialogueEditableTextPropertyHandle>(PropertyHandle.ToSharedRef(), PropertyUtils);
 
 	TSharedPtr<SHorizontalBox> HorizontalBox;
@@ -78,8 +95,20 @@ void FDialogueMultiLineEditableTextBox_CustomRowHelper::UpdateInternal()
 			// SNew(SBox)
 			// .HeightOverride(100)
 			// [
-				MultiLineEditableTextBoxWidget.ToSharedRef()
+				//MultiLineEditableTextBoxWidget.ToSharedRef()
 			// ]
+			//
+			SAssignNew(TextBoxWidget, SDialogueTextPropertyEditableTextBox, EditableTextProperty.ToSharedRef())
+			.Style(&Options.Style)
+			.Font(Options.Font)
+			.ForegroundColor(Options.ForegroundColor)
+			.ReadOnlyForegroundColor(Options.ReadOnlyForegroundColor)
+			.SelectAllTextWhenFocused(Options.bSelectAllTextWhenFocused)
+			.ClearKeyboardFocusOnCommit(Options.bClearKeyboardFocusOnCommit)
+			.SelectAllTextOnCommit(Options.bSelectAllTextOnCommit)
+			.AutoWrapText(Options.bAutoWrapText)
+			.WrapTextAt(Options.WrapTextAt)
+			.ModiferKeyForNewLine(Options.ModiferKeyForNewLine)
 		]
 
 		// Localization widget
@@ -87,55 +116,51 @@ void FDialogueMultiLineEditableTextBox_CustomRowHelper::UpdateInternal()
 		// +SHorizontalBox::Slot()
 		// .AutoWidth()
 		// [
-		// 	SNew(STextPropertyEditableTextBox, EditableTextProperty.ToSharedRef())
+		// 	SNew(SDialogueTextPropertyEditableTextBox, EditableTextProperty.ToSharedRef())
 		// 	.Font(FEditorStyle::GetFontStyle("PropertyWindow.NormalFont"))
 		// 	.AutoWrapText(true)
 		// ]
 	];
 
 	// Add Reset to default
-	HorizontalBox->AddSlot()
-	.AutoWidth()
-	.VAlign(VAlign_Center)
-	.Padding(4.f, 2.f)
-	[
-		SNew(SButton)
-		.IsFocusable(false)
-		.ToolTipText(this, &Self::GetResetToolTip)
-		.ButtonStyle(FEditorStyle::Get(), "NoBorder")
-		.ContentPadding(0)
-		.Visibility(this, &Self::GetDiffersFromDefaultAsVisibility)
-		.OnClicked(this, &Self::OnResetClicked)
-		.Content()
-		[
-			SNew(SImage)
-			.Image(FEditorStyle::GetBrush("PropertyWindow.DiffersFromDefault"))
-		]
-	];
+	// HorizontalBox->AddSlot()
+	// .AutoWidth()
+	// .VAlign(VAlign_Center)
+	// .Padding(4.f, 2.f)
+	// [
+	// 	SNew(SButton)
+	// 	.IsFocusable(false)
+	// 	.ToolTipText(this, &Self::GetResetToolTip)
+	// 	.ButtonStyle(FEditorStyle::Get(), "NoBorder")
+	// 	.ContentPadding(0)
+	// 	.Visibility(this, &Self::GetDiffersFromDefaultAsVisibility)
+	// 	.OnClicked(this, &Self::OnResetClicked)
+	// 	.Content()
+	// 	[
+	// 		SNew(SImage)
+	// 		.Image(FEditorStyle::GetBrush("PropertyWindow.DiffersFromDefault"))
+	// 	]
+	// ];
 }
 
-void FDialogueMultiLineEditableTextBox_CustomRowHelper::HandleTextCommitted(const FText& NewText, ETextCommit::Type CommitInfo)
-{
-	FText CurrentText;
-	if (PropertyHandle->GetValueAsFormattedText(CurrentText) != FPropertyAccess::MultipleValues ||
-		NewText.ToString() != MultipleValuesText.ToString())
-	{
-		PropertyHandle->SetValueFromFormattedString(NewText.ToString());
-	}
-}
+// void FDialogueMultiLineEditableTextBox_CustomRowHelper::HandleTextCommitted(const FText& NewText, ETextCommit::Type CommitInfo)
+// {
+// 	FText CurrentText;
+// 	if (PropertyHandle->GetValueAsFormattedText(CurrentText) != FPropertyAccess::MultipleValues ||
+// 		NewText.ToString() != MultipleValuesText.ToString())
+// 	{
+// 		PropertyHandle->SetValueFromFormattedString(NewText.ToString());
+// 	}
+// }
 
 FText FDialogueMultiLineEditableTextBox_CustomRowHelper::GetTextValue() const
 {
-	FText Text;
-
-	// Sets the value, only happens in rare cases
-	if (PropertyHandle->GetValueAsFormattedText(Text) == FPropertyAccess::MultipleValues)
+	if (TextBoxWidget.IsValid())
 	{
-		// If multiple values
-		Text = MultipleValuesText;
+		return TextBoxWidget->GetTextValue();
 	}
-
-	return Text;
+	
+	return FText::GetEmpty();
 }
 
 #undef LOCTEXT_NAMESPACE

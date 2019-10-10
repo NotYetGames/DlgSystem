@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "SDialogueGraphNode.h"
+#include "SDialogueGraphNode_Base.h"
 
 #include "Widgets/Layout/SBox.h"
 #include "DialogueGraphNode_Root.h"

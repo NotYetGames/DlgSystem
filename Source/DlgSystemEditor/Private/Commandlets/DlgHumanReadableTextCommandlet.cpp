@@ -330,7 +330,7 @@ void UDlgHumanReadableTextCommandlet::ExportNodeEdgesToHumanReadableFormat(const
 
 		FDlgEdge_FormatHumanReadable ExportEdge;
 		ExportEdge.TargetNodeIndex = Edge.TargetIndex;
-		ExportEdge.Text = Edge.Text;
+		ExportEdge.Text = Edge.GetRawText();
 		OutEdges.Add(ExportEdge);
 	}
 }
@@ -509,7 +509,7 @@ bool UDlgHumanReadableTextCommandlet::SetGraphNodesNewEdgesText(UDialogueGraphNo
 		}
 
 		// Edge Changed
-		if (!GraphNode->GetDialogueNode().GetNodeChildren()[EdgeIndex].Text.EqualTo(HumanEdge.Text))
+		if (!GraphNode->GetDialogueNode().GetNodeChildren()[EdgeIndex].GetRawText().EqualTo(HumanEdge.Text))
 		{
 			GraphNode->SetEdgeTextAt(EdgeIndex, HumanEdge.Text);
 			bModified = true;

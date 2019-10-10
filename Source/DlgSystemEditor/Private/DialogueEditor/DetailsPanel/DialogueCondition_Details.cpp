@@ -11,6 +11,7 @@
 #include "Widgets/SDialogueTextPropertyPickList.h"
 #include "IPropertyUtilities.h"
 #include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
+#include "DlgHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueCondition_Details"
 
@@ -73,8 +74,8 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 			.IsContextCheckBoxChecked(true)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueParticipantNames)
 		)
-		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetParticipantNameVisibility))
-		->Update();
+		.SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetParticipantNameVisibility))
+		.Update();
 	}
 
 	// CallbackName (variable name)
@@ -92,8 +93,8 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 			.IsContextCheckBoxChecked(false)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueCallbackNames)
 		)
-		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCallbackNameVisibility))
-		->Update();
+		.SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCallbackNameVisibility))
+		.Update();
 	}
 
 	// Operation
@@ -124,8 +125,8 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 			.IsContextCheckBoxChecked(true)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueParticipantNames)
 		)
-		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetOtherParticipantNameAndVariableVisibility))
-		->Update();
+		.SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetOtherParticipantNameAndVariableVisibility))
+		.Update();
 	}
 
 	// Other variable name
@@ -143,8 +144,8 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 			.IsContextCheckBoxChecked(false)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueOtherVariableNames)
 		)
-		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetOtherParticipantNameAndVariableVisibility))
-		->Update();
+		.SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetOtherParticipantNameAndVariableVisibility))
+		.Update();
 	}
 
 
@@ -266,8 +267,8 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 	}
 
 	CallbackNamePropertyRow->SetDisplayName(CalllBackNameDisplayName)
-		->SetToolTip(CalllBackNameToolTip)
-		->Update();
+		.SetToolTip(CalllBackNameToolTip)
+		.Update();
 
 	BoolValuePropertyRow->DisplayName(BoolValueDisplayName);
 	BoolValuePropertyRow->ToolTip(BoolValueToolTip);

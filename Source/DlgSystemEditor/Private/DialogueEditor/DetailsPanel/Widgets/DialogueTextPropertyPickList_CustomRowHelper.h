@@ -20,10 +20,10 @@ public:
 		: FDialogueBase_CustomRowHelper(InDetailWidgetRow, InPropertyHandle) {}
 
 	/** Set the SPropertyPickList */
-	Self* SetTextPropertyPickListWidget(const TSharedRef<SDialogueTextPropertyPickList>& InWidget)
+	Self& SetTextPropertyPickListWidget(const TSharedRef<SDialogueTextPropertyPickList>& InWidget)
 	{
 		TextPropertyPickListWidget = InWidget;
-		return this;
+		return *this;
 	}
 
 private:
