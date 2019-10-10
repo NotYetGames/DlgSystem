@@ -77,11 +77,6 @@ public:
 
 	
 protected:
-	// Reset to default
-	FText GetResetToolTip() const;
-	EVisibility GetDiffersFromDefaultAsVisibility() const;
-	FReply OnResetClicked();
-
 	void UpdateInternal() override;
 
 private:

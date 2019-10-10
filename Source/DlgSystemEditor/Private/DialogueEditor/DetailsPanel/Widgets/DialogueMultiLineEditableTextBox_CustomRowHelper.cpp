@@ -36,54 +36,11 @@ void FDialogueMultiLineEditableTextBoxOptions::SetDefaults()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueMultiLineEditableTextBox_CustomRowHelper
-FText FDialogueMultiLineEditableTextBox_CustomRowHelper::GetResetToolTip() const
-{
-	FString Tooltip = NSLOCTEXT("PropertyEditor", "ResetToDefaultToolTip", "Reset to Default").ToString();
-
-	if (PropertyHandle.IsValid() && !PropertyHandle->IsEditConst() && PropertyHandle->DiffersFromDefault())
-	{
-		const FString DefaultLabel = PropertyHandle->GetResetToDefaultLabel().ToString();
-		if (DefaultLabel.Len() > 0)
-		{
-			Tooltip += "\n";
-			Tooltip += DefaultLabel;
-		}
-	}
-
-	return FText::FromString(Tooltip);
-}
-
-EVisibility FDialogueMultiLineEditableTextBox_CustomRowHelper::GetDiffersFromDefaultAsVisibility() const
-{
-	if (PropertyHandle.IsValid())
-	{
-		return PropertyHandle->DiffersFromDefault() ? EVisibility::Visible : EVisibility::Hidden;
-	}
-	
-	return EVisibility::Visible;
-}
-
-FReply FDialogueMultiLineEditableTextBox_CustomRowHelper::OnResetClicked()
-{
-	if (EditableTextProperty.IsValid() && PropertyHandle.IsValid())
-	{
-		PropertyHandle->ResetToDefault();
-
-		// Broadcast to children
-		for (int32 Index = 0; Index < EditableTextProperty->GetNumTexts(); Index++)
-		{
-			OnTextCommittedEvent().Broadcast(EditableTextProperty->GetText(Index), ETextCommit::OnCleared);
-		}
-	}
-	return FReply::Handled();
-}
-
 void FDialogueMultiLineEditableTextBox_CustomRowHelper::UpdateInternal()
 {
 	check(PropertyHandle.IsValid());
 	check(PropertyUtils.IsValid());
 
-	PropertyHandle->MarkResetToDefaultCustomized(true);
 	EditableTextProperty = MakeShared<FDialogueEditableTextPropertyHandle>(PropertyHandle.ToSharedRef(), PropertyUtils);
 
 	TSharedPtr<SHorizontalBox> HorizontalBox;
@@ -109,7 +66,7 @@ void FDialogueMultiLineEditableTextBox_CustomRowHelper::UpdateInternal()
 				//MultiLineEditableTextBoxWidget.ToSharedRef()
 			// ]
 			//
-			SAssignNew(TextBoxWidget, SDialogueTextPropertyEditableTextBox, EditableTextProperty.ToSharedRef())
+			SAssignNew(TextBoxWidget, SDialogueTextPropertyEditableTextBox, EditableTextProperty.ToSharedRef(), PropertyHandle.ToSharedRef())
 			.Style(&Options.Style)
 			.Font(Options.Font)
 			.ForegroundColor(Options.ForegroundColor)
@@ -120,28 +77,12 @@ void FDialogueMultiLineEditableTextBox_CustomRowHelper::UpdateInternal()
 			.AutoWrapText(Options.bAutoWrapText)
 			.WrapTextAt(Options.WrapTextAt)
 			.ModiferKeyForNewLine(Options.ModiferKeyForNewLine)
+			.AddResetToDefaultWidget(true)
 		]
 	];
 
 	// Add Reset to default
-	HorizontalBox->AddSlot()
-	.AutoWidth()
-	.VAlign(VAlign_Center)
-	.Padding(4.f, 2.f)
-	[
-		SNew(SButton)
-		.IsFocusable(false)
-		.ToolTipText(this, &Self::GetResetToolTip)
-		.ButtonStyle(FEditorStyle::Get(), "NoBorder")
-		.ContentPadding(0)
-		.Visibility(this, &Self::GetDiffersFromDefaultAsVisibility)
-		.OnClicked(this, &Self::OnResetClicked)
-		.Content()
-		[
-			SNew(SImage)
-			.Image(FEditorStyle::GetBrush("PropertyWindow.DiffersFromDefault"))
-		]
-	];
+
 }
 
 FDialogueTextCommitedDelegate& FDialogueMultiLineEditableTextBox_CustomRowHelper::OnTextCommittedEvent()

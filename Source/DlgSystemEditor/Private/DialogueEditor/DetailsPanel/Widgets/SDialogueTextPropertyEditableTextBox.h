@@ -4,13 +4,13 @@
 #include "Widgets/SCompoundWidget.h"
 #include "Styling/CoreStyle.h"
 #include "STextPropertyEditableTextBox.h"
-
+#include "PropertyHandle.h"
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FDialogueTextCommitedDelegate, const FText&, ETextCommit::Type);
 DECLARE_MULTICAST_DELEGATE_OneParam(FDialogueTextChangedDelegate, const FText&);
 
 
-// From STextPropertyEditableTextBox but only the localization editing stuff
+// Own STextPropertyEditableTextBox version with custom modifications
 // Used to edit FText multiline FText instances
 class SDialogueTextPropertyEditableTextBox : public SCompoundWidget
 {
@@ -26,6 +26,7 @@ class SDialogueTextPropertyEditableTextBox : public SCompoundWidget
 		, _SelectAllTextWhenFocused(false)
 		, _ClearKeyboardFocusOnCommit(false)
 		, _SelectAllTextOnCommit(false)
+		, _AddResetToDefaultWidget(true)
 		, _ModiferKeyForNewLine(EModifierKey::None)
 
 		// Similar to TextProperty, see FTextCustomization
@@ -59,6 +60,9 @@ class SDialogueTextPropertyEditableTextBox : public SCompoundWidget
 		/** Whether to select all text when pressing enter to commit changes */
 		SLATE_ATTRIBUTE(bool, SelectAllTextOnCommit)
 
+		// Add reset to default buton
+		SLATE_ARGUMENT(bool, AddResetToDefaultWidget)
+	
 		/** The optional modifier key necessary to create a newline when typing into the editor. */
 		SLATE_ARGUMENT(EModifierKey::Type, ModiferKeyForNewLine)
 	
@@ -70,7 +74,8 @@ class SDialogueTextPropertyEditableTextBox : public SCompoundWidget
 	SLATE_END_ARGS()
 
 public:
-	void Construct(const FArguments& Arguments, const TSharedRef<IEditableTextProperty>& InEditableTextProperty);
+	void Construct(const FArguments& Arguments,
+		const TSharedRef<IEditableTextProperty>& InEditableTextProperty, const TSharedRef<IPropertyHandle>& InPropertyHandle);
 	bool SupportsKeyboardFocus() const override;
 	FReply OnFocusReceived(const FGeometry& MyGeometry, const FFocusEvent& InFocusEvent) override;
 	void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override;
@@ -114,14 +119,21 @@ private:
 
 	bool IsValidIdentity(const FText& InIdentity, FText* OutReason = nullptr, const FText* InErrorCtx = nullptr) const;
 
+	// Reset to default
+	FText GetResetToolTip() const;
+	EVisibility GetDiffersFromDefaultAsVisibility() const;
+	FReply OnResetClicked();
+	
 protected:
 	// Events
 	FDialogueTextCommitedDelegate TextCommittedEvent;
 	FDialogueTextChangedDelegate TextChangedEvent;	
-	
-	TSharedPtr<IEditableTextProperty> EditableTextProperty;
 
-	TSharedPtr<class SWidget> PrimaryWidget;
+	// Property variables
+	TSharedPtr<IEditableTextProperty> EditableTextProperty;
+	TSharedPtr<IPropertyHandle> PropertyHandle;
+
+	TSharedPtr<SWidget> PrimaryWidget;
 	TSharedPtr<SMultiLineEditableTextBox> MultiLineWidget;
 
 	// TSharedPtr<SEditableTextBox> SingleLineWidget;
@@ -132,6 +144,7 @@ protected:
 	TOptional<float> PreviousHeight;
 
 	bool bIsMultiLine = true;
+	bool bAddResetToDefaultWidget = true;
 
 	static FText MultipleValuesText;
 };

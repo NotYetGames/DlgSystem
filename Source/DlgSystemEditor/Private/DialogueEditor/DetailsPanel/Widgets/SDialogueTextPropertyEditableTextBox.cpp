@@ -13,9 +13,7 @@
 #include "Widgets/Input/SComboButton.h"
 #include "Widgets/Input/SComboBox.h"
 #include "Widgets/Input/SCheckBox.h"
-#include "Widgets/Input/SSearchBox.h"
 #include "EditorStyleSet.h"
-#include "Misc/PackageName.h"
 #include "AssetRegistryModule.h"
 #include "Internationalization/StringTable.h"
 #include "Internationalization/TextPackageNamespaceUtil.h"
@@ -27,10 +25,13 @@
 
 FText SDialogueTextPropertyEditableTextBox::MultipleValuesText(NSLOCTEXT("PropertyEditor", "MultipleValues", "Multiple Values"));
 
-void SDialogueTextPropertyEditableTextBox::Construct(const FArguments& InArgs, const TSharedRef<IEditableTextProperty>& InEditableTextProperty)
+void SDialogueTextPropertyEditableTextBox::Construct(const FArguments& InArgs,
+	const TSharedRef<IEditableTextProperty>& InEditableTextProperty, const TSharedRef<IPropertyHandle>& InPropertyHandle)
 {
 	EditableTextProperty = InEditableTextProperty;
-
+	PropertyHandle = InPropertyHandle;
+	bAddResetToDefaultWidget = InArgs._AddResetToDefaultWidget;
+	
 	TSharedPtr<SHorizontalBox> HorizontalBox;
 
 	//const bool bIsPassword = EditableTextProperty->IsPassword();
@@ -281,8 +282,70 @@ void SDialogueTextPropertyEditableTextBox::Construct(const FArguments& InArgs, c
 			.ToolTipText(LOCTEXT("TextNotLocalizedWarningToolTip", "This text is marked as 'culture invariant' and won't be gathered for localization.\nYou can change this by editing the advanced text settings."))
 		];
 
+
+	// Add Reset to default
+	if (bAddResetToDefaultWidget)
+	{
+		PropertyHandle->MarkResetToDefaultCustomized(true);
+		HorizontalBox->AddSlot()
+		.AutoWidth()
+		.VAlign(VAlign_Center)
+		.Padding(4.f, 2.f)
+		[
+			SNew(SButton)
+			.IsFocusable(false)
+			.ToolTipText(this, &Self::GetResetToolTip)
+			.ButtonStyle(FEditorStyle::Get(), "NoBorder")
+			.ContentPadding(0)
+			.Visibility(this, &Self::GetDiffersFromDefaultAsVisibility)
+			.OnClicked(this, &Self::OnResetClicked)
+			.Content()
+			[
+				SNew(SImage)
+				.Image(FEditorStyle::GetBrush("PropertyWindow.DiffersFromDefault"))
+			]
+		];
+	}
+
 	SetEnabled(TAttribute<bool>(this, &Self::CanEdit));
 }
+
+FText SDialogueTextPropertyEditableTextBox::GetResetToolTip() const
+{
+	FString Tooltip = NSLOCTEXT("PropertyEditor", "ResetToDefaultToolTip", "Reset to Default").ToString();
+	if (PropertyHandle.IsValid() && !PropertyHandle->IsEditConst() && PropertyHandle->DiffersFromDefault())
+	{
+		const FString DefaultLabel = PropertyHandle->GetResetToDefaultLabel().ToString();
+		if (DefaultLabel.Len() > 0)
+		{
+			Tooltip += "\n";
+			Tooltip += DefaultLabel;
+		}
+	}
+
+	return FText::FromString(Tooltip);
+}
+
+EVisibility SDialogueTextPropertyEditableTextBox::GetDiffersFromDefaultAsVisibility() const
+{
+	if (PropertyHandle.IsValid())
+	{
+		return PropertyHandle->DiffersFromDefault() ? EVisibility::Visible : EVisibility::Hidden;
+	}
+	
+	return EVisibility::Visible;
+}
+
+FReply SDialogueTextPropertyEditableTextBox::OnResetClicked()
+{
+	if (EditableTextProperty.IsValid() && PropertyHandle.IsValid())
+	{
+		PropertyHandle->ResetToDefault();
+		SetTextValue(EditableTextProperty->GetText(0));
+	}
+	return FReply::Handled();
+}
+
 
 EVisibility SDialogueTextPropertyEditableTextBox::GetLocalizableVisibility() const
 {
