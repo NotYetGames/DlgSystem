@@ -73,6 +73,7 @@ public:
 #endif
 
 	// Begin UDlgNode interface
+	void RebuildTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges) override;
 	bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
 	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated) override;
 	bool OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext) override;

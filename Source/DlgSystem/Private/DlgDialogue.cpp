@@ -532,7 +532,8 @@ void UDlgDialogue::ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const
 void UDlgDialogue::RefreshData()
 {
 	FDlgLogger::Get().Infof(TEXT("Refreshing data for Dialogue = `%s`"), *GetPathName());
-	
+
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 	DlgData.Empty();
 	DlgSpeakerStates.Empty();
 
@@ -601,7 +602,8 @@ void UDlgDialogue::RefreshData()
 		const FName NodeParticipantName = Node->GetNodeParticipantName();
 
 		// Rebuild
-		Node->RebuildTextArguments();
+		Node->RebuildTextArguments(true);
+		Node->RebuildTextsNamespacesAndKeys(Settings, true);
 
 		// participant names
 		TArray<FName> Participants;
@@ -638,19 +640,13 @@ void UDlgDialogue::RefreshData()
 		const int32 NumNodeChildren = Node->GetNumNodeChildren();
 		for (int32 EdgeIndex = 0; EdgeIndex < NumNodeChildren; EdgeIndex++)
 		{
-			FDlgEdge* EdgePtr = Node->GetMutableNodeChildAt(EdgeIndex);
-			if (EdgePtr == nullptr)
-			{
-				continue;
-			}
-			const FDlgEdge& Edge = *EdgePtr; // Node->GetNodeChildAt(EdgeIndex);
+			const FDlgEdge& Edge = Node->GetNodeChildAt(EdgeIndex);
 			const int32 TargetIndex = Edge.TargetIndex;
 
 			// Speaker states
 			DlgSpeakerStates.Add(Edge.SpeakerState);
 
-			// Text arguments
-			EdgePtr->RebuildTextArguments();
+			// Text arguments are rebuild from the Node
 			for (const FDlgTextArgument& TextArgument : Edge.GetTextArguments())
 			{
 				const FString ContextMessage = FString::Printf(TEXT("Adding Edge text arguments data from %s, to Node %d"), *NodeContext, TargetIndex);

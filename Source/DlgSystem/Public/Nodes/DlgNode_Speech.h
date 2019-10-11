@@ -43,8 +43,13 @@ public:
 	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated) override;
 	void GetAssociatedParticipants(TArray<FName>& OutArray) const override;
 
-	void RebuildConstructedText(const UDlgContextInternal* DlgContext);
-	void RebuildTextArguments() override { FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments); }
+	void RebuildTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges) override;
+	void RebuildConstructedText(const UDlgContextInternal* DlgContext) override;
+	void RebuildTextArguments(bool bEdges) override
+	{
+		Super::RebuildTextArguments(bEdges);
+		FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments);
+	}
 	void RebuildTextArgumentsFromPreview(const FText& Preview) override { FDlgTextArgument::UpdateTextArgumentArray(Preview, TextArguments); }
 	const TArray<FDlgTextArgument>& GetTextArguments() const override { return TextArguments; };
 
@@ -83,7 +88,7 @@ public:
 	virtual void SetNodeText(const FText& InText)
 	{
 		Text = InText;
-		RebuildTextArguments();
+		RebuildTextArguments(false);
 	}
 
 	void SetNodeData(UDlgNodeData* InNodeData) { NodeData = InNodeData; }
@@ -141,7 +146,6 @@ protected:
 	// NOTE: You should probably use the NodeData
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
 	UObject* GenericData;
-
 
 	/** Constructed at runtime from the original text and the arguments if there is any. */
 	FText ConstructedText;

@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "Nodes/DlgNode_SpeechSequence.h"
 #include "DlgContextInternal.h"
+#include "DlgLocalizationHelper.h"
 
 
 #if WITH_EDITOR
@@ -12,6 +13,23 @@ void UDlgNode_SpeechSequence::PostEditChangeProperty(FPropertyChangedEvent& Prop
 	AutoGenerateInnerEdges();
 }
 #endif
+
+void UDlgNode_SpeechSequence::RebuildTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges)
+{
+	Super::RebuildTextsNamespacesAndKeys(Settings, bEdges);
+	
+	UObject* Outer = GetOuter();
+	if (!IsValid(Outer))
+	{
+		return;
+	}
+	
+	for (FDlgSpeechSequenceEntry& Entry : SpeechSequence)
+	{
+		FDlgLocalizationHelper::UpdateTextNamespace(Outer, Settings, Entry.Text);
+		FDlgLocalizationHelper::UpdateTextNamespace(Outer, Settings, Entry.EdgeText);
+	}
+}
 
 bool UDlgNode_SpeechSequence::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {

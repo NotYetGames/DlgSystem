@@ -1,6 +1,5 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "Nodes/DlgNode.h"
-#include "DlgSystemPrivatePCH.h"
 #include "DlgContextInternal.h"
 #include "EngineUtils.h"
 #include "Logging/DlgLogger.h"
@@ -99,32 +98,6 @@ void UDlgNode::FireNodeEnterEvents(UDlgContextInternal* DlgContext)
 
 		Event.Call(Participant);
 	}
-}
-
-void UDlgNode::UpdateTextNamespace(FText& Text)
-{
-	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-	if (!Settings)
-	{
-		return;
-	}
-	
-	if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::Ignore)
-	{
-		return;
-	}
-
-	const auto Key = FTextInspector::GetKey(Text);
-	if (Key.IsSet())
-	{
-		FString Namespace = Settings->DialogueTextNamespaceName;
-		if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::NamespacePerDialogue)
-		{
-			Namespace += GetOuter()->GetName();
-		}
-		Text = FInternationalization::ForUseOnlyByLocMacroAndGraphNodeTextLiterals_CreateText(*Text.ToString(), *Namespace, *Key.GetValue());
-	}
-	
 }
 
 bool UDlgNode::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated)
@@ -242,6 +215,38 @@ FDlgEdge* UDlgNode::GetMutableNodeChildForTargetIndex(int32 TargetIndex)
 	}
 
 	return nullptr;
+}
+
+void UDlgNode::RebuildTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges)
+{
+	if (!bEdges)
+	{
+		return;
+	}
+
+	UObject* Outer = GetOuter();
+	if (!IsValid(Outer))
+	{
+		return;
+	}
+	
+	for (FDlgEdge& Edge : Children)
+	{
+		Edge.RebuildTextsNamespacesAndKeys(Outer, Settings);
+	}
+}
+
+void UDlgNode::RebuildTextArguments(bool bEdges)
+{
+	if (!bEdges)
+	{
+		return;
+	}
+
+	for (FDlgEdge& Edge : Children)
+	{
+		Edge.RebuildTextArguments();
+	}
 }
 
 void UDlgNode::GetAssociatedParticipants(TArray<FName>& OutArray) const

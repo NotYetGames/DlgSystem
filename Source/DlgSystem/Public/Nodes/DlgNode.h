@@ -14,6 +14,7 @@
 #include "DlgNode.generated.h"
 
 
+class UDlgSystemSettings;
 class UDlgContextInternal;
 class UDlgNode;
 class USoundWave;
@@ -144,14 +145,17 @@ public:
 	/** Gets the mutable Edge that corresponds to the provided TargetIndex or nullptr if nothing was found. */
 	virtual FDlgEdge* GetMutableNodeChildForTargetIndex(int32 TargetIndex);
 
-	/** Gets all the edges (children) indicies that DO NOT have a valid TargetIndex (is negative). */
+	/** Gets all the edges (children) indices that DO NOT have a valid TargetIndex (is negative). */
 	const TArray<int32> GetNodeOpenChildren_DEPRECATED() const;
 
 	/** Gathers associated participants, they are only added to the array if they are not yet there */
 	virtual void GetAssociatedParticipants(TArray<FName>& OutArray) const;
 
+	// Rebuilds the namespace and key of all the texts depending on the settings
+	virtual void RebuildTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges);
+	
 	// Rebuilds ConstructedText
-	virtual void RebuildTextArguments() {}
+	virtual void RebuildTextArguments(bool bEdges);
 	virtual void RebuildTextArgumentsFromPreview(const FText& Preview) {}
 
 	// Constructs the ConstructedText.
@@ -201,10 +205,7 @@ public:
 protected:
 	void FireNodeEnterEvents(UDlgContextInternal* DlgContext);
 
-	void UpdateTextNamespace(FText& Text);
-
 protected:
-
 #if WITH_EDITORONLY_DATA
 	/** Node's Graph representation, used to get position. */
 	UPROPERTY(Meta = (DlgNoExport))

@@ -4,6 +4,7 @@
 #include "DlgContextInternal.h"
 #include "DlgSystemPrivatePCH.h"
 #include "Logging/DlgLogger.h"
+#include "DlgLocalizationHelper.h"
 
 #if WITH_EDITOR
 void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -16,15 +17,17 @@ void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 	// rebuild text arguments
 	if (bTextChanged || PropertyName == GetMemberNameTextArguments())
 	{
-		RebuildTextArguments();
-		if (bTextChanged)
-		{
-			UpdateTextNamespace(Text);
-		}
+		RebuildTextArguments(true);
 	}
 }
 
 #endif
+
+void UDlgNode_Speech::RebuildTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges)
+{
+	Super::RebuildTextsNamespacesAndKeys(Settings, bEdges);
+	FDlgLocalizationHelper::UpdateTextNamespace(GetOuter(), Settings, Text);
+}
 
 void UDlgNode_Speech::RebuildConstructedText(const UDlgContextInternal* DlgContext)
 {
@@ -38,7 +41,7 @@ void UDlgNode_Speech::RebuildConstructedText(const UDlgContextInternal* DlgConte
 	{
 		OrderedArguments.Add(DlgArgument.DisplayString, DlgArgument.ConstructFormatArgumentValue(DlgContext, OwnerName));
 	}
-	ConstructedText = FText::Format(Text, OrderedArguments);
+	ConstructedText = FText::AsCultureInvariant(FText::Format(Text, OrderedArguments));
 }
 
 bool UDlgNode_Speech::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)

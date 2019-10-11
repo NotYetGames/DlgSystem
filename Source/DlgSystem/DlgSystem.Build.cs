@@ -61,7 +61,9 @@ public class DlgSystem : ModuleRules
 		// We need this dependency when the DlgSystem works in the editor mode/built with editor
 		if (Target.bBuildEditor)
 		{
+			PrivateDependencyModuleNames.Add("EditorWidgets");
 			PrivateDependencyModuleNames.Add("UnrealEd");
+
 			// Accessing the menu
 			PrivateDependencyModuleNames.Add("WorkspaceMenuStructure");
 		}

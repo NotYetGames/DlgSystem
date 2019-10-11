@@ -2,11 +2,17 @@
 #include "DlgEdge.h"
 #include "DlgSystemPrivatePCH.h"
 #include "DlgContextInternal.h"
+#include "DlgLocalizationHelper.h"
 
 const FDlgEdge& FDlgEdge::GetInvalidEdge()
 {
 	static FDlgEdge DlgEdge;
 	return DlgEdge;
+}
+
+void FDlgEdge::RebuildTextsNamespacesAndKeys(const UObject* Object, const UDlgSystemSettings* Settings)
+{
+	FDlgLocalizationHelper::UpdateTextNamespace(Object, Settings, Text);
 }
 
 bool FDlgEdge::Evaluate(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const
@@ -38,7 +44,7 @@ void FDlgEdge::RebuildConstructedText(const UDlgContextInternal* DlgContext, FNa
 	{
 		OrderedArguments.Add(DlgArgument.DisplayString, DlgArgument.ConstructFormatArgumentValue(DlgContext, NodeOwnerName));
 	}
-	ConstructedText = FText::Format(Text, OrderedArguments);
+	ConstructedText = FText::AsCultureInvariant(FText::Format(Text, OrderedArguments));
 }
 
 

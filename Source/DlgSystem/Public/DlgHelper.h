@@ -8,6 +8,8 @@
 #include <functional>
 
 
+class UDlgSystemSettings;
+
 // Const version of FScriptArrayHelper
 class FDlgConstScriptArrayHelper : public FScriptArrayHelper
 {

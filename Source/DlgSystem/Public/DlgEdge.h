@@ -10,6 +10,7 @@
 #include "DlgEdge.generated.h"
 
 
+class UDlgSystemSettings;
 class UDlgContextInternal;
 class UDlgNode;
 
@@ -40,13 +41,16 @@ public:
 	/** Creates a simple edge without text, without conditions */
 	FDlgEdge(int32 InTargetIndex = INDEX_NONE) : TargetIndex(InTargetIndex) {}
 
+	// Rebuilds the namespace or keys depending on the settings
+	void RebuildTextsNamespacesAndKeys(const UObject* Object, const UDlgSystemSettings* Settings);
+	
 	// Rebuilds TextArguments
 	void RebuildTextArguments() { FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments); }
 	void RebuildTextArgumentsFromPreview(const FText& Preview) { FDlgTextArgument::UpdateTextArgumentArray(Preview, TextArguments); }
 	
 	/** Returns with true if every condition attached to the edge and every enter condition of the target node are satisfied */
 	bool Evaluate(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
-
+	
 	/** Constructs the ConstructedText. */
 	void RebuildConstructedText(const UDlgContextInternal* DlgContext, FName NodeOwnerName);
 

@@ -2,7 +2,7 @@
 #include "DlgHelper.h"
 #include "HAL/FileManager.h"
 #include "Logging/DlgLogger.h"
-
+#include "DlgSystemSettings.h"
 
 bool FDlgHelper::DeleteFile(const FString& PathName, bool bVerbose)
 {
