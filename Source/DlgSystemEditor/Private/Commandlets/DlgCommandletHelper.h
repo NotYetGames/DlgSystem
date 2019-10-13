@@ -29,7 +29,7 @@ public:
 		TArray<UPackage*> PackagesToSave;
 		for (UDlgDialogue* Dialogue : Dialogues)
 		{
-			Dialogue->OnAssetSaved();
+			Dialogue->OnPreAssetSaved();
 			Dialogue->MarkPackageDirty();
 			PackagesToSave.Add(Dialogue->GetOutermost());
 		}

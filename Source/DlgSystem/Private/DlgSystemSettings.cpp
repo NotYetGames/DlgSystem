@@ -44,6 +44,13 @@ bool UDlgSystemSettings::CanEditChange(const UProperty* InProperty) const
 		{
 			return false;
 		}
+
+		// Only useful for GlobalNamespace
+		if (DialogueTextNamespaceLocalization != EDlgTextNamespaceLocalization::Global &&
+			PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, DialogueTextGlobalNamespaceName))
+		{
+			return false;
+		}
 	}
 
 	return bIsEditable;

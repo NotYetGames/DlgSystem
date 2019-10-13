@@ -87,19 +87,19 @@ enum class EDlgTextInputKeyForNewLine : uint8
 };
 
 /**
- *  Defines the visibility of the SpeakerState values
+ *  Defines how the overriden namespace will be set
  */
 UENUM()
-enum class EDlgTextLocalization : uint8
+enum class EDlgTextNamespaceLocalization : uint8
 {
 	/** The system does not modify the Namespace and Key values of the Text fields. */
-	Ignore					UMETA(DisplayName = "Ignore"),
+	Ignore			UMETA(DisplayName = "Ignore"),
 
 	/** The system sets the Namespace for Text fields for each dialogue separately. Unique keys are also generated. */
-	NamespacePerDialogue	UMETA(DisplayName = "Namespace Per Dialogue"),
+	PerDialogue		UMETA(DisplayName = "Namespace Per Dialogue"),
 
 	/** The system sets the Namespace for Text fields for each dialogue into the same value. Unique keys are also generated. */
-	GlobalNamespace			UMETA(DisplayName = "Global Namespace")
+	Global			UMETA(DisplayName = "Global Namespace")
 };
 
 // Config = DlgSystemPlugin, DefaultConfig
@@ -234,12 +234,13 @@ public:
 
 
 	/** Defines what the system should do with Text Namespaces and Keys for localization */
-	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Localization Method")
-	EDlgTextLocalization DialogueTextLocalizationMode = EDlgTextLocalization::Ignore;
+	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Namespace")
+	EDlgTextNamespaceLocalization DialogueTextNamespaceLocalization = EDlgTextNamespaceLocalization::Ignore;
 
-	/** Depending on DialogueTextLocalizationMode it can be used as the namespace for all dialogue text fields or as their prefix */
-	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Namespace Name")
-	FString DialogueTextNamespaceName = "Dialogue";
+	// Depending on TextLocalizationMode it can be used as the namespace for all dialogue
+	// Only used for GlobalNamespace
+	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Global Namespace Name")
+	FString DialogueTextGlobalNamespaceName = "Dialogue";
 
 
 	// Enables the message log to output info/errors/warnings to it

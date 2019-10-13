@@ -91,7 +91,12 @@ private:
 	bool CanEdit() const;
 	bool IsCultureInvariantFlagEnabled() const;
 	bool IsSourceTextReadOnly() const;
+
+	bool WillNamespaceBeUpdated() const;
+	bool IsNamespaceReadOnly() const;
+	bool IsKeyReadOnly() const { return IsIdentityReadOnly(); }
 	bool IsIdentityReadOnly() const;
+	
 	FText GetToolTipText() const;
 	EVisibility GetLocalizableVisibility() const;
 
@@ -115,6 +120,7 @@ private:
 
 	void HandleLocalizableCheckStateChanged(ECheckBoxState InCheckboxState, bool bActiveState);
 
+	EVisibility GetNamespaceOverridenWarningImageVisibility() const;
 	EVisibility GetTextWarningImageVisibility() const;
 
 	bool IsValidIdentity(const FText& InIdentity, FText* OutReason = nullptr, const FText* InErrorCtx = nullptr) const;

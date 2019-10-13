@@ -6,12 +6,25 @@
 #include "Internationalization/TextPackageNamespaceUtil.h"
 #include "Serialization/TextReferenceCollector.h"
 
+
+bool FDlgLocalizationHelper::WillTextNamespaceBeUpdated(const UObject* Object)
+{
+	return WillTextNamespaceBeUpdated(Object, GetDefault<UDlgSystemSettings>());
+}
+
+bool FDlgLocalizationHelper::WillTextNamespaceBeUpdated(const UObject* Object, const UDlgSystemSettings* Settings)
+{
+	check(Settings);
+	// TODO use Object
+
+	// Means we can override it
+	return Settings->DialogueTextNamespaceLocalization != EDlgTextNamespaceLocalization::Ignore;
+}
+
+#if WITH_EDITOR
+
 void FDlgLocalizationHelper::UpdateTextNamespace(const UObject* Object, const UDlgSystemSettings* Settings, FText& Text)
 {
-#if !WITH_EDITOR
-	return;
-#endif
-
 	const FString DefaultValue = TEXT("");
 
 	// Culture invariant, empty, from string table, can't update idk
@@ -25,7 +38,7 @@ void FDlgLocalizationHelper::UpdateTextNamespace(const UObject* Object, const UD
 	{
 		return;
 	}
-	if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::Ignore)
+	if (Settings->DialogueTextNamespaceLocalization == EDlgTextNamespaceLocalization::Ignore)
 	{
 		return;
 	}
@@ -35,8 +48,8 @@ void FDlgLocalizationHelper::UpdateTextNamespace(const UObject* Object, const UD
 	const FString CurrentKey = FTextInspector::GetKey(Text).Get(DefaultValue);
 
 	// Get newer namespace, default is GlobalNamespace
-	FString NewNamespace = Settings->DialogueTextNamespaceName;
-	if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::NamespacePerDialogue)
+	FString NewNamespace = Settings->DialogueTextGlobalNamespaceName;
+	if (Settings->DialogueTextNamespaceLocalization == EDlgTextNamespaceLocalization::PerDialogue)
 	{
 		if (!IsValid(Object))
 		{
@@ -47,7 +60,7 @@ void FDlgLocalizationHelper::UpdateTextNamespace(const UObject* Object, const UD
 
 	// Nothing to change
 	// Only apply the change if the new namespace/package is different - we want to keep the keys stable where possible
-#if WITH_EDITOR && USE_STABLE_LOCALIZATION_KEYS
+#if USE_STABLE_LOCALIZATION_KEYS
 	{
 		// Compare namespace + package
 		const UPackage* Package = Object ? Object->GetOutermost() : nullptr;
@@ -64,10 +77,10 @@ void FDlgLocalizationHelper::UpdateTextNamespace(const UObject* Object, const UD
 	{
 		return;
 	}
-#endif
+#endif // USE_STABLE_LOCALIZATION_KEYS 
 	 
 	// We must use the package
-#if WITH_EDITOR && USE_STABLE_LOCALIZATION_KEYS
+#if USE_STABLE_LOCALIZATION_KEYS
 	const FString* TextSource = FTextInspector::GetSourceString(Text);
 	FString NewStableNamespace;
 	FString NewStableKey;
@@ -81,18 +94,15 @@ void FDlgLocalizationHelper::UpdateTextNamespace(const UObject* Object, const UD
 		NewStableKey
 	);
 	NewNamespace = NewStableNamespace;
-#endif
+#endif // USE_STABLE_LOCALIZATION_KEYS
 
 	// Change namespace
 	// Don't use this as this marks the text as immutable
 	// Text = FInternationalization::ForUseOnlyByLocMacroAndGraphNodeTextLiterals_CreateText(*Text.ToString(), *NewNamespace, *CurrentKey);
-#if WITH_EDITOR
 	Text = FText::ChangeKey(NewNamespace, CurrentKey, Text);
-#endif
 }
 
-
-#if WITH_EDITOR && USE_STABLE_LOCALIZATION_KEYS
+#if USE_STABLE_LOCALIZATION_KEYS
 
 void FDlgLocalizationHelper::StaticStableTextId(const UObject* InObject, IEditableTextProperty::ETextPropertyEditAction InEditAction, const FString& InTextSource, const FString& InProposedNamespace, const FString& InProposedKey, FString& OutStableNamespace, FString& OutStableKey)
 {
@@ -143,5 +153,9 @@ void FDlgLocalizationHelper::StaticStableTextId(const UPackage* InPackage, IEdit
 		OutStableKey = FGuid::NewGuid().ToString();
 	}
 }
+#endif // USE_STABLE_LOCALIZATION_KEYS
 
-#endif // WITH_EDITOR && USE_STABLE_LOCALIZATION_KEYS
+
+#endif // WITH_EDITOR
+
+

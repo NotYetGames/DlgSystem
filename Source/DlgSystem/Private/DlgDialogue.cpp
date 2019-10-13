@@ -56,7 +56,7 @@ void UDlgDialogue::PreSave(const class ITargetPlatform* TargetPlatform)
 {
 	Super::PreSave(TargetPlatform);
 	DlgName = GetDlgFName();
-	OnAssetSaved();
+	OnPreAssetSaved();
 }
 
 void UDlgDialogue::Serialize(FArchive& Ar)
@@ -456,10 +456,10 @@ void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
 
 	DlgName = GetDlgFName();
 	AutoFixGraph();
-	RefreshData();
+	RefreshData(true);
 }
 
-void UDlgDialogue::OnAssetSaved()
+void UDlgDialogue::OnPreAssetSaved()
 {
 #if WITH_EDITOR
 	// Compile, graph data -> dialogue data
@@ -467,7 +467,7 @@ void UDlgDialogue::OnAssetSaved()
 #endif
 
 	// Save file, dialogue data -> text file (.dlg)
-	RefreshData();
+	RefreshData(true);
 	ExportToFile();
 }
 
@@ -529,7 +529,7 @@ void UDlgDialogue::ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const
 	}
 }
 
-void UDlgDialogue::RefreshData()
+void UDlgDialogue::RefreshData(bool bRebuildTextsNamespacesAndKey)
 {
 	FDlgLogger::Get().Infof(TEXT("Refreshing data for Dialogue = `%s`"), *GetPathName());
 
@@ -603,7 +603,10 @@ void UDlgDialogue::RefreshData()
 
 		// Rebuild
 		Node->RebuildTextArguments(true);
-		Node->RebuildTextsNamespacesAndKeys(Settings, true);
+		if (bRebuildTextsNamespacesAndKey)
+		{
+			Node->RebuildTextsNamespacesAndKeys(Settings, true);
+		}
 
 		// participant names
 		TArray<FName> Participants;

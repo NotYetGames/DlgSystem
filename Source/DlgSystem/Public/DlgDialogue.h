@@ -25,6 +25,8 @@ struct DLGSYSTEM_API FDlgDialogueObjectVersion
 		AddGuid,
 		AddComparisonWithOtherParticipant,
 		AddTextFormatArguments,
+		AddLocalizationOverwrittenNamespacesAndKeys,
+		
 
 		// -----<new versions can be added above this line>-------------------------------------------------
 		VersionPlusOne,
@@ -431,7 +433,7 @@ public:
 	void ImportFromFile();
 
 	/** Method to handle when this asset is going to be saved. Compiles the dialogue and saves to the text file. */
-	void OnAssetSaved();
+	void OnPreAssetSaved();
 
 	/** Useful for initially reloading the data from the text file so that the dialogue is always in sync. */
 	void InitialSyncWithTextFile()
@@ -449,7 +451,7 @@ public:
 	void ExportToFile() const;
 
 	/** Gathers data from the Dialogue to fill DlgData (used at runtime) */
-	void RefreshData();
+	void RefreshData(bool bRebuildTextsNamespacesAndKey = false);
 
 	/** Adds a new node to this dialogue, returns the index location of the added node in the Nodes array. */
 	int32 AddNode(UDlgNode* NodeToAdd) { return Nodes.Add(NodeToAdd); }

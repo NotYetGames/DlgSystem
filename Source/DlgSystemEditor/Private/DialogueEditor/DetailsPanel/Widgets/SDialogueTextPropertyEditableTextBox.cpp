@@ -20,6 +20,7 @@
 #include "Internationalization/StringTableCore.h"
 #include "Internationalization/StringTableRegistry.h"
 #include "Serialization/TextReferenceCollector.h"
+#include "DlgLocalizationHelper.h"
 
 #define LOCTEXT_NAMESPACE "STextPropertyEditableTextBox"
 
@@ -205,7 +206,17 @@ void SDialogueTextPropertyEditableTextBox::Construct(const FArguments& InArgs,
 						.OnTextCommitted(this, &Self::OnNamespaceCommitted)
 						.SelectAllTextOnCommit(true)
 						.Visibility(this, &Self::GetLocalizableVisibility)
-						.IsReadOnly(this, &Self::IsIdentityReadOnly)
+						.IsReadOnly(this, &Self::IsNamespaceReadOnly)
+					]
+
+					// Warning, key will be overriden
+					+SGridPanel::Slot(2, 3)
+					.Padding(2)
+					[
+						SNew(SImage)
+						.Image(FCoreStyle::Get().GetBrush("Icons.Warning"))
+						.Visibility(this, &Self::GetNamespaceOverridenWarningImageVisibility)
+						.ToolTipText(LOCTEXT("NamespaceOverridenWarningToolTip", "The namespace will be overriden on Save.\nTo change this bevahiour go to Project Settings -> (Editors) Dialogue -> Localization"))
 					]
 
 					// Key
@@ -230,7 +241,7 @@ void SDialogueTextPropertyEditableTextBox::Construct(const FArguments& InArgs,
 						.OnTextChanged(this, &Self::OnKeyChanged)
 						.OnTextCommitted(this, &Self::OnKeyCommitted)
 						.SelectAllTextOnCommit(true)
-						.IsReadOnly(this, &Self::IsIdentityReadOnly)
+						.IsReadOnly(this, &Self::IsKeyReadOnly)
 #else	// USE_STABLE_LOCALIZATION_KEYS
 						.IsReadOnly(true)
 #endif	// USE_STABLE_LOCALIZATION_KEYS
@@ -423,6 +434,16 @@ bool SDialogueTextPropertyEditableTextBox::IsSourceTextReadOnly() const
 	}
 
 	return false;
+}
+
+bool SDialogueTextPropertyEditableTextBox::WillNamespaceBeUpdated() const
+{
+	return !IsIdentityReadOnly() && FDlgLocalizationHelper::WillTextNamespaceBeUpdated(nullptr);
+}
+
+bool SDialogueTextPropertyEditableTextBox::IsNamespaceReadOnly() const
+{
+	return IsIdentityReadOnly() || WillNamespaceBeUpdated();
 }
 
 bool SDialogueTextPropertyEditableTextBox::IsIdentityReadOnly() const
@@ -938,6 +959,17 @@ void SDialogueTextPropertyEditableTextBox::HandleLocalizableCheckStateChanged(EC
 			}
 		}
 	}
+}
+
+EVisibility SDialogueTextPropertyEditableTextBox::GetNamespaceOverridenWarningImageVisibility() const
+{
+	// Nothing to show
+	if (GetLocalizableVisibility() != EVisibility::Visible)
+	{
+		return EVisibility::Collapsed;
+	}
+
+	return WillNamespaceBeUpdated() ? EVisibility::Visible : EVisibility::Collapsed;
 }
 
 EVisibility SDialogueTextPropertyEditableTextBox::GetTextWarningImageVisibility() const

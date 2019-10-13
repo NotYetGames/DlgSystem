@@ -4,6 +4,7 @@
 #include "SDialogueTextPropertyEditableTextBox.h"
 #include "IPropertyUtilities.h"
 #include "PropertyHandle.h"
+#include "DlgLocalizationHelper.h"
 
 // FROM: FTextCustomization
 // Allows us to edit a property handle
@@ -93,7 +94,9 @@ public:
 
 			check(PropertyPackages.IsValidIndex(InIndex));
 
-			StaticStableTextId(PropertyPackages[InIndex], InEditAction, InTextSource, InProposedNamespace, InProposedKey, OutStableNamespace, OutStableKey);
+			// NOTE: We use our copied version so that everything is in sync
+			FDlgLocalizationHelper::StaticStableTextId(PropertyPackages[InIndex], InEditAction, InTextSource, InProposedNamespace, InProposedKey, OutStableNamespace, OutStableKey);
+			//StaticStableTextId(PropertyPackages[InIndex], InEditAction, InTextSource, InProposedNamespace, InProposedKey, OutStableNamespace, OutStableKey);
 		}
 	}
 #endif // USE_STABLE_LOCALIZATION_KEYS
