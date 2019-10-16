@@ -90,10 +90,10 @@ void UDialogueSearchFilter::AddFrontEndFilterExtensions(TSharedPtr<FFrontendFilt
 	TArray<TSharedRef<FFrontendFilter>>& InOutFilterList) const
 {
 	TSharedPtr<FFrontendFilterCategory> DialogueCategory =
-		MakeShared<FFrontendFilterCategory>(LOCTEXT("DlgSystemCategoryName", "Dialogue Filters"),
+		MakeShared<FFrontendFilterCategory>(LOCTEXT("DlgSystemCategoryName", "Dialogue System Filters"),
 											LOCTEXT("DlgSystemCategoryTooltip", "Filter Dialogue System assets"));
 
-	InOutFilterList.Add(MakeShared<FFrontendFilter_DialogueParticipants>(DefaultCategory));
+	InOutFilterList.Add(MakeShared<FFrontendFilter_DialogueParticipants>(DialogueCategory));
 }
 
 
