@@ -102,9 +102,8 @@ enum class EDlgTextNamespaceLocalization : uint8
 	Global			UMETA(DisplayName = "Global Namespace")
 };
 
-// Config = DlgSystemPlugin, DefaultConfig
 // UDeveloperSettings classes are auto discovered https://wiki.unrealengine.com/CustomSettings
-UCLASS(Config = EditorPerProjectUserSettings, DefaultConfig, meta = (DisplayName = "Dialogue Editor Settings"))
+UCLASS(Config = Engine, DefaultConfig, meta = (DisplayName = "Dialogue System Settings"))
 class DLGSYSTEM_API UDlgSystemSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()

@@ -27,7 +27,7 @@ FText UDlgSystemSettings::GetSectionText() const
 
 FText UDlgSystemSettings::GetSectionDescription() const
 {
-	return LOCTEXT("SectionDescription", "Configure the look and feel of the Dialogue Editor.");
+	return LOCTEXT("SectionDescription", "Configure how the Dialogue Editor behaves + Runtime behaviour");
 }
 
 bool UDlgSystemSettings::CanEditChange(const UProperty* InProperty) const
