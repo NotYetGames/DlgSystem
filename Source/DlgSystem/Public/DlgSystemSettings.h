@@ -155,6 +155,12 @@ public:
 	// - LocalizationIgnoredTexts
 	// - LocalizationIgnoredStrings
 	bool IsIgnoredTextForLocalization(const FText& Text) const;
+
+	// Is this text remapped
+	FORCEINLINE bool IsTextRemapped(const FText& Text) const { return IsSourceStringRemapped(Text.ToString());  }
+	FORCEINLINE bool IsSourceStringRemapped(const FString& SourceString) const { return LocalizationRemapSourceStringsToTexts.Contains(SourceString); }
+	FORCEINLINE const FText& GetTextRemappedText(const FText& Text) const { return GetSourceStringRemappedText(Text.ToString()); }
+	FORCEINLINE const FText& GetSourceStringRemappedText(const FString& SourceString) const { return LocalizationRemapSourceStringsToTexts.FindChecked(SourceString); }
 	
 	/** Saves the settings to the config file depending on the settings of this class. */
 	void SaveSettings()
@@ -265,12 +271,12 @@ public:
 
 	// Same as Ignored Texts only this looks at the SourceString
 	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Ignored Strings")
-	TArray<FString> LocalizationIgnoredStrings;
+	TSet<FString> LocalizationIgnoredStrings;
 
 	// Map used to remap some SourceStrings texts found in the dialogues with a new Text value/namespace/key
 	// Key: SourceString we are searching for
 	// Value: Text replacement. NOTE: if the text value is empty we will still overwrite the namespace and key of the SourceString Text.
-	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Remap Source Strings to Texts")
+	UPROPERTY(Category = "Localization", Config, VisibleAnywhere, DisplayName = "Remap Source Strings to Texts")
 	TMap<FString, FText> LocalizationRemapSourceStringsToTexts;
 	
 

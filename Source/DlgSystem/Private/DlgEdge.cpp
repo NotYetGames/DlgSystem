@@ -79,7 +79,7 @@ void FDlgEdge::UpdateTextsNamespacesAndKeys(const UObject* ParentObject, const U
 		return;
 	}
 	
-	FDlgLocalizationHelper::UpdateTextNamespace(ParentObject, Settings, Text);
+	FDlgLocalizationHelper::UpdateTextNamespaceAndKey(ParentObject, Settings, Text);
 }
 
 bool FDlgEdge::Evaluate(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const

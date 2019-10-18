@@ -25,7 +25,7 @@ void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 
 void UDlgNode_Speech::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
 {
-	FDlgLocalizationHelper::UpdateTextNamespace(GetOuter(), Settings, Text);
+	FDlgLocalizationHelper::UpdateTextNamespaceAndKey(GetOuter(), Settings, Text);
 	Super::UpdateTextsNamespacesAndKeys(Settings, bEdges, bUpdateGraphNode);
 }
 

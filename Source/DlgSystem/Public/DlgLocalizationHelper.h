@@ -19,10 +19,10 @@ public:
 #if WITH_EDITOR
 	// Updates the text namespace to match the settings options
 	// NOTE: only works in editor mode
-	static void UpdateTextNamespace(const UObject* Object, const UDlgSystemSettings* Settings, FText& Text);
+	static void UpdateTextNamespaceAndKey(const UObject* Object, const UDlgSystemSettings* Settings, FText& Text);
 #else
 	// NO OP
-	static void UpdateTextNamespace(const UObject* Object, const UDlgSystemSettings* Settings, FText& Text) {}
+	static void UpdateTextNamespaceAndKey(const UObject* Object, const UDlgSystemSettings* Settings, FText& Text) {}
 #endif
 
 	// Will we update the text namespace for the following texts

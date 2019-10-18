@@ -23,8 +23,23 @@ bool FDlgLocalizationHelper::WillTextNamespaceBeUpdated(const FText& Text, const
 
 #if WITH_EDITOR
 
-void FDlgLocalizationHelper::UpdateTextNamespace(const UObject* Object, const UDlgSystemSettings* Settings, FText& Text)
+void FDlgLocalizationHelper::UpdateTextNamespaceAndKey(const UObject* Object, const UDlgSystemSettings* Settings, FText& Text)
 {
+	// See if we can edit this
+	if (!IsValid(Object) || !IsValid(Settings))
+	{
+		return;
+	}
+
+	// Text remapping takes precedence over everything
+	// if (Settings->IsTextRemapped(Text))
+	// {
+	// 	// Remapped
+	// 	const FText& RemappedText = Settings->GetTextRemappedText(Text);
+	// 	Text = RemappedText;
+	// 	return;
+	// }
+
 	FString NewNamespace;
 	FString NewKey;
 	if (!GetNewNamespaceAndKey(Object, Settings, Text, NewNamespace, NewKey))
@@ -47,12 +62,6 @@ bool FDlgLocalizationHelper::GetNewNamespaceAndKey(
 )
 {
 	static const FString DefaultValue = TEXT("");
-	
-	// See if we can edit this
-	if (!IsValid(Object) || !IsValid(Settings))
-	{
-		return false;
-	}
 	if (Settings->DialogueTextNamespaceLocalization == EDlgTextNamespaceLocalization::Ignore)
 	{
 		return false;
@@ -72,7 +81,7 @@ bool FDlgLocalizationHelper::GetNewNamespaceAndKey(
 
 	const FString CurrentFullNamespace = FTextInspector::GetNamespace(Text).Get(DefaultValue);
 	const FString CurrentKey = FTextInspector::GetKey(Text).Get(DefaultValue);
-	const FString NewKey = CurrentKey;
+	FString NewKey = CurrentKey;
 
 	// Set new Namespace
 	FString NewNamespace = Settings->DialogueTextGlobalNamespaceName; // GlobalNamespace
@@ -98,7 +107,7 @@ bool FDlgLocalizationHelper::GetNewNamespaceAndKey(
 #endif // USE_STABLE_LOCALIZATION_KEYS 
 
 	// Did key change?
-	bKeyChanged = !CurrentKey.Equals(NewKey, ESearchCase::CaseSensitive);
+	//bKeyChanged = !CurrentKey.Equals(NewKey, ESearchCase::CaseSensitive);
 
 	// Get stabilized namespace and keys
 	// We must use the package to get a stabilized key
@@ -107,7 +116,7 @@ bool FDlgLocalizationHelper::GetNewNamespaceAndKey(
 	{
 		const FString* TextSource = FTextInspector::GetSourceString(Text);
 		FString NewStableNamespace;
-		FString _;
+		FString NewStableKey;
 		StaticStableTextId(
 			Object,
 			IEditableTextProperty::ETextPropertyEditAction::EditedNamespace,
@@ -115,17 +124,16 @@ bool FDlgLocalizationHelper::GetNewNamespaceAndKey(
 			NewNamespace,
 			NewKey,
 			NewStableNamespace,
-			_
+			NewStableKey
 		);
 		NewNamespace = NewStableNamespace;
-	}
-	if (bKeyChanged)
-	{
-		// TODO maybe
-		checkNoEntry();
+		NewKey = NewStableKey;
 	}
 #endif // USE_STABLE_LOCALIZATION_KEYS
 
+	// Did key change?
+	bKeyChanged = !CurrentKey.Equals(NewKey, ESearchCase::CaseSensitive);
+	
 	// Something changed
 	if (bNamespaceChanged || bKeyChanged)
 	{

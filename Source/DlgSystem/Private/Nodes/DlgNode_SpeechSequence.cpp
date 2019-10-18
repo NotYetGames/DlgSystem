@@ -43,8 +43,8 @@ void UDlgNode_SpeechSequence::UpdateTextsNamespacesAndKeys(const UDlgSystemSetti
 	
 	for (FDlgSpeechSequenceEntry& Entry : SpeechSequence)
 	{
-		FDlgLocalizationHelper::UpdateTextNamespace(Outer, Settings, Entry.Text);
-		FDlgLocalizationHelper::UpdateTextNamespace(Outer, Settings, Entry.EdgeText);
+		FDlgLocalizationHelper::UpdateTextNamespaceAndKey(Outer, Settings, Entry.Text);
+		FDlgLocalizationHelper::UpdateTextNamespaceAndKey(Outer, Settings, Entry.EdgeText);
 	}
 
 	Super::UpdateTextsNamespacesAndKeys(Settings, bEdges, bUpdateGraphNode);
