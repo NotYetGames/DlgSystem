@@ -217,36 +217,69 @@ FDlgEdge* UDlgNode::GetMutableNodeChildForTargetIndex(int32 TargetIndex)
 	return nullptr;
 }
 
-void UDlgNode::RebuildTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges)
+
+void UDlgNode::UpdateDefaultTexts(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
 {
-	if (!bEdges)
+	// We only care about edges here
+	if (bEdges && Settings->bSetDefaultEdgeTexts)
 	{
-		return;
+		const UDlgDialogue* Dialogue = GetDialogue();
+		for (FDlgEdge& Edge : Children)
+		{
+			Edge.UpdateDefaultTexts(Dialogue, Settings);
+
+			// Set only one, kill the rest
+			if (Settings->bSetDefaultEdgeTextOnFirstChildOnly)
+			{
+				break;
+			}
+		}
 	}
 
-	UObject* Outer = GetOuter();
-	if (!IsValid(Outer))
+	if (bUpdateGraphNode)
 	{
-		return;
-	}
-	
-	for (FDlgEdge& Edge : Children)
-	{
-		Edge.RebuildTextsNamespacesAndKeys(Outer, Settings);
+		UpdateGraphNode();
 	}
 }
 
-void UDlgNode::RebuildTextArguments(bool bEdges)
+void UDlgNode::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
 {
-	if (!bEdges)
+	if (bEdges)
 	{
-		return;
+		UObject* Outer = GetOuter();
+		for (FDlgEdge& Edge : Children)
+		{
+			Edge.UpdateTextsNamespacesAndKeys(Outer, Settings);
+		}
+	}
+	
+	if (bUpdateGraphNode)
+	{
+		UpdateGraphNode();
+	}
+}
+
+void UDlgNode::RebuildTextArguments(bool bEdges, bool bUpdateGraphNode)
+{
+	if (bEdges)
+	{
+		for (FDlgEdge& Edge : Children)
+		{
+			Edge.RebuildTextArguments();
+		}
 	}
 
-	for (FDlgEdge& Edge : Children)
+	if (bUpdateGraphNode)
 	{
-		Edge.RebuildTextArguments();
+		UpdateGraphNode();
 	}
+}
+
+void UDlgNode::UpdateGraphNode()
+{
+#if WITH_EDITOR
+	UDlgDialogue::GetDialogueEditorAccess()->UpdateGraphNodeEdges(GraphNode);
+#endif // WITH_EDITOR
 }
 
 void UDlgNode::GetAssociatedParticipants(TArray<FName>& OutArray) const

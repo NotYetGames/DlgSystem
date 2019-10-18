@@ -213,7 +213,7 @@ protected:
 protected:
 	/** Current Dialogue used in this context at runtime. */
 	UPROPERTY()
-	UDlgDialogue* Dialogue;
+	UDlgDialogue* Dialogue = nullptr;
 
 	/**
 	 * All object is expected to implement the IDlgDialogueParticipant interface

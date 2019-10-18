@@ -151,11 +151,14 @@ public:
 	/** Gathers associated participants, they are only added to the array if they are not yet there */
 	virtual void GetAssociatedParticipants(TArray<FName>& OutArray) const;
 
-	// Rebuilds the namespace and key of all the texts depending on the settings
-	virtual void RebuildTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges);
+	// Updates the default texts if the settings allows it
+	virtual void UpdateDefaultTexts(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true);
+	
+	// Updates the namespace and key of all the texts depending on the settings
+	virtual void UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true);
 	
 	// Rebuilds ConstructedText
-	virtual void RebuildTextArguments(bool bEdges);
+	virtual void RebuildTextArguments(bool bEdges, bool bUpdateGraphNode = true);
 	virtual void RebuildTextArgumentsFromPreview(const FText& Preview) {}
 
 	// Constructs the ConstructedText.
@@ -202,6 +205,9 @@ public:
 	static FName GetMemberNameEnterEvents() { return GET_MEMBER_NAME_CHECKED(UDlgNode, EnterEvents); }
 	static FName GetMemberNameChildren() { return GET_MEMBER_NAME_CHECKED(UDlgNode, Children); }
 
+	// Syncs the GraphNode Edges with our edges
+	void UpdateGraphNode();
+	
 protected:
 	void FireNodeEnterEvents(UDlgContextInternal* DlgContext);
 
@@ -213,7 +219,7 @@ protected:
 
 	// Used to build the change event and broadcast it
 	int32 BroadcastPropertyEdgeIndexChanged = INDEX_NONE;
-#endif
+#endif // WITH_EDITORONLY_DATA
 
 	/** Name of a participant (speaker) associated with this node. */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DisplayName = "Participant Name"))

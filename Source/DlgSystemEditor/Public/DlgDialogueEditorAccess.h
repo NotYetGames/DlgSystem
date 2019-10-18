@@ -14,6 +14,7 @@ public:
 	FDlgDialogueEditorAccess() {}
 	~FDlgDialogueEditorAccess() {}
 
+	void UpdateGraphNodeEdges(UEdGraphNode* GraphNode);
 	UEdGraph* CreateNewDialogueGraph(UDlgDialogue* Dialogue) const override;
 	void CompileDialogueNodesFromGraphNodes(UDlgDialogue* Dialogue) const override;
 	void RemoveAllGraphNodes(UDlgDialogue* Dialogue) const override;

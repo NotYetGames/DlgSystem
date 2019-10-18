@@ -9,10 +9,10 @@
 
 #include "DlgEdge.generated.h"
 
-
 class UDlgSystemSettings;
 class UDlgContextInternal;
 class UDlgNode;
+class UDlgDialogue;
 
 /**
  * The representation of a child in a node. Defined by a TargetIndex which points to the index array in the Dialogue.Nodes
@@ -41,8 +41,11 @@ public:
 	/** Creates a simple edge without text, without conditions */
 	FDlgEdge(int32 InTargetIndex = INDEX_NONE) : TargetIndex(InTargetIndex) {}
 
-	// Rebuilds the namespace or keys depending on the settings
-	void RebuildTextsNamespacesAndKeys(const UObject* Object, const UDlgSystemSettings* Settings);
+	// Updates the default texts if the settings allows it
+	void UpdateDefaultTexts(const UDlgDialogue* ParentDialogue, const UDlgSystemSettings* Settings);
+	
+	// Updates the namespace or keys depending on the settings
+	void UpdateTextsNamespacesAndKeys(const UObject* ParentObject, const UDlgSystemSettings* Settings);
 	
 	// Rebuilds TextArguments
 	void RebuildTextArguments() { FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments); }

@@ -23,10 +23,10 @@ void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 
 #endif
 
-void UDlgNode_Speech::RebuildTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges)
+void UDlgNode_Speech::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
 {
-	Super::RebuildTextsNamespacesAndKeys(Settings, bEdges);
 	FDlgLocalizationHelper::UpdateTextNamespace(GetOuter(), Settings, Text);
+	Super::UpdateTextsNamespacesAndKeys(Settings, bEdges, bUpdateGraphNode);
 }
 
 void UDlgNode_Speech::RebuildConstructedText(const UDlgContextInternal* DlgContext)

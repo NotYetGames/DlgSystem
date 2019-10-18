@@ -113,7 +113,7 @@ private:
 	{
 		if (Dialogue)
 		{
-			Dialogue->RefreshData();
+			Dialogue->UpdateAndRefreshData();
 		}
 	}
 

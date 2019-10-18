@@ -25,7 +25,7 @@ public:
 
 	/** Text that will appear when you want to continue down this edge to the next conversation. Usually "Next". */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
-	FText EdgeText = UDlgSystemSettings::EdgeTextNext;
+	FText EdgeText;
 
 	/** State of the speaker attached to the entry. Passed to the GetParticipantIcon function. */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
@@ -38,17 +38,17 @@ public:
 	// Voice attached to this node. The Sound Wave variant.
 	// NOTE: You should probably use the NodeData
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
-	USoundWave* VoiceSoundWave;
+	USoundWave* VoiceSoundWave = nullptr;
 
 	// Voice attached to this node. The Dialogue Wave variant. Only the first wave from the dialogue context array should be used.
 	// NOTE: You should probably use the NodeData
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
-	UDialogueWave* VoiceDialogueWave;
+	UDialogueWave* VoiceDialogueWave = nullptr;
 
 	// Any generic object you would like
 	// NOTE: You should probably use the NodeData
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
-	UObject* GenericData;
+	UObject* GenericData = nullptr;
 };
 
 
@@ -73,7 +73,8 @@ public:
 #endif
 
 	// Begin UDlgNode interface
-	void RebuildTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges) override;
+	void UpdateDefaultTexts(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true) override;
+	void UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true) override;
 	bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
 	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated) override;
 	bool OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext) override;
@@ -88,7 +89,7 @@ public:
 	UObject* GetGenericData() const override;
 	FName GetNodeParticipantName() const override;
 	void GetAssociatedParticipants(TArray<FName>& OutArray) const override;
-
+	
 #if WITH_EDITOR
 	FString GetNodeTypeString() const override { return TEXT("Speech Sequence"); }
 #endif

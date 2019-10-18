@@ -99,7 +99,7 @@ void UDlgDialogue::PostLoad()
 	// Refresh the data, so that it is valid after loading.
 	if (DialogueVersion < FDlgDialogueObjectVersion::AddTextFormatArguments)
 	{
-		RefreshData();
+		UpdateAndRefreshData();
 	}
 
 	// Create thew new Guid
@@ -254,7 +254,7 @@ void UDlgDialogue::PostEditChangeProperty(FPropertyChangedEvent& PropertyChanged
 
 void UDlgDialogue::PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent)
 {
-	RefreshData();
+	UpdateAndRefreshData();
 
 	const auto* ActiveMemberNode = PropertyChangedEvent.PropertyChain.GetActiveMemberNode();
 	const auto* ActivePropertyNode = PropertyChangedEvent.PropertyChain.GetActiveNode();
@@ -352,7 +352,7 @@ void UDlgDialogue::ImportFromFile()
 	const EDlgDialogueTextFormat TextFormat = GetDefault<UDlgSystemSettings>()->DialogueTextFormat;
 	if (TextFormat == EDlgDialogueTextFormat::None)
 	{
-		RefreshData();
+		UpdateAndRefreshData();
 		return;
 	}
 
@@ -456,7 +456,7 @@ void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
 
 	DlgName = GetDlgFName();
 	AutoFixGraph();
-	RefreshData(true);
+	UpdateAndRefreshData(true);
 }
 
 void UDlgDialogue::OnPreAssetSaved()
@@ -467,7 +467,7 @@ void UDlgDialogue::OnPreAssetSaved()
 #endif
 
 	// Save file, dialogue data -> text file (.dlg)
-	RefreshData(true);
+	UpdateAndRefreshData(true);
 	ExportToFile();
 }
 
@@ -529,7 +529,7 @@ void UDlgDialogue::ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const
 	}
 }
 
-void UDlgDialogue::RefreshData(bool bRebuildTextsNamespacesAndKey)
+void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 {
 	FDlgLogger::Get().Infof(TEXT("Refreshing data for Dialogue = `%s`"), *GetPathName());
 
@@ -601,12 +601,16 @@ void UDlgDialogue::RefreshData(bool bRebuildTextsNamespacesAndKey)
 		UDlgNode* Node = Nodes[NodeIndex];
 		const FName NodeParticipantName = Node->GetNodeParticipantName();
 
-		// Rebuild
-		Node->RebuildTextArguments(true);
-		if (bRebuildTextsNamespacesAndKey)
+		// Rebuild & Update
+		// NOTE: this can do a dialogue data -> graph node data update
+		Node->RebuildTextArguments(true, false);
+		Node->UpdateDefaultTexts(Settings, true, false);
+		if (bUpdateTextsNamespacesAndKeys)
 		{
-			Node->RebuildTextsNamespacesAndKeys(Settings, true);
+			Node->UpdateTextsNamespacesAndKeys(Settings, true, false);
 		}
+		// Sync with the editor graph nodes
+		Node->UpdateGraphNode();
 
 		// participant names
 		TArray<FName> Participants;
@@ -710,6 +714,16 @@ void UDlgDialogue::RefreshData(bool bRebuildTextsNamespacesAndKey)
 	}
 }
 
+bool UDlgDialogue::IsEndNode(int32 NodeIndex) const
+{
+	if (!Nodes.IsValidIndex(NodeIndex))
+	{
+		return false;
+	}
+
+	return Nodes[NodeIndex]->IsA<UDlgNode_End>();
+}
+
 void UDlgDialogue::AutoFixGraph()
 {
 	check(StartNode);
@@ -742,6 +756,7 @@ void UDlgDialogue::AutoFixGraph()
 	}
 
 	// syntax correction 3: if a node is not an end node but has no children it will "adopt" the next node
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 	for (int32 i = 0; i < Nodes.Num() - 1; ++i)
 	{
 		UDlgNode* Node = Nodes[i];
@@ -753,16 +768,18 @@ void UDlgDialogue::AutoFixGraph()
 		}
 
 		// Add some text to the edges.
-		if (NodeChildren.Num() == 1 && Nodes.IsValidIndex(NodeChildren[0].TargetIndex))
+		const int32 FirstTargetIndex = NodeChildren[0].TargetIndex;
+		if (Settings->bSetDefaultEdgeTexts &&
+			NodeChildren.Num() == 1 &&
+			Nodes.IsValidIndex(FirstTargetIndex))
 		{
-			UDlgNode* NextNode = Nodes[NodeChildren[0].TargetIndex];
-			if (NextNode->IsA<UDlgNode_End>())
+			if (IsEndNode(FirstTargetIndex))
 			{
-				Node->GetSafeMutableNodeChildAt(0)->SetUnformattedText(UDlgSystemSettings::EdgeTextFinish);
+				Node->GetSafeMutableNodeChildAt(0)->SetUnformattedText(Settings->DefaultTextEdgeToEndNode);
 			}
 			else
 			{
-				Node->GetSafeMutableNodeChildAt(0)->SetUnformattedText(UDlgSystemSettings::EdgeTextNext);
+				Node->GetSafeMutableNodeChildAt(0)->SetUnformattedText(Settings->DefaultTextEdgeToNormalNode);
 			}
 		}
 	}

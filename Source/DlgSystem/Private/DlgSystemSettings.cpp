@@ -10,13 +10,13 @@
 
 //////////////////////////////////////////////////////////////////////////
 // UDlgSystemSettings
-const FText UDlgSystemSettings::EdgeTextFinish = LOCTEXT("edge_finish", "Finish");
-const FText UDlgSystemSettings::EdgeTextNext = LOCTEXT("edge_next", "Next");
-
 UDlgSystemSettings::UDlgSystemSettings()
 {
 	BlacklistedReflectionClasses = {AActor::StaticClass(), APawn::StaticClass(),  ACharacter::StaticClass()};
 	// AdditionalTextFormatFileExtensionsToLookFor = {""};
+
+	DefaultTextEdgeToEndNode = LOCTEXT("default_edge_finish", "Finish");
+	DefaultTextEdgeToNormalNode = LOCTEXT("default_edge_next", "Next");
 }
 
 #if WITH_EDITOR
@@ -48,6 +48,15 @@ bool UDlgSystemSettings::CanEditChange(const UProperty* InProperty) const
 		// Only useful for GlobalNamespace
 		if (DialogueTextNamespaceLocalization != EDlgTextNamespaceLocalization::Global &&
 			PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, DialogueTextGlobalNamespaceName))
+		{
+			return false;
+		}
+
+		// Can't edit because they are not used
+		if (!bSetDefaultEdgeTexts &&
+			(PropertyName ==  GET_MEMBER_NAME_CHECKED(ThisClass, DefaultTextEdgeToEndNode) ||
+			 PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, DefaultTextEdgeToNormalNode) ||
+			 PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, bSetDefaultEdgeTextOnFirstChildOnly)))
 		{
 			return false;
 		}

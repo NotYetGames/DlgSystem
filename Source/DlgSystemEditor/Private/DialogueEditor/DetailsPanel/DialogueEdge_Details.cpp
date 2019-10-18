@@ -94,7 +94,7 @@ void FDialogueEdge_Details::HandleSpeakerStateCommitted(const FText& InSearchTex
 {
 	if (Dialogue)
 	{
-		Dialogue->RefreshData();
+		Dialogue->UpdateAndRefreshData();
 	}
 }
 
@@ -104,7 +104,7 @@ void FDialogueEdge_Details::HandleTextCommitted(const FText& InText, ETextCommit
 	{
 		if (Dialogue)
 		{
-			Dialogue->RefreshData();
+			Dialogue->UpdateAndRefreshData();
 		}
 
 		GraphEdge->GetDialogueEdge().RebuildTextArguments();

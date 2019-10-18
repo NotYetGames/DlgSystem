@@ -429,6 +429,18 @@ void UDialogueGraphNode::SetEdges(const TArray<FDlgEdge>& InEdges)
 	}
 }
 
+void UDialogueGraphNode::UpdateEdgesFromDialogueNode()
+{
+	const TArray<UDialogueGraphNode_Edge*> GraphNodeEdges = GetChildEdgeNodes();
+	const int32 NumEdges = DialogueNode->GetNumNodeChildren();
+	check(NumEdges == GraphNodeEdges.Num());
+
+	for (int32 EdgeIndex = 0; EdgeIndex < NumEdges; EdgeIndex++)
+	{
+		GraphNodeEdges[EdgeIndex]->SetDialogueEdge(DialogueNode->GetNodeChildAt(EdgeIndex));
+	}
+}
+
 void UDialogueGraphNode::ApplyCompilerWarnings()
 {
 	ClearCompilerMessage();

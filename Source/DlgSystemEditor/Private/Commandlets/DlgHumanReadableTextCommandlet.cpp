@@ -33,6 +33,7 @@ UDlgHumanReadableTextCommandlet::UDlgHumanReadableTextCommandlet()
 int32 UDlgHumanReadableTextCommandlet::Main(const FString& Params)
 {
 	UE_LOG(LogDlgHumanReadableTextCommandlet, Display, TEXT("Starting"));
+	Settings = GetDefault<UDlgSystemSettings>();
 
 	// Parse command line - we're interested in the param vals
 	TArray<FString> Tokens;
@@ -521,5 +522,12 @@ bool UDlgHumanReadableTextCommandlet::SetGraphNodesNewEdgesText(UDialogueGraphNo
 
 bool UDlgHumanReadableTextCommandlet::IsEdgeTextDefault(const FText& EdgeText)
 {
-	return UDlgSystemSettings::EdgeTextFinish.EqualToCaseIgnored(EdgeText) || UDlgSystemSettings::EdgeTextNext.EqualToCaseIgnored(EdgeText);
+	checkNoEntry();
+	return false;
+	// if (Settings->bSetDefaultEdgeTexts)
+	// {
+		
+	// }
+	
+	// return UDlgSystemSettings::EdgeTextFinish.EqualToCaseIgnored(EdgeText) || UDlgSystemSettings::EdgeTextNext.EqualToCaseIgnored(EdgeText);
 }

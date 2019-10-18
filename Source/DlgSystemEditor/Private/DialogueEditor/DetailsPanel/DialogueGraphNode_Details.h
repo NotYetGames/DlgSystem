@@ -59,13 +59,13 @@ private:
 	/** Handler for when text in the editable text box changed */
 	void HandleParticipantTextCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo)
 	{
-		Dialogue->RefreshData();
+		Dialogue->UpdateAndRefreshData();
 	}
 
 	/** Handler for when the speaker state is changed */
 	void HandleSpeakerStateCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo)
 	{
-		Dialogue->RefreshData();
+		Dialogue->UpdateAndRefreshData();
 	}
 
 	// The IsVirtualParent property changed

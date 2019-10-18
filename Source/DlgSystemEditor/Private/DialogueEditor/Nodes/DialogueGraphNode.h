@@ -292,8 +292,13 @@ public:
 	/** Sets a new Text for the Edge at location EdgeIndex.  */
 	void SetEdgeTextAt(int32 EdgeIndex, const FText& NewText);
 
-	/** Sets all the node children (edges). USE WITH CAUTION */
+	// Sets all the node children (edges).
+	// NOTE: USE WITH CAUTION
 	void SetEdges(const TArray<FDlgEdge>& InEdges);
+
+	// Updates the edges data from the DialogueNode
+	// NOTE: USE WITH CAUTION
+	void UpdateEdgesFromDialogueNode();
 
 	/** Checks the node for warnings and applies the compiler warnings messages */
 	void ApplyCompilerWarnings();

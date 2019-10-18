@@ -429,6 +429,9 @@ public:
 	/** Sets the Node at index NodeIndex. Use with care. */
 	void SetNode(int32 NodeIndex, UDlgNode* InNode) { Nodes[NodeIndex] = InNode; }
 
+	// Is the Node at NodeIndex (if it exists) an end node?
+	bool IsEndNode(int32 NodeIndex) const;
+	
 	/** Check if a text file in the same folder with the same name (DlgName) exists and loads the data from that file. */
 	void ImportFromFile();
 
@@ -450,8 +453,10 @@ public:
 	/** Exports this dialogue data into it's corresponding ".dlg" text file with the same name as this (DlgName). */
 	void ExportToFile() const;
 
-	/** Gathers data from the Dialogue to fill DlgData (used at runtime) */
-	void RefreshData(bool bRebuildTextsNamespacesAndKey = false);
+	// Updates the data of some nodes
+	// Fills the DlgData with the updated data
+	// NOTE: this can do a dialogue data -> graph node data update
+	void UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys = false);
 
 	/** Adds a new node to this dialogue, returns the index location of the added node in the Nodes array. */
 	int32 AddNode(UDlgNode* NodeToAdd) { return Nodes.Add(NodeToAdd); }

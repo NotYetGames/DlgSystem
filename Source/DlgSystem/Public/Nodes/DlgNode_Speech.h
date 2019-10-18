@@ -43,11 +43,11 @@ public:
 	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated) override;
 	void GetAssociatedParticipants(TArray<FName>& OutArray) const override;
 
-	void RebuildTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges) override;
+	void UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true) override;
 	void RebuildConstructedText(const UDlgContextInternal* DlgContext) override;
-	void RebuildTextArguments(bool bEdges) override
+	void RebuildTextArguments(bool bEdges, bool bUpdateGraphNode = true) override
 	{
-		Super::RebuildTextArguments(bEdges);
+		Super::RebuildTextArguments(bEdges, bUpdateGraphNode);
 		FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments);
 	}
 	void RebuildTextArgumentsFromPreview(const FText& Preview) override { FDlgTextArgument::UpdateTextArgumentArray(Preview, TextArguments); }

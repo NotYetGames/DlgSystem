@@ -12,6 +12,14 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgDialogueEditorAccess
+void FDlgDialogueEditorAccess::UpdateGraphNodeEdges(UEdGraphNode* GraphNode)
+{
+	if (UDialogueGraphNode* DialogueGraphNode = Cast<UDialogueGraphNode>(GraphNode))
+	{
+		DialogueGraphNode->UpdateEdgesFromDialogueNode();
+	}
+}
+
 UEdGraph* FDlgDialogueEditorAccess::CreateNewDialogueGraph(UDlgDialogue* Dialogue) const
 {
 	UDialogueGraph* DialogueGraph = CastChecked<UDialogueGraph>(FDialogueEditorUtilities::CreateNewGraph(Dialogue, NAME_None,
@@ -25,7 +33,8 @@ UEdGraph* FDlgDialogueEditorAccess::CreateNewDialogueGraph(UDlgDialogue* Dialogu
 void FDlgDialogueEditorAccess::CompileDialogueNodesFromGraphNodes(UDlgDialogue* Dialogue) const
 {
 	FCompilerResultsLog MessageLog;
-	FDialogueCompilerContext CompilerContext(Dialogue, MessageLog);
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+	FDialogueCompilerContext CompilerContext(Dialogue, Settings, MessageLog);
 	CompilerContext.Compile();
 	//FDialogueEditorUtilities::RefreshDetailsView(Dialogue->GetGraph(), true);
 }

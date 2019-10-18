@@ -10,9 +10,41 @@ const FDlgEdge& FDlgEdge::GetInvalidEdge()
 	return DlgEdge;
 }
 
-void FDlgEdge::RebuildTextsNamespacesAndKeys(const UObject* Object, const UDlgSystemSettings* Settings)
+void FDlgEdge::UpdateDefaultTexts(const UDlgDialogue* ParentDialogue, const UDlgSystemSettings* Settings)
 {
-	FDlgLocalizationHelper::UpdateTextNamespace(Object, Settings, Text);
+	if (!Settings->bSetDefaultEdgeTexts)
+	{
+		return;
+	}
+	if (!IsValid())
+	{
+		return;
+	}
+
+	// Only if empty
+	if (GetUnformattedText().IsEmpty())
+	{
+		if (ParentDialogue->IsEndNode(TargetIndex))
+		{
+			// End Node
+			SetText(Settings->DefaultTextEdgeToEndNode);
+		}
+		else
+		{
+			// Normal node
+			SetText(Settings->DefaultTextEdgeToNormalNode);
+		}
+	}
+}
+
+void FDlgEdge::UpdateTextsNamespacesAndKeys(const UObject* ParentObject, const UDlgSystemSettings* Settings)
+{
+	if (!IsValid())
+	{
+		return;
+	}
+	
+	FDlgLocalizationHelper::UpdateTextNamespace(ParentObject, Settings, Text);
 }
 
 bool FDlgEdge::Evaluate(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const

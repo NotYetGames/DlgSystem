@@ -70,8 +70,8 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("EdgeTextSearchKey", "Edge Text"));
 
 		EdgeTextPropertyRow = MakeShared<FDialogueMultiLineEditableTextBox_CustomRowHelper>(DetailWidgetRow, EdgeTextPropertyHandle);
-		TextPropertyRow->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities());
-		TextPropertyRow->Update();
+		EdgeTextPropertyRow->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities());
+		EdgeTextPropertyRow->Update();
 	}
 
 	//

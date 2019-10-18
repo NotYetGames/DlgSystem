@@ -180,15 +180,28 @@ public:
 	TSet<FString> GetAllTextFileExtensions() const;
 
 public:
-	// Some constants used. TODO make these configurable
-	static const FText EdgeTextFinish;
-	static const FText EdgeTextNext;
-
-public:
 	/** If enabled this clears the dialogue history automatically on Editor Start PIE and On Load New Map */
 	UPROPERTY(Category = "Runtime", Config, EditAnywhere)
 	bool bClearDialogueHistoryAutomatically = true;
 
+	
+	// Should the dialogue system set the default texts on empty edges on save dialogue and when creating them?
+	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Set Default Edge Texts")
+	bool bSetDefaultEdgeTexts = true;
+
+	// If true the default text will be only applied to the first child instead of all children from a node
+	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Set Default Edge Texts on First Child Only")
+	bool bSetDefaultEdgeTextOnFirstChildOnly = true;
+	
+	// Default text that appears on empty edges that lead to an end node
+	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Edge Text To End Node")
+	FText DefaultTextEdgeToEndNode;
+
+	// Default text that appears on empty edges texts that lead to a normal node (not an end node).
+	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Edge Text To Normal Node")
+	FText DefaultTextEdgeToNormalNode;
+
+	
 	/** The dialogue text format used for saving and reloading from text files. */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Format")
 	EDlgDialogueTextFormat DialogueTextFormat = EDlgDialogueTextFormat::None;
@@ -255,7 +268,7 @@ public:
 	UPROPERTY(Category = "Logger", Config, EditAnywhere)
 	bool bMessageLogOpen = true;
 
-	// NOTE: Not editable if intended so that not to allow the user to disable logging completely
+	// NOTE: Not editable is intended so that not to allow the user to disable logging completely
 	UPROPERTY(Config)
 	bool bEnableOutputLog = false;
 
@@ -353,6 +366,7 @@ public:
 	UPROPERTY(Category = "Graph Node Speech Sequence", Config, EditAnywhere)
 	TEnumAsByte<EHorizontalAlignment> DescriptionSpeakerHorizontalAlignment = HAlign_Center;
 
+	
 	/** The wire thickness of the connections between nodes. */
 	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
 	float WireThickness = 2.0f;
@@ -401,6 +415,7 @@ public:
 	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
 	FLinearColor WireSecondaryEdgeColor = FLinearColor{0.101961f, 0.137255f, 0.494118f, 1.f}; // blueish
 
+	
 	// Advanced Section
 	/**  The offset on the X axis (left/right) to use when automatically positioning nodes. */
 	UPROPERTY(Category = "Position", Config, EditAnywhere, AdvancedDisplay)

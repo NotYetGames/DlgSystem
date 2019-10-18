@@ -14,10 +14,24 @@ void UDlgNode_SpeechSequence::PostEditChangeProperty(FPropertyChangedEvent& Prop
 }
 #endif
 
-void UDlgNode_SpeechSequence::RebuildTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges)
+void UDlgNode_SpeechSequence::UpdateDefaultTexts(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
 {
-	Super::RebuildTextsNamespacesAndKeys(Settings, bEdges);
-	
+	// We only care about edges here
+	if (!Settings->bSetDefaultEdgeTexts)
+	{
+		return;
+	}
+
+	for (FDlgSpeechSequenceEntry& Entry : SpeechSequence)
+	{
+		// Inner edges always point to a normal node and are always the unique edge child
+		Entry.EdgeText = Settings->DefaultTextEdgeToNormalNode;
+	}
+	Super::UpdateDefaultTexts(Settings, bEdges, bUpdateGraphNode);
+}
+
+void UDlgNode_SpeechSequence::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
+{
 	UObject* Outer = GetOuter();
 	if (!IsValid(Outer))
 	{
@@ -29,6 +43,8 @@ void UDlgNode_SpeechSequence::RebuildTextsNamespacesAndKeys(const UDlgSystemSett
 		FDlgLocalizationHelper::UpdateTextNamespace(Outer, Settings, Entry.Text);
 		FDlgLocalizationHelper::UpdateTextNamespace(Outer, Settings, Entry.EdgeText);
 	}
+
+	Super::UpdateTextsNamespacesAndKeys(Settings, bEdges, bUpdateGraphNode);
 }
 
 bool UDlgNode_SpeechSequence::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)
