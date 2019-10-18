@@ -41,8 +41,11 @@ public:
 	/** Creates a simple edge without text, without conditions */
 	FDlgEdge(int32 InTargetIndex = INDEX_NONE) : TargetIndex(InTargetIndex) {}
 
+	// Is the Text property visible on this edge, the edges comes from the ParentNode
+	static bool IsTextVisible(const UDlgNode* ParentNode);
+	
 	// Updates the default texts if the settings allows it
-	void UpdateDefaultTexts(const UDlgDialogue* ParentDialogue, const UDlgSystemSettings* Settings);
+	void UpdateDefaultTexts(const UDlgDialogue* ParentDialogue, const UDlgNode* ParentNode, const UDlgSystemSettings* Settings);
 	
 	// Updates the namespace or keys depending on the settings
 	void UpdateTextsNamespacesAndKeys(const UObject* ParentObject, const UDlgSystemSettings* Settings);

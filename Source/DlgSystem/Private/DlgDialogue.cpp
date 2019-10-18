@@ -529,6 +529,69 @@ void UDlgDialogue::ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const
 	}
 }
 
+FDlgParticipantData& UDlgDialogue::GetParticipantDataEntry(FName ParticipantName, FName FallbackNodeOwnerName, bool bCheckNone, const FString& ContextMessage)
+{
+	// Used to ignore some participants
+	static FDlgParticipantData BlackHoleParticipant;
+	
+	// If the Participant Name is not set, it adopts the Node Owner Name
+	const FName& ValidParticipantName = ParticipantName == NAME_None ? FallbackNodeOwnerName : ParticipantName;
+
+	// Parent/child is not valid, simply do nothing
+	if (bCheckNone && ValidParticipantName == NAME_None)
+	{
+		FDlgLogger::Get().Warningf(
+			TEXT("Ignoring ParticipantName = None, Context = %s. Either your node name is None or your participant name is None."),
+			*ContextMessage
+		);
+		return BlackHoleParticipant;
+	}
+
+	return DlgData.FindOrAdd(ValidParticipantName);
+}
+
+void UDlgDialogue::AddConditionsDataFromNodeEdges(const UDlgNode* Node, int32 NodeIndex)
+{
+	const FString NodeContext = FString::Printf(TEXT("Node %s"), NodeIndex > INDEX_NONE ? *FString::FromInt(NodeIndex) : TEXT("Start") );
+	const FName FallbackNodeOwnerName = Node->GetNodeParticipantName();
+
+	for (const FDlgEdge& Edge : Node->GetNodeChildren())
+	{
+		const int32 TargetIndex = Edge.TargetIndex;
+
+		for (const FDlgCondition& Condition : Edge.Conditions)
+		{
+			FString ContextMessage = FString::Printf(TEXT("Adding Edge primary condition data from %s, to Node %d"), *NodeContext, TargetIndex);
+			GetParticipantDataEntry(Condition.ParticipantName, FallbackNodeOwnerName, true, ContextMessage)
+				.AddConditionPrimaryData(Condition);
+
+			if (Condition.IsSecondParticipantInvolved())
+			{
+				ContextMessage = FString::Printf(TEXT("Adding Edge secondary condition data from %s, to Node %d"), *NodeContext, TargetIndex);
+				GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName, true, ContextMessage)
+					.AddConditionSecondaryData(Condition);
+			}
+		}
+	}
+}
+
+void UDlgDialogue::RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings* Settings, bool bUpdateTextsNamespacesAndKeys)
+{
+	static constexpr bool bEdges = true;
+	static constexpr bool bUpdateGraphNode = false;
+	
+	// Rebuild & Update
+	// NOTE: this can do a dialogue data -> graph node data update
+	Node->RebuildTextArguments(bEdges, bUpdateGraphNode);
+	Node->UpdateDefaultTexts(Settings, bEdges, bUpdateGraphNode);
+	if (bUpdateTextsNamespacesAndKeys)
+	{
+		Node->UpdateTextsNamespacesAndKeys(Settings, bEdges, bUpdateGraphNode);
+	}
+	// Sync with the editor
+	Node->UpdateGraphNode();
+}
+
 void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 {
 	FDlgLogger::Get().Infof(TEXT("Refreshing data for Dialogue = `%s`"), *GetPathName());
@@ -537,60 +600,11 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 	DlgData.Empty();
 	DlgSpeakerStates.Empty();
 
-	// Used to ignore some participants
-	FDlgParticipantData BlackHoleParticipant;
-
-	// Gets the map entry - creates it first if it is not yet there
-	auto GetParticipantDataEntry =
-		[this, &BlackHoleParticipant](FName ParticipantName, FName FallbackNodeOwnerName, bool bCheckNone, const FString& ContextMessage) -> FDlgParticipantData&
-	{
-		// If the Participant Name is not set, it adopts the Node Owner Name
-		const FName& ValidParticipantName = ParticipantName == NAME_None ? FallbackNodeOwnerName : ParticipantName;
-
-		// Parent/child is not valid, simply do nothing
-		if (bCheckNone && ValidParticipantName == NAME_None)
-		{
-			FDlgLogger::Get().Warningf(
-				TEXT("Ignoring ParticipantName = None, Context = %s. Either your node name is None or your participant name is None."),
-				*ContextMessage
-			);
-			return BlackHoleParticipant;
-		}
-
-		FDlgParticipantData& ParticipantData = DlgData.FindOrAdd(ValidParticipantName);
-		return ParticipantData;
-	};
-
-	// Adds conditions from the edges of this Node.
-	const auto AddConditionsFromEdges = [this, &GetParticipantDataEntry](const UDlgNode* Node, const int32 NodeIndex)
-	{
-		const FString NodeContext = FString::Printf(TEXT("Node %s"), NodeIndex > INDEX_NONE ? *FString::FromInt(NodeIndex) : TEXT("Start") );
-		const FName FallbackNodeOwnerName = Node->GetNodeParticipantName();
-
-		for (const FDlgEdge& Edge : Node->GetNodeChildren())
-		{
-			const int32 TargetIndex = Edge.TargetIndex;
-
-			for (const FDlgCondition& Condition : Edge.Conditions)
-			{
-				FString ContextMessage = FString::Printf(TEXT("Adding Edge primary condition data from %s, to Node %d"), *NodeContext, TargetIndex);
-				GetParticipantDataEntry(Condition.ParticipantName, FallbackNodeOwnerName, true, ContextMessage)
-					.AddConditionPrimaryData(Condition);
-
-				if (Condition.IsSecondParticipantInvolved())
-				{
-					ContextMessage = FString::Printf(TEXT("Adding Edge secondary condition data from %s, to Node %d"), *NodeContext, TargetIndex);
-					GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName, true, ContextMessage)
-						.AddConditionSecondaryData(Condition);
-				}
-			}
-		}
-	};
-
 	// do not forget about the edges of the Root/Start Node
 	if (IsValid(StartNode))
 	{
-		AddConditionsFromEdges(StartNode, INDEX_NONE);
+		AddConditionsDataFromNodeEdges(StartNode, INDEX_NONE);
+		RebuildAndUpdateNode(StartNode, Settings, bUpdateTextsNamespacesAndKeys);
 	}
 
 	// Regular Nodes
@@ -602,15 +616,7 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 		const FName NodeParticipantName = Node->GetNodeParticipantName();
 
 		// Rebuild & Update
-		// NOTE: this can do a dialogue data -> graph node data update
-		Node->RebuildTextArguments(true, false);
-		Node->UpdateDefaultTexts(Settings, true, false);
-		if (bUpdateTextsNamespacesAndKeys)
-		{
-			Node->UpdateTextsNamespacesAndKeys(Settings, true, false);
-		}
-		// Sync with the editor graph nodes
-		Node->UpdateGraphNode();
+		RebuildAndUpdateNode(Node, Settings, bUpdateTextsNamespacesAndKeys);
 
 		// participant names
 		TArray<FName> Participants;
@@ -639,7 +645,7 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 		}
 
 		// Gather Edge Data
-		AddConditionsFromEdges(Node, NodeIndex);
+		AddConditionsDataFromNodeEdges(Node, NodeIndex);
 
 		// Walk over edges of speaker nodes
 		// NOTE: for speaker sequence nodes, the inner edges are handled by AddAllSpeakerStatesIntoSet
@@ -768,20 +774,7 @@ void UDlgDialogue::AutoFixGraph()
 		}
 
 		// Add some text to the edges.
-		const int32 FirstTargetIndex = NodeChildren[0].TargetIndex;
-		if (Settings->bSetDefaultEdgeTexts &&
-			NodeChildren.Num() == 1 &&
-			Nodes.IsValidIndex(FirstTargetIndex))
-		{
-			if (IsEndNode(FirstTargetIndex))
-			{
-				Node->GetSafeMutableNodeChildAt(0)->SetUnformattedText(Settings->DefaultTextEdgeToEndNode);
-			}
-			else
-			{
-				Node->GetSafeMutableNodeChildAt(0)->SetUnformattedText(Settings->DefaultTextEdgeToNormalNode);
-			}
-		}
+		Node->UpdateDefaultTexts(Settings, true, true);
 	}
 }
 

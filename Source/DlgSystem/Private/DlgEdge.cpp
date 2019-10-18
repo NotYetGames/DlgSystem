@@ -3,6 +3,8 @@
 #include "DlgSystemPrivatePCH.h"
 #include "DlgContextInternal.h"
 #include "DlgLocalizationHelper.h"
+#include "Nodes/DlgNode_Selector.h"
+#include "Nodes/DlgNode_Speech.h"
 
 const FDlgEdge& FDlgEdge::GetInvalidEdge()
 {
@@ -10,17 +12,50 @@ const FDlgEdge& FDlgEdge::GetInvalidEdge()
 	return DlgEdge;
 }
 
-void FDlgEdge::UpdateDefaultTexts(const UDlgDialogue* ParentDialogue, const UDlgSystemSettings* Settings)
+bool FDlgEdge::IsTextVisible(const UDlgNode* ParentNode)
 {
-	if (!Settings->bSetDefaultEdgeTexts)
+	if (!::IsValid(ParentNode))
 	{
-		return;
+		return false;
 	}
+
+	// Selector node
+	if (ParentNode->IsA<UDlgNode_Selector>())
+	{
+		return false;
+	}
+
+	// Virtual parent node
+	if (const UDlgNode_Speech* Node = Cast<UDlgNode_Speech>(ParentNode))
+	{
+		if (Node->IsVirtualParent())
+		{
+			return false;
+		}
+	}
+	
+	return true; 
+}
+
+void FDlgEdge::UpdateDefaultTexts(const UDlgDialogue* ParentDialogue, const UDlgNode* ParentNode, const UDlgSystemSettings* Settings)
+{
 	if (!IsValid())
 	{
 		return;
 	}
 
+	// Clear the current text as it won't be visible anyways
+	if (!IsTextVisible(ParentNode))
+	{
+		SetText(FText::GetEmpty());
+		return;
+	}
+	
+	if (!Settings->bSetDefaultEdgeTexts)
+	{
+		return;
+	}
+	
 	// Only if empty
 	if (GetUnformattedText().IsEmpty())
 	{

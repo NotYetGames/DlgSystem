@@ -25,7 +25,10 @@ void UDlgNode_SpeechSequence::UpdateDefaultTexts(const UDlgSystemSettings* Setti
 	for (FDlgSpeechSequenceEntry& Entry : SpeechSequence)
 	{
 		// Inner edges always point to a normal node and are always the unique edge child
-		Entry.EdgeText = Settings->DefaultTextEdgeToNormalNode;
+		if (Entry.EdgeText.IsEmpty())
+		{
+			Entry.EdgeText = Settings->DefaultTextEdgeToNormalNode;
+		}
 	}
 	Super::UpdateDefaultTexts(Settings, bEdges, bUpdateGraphNode);
 }

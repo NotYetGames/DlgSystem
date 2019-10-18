@@ -226,7 +226,7 @@ void UDlgNode::UpdateDefaultTexts(const UDlgSystemSettings* Settings, bool bEdge
 		const UDlgDialogue* Dialogue = GetDialogue();
 		for (FDlgEdge& Edge : Children)
 		{
-			Edge.UpdateDefaultTexts(Dialogue, Settings);
+			Edge.UpdateDefaultTexts(Dialogue, this, Settings);
 
 			// Set only one, kill the rest
 			if (Settings->bSetDefaultEdgeTextOnFirstChildOnly)

@@ -25,9 +25,9 @@ public:
 	static void UpdateTextNamespace(const UObject* Object, const UDlgSystemSettings* Settings, FText& Text) {}
 #endif
 
-	// Will we update the text namespace for the following uobjects
-	static bool WillTextNamespaceBeUpdated(const UObject* Object);
-	static bool WillTextNamespaceBeUpdated(const UObject* Object, const UDlgSystemSettings* Settings);
+	// Will we update the text namespace for the following texts
+	static bool WillTextNamespaceBeUpdated(const FText& Text);
+	static bool WillTextNamespaceBeUpdated(const FText& Text, const UDlgSystemSettings* Settings);
 	
 #if WITH_EDITOR && USE_STABLE_LOCALIZATION_KEYS
 	// Copied From IEditableTextProperty
@@ -37,5 +37,18 @@ public:
 
 	/** Get the localization ID we should use for the given package, and the given text instance */
 	static void StaticStableTextId(const UPackage* InPackage, IEditableTextProperty::ETextPropertyEditAction InEditAction, const FString& InTextSource, const FString& InProposedNamespace, const FString& InProposedKey, FString& OutStableNamespace, FString& OutStableKey);
+
+protected:
+	// Returns true if we should do an update of the FText
+	//         false otherwise
+	static bool GetNewNamespaceAndKey(
+		const UObject* Object,
+		const UDlgSystemSettings* Settings,
+		const FText& Text,
+		FString& OutNewNamespace,
+		FString& OutNewKey
+	);
+
 #endif // WITH_EDITOR && USE_STABLE_LOCALIZATION_KEYS
+	
 };

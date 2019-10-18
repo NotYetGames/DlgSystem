@@ -438,7 +438,7 @@ bool SDialogueTextPropertyEditableTextBox::IsSourceTextReadOnly() const
 
 bool SDialogueTextPropertyEditableTextBox::WillNamespaceBeUpdated() const
 {
-	return !IsIdentityReadOnly() && FDlgLocalizationHelper::WillTextNamespaceBeUpdated(nullptr);
+	return !IsIdentityReadOnly() && FDlgLocalizationHelper::WillTextNamespaceBeUpdated(GetTextValue());
 }
 
 bool SDialogueTextPropertyEditableTextBox::IsNamespaceReadOnly() const

@@ -52,9 +52,17 @@ bool UDlgSystemSettings::CanEditChange(const UProperty* InProperty) const
 			return false;
 		}
 
+		if (DialogueTextNamespaceLocalization == EDlgTextNamespaceLocalization::Ignore &&
+			(PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, LocalizationRemapSourceStringsToTexts) || 
+			 PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, LocalizationIgnoredTexts) ||
+			 PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, LocalizationIgnoredStrings)))
+		{
+			return false;
+		}
+
 		// Can't edit because they are not used
 		if (!bSetDefaultEdgeTexts &&
-			(PropertyName ==  GET_MEMBER_NAME_CHECKED(ThisClass, DefaultTextEdgeToEndNode) ||
+			(PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, DefaultTextEdgeToEndNode) ||
 			 PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, DefaultTextEdgeToNormalNode) ||
 			 PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, bSetDefaultEdgeTextOnFirstChildOnly)))
 		{
@@ -89,6 +97,29 @@ void UDlgSystemSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 	}
 }
 #endif // WITH_EDITOR
+
+bool UDlgSystemSettings::IsIgnoredTextForLocalization(const FText& Text) const
+{
+	// Ignored texts
+	for (const FText& Ignored : LocalizationIgnoredTexts)
+	{
+		if (Text.EqualTo(Ignored))
+		{
+			return false;
+		}
+	}
+
+	// Ignore strings
+	for (const FString& Ignored : LocalizationIgnoredStrings)
+	{
+		if (Text.ToString().Equals(Ignored))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
 
 FString UDlgSystemSettings::GetTextFileExtension(EDlgDialogueTextFormat TextFormat)
 {

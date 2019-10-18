@@ -7,58 +7,81 @@
 #include "Serialization/TextReferenceCollector.h"
 
 
-bool FDlgLocalizationHelper::WillTextNamespaceBeUpdated(const UObject* Object)
+bool FDlgLocalizationHelper::WillTextNamespaceBeUpdated(const FText& Text)
 {
-	return WillTextNamespaceBeUpdated(Object, GetDefault<UDlgSystemSettings>());
+	return WillTextNamespaceBeUpdated(Text, GetDefault<UDlgSystemSettings>());
 }
 
-bool FDlgLocalizationHelper::WillTextNamespaceBeUpdated(const UObject* Object, const UDlgSystemSettings* Settings)
+bool FDlgLocalizationHelper::WillTextNamespaceBeUpdated(const FText& Text, const UDlgSystemSettings* Settings)
 {
 	check(Settings);
-	// TODO use Object
 
 	// Means we can override it
-	return Settings->DialogueTextNamespaceLocalization != EDlgTextNamespaceLocalization::Ignore;
+	return Settings->DialogueTextNamespaceLocalization != EDlgTextNamespaceLocalization::Ignore &&
+		   Settings->IsIgnoredTextForLocalization(Text);
 }
 
 #if WITH_EDITOR
 
 void FDlgLocalizationHelper::UpdateTextNamespace(const UObject* Object, const UDlgSystemSettings* Settings, FText& Text)
 {
-	const FString DefaultValue = TEXT("");
-
-	// Culture invariant, empty, from string table, can't update idk
-	if (!Text.ShouldGatherForLocalization())
+	FString NewNamespace;
+	FString NewKey;
+	if (!GetNewNamespaceAndKey(Object, Settings, Text, NewNamespace, NewKey))
 	{
 		return;
 	}
+	
+	// Change namespace
+	// Don't use this as this marks the text as immutable
+	// Text = FInternationalization::ForUseOnlyByLocMacroAndGraphNodeTextLiterals_CreateText(*Text.ToString(), *NewNamespace, *CurrentKey);
+	Text = FText::ChangeKey(NewNamespace, NewKey, Text);
+}
 
-	// Ignore from settings
-	if (!Settings)
+bool FDlgLocalizationHelper::GetNewNamespaceAndKey(
+	const UObject* Object,
+	const UDlgSystemSettings* Settings,
+	const FText& Text,
+	FString& OutNewNamespace,
+	FString& OutNewKey
+)
+{
+	static const FString DefaultValue = TEXT("");
+	
+	// See if we can edit this
+	if (!IsValid(Object) || !IsValid(Settings))
 	{
-		return;
+		return false;
 	}
 	if (Settings->DialogueTextNamespaceLocalization == EDlgTextNamespaceLocalization::Ignore)
 	{
-		return;
+		return false;
 	}
+	// Culture invariant, empty, from string table, can't update idk
+	if (!Text.ShouldGatherForLocalization())
+	{
+		return false;
+	}
+	if (!Settings->IsIgnoredTextForLocalization(Text))
+	{
+		return false;
+	}
+	
+	bool bNamespaceChanged = false;
+	bool bKeyChanged = false;
 
 	const FString CurrentFullNamespace = FTextInspector::GetNamespace(Text).Get(DefaultValue);
-	const FString CurrentNamespace = TextNamespaceUtil::StripPackageNamespace(CurrentFullNamespace);
 	const FString CurrentKey = FTextInspector::GetKey(Text).Get(DefaultValue);
+	const FString NewKey = CurrentKey;
 
-	// Get newer namespace, default is GlobalNamespace
-	FString NewNamespace = Settings->DialogueTextGlobalNamespaceName;
+	// Set new Namespace
+	FString NewNamespace = Settings->DialogueTextGlobalNamespaceName; // GlobalNamespace
 	if (Settings->DialogueTextNamespaceLocalization == EDlgTextNamespaceLocalization::PerDialogue)
 	{
-		if (!IsValid(Object))
-		{
-			return;
-		}
 		NewNamespace = Object->GetName();
 	}
 
-	// Nothing to change
+	// Did namespace change?
 	// Only apply the change if the new namespace/package is different - we want to keep the keys stable where possible
 #if USE_STABLE_LOCALIZATION_KEYS
 	{
@@ -66,41 +89,54 @@ void FDlgLocalizationHelper::UpdateTextNamespace(const UObject* Object, const UD
 		const UPackage* Package = Object ? Object->GetOutermost() : nullptr;
 		const FString PackageNamespace = TextNamespaceUtil::EnsurePackageNamespace(const_cast<UPackage*>(Package));
 		const FString NewFullNamespace = TextNamespaceUtil::BuildFullNamespace(NewNamespace, PackageNamespace, /*bAlwaysApplyPackageNamespace*/true);
-		if (CurrentFullNamespace.Equals(NewFullNamespace, ESearchCase::CaseSensitive))
-		{
-			return;
-		}
+		bNamespaceChanged = !CurrentFullNamespace.Equals(NewFullNamespace, ESearchCase::CaseSensitive);
 	}
 #else
 	// Compare only namespaces without the package
-	if (CurrentNamespace.Equals(NewNamespace, ESearchCase::CaseSensitive))
-	{
-		return;
-	}
+	const FString CurrentNamespace = TextNamespaceUtil::StripPackageNamespace(CurrentFullNamespace);
+	bNamespaceChanged = !CurrentNamespace.Equals(NewNamespace, ESearchCase::CaseSensitive);
 #endif // USE_STABLE_LOCALIZATION_KEYS 
-	 
-	// We must use the package
+
+	// Did key change?
+	bKeyChanged = !CurrentKey.Equals(NewKey, ESearchCase::CaseSensitive);
+
+	// Get stabilized namespace and keys
+	// We must use the package to get a stabilized key
 #if USE_STABLE_LOCALIZATION_KEYS
-	const FString* TextSource = FTextInspector::GetSourceString(Text);
-	FString NewStableNamespace;
-	FString NewStableKey;
-	StaticStableTextId(
-		Object,
-		IEditableTextProperty::ETextPropertyEditAction::EditedNamespace,
-		TextSource ? *TextSource : FString(),
-		NewNamespace,
-		CurrentKey,
-		NewStableNamespace,
-		NewStableKey
-	);
-	NewNamespace = NewStableNamespace;
+	if (bNamespaceChanged)
+	{
+		const FString* TextSource = FTextInspector::GetSourceString(Text);
+		FString NewStableNamespace;
+		FString _;
+		StaticStableTextId(
+			Object,
+			IEditableTextProperty::ETextPropertyEditAction::EditedNamespace,
+			TextSource ? *TextSource : FString(),
+			NewNamespace,
+			NewKey,
+			NewStableNamespace,
+			_
+		);
+		NewNamespace = NewStableNamespace;
+	}
+	if (bKeyChanged)
+	{
+		// TODO maybe
+		checkNoEntry();
+	}
 #endif // USE_STABLE_LOCALIZATION_KEYS
 
-	// Change namespace
-	// Don't use this as this marks the text as immutable
-	// Text = FInternationalization::ForUseOnlyByLocMacroAndGraphNodeTextLiterals_CreateText(*Text.ToString(), *NewNamespace, *CurrentKey);
-	Text = FText::ChangeKey(NewNamespace, CurrentKey, Text);
+	// Something changed
+	if (bNamespaceChanged || bKeyChanged)
+	{
+		OutNewNamespace = NewNamespace;
+		OutNewKey = NewKey;
+		return true;
+	}
+	
+	return false;
 }
+
 
 #if USE_STABLE_LOCALIZATION_KEYS
 
@@ -153,9 +189,10 @@ void FDlgLocalizationHelper::StaticStableTextId(const UPackage* InPackage, IEdit
 		OutStableKey = FGuid::NewGuid().ToString();
 	}
 }
+
 #endif // USE_STABLE_LOCALIZATION_KEYS
 
-
 #endif // WITH_EDITOR
+
 
 

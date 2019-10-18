@@ -151,6 +151,11 @@ public:
 
 #undef CREATE_SETTER
 
+	// Depends on:
+	// - LocalizationIgnoredTexts
+	// - LocalizationIgnoredStrings
+	bool IsIgnoredTextForLocalization(const FText& Text) const;
+	
 	/** Saves the settings to the config file depending on the settings of this class. */
 	void SaveSettings()
 	{
@@ -184,24 +189,7 @@ public:
 	UPROPERTY(Category = "Runtime", Config, EditAnywhere)
 	bool bClearDialogueHistoryAutomatically = true;
 
-	
-	// Should the dialogue system set the default texts on empty edges on save dialogue and when creating them?
-	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Set Default Edge Texts")
-	bool bSetDefaultEdgeTexts = true;
 
-	// If true the default text will be only applied to the first child instead of all children from a node
-	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Set Default Edge Texts on First Child Only")
-	bool bSetDefaultEdgeTextOnFirstChildOnly = true;
-	
-	// Default text that appears on empty edges that lead to an end node
-	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Edge Text To End Node")
-	FText DefaultTextEdgeToEndNode;
-
-	// Default text that appears on empty edges texts that lead to a normal node (not an end node).
-	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Edge Text To Normal Node")
-	FText DefaultTextEdgeToNormalNode;
-
-	
 	/** The dialogue text format used for saving and reloading from text files. */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Format")
 	EDlgDialogueTextFormat DialogueTextFormat = EDlgDialogueTextFormat::None;
@@ -245,7 +233,24 @@ public:
 	TSet<FString> AdditionalTextFormatFileExtensionsToLookFor;
 
 
-	/** Defines what the system should do with Text Namespaces and Keys for localization */
+	// Should the dialogue system set the default texts on empty edges on save dialogue and when creating them?
+	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Set Default Edge Texts")
+	bool bSetDefaultEdgeTexts = true;
+
+	// If true the default text will be only applied to the first child instead of all children from a node
+	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Set Default Edge Texts on First Child Only")
+	bool bSetDefaultEdgeTextOnFirstChildOnly = true;
+	
+	// Default text that appears on empty edges that lead to an end node
+	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Edge Text To End Node")
+	FText DefaultTextEdgeToEndNode;
+
+	// Default text that appears on empty edges texts that lead to a normal node (not an end node).
+	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Edge Text To Normal Node")
+	FText DefaultTextEdgeToNormalNode;
+	
+	
+	// Defines what the system should do with Text Namespaces for localization
 	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Namespace")
 	EDlgTextNamespaceLocalization DialogueTextNamespaceLocalization = EDlgTextNamespaceLocalization::Ignore;
 
@@ -254,6 +259,20 @@ public:
 	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Global Namespace Name")
 	FString DialogueTextGlobalNamespaceName = "Dialogue";
 
+	// Additional Array of texts that this system won't overwrite the namespace or key for
+	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Ignored Texts")
+	TArray<FText> LocalizationIgnoredTexts;
+
+	// Same as Ignored Texts only this looks at the SourceString
+	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Ignored Strings")
+	TArray<FString> LocalizationIgnoredStrings;
+
+	// Map used to remap some SourceStrings texts found in the dialogues with a new Text value/namespace/key
+	// Key: SourceString we are searching for
+	// Value: Text replacement. NOTE: if the text value is empty we will still overwrite the namespace and key of the SourceString Text.
+	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Remap Source Strings to Texts")
+	TMap<FString, FText> LocalizationRemapSourceStringsToTexts;
+	
 
 	// Enables the message log to output info/errors/warnings to it
 	UPROPERTY(Category = "Logger", Config, EditAnywhere)

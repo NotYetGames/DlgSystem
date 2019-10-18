@@ -28,7 +28,7 @@ void FDialogueEdge_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InStruct
 	{
 		// Virtual parents do not handle direct children, only grand children
 		// And selector node do not even touch them
-		bShowTextProperty = !GraphNode->IsVirtualParentNode() && !GraphNode->IsSelectorNode();
+		bShowTextProperty = FDlgEdge::IsTextVisible(&GraphNode->GetDialogueNode());
 	}
 
 	const bool bShowOnlyInnerProperties = StructPropertyHandle->GetProperty()->HasMetaData(META_ShowOnlyInnerProperties);
