@@ -21,10 +21,25 @@ bool FDlgLocalizationHelper::WillTextNamespaceBeUpdated(const FText& Text, const
 		   Settings->IsIgnoredTextForLocalization(Text);
 }
 
+void FDlgLocalizationHelper::UpdateTextFromRemapping(const UDlgSystemSettings* Settings, FText& OutText)
+{
+	if (Settings->IsTextRemapped(OutText))
+	{
+		// Remapped
+		const FText& RemappedText = Settings->GetTextRemappedText(OutText);
+		OutText = RemappedText;
+		// Copy namespace and key
+		// NewNamespace = FTextInspector::GetNamespace(RemappedText).Get(DefaultValue);
+		// NewKey = FTextInspector::GetKey(RemappedText).Get(DefaultValue);
+	}
+}
+
 #if WITH_EDITOR
 
 void FDlgLocalizationHelper::UpdateTextNamespaceAndKey(const UObject* Object, const UDlgSystemSettings* Settings, FText& Text)
 {
+	static const FString DefaultValue = TEXT("");
+	
 	// See if we can edit this
 	if (!IsValid(Object) || !IsValid(Settings))
 	{
@@ -32,14 +47,6 @@ void FDlgLocalizationHelper::UpdateTextNamespaceAndKey(const UObject* Object, co
 	}
 
 	// Text remapping takes precedence over everything
-	// if (Settings->IsTextRemapped(Text))
-	// {
-	// 	// Remapped
-	// 	const FText& RemappedText = Settings->GetTextRemappedText(Text);
-	// 	Text = RemappedText;
-	// 	return;
-	// }
-
 	FString NewNamespace;
 	FString NewKey;
 	if (!GetNewNamespaceAndKey(Object, Settings, Text, NewNamespace, NewKey))
@@ -114,13 +121,14 @@ bool FDlgLocalizationHelper::GetNewNamespaceAndKey(
 #if USE_STABLE_LOCALIZATION_KEYS
 	if (bNamespaceChanged)
 	{
-		const FString* TextSource = FTextInspector::GetSourceString(Text);
+		// NOTE: dereference should be legal because GetSourceString always return a valid pointer
+		const FString& TextSource = *FTextInspector::GetSourceString(Text);
 		FString NewStableNamespace;
 		FString NewStableKey;
 		StaticStableTextId(
 			Object,
 			IEditableTextProperty::ETextPropertyEditAction::EditedNamespace,
-			TextSource ? *TextSource : FString(),
+			TextSource,
 			NewNamespace,
 			NewKey,
 			NewStableNamespace,

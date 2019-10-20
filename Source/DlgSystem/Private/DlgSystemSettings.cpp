@@ -53,8 +53,7 @@ bool UDlgSystemSettings::CanEditChange(const UProperty* InProperty) const
 		}
 
 		if (DialogueTextNamespaceLocalization == EDlgTextNamespaceLocalization::Ignore &&
-			(PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, LocalizationIgnoredTexts) ||
-			 PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, LocalizationIgnoredStrings)))
+			(PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, LocalizationIgnoredStrings)))
 		{
 			return false;
 		}
@@ -100,22 +99,23 @@ void UDlgSystemSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 bool UDlgSystemSettings::IsIgnoredTextForLocalization(const FText& Text) const
 {
 	// Ignored texts
-	for (const FText& Ignored : LocalizationIgnoredTexts)
-	{
-		if (Text.EqualTo(Ignored))
-		{
-			return false;
-		}
-	}
+	// for (const FText& Ignored : LocalizationIgnoredTexts)
+	// {
+	// 	if (Text.EqualTo(Ignored))
+	// 	{
+	// 		return false;
+	// 	}
+	// }
 
 	// Ignore strings
-	if (LocalizationIgnoredStrings.Contains(Text.ToString()))
+	const FString& TextSourceString = *FTextInspector::GetSourceString(Text);
+	if (LocalizationIgnoredStrings.Contains(TextSourceString))
 	{
 		return false;
 	}
 	// for (const FString& Ignored : LocalizationIgnoredStrings)
 	// {
-	// 	if (Text.ToString().Equals(Ignored))
+	// 	if (TextSourceString.Equals(Ignored))
 	// 	{
 	// 		return false;
 	// 	}

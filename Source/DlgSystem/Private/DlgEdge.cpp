@@ -37,7 +37,9 @@ bool FDlgEdge::IsTextVisible(const UDlgNode* ParentNode)
 	return true; 
 }
 
-void FDlgEdge::UpdateDefaultTexts(const UDlgDialogue* ParentDialogue, const UDlgNode* ParentNode, const UDlgSystemSettings* Settings)
+void FDlgEdge::UpdateTextValueFromDefaultAndRemapping(
+	const UDlgDialogue* ParentDialogue, const UDlgNode* ParentNode, const UDlgSystemSettings* Settings, bool bUpdateFromRemapping
+)
 {
 	if (!IsValid())
 	{
@@ -51,24 +53,28 @@ void FDlgEdge::UpdateDefaultTexts(const UDlgDialogue* ParentDialogue, const UDlg
 		return;
 	}
 	
-	if (!Settings->bSetDefaultEdgeTexts)
+	if (Settings->bSetDefaultEdgeTexts)
 	{
-		return;
+		// Only if empty
+		if (GetUnformattedText().IsEmpty())
+		{
+			if (ParentDialogue->IsEndNode(TargetIndex))
+			{
+				// End Node
+				SetText(Settings->DefaultTextEdgeToEndNode);
+			}
+			else
+			{
+				// Normal node
+				SetText(Settings->DefaultTextEdgeToNormalNode);
+			}
+		}
 	}
-	
-	// Only if empty
-	if (GetUnformattedText().IsEmpty())
+
+	// Update text remapping
+	if (bUpdateFromRemapping)
 	{
-		if (ParentDialogue->IsEndNode(TargetIndex))
-		{
-			// End Node
-			SetText(Settings->DefaultTextEdgeToEndNode);
-		}
-		else
-		{
-			// Normal node
-			SetText(Settings->DefaultTextEdgeToNormalNode);
-		}
+		FDlgLocalizationHelper::UpdateTextFromRemapping(Settings, Text);
 	}
 }
 

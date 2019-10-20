@@ -14,23 +14,24 @@ void UDlgNode_SpeechSequence::PostEditChangeProperty(FPropertyChangedEvent& Prop
 }
 #endif
 
-void UDlgNode_SpeechSequence::UpdateDefaultTexts(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
+void UDlgNode_SpeechSequence::UpdateTextsValuesFromDefaultsAndRemappings(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
 {
-	// We only care about edges here
-	if (!Settings->bSetDefaultEdgeTexts)
-	{
-		return;
-	}
-
 	for (FDlgSpeechSequenceEntry& Entry : SpeechSequence)
 	{
-		// Inner edges always point to a normal node and are always the unique edge child
-		if (Entry.EdgeText.IsEmpty())
+		// We only care about edges here
+		if (Settings->bSetDefaultEdgeTexts)
 		{
-			Entry.EdgeText = Settings->DefaultTextEdgeToNormalNode;
+			// Inner edges always point to a normal node and are always the unique edge child
+			if (Entry.EdgeText.IsEmpty())
+			{
+				Entry.EdgeText = Settings->DefaultTextEdgeToNormalNode;
+			}
 		}
+
+		FDlgLocalizationHelper::UpdateTextFromRemapping(Settings, Entry.Text);
+		FDlgLocalizationHelper::UpdateTextFromRemapping(Settings, Entry.EdgeText);
 	}
-	Super::UpdateDefaultTexts(Settings, bEdges, bUpdateGraphNode);
+	Super::UpdateTextsValuesFromDefaultsAndRemappings(Settings, bEdges, bUpdateGraphNode);
 }
 
 void UDlgNode_SpeechSequence::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)

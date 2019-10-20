@@ -16,6 +16,8 @@ class DLGSYSTEM_API FDlgLocalizationHelper
 {
 	typedef FDlgLocalizationHelper Self;
 public:
+	static void UpdateTextFromRemapping(const UDlgSystemSettings* Settings, FText& OutText);
+	
 #if WITH_EDITOR
 	// Updates the text namespace to match the settings options
 	// NOTE: only works in editor mode

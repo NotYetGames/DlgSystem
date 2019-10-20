@@ -151,8 +151,10 @@ public:
 	/** Gathers associated participants, they are only added to the array if they are not yet there */
 	virtual void GetAssociatedParticipants(TArray<FName>& OutArray) const;
 
-	// Updates the default texts if the settings allows it
-	virtual void UpdateDefaultTexts(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true);
+	// Updates the value of the texts from the default values or the remappings (if any)
+	virtual void UpdateTextsValuesFromDefaultsAndRemappings(
+		const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true
+	);
 	
 	// Updates the namespace and key of all the texts depending on the settings
 	virtual void UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true);

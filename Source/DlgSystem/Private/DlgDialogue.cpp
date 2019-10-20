@@ -583,12 +583,13 @@ void UDlgDialogue::RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings
 	// Rebuild & Update
 	// NOTE: this can do a dialogue data -> graph node data update
 	Node->RebuildTextArguments(bEdges, bUpdateGraphNode);
-	Node->UpdateDefaultTexts(Settings, bEdges, bUpdateGraphNode);
+	Node->UpdateTextsValuesFromDefaultsAndRemappings(Settings, bEdges, bUpdateGraphNode);
 	if (bUpdateTextsNamespacesAndKeys)
 	{
 		Node->UpdateTextsNamespacesAndKeys(Settings, bEdges, bUpdateGraphNode);
 	}
-	// Sync with the editor
+	
+	// Sync with the editor aka bUpdateGraphNode = true
 	Node->UpdateGraphNode();
 }
 
@@ -774,7 +775,7 @@ void UDlgDialogue::AutoFixGraph()
 		}
 
 		// Add some text to the edges.
-		Node->UpdateDefaultTexts(Settings, true, true);
+		Node->UpdateTextsValuesFromDefaultsAndRemappings(Settings, true, true);
 	}
 }
 

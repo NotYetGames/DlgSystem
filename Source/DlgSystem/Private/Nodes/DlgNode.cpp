@@ -3,6 +3,7 @@
 #include "DlgContextInternal.h"
 #include "EngineUtils.h"
 #include "Logging/DlgLogger.h"
+#include "DlgLocalizationHelper.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -218,24 +219,36 @@ FDlgEdge* UDlgNode::GetMutableNodeChildForTargetIndex(int32 TargetIndex)
 }
 
 
-void UDlgNode::UpdateDefaultTexts(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
+void UDlgNode::UpdateTextsValuesFromDefaultsAndRemappings(
+	const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode
+)
 {
 	// We only care about edges here
-	if (bEdges && Settings->bSetDefaultEdgeTexts)
+	if (bEdges)
 	{
-		const UDlgDialogue* Dialogue = GetDialogue();
-		for (FDlgEdge& Edge : Children)
+		const bool bSkipAfterFirstChild = Settings->bSetDefaultEdgeTextOnFirstChildOnly;
+		if (Settings->bSetDefaultEdgeTexts)
 		{
-			Edge.UpdateDefaultTexts(Dialogue, this, Settings);
-
-			// Set only one, kill the rest
-			if (Settings->bSetDefaultEdgeTextOnFirstChildOnly)
+			const UDlgDialogue* Dialogue = GetDialogue();
+			for (FDlgEdge& Edge : Children)
 			{
-				break;
+				Edge.UpdateTextValueFromDefaultAndRemapping(Dialogue, this, Settings, false);
+
+				// Set only one, kill the rest
+				if (bSkipAfterFirstChild)
+				{
+					break;
+				}
 			}
 		}
-	}
 
+		// Update the rest of the texts remapping
+		for (FDlgEdge& Edge : Children)
+		{
+			FDlgLocalizationHelper::UpdateTextFromRemapping(Settings, Edge.GetMutableUnformattedText());
+		}
+	}
+	
 	if (bUpdateGraphNode)
 	{
 		UpdateGraphNode();

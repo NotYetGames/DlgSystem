@@ -157,9 +157,9 @@ public:
 	bool IsIgnoredTextForLocalization(const FText& Text) const;
 
 	// Is this text remapped
-	FORCEINLINE bool IsTextRemapped(const FText& Text) const { return IsSourceStringRemapped(Text.ToString());  }
+	FORCEINLINE bool IsTextRemapped(const FText& Text) const { return IsSourceStringRemapped(*FTextInspector::GetSourceString(Text));  }
 	FORCEINLINE bool IsSourceStringRemapped(const FString& SourceString) const { return LocalizationRemapSourceStringsToTexts.Contains(SourceString); }
-	FORCEINLINE const FText& GetTextRemappedText(const FText& Text) const { return GetSourceStringRemappedText(Text.ToString()); }
+	FORCEINLINE const FText& GetTextRemappedText(const FText& Text) const { return GetSourceStringRemappedText(*FTextInspector::GetSourceString(Text)); }
 	FORCEINLINE const FText& GetSourceStringRemappedText(const FString& SourceString) const { return LocalizationRemapSourceStringsToTexts.FindChecked(SourceString); }
 	
 	/** Saves the settings to the config file depending on the settings of this class. */
@@ -266,17 +266,17 @@ public:
 	FString DialogueTextGlobalNamespaceName = "Dialogue";
 
 	// Additional Array of texts that this system won't overwrite the namespace or key for
-	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Ignored Texts")
-	TArray<FText> LocalizationIgnoredTexts;
+	//UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Ignored Texts")
+	//TArray<FText> LocalizationIgnoredTexts;
 
-	// Same as Ignored Texts only this looks at the SourceString
-	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Ignored Strings")
+	// Additional Array of source strings that this system won't overwrite the namespace or key for
+	UPROPERTY(Category = "Localization", Config, EditAnywhere, AdvancedDisplay, DisplayName = "Ignored Strings")
 	TSet<FString> LocalizationIgnoredStrings;
 
 	// Map used to remap some SourceStrings texts found in the dialogues with a new Text value/namespace/key
 	// Key: SourceString we are searching for
-	// Value: Text replacement. NOTE: if the text value is empty we will still overwrite the namespace and key of the SourceString Text.
-	UPROPERTY(Category = "Localization", Config, VisibleAnywhere, DisplayName = "Remap Source Strings to Texts")
+	// Value: Text replacement. NOTE: if the text value is usually not empty
+	UPROPERTY(Category = "Localization", Config, EditAnywhere, AdvancedDisplay, DisplayName = "Remap Source Strings to Texts")
 	TMap<FString, FText> LocalizationRemapSourceStringsToTexts;
 	
 

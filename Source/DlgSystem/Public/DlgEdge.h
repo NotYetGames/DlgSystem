@@ -44,8 +44,10 @@ public:
 	// Is the Text property visible on this edge, the edges comes from the ParentNode
 	static bool IsTextVisible(const UDlgNode* ParentNode);
 	
-	// Updates the default texts if the settings allows it
-	void UpdateDefaultTexts(const UDlgDialogue* ParentDialogue, const UDlgNode* ParentNode, const UDlgSystemSettings* Settings);
+	// Updates the text value of the Edge Text from the default value and text remapping (if any)
+	void UpdateTextValueFromDefaultAndRemapping(
+		const UDlgDialogue* ParentDialogue, const UDlgNode* ParentNode, const UDlgSystemSettings* Settings, bool bUpdateFromRemapping
+	);
 	
 	// Updates the namespace or keys depending on the settings
 	void UpdateTextsNamespacesAndKeys(const UObject* ParentObject, const UDlgSystemSettings* Settings);
@@ -88,6 +90,7 @@ public:
 
 	// This always returns the unformatted text, if you want the formatted text use GetText()
 	const FText& GetUnformattedText() const { return Text; }
+	FText& GetMutableUnformattedText() { return Text; }
 	
 	/** Returns if the Edge is valid, has the TargetIndex non negative  */
 	bool IsValid() const
