@@ -96,6 +96,10 @@ bool FDlgLocalizationHelper::GetNewNamespaceAndKey(
 	{
 		NewNamespace = Object->GetName();
 	}
+	else if (Settings->DialogueTextNamespaceLocalization == EDlgTextNamespaceLocalization::WithPrefixPerDialogue)
+	{
+		NewNamespace = Settings->DialogueTextPrefixNamespaceName + Object->GetName();
+	}
 
 	// Did namespace change?
 	// Only apply the change if the new namespace/package is different - we want to keep the keys stable where possible

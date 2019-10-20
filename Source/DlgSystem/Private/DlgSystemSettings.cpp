@@ -6,7 +6,6 @@
 #include "DlgManager.h"
 #include "Logging/DlgLogger.h"
 
-#define LOCTEXT_NAMESPACE "DlgSystemSettings"
 
 //////////////////////////////////////////////////////////////////////////
 // UDlgSystemSettings
@@ -15,11 +14,12 @@ UDlgSystemSettings::UDlgSystemSettings()
 	BlacklistedReflectionClasses = {AActor::StaticClass(), APawn::StaticClass(),  ACharacter::StaticClass()};
 	// AdditionalTextFormatFileExtensionsToLookFor = {""};
 
-	DefaultTextEdgeToEndNode = LOCTEXT("default_edge_finish", "Finish");
-	DefaultTextEdgeToNormalNode = LOCTEXT("default_edge_next", "Next");
+	DefaultTextEdgeToEndNode = FText::AsCultureInvariant(TEXT("Finish"));
+	DefaultTextEdgeToNormalNode = FText::AsCultureInvariant(TEXT("Next"));
 }
 
 #if WITH_EDITOR
+#define LOCTEXT_NAMESPACE "DlgSystemSettings"
 FText UDlgSystemSettings::GetSectionText() const
 {
 	return LOCTEXT("SectionText", "Dialogue");
@@ -48,6 +48,13 @@ bool UDlgSystemSettings::CanEditChange(const UProperty* InProperty) const
 		// Only useful for GlobalNamespace
 		if (DialogueTextNamespaceLocalization != EDlgTextNamespaceLocalization::Global &&
 			PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, DialogueTextGlobalNamespaceName))
+		{
+			return false;
+		}
+
+		// Only useful for WithPrefixPerDialogue
+		if (DialogueTextNamespaceLocalization != EDlgTextNamespaceLocalization::WithPrefixPerDialogue &&
+			PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, DialogueTextPrefixNamespaceName))
 		{
 			return false;
 		}
@@ -94,6 +101,7 @@ void UDlgSystemSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 		}
 	}
 }
+#undef LOCTEXT_NAMESPACE
 #endif // WITH_EDITOR
 
 bool UDlgSystemSettings::IsIgnoredTextForLocalization(const FText& Text) const
@@ -179,4 +187,3 @@ TSet<FString> UDlgSystemSettings::GetAllTextFileExtensions() const
 
 
 
-#undef LOCTEXT_NAMESPACE

@@ -92,14 +92,19 @@ enum class EDlgTextInputKeyForNewLine : uint8
 UENUM()
 enum class EDlgTextNamespaceLocalization : uint8
 {
-	/** The system does not modify the Namespace and Key values of the Text fields. */
+	// The system does not modify the Namespace and Key values of the Text fields.
 	Ignore			UMETA(DisplayName = "Ignore"),
 
-	/** The system sets the Namespace for Text fields for each dialogue separately. Unique keys are also generated. */
-	PerDialogue		UMETA(DisplayName = "Namespace Per Dialogue"),
+	// The system sets the Namespace for Text fields for each dialogue separately. Unique keys are also generated.
+	PerDialogue		UMETA(DisplayName = "Namespace Per Dialogue (DialogueName)"),
 
-	/** The system sets the Namespace for Text fields for each dialogue into the same value. Unique keys are also generated. */
-	Global			UMETA(DisplayName = "Global Namespace")
+	// Same as PerDialogue only we will have a prefix set
+	WithPrefixPerDialogue UMETA(DisplayName = "Prefix + Namespace Per Dialogue (Prefix.DialogueName)"),
+
+	// The system sets the Namespace for Text fields for each dialogue into the same value. Unique keys are also generated.
+	Global				UMETA(DisplayName = "Global Namespace")
+
+	
 };
 
 // UDeveloperSettings classes are auto discovered https://wiki.unrealengine.com/CustomSettings
@@ -264,6 +269,11 @@ public:
 	// Only used for GlobalNamespace
 	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Global Namespace Name")
 	FString DialogueTextGlobalNamespaceName = "Dialogue";
+
+	// Depending on TextLocalizationMode it can be used as the prefix for all dialogues namespace name
+	// Only used for WithPrefixPerDialogue
+	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Namespace Name Prefix")
+	FString DialogueTextPrefixNamespaceName = "Dialogue_";
 
 	// Additional Array of texts that this system won't overwrite the namespace or key for
 	//UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Ignored Texts")
