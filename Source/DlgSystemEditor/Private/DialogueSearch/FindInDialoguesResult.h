@@ -26,20 +26,23 @@ public:
 	}
 
 public:
-	/** Search term that the search items must match*/
+	// Search term that the search items must match
 	FString SearchString;
 
-	/** Include node/edge indices in search results? */
+	// Include node/edge indices in search results?
 	bool bIncludeIndices = false;
 
-	/** Include the Dialogue GUID in search results */
+	// Include the Dialogue GUID in search results
 	bool bIncludeDialogueGUID = false;
 
-	/** Include node comments in search results? */
+	// Include node comments in search results?
 	bool bIncludeComments = true;
 
-	/** Include numerical data in search results like (int32, floats)? */
+	// Include numerical data in search results like (int32, floats)?
 	bool bIncludeNumericalTypes = false;
+
+	// Include the Text localization data in search results (namespace, key)
+	bool bIncludeTextLocalizationData = false;
 };
 
 /* Base class that matched the search results. When used by itself it is a simple text node. */
