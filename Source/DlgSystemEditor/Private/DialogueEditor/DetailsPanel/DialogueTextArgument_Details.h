@@ -3,6 +3,7 @@
 
 #include "IPropertyTypeCustomization.h"
 #include "Layout/Visibility.h"
+#include "IDetailPropertyRow.h"
 
 #include "DlgTextArgument.h"
 #include "DialogueDetailsPanelUtils.h"
@@ -55,6 +56,12 @@ private:
 			   ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
+	EVisibility GetVariableInfoVisibility() const
+	{
+		return ArgumentType == EDlgTextArgumentType::DlgTextArgumentClassMethodReturnWithVariables
+			? EVisibility::Visible : EVisibility::Hidden;
+	}
+
 	/** Gets all the event name suggestions depending on EventType from all Dialogues. */
 	TArray<FName> GetAllDialoguesVariableNames() const
 	{
@@ -100,6 +107,7 @@ private:
 	// Cache the some property handles
 	TSharedPtr<IPropertyHandle> StructPropertyHandle;
 	TSharedPtr<IPropertyHandle> ParticipantNamePropertyHandle;
+	TSharedPtr<IPropertyHandle> VariableInfoPropertyHandle;
 
 	// Cache the properties
 	TSharedPtr<IPropertyHandle> ArgumentTypePropertyHandle;
@@ -110,6 +118,7 @@ private:
 	// Cache the rows of the properties, created in CustomizeChildren
 	TSharedPtr<FTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
 	TSharedPtr<FTextPropertyPickList_CustomRowHelper> VariableNamePropertyRow;
+	IDetailPropertyRow* VariableInfoPropertyRow = nullptr;
 
 	/** Hold a reference to dialogue we are displaying. */
 	UDlgDialogue* Dialogue = nullptr;

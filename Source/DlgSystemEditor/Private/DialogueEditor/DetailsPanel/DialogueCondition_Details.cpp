@@ -30,11 +30,13 @@ void FDialogueCondition_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InS
 	ConditionTypePropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, ConditionType));
 	CompareTypePropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, CompareType));
 	IntValuePropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, IntValue));
+	VariableListPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, functionData));
 	check(ParticipantNamePropertyHandle.IsValid());
 	check(OtherParticipantNamePropertyHandle.IsValid());
 	check(ConditionTypePropertyHandle.IsValid());
 	check(CompareTypePropertyHandle.IsValid());
 	check(IntValuePropertyHandle.IsValid());
+	check(VariableListPropertyHandle.IsValid());
 
 	// Register handler properties changes
 	ConditionTypePropertyHandle->SetOnPropertyValueChanged(FSimpleDelegate::CreateSP(this, &Self::OnConditionTypeChanged, true));
@@ -94,6 +96,13 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 		)
 		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCallbackNameVisibility))
 		->Update();
+	}
+
+	// functionData (Variable Name)
+	{
+		VariableListPropertyRow = &StructBuilder.AddProperty(
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, functionData)).ToSharedRef());
+		VariableListPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetVariableListVisibility));
 	}
 
 	// Operation
@@ -208,6 +217,12 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 	FText IntValueDisplayName = LOCTEXT("IntValueDisplayName", "Int Value");
 	FText IntValueToolTip = LOCTEXT("IntValueToolTip", "The int value the VariableName is checked against (depending on the operation).\n"
 		"VariableName <Operation> IntValue");
+	FText ParticipantSelectorDisplayName = LOCTEXT("ParticipantSelectorDisplayName", "Participant to use");
+	FText ParticipantSelectorToolTip = LOCTEXT("ParticipantSelectorToolTip", "Select your dialog participant to run functions from.");
+	FText FunctionSelectorDisplayName = LOCTEXT("FunctionSelectorDisplayName", "Method To Use");
+	FText FunctionSelectorToolTip = LOCTEXT("FunctionSelectorToolTip", "The function you wish to use, must return a bool!");
+	FText VariableListDisplayName = LOCTEXT("VariableListDisplayName", "Variables");
+	FText VariableListToolTip = LOCTEXT("VariableListToolTip", "The variables to pass towards the method. Split with a space!");
 
 	FDialogueDetailsPanelUtils::ResetNumericPropertyLimits(IntValuePropertyHandle);
 	switch (ConditionType)
@@ -235,6 +250,13 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 
 	case EDlgConditionType::DlgConditionIntCall:
 	case EDlgConditionType::DlgConditionClassIntVariable:
+		break;
+
+	case EDlgConditionType::DlgConditionClassMethod:
+	case EDlgConditionType::DlgConditionClassMethodWithVariable:
+		CalllBackNameDisplayName = LOCTEXT("ConditionMethod_CallBackNameDisplayName", "Function Name");
+		CalllBackNameToolTip = LOCTEXT("ConditionMethod_CallBackNameToolTip", "The name of the function you wish to execute");
+		BoolValueToolTip = LOCTEXT("ConditionMethod_BoolValueToolTip", "Whether the bool check is expected to be true or false in order to satisfy the condition");
 		break;
 
 	case EDlgConditionType::DlgConditionNodeVisited:
@@ -275,6 +297,8 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 	IntValuePropertyRow->DisplayName(IntValueDisplayName);
 	IntValuePropertyRow->ToolTip(IntValueToolTip);
 	FloatValuePropertyRow->ToolTip(FloatValueToolTip);
+	VariableListPropertyRow->DisplayName(VariableListDisplayName);
+	VariableListPropertyRow->ToolTip(VariableListToolTip);
 
 	// Refresh the view, without this some names/tooltips won't get refreshed
 	if (bForceRefresh && PropertyUtils.IsValid())
@@ -317,7 +341,9 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 		bReflectionBased = ConditionType == EDlgConditionType::DlgConditionClassBoolVariable
 						|| ConditionType == EDlgConditionType::DlgConditionClassIntVariable
 						|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
-						|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable;
+						|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable
+						|| ConditionType == EDlgConditionType::DlgConditionClassMethod
+						|| ConditionType == EDlgConditionType::DlgConditionClassMethodWithVariable;
 	}
 
 
@@ -397,6 +423,20 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 			{
 				UDlgManager::GetAllDialoguesNameNames(ParticipantName, Suggestions);
 			}
+		}
+		break;
+
+	case EDlgConditionType::DlgConditionClassMethod:
+		if (bReflectionBased && Dialogue)
+		{
+			UDlgReflectionHelper::GetMethodNames(Dialogue->GetParticipantClass(ParticipantName), Suggestions, UBoolProperty::StaticClass(), false);
+		}
+		break;
+
+	case EDlgConditionType::DlgConditionClassMethodWithVariable:
+		if (bReflectionBased && Dialogue)
+		{
+			UDlgReflectionHelper::GetMethodNames(Dialogue->GetParticipantClass(ParticipantName), Suggestions, UBoolProperty::StaticClass(), true);
 		}
 		break;
 

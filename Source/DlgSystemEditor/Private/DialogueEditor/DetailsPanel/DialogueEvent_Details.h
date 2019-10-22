@@ -70,6 +70,7 @@ private:
 	{
 		return EventType == EDlgEventType::DlgEventModifyName
 			|| EventType == EDlgEventType::DlgEventModifyClassNameVariable
+			|| EventType == EDlgEventType::DlgCallMethodWithVariables
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 

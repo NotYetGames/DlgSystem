@@ -25,8 +25,10 @@ void FDialogueTextArgument_Details::CustomizeHeader(TSharedRef<IPropertyHandle> 
 	// Cache the Property Handle for the ArgumentType
 	ParticipantNamePropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgTextArgument, ParticipantName));
 	ArgumentTypePropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgTextArgument, Type));
+	VariableInfoPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgTextArgument, VariableInfo));
 	check(ParticipantNamePropertyHandle.IsValid());
 	check(ArgumentTypePropertyHandle.IsValid());
+	check(VariableInfoPropertyHandle.IsValid());
 
 	// Register handler for event type change
 	ArgumentTypePropertyHandle->SetOnPropertyValueChanged(
@@ -69,6 +71,13 @@ void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle
 	// ArgumentType
 	StructBuilder.AddProperty(ArgumentTypePropertyHandle.ToSharedRef());
 
+	// Variable Info
+	{
+		VariableInfoPropertyRow = &StructBuilder.AddProperty(
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgTextArgument, VariableInfo)).ToSharedRef());
+		VariableInfoPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetVariableInfoVisibility));
+	}
+
 	// VariableName
 	{
 		const TSharedPtr<IPropertyHandle> VariableNamePropertyHandle =
@@ -101,6 +110,20 @@ void FDialogueTextArgument_Details::OnArgumentTypeChanged(bool bForceRefresh)
 		return;
 	}
 	ArgumentType = static_cast<EDlgTextArgumentType>(Value);
+
+	FText VariableNameDisplayName = LOCTEXT("VariableNameDisplayName", "Variable Name");
+	FText VariableNameToolTip = LOCTEXT("VariableNameToolTip", "The name of the variable to use");
+
+	if (ArgumentType == EDlgTextArgumentType::DlgTextArgumentClassMethodReturn ||
+		ArgumentType == EDlgTextArgumentType::DlgTextArgumentClassMethodReturnWithVariables)
+	{
+		VariableNameDisplayName = LOCTEXT("VariableNameDisplayName", "Function Name");
+		VariableNameToolTip = LOCTEXT("VariableNameToolTip", "The name of the function you wish to execute. MUST have a string return param!!!");
+	}
+
+	VariableNamePropertyRow->SetDisplayName(VariableNameDisplayName)
+		->SetToolTip(VariableNameToolTip)
+		->Update();
 
 	// Refresh the view, without this some names/tooltips won't get refreshed
 	if (bForceRefresh && PropertyUtils.IsValid())
@@ -157,6 +180,20 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 			if (Dialogue)
 			{
 				UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UTextProperty::StaticClass(), Suggestions);
+			}
+			break;
+
+		case EDlgTextArgumentType::DlgTextArgumentClassMethodReturn:
+			if (Dialogue)
+			{
+				UDlgReflectionHelper::GetMethodNames(Dialogue->GetParticipantClass(ParticipantName), Suggestions, UTextProperty::StaticClass(), false);
+			}
+			break;
+
+		case EDlgTextArgumentType::DlgTextArgumentClassMethodReturnWithVariables:
+			if (Dialogue)
+			{
+				UDlgReflectionHelper::GetMethodNames(Dialogue->GetParticipantClass(ParticipantName), Suggestions, UTextProperty::StaticClass(), true);
 			}
 			break;
 

@@ -138,11 +138,24 @@ void FDialogueEvent_Details::OnEventTypeChanged(bool bForceRefresh)
 	// Update the display name/tooltips
 	FText EventNameDisplayName = LOCTEXT("EventNameDisplayName", "Variable Name");
 	FText EventNameToolTip = LOCTEXT("EventNameToolTip", "Name of the relevant variable");
+	FText ValueNameDisplayName = LOCTEXT("NameValueDisplayName", "Name Value");
+	FText ValueNameToolTip = LOCTEXT("NameValueToolTip", "The value the participant gets");
 	if (EventType == EDlgEventType::DlgEventEvent)
 	{
 		EventNameDisplayName = LOCTEXT("DlgEvent_EventNameDisplayName", "Event Name");
 		EventNameToolTip = LOCTEXT("DlgEvent_EventNameToolTip", "Name of the relevant event");
 	}
+	else if (EventType == EDlgEventType::DlgCallMethod ||
+		EventType == EDlgEventType::DlgCallMethodWithVariables)
+	{
+		EventNameDisplayName = LOCTEXT("DlgEvent_EventNameDisplayName", "Function name");
+		EventNameToolTip = LOCTEXT("DlgEvent_EventNameToolTip", "Name of the function you wish to execute");
+		ValueNameDisplayName = LOCTEXT("NameValueDisplayName", "Variables");
+		ValueNameToolTip = LOCTEXT("NameValueToolTip", "The variables you wish to pass along");
+	}
+
+	NameValuePropertyRow->DisplayName(ValueNameDisplayName)
+		.ToolTip(ValueNameToolTip);
 
 	EventNamePropertyRow->SetDisplayName(EventNameDisplayName)
 		->SetToolTip(EventNameToolTip)
@@ -210,6 +223,22 @@ TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
 		}
 		break;
 
+	case EDlgEventType::DlgCallMethod:
+		if (Dialogue)
+		{
+			UDlgReflectionHelper::GetMethodNames(Dialogue->GetParticipantClass(ParticipantName), Suggestions, nullptr, false);
+			FDlgHelper::SortDefault(Suggestions);
+		}
+		break;
+
+	case EDlgEventType::DlgCallMethodWithVariables:
+		if (Dialogue)
+		{
+			UDlgReflectionHelper::GetMethodNames(Dialogue->GetParticipantClass(ParticipantName), Suggestions, nullptr, true);
+			FDlgHelper::SortDefault(Suggestions);
+		}
+		break;
+
 
 	case EDlgEventType::DlgEventEvent:
 	default:
@@ -262,6 +291,16 @@ TArray<FName> FDialogueEvent_Details::GetCurrentDialogueEventNames() const
 
 	case EDlgEventType::DlgEventModifyClassNameVariable:
 		UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
+		break;
+
+	case EDlgEventType::DlgCallMethod:
+		UDlgReflectionHelper::GetMethodNames(Dialogue->GetParticipantClass(ParticipantName), Suggestions, nullptr, false);
+		FDlgHelper::SortDefault(Suggestions);
+		break;
+
+	case EDlgEventType::DlgCallMethodWithVariables:
+		UDlgReflectionHelper::GetMethodNames(Dialogue->GetParticipantClass(ParticipantName), Suggestions, nullptr, true);
+		FDlgHelper::SortDefault(Suggestions);
 		break;
 
 	case EDlgEventType::DlgEventEvent:

@@ -13,16 +13,19 @@ class UDlgContextInternal;
 UENUM()
 enum class EDlgTextArgumentType : uint8
 {
-	DlgTextArgumentDisplayName = 0	UMETA(DisplayName = "Participant Display Name"),
-	DlgTextArgumentGender			UMETA(DisplayName = "Participant Gender"),
+	DlgTextArgumentDisplayName = 0					UMETA(DisplayName = "Participant Display Name"),
+	DlgTextArgumentGender							UMETA(DisplayName = "Participant Gender"),
 
-	DlgTextArgumentDialogueInt		UMETA(DisplayName = "Dialogue Int Variable"),
-	DlgTextArgumentClassInt			UMETA(DisplayName = "Class Int Variable"),
+	DlgTextArgumentDialogueInt						UMETA(DisplayName = "Dialogue Int Variable"),
+	DlgTextArgumentClassInt							UMETA(DisplayName = "Class Int Variable"),
 
-	DlgTextArgumentDialogueFloat	UMETA(DisplayName = "Dialogue Float Variable"),
-	DlgTextArgumentClassFloat		UMETA(DisplayName = "Class Float Variable"),
+	DlgTextArgumentDialogueFloat					UMETA(DisplayName = "Dialogue Float Variable"),
+	DlgTextArgumentClassFloat						UMETA(DisplayName = "Class Float Variable"),
 
-	DlgTextArgumentClassText		UMETA(DisplayName = "Class Text Variable")
+	DlgTextArgumentClassText						UMETA(DisplayName = "Class Text Variable"),
+
+	DlgTextArgumentClassMethodReturn				UMETA(DisplayName = "Class Method Return Parameter"),
+	DlgTextArgumentClassMethodReturnWithVariables	UMETA(DisplayName = "Class Method Return Parameter With Variables")
 };
 
 /**
@@ -57,6 +60,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueTextArgument)
 	FName VariableName;
+
+	/** The variable information you wish to pass along to the method */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueTextArgument)
+	FName VariableInfo;
 
 public:
 

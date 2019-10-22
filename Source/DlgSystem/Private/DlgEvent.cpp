@@ -18,6 +18,13 @@ void FDlgEvent::Call(UObject* TargetParticipant) const
 		IDlgDialogueParticipant::Execute_OnDialogueEvent(TargetParticipant, EventName);
 		break;
 
+	case EDlgEventType::DlgCallMethod:
+		UDlgReflectionHelper::ExecuteFunction(TargetParticipant, EventName, "");
+		break;
+
+	case EDlgEventType::DlgCallMethodWithVariables:
+		UDlgReflectionHelper::ExecuteFunction(TargetParticipant, EventName, NameValue);
+
 	case EDlgEventType::DlgEventModifyInt:
 		IDlgDialogueParticipant::Execute_ModifyIntValue(TargetParticipant, EventName, bDelta, IntValue);
 		break;
