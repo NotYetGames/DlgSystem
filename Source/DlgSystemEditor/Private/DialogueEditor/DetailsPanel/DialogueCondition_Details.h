@@ -110,6 +110,8 @@ private:
 			|| ConditionType == EDlgConditionType::DlgConditionHasSatisfiedChild
 			|| ConditionType == EDlgConditionType::DlgConditionBoolCall
 			|| ConditionType == EDlgConditionType::DlgConditionClassBoolVariable
+			|| ConditionType == EDlgConditionType::DlgConditionClassMethod
+			|| ConditionType == EDlgConditionType::DlgConditionClassMethodWithVariable
 
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
@@ -138,6 +140,12 @@ private:
 			|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
 			|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable
 			|| ConditionType == EDlgConditionType::DlgConditionClassBoolVariable
+			? EVisibility::Visible : EVisibility::Hidden;
+	}
+
+	EVisibility GetVariableListVisibility() const
+	{
+		return ConditionType == EDlgConditionType::DlgConditionClassMethodWithVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
@@ -202,6 +210,7 @@ private:
 	TSharedPtr<IPropertyHandle> ConditionTypePropertyHandle;
 	TSharedPtr<IPropertyHandle> CompareTypePropertyHandle;
 	TSharedPtr<IPropertyHandle> IntValuePropertyHandle;
+	TSharedPtr<IPropertyHandle> VariableListPropertyHandle;
 
 	// just some nice utilities
 	TSharedPtr<IPropertyUtilities> PropertyUtils;
@@ -209,6 +218,7 @@ private:
 	// Cache the rows of the properties, created in CustomizeChildren
 	TSharedPtr<FTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
 	TSharedPtr<FTextPropertyPickList_CustomRowHelper> CallbackNamePropertyRow;
+	TSharedPtr<FTextPropertyPickList_CustomRowHelper> FunctionNamePropertyRow;
 	IDetailPropertyRow* IntValuePropertyRow = nullptr;
 	IDetailPropertyRow* FloatValuePropertyRow = nullptr;
 	IDetailPropertyRow* NameValuePropertyRow = nullptr;
@@ -216,6 +226,7 @@ private:
 	IDetailPropertyRow* LongTermMemoryPropertyRow = nullptr;
 	IDetailPropertyRow* OperationPropertyRow = nullptr;
 	IDetailPropertyRow* CompareTypePropertyRow = nullptr;
+	IDetailPropertyRow* VariableListPropertyRow = nullptr;
 	TSharedPtr<FTextPropertyPickList_CustomRowHelper> OtherParticipantNamePropertyRow;
 	TSharedPtr<FTextPropertyPickList_CustomRowHelper> OtherVariableNamePropertyRow;
 

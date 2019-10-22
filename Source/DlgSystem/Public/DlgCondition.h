@@ -43,6 +43,8 @@ enum class EDlgConditionType : uint8
 	DlgConditionClassFloatVariable	UMETA(DisplayName = "Check class float variable"),
 	DlgConditionClassBoolVariable	UMETA(DisplayName = "Check class bool variable"),
 	DlgConditionClassNameVariable	UMETA(DisplayName = "Check class name variable"),
+	DlgConditionClassMethod				UMETA(DisplayName = "Check Class Method"),
+	DlgConditionClassMethodWithVariable UMETA(DisplayName = "Check Class Method and Pass Variables"),
 
 
 	/** Status check of the selected node index */
@@ -103,6 +105,8 @@ protected:
 	bool CheckInt(int32 Value, const UDlgContextInternal* DlgContext) const;
 	bool CheckBool(bool bValue, const UDlgContextInternal* DlgContext) const;
 	bool CheckName(FName Value, const UDlgContextInternal* DlgContext) const;
+
+	bool CheckMethodWithVariables(FName Value, UObject* Participant, FName Variables) const;
 
 	/** Checks Participant, prints warning if it is nullptr */
 	bool ValidateIsParticipantValid(const UObject* Participant, const FString& ContextMessage) const;
@@ -166,6 +170,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
 	bool bLongTermMemory = true;
 
+	/** Data storage for when you are comparing variables */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
+	FName functionData;
+
 public:
 
 	// Operator overload for serialization
@@ -187,5 +195,6 @@ FORCEINLINE bool FDlgCondition::operator==(const FDlgCondition& Other) const
 			Operation == Other.Operation &&
 			CompareType == Other.CompareType &&
 			OtherParticipantName == Other.OtherParticipantName &&
-			OtherVariableName == Other.OtherVariableName;
+			OtherVariableName == Other.OtherVariableName &&
+			functionData == Other.functionData;
 }

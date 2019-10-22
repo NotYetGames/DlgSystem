@@ -56,6 +56,12 @@ FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgCo
 		case EDlgTextArgumentType::DlgTextArgumentGender:
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetParticipantGender(Participant));
 
+		case EDlgTextArgumentType::DlgTextArgumentClassMethodReturn:
+			return FFormatArgumentValue(UDlgReflectionHelper::GetMethodResult<FText, UTextProperty>(const_cast<UObject*>(Participant), VariableName, ""));
+
+		case EDlgTextArgumentType::DlgTextArgumentClassMethodReturnWithVariables:
+			return FFormatArgumentValue(UDlgReflectionHelper::GetMethodResult<FText, UTextProperty>(const_cast<UObject*>(Participant), VariableName, VariableInfo));
+
 		default:
 			checkNoEntry();
 			return FFormatArgumentValue(0);

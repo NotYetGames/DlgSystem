@@ -71,6 +71,10 @@ bool FDlgCondition::Evaluate(const UDlgContextInternal* DlgContext, const UObjec
 		case EDlgConditionType::DlgConditionClassNameVariable:
 			return CheckName(UDlgReflectionHelper::GetVariable<UNameProperty, FName>(DlgParticipant, CallbackName), DlgContext);
 
+		case EDlgConditionType::DlgConditionClassMethod:
+		case EDlgConditionType::DlgConditionClassMethodWithVariable:
+			return CheckMethodWithVariables(CallbackName, const_cast<UObject*>(DlgParticipant), functionData);
+
 
 		case EDlgConditionType::DlgConditionNodeVisited:
 			if (bLongTermMemory)
@@ -236,6 +240,15 @@ bool FDlgCondition::CheckName(FName Value, const UDlgContextInternal* DlgContext
 	return (ValueToCheckAgainst == Value) == bBoolValue;
 }
 
+bool FDlgCondition::CheckMethodWithVariables(FName Value, UObject* Participant, FName Variables) const
+{
+	// We need to make sure we only pass along variables when we have the correct condition, this being
+	// DlgConditionClassMethod
+	return ConditionType == EDlgConditionType::DlgConditionClassMethodWithVariable
+		? UDlgReflectionHelper::GetMethodResult<bool, UBoolProperty>(Participant, Value, Variables == "None" ? "" : Variables) == bBoolValue
+		: UDlgReflectionHelper::GetMethodResult<bool, UBoolProperty>(Participant, Value, "") == bBoolValue;
+}
+
 bool FDlgCondition::ValidateIsParticipantValid(const UObject* Participant, const FString& ContextMessage) const
 {
 	if (IsValid(Participant))
@@ -285,5 +298,6 @@ FArchive& operator<<(FArchive &Ar, FDlgCondition& DlgCondition)
 	Ar << DlgCondition.CompareType;
 	Ar << DlgCondition.OtherParticipantName;
 	Ar << DlgCondition.OtherVariableName;
+	Ar << DlgCondition.functionData;
 	return Ar;
 }

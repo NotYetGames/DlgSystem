@@ -9,6 +9,10 @@ enum class EDlgEventType : uint8
 {
 	/** just a notification with an FName parameter */
 	DlgEventEvent						UMETA(DisplayName = "Event"),
+	
+	/** executes a function with optional variables */
+	DlgCallMethod						UMETA(DisplayName = "Call function"),
+	DlgCallMethodWithVariables			UMETA(DisplayName = "Call function with variables"),
 
 	/** events to modify basic variable types. Calls the interface methods */
 	DlgEventModifyInt					UMETA(DisplayName = "Modify Int"),
