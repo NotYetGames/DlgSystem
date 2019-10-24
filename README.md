@@ -44,9 +44,9 @@ Brought to you by Not Yet:
 
 NOTE: that initially the plugin was free on the marketplace but later we switched to a small fee because maintaining all of the binary versions for different engine targets took a lot of time, consider buying the plugin on the marketplace as a donation :).
 
-### Buy us some tea/coffee:
+### Buy us some tea/coffee
 
-You can buy the plugin on the [unreal engine marketplace](https://www.unrealengine.com/marketplace/not-yet-dialogue-system) and always get binary support for the plugin for the latest 3 engine versions.
+You can buy [this plugin](https://www.unrealengine.com/marketplace/not-yet-dialogue-system) or our other plugins on the [unreal engine marketplace](https://www.unrealengine.com/marketplace/en-US/profile/Not+Yet) and always get binary support for the latest 3 engine versions.
 
 Or you can just donate for that cup of tea/coffee :):
 
@@ -56,9 +56,8 @@ Or you can just donate for that cup of tea/coffee :):
 
 Should it prove useful to you, the best way to say thanks is to mention us and our game to your own audience.
 
-
-
 ## Modules dependency
+
 ```mermaid
 graph TD;
     A[DlgSystemEditor]-->B[UnrealEd];
@@ -70,6 +69,7 @@ graph TD;
 ## Conventions
 
 ### Branches
+
 The supported unreal versions have their own branches.
 The outdated version branches are kept but not updated anymore.
 
