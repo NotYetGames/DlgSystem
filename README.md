@@ -17,12 +17,17 @@ Branch Unreal version: `4.23`
     - Settings panel in Project Settings to modify the layout
     - Option to import from and export to plain text formats (e.g. json)
     - Real time display/edit functionality of the Dialogue runtime data.
+- Execute blueprint and C++ functions from your dialogues. The following are supported:
+	- Enter Events
+	- Enter Conditions
+	- Text Arguments
 
 Not yet convinced? Have you seen our [`showcase page`](https://gitlab.com/NotYetGames/DlgSystem/wikis/Feature-Showcase)?
 
 ## General Information
 
-See the [Wiki](https://gitlab.com/NotYetGames/DlgSystem/wikis/home) for the manual and tutorials.
+See the [Wiki](https://gitlab.com/NotYetGames/DlgSystem/wikis/home) for the manual and tutorials.  
+See [Function Execution](Examples/README.md) page for a tutorial on how to run Blueprint and C++ functions using your dialogues.
 
 [DlgSystemExample project](https://gitlab.com/NotYetGames/DlgSystemExample/tree/4.23) is also provided.
 
