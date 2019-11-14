@@ -34,6 +34,25 @@ bool UDlgContextInternal::Initialize(UDlgDialogue* InDialogue, const TMap<FName,
 }
 
 
+bool UDlgContextInternal::CouldBeInitialized(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants)
+{
+	Dialogue = InDialogue;
+	Participants = InParticipants;
+
+	// Evaluate edges/children of the start node
+	const UDlgNode& StartNode = Dialogue->GetStartNode();
+	for (const FDlgEdge& ChildLink : StartNode.GetNodeChildren())
+	{
+		if (ChildLink.TargetIndex != INDEX_NONE && ChildLink.Evaluate(this, {}))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
 bool UDlgContextInternal::Initialize(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants, int32 StartIndex, const TSet<int32>& VisitedNodes, bool bFireEnterEvents)
 {
 	Dialogue = InDialogue;

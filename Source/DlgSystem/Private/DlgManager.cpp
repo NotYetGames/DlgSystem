@@ -35,6 +35,20 @@ UDlgContext* UDlgManager::StartDialogue(UDlgDialogue* Dialogue, const TArray<UOb
 }
 
 
+bool UDlgManager::CouldStartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants)
+{
+	TMap<FName, UObject*> ParticipantBinding;
+
+	if (!ConstructParticipantMap(Dialogue, Participants, ParticipantBinding))
+	{
+		return nullptr;
+	}
+
+	UDlgContextInternal* Context = NewObject<UDlgContextInternal>(Participants[0], UDlgContextInternal::StaticClass());
+	return Context->CouldBeInitialized(Dialogue, ParticipantBinding);
+}
+
+
 UDlgContext* UDlgManager::ResumeDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants, int32 StartIndex, const TSet<int32>& AlreadyVisitedNodes, bool bFireEnterEvents)
 {
 	TMap<FName, UObject*> ParticipantBinding;

@@ -35,6 +35,14 @@ public:
 	static UDlgContext* StartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants);
 
 	/**
+	 * Checks if there is any child of the start node which can be enterred based on the conditions
+	 *
+	 * @returns true if there is an enterable node from the start node
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
+	static bool CouldStartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants);
+
+	/**
 	 * Starts a Dialogue with the provided Dialogue and Participants array, at the given entry point
 	 * This method can fail in the following situations:
 	 *  - The Participants number does not match the number of participants from the Dialogue.

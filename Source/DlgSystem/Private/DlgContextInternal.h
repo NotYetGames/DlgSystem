@@ -53,6 +53,13 @@ public:
 	bool Initialize(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
 
 	/**
+	 * Checks if the context could be initialized, used to check if there is any reachable node from the start node
+	 *
+	 * @return true if could be, false otherwise.
+	 */
+	bool CouldBeInitialized(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
+
+	/**
 	 * Initializes the context using the given node as entry point
 	 *
 	 * @return true on success or false otherwise.
