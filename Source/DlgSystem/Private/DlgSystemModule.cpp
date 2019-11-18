@@ -35,10 +35,10 @@ static const FName NAME_MODULE_AssetRegistry("AssetRegistry");
 void FDlgSystemModule::StartupModule()
 {
 	FDlgLogger::OnStart();
-	
+
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
-	FDlgLogger::Get().Info(TEXT("Started DlgSystemModule"));
-	
+	FDlgLogger::Get().Info(TEXT("DlgSystemModule: StartupModule"));
+
 	OnPreLoadMapHandle = FCoreUObjectDelegates::PreLoadMap.AddRaw(this, &Self::HandlePreLoadMap);
 
 	// Listen for deleted assets
@@ -119,7 +119,7 @@ void FDlgSystemModule::ShutdownModule()
 		FCoreUObjectDelegates::PreLoadMap.Remove(OnPreLoadMapHandle);
 	}
 
-	FDlgLogger::Get().Info(TEXT("Stopped DlgSystemModule"));
+	FDlgLogger::Get().Info(TEXT("DlgSystemModule: ShutdownModule"));
 	FDlgLogger::OnShutdown();
 }
 

@@ -53,7 +53,7 @@ FDlgSystemEditorModule::FDlgSystemEditorModule() : DlgSystemAssetCategoryBit(EAs
 
 void FDlgSystemEditorModule::StartupModule()
 {
-	UE_LOG(LogDlgSystemEditor, Log, TEXT("Started DlgSystemEditorModule"));
+	UE_LOG(LogDlgSystemEditor, Log, TEXT("DlgSystemEditorModule: StartupModule"));
 	OnPostEngineInitHandle = FCoreDelegates::OnPostEngineInit.AddRaw(this, &Self::HandleOnPostEngineInit);
 	OnBeginPIEHandle = FEditorDelegates::BeginPIE.AddRaw(this, &Self::HandleOnBeginPIE);
 
@@ -133,7 +133,7 @@ void FDlgSystemEditorModule::StartupModule()
 	FileMenuEditorCommands = MakeShared<FUICommandList>();
 	FileMenuEditorCommands->MapAction(FDialogueEditorCommands::Get().SaveAllDialogues, FExecuteAction::CreateStatic(&Self::HandleOnSaveAllDialogues));
 	FileMenuEditorCommands->MapAction(FDialogueEditorCommands::Get().DeleteAllDialoguesTextFiles, FExecuteAction::CreateStatic(&Self::HandleOnDeleteAllDialoguesTextFiles));
-	
+
 	// Content Browser extension
 	FDlgContentBrowserExtensions::InstallHooks();
 
@@ -206,7 +206,7 @@ void FDlgSystemEditorModule::ShutdownModule()
 		FEditorDelegates::BeginPIE.Remove(OnBeginPIEHandle);
 	}
 
-	UE_LOG(LogDlgSystemEditor, Log, TEXT("Stopped DlgSystemEditorModule"));
+	UE_LOG(LogDlgSystemEditor, Log, TEXT("DlgSystemEditorModule: ShutdownModule"));
 }
 
 bool FDlgSystemEditorModule::SaveAllDialogues()
@@ -214,7 +214,7 @@ bool FDlgSystemEditorModule::SaveAllDialogues()
 	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
 	TArray<UPackage*> PackagesToSave;
 	const bool bBatchOnlyInGameDialogues = GetDefault<UDlgSystemSettings>()->bBatchOnlyInGameDialogues;
-	
+
 	for (UDlgDialogue* Dialogue : Dialogues)
 	{
 		// Ignore, not in game directory
@@ -222,7 +222,7 @@ bool FDlgSystemEditorModule::SaveAllDialogues()
 		{
 			continue;
 		}
-		
+
 		Dialogue->MarkPackageDirty();
 		PackagesToSave.Add(Dialogue->GetOutermost());
 	}
@@ -256,7 +256,7 @@ void FDlgSystemEditorModule::HandleOnDeleteAllDialoguesTextFiles()
 		TEXT("Delete all Dialogues text files? Delete all dialogues text files on the disk with the following extensions: %s"),
 		*StringAllFileExtensions
 	);
-	
+
 	const EAppReturnType::Type Response = FPlatformMisc::MessageBoxExt(EAppMsgType::YesNo, *Text, TEXT("Delete All Dialogues text files?"));
 	if (Response == EAppReturnType::No)
 	{
