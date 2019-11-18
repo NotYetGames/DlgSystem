@@ -155,8 +155,14 @@ void UDlgDialogue::PostLoad()
 
 void UDlgDialogue::PostInitProperties()
 {
-	// TODO, this seems like a bad place to init properties, because this will get called every time we are loading uassets from the filesystem
 	Super::PostInitProperties();
+
+	// Ignore these cases
+	if (HasAnyFlags(RF_ClassDefaultObject | RF_NeedLoad))
+	{
+		return;
+	}
+
 	const int32 DialogueVersion = GetLinkerCustomVersion(FDlgDialogueObjectVersion::GUID);
 
 #if WITH_EDITOR
@@ -400,7 +406,7 @@ void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
 
 	// TODO handle DlgName == NAME_None or invalid filename
 	FDlgLogger::Get().Infof(TEXT("Reloading data for Dialogue = `%s` FROM file = `%s`"), *GetPathName(), *TextFileName);
-	
+
 	// TODO(vampy): Check for errors
 	check(TextFormat != EDlgDialogueTextFormat::None);
 	switch (TextFormat)
@@ -422,7 +428,7 @@ void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
 		default:
 			checkNoEntry();
 			break;
-		
+
 	}
 
 	if (!IsValid(StartNode))
@@ -492,7 +498,7 @@ void UDlgDialogue::ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const
 	{
 		FDlgLogger::Get().Infof(TEXT("Exporting data for Dialogue = `%s` TO file = `%s`"), *GetPathName(), *TextFileName);
 	}
-	
+
 	switch (TextFormat)
 	{
 		case EDlgDialogueTextFormat::JSON:
@@ -533,7 +539,7 @@ FDlgParticipantData& UDlgDialogue::GetParticipantDataEntry(FName ParticipantName
 {
 	// Used to ignore some participants
 	static FDlgParticipantData BlackHoleParticipant;
-	
+
 	// If the Participant Name is not set, it adopts the Node Owner Name
 	const FName& ValidParticipantName = ParticipantName == NAME_None ? FallbackNodeOwnerName : ParticipantName;
 
@@ -579,7 +585,7 @@ void UDlgDialogue::RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings
 {
 	static constexpr bool bEdges = true;
 	static constexpr bool bUpdateGraphNode = false;
-	
+
 	// Rebuild & Update
 	// NOTE: this can do a dialogue data -> graph node data update
 	Node->RebuildTextArguments(bEdges, bUpdateGraphNode);
@@ -588,7 +594,7 @@ void UDlgDialogue::RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings
 	{
 		Node->UpdateTextsNamespacesAndKeys(Settings, bEdges, bUpdateGraphNode);
 	}
-	
+
 	// Sync with the editor aka bUpdateGraphNode = true
 	Node->UpdateGraphNode();
 }
