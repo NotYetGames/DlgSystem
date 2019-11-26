@@ -41,7 +41,7 @@ bool UDlgManager::CouldStartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TA
 
 	if (!ConstructParticipantMap(Dialogue, Participants, ParticipantBinding))
 	{
-		return nullptr;
+		return false;
 	}
 
 	UDlgContextInternal* Context = NewObject<UDlgContextInternal>(Participants[0], UDlgContextInternal::StaticClass());
