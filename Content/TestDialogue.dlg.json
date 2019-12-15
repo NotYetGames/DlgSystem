@@ -1,6 +1,6 @@
 {
 	"__type__": "DlgDialogue",
-	"DlgVersion": 7,
+	"DlgVersion": 8,
 	"DlgName": "TestDialogue",
 	"DlgGuid": "D3B6003044F0EC3A430C03B963F09C88",
 	"DlgParticipantClasses": [
@@ -16,14 +16,14 @@
 	"StartNode":
 	{
 		"__type__": "DlgNode_Speech",
+		"bIsVirtualParent": false,
 		"Text": "",
 		"TextArguments": [],
+		"SpeakerState": "None",
 		"NodeData": null,
 		"VoiceSoundWave": "",
 		"VoiceDialogueWave": "",
 		"GenericData": "",
-		"SpeakerState": "None",
-		"bIsVirtualParent": false,
 		"OwnerName": "None",
 		"bCheckChildrenOnEvaluation": false,
 		"EnterConditions": [],
@@ -32,18 +32,18 @@
 			{
 				"TargetIndex": 0,
 				"Conditions": [],
-				"Text": "Next",
-				"TextArguments": [],
 				"SpeakerState": "None",
-				"bIncludeInAllOptionListIfUnsatisfied": true
+				"bIncludeInAllOptionListIfUnsatisfied": true,
+				"Text": "Next Remapped",
+				"TextArguments": []
 			},
 			{
 				"TargetIndex": 1,
 				"Conditions": [],
-				"Text": "",
-				"TextArguments": [],
 				"SpeakerState": "None",
-				"bIncludeInAllOptionListIfUnsatisfied": true
+				"bIncludeInAllOptionListIfUnsatisfied": true,
+				"Text": "",
+				"TextArguments": []
 			}
 		]
 	},
@@ -51,14 +51,14 @@
 		{
 			"__index__": 0,
 			"__type__": "DlgNode_Speech",
+			"bIsVirtualParent": false,
 			"Text": "I can talk!",
 			"TextArguments": [],
+			"SpeakerState": "None",
 			"NodeData": null,
 			"VoiceSoundWave": "",
 			"VoiceDialogueWave": "",
 			"GenericData": "",
-			"SpeakerState": "None",
-			"bIsVirtualParent": false,
 			"OwnerName": "TestOwner",
 			"bCheckChildrenOnEvaluation": false,
 			"EnterConditions": [
@@ -110,24 +110,24 @@
 							"bLongTermMemory": true
 						}
 					],
-					"Text": "Next",
-					"TextArguments": [],
 					"SpeakerState": "None",
-					"bIncludeInAllOptionListIfUnsatisfied": true
+					"bIncludeInAllOptionListIfUnsatisfied": true,
+					"Text": "Next Remapped",
+					"TextArguments": []
 				}
 			]
 		},
 		{
 			"__index__": 1,
 			"__type__": "DlgNode_Speech",
+			"bIsVirtualParent": false,
 			"Text": "Meow. Yeah I can speak too",
 			"TextArguments": [],
+			"SpeakerState": "None",
 			"NodeData": null,
 			"VoiceSoundWave": "",
 			"VoiceDialogueWave": "",
 			"GenericData": "",
-			"SpeakerState": "None",
-			"bIsVirtualParent": false,
 			"OwnerName": "Cat",
 			"bCheckChildrenOnEvaluation": false,
 			"EnterConditions": [],
@@ -136,24 +136,24 @@
 				{
 					"TargetIndex": 2,
 					"Conditions": [],
-					"Text": "Next",
-					"TextArguments": [],
 					"SpeakerState": "None",
-					"bIncludeInAllOptionListIfUnsatisfied": true
+					"bIncludeInAllOptionListIfUnsatisfied": true,
+					"Text": "Next Remapped",
+					"TextArguments": []
 				}
 			]
 		},
 		{
 			"__index__": 2,
 			"__type__": "DlgNode_Speech",
+			"bIsVirtualParent": false,
 			"Text": "You don't say?",
 			"TextArguments": [],
+			"SpeakerState": "None",
 			"NodeData": null,
 			"VoiceSoundWave": "",
 			"VoiceDialogueWave": "",
 			"GenericData": "",
-			"SpeakerState": "None",
-			"bIsVirtualParent": false,
 			"OwnerName": "TestOwner",
 			"bCheckChildrenOnEvaluation": false,
 			"EnterConditions": [],
@@ -183,10 +183,10 @@
 				{
 					"TargetIndex": 3,
 					"Conditions": [],
-					"Text": "Finish",
-					"TextArguments": [],
 					"SpeakerState": "None",
-					"bIncludeInAllOptionListIfUnsatisfied": true
+					"bIncludeInAllOptionListIfUnsatisfied": true,
+					"Text": "Finish",
+					"TextArguments": []
 				}
 			]
 		},
