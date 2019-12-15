@@ -569,6 +569,48 @@ bool FDialogueEditorUtilities::CanConvertSpeechSequenceNodeToSpeechNodes(const T
 	return false;
 }
 
+void FDialogueEditorUtilities::CloseOtherEditors(UObject* Asset, IAssetEditorInstance* OnlyEditor)
+{
+	if (!IsValid(Asset) || !GEditor)
+	{
+		return;
+	}
+
+#if ENGINE_MINOR_VERSION >= 24
+	GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->CloseOtherEditors(Asset, OnlyEditor);
+#else
+	FAssetEditorManager::Get().CloseOtherEditors(Asset, OnlyEditor);
+#endif
+}
+
+bool FDialogueEditorUtilities::OpenEditorForAsset(const UObject* Asset)
+{
+	if (!IsValid(Asset) || !GEditor)
+	{
+		return false;
+	}
+	
+#if ENGINE_MINOR_VERSION >= 24
+	return GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->OpenEditorForAsset(const_cast<UObject*>(Asset));
+#else
+	return FAssetEditorManager::Get().OpenEditorForAsset(const_cast<UObject*>(Asset));
+#endif
+}
+
+IAssetEditorInstance* FDialogueEditorUtilities::FindEditorForAsset(UObject* Asset, bool bFocusIfOpen)
+{
+	if (!IsValid(Asset) || !GEditor)
+	{
+		return nullptr;
+	}
+
+#if ENGINE_MINOR_VERSION >= 24
+	return GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorForAsset(Asset, bFocusIfOpen);
+#else
+	return FAssetEditorManager::Get().FindEditorForAsset(Asset, bFocusIfOpen);
+#endif
+}
+
 bool FDialogueEditorUtilities::OpenEditorAndJumpToGraphNode(const UEdGraphNode* GraphNode,
 															bool bFocusIfOpen /*= false*/)
 {
@@ -594,7 +636,7 @@ bool FDialogueEditorUtilities::OpenEditorAndJumpToGraphNode(const UEdGraphNode* 
 	}
 
 	// Could still fail focus on the graph node
-	IAssetEditorInstance* EditorInstance = FAssetEditorManager::Get().FindEditorForAsset(Dialogue, bFocusIfOpen);
+	IAssetEditorInstance* EditorInstance = FindEditorForAsset(Dialogue, bFocusIfOpen);
 	if (EditorInstance)
 	{
 		EditorInstance->FocusWindow(const_cast<UEdGraphNode*>(GraphNode));

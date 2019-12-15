@@ -14,6 +14,13 @@
 
 #include "Modules/ModuleManager.h"
 
+#if ENGINE_MINOR_VERSION >= 24
+	#define NY_ARRAY_COUNT UE_ARRAY_COUNT
+#else
+	#define NY_ARRAY_COUNT ARRAY_COUNT
+#endif
+
+
 // Pulled the two FOutputDevice::Logf functions into shared code. Needs to be a #define
 // since it uses GET_VARARGS_RESULT which uses the va_list stuff which operates on the
 // current function, so we can't easily call a function
@@ -27,7 +34,7 @@
 \
 	/* first, try using the stack buffer */ \
 	Buffer = StackBuffer; \
-	GET_VARARGS_RESULT( Buffer, ARRAY_COUNT(StackBuffer), ARRAY_COUNT(StackBuffer) - 1, Fmt, Fmt, Result ); \
+	GET_VARARGS_RESULT( Buffer, NY_ARRAY_COUNT(StackBuffer), NY_ARRAY_COUNT(StackBuffer) - 1, Fmt, Fmt, Result ); \
 \
 	/* if that fails, then use heap allocation to make enough space */ \
 	while(Result == -1) \
@@ -43,8 +50,6 @@
 \
 	SerializeFunc; \
 	FMemory::SystemFree(AllocatedBuffer);
-
-
 
 
 INYLogger& INYLogger::SetClientConsolePlayerController(APlayerController* PC)
@@ -292,3 +297,5 @@ void INYLogger::ClearAllOnScreenLogs()
 
 	GEngine->ClearOnScreenDebugMessages();
 }
+
+#undef NY_ARRAY_COUNT

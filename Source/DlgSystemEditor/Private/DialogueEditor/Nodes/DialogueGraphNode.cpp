@@ -7,6 +7,10 @@
 #include "Engine/Font.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 
+#if ENGINE_MINOR_VERSION >= 24
+#include "ToolMenu.h"
+#endif
+
 #include "DlgSystemEditorPrivatePCH.h"
 #include "DlgDialogue.h"
 #include "DialogueGraphNode_Edge.h"
@@ -193,13 +197,34 @@ void UDialogueGraphNode::PinConnectionListChanged(UEdGraphPin* Pin)
 	}
 }
 
+#if ENGINE_MINOR_VERSION >= 24
+void UDialogueGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const
+{
+	// These actions (commands) are handled and registered in the FDialogueEditor class
+	if (Context->Node && !Context->bIsDebugging && !IsRootNode())
+	{
+		// Menu for right clicking on node
+		FToolMenuSection& Section = Menu->AddSection("DialogueGraphNode_BaseNodeEditCRUD");
+		if (IsSpeechSequenceNode())
+			Section.AddMenuEntry(FDialogueEditorCommands::Get().ConvertSpeechSequenceNodeToSpeechNodes);
+
+		Section.AddMenuEntry(FGenericCommands::Get().Delete);
+//		Section.AddMenuEntry(FGenericCommands::Get().Cut);
+		Section.AddMenuEntry(FGenericCommands::Get().Copy);
+//		Section.AddMenuEntry(FGenericCommands::Get().Duplicate);
+
+	}
+}
+
+#else
+
 void UDialogueGraphNode::GetContextMenuActions(const FGraphNodeContextMenuBuilder& Context) const
 {
 	// These actions (commands) are handled and registered in the FDialogueEditor class
-	if (Context.Node && !IsRootNode())
+	if (Context.Node && !Context.bIsDebugging && !IsRootNode())
 	{
 		// Menu for right clicking on node
-		Context.MenuBuilder->BeginSection("DialogoueGraphNode_BaseNodeEditCRUD");
+		Context.MenuBuilder->BeginSection("DialogueGraphNode_BaseNodeEditCRUD");
 		{
 			if (IsSpeechSequenceNode())
 				Context.MenuBuilder->AddMenuEntry(FDialogueEditorCommands::Get().ConvertSpeechSequenceNodeToSpeechNodes);
@@ -212,6 +237,7 @@ void UDialogueGraphNode::GetContextMenuActions(const FGraphNodeContextMenuBuilde
 		Context.MenuBuilder->EndSection();
 	}
 }
+#endif // ENGINE_MINOR_VERSION >= 24
 
 void UDialogueGraphNode::AutowireNewNode(UEdGraphPin* FromPin)
 {

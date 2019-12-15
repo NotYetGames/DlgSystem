@@ -84,6 +84,10 @@ public class DlgSystemEditor : ModuleRules
 				"ApplicationCore",
 			});
 
+#if UE_4_24_OR_LATER
+		PrivateDependencyModuleNames.Add("ToolMenus");
+#endif
+
 		PrivateIncludePathModuleNames.AddRange(
 			new string[] {
 				"AssetRegistry",

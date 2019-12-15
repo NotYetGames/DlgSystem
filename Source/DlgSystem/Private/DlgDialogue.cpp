@@ -194,27 +194,6 @@ void UDlgDialogue::PostRename(UObject* OldOuter, const FName OldName)
 	DlgName = GetDlgFName();
 }
 
-bool UDlgDialogue::Modify(bool bAlwaysMarkDirty)
-{
-	if (!CanModify())
-	{
-		return false;
-	}
-
-	const bool bWasSaved = Super::Modify(bAlwaysMarkDirty);
-	// if (StartNode)
-	// {
-	// 	bWasSaved = bWasSaved && StartNode->Modify(bAlwaysMarkDirty);
-	// }
-
-	// for (UDlgNode* Node : Nodes)
-	// {
-	// 	bWasSaved = bWasSaved && Node->Modify(bAlwaysMarkDirty);
-	// }
-
-	return bWasSaved;
-}
-
 void UDlgDialogue::PostDuplicate(bool bDuplicateForPIE)
 {
 	Super::PostDuplicate(bDuplicateForPIE);
@@ -243,6 +222,27 @@ void UDlgDialogue::PostEditImport()
 
 #if WITH_EDITOR
 TSharedPtr<IDlgDialogueEditorAccess> UDlgDialogue::DialogueEditorAccess = nullptr;
+
+bool UDlgDialogue::Modify(bool bAlwaysMarkDirty)
+{
+	if (!CanModify())
+	{
+		return false;
+	}
+
+	const bool bWasSaved = Super::Modify(bAlwaysMarkDirty);
+	// if (StartNode)
+	// {
+	// 	bWasSaved = bWasSaved && StartNode->Modify(bAlwaysMarkDirty);
+	// }
+
+	// for (UDlgNode* Node : Nodes)
+	// {
+	// 	bWasSaved = bWasSaved && Node->Modify(bAlwaysMarkDirty);
+	// }
+
+	return bWasSaved;
+}
 
 bool UDlgDialogue::CanEditChange(const UProperty* InProperty) const
 {

@@ -283,7 +283,7 @@ void FDialogueEditor::InitDialogueEditor(const EToolkitMode::Type Mode,
 	Settings = GetMutableDefault<UDlgSystemSettings>();
 
 	// close all other editors editing this asset
-	FAssetEditorManager::Get().CloseOtherEditors(InitDialogue, this);
+	FDialogueEditorUtilities::CloseOtherEditors(InitDialogue, this);
 	DialogueBeingEdited = InitDialogue;
 	FDialogueEditorUtilities::TryToCreateDefaultGraph(DialogueBeingEdited);
 

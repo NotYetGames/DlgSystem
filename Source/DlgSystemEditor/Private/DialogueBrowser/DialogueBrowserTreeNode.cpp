@@ -167,7 +167,7 @@ FReply FDialogueBrowserTreeDialogueNode::OnClick()
 {
 	if (Dialogue.IsValid())
 	{
-		FAssetEditorManager::Get().OpenEditorForAsset(const_cast<UDlgDialogue*>(Dialogue.Get()));
+		FDialogueEditorUtilities::OpenEditorForAsset(Dialogue.Get());
 		return FReply::Handled();
 	}
 

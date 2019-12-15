@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 8,
 	"VersionName": "8.0",
-	"EngineVersion" : "4.23.0",
+	"EngineVersion" : "4.24.0",
 	"FriendlyName": "DlgSystem",
 	"Description": "Dialogue system (with text based dialogues) and nice Editor for editing dialogues",
 	"Category": "Editor",
@@ -23,7 +23,7 @@
 		},
 		{
 			"Name": "DlgSystemEditor",
-			"Type": "Developer",
+			"Type": "UncookedOnly",
 			"LoadingPhase": "PreDefault",
 			"WhitelistPlatforms": ["Win64", "Win32", "Linux"]
 		}

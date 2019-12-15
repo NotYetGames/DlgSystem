@@ -101,17 +101,6 @@ public:
 	void PostRename(UObject* OldOuter, const FName OldName) override;
 
 	/**
-	 * Note that the object will be modified.  If we are currently recording into the
-	 * transaction buffer (undo/redo), save a copy of this object into the buffer and
-	 * marks the package as needing to be saved.
-	 *
-	 * @param	bAlwaysMarkDirty	if true, marks the package dirty even if we aren't
-	 *								currently recording an active undo/redo transaction
-	 * @return true if the object was saved to the transaction buffer
-	 */
-	bool Modify(bool bAlwaysMarkDirty = true) override;
-
-	/**
 	 * Called after duplication & serialization and before PostLoad. Used to e.g. make sure UStaticMesh's UModel gets copied as well.
 	 * Note: NOT called on components on actor duplication (alt-drag or copy-paste).  Use PostEditImport as well to cover that case.
 	 */
@@ -125,6 +114,17 @@ public:
 	void PostEditImport() override;
 
 #if WITH_EDITOR
+	/**
+	 * Note that the object will be modified.  If we are currently recording into the
+	 * transaction buffer (undo/redo), save a copy of this object into the buffer and
+	 * marks the package as needing to be saved.
+	 *
+	 * @param	bAlwaysMarkDirty	if true, marks the package dirty even if we aren't
+	 *								currently recording an active undo/redo transaction
+	 * @return true if the object was saved to the transaction buffer
+	 */
+	bool Modify(bool bAlwaysMarkDirty = true) override;
+	
 	/**
 	 * Called by the editor to query whether a property of this object is allowed to be modified.
 	 * The property editor uses this to disable controls for properties that should not be changed.

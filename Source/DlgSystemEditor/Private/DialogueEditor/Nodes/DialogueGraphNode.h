@@ -14,6 +14,8 @@
 
 class UEdGraphPin;
 class DialogueGraphNode_Edge;
+class UToolMenu;
+class UGraphNodeContextMenuContext;
 
 /** Result for a single difference between the Dialogue Node Edges and LinkedTo Array of the output pins */
 struct FDiffNodeEdgeLinkedToPinResult
@@ -131,8 +133,12 @@ public:
 	void PinConnectionListChanged(UEdGraphPin* Pin) override;
 
 	/** Gets a list of actions that can be done to this particular node */
+#if ENGINE_MINOR_VERSION >= 24
+	void GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
+#else
 	void GetContextMenuActions(const FGraphNodeContextMenuBuilder& Context) const override;
-
+#endif
+	
 	/**
 	 * Autowire a newly created node.
 	 *

@@ -136,19 +136,19 @@ public:
 	 */
 	static bool CanConvertSpeechSequenceNodeToSpeechNodes(const TSet<UObject*>& SelectedNodes);
 
+	/** Close any editor which is not this one */
+	static void CloseOtherEditors(UObject* Asset, IAssetEditorInstance* OnlyEditor);
+	
 	/**
 	 * Tries to open the editor for the specified asset. Returns true if the asset is opened in an editor.
 	 * If the file is already open in an editor, it will not create another editor window but instead bring it to front
 	 */
-	static bool OpenEditorForAsset(const UObject* Asset)
-	{
-		if (!IsValid(Asset))
-		{
-			return false;
-		}
+	static bool OpenEditorForAsset(const UObject* Asset);
 
-		return FAssetEditorManager::Get().OpenEditorForAsset(const_cast<UObject*>(Asset));
-	}
+	/** Returns the primary editor if one is already open for the specified asset.
+	 * If there is one open and bFocusIfOpen is true, that editor will be brought to the foreground and focused if possible.
+	 */
+	static IAssetEditorInstance* FindEditorForAsset(UObject* Asset, bool bFocusIfOpen);
 
 	/**
 	 * Tries to open an Dialogue editor for the GraphNode and jumps to it. Returns true if the asset is opened in an editor.

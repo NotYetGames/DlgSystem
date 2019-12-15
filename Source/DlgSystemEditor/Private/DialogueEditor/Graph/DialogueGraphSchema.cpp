@@ -7,6 +7,10 @@
 #include "AssetData.h"
 #include "GraphEditorActions.h"
 
+#if ENGINE_MINOR_VERSION >= 24
+#include "ToolMenu.h"
+#endif
+
 #include "DialogueGraph.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
@@ -64,9 +68,27 @@ void UDialogueGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& Cont
 	}
 }
 
+#if ENGINE_MINOR_VERSION >= 24
+void UDialogueGraphSchema::GetContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const
+{
+	if (Context->Node && !Context->bIsDebugging)
+	{
+		// Menu for right clicking on node
+		FToolMenuSection& Section = Menu->AddSection("DialogueGraphSchemaNodeActions", LOCTEXT("NodeActionsMenuHeader", "Node Actions"));
+		
+		// This action is handled in UDialogueGraphSchema::BreakNodeLinks, and the action is registered in SGraphEditorImpl (not by us)
+		Section.AddMenuEntry(FGraphEditorCommands::Get().BreakNodeLinks);
+	}
+
+	// The rest of the menus are implemented in the each nodes GetContextMenuActions method
+	Super::GetContextMenuActions(Menu, Context);
+}
+
+#else
+
 void UDialogueGraphSchema::GetContextMenuActions(const UEdGraph* CurrentGraph, const UEdGraphNode* InGraphNode, const UEdGraphPin* InGraphPin, FMenuBuilder* MenuBuilder, bool bIsDebugging) const
 {
-	if (InGraphNode)
+	if (InGraphNode && !bIsDebugging)
 	{
 		// Menu for right clicking on node
 		MenuBuilder->BeginSection("DialogueGraphSchemaNodeActions", LOCTEXT("NodeActionsMenuHeader", "Node Actions"));
@@ -76,10 +98,11 @@ void UDialogueGraphSchema::GetContextMenuActions(const UEdGraph* CurrentGraph, c
 		}
 		MenuBuilder->EndSection();
 	}
-
+	
 	// The rest of the menus are implemented in the each nodes GetContextMenuActions method
 	Super::GetContextMenuActions(CurrentGraph, InGraphNode, InGraphPin, MenuBuilder, bIsDebugging);
 }
+#endif // ENGINE_MINOR_VERSION >= 24
 
 void UDialogueGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
 {
