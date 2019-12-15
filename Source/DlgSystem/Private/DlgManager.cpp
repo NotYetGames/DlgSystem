@@ -13,6 +13,8 @@
 #include "DlgDialogue.h"
 #include "DlgMemory.h"
 #include "DlgContextInternal.h"
+#include "Logging/DlgLogger.h"
+#include "DlgHelper.h"
 
 UDlgContext* UDlgManager::StartDialogue(UDlgDialogue* Dialogue, const TArray<UObject*>& Participants)
 {
@@ -30,6 +32,20 @@ UDlgContext* UDlgManager::StartDialogue(UDlgDialogue* Dialogue, const TArray<UOb
 	}
 
 	return nullptr;
+}
+
+
+bool UDlgManager::CouldStartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants)
+{
+	TMap<FName, UObject*> ParticipantBinding;
+
+	if (!ConstructParticipantMap(Dialogue, Participants, ParticipantBinding))
+	{
+		return false;
+	}
+
+	UDlgContextInternal* Context = NewObject<UDlgContextInternal>(Participants[0], UDlgContextInternal::StaticClass());
+	return Context->CouldBeInitialized(Dialogue, ParticipantBinding);
 }
 
 
@@ -197,9 +213,10 @@ TMap<FGuid, UDlgDialogue*> UDlgManager::GetAllDialoguesGuidMap()
 		const FGuid ID = Dialogue->GetDlgGuid();
 		if (DialoguesMap.Contains(ID))
 		{
-			UE_LOG(LogDlgSystem,
-				Error,
-				TEXT("GetAllDialoguesGuidMap: ID = `%s` for Dialogue = `%s` already exists"), *ID.ToString(), *Dialogue->GetPathName());
+			FDlgLogger::Get().Errorf(
+				TEXT("GetAllDialoguesGuidMap: ID = `%s` for Dialogue = `%s` already exists"),
+				*ID.ToString(), *Dialogue->GetPathName()
+			);
 		}
 
 		DialoguesMap.Add(ID, Dialogue);
@@ -228,6 +245,7 @@ bool UDlgManager::DoesObjectImplementDialogueParticipantInterface(const UObject*
 	static const UClass* DialogueParticipantClass = UDlgDialogueParticipant::StaticClass();
 
 	// Apparently blueprints only work this way
+	// NOTE this is the blueprint assets, not an instance, used only by the custom graph nodes
 	if (const UBlueprint* Blueprint = Cast<UBlueprint>(Object))
 	{
 		if (const UClass* GeneratedClass = Cast<UClass>(Blueprint->GeneratedClass))
@@ -375,18 +393,18 @@ bool UDlgManager::ValidateParticipant(const FString& ContextMessageFailure, cons
 	const FString DialoguePath = IsValid(ContextDialogue) ? ContextDialogue->GetPathName() : TEXT("NONE");
 	if (!IsValid(Participant))
 	{
-		UE_LOG(LogDlgSystem,
-			Error,
+		FDlgLogger::Get().Errorf(
 			TEXT("%s - Participant is invalid (not set or nullptr). For Dialogue = `%s`"),
-			*ContextMessageFailure, *DialoguePath);
+			*ContextMessageFailure, *DialoguePath
+		);
 		return false;
 	}
 	if (!Participant->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
 	{
-		UE_LOG(LogDlgSystem,
-			Error,
+		FDlgLogger::Get().Errorf(
 			TEXT("%s - Participant = `%s` does not implement the IDlgDialogueParticipant interface!. For Dialogue = `%s`"),
-			*ContextMessageFailure, *Participant->GetPathName(), *DialoguePath);
+			*ContextMessageFailure, *Participant->GetPathName(), *DialoguePath
+		);
 		return false;
 	}
 
@@ -397,18 +415,13 @@ bool UDlgManager::ConstructParticipantMap(const UDlgDialogue* Dialogue, const TA
 {
 	if (!IsValid(Dialogue))
 	{
-		UE_LOG(LogDlgSystem,
-			   Error,
-			   TEXT("Failed to start dialogue - Invalid dialogue (is nullptr)!"));
+		FDlgLogger::Get().Error(TEXT("Failed to start dialogue - Invalid dialogue (is nullptr)!"));
 		return false;
 	}
 
 	if (Dialogue->GetParticipantData().Num() == 0)
 	{
-		UE_LOG(LogDlgSystem,
-			   Error,
-			   TEXT("Failed to start dialogue = `%s` - Dialogue does not have any participants"),
-			   *Dialogue->GetPathName());
+		FDlgLogger::Get().Errorf(TEXT("Failed to start dialogue = `%s` - Dialogue does not have any participants"), *Dialogue->GetPathName());
 		return false;
 	}
 
@@ -416,10 +429,10 @@ bool UDlgManager::ConstructParticipantMap(const UDlgDialogue* Dialogue, const TA
 	const TMap<FName, FDlgParticipantData>& DialogueParticipants = Dialogue->GetParticipantData();
 	if (DialogueParticipants.Num() != Participants.Num())
 	{
-		UE_LOG(LogDlgSystem,
-			   Error,
-			   TEXT("Failed to start dialogue = `%s` - The asset has %d participants! Provided participant count: %d"),
-			   *Dialogue->GetPathName(), DialogueParticipants.Num(), Participants.Num());
+		FDlgLogger::Get().Errorf(
+			TEXT("Failed to start dialogue = `%s` - The asset has %d participants! Provided participant count: %d"),
+			*Dialogue->GetPathName(), DialogueParticipants.Num(), Participants.Num()
+		);
 		return false;
 	}
 
@@ -429,21 +442,20 @@ bool UDlgManager::ConstructParticipantMap(const UDlgDialogue* Dialogue, const TA
 		UObject* Participant = Participants[ParticipantIndex];
 		if (!IsValid(Participant))
 		{
-			UE_LOG(LogDlgSystem,
-				   Error,
-				   TEXT("Failed to start dialogue = `%s` - Participant at index %d is invalid (not set or nullptr)"),
-				   *Dialogue->GetPathName(), ParticipantIndex);
+			FDlgLogger::Get().Errorf(
+				TEXT("Failed to start dialogue = `%s` - Participant at index %d is invalid (not set or nullptr)"),
+				*Dialogue->GetPathName(), ParticipantIndex
+			);
 			return false;
 		}
 
 		// Be sure it is a participant
 		if (!Participant->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
 		{
-			UE_LOG(LogDlgSystem,
-				   Error,
-				   TEXT("Failed to start dialogue = `%s` - Participant object at index = %d and Path = `%s`"
-						"does not implement the IDlgDialogueParticipant interface!"),
-				   *Dialogue->GetPathName(), ParticipantIndex, *Participant->GetPathName());
+			FDlgLogger::Get().Errorf(
+				TEXT("Failed to start dialogue = `%s` - Participant object at index = %d and Path = `%s` does not implement the IDlgDialogueParticipant interface!"),
+				*Dialogue->GetPathName(), ParticipantIndex, *Participant->GetPathName()
+			);
 			return false;
 		}
 
@@ -451,10 +463,10 @@ bool UDlgManager::ConstructParticipantMap(const UDlgDialogue* Dialogue, const TA
 		const FName ParticipantName = IDlgDialogueParticipant::Execute_GetParticipantName(Participant);
 		if (!DialogueParticipants.Find(ParticipantName))
 		{
-			UE_LOG(LogDlgSystem,
-				   Error,
-				   TEXT("Failed to start dialogue = `%s` - Input Participant at index = %d has the name %s, which is not referenced by this Dialogue"),
-				   *Dialogue->GetPathName(), ParticipantIndex, *ParticipantName.ToString());
+			FDlgLogger::Get().Errorf(
+				TEXT("Failed to start dialogue = `%s` - Input Participant at index = %d has the name %s, which is not referenced by this Dialogue"),
+				*Dialogue->GetPathName(), ParticipantIndex, *ParticipantName.ToString()
+			);
 			return false;
 		}
 		OutMap.Add(ParticipantName, Participant);

@@ -14,11 +14,13 @@
 #include "DlgNode.generated.h"
 
 
+class UDlgSystemSettings;
 class UDlgContextInternal;
 class UDlgNode;
 class USoundWave;
 class UDialogueWave;
 struct FDlgTextArgument;
+class UDlgDialogue;
 
 /**
  *  Abstract base class for Dialogue nodes
@@ -44,7 +46,7 @@ public:
 	 *
 	 * @param PropertyChangedEvent the property that was modified
 	 */
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	/**
 	 * This alternate version of PostEditChange is called when properties inside structs are modified.  The property that was actually modified
@@ -110,7 +112,10 @@ public:
 	/** Gets this nodes children (edges) as a const/mutable array */
 	virtual const TArray<FDlgEdge>& GetNodeChildren() const { return Children; }
 	virtual void SetNodeChildren(const TArray<FDlgEdge>& InChildren) { Children = InChildren; }
-
+	virtual int32 GetNumNodeChildren() const { return Children.Num(); }
+	virtual const FDlgEdge& GetNodeChildAt(int32 EdgeIndex) const { return Children[EdgeIndex]; }
+	
+	
 	/** Adds an Edge to the end of the Children Array. */
 	virtual void AddNodeChild(const FDlgEdge& InChild) { Children.Add(InChild); }
 
@@ -140,12 +145,27 @@ public:
 	/** Gets the mutable Edge that corresponds to the provided TargetIndex or nullptr if nothing was found. */
 	virtual FDlgEdge* GetMutableNodeChildForTargetIndex(int32 TargetIndex);
 
-	/** Gets all the edges (children) indicies that DO NOT have a valid TargetIndex (is negative). */
+	/** Gets all the edges (children) indices that DO NOT have a valid TargetIndex (is negative). */
 	const TArray<int32> GetNodeOpenChildren_DEPRECATED() const;
 
 	/** Gathers associated participants, they are only added to the array if they are not yet there */
 	virtual void GetAssociatedParticipants(TArray<FName>& OutArray) const;
 
+	// Updates the value of the texts from the default values or the remappings (if any)
+	virtual void UpdateTextsValuesFromDefaultsAndRemappings(
+		const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true
+	);
+	
+	// Updates the namespace and key of all the texts depending on the settings
+	virtual void UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true);
+	
+	// Rebuilds ConstructedText
+	virtual void RebuildTextArguments(bool bEdges, bool bUpdateGraphNode = true);
+	virtual void RebuildTextArgumentsFromPreview(const FText& Preview) {}
+
+	// Constructs the ConstructedText.
+	virtual void RebuildConstructedText(const UDlgContextInternal* DlgContext) {}
+	
 	/** Gets the text arguments for this Node (if any). Used for FText::Format */
 	virtual const TArray<FDlgTextArgument>& GetTextArguments() const
 	{
@@ -170,7 +190,7 @@ public:
 
 	/** Gets the speaker state ordered to this node (can be used e.g. for icon selection) */
 	virtual FName GetSpeakerState() const { return NAME_None; }
-	virtual void AddAllSpeakerStatesIntoSet(TSet<FName>& States) const {};
+	virtual void AddAllSpeakerStatesIntoSet(TSet<FName>& OutStates) const {};
 
 	/** Gets the generic data asset of this Node. */
 	virtual UObject* GetGenericData() const { return nullptr; }
@@ -178,7 +198,7 @@ public:
 	virtual UDlgNodeData* GetNodeData() const { return nullptr; }
 
 	/** Helper method to get directly the Dialogue */
-	class UDlgDialogue* GetDialogue() const;
+	UDlgDialogue* GetDialogue() const;
 
 	/** Helper functions to get the names of some properties. Used by the DlgSystemEditor module. */
 	static FName GetMemberNameOwnerName() { return GET_MEMBER_NAME_CHECKED(UDlgNode, OwnerName); }
@@ -187,14 +207,13 @@ public:
 	static FName GetMemberNameEnterEvents() { return GET_MEMBER_NAME_CHECKED(UDlgNode, EnterEvents); }
 	static FName GetMemberNameChildren() { return GET_MEMBER_NAME_CHECKED(UDlgNode, Children); }
 
+	// Syncs the GraphNode Edges with our edges
+	void UpdateGraphNode();
+	
 protected:
-
 	void FireNodeEnterEvents(UDlgContextInternal* DlgContext);
 
-	void UpdateTextNamespace(FText& Text);
-
 protected:
-
 #if WITH_EDITORONLY_DATA
 	/** Node's Graph representation, used to get position. */
 	UPROPERTY(Meta = (DlgNoExport))
@@ -202,7 +221,7 @@ protected:
 
 	// Used to build the change event and broadcast it
 	int32 BroadcastPropertyEdgeIndexChanged = INDEX_NONE;
-#endif
+#endif // WITH_EDITORONLY_DATA
 
 	/** Name of a participant (speaker) associated with this node. */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DisplayName = "Participant Name"))

@@ -35,10 +35,19 @@ public:
 	 */
 	static bool SaveAllDialogues();
 
+	/**
+	 * Deletes all teh dialogues text files
+	 * @return True on success or false on failure.
+	 */
+	static bool DeleteAllDialoguesTextFiles(const TSet<FString>& TextFileExtensions);
+
 private:
 	/** Handle clicking on save all dialogues. */
 	static void HandleOnSaveAllDialogues();
 
+	/** Handle clicking on delete all dialogues text files. */
+	static void HandleOnDeleteAllDialoguesTextFiles();
+	
 	/** Handle on post engine init event */
 	void HandleOnPostEngineInit();
 
@@ -68,9 +77,9 @@ private:
 	TSharedPtr<FGraphPanelPinFactory> DialogueGraphPinFactory;
 
 	/**
-	 * Global Editor commands bound from this plugin.
+	 * File menu Editor commands bound from this plugin.
 	 */
-	TSharedPtr<FUICommandList> GlobalEditorCommands;
+	TSharedPtr<FUICommandList> FileMenuEditorCommands;
 
 	/** The Tools Dialogue category. */
 	TSharedPtr<FWorkspaceItem> ToolsDialogueCategory;

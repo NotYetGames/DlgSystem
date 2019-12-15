@@ -8,9 +8,10 @@
 #include "DlgReflectionHelper.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
-#include "STextPropertyPickList.h"
+#include "Widgets/SDialogueTextPropertyPickList.h"
 #include "IPropertyUtilities.h"
-#include "CustomRowHelpers/TextPropertyPickList_CustomRowHelper.h"
+#include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
+#include "DlgHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueCondition_Details"
 
@@ -64,17 +65,17 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 	{
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("ParticipantNameSearchKey", "Participant Name"));
 
-		ParticipantNamePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
+		ParticipantNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
 		ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
-			SNew(STextPropertyPickList)
+			SNew(SDialogueTextPropertyPickList)
 			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(bHasDialogue)
 			.IsContextCheckBoxChecked(true)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueParticipantNames)
 		)
-		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetParticipantNameVisibility))
-		->Update();
+		.SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetParticipantNameVisibility))
+		.Update();
 	}
 
 	// CallbackName (variable name)
@@ -83,17 +84,17 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, CallbackName));
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("CallBackNameSearchKey", "Variable Name"));
 
-		CallbackNamePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, CallbackNamePropertyHandle);
+		CallbackNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, CallbackNamePropertyHandle);
 		CallbackNamePropertyRow->SetTextPropertyPickListWidget(
-			SNew(STextPropertyPickList)
+			SNew(SDialogueTextPropertyPickList)
 			.AvailableSuggestions(this, &Self::GetAllDialoguesCallbackNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(bHasDialogue)
 			.IsContextCheckBoxChecked(false)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueCallbackNames)
 		)
-		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCallbackNameVisibility))
-		->Update();
+		.SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCallbackNameVisibility))
+		.Update();
 	}
 
 	// Operation
@@ -115,17 +116,17 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 	{
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("ParticipantNameSearchKey", "Participant Name"));
 
-		ParticipantNamePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, OtherParticipantNamePropertyHandle);
+		ParticipantNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, OtherParticipantNamePropertyHandle);
 		ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
-			SNew(STextPropertyPickList)
+			SNew(SDialogueTextPropertyPickList)
 			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(true)
 			.IsContextCheckBoxChecked(true)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueParticipantNames)
 		)
-		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetOtherParticipantNameAndVariableVisibility))
-		->Update();
+		.SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetOtherParticipantNameAndVariableVisibility))
+		.Update();
 	}
 
 	// Other variable name
@@ -134,17 +135,17 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, OtherVariableName));
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("CallBackNameSearchKey", "Variable Name"));
 
-		OtherVariableNamePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, CallbackNamePropertyHandle);
+		OtherVariableNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, CallbackNamePropertyHandle);
 		OtherVariableNamePropertyRow->SetTextPropertyPickListWidget(
-			SNew(STextPropertyPickList)
+			SNew(SDialogueTextPropertyPickList)
 			.AvailableSuggestions(this, &Self::GetAllDialoguesOtherVariableNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(true)
 			.IsContextCheckBoxChecked(false)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueOtherVariableNames)
 		)
-		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetOtherParticipantNameAndVariableVisibility))
-		->Update();
+		.SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetOtherParticipantNameAndVariableVisibility))
+		.Update();
 	}
 
 
@@ -212,32 +213,32 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 	FDialogueDetailsPanelUtils::ResetNumericPropertyLimits(IntValuePropertyHandle);
 	switch (ConditionType)
 	{
-	case EDlgConditionType::DlgConditionEventCall:
+	case EDlgConditionType::EventCall:
 		CalllBackNameDisplayName = LOCTEXT("ConditionEvent_CallBackNameDisplayName", "Condition Name");
 		CalllBackNameToolTip = LOCTEXT("ConditionEvent_CallBackNameToolTip", "Name parameter of the event call the participant gets");
 		BoolValueToolTip = LOCTEXT("ConditionEvent_BoolValueToolTip", "Does the return result of the Event/Condition has this boolean value?");
 		break;
 
-	case EDlgConditionType::DlgConditionBoolCall:
-	case EDlgConditionType::DlgConditionClassBoolVariable:
+	case EDlgConditionType::BoolCall:
+	case EDlgConditionType::ClassBoolVariable:
 		BoolValueToolTip = LOCTEXT("ConditionBool_BoolValueToolTip", "Whether the bool check is expected to be true or false in order to satisfy the condition");
 		break;
 
-	case EDlgConditionType::DlgConditionNameCall:
-	case EDlgConditionType::DlgConditionClassNameVariable:
+	case EDlgConditionType::NameCall:
+	case EDlgConditionType::ClassNameVariable:
 		BoolValueToolTip = LOCTEXT("ConditionBool_BoolValueToolTip", "Whether the two Name is expected to be equal or not in order to satisfy the condition");
 		BoolValueDisplayName = LOCTEXT("BoolValueDisplayName", "Succeed on Equal");
 		break;
 
-	case EDlgConditionType::DlgConditionFloatCall:
-	case EDlgConditionType::DlgConditionClassFloatVariable:
+	case EDlgConditionType::FloatCall:
+	case EDlgConditionType::FloatVariable:
 		break;
 
-	case EDlgConditionType::DlgConditionIntCall:
-	case EDlgConditionType::DlgConditionClassIntVariable:
+	case EDlgConditionType::IntCall:
+	case EDlgConditionType::ClassIntVariable:
 		break;
 
-	case EDlgConditionType::DlgConditionNodeVisited:
+	case EDlgConditionType::WasNodeVisited:
 		if (Dialogue)
 		{
 			FDialogueDetailsPanelUtils::SetNumericPropertyLimits<int32>(IntValuePropertyHandle, 0, Dialogue->GetNodes().Num() - 1);
@@ -249,7 +250,7 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 		BoolValueToolTip = LOCTEXT("ConditionNodeVisited_BoolValueToolTip", "Should the node be visited? True/False.");
 		break;
 
-	case EDlgConditionType::DlgConditionHasSatisfiedChild:
+	case EDlgConditionType::HasSatisfiedChild:
 		if (Dialogue)
 		{
 			FDialogueDetailsPanelUtils::SetNumericPropertyLimits<int32>(IntValuePropertyHandle, 0, Dialogue->GetNodes().Num() - 1);
@@ -266,8 +267,8 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 	}
 
 	CallbackNamePropertyRow->SetDisplayName(CalllBackNameDisplayName)
-		->SetToolTip(CalllBackNameToolTip)
-		->Update();
+		.SetToolTip(CalllBackNameToolTip)
+		.Update();
 
 	BoolValuePropertyRow->DisplayName(BoolValueDisplayName);
 	BoolValuePropertyRow->ToolTip(BoolValueToolTip);
@@ -290,7 +291,7 @@ void FDialogueCondition_Details::OnCompareTypeChanged(bool bForceRefresh)
 	{
 		return;
 	}
-	CompareType = static_cast<EDlgCompareType>(Value);
+	CompareType = static_cast<EDlgCompare>(Value);
 
 	// Refresh the view, without this some names/tooltips won't get refreshed
 	if (bForceRefresh && PropertyUtils.IsValid())
@@ -310,21 +311,21 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 	bool bReflectionBased = false;
 	if (bOtherValue)
 	{
-		bReflectionBased = CompareType == EDlgCompareType::DlgCompareToClassVariable;
+		bReflectionBased = CompareType == EDlgCompare::ToClassVariable;
 	}
 	else
 	{
-		bReflectionBased = ConditionType == EDlgConditionType::DlgConditionClassBoolVariable
-						|| ConditionType == EDlgConditionType::DlgConditionClassIntVariable
-						|| ConditionType == EDlgConditionType::DlgConditionClassFloatVariable
-						|| ConditionType == EDlgConditionType::DlgConditionClassNameVariable;
+		bReflectionBased = ConditionType == EDlgConditionType::ClassBoolVariable
+						|| ConditionType == EDlgConditionType::ClassIntVariable
+						|| ConditionType == EDlgConditionType::FloatVariable
+						|| ConditionType == EDlgConditionType::ClassNameVariable;
 	}
 
 
 	switch (ConditionType)
 	{
-	case EDlgConditionType::DlgConditionClassBoolVariable:
-	case EDlgConditionType::DlgConditionBoolCall:
+	case EDlgConditionType::ClassBoolVariable:
+	case EDlgConditionType::BoolCall:
 		if (bReflectionBased && Dialogue)
 		{
 			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
@@ -343,8 +344,8 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 		}
 		break;
 
-	case EDlgConditionType::DlgConditionClassFloatVariable:
-	case EDlgConditionType::DlgConditionFloatCall:
+	case EDlgConditionType::FloatVariable:
+	case EDlgConditionType::FloatCall:
 		if (bReflectionBased && Dialogue)
 		{
 			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
@@ -362,8 +363,8 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 		}
 		break;
 
-	case EDlgConditionType::DlgConditionClassIntVariable:
-	case EDlgConditionType::DlgConditionIntCall:
+	case EDlgConditionType::ClassIntVariable:
+	case EDlgConditionType::IntCall:
 		if (bReflectionBased && Dialogue)
 		{
 			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
@@ -381,8 +382,8 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 		}
 		break;
 
-	case EDlgConditionType::DlgConditionNameCall:
-	case EDlgConditionType::DlgConditionClassNameVariable:
+	case EDlgConditionType::NameCall:
+	case EDlgConditionType::ClassNameVariable:
 		if (bReflectionBased && Dialogue)
 		{
 			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
@@ -400,8 +401,8 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 		}
 		break;
 
-	case EDlgConditionType::DlgConditionEventCall:
-	case EDlgConditionType::DlgConditionNodeVisited:
+	case EDlgConditionType::EventCall:
+	case EDlgConditionType::WasNodeVisited:
 	default:
 		if (bCurrentOnly && Dialogue)
 		{

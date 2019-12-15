@@ -124,7 +124,11 @@ public:
 
 private:
 	/** Helper method to make a Text Node and add it as a child to ParentNode */
-	TSharedPtr<FFindInDialoguesResult> MakeChildTextNode(const TSharedPtr<FFindInDialoguesResult>& ParentNode, const FText& DisplayName, const FText& Category, const FString& CommentString = FString())
+	TSharedPtr<FFindInDialoguesResult> MakeChildTextNode(
+		const TSharedPtr<FFindInDialoguesResult>& ParentNode,
+		const FText& DisplayName, const FText& Category,
+		const FString& CommentString
+	)
 	{
 		TSharedPtr<FFindInDialoguesResult> TextNode = MakeShared<FFindInDialoguesResult>(DisplayName, ParentNode);
 		TextNode->SetCategory(Category);
@@ -134,6 +138,37 @@ private:
 		}
 		ParentNode->AddChild(TextNode);
 		return TextNode;
+	}
+
+	bool SearchForTextLocalizationData(const TSharedPtr<FFindInDialoguesResult>& ParentNode,
+		const FString& SearchString, const FText& Text,
+		const FText& NamespaceCategory, const FString& NamespaceCommentString,
+		const FText& KeyCategory, const FString& KeyCommentString
+	)
+	{
+		static const FString DefaultValue = TEXT("");
+		bool bContainsSearchString = false;
+		
+		const FString CurrentFullNamespace = FTextInspector::GetNamespace(Text).Get(DefaultValue);
+		const FString CurrentKey = FTextInspector::GetKey(Text).Get(DefaultValue);
+		if (CurrentFullNamespace.Contains(SearchString))
+		{
+			bContainsSearchString = true;
+			MakeChildTextNode(ParentNode,
+				FText::AsCultureInvariant(CurrentFullNamespace),
+				NamespaceCategory,
+				NamespaceCommentString);
+		}
+		if (CurrentKey.Contains(SearchString))
+		{
+			bContainsSearchString = true;
+			MakeChildTextNode(ParentNode,
+				FText::AsCultureInvariant(CurrentKey),
+				KeyCategory,
+				KeyCommentString);
+		}
+
+		return bContainsSearchString;
 	}
 
 	/** Handler for a request to spawn a new global find results tab */

@@ -4,10 +4,11 @@
 #include "IPropertyTypeCustomization.h"
 #include "Layout/Visibility.h"
 #include "DialogueDetailsPanelUtils.h"
+#include "DlgManager.h"
 
 class UDlgDialogue;
-class FMultiLineEditableTextBox_CustomRowHelper;
-class FTextPropertyPickList_CustomRowHelper;
+class FDialogueMultiLineEditableTextBox_CustomRowHelper;
+class FDialogueTextPropertyPickList_CustomRowHelper;
 
 /**
  * How the details customization panel looks for the FDlgEdge
@@ -44,8 +45,6 @@ public:
 		IDetailChildrenBuilder& StructBuilder,
 		IPropertyTypeCustomizationUtils& StructCustomizationUtils) override;
 
-
-
 	/** Gets the Speaker States from all Dialogues. */
 	TArray<FName> GetAllDialoguesSpeakerStates() const
 	{
@@ -59,7 +58,8 @@ public:
 
 	/** Handler for when the text is changed */
 	void HandleTextCommitted(const FText& InText, ETextCommit::Type CommitInfo);
-
+	void HandleTextChanged(const FText& InText);
+	
 private:
 	// Getters for the visibility of some properties
 	EVisibility GetTextVisibility() const { return bShowTextProperty ? EVisibility::Visible : EVisibility::Hidden; }
@@ -67,11 +67,11 @@ private:
 	EVisibility GetSpeakerStateVisibility() const
 	{
 		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-
-		return bShowTextProperty &&
-			  (Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnEdge ||
-			   Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnNodeAndEdge)
-			   ? EVisibility::Visible : EVisibility::Hidden;
+		const bool bSettingsShow =
+			Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnEdge ||
+			Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnNodeAndEdge;
+		
+		return bShowTextProperty && bSettingsShow ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 private:
@@ -83,8 +83,8 @@ private:
 
 	/** Cache some properties */
 	TSharedPtr<IPropertyHandle> TextPropertyHandle;
-	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
+	TSharedPtr<FDialogueMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
 
 	/** Hold a reference to dialogue we are displaying. */
 	UDlgDialogue* Dialogue = nullptr;

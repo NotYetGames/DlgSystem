@@ -44,6 +44,8 @@ enc_temp_folder/
 *.VC.db
 *.opendb
 *.vcxproj*
+*.gen.cpp
+*.generated.h
 
 # Precompiled Assets
 SourceArt/**/*.png

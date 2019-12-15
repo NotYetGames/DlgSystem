@@ -51,6 +51,7 @@ public:
 	static const FName PROPERTY_FindAssetIcon;
 
 	static const FName PROPERTY_SaveAllDialoguesIcon;
+	static const FName PROPERTY_DeleteAllDialoguesTextFilesIcon;
 	static const FName PROPERTY_FindDialogueIcon;
 	static const FName PROPERTY_BrowseDialogueIcon;
 

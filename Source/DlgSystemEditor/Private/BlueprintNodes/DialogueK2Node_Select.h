@@ -10,10 +10,10 @@
 UENUM()
 enum class EDlgVariableType : uint8
 {
-	DlgVariableTypeFloat		 UMETA(DisplayName = "Dialogue Float Variable"),
-	DlgVariableTypeInt			 UMETA(DisplayName = "Dialogue Int Variable"),
-	DlgVariableTypeName			 UMETA(DisplayName = "Dialogue Name Variable"),
-	DlgVariableTypeSpeakerState	 UMETA(DisplayName = "Dialogue Speaker State"),
+	Float			UMETA(DisplayName = "Dialogue Float Variable"),
+	Int				UMETA(DisplayName = "Dialogue Int Variable"),
+	Name			UMETA(DisplayName = "Dialogue Name Variable"),
+	SpeakerState	UMETA(DisplayName = "Dialogue Speaker State"),
 };
 
 /**
@@ -100,16 +100,16 @@ private:
 	{
 		switch (VariableType)
 		{
-		case EDlgVariableType::DlgVariableTypeFloat:
+		case EDlgVariableType::Float:
 			VariablePinType = UEdGraphSchema_K2::PC_Float;
 			break;
-		case EDlgVariableType::DlgVariableTypeInt:
+		case EDlgVariableType::Int:
 			VariablePinType = UEdGraphSchema_K2::PC_Int;
 			break;
-		case EDlgVariableType::DlgVariableTypeName:
+		case EDlgVariableType::Name:
 			VariablePinType = UEdGraphSchema_K2::PC_Name;
 			break;
-		case EDlgVariableType::DlgVariableTypeSpeakerState:
+		case EDlgVariableType::SpeakerState:
 			VariablePinType = UEdGraphSchema_K2::PC_Wildcard;
 			break;
 		default:

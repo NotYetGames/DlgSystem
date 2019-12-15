@@ -18,6 +18,8 @@
 #include "Nodes/DlgNode_Speech.h"
 #include "Nodes/DlgNode_End.h"
 #include "DlgManager.h"
+#include "Logging/DlgLogger.h"
+#include "DlgHelper.h"
 
 #define LOCTEXT_NAMESPACE "DlgDialogue"
 
@@ -43,7 +45,7 @@ void UpdateDialogueToVersion_ConvertedNodesToUObject(UDlgDialogue* Dialogue)
 void UpdateDialogueToVersion_UseOnlyOneOutputAndInputPin(UDlgDialogue* Dialogue)
 {
 #if WITH_EDITOR
-	Dialogue->GetDialogueEditorModule()->UpdateDialogueToVersion_UseOnlyOneOutputAndInputPin(Dialogue);
+	Dialogue->GetDialogueEditorAccess()->UpdateDialogueToVersion_UseOnlyOneOutputAndInputPin(Dialogue);
 #endif
 }
 
@@ -54,7 +56,7 @@ void UDlgDialogue::PreSave(const class ITargetPlatform* TargetPlatform)
 {
 	Super::PreSave(TargetPlatform);
 	DlgName = GetDlgFName();
-	OnAssetSaved();
+	OnPreAssetSaved();
 }
 
 void UDlgDialogue::Serialize(FArchive& Ar)
@@ -88,31 +90,33 @@ void UDlgDialogue::PostLoad()
 	// Simply the number of nodes, VirtualParent Node is merged into Speech Node and SelectRandom and SelectorFirst are merged into one Selector Node
 	if (DialogueVersion < FDlgDialogueObjectVersion::MergeVirtualParentAndSelectorTypes)
 	{
-		UE_LOG(LogDlgSystem,
-			   Warning,
-			   TEXT("Dialogue = `%s` with Version MergeVirtualParentAndSelectorTypes will not be converted."
-				    "See https://gitlab.com/snippets/1691704 for manual conversion "), *GetTextFilePathName());
+		FDlgLogger::Get().Warningf(
+			TEXT("Dialogue = `%s` with Version MergeVirtualParentAndSelectorTypes will not be converted. See https://gitlab.com/snippets/1691704 for manual conversion"),
+			*GetTextFilePathName()
+		);
 	}
 
 	// Refresh the data, so that it is valid after loading.
 	if (DialogueVersion < FDlgDialogueObjectVersion::AddTextFormatArguments)
 	{
-		RefreshData();
+		UpdateAndRefreshData();
 	}
 
 	// Create thew new Guid
 	if (!DlgGuid.IsValid())
 	{
 		RegenerateGuid();
-		UE_LOG(LogDlgSystem, Verbose, TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because of of invalid DlgGuid."),
-			   *DlgGuid.ToString(), *GetPathName());
+		FDlgLogger::Get().Debugf(
+			TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because of of invalid DlgGuid."),
+			*DlgGuid.ToString(), *GetPathName()
+		);
 	}
 
 #if WITH_EDITOR
-	const bool bHasDialogueEditorModule = GetDialogueEditorModule().IsValid();
+	const bool bHasDialogueEditorModule = GetDialogueEditorAccess().IsValid();
 	// If this is false it means the graph nodes are not even created? Check for old files that were saved
 	// before graph editor was even implemented. The editor will popup a prompt from FDialogueEditorUtilities::TryToCreateDefaultGraph
-	if (bHasDialogueEditorModule && !GetDialogueEditorModule()->AreDialogueNodesInSyncWithGraphNodes(this))
+	if (bHasDialogueEditorModule && !GetDialogueEditorAccess()->AreDialogueNodesInSyncWithGraphNodes(this))
 	{
 		return;
 	}
@@ -151,13 +155,19 @@ void UDlgDialogue::PostLoad()
 
 void UDlgDialogue::PostInitProperties()
 {
-	// TODO, this seems like a bad place to init properties, because this will get called every time we are loading uassets from the filesystem
 	Super::PostInitProperties();
+
+	// Ignore these cases
+	if (HasAnyFlags(RF_ClassDefaultObject | RF_NeedLoad))
+	{
+		return;
+	}
+
 	const int32 DialogueVersion = GetLinkerCustomVersion(FDlgDialogueObjectVersion::GUID);
 
 #if WITH_EDITOR
 	// Wait for the editor module to be set by the editor in UDialogueGraph constructor
-	if (GetDialogueEditorModule().IsValid())
+	if (GetDialogueEditorAccess().IsValid())
 	{
 		CreateGraph();
 	}
@@ -171,8 +181,10 @@ void UDlgDialogue::PostInitProperties()
 	if (DialogueVersion >= FDlgDialogueObjectVersion::AddGuid && !DlgGuid.IsValid())
 	{
 		RegenerateGuid();
-		UE_LOG(LogDlgSystem, Verbose, TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because of new created Dialogue."),
-			   *DlgGuid.ToString(), *GetPathName());
+		FDlgLogger::Get().Debugf(
+			TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because of new created Dialogue."),
+			*DlgGuid.ToString(), *GetPathName()
+		);
 	}
 }
 
@@ -210,8 +222,10 @@ void UDlgDialogue::PostDuplicate(bool bDuplicateForPIE)
 	// Used when duplicating dialogues.
 	// Make new guid for this copied Dialogue.
 	RegenerateGuid();
-	UE_LOG(LogDlgSystem, Verbose, TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because Dialogue was copied."),
-		   *DlgGuid.ToString(), *GetPathName());
+	FDlgLogger::Get().Debugf(
+		TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because Dialogue was copied."),
+		*DlgGuid.ToString(), *GetPathName()
+	);
 }
 
 void UDlgDialogue::PostEditImport()
@@ -221,12 +235,14 @@ void UDlgDialogue::PostEditImport()
 	// Used when duplicating dialogues.
 	// Make new guid for this copied Dialogue
 	RegenerateGuid();
-	UE_LOG(LogDlgSystem, Verbose, TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because Dialogue was copied."),
-		   *DlgGuid.ToString(), *GetPathName());
+	FDlgLogger::Get().Debugf(
+		TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because Dialogue was copied."),
+		*DlgGuid.ToString(), *GetPathName()
+	);
 }
 
 #if WITH_EDITOR
-TSharedPtr<IDlgDialogueEditorModule> UDlgDialogue::DialogueEditorModule = nullptr;
+TSharedPtr<IDlgDialogueEditorAccess> UDlgDialogue::DialogueEditorAccess = nullptr;
 
 bool UDlgDialogue::CanEditChange(const UProperty* InProperty) const
 {
@@ -244,7 +260,7 @@ void UDlgDialogue::PostEditChangeProperty(FPropertyChangedEvent& PropertyChanged
 
 void UDlgDialogue::PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent)
 {
-	RefreshData();
+	UpdateAndRefreshData();
 
 	const auto* ActiveMemberNode = PropertyChangedEvent.PropertyChain.GetActiveMemberNode();
 	const auto* ActivePropertyNode = PropertyChangedEvent.PropertyChain.GetActiveNode();
@@ -301,8 +317,8 @@ void UDlgDialogue::CreateGraph()
 		StartNode = ConstructDialogueNode<UDlgNode_Speech>();
 	}
 
-	UE_LOG(LogDlgSystem, Verbose, TEXT("Creating graph for Dialogue = `%s`"), *GetPathName());
-	DlgGraph = GetDialogueEditorModule()->CreateNewDialogueGraph(this);
+	FDlgLogger::Get().Debugf(TEXT("Creating graph for Dialogue = `%s`"), *GetPathName());
+	DlgGraph = GetDialogueEditorAccess()->CreateNewDialogueGraph(this);
 
 	// Give the schema a chance to fill out any required nodes
 	DlgGraph->GetSchema()->CreateDefaultNodesForGraph(*DlgGraph);
@@ -316,8 +332,8 @@ void UDlgDialogue::ClearGraph()
 		return;
 	}
 
-	UE_LOG(LogDlgSystem, Verbose, TEXT("Clearing graph for Dialogue = `%s`"), *GetPathName());
-	GetDialogueEditorModule()->RemoveAllGraphNodes(this);
+	FDlgLogger::Get().Debugf(TEXT("Clearing graph for Dialogue = `%s`"), *GetPathName());
+	GetDialogueEditorAccess()->RemoveAllGraphNodes(this);
 
 	// Give the schema a chance to fill out any required nodes
 	DlgGraph->GetSchema()->CreateDefaultNodesForGraph(*DlgGraph);
@@ -331,47 +347,88 @@ void UDlgDialogue::CompileDialogueNodesFromGraphNodes()
 		return;
 	}
 
-	UE_LOG(LogDlgSystem, Log, TEXT("Compiling Dialogue = `%s` (Graph data -> Dialogue data)`"), *GetPathName());
-	GetDialogueEditorModule()->CompileDialogueNodesFromGraphNodes(this);
+	FDlgLogger::Get().Infof(TEXT("Compiling Dialogue = `%s` (Graph data -> Dialogue data)`"), *GetPathName());
+	GetDialogueEditorAccess()->CompileDialogueNodesFromGraphNodes(this);
 }
 #endif // #if WITH_EDITOR
 
-void UDlgDialogue::ReloadFromFile()
+void UDlgDialogue::ImportFromFile()
 {
 	// Simply ignore reloading
 	const EDlgDialogueTextFormat TextFormat = GetDefault<UDlgSystemSettings>()->DialogueTextFormat;
-	if (TextFormat == EDlgDialogueTextFormat::DlgDialogueNoTextFormat)
+	if (TextFormat == EDlgDialogueTextFormat::None)
 	{
-		RefreshData();
+		UpdateAndRefreshData();
 		return;
 	}
 
+	ImportFromFileFormat(TextFormat);
+}
+
+void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
+{
+	const bool bHasExtension = UDlgSystemSettings::HasTextFileExtension(TextFormat);
+	const FString& TextFileName = GetTextFilePathName(TextFormat);
+
+	// Nothing to do
+	IFileManager& FileManager = IFileManager::Get();
+	if (!bHasExtension)
+	{
+		// Useful For debugging
+		if (TextFormat == EDlgDialogueTextFormat::All)
+		{
+			// Import from all
+			const int32 TextFormatsNum = static_cast<int32>(EDlgDialogueTextFormat::NumTextFormats);
+			for (int32 TextFormatIndex = static_cast<int32>(EDlgDialogueTextFormat::StartTextFormats);
+					   TextFormatIndex < TextFormatsNum; TextFormatIndex++)
+			{
+				const EDlgDialogueTextFormat CurrentTextFormat = static_cast<EDlgDialogueTextFormat>(TextFormatIndex);
+				const FString& CurrentTextFileName = GetTextFilePathName(CurrentTextFormat);
+				if (FileManager.FileExists(*CurrentTextFileName))
+				{
+					ImportFromFileFormat(CurrentTextFormat);
+				}
+			}
+		}
+		return;
+	}
+
+	// File does not exist abort
+	if (!FileManager.FileExists(*TextFileName))
+	{
+		FDlgLogger::Get().Errorf(TEXT("Reloading data for Dialogue = `%s` FROM file = `%s` FAILED, because the file does not exist"), *GetPathName(), *TextFileName);
+		return;
+	}
+
+	// Clear data first
 	StartNode = nullptr;
 	Nodes.Empty();
 
 	// TODO handle DlgName == NAME_None or invalid filename
-	const FString& TextFileName = GetTextFilePathName();
-	UE_LOG(LogDlgSystem, Log, TEXT("Reloading data for Dialogue = `%s` FROM file = `%s`"), *GetPathName(), *TextFileName);
+	FDlgLogger::Get().Infof(TEXT("Reloading data for Dialogue = `%s` FROM file = `%s`"), *GetPathName(), *TextFileName);
 
 	// TODO(vampy): Check for errors
-	check(TextFormat != EDlgDialogueTextFormat::DlgDialogueNoTextFormat);
+	check(TextFormat != EDlgDialogueTextFormat::None);
 	switch (TextFormat)
 	{
-		case EDlgDialogueTextFormat::DlgDialogueTextFormatJson:
+		case EDlgDialogueTextFormat::JSON:
 		{
 			FDlgJsonParser JsonParser;
 			JsonParser.InitializeParser(TextFileName);
 			JsonParser.ReadAllProperty(GetClass(), this, this);
 			break;
 		}
-		case EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue:
-		default:
+		case EDlgDialogueTextFormat::DialogueDEPRECATED:
 		{
 			FDlgConfigParser Parser(TEXT("Dlg"));
 			Parser.InitializeParser(TextFileName);
 			Parser.ReadAllProperty(GetClass(), this, this);
 			break;
 		}
+		default:
+			checkNoEntry();
+			break;
+
 	}
 
 	if (!IsValid(StartNode))
@@ -388,27 +445,27 @@ void UDlgDialogue::ReloadFromFile()
 		{
 			// found duplicate of this Dialogue
 			RegenerateGuid();
-			UE_LOG(LogDlgSystem,
-				Warning,
+			FDlgLogger::Get().Warningf(
 				TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because the input file contained a duplicate GUID."),
-				*DlgGuid.ToString(), *GetPathName());
+				*DlgGuid.ToString(), *GetPathName()
+			);
 		}
 		else
 		{
 			// We have bigger problems on our hands
-			UE_LOG(LogDlgSystem,
-				Error,
+			FDlgLogger::Get().Errorf(
 				TEXT("Found Duplicate Dialogue that does not belong to this Dialogue = `%s`, DuplicateDialogues.Num = %d"),
-				*GetPathName(),  DuplicateDialogues.Num());
+				*GetPathName(),  DuplicateDialogues.Num()
+			);
 		}
 	}
 
 	DlgName = GetDlgFName();
 	AutoFixGraph();
-	RefreshData();
+	UpdateAndRefreshData(true);
 }
 
-void UDlgDialogue::OnAssetSaved()
+void UDlgDialogue::OnPreAssetSaved()
 {
 #if WITH_EDITOR
 	// Compile, graph data -> dialogue data
@@ -416,101 +473,145 @@ void UDlgDialogue::OnAssetSaved()
 #endif
 
 	// Save file, dialogue data -> text file (.dlg)
-	RefreshData();
+	UpdateAndRefreshData(true);
 	ExportToFile();
 }
 
 void UDlgDialogue::ExportToFile() const
 {
 	const EDlgDialogueTextFormat TextFormat = GetDefault<UDlgSystemSettings>()->DialogueTextFormat;
-	if (TextFormat == EDlgDialogueTextFormat::DlgDialogueNoTextFormat)
+	if (TextFormat == EDlgDialogueTextFormat::None)
 	{
 		// Simply ignore saving
 		return;
 	}
 
-	// TODO(vampy): Check for errors
-	const FString& TextFileName = GetTextFilePathName();
-	UE_LOG(LogDlgSystem, Log, TEXT("Exporting data for Dialogue = `%s` TO file = `%s`"), *GetPathName(), *TextFileName);
+	ExportToFileFormat(TextFormat);
+}
 
-	check(TextFormat != EDlgDialogueTextFormat::DlgDialogueNoTextFormat)
+void UDlgDialogue::ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const
+{
+	// TODO(vampy): Check for errors
+	const bool bHasExtension = UDlgSystemSettings::HasTextFileExtension(TextFormat);
+	const FString& TextFileName = GetTextFilePathName(TextFormat);
+	if (bHasExtension)
+	{
+		FDlgLogger::Get().Infof(TEXT("Exporting data for Dialogue = `%s` TO file = `%s`"), *GetPathName(), *TextFileName);
+	}
+
 	switch (TextFormat)
 	{
-		case EDlgDialogueTextFormat::DlgDialogueTextFormatJson:
+		case EDlgDialogueTextFormat::JSON:
 		{
 			FDlgJsonWriter JsonWriter;
 			JsonWriter.Write(GetClass(), this);
 			JsonWriter.ExportToFile(TextFileName);
 			break;
 		}
-		case EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue:
-		default:
+		case EDlgDialogueTextFormat::DialogueDEPRECATED:
 		{
 			FDlgConfigWriter DlgWriter(TEXT("Dlg"));
 			DlgWriter.Write(GetClass(), this);
 			DlgWriter.ExportToFile(TextFileName);
 			break;
 		}
+		case EDlgDialogueTextFormat::All:
+		{
+			// Useful for debugging
+			// Export to all  formats
+			const int32 TextFormatsNum = static_cast<int32>(EDlgDialogueTextFormat::NumTextFormats);
+			for (int32 TextFormatIndex = static_cast<int32>(EDlgDialogueTextFormat::StartTextFormats);
+					   TextFormatIndex < TextFormatsNum; TextFormatIndex++)
+			{
+				const EDlgDialogueTextFormat CurrentTextFormat = static_cast<EDlgDialogueTextFormat>(TextFormatIndex);
+				ExportToFileFormat(CurrentTextFormat);
+			}
+			break;
+		}
+		default:
+			// It Should not have any extension
+			check(!bHasExtension);
+			break;
 	}
 }
 
-void UDlgDialogue::RefreshData()
+FDlgParticipantData& UDlgDialogue::GetParticipantDataEntry(FName ParticipantName, FName FallbackNodeOwnerName, bool bCheckNone, const FString& ContextMessage)
 {
-	UE_LOG(LogDlgSystem, Log, TEXT("Refreshing data for Dialogue = `%s`"), *GetPathName());
-	DlgData.Empty();
-	DlgSpeakerStates.Empty();
-
 	// Used to ignore some participants
-	FDlgParticipantData BlackHoleParticipant;
+	static FDlgParticipantData BlackHoleParticipant;
 
-	// Gets the map entry - creates it first if it is not yet there
-	auto GetParticipantDataEntry =
-		[this, &BlackHoleParticipant](FName ParticipantName, FName FallbackNodeOwnerName, bool bCheckNone, const FString& ContextMessage) -> FDlgParticipantData&
+	// If the Participant Name is not set, it adopts the Node Owner Name
+	const FName& ValidParticipantName = ParticipantName == NAME_None ? FallbackNodeOwnerName : ParticipantName;
+
+	// Parent/child is not valid, simply do nothing
+	if (bCheckNone && ValidParticipantName == NAME_None)
 	{
-		// If the Participant Name is not set, it adopts the Node Owner Name
-		const FName& ValidParticipantName = ParticipantName == NAME_None ? FallbackNodeOwnerName : ParticipantName;
+		FDlgLogger::Get().Warningf(
+			TEXT("Ignoring ParticipantName = None, Context = %s. Either your node name is None or your participant name is None."),
+			*ContextMessage
+		);
+		return BlackHoleParticipant;
+	}
 
-		// Parent/child is not valid, simply do nothing
-		if (bCheckNone && ValidParticipantName == NAME_None)
-		{
-			UE_LOG(LogDlgSystem, Warning, TEXT("Ignoring ParticipantName = None, Context = %s. Either your node name is None or your participant name is None."), *ContextMessage);
-			return BlackHoleParticipant;
-		}
+	return DlgData.FindOrAdd(ValidParticipantName);
+}
 
-		FDlgParticipantData& ParticipantData = DlgData.FindOrAdd(ValidParticipantName);
-		return ParticipantData;
-	};
+void UDlgDialogue::AddConditionsDataFromNodeEdges(const UDlgNode* Node, int32 NodeIndex)
+{
+	const FString NodeContext = FString::Printf(TEXT("Node %s"), NodeIndex > INDEX_NONE ? *FString::FromInt(NodeIndex) : TEXT("Start") );
+	const FName FallbackNodeOwnerName = Node->GetNodeParticipantName();
 
-	// Adds conditions from the edges of this Node.
-	const auto AddConditionsFromEdges = [this, &GetParticipantDataEntry](const UDlgNode* Node, const int32 NodeIndex)
+	for (const FDlgEdge& Edge : Node->GetNodeChildren())
 	{
-		const FString NodeContext = FString::Printf(TEXT("Node %s"), NodeIndex > INDEX_NONE ? *FString::FromInt(NodeIndex) : TEXT("Start") );
-		const FName FallbackNodeOwnerName = Node->GetNodeParticipantName();
+		const int32 TargetIndex = Edge.TargetIndex;
 
-		for (const FDlgEdge& Edge : Node->GetNodeChildren())
+		for (const FDlgCondition& Condition : Edge.Conditions)
 		{
-			const int32 TargetIndex = Edge.TargetIndex;
+			FString ContextMessage = FString::Printf(TEXT("Adding Edge primary condition data from %s, to Node %d"), *NodeContext, TargetIndex);
+			GetParticipantDataEntry(Condition.ParticipantName, FallbackNodeOwnerName, true, ContextMessage)
+				.AddConditionPrimaryData(Condition);
 
-			for (const FDlgCondition& Condition : Edge.Conditions)
+			if (Condition.IsSecondParticipantInvolved())
 			{
-				FString ContextMessage = FString::Printf(TEXT("Adding Edge primary condition data from %s, to Node %d"), *NodeContext, TargetIndex);
-				GetParticipantDataEntry(Condition.ParticipantName, FallbackNodeOwnerName, true, ContextMessage)
-					.AddConditionPrimaryData(Condition);
-
-				if (Condition.IsSecondParticipantInvolved())
-				{
-					ContextMessage = FString::Printf(TEXT("Adding Edge secondary condition data from %s, to Node %d"), *NodeContext, TargetIndex);
-					GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName, true, ContextMessage)
-						.AddConditionSecondaryData(Condition);
-				}
+				ContextMessage = FString::Printf(TEXT("Adding Edge secondary condition data from %s, to Node %d"), *NodeContext, TargetIndex);
+				GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName, true, ContextMessage)
+					.AddConditionSecondaryData(Condition);
 			}
 		}
-	};
+	}
+}
+
+void UDlgDialogue::RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings* Settings, bool bUpdateTextsNamespacesAndKeys)
+{
+	static constexpr bool bEdges = true;
+	static constexpr bool bUpdateGraphNode = false;
+
+	// Rebuild & Update
+	// NOTE: this can do a dialogue data -> graph node data update
+	Node->RebuildTextArguments(bEdges, bUpdateGraphNode);
+	Node->UpdateTextsValuesFromDefaultsAndRemappings(Settings, bEdges, bUpdateGraphNode);
+	if (bUpdateTextsNamespacesAndKeys)
+	{
+		Node->UpdateTextsNamespacesAndKeys(Settings, bEdges, bUpdateGraphNode);
+	}
+
+	// Sync with the editor aka bUpdateGraphNode = true
+	Node->UpdateGraphNode();
+}
+
+void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
+{
+	FDlgLogger::Get().Infof(TEXT("Refreshing data for Dialogue = `%s`"), *GetPathName());
+
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+	DlgData.Empty();
+	DlgSpeakerStates.Empty();
 
 	// do not forget about the edges of the Root/Start Node
 	if (IsValid(StartNode))
 	{
-		AddConditionsFromEdges(StartNode, INDEX_NONE);
+		AddConditionsDataFromNodeEdges(StartNode, INDEX_NONE);
+		RebuildAndUpdateNode(StartNode, Settings, bUpdateTextsNamespacesAndKeys);
 	}
 
 	// Regular Nodes
@@ -518,8 +619,11 @@ void UDlgDialogue::RefreshData()
 	for (int32 NodeIndex = 0; NodeIndex < NodesNum; NodeIndex++)
 	{
 		const FString NodeContext = FString::Printf(TEXT("Node %d"), NodeIndex);
-		const UDlgNode* Node = Nodes[NodeIndex];
+		UDlgNode* Node = Nodes[NodeIndex];
 		const FName NodeParticipantName = Node->GetNodeParticipantName();
+
+		// Rebuild & Update
+		RebuildAndUpdateNode(Node, Settings, bUpdateTextsNamespacesAndKeys);
 
 		// participant names
 		TArray<FName> Participants;
@@ -548,14 +652,22 @@ void UDlgDialogue::RefreshData()
 		}
 
 		// Gather Edge Data
-		AddConditionsFromEdges(Node, NodeIndex);
+		AddConditionsDataFromNodeEdges(Node, NodeIndex);
 
-		for (const FDlgEdge& Edge : Node->GetNodeChildren())
+		// Walk over edges of speaker nodes
+		// NOTE: for speaker sequence nodes, the inner edges are handled by AddAllSpeakerStatesIntoSet
+		// so no need to special case handle it
+		const int32 NumNodeChildren = Node->GetNumNodeChildren();
+		for (int32 EdgeIndex = 0; EdgeIndex < NumNodeChildren; EdgeIndex++)
 		{
+			const FDlgEdge& Edge = Node->GetNodeChildAt(EdgeIndex);
 			const int32 TargetIndex = Edge.TargetIndex;
+
+			// Speaker states
 			DlgSpeakerStates.Add(Edge.SpeakerState);
 
-			for (const FDlgTextArgument& TextArgument : Edge.TextArguments)
+			// Text arguments are rebuild from the Node
+			for (const FDlgTextArgument& TextArgument : Edge.GetTextArguments())
 			{
 				const FString ContextMessage = FString::Printf(TEXT("Adding Edge text arguments data from %s, to Node %d"), *NodeContext, TargetIndex);
 				GetParticipantDataEntry(TextArgument.ParticipantName, NodeParticipantName, true, ContextMessage)
@@ -610,9 +722,19 @@ void UDlgDialogue::RefreshData()
 		}
 		else
 		{
-			UE_LOG(LogDlgSystem, Warning, TEXT("Trying to fill DlgParticipantClasses, got a Participant name = None. Ignoring!"));
+			FDlgLogger::Get().Warning(TEXT("Trying to fill DlgParticipantClasses, got a Participant name = None. Ignoring!"));
 		}
 	}
+}
+
+bool UDlgDialogue::IsEndNode(int32 NodeIndex) const
+{
+	if (!Nodes.IsValidIndex(NodeIndex))
+	{
+		return false;
+	}
+
+	return Nodes[NodeIndex]->IsA<UDlgNode_End>();
 }
 
 void UDlgDialogue::AutoFixGraph()
@@ -647,6 +769,7 @@ void UDlgDialogue::AutoFixGraph()
 	}
 
 	// syntax correction 3: if a node is not an end node but has no children it will "adopt" the next node
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 	for (int32 i = 0; i < Nodes.Num() - 1; ++i)
 	{
 		UDlgNode* Node = Nodes[i];
@@ -658,24 +781,18 @@ void UDlgDialogue::AutoFixGraph()
 		}
 
 		// Add some text to the edges.
-		if (NodeChildren.Num() == 1 && Nodes.IsValidIndex(NodeChildren[0].TargetIndex))
-		{
-			UDlgNode* NextNode = Nodes[NodeChildren[0].TargetIndex];
-			if (NextNode->IsA<UDlgNode_End>())
-			{
-				Node->GetSafeMutableNodeChildAt(0)->Text = UDlgSystemSettings::EdgeTextFinish;
-			}
-			else
-			{
-				Node->GetSafeMutableNodeChildAt(0)->Text = UDlgSystemSettings::EdgeTextNext;
-			}
-		}
+		Node->UpdateTextsValuesFromDefaultsAndRemappings(Settings, true, true);
 	}
 }
 
 FString UDlgDialogue::GetTextFilePathName(bool bAddExtension/* = true*/) const
 {
-	// Extract filename from path
+	return GetTextFilePathName(GetDefault<UDlgSystemSettings>()->DialogueTextFormat, bAddExtension);
+}
+
+FString UDlgDialogue::GetTextFilePathName(EDlgDialogueTextFormat TextFormat, bool bAddExtension/* = true*/) const
+{
+		// Extract filename from path
 	// NOTE: this is not a filesystem path, it is an unreal path 'Outermost.[Outer:]Name'
 	// Usually GetPathName works, but the path name might be weird.
 	// FSoftObjectPath(this).ToString(); which does call this function GetPathName() but it returns a legit clean path
@@ -684,10 +801,47 @@ FString UDlgDialogue::GetTextFilePathName(bool bAddExtension/* = true*/) const
 	if (bAddExtension)
 	{
 		// Modify the extension of the base text file depending on the extension
-		TextFileName += GetTextFileExtension(GetDefault<UDlgSystemSettings>()->DialogueTextFormat);
+		TextFileName += UDlgSystemSettings::GetTextFileExtension(TextFormat);
 	}
 
 	return TextFileName;
+}
+
+bool UDlgDialogue::DeleteTextFileForTextFormat(EDlgDialogueTextFormat TextFormat) const
+{
+	return DeleteTextFileForExtension(UDlgSystemSettings::GetTextFileExtension(TextFormat));
+}
+
+bool UDlgDialogue::DeleteTextFileForExtension(const FString& FileExtension) const
+{
+	const FString TextFilePathName = GetTextFilePathName(false);
+	if (TextFilePathName.IsEmpty())
+	{
+		// Memory corruption? tread carefully here
+		FDlgLogger::Get().Errorf(
+			TEXT("Can't delete text file for Dialogue = `%s` because the file path name is empty :O"),
+			*GetPathName()
+		);
+		return false;
+	}
+
+	const FString FullPathName = TextFilePathName + FileExtension;
+	return FDlgHelper::DeleteFile(FullPathName);
+}
+
+bool UDlgDialogue::DeleteAllTextFiles() const
+{
+	bool bStatus = true;
+	for (const FString& FileExtension : GetDefault<UDlgSystemSettings>()->GetAllTextFileExtensions())
+	{
+		bStatus &= DeleteTextFileForExtension(FileExtension);
+	}
+	return bStatus;
+}
+
+bool UDlgDialogue::IsInProjectDirectory() const
+{
+	return FDlgHelper::IsPathInProjectDirectory(GetPathName());
 }
 
 FString UDlgDialogue::GetTextFilePathNameFromAssetPathName(const FString& AssetPathName)
@@ -725,23 +879,6 @@ FString UDlgDialogue::GetTextFilePathNameFromAssetPathName(const FString& AssetP
 	return ContentDir + PathName;
 }
 
-FString UDlgDialogue::GetTextFileExtension(EDlgDialogueTextFormat InTextFormat)
-{
-	switch (InTextFormat)
-	{
-		// Empty
-		case EDlgDialogueTextFormat::DlgDialogueNoTextFormat:
-			return FString();
-
-		// JSON has the .json added at the end
-		case EDlgDialogueTextFormat::DlgDialogueTextFormatJson:
-			return TEXT(".dlg.json");
-
-		case EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue:
-		default:
-			return TEXT(".dlg");
-	}
-}
 
 // End own functions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

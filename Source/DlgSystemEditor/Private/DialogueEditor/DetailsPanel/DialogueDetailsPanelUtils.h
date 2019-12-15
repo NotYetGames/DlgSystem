@@ -5,10 +5,12 @@
 
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
-#include "DlgManager.h"
 
 #define CREATE_VISIBILITY_CALLBACK(_SelfMethod) \
 	TAttribute<EVisibility>::Create(TAttribute<EVisibility>::FGetter::CreateSP(this, _SelfMethod))
+
+#define CREATE_VISIBILITY_CALLBACK_STATIC(_StaticMethod) \
+	TAttribute<EVisibility>::Create(TAttribute<EVisibility>::FGetter::CreateStatic(_StaticMethod))
 
 // Constants used in this file
 static constexpr TCHAR* META_ShowOnlyInnerProperties = TEXT("ShowOnlyInnerProperties");
@@ -20,15 +22,50 @@ static constexpr TCHAR* META_ClampMax = TEXT("ClampMax");
 struct FDialogueDetailsPanelUtils
 {
 public:
+	// Getters for visibility of some properties
+	static EVisibility GetVoiceSoundWaveVisibility()
+	{
+		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::SoundWave ||
+			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::SoundWaveAndDialogueWave
+			   ? EVisibility::Visible : EVisibility::Hidden;
+	}
+
+	static EVisibility GetVoiceDialogueWaveVisibility()
+	{
+		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DialogueWave ||
+			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::SoundWaveAndDialogueWave
+			   ? EVisibility::Visible : EVisibility::Hidden;
+	}
+
+	static EVisibility GetSpeakerStateNodeVisibility()
+	{
+		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+		return Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnNode ||
+			   Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnNodeAndEdge
+			   ? EVisibility::Visible : EVisibility::Hidden;
+	}
+
+	static EVisibility GetNodeDataVisibility()
+	{
+		return GetDefault<UDlgSystemSettings>()->bShowNodeData ? EVisibility::Visible : EVisibility::Hidden;
+	}
+	
+	static EVisibility GetGenericDataVisibility()
+	{
+		return GetDefault<UDlgSystemSettings>()->bShowGenericData ? EVisibility::Visible : EVisibility::Hidden;
+	}
+	
 	/** Gets the appropriate modifier key for an input field depending on the Dialogue System Settings */
 	static EModifierKey::Type GetModifierKeyFromDialogueSettings()
 	{
 		switch (GetDefault<UDlgSystemSettings>()->DialogueTextInputKeyForNewLine)
 		{
-		case EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineShiftPlusEnter:
+		case EDlgTextInputKeyForNewLine::ShiftPlusEnter:
 			return EModifierKey::Shift;
 
-		case EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineEnter:
+		case EDlgTextInputKeyForNewLine::Enter:
 		default:
 			return EModifierKey::None;
 		}
@@ -83,51 +120,14 @@ public:
 	}
 
 	/** Gets the Base GraphNode owner that belongs to this PropertyHandle. It could be an Edge or a GraphNode */
-	static UDialogueGraphNode_Base* GetGraphNodeBaseFromPropertyHandle(const TSharedRef<IPropertyHandle>& PropertyHandle)
-	{
-		TArray<UObject*> OuterObjects;
-		PropertyHandle->GetOuterObjects(OuterObjects);
-
-		for (UObject* Object : OuterObjects)
-		{
-			if (UDlgNode* Node = Cast<UDlgNode>(Object))
-			{
-				return CastChecked<UDialogueGraphNode_Base>(Node->GetGraphNode());
-			}
-
-			if (UDialogueGraphNode_Base* Node = Cast<UDialogueGraphNode_Base>(Object))
-			{
-				return Node;
-			}
-		}
-
-		return nullptr;
-	}
+	static UDialogueGraphNode_Base* GetGraphNodeBaseFromPropertyHandle(const TSharedRef<IPropertyHandle>& PropertyHandle);
 
 	/**
 	 * Similar to the Base node only this always returns a UDialogueGraphNode
 	 * If the BaseGraphNode is an GraphNode then return that
 	 * If the BaseGraphNode is an Edge then return the ParentGraphNode
 	 */
-	static UDialogueGraphNode* GetClosestGraphNodeFromPropertyHandle(const TSharedRef<IPropertyHandle>& PropertyHandle)
-	{
-		if (UDialogueGraphNode_Base* BaseGraphNode = GetGraphNodeBaseFromPropertyHandle(PropertyHandle))
-		{
-			if (UDialogueGraphNode* Node = Cast<UDialogueGraphNode>(BaseGraphNode))
-			{
-				return Node;
-			}
-			if (UDialogueGraphNode_Edge* GraphEdge = Cast<UDialogueGraphNode_Edge>(BaseGraphNode))
-			{
-				if (GraphEdge->HasParentNode())
-				{
-					return GraphEdge->GetParentNode();
-				}
-			}
-		}
-
-		return nullptr;
-	}
+	static UDialogueGraphNode* GetClosestGraphNodeFromPropertyHandle(const TSharedRef<IPropertyHandle>& PropertyHandle);
 
 	/**
 	 * Similar to the Base node only this always returns a UDialogueGraphNode_Edge
@@ -140,82 +140,15 @@ public:
 	}
 
 	/** Gets the Dialogue that is the top most root owner of this PropertyHandle. used in the details panel. */
-	static UDlgDialogue* GetDialogueFromPropertyHandle(const TSharedRef<IPropertyHandle>& PropertyHandle)
-	{
-		UDlgDialogue* Dialogue = nullptr;
-
-		// Check first children objects of property handle, should be a dialogue node or a graph node
-		if (UDialogueGraphNode_Base* GraphNode = GetGraphNodeBaseFromPropertyHandle(PropertyHandle))
-		{
-			Dialogue = GraphNode->GetDialogue();
-		}
-
-		// One last try, get to the root of the problem ;)
-		if (!IsValid(Dialogue))
-		{
-			TSharedPtr<IPropertyHandle> ParentHandle = PropertyHandle->GetParentHandle();
-			// Find the root property handle
-			while (ParentHandle.IsValid() && ParentHandle->GetParentHandle().IsValid())
-			{
-				ParentHandle = ParentHandle->GetParentHandle();
-			}
-
-			// The outer should be a dialogue
-			if (ParentHandle.IsValid())
-			{
-				TArray<UObject*> OuterObjects;
-				ParentHandle->GetOuterObjects(OuterObjects);
-				for (UObject* Object : OuterObjects)
-				{
-					if (UDlgDialogue* FoundDialogue = Cast<UDlgDialogue>(Object))
-					{
-						Dialogue = FoundDialogue;
-						break;
-					}
-				}
-			}
-		}
-
-		return Dialogue;
-	}
+	static UDlgDialogue* GetDialogueFromPropertyHandle(const TSharedRef<IPropertyHandle>& PropertyHandle);
 
 	/**
 	 * Tries to get the participant name of the struct by using that structs PropertyName
 	 * 1. Tries to get the value from the ParticipantNamePropertyHandle of that struct.
 	 * 2. Gets the ParticipantName from the Node that has this property.
 	 */
-	static FName GetParticipantNameFromPropertyHandle(const TSharedRef<IPropertyHandle>& ParticipantNamePropertyHandle)
-	{
-		FName ParticipantName = NAME_None;
-		if (ParticipantNamePropertyHandle->GetValue(ParticipantName) != FPropertyAccess::Success)
-		{
-			return ParticipantName;
-		}
-
-		// Try the node that owns this
-		if (ParticipantName.IsNone())
-		{
-			// Possible edge?
-			if (UDialogueGraphNode* GraphNode = GetClosestGraphNodeFromPropertyHandle(ParticipantNamePropertyHandle))
-			{
-				return GraphNode->GetDialogueNode().GetNodeParticipantName();
-			}
-		}
-
-		return ParticipantName;
-	}
+	static FName GetParticipantNameFromPropertyHandle(const TSharedRef<IPropertyHandle>& ParticipantNamePropertyHandle);
 
 	/** Gets all the participant names of the Dialogue sorted alphabetically */
-	static TArray<FName> GetDialogueSortedParticipantNames(UDlgDialogue* Dialogue)
-	{
-		if (Dialogue == nullptr)
-		{
-			return {};
-		}
-
-		TSet<FName> ParticipantNames;
-		Dialogue->GetAllParticipantNames(ParticipantNames);
-		FDlgHelper::SortDefault(ParticipantNames);
-		return ParticipantNames.Array();
-	}
+	static TArray<FName> GetDialogueSortedParticipantNames(UDlgDialogue* Dialogue);
 };

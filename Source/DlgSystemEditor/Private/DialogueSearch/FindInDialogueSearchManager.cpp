@@ -260,13 +260,23 @@ bool FFindInDialogueSearchManager::QueryDlgEdge(const FDialogueSearchFilter& Sea
 	bool bContainsSearchString = false;
 
 	// Test Text
-	if (InDlgEdge.Text.ToString().Contains(SearchFilter.SearchString))
+	if (InDlgEdge.GetUnformattedText().ToString().Contains(SearchFilter.SearchString))
 	{
 		bContainsSearchString = true;
 		MakeChildTextNode(OutParentNode,
-						  InDlgEdge.Text,
+						  InDlgEdge.GetUnformattedText(),
 						  LOCTEXT("DlgEdgText", "DlgEdge Text"),
 						  TEXT("DlgEdge.Text"));
+	}
+	// Test the Node Text Data
+	if (SearchFilter.bIncludeTextLocalizationData)
+	{
+		bContainsSearchString = SearchForTextLocalizationData(
+			OutParentNode,
+			SearchFilter.SearchString, InDlgEdge.GetUnformattedText(),
+			LOCTEXT("EdgeTextNamespaceName_Found", "Edge Text Namespace"), TEXT("Edge Text Localization Namespace"),
+			LOCTEXT("EdgeTextKey_Found", "Edge Text Key"), TEXT("Edge Text Localization Key")
+		) || bContainsSearchString;
 	}
 
 	// Test Condition
@@ -287,9 +297,10 @@ bool FFindInDialogueSearchManager::QueryDlgEdge(const FDialogueSearchFilter& Sea
 	}
 
 	// Test TextArguments
-	for (int32 Index = 0, Num = InDlgEdge.TextArguments.Num(); Index < Num; Index++)
+	const TArray<FDlgTextArgument>&  TextArguments = InDlgEdge.GetTextArguments();
+	for (int32 Index = 0, Num = TextArguments.Num(); Index < Num; Index++)
 	{
-		bContainsSearchString |= QueryDlgTextArgument(SearchFilter, InDlgEdge.TextArguments[Index], OutParentNode, Index);
+		bContainsSearchString |= QueryDlgTextArgument(SearchFilter, TextArguments[Index], OutParentNode, Index);
 	}
 
 	return bContainsSearchString;
@@ -354,6 +365,16 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& S
 		bContainsSearchString = true;
 		MakeChildTextNode(TreeGraphNode, Node.GetNodeUnformattedText(), LOCTEXT("DescriptionKey", "Description"), TEXT("Description"));
 	}
+	// Test the Node Text Data
+	if (SearchFilter.bIncludeTextLocalizationData)
+	{
+		bContainsSearchString = SearchForTextLocalizationData(
+			TreeGraphNode,
+			SearchFilter.SearchString, Node.GetNodeUnformattedText(),
+			LOCTEXT("TextNamespaceName_Found", "Text Namespace"), TEXT("Text Localization Namespace"),
+			LOCTEXT("TextKey_Found", "Text Key"), TEXT("Text Localization Key")
+		) || bContainsSearchString;
+	}
 
 	// Test the EnterConditions
 	for (const FDlgCondition& Condition : Node.GetNodeEnterConditions())
@@ -402,19 +423,41 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& S
 			}
 
 			// Test Text Description
+			const FText TextCategory = FText::Format(LOCTEXT("SequenceEntryText", "SequenceEntry.Text at index = {0}"), FText::AsNumber(Index));
 			if (SequenceEntry.Text.ToString().Contains(SearchFilter.SearchString))
 			{
 				bContainsSearchString = true;
-				const FText Category = FText::Format(LOCTEXT("SequenceEntryText", "SequenceEntry.Description at index = {0}"), FText::AsNumber(Index));
-				MakeChildTextNode(TreeGraphNode, SequenceEntry.Text, Category, Category.ToString());
+				MakeChildTextNode(TreeGraphNode, SequenceEntry.Text, TextCategory, TextCategory.ToString());
+			}
+			if (SearchFilter.bIncludeTextLocalizationData)
+			{
+				const FText NamespaceCategory = FText::FromString(TEXT("Namespace ") + TextCategory.ToString());
+				const FText KeyCategory =  FText::FromString(TEXT("Key ") + TextCategory.ToString());
+				bContainsSearchString = SearchForTextLocalizationData(
+					TreeGraphNode,
+					SearchFilter.SearchString, SequenceEntry.Text,
+					NamespaceCategory, NamespaceCategory.ToString(),
+					KeyCategory, KeyCategory.ToString()
+				) || bContainsSearchString;
 			}
 
 			// Test EdgeText
+			const FText EdgeTextCategory = FText::Format(LOCTEXT("SequenceEntryEdgeText", "SequenceEntry.EdgeText at index = {0}"), FText::AsNumber(Index));
 			if (SequenceEntry.EdgeText.ToString().Contains(SearchFilter.SearchString))
 			{
 				bContainsSearchString = true;
-				const FText Category = FText::Format(LOCTEXT("SequenceEntryEdgeText", "SequenceEntry.EdgeText at index = {0}"), FText::AsNumber(Index));
-				MakeChildTextNode(TreeGraphNode, SequenceEntry.EdgeText, Category, Category.ToString());
+				MakeChildTextNode(TreeGraphNode, SequenceEntry.EdgeText, EdgeTextCategory, EdgeTextCategory.ToString());
+			}
+			if (SearchFilter.bIncludeTextLocalizationData)
+			{
+				const FText NamespaceCategory = FText::FromString(TEXT("Namespace ") + EdgeTextCategory.ToString());
+				const FText KeyCategory =  FText::FromString(TEXT("Key ") + EdgeTextCategory.ToString());
+				bContainsSearchString = SearchForTextLocalizationData(
+					TreeGraphNode,
+					SearchFilter.SearchString, SequenceEntry.EdgeText,
+					NamespaceCategory, NamespaceCategory.ToString(),
+					KeyCategory, KeyCategory.ToString()
+				) || bContainsSearchString;
 			}
 
 			// Test SpeakerState

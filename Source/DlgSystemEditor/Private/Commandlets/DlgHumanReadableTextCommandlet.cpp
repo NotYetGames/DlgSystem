@@ -14,6 +14,7 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "IO/DlgJsonParser.h"
 #include "DlgCommandletHelper.h"
+#include "DlgHelper.h"
 
 
 DEFINE_LOG_CATEGORY(LogDlgHumanReadableTextCommandlet);
@@ -32,6 +33,7 @@ UDlgHumanReadableTextCommandlet::UDlgHumanReadableTextCommandlet()
 int32 UDlgHumanReadableTextCommandlet::Main(const FString& Params)
 {
 	UE_LOG(LogDlgHumanReadableTextCommandlet, Display, TEXT("Starting"));
+	Settings = GetDefault<UDlgSystemSettings>();
 
 	// Parse command line - we're interested in the param vals
 	TArray<FString> Tokens;
@@ -120,7 +122,7 @@ int32 UDlgHumanReadableTextCommandlet::Export()
 		FString DialoguePath = OriginalDialoguePath;
 
 		// Only export game dialogues
-		if (!FDlgCommandletHelper::IsDialoguePathInProjectDirectory(DialoguePath))
+		if (!FDlgHelper::IsPathInProjectDirectory(DialoguePath))
 		{
 			UE_LOG(LogDlgHumanReadableTextCommandlet, Warning, TEXT("Dialogue = `%s` is not in the game directory, ignoring"), *DialoguePath);
 			continue;
@@ -329,7 +331,7 @@ void UDlgHumanReadableTextCommandlet::ExportNodeEdgesToHumanReadableFormat(const
 
 		FDlgEdge_FormatHumanReadable ExportEdge;
 		ExportEdge.TargetNodeIndex = Edge.TargetIndex;
-		ExportEdge.Text = Edge.Text;
+		ExportEdge.Text = Edge.GetUnformattedText();
 		OutEdges.Add(ExportEdge);
 	}
 }
@@ -376,7 +378,7 @@ bool UDlgHumanReadableTextCommandlet::ImportHumanReadableFormatIntoDialogue(cons
 			// Node Text changed
 			if (!NodeSpeech->GetNodeUnformattedText().EqualTo(HumanNode.Text))
 			{
-				NodeSpeech->SetNodeUnformattedText(HumanNode.Text);
+				NodeSpeech->SetNodeText(HumanNode.Text);
 				bModified = true;
 			}
 
@@ -508,7 +510,7 @@ bool UDlgHumanReadableTextCommandlet::SetGraphNodesNewEdgesText(UDialogueGraphNo
 		}
 
 		// Edge Changed
-		if (!GraphNode->GetDialogueNode().GetNodeChildren()[EdgeIndex].Text.EqualTo(HumanEdge.Text))
+		if (!GraphNode->GetDialogueNode().GetNodeChildren()[EdgeIndex].GetUnformattedText().EqualTo(HumanEdge.Text))
 		{
 			GraphNode->SetEdgeTextAt(EdgeIndex, HumanEdge.Text);
 			bModified = true;
@@ -520,5 +522,12 @@ bool UDlgHumanReadableTextCommandlet::SetGraphNodesNewEdgesText(UDialogueGraphNo
 
 bool UDlgHumanReadableTextCommandlet::IsEdgeTextDefault(const FText& EdgeText)
 {
-	return UDlgSystemSettings::EdgeTextFinish.EqualToCaseIgnored(EdgeText) || UDlgSystemSettings::EdgeTextNext.EqualToCaseIgnored(EdgeText);
+	checkNoEntry();
+	return false;
+	// if (Settings->bSetDefaultEdgeTexts)
+	// {
+		
+	// }
+	
+	// return UDlgSystemSettings::EdgeTextFinish.EqualToCaseIgnored(EdgeText) || UDlgSystemSettings::EdgeTextNext.EqualToCaseIgnored(EdgeText);
 }

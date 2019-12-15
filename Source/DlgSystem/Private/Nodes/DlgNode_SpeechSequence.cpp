@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "Nodes/DlgNode_SpeechSequence.h"
 #include "DlgContextInternal.h"
+#include "DlgLocalizationHelper.h"
 
 
 #if WITH_EDITOR
@@ -12,6 +13,43 @@ void UDlgNode_SpeechSequence::PostEditChangeProperty(FPropertyChangedEvent& Prop
 	AutoGenerateInnerEdges();
 }
 #endif
+
+void UDlgNode_SpeechSequence::UpdateTextsValuesFromDefaultsAndRemappings(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
+{
+	for (FDlgSpeechSequenceEntry& Entry : SpeechSequence)
+	{
+		// We only care about edges here
+		if (Settings->bSetDefaultEdgeTexts)
+		{
+			// Inner edges always point to a normal node and are always the unique edge child
+			if (Entry.EdgeText.IsEmpty())
+			{
+				Entry.EdgeText = Settings->DefaultTextEdgeToNormalNode;
+			}
+		}
+
+		FDlgLocalizationHelper::UpdateTextFromRemapping(Settings, Entry.Text);
+		FDlgLocalizationHelper::UpdateTextFromRemapping(Settings, Entry.EdgeText);
+	}
+	Super::UpdateTextsValuesFromDefaultsAndRemappings(Settings, bEdges, bUpdateGraphNode);
+}
+
+void UDlgNode_SpeechSequence::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
+{
+	UObject* Outer = GetOuter();
+	if (!IsValid(Outer))
+	{
+		return;
+	}
+	
+	for (FDlgSpeechSequenceEntry& Entry : SpeechSequence)
+	{
+		FDlgLocalizationHelper::UpdateTextNamespaceAndKey(Outer, Settings, Entry.Text);
+		FDlgLocalizationHelper::UpdateTextNamespaceAndKey(Outer, Settings, Entry.EdgeText);
+	}
+
+	Super::UpdateTextsNamespacesAndKeys(Settings, bEdges, bUpdateGraphNode);
+}
 
 bool UDlgNode_SpeechSequence::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
@@ -116,11 +154,11 @@ FName UDlgNode_SpeechSequence::GetSpeakerState() const
 	return NAME_None;
 }
 
-void UDlgNode_SpeechSequence::AddAllSpeakerStatesIntoSet(TSet<FName>& States) const
+void UDlgNode_SpeechSequence::AddAllSpeakerStatesIntoSet(TSet<FName>& OutStates) const
 {
 	for (const auto& SpeechEntry : SpeechSequence)
 	{
-		States.Add(SpeechEntry.SpeakerState);
+		OutStates.Add(SpeechEntry.SpeakerState);
 	}
 }
 
@@ -153,7 +191,7 @@ void UDlgNode_SpeechSequence::AutoGenerateInnerEdges()
 	for (const FDlgSpeechSequenceEntry& Entry : SpeechSequence)
 	{
 		FDlgEdge Edge;
-		Edge.Text = Entry.EdgeText;
+		Edge.SetUnformattedText(Entry.EdgeText);
 		InnerEdges.Add(Edge);
 	}
 }

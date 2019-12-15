@@ -1,8 +1,9 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
 #include "Nodes/DlgNode.h"
-#include "DlgSystemPrivatePCH.h"
 #include "DlgContextInternal.h"
 #include "EngineUtils.h"
+#include "Logging/DlgLogger.h"
+#include "DlgLocalizationHelper.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,7 +71,7 @@ bool UDlgNode::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgN
 
 	for (FDlgEdge& Edge : Children)
 	{
-		Edge.ConstructTextFromArguments(DlgContext, OwnerName);
+		Edge.RebuildConstructedText(DlgContext, OwnerName);
 	}
 
 	return ReevaluateChildren(DlgContext, {});
@@ -90,34 +91,14 @@ void UDlgNode::FireNodeEnterEvents(UDlgContextInternal* DlgContext)
 
 		if (Participant == nullptr)
 		{
-			UE_LOG(LogDlgSystem, Error, TEXT("FireNodeEnterEvents: Dialogue = `%s`, NodeIndex = %d. Got non existent Participant Name, event call will fail!"), *GetDialogue()->GetPathName(), DlgContext->GetActiveNodeIndex());
+			FDlgLogger::Get().Errorf(
+				TEXT("FireNodeEnterEvents: Dialogue = `%s`, NodeIndex = %d. Got non existent Participant Name, event call will fail!"),
+				*GetDialogue()->GetPathName(), DlgContext->GetActiveNodeIndex()
+			);
 		}
 
 		Event.Call(Participant);
 	}
-}
-
-void UDlgNode::UpdateTextNamespace(FText& Text)
-{
-	if (const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>())
-	{
-		if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::DlgIgnore)
-		{
-			return;
-		}
-
-		const auto Key = FTextInspector::GetKey(Text);
-		if (Key.IsSet())
-		{
-			FString Namespace = Settings->DialogueTextNamespaceName;
-			if (Settings->DialogueTextLocalizationMode == EDlgTextLocalization::DlgNamespacePerDialogue)
-			{
-				Namespace += GetOuter()->GetName();
-			}
-			Text = FInternationalization::ForUseOnlyByLocMacroAndGraphNodeTextLiterals_CreateText(*Text.ToString(), *Namespace, *Key.GetValue());
-		}
-	}
-	
 }
 
 bool UDlgNode::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated)
@@ -146,7 +127,10 @@ bool UDlgNode::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UD
 	// no child, but no end node?
 	if (AvailableChildren.Num() == 0)
 	{
-		UE_LOG(LogDlgSystem, Warning, TEXT("Dialogue stucked: no valid child for a node!"));
+		FDlgLogger::Get().Warningf(
+			TEXT("Dialogue = %s got stuck: no valid child for a node!"),
+			*DlgContext->GetDialoguePathName()
+		);
 		return false;
 	}
 
@@ -199,12 +183,10 @@ bool UDlgNode::OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext
 		return DlgContext->EnterNode(AvailableChildren[OptionIndex]->TargetIndex, {});
 	}
 
-	UE_LOG(LogDlgSystem,
-		   Error,
-		   TEXT("Failed to choose option index = %d - it only has %d valid options!"),
-		   OptionIndex,
-		   AvailableChildren.Num());
-
+	FDlgLogger::Get().Errorf(
+		TEXT("Failed to choose option index = %d - it only has %d valid options!"),
+		OptionIndex, AvailableChildren.Num()
+	);
 	return false;
 }
 
@@ -234,6 +216,83 @@ FDlgEdge* UDlgNode::GetMutableNodeChildForTargetIndex(int32 TargetIndex)
 	}
 
 	return nullptr;
+}
+
+
+void UDlgNode::UpdateTextsValuesFromDefaultsAndRemappings(
+	const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode
+)
+{
+	// We only care about edges here
+	if (bEdges)
+	{
+		const bool bSkipAfterFirstChild = Settings->bSetDefaultEdgeTextOnFirstChildOnly;
+		if (Settings->bSetDefaultEdgeTexts)
+		{
+			const UDlgDialogue* Dialogue = GetDialogue();
+			for (FDlgEdge& Edge : Children)
+			{
+				Edge.UpdateTextValueFromDefaultAndRemapping(Dialogue, this, Settings, false);
+
+				// Set only one, kill the rest
+				if (bSkipAfterFirstChild)
+				{
+					break;
+				}
+			}
+		}
+
+		// Update the rest of the texts remapping
+		for (FDlgEdge& Edge : Children)
+		{
+			FDlgLocalizationHelper::UpdateTextFromRemapping(Settings, Edge.GetMutableUnformattedText());
+		}
+	}
+	
+	if (bUpdateGraphNode)
+	{
+		UpdateGraphNode();
+	}
+}
+
+void UDlgNode::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
+{
+	if (bEdges)
+	{
+		UObject* Outer = GetOuter();
+		for (FDlgEdge& Edge : Children)
+		{
+			Edge.UpdateTextsNamespacesAndKeys(Outer, Settings);
+		}
+	}
+	
+	if (bUpdateGraphNode)
+	{
+		UpdateGraphNode();
+	}
+}
+
+void UDlgNode::RebuildTextArguments(bool bEdges, bool bUpdateGraphNode)
+{
+	if (bEdges)
+	{
+		for (FDlgEdge& Edge : Children)
+		{
+			Edge.RebuildTextArguments();
+		}
+	}
+
+	if (bUpdateGraphNode)
+	{
+		UpdateGraphNode();
+	}
+}
+
+void UDlgNode::UpdateGraphNode()
+{
+#if WITH_EDITOR
+	UDlgDialogue::GetDialogueEditorAccess()->UpdateGraphNodeEdges(GraphNode);
+#endif // WITH_EDITOR
 }
 
 void UDlgNode::GetAssociatedParticipants(TArray<FName>& OutArray) const

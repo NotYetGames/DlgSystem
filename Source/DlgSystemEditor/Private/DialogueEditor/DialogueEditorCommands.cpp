@@ -37,6 +37,11 @@ void FDialogueEditorCommands::RegisterCommands()
 		"Saves all dialogues to the disk",
 		EUserInterfaceActionType::Button, FInputChord());
 
+	UI_COMMAND(DeleteAllDialoguesTextFiles,
+		"Delete All Dialogues Text Files",
+		"Delete all dialogues text files on the disk from all existing known text formats and from the Settings AdditionalTextFormatFileExtensionsToLookFor",
+		EUserInterfaceActionType::Button, FInputChord());
+	
 	UI_COMMAND(FindInAllDialogues,
 		"Find in All Dialogues",
 		"Find references to descriptions, events, condition and variables in ALL Dialogue",

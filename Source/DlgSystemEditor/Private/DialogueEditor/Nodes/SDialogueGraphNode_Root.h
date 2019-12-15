@@ -3,19 +3,19 @@
 
 #include "Widgets/DeclarativeSyntaxSupport.h"
 
-#include "SGraphNode_Dialogue.h"
+#include "SDialogueGraphNode.h"
 
 class UDialogueGraphNode_Root;
 
 /**
  * Widget for UDialogueGraphNode_Root
  */
-class SGraphNode_DialogueRoot : public SGraphNode_DialogueNode
+class SDialogueGraphNode_Root : public SDialogueGraphNode
 {
-	typedef SGraphNode_DialogueNode Super;
+	typedef SDialogueGraphNode Super;
 public:
 
-	SLATE_BEGIN_ARGS(SGraphNode_DialogueRoot) {}
+	SLATE_BEGIN_ARGS(SDialogueGraphNode_Root) {}
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs, UDialogueGraphNode_Root* InNode);

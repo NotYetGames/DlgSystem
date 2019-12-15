@@ -265,33 +265,7 @@ public:
 struct FDlgTestHelper
 {
 public:
-	FORCEINLINE static int64 RandomInt64()
-	{
-		return static_cast<int64>(FMath::Rand()) << 32 | FMath::Rand();
-	}
 
-	static bool IsFloatEqual(const float A, const float B)
-	{
-		return FMath::IsNearlyEqual(A, B, KINDA_SMALL_NUMBER);
-	}
-
-	static FString GetFullNameFromObject(const UObject* Object)
-	{
-		if (!IsValid(Object))
-		{
-			return TEXT("nullptr");
-		}
-		return Object->GetFullName();
-	}
-
-	static FString GetClassNameFromObject(const UObject* Object)
-	{
-		if (!IsValid(Object))
-		{
-			return TEXT("INVALID CLASS");
-		}
-		return Object->GetClass()->GetName();
-	}
 
 	template <typename ValueType>
 	static void CheckMapStringKeyInvariants(const TMap<FString, ValueType>& ThisMap)
@@ -341,7 +315,7 @@ public:
 		return FDlgTestHelper_MapEqualImpl<KeyType, ValueType*>::IsEqual(ThisMap, OtherMap, PropertyName, OutError, false, GetKeyTypeAsString,
 			[](const auto* Object) -> FString
 			{
-				return FDlgTestHelper::GetFullNameFromObject(Object);
+				return FDlgHelper::GetFullNameFromObject(Object);
 			},
 			[](const auto* FirstMapValue, const auto* SecondMapValue, FString& ComparisonErrorMessage) -> bool
 			{

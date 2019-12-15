@@ -69,7 +69,7 @@ FText UDialogueGraphNode_Edge::GetTooltipText() const
 {
 	return FText::Format(LOCTEXT("EdegeXToY", "Edge from node {0} to {1}\nText = {2}"),
 						GetParentNode()->GetDialogueNodeIndex(), GetChildNode()->GetDialogueNodeIndex(),
-						DialogueEdge.Text);
+						DialogueEdge.GetUnformattedText());
 }
 
 void UDialogueGraphNode_Edge::PinConnectionListChanged(UEdGraphPin* Pin)

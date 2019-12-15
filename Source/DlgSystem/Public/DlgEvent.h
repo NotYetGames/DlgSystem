@@ -8,19 +8,19 @@ UENUM()
 enum class EDlgEventType : uint8
 {
 	/** just a notification with an FName parameter */
-	DlgEventEvent						UMETA(DisplayName = "Event"),
+	Event						UMETA(DisplayName = "Event"),
 
 	/** events to modify basic variable types. Calls the interface methods */
-	DlgEventModifyInt					UMETA(DisplayName = "Modify Int"),
-	DlgEventModifyFloat					UMETA(DisplayName = "Modify Float"),
-	DlgEventModifyBool					UMETA(DisplayName = "Modify Bool"),
-	DlgEventModifyName					UMETA(DisplayName = "Modify Name"),
+	ModifyInt					UMETA(DisplayName = "Modify Int"),
+	ModifyFloat					UMETA(DisplayName = "Modify Float"),
+	ModifyBool					UMETA(DisplayName = "Modify Bool"),
+	ModifyName					UMETA(DisplayName = "Modify Name"),
 
 	/** events to modify the variable of the participant UObject by using its UClass */
-	DlgEventModifyClassIntVariable		UMETA(DisplayName = "Modify class int variable"),
-	DlgEventModifyClassFloatVariable	UMETA(DisplayName = "Modify class float variable"),
-	DlgEventModifyClassBoolVariable		UMETA(DisplayName = "Modify class bool variable"),
-	DlgEventModifyClassNameVariable		UMETA(DisplayName = "Modify class name variable")
+	ModifyClassIntVariable		UMETA(DisplayName = "Modify class Int variable"),
+	ModifyClassFloatVariable	UMETA(DisplayName = "Modify class Float variable"),
+	ModifyClassBoolVariable		UMETA(DisplayName = "Modify class Bool variable"),
+	ModifyClassNameVariable		UMETA(DisplayName = "Modify class Name variable")
 };
 
 
@@ -53,7 +53,7 @@ public:
 
 	/** Type of the event, can be a simple event or a call to modify a bool/int/float variable */
 	UPROPERTY(EditAnywhere, Category = DialogueEventData)
-	EDlgEventType EventType = EDlgEventType::DlgEventEvent;
+	EDlgEventType EventType = EDlgEventType::Event;
 
 	/** Name of the relevant variable or event */
 	UPROPERTY(EditAnywhere, Category = DialogueEventData)

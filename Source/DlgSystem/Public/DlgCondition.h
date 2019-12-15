@@ -13,68 +13,68 @@ UENUM()
 enum class EDlgConditionStrength : uint8
 {
 	/** All strong condition must be satisfied inside the condition array */
-	DlgConditionStrengthStrong = 0		UMETA(DisplayName = "Strong Condition"),
+	Strong = 0		UMETA(DisplayName = "Strong Condition"),
 
 	/** At least one of the weak conditions must be satisfied inside the condition array (if there is any) */
-	DlgConditionStrengthWeak			UMETA(DisplayName = "Weak Condition"),
+	Weak			UMETA(DisplayName = "Weak Condition"),
 };
 
 UENUM()
 enum class EDlgConditionType : uint8
 {
 	/** A logical operation on a requested int variable acquired via the IDlgParticipant getter function */
-	DlgConditionIntCall = 0		UMETA(DisplayName = "Check int call"),
+	IntCall = 0		UMETA(DisplayName = "Check int call"),
 
 	/** A logical operation on a requested float variable acquired via the IDlgParticipant getter function */
-	DlgConditionFloatCall		UMETA(DisplayName = "Check float call"),
+	FloatCall		UMETA(DisplayName = "Check float call"),
 
 	/** A logical operation on a requested bool variable acquired via the IDlgParticipant getter function */
-	DlgConditionBoolCall		UMETA(DisplayName = "Check bool call"),
+	BoolCall		UMETA(DisplayName = "Check bool call"),
 
 	/** A logical operation on a requested name variable acquired via the IDlgParticipant getter function */
-	DlgConditionNameCall		UMETA(DisplayName = "Check name call"),
+	NameCall		UMETA(DisplayName = "Check name call"),
 
 	/** A named condition call on the selected Participant */
-	DlgConditionEventCall		UMETA(DisplayName = "Check named condition"),
+	EventCall		UMETA(DisplayName = "Check named condition"),
 
 
 	/** A logical operation on an variables acquired from the object using the UClass */
-	DlgConditionClassIntVariable	UMETA(DisplayName = "Check class int variable"),
-	DlgConditionClassFloatVariable	UMETA(DisplayName = "Check class float variable"),
-	DlgConditionClassBoolVariable	UMETA(DisplayName = "Check class bool variable"),
-	DlgConditionClassNameVariable	UMETA(DisplayName = "Check class name variable"),
+	ClassIntVariable	UMETA(DisplayName = "Check class int variable"),
+	FloatVariable		UMETA(DisplayName = "Check class float variable"),
+	ClassBoolVariable	UMETA(DisplayName = "Check class bool variable"),
+	ClassNameVariable	UMETA(DisplayName = "Check class name variable"),
 
 
 	/** Status check of the selected node index */
-	DlgConditionNodeVisited UMETA(DisplayName = "Was node already visited"),
+	WasNodeVisited		UMETA(DisplayName = "Was node already visited"),
 
 	/** Checks if target node has any satisfied child */
-	DlgConditionHasSatisfiedChild UMETA(DisplayName = "Has satisfied child")
+	HasSatisfiedChild	UMETA(DisplayName = "Has satisfied child")
 };
 
 /**
- * Operation the return value of a DlgConditionIntCall/DlgConditionFloatCall is checked with
+ * Operation the return value of a IntCall/FloatCall is checked with
  */
 UENUM()
 enum class EDlgOperation : uint8
 {
-	DlgEqual = 0		UMETA(DisplayName = "== (Is Equal To)"),
-	DlgNotEqual			UMETA(DisplayName = "!= (Is Not Equal To)"),
-	DlgLess				UMETA(DisplayName = "<  (Is Less Than)"),
-	DlgLessOrEqual		UMETA(DisplayName = "<= (Is Less Than Or Equal To)"),
-	DlgGreater			UMETA(DisplayName = ">  (Is Greater Than)"),
-	DlgGreaterOrEqual	UMETA(DisplayName = ">= (Is Greater Than Or Equal To)"),
+	Equal = 0		UMETA(DisplayName = "== (Is Equal To)"),
+	NotEqual		UMETA(DisplayName = "!= (Is Not Equal To)"),
+	Less			UMETA(DisplayName = "<  (Is Less Than)"),
+	LessOrEqual		UMETA(DisplayName = "<= (Is Less Than Or Equal To)"),
+	Greater			UMETA(DisplayName = ">  (Is Greater Than)"),
+	GreaterOrEqual	UMETA(DisplayName = ">= (Is Greater Than Or Equal To)"),
 };
 
 /**
  *  Type of value the participant's value is checked against
  */
 UENUM()
-enum class EDlgCompareType : uint8
+enum class EDlgCompare : uint8
 {
-	DlgCompareToConst = 0			UMETA(DisplayName = "Compare to Constant"),
-	DlgCompareToVariable			UMETA(DisplayName = "Compare to Variable"),
-	DlgCompareToClassVariable		UMETA(DisplayName = "Compare to Class Variable")
+	ToConst = 0			UMETA(DisplayName = "Compare to Constant"),
+	ToVariable			UMETA(DisplayName = "Compare to Variable"),
+	ToClassVariable		UMETA(DisplayName = "Compare to Class Variable")
 };
 
 /**
@@ -97,7 +97,7 @@ public:
 
 protected:
 
-	/** Helper functions doing the check on the primary value based on EDlgCompareType */
+	/** Helper functions doing the check on the primary value based on EDlgCompare */
 
 	bool CheckFloat(float Value, const UDlgContextInternal* DlgContext) const;
 	bool CheckInt(int32 Value, const UDlgContextInternal* DlgContext) const;
@@ -114,11 +114,11 @@ public:
 
 	/** Defines the way the condition is interpreted inside the condition array */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
-	EDlgConditionStrength Strength = EDlgConditionStrength::DlgConditionStrengthStrong;
+	EDlgConditionStrength Strength = EDlgConditionStrength::Strong;
 
 	/** Type of the condition, defines the behavior */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
-	EDlgConditionType ConditionType = EDlgConditionType::DlgConditionIntCall;
+	EDlgConditionType ConditionType = EDlgConditionType::IntCall;
 
 	/** Name of the participant (speaker) the event is called on. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
@@ -130,11 +130,11 @@ public:
 
 	/** The desired operation on the selected variable */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
-	EDlgOperation Operation = EDlgOperation::DlgEqual;
+	EDlgOperation Operation = EDlgOperation::Equal;
 
 	/** Type of value to check against  */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
-	EDlgCompareType CompareType = EDlgCompareType::DlgCompareToConst;
+	EDlgCompare CompareType = EDlgCompare::ToConst;
 
 
 	/** Name of the other participant (speaker) the check is performed against (with some compare types) */

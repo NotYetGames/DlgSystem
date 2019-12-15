@@ -41,6 +41,9 @@ public:
 	/** Saves all the dialogues. */
 	TSharedPtr<FUICommandInfo> SaveAllDialogues;
 
+	/** Removes all the dialogue text files */
+	TSharedPtr<FUICommandInfo> DeleteAllDialoguesTextFiles;
+
 	/** Open find in ALL Dialogues search window */
 	TSharedPtr<FUICommandInfo> FindInAllDialogues;
 

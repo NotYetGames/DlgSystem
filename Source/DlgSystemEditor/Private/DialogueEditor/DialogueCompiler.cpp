@@ -75,26 +75,6 @@ void FDialogueCompilerContext::PreCompileGraphNode(UDialogueGraphNode* GraphNode
 
 void FDialogueCompilerContext::PostCompileGraphNode(UDialogueGraphNode* GraphNode)
 {
-	// Add text automatically to the children,
-	if (GraphNode->GetOutputPin()->LinkedTo.Num() == 1)
-	{
-		const TArray<FDlgEdge>& NodeEdges = GraphNode->GetDialogueNode().GetNodeChildren();;
-		check(NodeEdges.Num() == 1);
-		// there is only one child and that child does not have any text on the edges
-		if (NodeEdges[0].Text.IsEmpty())
-		{
-			UDialogueGraphNode* ChildGraphNode = GraphNode->GetChildNodes()[0];
-			// TODO add graph nodes for each type
-			if (ChildGraphNode->IsEndNode())
-			{
-				GraphNode->SetEdgeTextAt(0, UDlgSystemSettings::EdgeTextFinish);
-			}
-			else
-			{
-				GraphNode->SetEdgeTextAt(0, UDlgSystemSettings::EdgeTextNext);
-			}
-		}
-	}
 	GraphNode->ApplyCompilerWarnings();
 
 	// Check symmetry, dialogue node <-> graph node
@@ -241,7 +221,7 @@ bool FDialogueCompilerContext::GetPathToNodeAsSet(const UDialogueGraphNode* Sour
 
 void FDialogueCompilerContext::SetEdgesCategorization()
 {
-	// If there is an unique path from the root node to  the child node (the node the edge points to) of this edge it means the
+	// If there is an unique path from the root node to the child node (the node the edge points to) of this edge it means the
 	// edge is primary, otherwise it is secondary.
 	for (UDialogueGraphNode* GraphNode : VisitedNodes)
 	{

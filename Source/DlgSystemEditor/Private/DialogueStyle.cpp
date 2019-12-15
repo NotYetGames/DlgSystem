@@ -37,6 +37,7 @@ const FName FDialogueStyle::PROPERTY_FindAssetIcon(TEXT("DlgSystemEditor.FindAss
 
 // Tied with FDialogueEditorCommands::SaveAllDialogues
 const FName FDialogueStyle::PROPERTY_SaveAllDialoguesIcon(TEXT("DlgSystemEditor.SaveAllDialogues"));
+const FName FDialogueStyle::PROPERTY_DeleteAllDialoguesTextFilesIcon(TEXT("DlgSystemEditor.DeleteAllDialoguesTextFiles"));
 const FName FDialogueStyle::PROPERTY_FindDialogueIcon(TEXT("DlgSystemEditor.FindDialogue.Icon"));
 const FName FDialogueStyle::PROPERTY_BrowseDialogueIcon(TEXT("DlgSystemEditor.BrowseDialogue.Icon"));
 
@@ -101,7 +102,10 @@ void FDialogueStyle::Initialize()
 
 	// Level Editor Save All Dialogues
 	StyleSet->Set(PROPERTY_SaveAllDialoguesIcon,
-				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_file_saveall_16px.png"), Icon16x16));
+				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_file_saveall_40x.png"), Icon40x40));
+	StyleSet->Set(PROPERTY_DeleteAllDialoguesTextFilesIcon,
+				  new FSlateImageBrush(GetEngineContentPath("Icons/Edit/icon_Edit_Delete_40x.png"), Icon40x40));
+
 	StyleSet->Set(PROPERTY_FindDialogueIcon, new FSlateImageBrush(GetEngineContentPath("Icons/icon_Genericfinder_16x.png"), Icon16x16));
 	StyleSet->Set(PROPERTY_BrowseDialogueIcon,
 				  new FSlateImageBrush(GetEngineContentPath("Icons/icon_tab_ContentBrowser_16x.png"), Icon16x16));

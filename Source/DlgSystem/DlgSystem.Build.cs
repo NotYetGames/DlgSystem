@@ -52,10 +52,18 @@ public class DlgSystem : ModuleRules
 				// ... add private dependencies that you statically link with here ...
 			});
 
+		// Add MessageLog support
+		if (Target.bBuildDeveloperTools)
+		{
+			PrivateDependencyModuleNames.Add("MessageLog");
+		}
+
 		// We need this dependency when the DlgSystem works in the editor mode/built with editor
 		if (Target.bBuildEditor)
 		{
+			PrivateDependencyModuleNames.Add("EditorWidgets");
 			PrivateDependencyModuleNames.Add("UnrealEd");
+
 			// Accessing the menu
 			PrivateDependencyModuleNames.Add("WorkspaceMenuStructure");
 		}

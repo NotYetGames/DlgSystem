@@ -6,9 +6,9 @@
 
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
-#include "STextPropertyPickList.h"
-#include "CustomRowHelpers/TextPropertyPickList_CustomRowHelper.h"
-#include "CustomRowHelpers/MultiLineEditableTextBox_CustomRowHelper.h"
+#include "Widgets/SDialogueTextPropertyPickList.h"
+#include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
+#include "Widgets/DialogueMultiLineEditableTextBox_CustomRowHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueSpeechSequenceEntry_Details"
 
@@ -41,17 +41,42 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, Speaker));
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("ParticipantNameSearchKey", "Participant Name"));
 
-		ParticipantNamePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
+		ParticipantNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
 		ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
-			SNew(STextPropertyPickList)
+			SNew(SDialogueTextPropertyPickList)
 			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(bHasDialogue)
 			.IsContextCheckBoxChecked(true)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueParticipantNames)
 		)
-		->Update();
+		.Update();
 	}
+
+	// Text
+	{
+		TextPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, Text));
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
+
+		TextPropertyRow = MakeShared<FDialogueMultiLineEditableTextBox_CustomRowHelper>(DetailWidgetRow, TextPropertyHandle);
+		TextPropertyRow->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities());
+		TextPropertyRow->Update();
+	}
+
+
+	// Edge Text
+	{
+		EdgeTextPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, EdgeText));
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("EdgeTextSearchKey", "Edge Text"));
+
+		EdgeTextPropertyRow = MakeShared<FDialogueMultiLineEditableTextBox_CustomRowHelper>(DetailWidgetRow, EdgeTextPropertyHandle);
+		EdgeTextPropertyRow->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities());
+		EdgeTextPropertyRow->Update();
+	}
+
+	//
+	// Data
+	//
 
 	// Speaker State
 	{
@@ -60,76 +85,36 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("SpeakerStateSearchKey", "Speaker State"));
 
-		SpeakerStatePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, SpeakerStatePropertyHandle);
+		SpeakerStatePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, SpeakerStatePropertyHandle);
 		SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
-			SNew(STextPropertyPickList)
+			SNew(SDialogueTextPropertyPickList)
 			.AvailableSuggestions(this, &Self::GetAllDialoguesSpeakerStates)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(false)
 		)
-		->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetSpeakerStateVisibility))
-		->Update();
+		.SetVisibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetSpeakerStateNodeVisibility))
+		.Update();
 	}
 
-	// Text
-	{
-		TextPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, Text));
-		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("TextSearchKey", "Text"));
-
-		TextPropertyRow = MakeShared<FMultiLineEditableTextBox_CustomRowHelper>(DetailWidgetRow, TextPropertyHandle);
-		TextPropertyRow->SetMultiLineEditableTextBoxWidget(
-			SNew(SMultiLineEditableTextBox)
-			.Font(FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont")))
-			.SelectAllTextWhenFocused(false)
-			.ClearKeyboardFocusOnCommit(false)
-			.SelectAllTextOnCommit(false)
-			.AutoWrapText(true)
-			.ModiferKeyForNewLine(FDialogueDetailsPanelUtils::GetModifierKeyFromDialogueSettings())
-			.Text(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
-			.OnTextCommitted(TextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
-		)
-		->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities())
-		->Update();
-	}
-
-	// Node Data
+	// Node Data that can be anything set by the user
 	NodeDataPropertyRow = &StructBuilder.AddProperty(
 		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, NodeData)).ToSharedRef());
-
-	// Voice
+	NodeDataPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetNodeDataVisibility));
+	
+	// SoundWave
 	VoiceSoundWavePropertyRow = &StructBuilder.AddProperty(
 		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, VoiceSoundWave)).ToSharedRef());
-	VoiceSoundWavePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetVoiceSoundWaveVisibility));
+	VoiceSoundWavePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetVoiceSoundWaveVisibility));
 
+	// DialogueWave
 	VoiceDialogueWavePropertyRow = &StructBuilder.AddProperty(
 		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, VoiceDialogueWave)).ToSharedRef());
-	VoiceDialogueWavePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetVoiceDialogueWaveVisibility));
+	VoiceDialogueWavePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetVoiceDialogueWaveVisibility));
 
-	// Edge Text
-	{
-		EdgeTextPropertyHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, EdgeText));
-		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("EdgeTextSearchKey", "Edge Text"));
-
-		EdgeTextPropertyRow = MakeShared<FMultiLineEditableTextBox_CustomRowHelper>(DetailWidgetRow, EdgeTextPropertyHandle);
-		EdgeTextPropertyRow->SetMultiLineEditableTextBoxWidget(
-			SNew(SMultiLineEditableTextBox)
-			.Font(FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont")))
-			.SelectAllTextWhenFocused(false)
-			.ClearKeyboardFocusOnCommit(false)
-			.SelectAllTextOnCommit(false)
-			.AutoWrapText(true)
-			.ModiferKeyForNewLine(FDialogueDetailsPanelUtils::GetModifierKeyFromDialogueSettings())
-			.Text(EdgeTextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::GetTextValue)
-			.OnTextCommitted(EdgeTextPropertyRow.ToSharedRef(), &FMultiLineEditableTextBox_CustomRowHelper::HandleTextCommited)
-		)
-		->SetPropertyUtils(StructCustomizationUtils.GetPropertyUtilities())
-		->Update();
-	}
-
-	// Generic Data
+	// Generic Data, can be FMOD sound
 	GenericDataPropertyRow = &StructBuilder.AddProperty(
 		StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgSpeechSequenceEntry, GenericData)).ToSharedRef());
-	GenericDataPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetGenericDataVisibility));
+	GenericDataPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetGenericDataVisibility));
 }
 
 #undef LOCTEXT_NAMESPACE

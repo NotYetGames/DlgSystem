@@ -16,7 +16,7 @@ TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesFo
 	for (const UDialogueGraphNode* GraphNode : Graph->GetAllDialogueGraphNodes())
 	{
 		// Enter events
-		if (IsEventInArray(EventName, EDlgEventType::DlgEventEvent, GraphNode->GetDialogueNode().GetNodeEnterEvents()))
+		if (IsEventInArray(EventName, EDlgEventType::Event, GraphNode->GetDialogueNode().GetNodeEnterEvents()))
 		{
 			FoundResult->GraphNodes.Add(GraphNode);
 		}
@@ -37,7 +37,7 @@ TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesFo
 		{
 			// Node
 			// Node Enter conditions
-			if (IsConditionInArray(ConditionName, EDlgConditionType::DlgConditionEventCall,
+			if (IsConditionInArray(ConditionName, EDlgConditionType::EventCall,
 								   GraphNode->GetDialogueNode().GetNodeEnterConditions()))
 			{
 				FoundResult->GraphNodes.Add(GraphNode);
@@ -48,7 +48,7 @@ TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesFo
 		else if (const UDialogueGraphNode_Edge* EdgeNode = Cast<UDialogueGraphNode_Edge>(GraphNodeBase))
 		{
 			// Edge
-			if (IsConditionInArray(ConditionName, EDlgConditionType::DlgConditionEventCall,
+			if (IsConditionInArray(ConditionName, EDlgConditionType::EventCall,
 								   EdgeNode->GetDialogueEdge().Conditions))
 			{
 				FoundResult->EdgeNodes.Add(EdgeNode);
@@ -133,7 +133,7 @@ void FDialogueSearchUtilities::GetGraphNodesForTextArgumentVariable(const FName&
 		else if (const UDialogueGraphNode_Edge* EdgeNode = Cast<UDialogueGraphNode_Edge>(GraphNodeBase))
 		{
 			// Edge
-			if (IsTextArgumentInArray(VariableName, ArgumentType, EdgeNode->GetDialogueEdge().TextArguments))
+			if (IsTextArgumentInArray(VariableName, ArgumentType, EdgeNode->GetDialogueEdge().GetTextArguments()))
 			{
 				FoundResult->EdgeNodes.Add(EdgeNode);
 			}

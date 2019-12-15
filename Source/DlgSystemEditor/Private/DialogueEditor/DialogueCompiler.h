@@ -9,11 +9,14 @@ class UDialogueGraphNode_Root;
 class UDlgNode;
 class UDlgDialogue;
 class UDialogueGraphNode;
+class UDlgSystemSettings;
 
 class FDialogueCompilerContext
 {
 public:
-	FDialogueCompilerContext(UDlgDialogue* InDialogue, FCompilerResultsLog& InMessageLog) : Dialogue(InDialogue), MessageLog(InMessageLog) {}
+	FDialogueCompilerContext(UDlgDialogue* InDialogue, const UDlgSystemSettings* InSettings, FCompilerResultsLog& InMessageLog)
+	: Dialogue(InDialogue), Settings(InSettings), MessageLog(InMessageLog)
+	{}
 
 	/** Compile the Dialogue from its graph nodes */
 	void Compile();
@@ -51,8 +54,11 @@ private:
 
 private:
 	/** The dialogue being compiled. */
-	UDlgDialogue* Dialogue;
+	UDlgDialogue* Dialogue = nullptr;
 
+	// Settings we will use
+	const UDlgSystemSettings* Settings = nullptr;
+	
 	// TODO Use this
 	/** Compiler message log (errors, warnings, notes) */
 	FCompilerResultsLog& MessageLog;

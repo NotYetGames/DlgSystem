@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "STextPropertyPickList.h"
+#include "SDialogueTextPropertyPickList.h"
 
 #include "PropertyHandle.h"
 #include "Widgets/Input/SSearchBox.h"
@@ -8,11 +8,11 @@
 #include "IDocumentation.h"
 #include "Layout/WidgetPath.h"
 
-#define LOCTEXT_NAMESPACE "STextPropertyPickList"
+#define LOCTEXT_NAMESPACE "SDialogueTextPropertyPickList"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// STextPropertyPickList
-void STextPropertyPickList::Construct(const FArguments& InArgs)
+// SDialogueTextPropertyPickList
+void SDialogueTextPropertyPickList::Construct(const FArguments& InArgs)
 {
 	// MUST call SetPropertyHandle later or a check will fail.
 	if (InArgs._PropertyHandle.IsValid())
@@ -88,7 +88,7 @@ void STextPropertyPickList::Construct(const FArguments& InArgs)
 //	ButtonBoxWrapper->SetVisibility(ButtonBox->NumSlots() > 0 ? EVisibility::Visible : EVisibility::Collapsed);
 }
 
-FReply STextPropertyPickList::OnPreviewKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
+FReply SDialogueTextPropertyPickList::OnPreviewKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
 {
 	if (InKeyEvent.GetKey() == EKeys::Escape)
 	{
@@ -100,7 +100,7 @@ FReply STextPropertyPickList::OnPreviewKeyDown(const FGeometry& MyGeometry, cons
 	return FReply::Unhandled();
 }
 
-void STextPropertyPickList::SetText(const TAttribute<FText>& InNewText)
+void SDialogueTextPropertyPickList::SetText(const TAttribute<FText>& InNewText)
 {
 	const FText NewText = InNewText.Get();
 	TextAttribute.Set(NewText);
@@ -116,14 +116,14 @@ void STextPropertyPickList::SetText(const TAttribute<FText>& InNewText)
 	}
 }
 
-void STextPropertyPickList::SetToolTipAttribute(const TAttribute<FText>& InNewText)
+void SDialogueTextPropertyPickList::SetToolTipAttribute(const TAttribute<FText>& InNewText)
 {
 	const FText NewText = InNewText.Get();
 	ToolTipAttribute.Set(NewText);
 	SetToolTipText(ToolTipAttribute);
 }
 
-void STextPropertyPickList::SetPropertyHandle(const TSharedPtr<IPropertyHandle>& InPropertyHandle)
+void SDialogueTextPropertyPickList::SetPropertyHandle(const TSharedPtr<IPropertyHandle>& InPropertyHandle)
 {
 	PropertyHandle = InPropertyHandle;
 	check(PropertyHandle.IsValid());
@@ -136,7 +136,7 @@ void STextPropertyPickList::SetPropertyHandle(const TSharedPtr<IPropertyHandle>&
 	}
 }
 
-TSharedRef<SWidget> STextPropertyPickList::GetMenuWidget()
+TSharedRef<SWidget> SDialogueTextPropertyPickList::GetMenuWidget()
 {
 	// Is it cached?
 	if (MenuWidget.IsValid())
@@ -193,7 +193,7 @@ TSharedRef<SWidget> STextPropertyPickList::GetMenuWidget()
 	return GetMenuWidget();
 }
 
-TSharedRef<SWidget> STextPropertyPickList::GetContextCheckBoxWidget()
+TSharedRef<SWidget> SDialogueTextPropertyPickList::GetContextCheckBoxWidget()
 {
 	// It is cached?
 	if (ContextCheckBoxWidget.IsValid())
@@ -224,7 +224,7 @@ TSharedRef<SWidget> STextPropertyPickList::GetContextCheckBoxWidget()
 	return GetContextCheckBoxWidget();
 }
 
-TSharedRef<SWidget> STextPropertyPickList::GetSearchBoxWidget()
+TSharedRef<SWidget> SDialogueTextPropertyPickList::GetSearchBoxWidget()
 {
 	// Is it cached?
 	if (InputTextWidget.IsValid())
@@ -251,7 +251,7 @@ TSharedRef<SWidget> STextPropertyPickList::GetSearchBoxWidget()
 	return GetSearchBoxWidget();
 }
 
-TSharedRef<SWidget> STextPropertyPickList::GetListViewWidget()
+TSharedRef<SWidget> SDialogueTextPropertyPickList::GetListViewWidget()
 {
 	// Is it cached?
 	if (ListViewContainerWidget.IsValid())
@@ -281,7 +281,7 @@ TSharedRef<SWidget> STextPropertyPickList::GetListViewWidget()
 	return GetListViewWidget();
 }
 
-TSharedRef<ITableRow> STextPropertyPickList::HandleListGenerateRow(TextListItem Text, const TSharedRef<STableViewBase>& OwnerTable)
+TSharedRef<ITableRow> SDialogueTextPropertyPickList::HandleListGenerateRow(TextListItem Text, const TSharedRef<STableViewBase>& OwnerTable)
 {
 	check(Text.IsValid());
 	return SNew(STableRow<TextListItem>, OwnerTable)
@@ -292,7 +292,7 @@ TSharedRef<ITableRow> STextPropertyPickList::HandleListGenerateRow(TextListItem 
 		];
 }
 
-void STextPropertyPickList::HandleMenuOpenChanged(bool bOpen)
+void SDialogueTextPropertyPickList::HandleMenuOpenChanged(bool bOpen)
 {
 	if (!bOpen)
 	{
@@ -301,7 +301,7 @@ void STextPropertyPickList::HandleMenuOpenChanged(bool bOpen)
 	}
 }
 
-void STextPropertyPickList::HandleComboBoxOpened()
+void SDialogueTextPropertyPickList::HandleComboBoxOpened()
 {
 	GetSearchBoxWidget();
 	FocusSearchBox();
@@ -309,7 +309,7 @@ void STextPropertyPickList::HandleComboBoxOpened()
 }
 
 /** Handler for when text in the editable text box changed */
-void STextPropertyPickList::HandleTextChanged(const FText& InSearchText)
+void SDialogueTextPropertyPickList::HandleTextChanged(const FText& InSearchText)
 {
 	UpdateSuggestionList();
 
@@ -318,7 +318,7 @@ void STextPropertyPickList::HandleTextChanged(const FText& InSearchText)
 }
 
 /** Handler for when text in the editable text box changed */
-void STextPropertyPickList::HandleTextCommitted(const FText& NewText, ETextCommit::Type CommitType)
+void SDialogueTextPropertyPickList::HandleTextCommitted(const FText& NewText, ETextCommit::Type CommitType)
 {
 	// Ignore default
 	if (CommitType == ETextCommit::Default)
@@ -364,7 +364,7 @@ void STextPropertyPickList::HandleTextCommitted(const FText& NewText, ETextCommi
 	}
 }
 
-FReply STextPropertyPickList::HandleKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
+FReply SDialogueTextPropertyPickList::HandleKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
 {
 	if (InKeyEvent.GetKey() == EKeys::Up || InKeyEvent.GetKey() == EKeys::Down)
 	{
@@ -415,7 +415,7 @@ FReply STextPropertyPickList::HandleKeyDown(const FGeometry& MyGeometry, const F
 	return FReply::Unhandled();
 }
 
-void STextPropertyPickList::HandleListSelectionChanged(TextListItem NewValue, ESelectInfo::Type SelectInfo)
+void SDialogueTextPropertyPickList::HandleListSelectionChanged(TextListItem NewValue, ESelectInfo::Type SelectInfo)
 {
 	// If the user selected it via click or keyboard then select it, then accept the choice and close the window
 	if (SelectInfo == ESelectInfo::OnMouseClick || SelectInfo == ESelectInfo::OnKeyPress || SelectInfo == ESelectInfo::Direct )
@@ -435,7 +435,7 @@ void STextPropertyPickList::HandleListSelectionChanged(TextListItem NewValue, ES
 	}
 }
 
-void STextPropertyPickList::HandleContextCheckboxChanged(ECheckBoxState CheckState)
+void SDialogueTextPropertyPickList::HandleContextCheckboxChanged(ECheckBoxState CheckState)
 {
 	bIsContextCheckBoxChecked = CheckState == ECheckBoxState::Checked;
 	UpdateSuggestionList();
@@ -443,7 +443,7 @@ void STextPropertyPickList::HandleContextCheckboxChanged(ECheckBoxState CheckSta
 	FocusSearchBox();
 }
 
-void STextPropertyPickList::UpdateSuggestionList()
+void SDialogueTextPropertyPickList::UpdateSuggestionList()
 {
 	const FString TypedText = InputTextWidget.IsValid() ? InputTextWidget->GetText().ToString() : TEXT("");
 	Suggestions.Empty();
@@ -488,14 +488,14 @@ void STextPropertyPickList::UpdateSuggestionList()
 	}
 }
 
-void STextPropertyPickList::FocusSearchBox() const
+void SDialogueTextPropertyPickList::FocusSearchBox() const
 {
 	FWidgetPath WidgetToFocusPath;
 	FSlateApplication::Get().GeneratePathToWidgetChecked(InputTextWidget.ToSharedRef(), WidgetToFocusPath);
 	FSlateApplication::Get().SetKeyboardFocus(WidgetToFocusPath, EFocusCause::SetDirectly);
 }
 
-TSharedPtr<FName> STextPropertyPickList::GetSelectedSuggestion() const
+TSharedPtr<FName> SDialogueTextPropertyPickList::GetSelectedSuggestion() const
 {
 	TSharedPtr<FName> SelectedSuggestion;
 	const TArray<TSharedPtr<FName>>& SelectedSuggestionList = ListViewWidget->GetSelectedItems();

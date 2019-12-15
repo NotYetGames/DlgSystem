@@ -4,6 +4,7 @@
 #include "DlgSystemPrivatePCH.h"
 #include "DlgReflectionHelper.h"
 #include "DlgDialogueParticipant.h"
+#include "Logging/DlgLogger.h"
 
 void FDlgEvent::Call(UObject* TargetParticipant) const
 {
@@ -14,33 +15,33 @@ void FDlgEvent::Call(UObject* TargetParticipant) const
 
 	switch (EventType)
 	{
-	case EDlgEventType::DlgEventEvent:
+	case EDlgEventType::Event:
 		IDlgDialogueParticipant::Execute_OnDialogueEvent(TargetParticipant, EventName);
 		break;
 
-	case EDlgEventType::DlgEventModifyInt:
+	case EDlgEventType::ModifyInt:
 		IDlgDialogueParticipant::Execute_ModifyIntValue(TargetParticipant, EventName, bDelta, IntValue);
 		break;
-	case EDlgEventType::DlgEventModifyFloat:
+	case EDlgEventType::ModifyFloat:
 		IDlgDialogueParticipant::Execute_ModifyFloatValue(TargetParticipant, EventName, bDelta, FloatValue);
 		break;
-	case EDlgEventType::DlgEventModifyBool:
+	case EDlgEventType::ModifyBool:
 		IDlgDialogueParticipant::Execute_ModifyBoolValue(TargetParticipant, EventName, bValue);
 		break;
-	case EDlgEventType::DlgEventModifyName:
+	case EDlgEventType::ModifyName:
 		IDlgDialogueParticipant::Execute_ModifyNameValue(TargetParticipant, EventName, NameValue);
 		break;
 
-	case EDlgEventType::DlgEventModifyClassIntVariable:
+	case EDlgEventType::ModifyClassIntVariable:
 		UDlgReflectionHelper::ModifyVariable<UIntProperty>(TargetParticipant, EventName, IntValue, bDelta);
 		break;
-	case EDlgEventType::DlgEventModifyClassFloatVariable:
+	case EDlgEventType::ModifyClassFloatVariable:
 		UDlgReflectionHelper::ModifyVariable<UFloatProperty>(TargetParticipant, EventName, FloatValue, bDelta);
 		break;
-	case EDlgEventType::DlgEventModifyClassBoolVariable:
+	case EDlgEventType::ModifyClassBoolVariable:
 		UDlgReflectionHelper::SetVariable<UBoolProperty>(TargetParticipant, EventName, bValue);
 		break;
-	case EDlgEventType::DlgEventModifyClassNameVariable:
+	case EDlgEventType::ModifyClassNameVariable:
 		UDlgReflectionHelper::SetVariable<UNameProperty>(TargetParticipant, EventName, NameValue);
 		break;
 
@@ -56,7 +57,10 @@ bool FDlgEvent::ValidateIsParticipantValid(const UObject* Participant) const
 		return true;
 	}
 
-	UE_LOG(LogDlgSystem, Error, TEXT("Event failed: invalid participant! ParticipantName = %s, EventName = %s"), *ParticipantName.ToString(), *EventName.ToString());
+	FDlgLogger::Get().Errorf(
+		TEXT("Event failed: invalid participant! ParticipantName = %s, EventName = %s"),
+		*ParticipantName.ToString(), *EventName.ToString()
+	);
 	return false;
 }
 

@@ -5,12 +5,11 @@
 #include "Layout/Visibility.h"
 #include "IDetailPropertyRow.h"
 
-#include "DlgDialogue.h"
 #include "DlgEvent.h"
 #include "DlgManager.h"
 #include "DialogueDetailsPanelUtils.h"
 
-class FTextPropertyPickList_CustomRowHelper;
+class FDialogueTextPropertyPickList_CustomRowHelper;
 
 /**
  * How the details panel renders the FDlgEvent
@@ -54,38 +53,38 @@ private:
 	// Getters for the visibility of some properties
 	EVisibility GetIntValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyInt
-			|| EventType == EDlgEventType::DlgEventModifyClassIntVariable
+		return EventType == EDlgEventType::ModifyInt
+			|| EventType == EDlgEventType::ModifyClassIntVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetFloatValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyFloat
-			|| EventType == EDlgEventType::DlgEventModifyClassFloatVariable
+		return EventType == EDlgEventType::ModifyFloat
+			|| EventType == EDlgEventType::ModifyClassFloatVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetNameValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyName
-			|| EventType == EDlgEventType::DlgEventModifyClassNameVariable
+		return EventType == EDlgEventType::ModifyName
+			|| EventType == EDlgEventType::ModifyClassNameVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetBoolDeltaVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyInt
-			|| EventType == EDlgEventType::DlgEventModifyFloat
-			|| EventType == EDlgEventType::DlgEventModifyClassIntVariable
-			|| EventType == EDlgEventType::DlgEventModifyClassFloatVariable
+		return EventType == EDlgEventType::ModifyInt
+			|| EventType == EDlgEventType::ModifyFloat
+			|| EventType == EDlgEventType::ModifyClassIntVariable
+			|| EventType == EDlgEventType::ModifyClassFloatVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetBoolValueVisibility() const
 	{
-		return EventType == EDlgEventType::DlgEventModifyBool
-			|| EventType == EDlgEventType::DlgEventModifyClassBoolVariable
+		return EventType == EDlgEventType::ModifyBool
+			|| EventType == EDlgEventType::ModifyClassBoolVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
@@ -114,13 +113,13 @@ private:
 	{
 		if (Dialogue)
 		{
-			Dialogue->RefreshData();
+			Dialogue->UpdateAndRefreshData();
 		}
 	}
 
 private:
 	// The current Event type of the struct.
-	EDlgEventType EventType = EDlgEventType::DlgEventEvent;
+	EDlgEventType EventType = EDlgEventType::Event;
 
 	// Cache the some property handles
 	TSharedPtr<IPropertyHandle> StructPropertyHandle;
@@ -133,8 +132,8 @@ private:
 	TSharedPtr<IPropertyUtilities> PropertyUtils;
 
 	// Cache the rows of the properties, created in CustomizeChildren
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> EventNamePropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> EventNamePropertyRow;
 	IDetailPropertyRow* IntValuePropertyRow = nullptr;
 	IDetailPropertyRow* FloatValuePropertyRow = nullptr;
 	IDetailPropertyRow* NameValuePropertyRow = nullptr;

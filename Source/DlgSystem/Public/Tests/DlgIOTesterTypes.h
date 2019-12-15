@@ -59,10 +59,10 @@ public:
 UENUM()
 enum class EDlgTestEnum : uint8
 {
-	ETE_First = 0,
-	ETE_Second,
-	ETE_Third,
-	ETE_NumOf
+	First = 0,
+	Second,
+	Third,
+	NumOf
 };
 
 UCLASS()

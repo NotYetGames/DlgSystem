@@ -13,16 +13,16 @@ class UDlgContextInternal;
 UENUM()
 enum class EDlgTextArgumentType : uint8
 {
-	DlgTextArgumentDisplayName = 0	UMETA(DisplayName = "Participant Display Name"),
-	DlgTextArgumentGender			UMETA(DisplayName = "Participant Gender"),
+	DisplayName = 0	UMETA(DisplayName = "Participant Display Name"),
+	Gender			UMETA(DisplayName = "Participant Gender"),
 
-	DlgTextArgumentDialogueInt		UMETA(DisplayName = "Dialogue Int Variable"),
-	DlgTextArgumentClassInt			UMETA(DisplayName = "Class Int Variable"),
+	DialogueInt		UMETA(DisplayName = "Dialogue Int Variable"),
+	ClassInt		UMETA(DisplayName = "Class Int Variable"),
 
-	DlgTextArgumentDialogueFloat	UMETA(DisplayName = "Dialogue Float Variable"),
-	DlgTextArgumentClassFloat		UMETA(DisplayName = "Class Float Variable"),
+	DialogueFloat	UMETA(DisplayName = "Dialogue Float Variable"),
+	ClassFloat		UMETA(DisplayName = "Class Float Variable"),
 
-	DlgTextArgumentClassText		UMETA(DisplayName = "Class Text Variable")
+	ClassText		UMETA(DisplayName = "Class Text Variable")
 };
 
 /**
@@ -50,7 +50,7 @@ public:
 	FString DisplayString;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueTextArgument)
-	EDlgTextArgumentType Type = EDlgTextArgumentType::DlgTextArgumentDisplayName;
+	EDlgTextArgumentType Type = EDlgTextArgumentType::DisplayName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueTextArgument)
 	FName ParticipantName;

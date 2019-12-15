@@ -1,14 +1,29 @@
 {
 	"__type__": "DlgDialogue",
-	"DlgVersion": 5,
+	"DlgVersion": 8,
 	"DlgName": "TestDialogue",
 	"DlgGuid": "D3B6003044F0EC3A430C03B963F09C88",
+	"DlgParticipantClasses": [
+		{
+			"ParticipantName": "TestOwner",
+			"ParticipantClass": ""
+		},
+		{
+			"ParticipantName": "Cat",
+			"ParticipantClass": ""
+		}
+	],
 	"StartNode":
 	{
 		"__type__": "DlgNode_Speech",
-		"Text": "",
-		"SpeakerState": "None",
 		"bIsVirtualParent": false,
+		"Text": "",
+		"TextArguments": [],
+		"SpeakerState": "None",
+		"NodeData": null,
+		"VoiceSoundWave": "",
+		"VoiceDialogueWave": "",
+		"GenericData": "",
 		"OwnerName": "None",
 		"bCheckChildrenOnEvaluation": false,
 		"EnterConditions": [],
@@ -17,14 +32,18 @@
 			{
 				"TargetIndex": 0,
 				"Conditions": [],
-				"Text": "Next",
-				"SpeakerState": "None"
+				"SpeakerState": "None",
+				"bIncludeInAllOptionListIfUnsatisfied": true,
+				"Text": "Next Remapped",
+				"TextArguments": []
 			},
 			{
 				"TargetIndex": 1,
 				"Conditions": [],
+				"SpeakerState": "None",
+				"bIncludeInAllOptionListIfUnsatisfied": true,
 				"Text": "",
-				"SpeakerState": "None"
+				"TextArguments": []
 			}
 		]
 	},
@@ -32,18 +51,26 @@
 		{
 			"__index__": 0,
 			"__type__": "DlgNode_Speech",
-			"Text": "I can talk!",
-			"SpeakerState": "None",
 			"bIsVirtualParent": false,
+			"Text": "I can talk!",
+			"TextArguments": [],
+			"SpeakerState": "None",
+			"NodeData": null,
+			"VoiceSoundWave": "",
+			"VoiceDialogueWave": "",
+			"GenericData": "",
 			"OwnerName": "TestOwner",
 			"bCheckChildrenOnEvaluation": false,
 			"EnterConditions": [
 				{
-					"Strength": "EDlgConditionStrength::DlgConditionStrengthStrong",
-					"ConditionType": "EDlgConditionType::DlgConditionIntCall",
+					"Strength": "EDlgConditionStrength::Strong",
+					"ConditionType": "EDlgConditionType::IntCall",
 					"ParticipantName": "None",
 					"CallbackName": "NodeVariable",
-					"Operation": "EDlgOperation::DlgEqual",
+					"Operation": "EDlgOperation::Equal",
+					"CompareType": "EDlgCompare::ToConst",
+					"OtherParticipantName": "None",
+					"OtherVariableName": "None",
 					"IntValue": 0,
 					"FloatValue": 0,
 					"NameValue": "None",
@@ -54,7 +81,7 @@
 			"EnterEvents": [
 				{
 					"ParticipantName": "None",
-					"EventType": "EDlgEventType::DlgEventModifyInt",
+					"EventType": "EDlgEventType::ModifyInt",
 					"EventName": "NodeVariable",
 					"IntValue": 0,
 					"FloatValue": 0,
@@ -68,11 +95,14 @@
 					"TargetIndex": 2,
 					"Conditions": [
 						{
-							"Strength": "EDlgConditionStrength::DlgConditionStrengthStrong",
-							"ConditionType": "EDlgConditionType::DlgConditionIntCall",
+							"Strength": "EDlgConditionStrength::Strong",
+							"ConditionType": "EDlgConditionType::IntCall",
 							"ParticipantName": "None",
 							"CallbackName": "EdgeVariable",
-							"Operation": "EDlgOperation::DlgEqual",
+							"Operation": "EDlgOperation::Equal",
+							"CompareType": "EDlgCompare::ToConst",
+							"OtherParticipantName": "None",
+							"OtherVariableName": "None",
 							"IntValue": 100,
 							"FloatValue": 0,
 							"NameValue": "None",
@@ -80,17 +110,24 @@
 							"bLongTermMemory": true
 						}
 					],
-					"Text": "Next",
-					"SpeakerState": "None"
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true,
+					"Text": "Next Remapped",
+					"TextArguments": []
 				}
 			]
 		},
 		{
 			"__index__": 1,
 			"__type__": "DlgNode_Speech",
-			"Text": "Meow. Yeah I can speak too",
-			"SpeakerState": "None",
 			"bIsVirtualParent": false,
+			"Text": "Meow. Yeah I can speak too",
+			"TextArguments": [],
+			"SpeakerState": "None",
+			"NodeData": null,
+			"VoiceSoundWave": "",
+			"VoiceDialogueWave": "",
+			"GenericData": "",
 			"OwnerName": "Cat",
 			"bCheckChildrenOnEvaluation": false,
 			"EnterConditions": [],
@@ -99,24 +136,31 @@
 				{
 					"TargetIndex": 2,
 					"Conditions": [],
-					"Text": "Next",
-					"SpeakerState": "None"
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true,
+					"Text": "Next Remapped",
+					"TextArguments": []
 				}
 			]
 		},
 		{
 			"__index__": 2,
 			"__type__": "DlgNode_Speech",
-			"Text": "You don't say?",
-			"SpeakerState": "None",
 			"bIsVirtualParent": false,
+			"Text": "You don't say?",
+			"TextArguments": [],
+			"SpeakerState": "None",
+			"NodeData": null,
+			"VoiceSoundWave": "",
+			"VoiceDialogueWave": "",
+			"GenericData": "",
 			"OwnerName": "TestOwner",
 			"bCheckChildrenOnEvaluation": false,
 			"EnterConditions": [],
 			"EnterEvents": [
 				{
 					"ParticipantName": "None",
-					"EventType": "EDlgEventType::DlgEventModifyInt",
+					"EventType": "EDlgEventType::ModifyInt",
 					"EventName": "DefaultValue",
 					"IntValue": 0,
 					"FloatValue": 0,
@@ -126,7 +170,7 @@
 				},
 				{
 					"ParticipantName": "None",
-					"EventType": "EDlgEventType::DlgEventModifyInt",
+					"EventType": "EDlgEventType::ModifyInt",
 					"EventName": "Default",
 					"IntValue": 0,
 					"FloatValue": 0,
@@ -139,8 +183,10 @@
 				{
 					"TargetIndex": 3,
 					"Conditions": [],
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true,
 					"Text": "Finish",
-					"SpeakerState": "None"
+					"TextArguments": []
 				}
 			]
 		},

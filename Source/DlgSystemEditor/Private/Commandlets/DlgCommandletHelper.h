@@ -29,17 +29,12 @@ public:
 		TArray<UPackage*> PackagesToSave;
 		for (UDlgDialogue* Dialogue : Dialogues)
 		{
-			Dialogue->OnAssetSaved();
+			Dialogue->OnPreAssetSaved();
 			Dialogue->MarkPackageDirty();
 			PackagesToSave.Add(Dialogue->GetOutermost());
 		}
 
 		static constexpr bool bCheckDirty = false;
 		return UEditorLoadingAndSavingUtils::SavePackages(PackagesToSave, bCheckDirty);
-	}
-
-	static bool IsDialoguePathInProjectDirectory(const FString& DialoguePath)
-	{
-		return DialoguePath.StartsWith(TEXT("/Game"));
 	}
 };

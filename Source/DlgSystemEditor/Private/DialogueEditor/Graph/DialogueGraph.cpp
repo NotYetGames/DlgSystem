@@ -9,15 +9,15 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueEditor/DialogueCompiler.h"
-#include "DlgDialogueEditorModule.h"
+#include "DlgDialogueEditorAccess.h"
 
 UDialogueGraph::UDialogueGraph(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	// Set the static editor module interface used by all the dialogues in the DlgSystem module to communicate with the editor.
-	if (!UDlgDialogue::GetDialogueEditorModule().IsValid())
+	if (!UDlgDialogue::GetDialogueEditorAccess().IsValid())
 	{
-		UDlgDialogue::SetDialogueEditorModule(TSharedPtr<IDlgDialogueEditorModule>(new FDlgDialogueEditorModule));
+		UDlgDialogue::SetDialogueEditorAccess(TSharedPtr<IDlgDialogueEditorAccess>(new FDlgDialogueEditorAccess));
 	}
 }
 

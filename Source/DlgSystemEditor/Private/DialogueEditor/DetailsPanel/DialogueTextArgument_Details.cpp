@@ -4,12 +4,14 @@
 #include "IDetailPropertyRow.h"
 #include "IPropertyUtilities.h"
 #include "IDetailChildrenBuilder.h"
+#include "UObject/TextProperty.h"
 
 #include "DlgReflectionHelper.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
-#include "STextPropertyPickList.h"
-#include "CustomRowHelpers/TextPropertyPickList_CustomRowHelper.h"
+#include "Widgets/SDialogueTextPropertyPickList.h"
+#include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
+#include "DlgHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueTextArgument_Details"
 
@@ -54,16 +56,16 @@ void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle
 	{
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("ParticipantNameSearchKey", "Participant Name"));
 
-		ParticipantNamePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
+		ParticipantNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
 		ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
-			SNew(STextPropertyPickList)
+			SNew(SDialogueTextPropertyPickList)
 			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(bHasDialogue)
 			.IsContextCheckBoxChecked(true)
 			.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueParticipantNames)
 		)
-		->Update();
+		.Update();
 	}
 
 	// ArgumentType
@@ -75,9 +77,9 @@ void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgTextArgument, VariableName));
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("VariableNameSearchKey", "Variable Name"));
 
-		VariableNamePropertyRow = MakeShared<FTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, VariableNamePropertyHandle);
+		VariableNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, VariableNamePropertyHandle);
 		VariableNamePropertyRow->SetTextPropertyPickListWidget(
-				SNew(STextPropertyPickList)
+				SNew(SDialogueTextPropertyPickList)
 				.AvailableSuggestions(this, &Self::GetAllDialoguesVariableNames)
 				.OnTextCommitted(this, &Self::HandleTextCommitted)
 				.HasContextCheckbox(bHasDialogue)
@@ -116,7 +118,7 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 
 	switch (ArgumentType)
 	{
-		case EDlgTextArgumentType::DlgTextArgumentDialogueInt:
+		case EDlgTextArgumentType::DialogueInt:
 			if (bCurrentOnly && Dialogue)
 			{
 				TSet<FName> SuggestionsSet;
@@ -129,11 +131,11 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 			}
 			break;
 
-		case EDlgTextArgumentType::DlgTextArgumentClassInt:
+		case EDlgTextArgumentType::ClassInt:
 			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
 			break;
 
-		case EDlgTextArgumentType::DlgTextArgumentDialogueFloat:
+		case EDlgTextArgumentType::DialogueFloat:
 			if (bCurrentOnly && Dialogue)
 			{
 				TSet<FName> SuggestionsSet;
@@ -146,21 +148,21 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 			}
 			break;
 
-		case EDlgTextArgumentType::DlgTextArgumentClassFloat:
+		case EDlgTextArgumentType::ClassFloat:
 			if (Dialogue)
 			{
 				UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
 			}
 			break;
 
-		case EDlgTextArgumentType::DlgTextArgumentClassText:
+		case EDlgTextArgumentType::ClassText:
 			if (Dialogue)
 			{
 				UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UTextProperty::StaticClass(), Suggestions);
 			}
 			break;
 
-		case EDlgTextArgumentType::DlgTextArgumentDisplayName:
+		case EDlgTextArgumentType::DisplayName:
 		default:
 			break;
 	}

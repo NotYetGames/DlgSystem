@@ -50,7 +50,7 @@ UEdGraphNode* FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction::Per
 		// Get only the first edge, as there should be only one anyways (besides the last node)
 		if (Children.Num() > 0)
 		{
-			SequenceEntry.EdgeText = Children[0].Text;
+			SequenceEntry.EdgeText = Children[0].GetUnformattedText();
 		}
 
 		SpeechSequence->Add(SequenceEntry);

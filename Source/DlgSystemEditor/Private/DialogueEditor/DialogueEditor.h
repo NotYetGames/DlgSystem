@@ -120,23 +120,8 @@ public:
 	}
 
 	/** Refreshes the details panel with the Dialogue */
-	void RefreshDetailsView() override
-	{
-		if (DetailsView.IsValid())
-		{
-			if (DialogueBeingEdited)
-			{
-				DetailsView->SetObject(DialogueBeingEdited, true);
-			}
-			else
-			{
-				DetailsView->ForceRefresh();
-			}
-			DetailsView->ClearSearch();
-		}
-	}
-
-	void Refresh() override;
+	void RefreshDetailsView(bool bRestorePreviousSelection) override;
+	void Refresh(bool bRestorePreviousSelection) override;
 	void JumpToObject(const UObject* Object) override;
 	//~ End IDialogueEditor Interface
 
@@ -249,7 +234,7 @@ private:
 
 	// Graph events
 	/** Called when the selection changes in the GraphEditor */
-	void OnSelectedNodesChanged(const TSet<class UObject*>& NewSelection) const;
+	void OnSelectedNodesChanged(const TSet<UObject*>& NewSelection);
 
 	/** Called to create context menu when right-clicking on graph */
 	FActionMenuContent OnCreateGraphActionMenu(UEdGraph* InGraph,
@@ -303,6 +288,9 @@ private:
 	/** Keep the reference to the target Node Edge before dragging. Only set on output pins from UDialogueGraphNode. */
 	UDialogueGraphNode_Edge* LastTargetGraphEdgeBeforeDrag = nullptr;
 
+	// Keep track of the previous selected objects so that we can reverse selection
+	TArray<TWeakObjectPtr<UObject>> PreviousSelectedNodeObjects;
+	
 	/**	The tab ids for all the tabs used */
 	static const FName DetailsTabID;
 	static const FName GraphCanvasTabID;

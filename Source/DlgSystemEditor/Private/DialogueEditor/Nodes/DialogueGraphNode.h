@@ -199,7 +199,7 @@ public:
 	{
 		if (const UDlgNode_Selector* Node = Cast<UDlgNode_Selector>(DialogueNode))
 		{
-			return Node->GetSelectorType() == EDlgNodeSelectorType::DlgNodeSelectorFirst;
+			return Node->GetSelectorType() == EDlgNodeSelectorType::First;
 		}
 
 		return false;
@@ -210,7 +210,7 @@ public:
 	{
 		if (const UDlgNode_Selector* Node = Cast<UDlgNode_Selector>(DialogueNode))
 		{
-			return Node->GetSelectorType() == EDlgNodeSelectorType::DlgNodeSelectorRandom;
+			return Node->GetSelectorType() == EDlgNodeSelectorType::Random;
 		}
 
 		return false;
@@ -292,10 +292,15 @@ public:
 	/** Sets a new Text for the Edge at location EdgeIndex.  */
 	void SetEdgeTextAt(int32 EdgeIndex, const FText& NewText);
 
-	/** Sets all the node children (edges). USE WITH CAUTION */
+	// Sets all the node children (edges).
+	// NOTE: USE WITH CAUTION
 	void SetEdges(const TArray<FDlgEdge>& InEdges);
 
-	/** Checks the node for warnings and applies the compiler wanings messages */
+	// Updates the edges data from the DialogueNode
+	// NOTE: USE WITH CAUTION
+	void UpdateEdgesFromDialogueNode();
+
+	/** Checks the node for warnings and applies the compiler warnings messages */
 	void ApplyCompilerWarnings();
 
 	/** Estimate the width of this Node from the length of its content */

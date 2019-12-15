@@ -410,8 +410,7 @@ void UDialogueGraphNode::SetEdgeTextAt(int32 EdgeIndex, const FText& NewText)
 	check(GraphNodeEdges.IsValidIndex(EdgeIndex));
 
 	FDlgEdge* Edge = DialogueNode->GetSafeMutableNodeChildAt(EdgeIndex);
-	Edge->Text = NewText;
-	Edge->RebuildTextArgumentsArray();
+	Edge->SetText(NewText);
 	GraphNodeEdges[EdgeIndex]->SetDialogueEdgeText(NewText);
 }
 
@@ -427,6 +426,18 @@ void UDialogueGraphNode::SetEdges(const TArray<FDlgEdge>& InEdges)
 	for (int32 EdgeIndex = 0, EdgesNum = InEdges.Num(); EdgeIndex < EdgesNum; EdgeIndex++)
 	{
 		GraphNodeEdges[EdgeIndex]->SetDialogueEdge(InEdges[EdgeIndex]);
+	}
+}
+
+void UDialogueGraphNode::UpdateEdgesFromDialogueNode()
+{
+	const TArray<UDialogueGraphNode_Edge*> GraphNodeEdges = GetChildEdgeNodes();
+	const int32 NumEdges = DialogueNode->GetNumNodeChildren();
+	check(NumEdges == GraphNodeEdges.Num());
+
+	for (int32 EdgeIndex = 0; EdgeIndex < NumEdges; EdgeIndex++)
+	{
+		GraphNodeEdges[EdgeIndex]->SetDialogueEdge(DialogueNode->GetNodeChildAt(EdgeIndex));
 	}
 }
 

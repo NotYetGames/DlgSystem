@@ -14,6 +14,7 @@ class UDlgNode;
 /** Used to store temporary state of edges */
 struct FDlgEdgeData
 {
+public:
 	bool bSatisfied = false;
 	const FDlgEdge* EdgePtr = nullptr;
 
@@ -43,39 +44,39 @@ public:
 	 *
 	 * @return true if the dialogue did not end, false otherwise
 	 */
-	UFUNCTION(BlueprintCallable, Category = DialogueControl)
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
 	virtual bool ChooseChild(int32 OptionIndex) { return false; }
 
 	/**
 	 *  Exactly as above but expects an index from the AllOptions array
 	 *  If the index is invalid or the selected edge is not satisfied the call fails
 	 */
-	UFUNCTION(BlueprintCallable, Category = DialogueControl)
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
 	bool ChooseChildBasedOnAllOptionIndex(int32 Index);
 
 	/**
 	 * Normally the children of the active node are checked only once, when the conversation enters the node.
 	 * If an option can appear/disappear real time in the middle of the conversation this function should be called manually each frame
 	 */
-	UFUNCTION(BlueprintCallable, Category = DialogueControl)
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
 	virtual void ReevaluateChildren() {}
 
 	/** Use these functions if you don't care about unsatisfied player options: */
 
 	/** Gets the number of children with satisfied conditions (number of options) */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	int32 GetOptionNum() const { return AvailableChildren.Num(); }
 
 	/** Gets the Text of the (satisfied) option with index OptionIndex  */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	const FText& GetOptionText(int32 OptionIndex) const;
 
 	/** Gets the SpeakerState of the (satisfied) edge with index OptionIndex */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	FName GetOptionSpeakerState(int32 OptionIndex) const;
 
 	/** Gets the edge representing a player option from the satisfied options */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	const FDlgEdge& GetOption(int32 OptionIndex) const;
 
 
@@ -85,60 +86,75 @@ public:
 	 */
 
 	/** Gets the number of children (both satisfied and unsatisfied ones are counted) */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	int32 GetAllOptionNum() const { return AllChildren.Num(); }
 
 	/** Gets the Text of an option from the all list, which includes the unsatisfied ones as well */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	const FText& GetOptionTextFromAll(int32 Index) const;
 
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	bool IsOptionSatisfied(int32 Index) const;
 
 	/** Gets the SpeakerState of the edge with index OptionIndex */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	FName GetOptionSpeakerStateFromAll(int32 Index) const;
 
 	/** Gets the edge representing a player option from all options */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	const FDlgEdge& GetOptionFromAll(int32 Index) const;
 
-
 	/** Gets the Text of the active node index */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	const FText& GetActiveNodeText() const;
 
-	/** Gets the SpeakerState of the active node index */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	FName GetActiveSpeakerState() const;
+	UE_DEPRECATED(4.21, "Use GetActiveNodeSpeakerState Instead.")
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode", meta=(DeprecatedFunction, DeprecationMessage="Use GetActiveNodeSpeakerState Instead"))
+	FName GetActiveSpeakerState() const { return GetActiveNodeSpeakerState(); }
 
+	/** Gets the SpeakerState of the active node index */
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
+	FName GetActiveNodeSpeakerState() const;
+	
 	/** Gets the Voice as a Sound Wave of the active node index */
-	UFUNCTION(BlueprintPure, Category = DialogueDataSound)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	USoundWave* GetActiveNodeVoiceSoundWave() const;
 
 	/** Gets the Voice as a Dialogue Wave of the active node index */
-	UFUNCTION(BlueprintPure, Category = DialogueDataSound)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	UDialogueWave* GetActiveNodeVoiceDialogueWave() const;
 
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	UObject* GetActiveNodeGenericData() const;
 
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	UDlgNodeData* GetActiveNodeData() const;
 
+	UE_DEPRECATED(4.21, "Use GetActiveNodeParticipantIcon Instead.")
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode",  meta=(DeprecatedFunction, DeprecationMessage="Use GetActiveNodeParticipantIcon Instead"))
+	UTexture2D* GetActiveParticipantIcon() const { return GetActiveNodeParticipantIcon(); }
+
 	/** Gets the Icon associated with the active node participant name (owner name). */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	UTexture2D* GetActiveParticipantIcon() const;
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
+	UTexture2D* GetActiveNodeParticipantIcon() const;
+	
+	UE_DEPRECATED(4.21, "Use GetActiveNodeParticipant Instead.")
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode",  meta=(DeprecatedFunction, DeprecationMessage="Use GetActiveNodeParticipant Instead"))
+	UObject* GetActiveParticipant() const { return GetActiveNodeParticipant(); }
 
 	/** Gets the Object associated with the active node participant name (owner name). */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	UObject* GetActiveParticipant() const;
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
+	UObject* GetActiveNodeParticipant() const;
+
+	UE_DEPRECATED(4.21, "Use GetActiveNodeParticipantName Instead.")
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode", meta=(DeprecatedFunction, DeprecationMessage="Use GetActiveNodeParticipantName Instead"))
+	FName GetActiveParticipantName() const { return GetActiveNodeParticipantName(); }
 
 	/** Gets the active node participant name (owner name). */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	FName GetActiveParticipantName() const;
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
+	FName GetActiveNodeParticipantName() const;
 
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	UObject* GetParticipant(FName DlgParticipantName)
 	{
 		return const_cast<UObject*>(GetConstParticipant(DlgParticipantName));
@@ -147,11 +163,11 @@ public:
 	const UObject* GetConstParticipant(FName DlgParticipantName) const;
 	const TMap<FName, UObject*>& GetParticipantMap() const { return Participants; }
 
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	int32 GetActiveNodeIndex() const { return ActiveNodeIndex; }
 
 	/** Returns the indices which were visited inside this single context. For global data check DlgMemory */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	const TSet<int32>& GetVisitedNodeIndices() const { return VisitedNodeIndices; }
 
 	/**
@@ -164,7 +180,7 @@ public:
 	 * @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionNum()[ interval (if true), or in the [0, GetAllOptionNum()[ (if false)
 	 * @return true if the node was already visited
 	 */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	bool IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory = false, bool bIndexSkipsUnsatisfiedEdges = true) const;
 
 
@@ -177,7 +193,7 @@ public:
 	 * @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionNum()[ interval (if true), or in the [0, GetAllOptionNum()[ (if false)
 	 * @return true if the node is an end node
 	 */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	bool IsEdgeConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisfiedEdges = true) const;
 
 	// Helper methods to get some Dialogue properties
@@ -197,7 +213,7 @@ protected:
 protected:
 	/** Current Dialogue used in this context at runtime. */
 	UPROPERTY()
-	UDlgDialogue* Dialogue;
+	UDlgDialogue* Dialogue = nullptr;
 
 	/**
 	 * All object is expected to implement the IDlgDialogueParticipant interface

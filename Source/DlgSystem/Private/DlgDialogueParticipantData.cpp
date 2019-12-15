@@ -15,33 +15,33 @@ void FDlgParticipantData::AddConditionPrimaryData(const FDlgCondition& Condition
 
 	switch (ConditionType)
 	{
-		case EDlgConditionType::DlgConditionEventCall:
+		case EDlgConditionType::EventCall:
 			Conditions.Add(ConditionName);
 			break;
 
-		case EDlgConditionType::DlgConditionIntCall:
+		case EDlgConditionType::IntCall:
 			IntVariableNames.Add(ConditionName);
 			break;
-		case EDlgConditionType::DlgConditionFloatCall:
+		case EDlgConditionType::FloatCall:
 			FloatVariableNames.Add(ConditionName);
 			break;
-		case EDlgConditionType::DlgConditionBoolCall:
+		case EDlgConditionType::BoolCall:
 			BoolVariableNames.Add(ConditionName);
 			break;
-		case EDlgConditionType::DlgConditionNameCall:
+		case EDlgConditionType::NameCall:
 			NameVariableNames.Add(ConditionName);
 			break;
 
-		case EDlgConditionType::DlgConditionClassIntVariable:
+		case EDlgConditionType::ClassIntVariable:
 			ClassIntVariableNames.Add(ConditionName);
 			break;
-		case EDlgConditionType::DlgConditionClassFloatVariable:
+		case EDlgConditionType::FloatVariable:
 			ClassFloatVariableNames.Add(ConditionName);
 			break;
-		case EDlgConditionType::DlgConditionClassBoolVariable:
+		case EDlgConditionType::ClassBoolVariable:
 			ClassBoolVariableNames.Add(ConditionName);
 			break;
-		case EDlgConditionType::DlgConditionClassNameVariable:
+		case EDlgConditionType::ClassNameVariable:
 			ClassNameVariableNames.Add(ConditionName);
 			break;
 
@@ -53,27 +53,27 @@ void FDlgParticipantData::AddConditionPrimaryData(const FDlgCondition& Condition
 void FDlgParticipantData::AddConditionSecondaryData(const FDlgCondition& Condition)
 {
 	const FName VariableName = Condition.OtherVariableName;
-	if (Condition.CompareType != EDlgCompareType::DlgCompareToConst)
+	if (Condition.CompareType != EDlgCompare::ToConst)
 	{
-		const bool bClassVariable = Condition.CompareType == EDlgCompareType::DlgCompareToClassVariable;
+		const bool bClassVariable = Condition.CompareType == EDlgCompare::ToClassVariable;
 		switch (Condition.ConditionType)
 		{
-		case EDlgConditionType::DlgConditionIntCall:
-		case EDlgConditionType::DlgConditionClassIntVariable:
+		case EDlgConditionType::IntCall:
+		case EDlgConditionType::ClassIntVariable:
 			(bClassVariable ? ClassIntVariableNames : IntVariableNames).Add(VariableName);
 			break;
 
-		case EDlgConditionType::DlgConditionFloatCall:
-		case EDlgConditionType::DlgConditionClassFloatVariable:
+		case EDlgConditionType::FloatCall:
+		case EDlgConditionType::FloatVariable:
 			(bClassVariable ? ClassFloatVariableNames : FloatVariableNames).Add(VariableName);
 			break;
 
-		case EDlgConditionType::DlgConditionBoolCall:
-		case EDlgConditionType::DlgConditionClassBoolVariable:
+		case EDlgConditionType::BoolCall:
+		case EDlgConditionType::ClassBoolVariable:
 			(bClassVariable ? ClassBoolVariableNames : BoolVariableNames).Add(VariableName);
 			break;
-		case EDlgConditionType::DlgConditionNameCall:
-		case EDlgConditionType::DlgConditionClassNameVariable:
+		case EDlgConditionType::NameCall:
+		case EDlgConditionType::ClassNameVariable:
 			(bClassVariable ? ClassNameVariableNames : NameVariableNames).Add(VariableName);
 			break;
 
@@ -87,33 +87,33 @@ void FDlgParticipantData::AddEventData(const FDlgEvent& Event)
 {
 	switch (Event.EventType)
 	{
-		case EDlgEventType::DlgEventEvent:
+		case EDlgEventType::Event:
 			Events.Add(Event.EventName);
 			break;
 
-		case EDlgEventType::DlgEventModifyInt:
+		case EDlgEventType::ModifyInt:
 			IntVariableNames.Add(Event.EventName);
 			break;
-		case EDlgEventType::DlgEventModifyFloat:
+		case EDlgEventType::ModifyFloat:
 			FloatVariableNames.Add(Event.EventName);
 			break;
-		case EDlgEventType::DlgEventModifyBool:
+		case EDlgEventType::ModifyBool:
 			BoolVariableNames.Add(Event.EventName);
 			break;
-		case EDlgEventType::DlgEventModifyName:
+		case EDlgEventType::ModifyName:
 			NameVariableNames.Add(Event.EventName);
 			break;
 
-		case EDlgEventType::DlgEventModifyClassIntVariable:
+		case EDlgEventType::ModifyClassIntVariable:
 			ClassIntVariableNames.Add(Event.EventName);
 			break;
-		case EDlgEventType::DlgEventModifyClassFloatVariable:
+		case EDlgEventType::ModifyClassFloatVariable:
 			ClassFloatVariableNames.Add(Event.EventName);
 			break;
-		case EDlgEventType::DlgEventModifyClassBoolVariable:
+		case EDlgEventType::ModifyClassBoolVariable:
 			ClassBoolVariableNames.Add(Event.EventName);
 			break;
-		case EDlgEventType::DlgEventModifyClassNameVariable:
+		case EDlgEventType::ModifyClassNameVariable:
 			ClassNameVariableNames.Add(Event.EventName);
 			break;
 
@@ -126,22 +126,22 @@ void FDlgParticipantData::AddTextArgumentData(const FDlgTextArgument& TextArgume
 {
 	switch (TextArgument.Type)
 	{
-		case EDlgTextArgumentType::DlgTextArgumentDialogueInt:
+		case EDlgTextArgumentType::DialogueInt:
 			IntVariableNames.Add(TextArgument.VariableName);
 			break;
 
-		case EDlgTextArgumentType::DlgTextArgumentClassInt:
+		case EDlgTextArgumentType::ClassInt:
 			ClassIntVariableNames.Add(TextArgument.VariableName);
 			break;
 
-		case EDlgTextArgumentType::DlgTextArgumentDialogueFloat:
+		case EDlgTextArgumentType::DialogueFloat:
 			FloatVariableNames.Add(TextArgument.VariableName);
 
-		case EDlgTextArgumentType::DlgTextArgumentClassFloat:
+		case EDlgTextArgumentType::ClassFloat:
 			ClassFloatVariableNames.Add(TextArgument.VariableName);
 			break;
 
-		case EDlgTextArgumentType::DlgTextArgumentClassText:
+		case EDlgTextArgumentType::ClassText:
 			ClassTextVariableNames.Add(TextArgument.VariableName);
 			break;
 

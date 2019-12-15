@@ -5,12 +5,11 @@
 #include "Layout/Visibility.h"
 #include "IDetailPropertyRow.h"
 
-#include "DlgDialogue.h"
 #include "DlgManager.h"
 #include "DialogueDetailsPanelUtils.h"
 
-class FTextPropertyPickList_CustomRowHelper;
-class FMultiLineEditableTextBox_CustomRowHelper;
+class FDialogueTextPropertyPickList_CustomRowHelper;
+class FDialogueMultiLineEditableTextBox_CustomRowHelper;
 
 /**
 * How the details customization panel looks for the FDlgSpeechSequenceEntry
@@ -75,38 +74,8 @@ private:
 	{
 		if (Dialogue)
 		{
-			Dialogue->RefreshData();
+			Dialogue->UpdateAndRefreshData();
 		}
-	}
-
-	// Getters for visibility of some properties
-	EVisibility GetVoiceSoundWaveVisibility() const
-	{
-		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWave ||
-			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWaveAndDialogueWave
-			   ? EVisibility::Visible : EVisibility::Hidden;
-	}
-
-	EVisibility GetVoiceDialogueWaveVisibility() const
-	{
-		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedDialogueWave ||
-			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWaveAndDialogueWave
-			   ? EVisibility::Visible : EVisibility::Hidden;
-	}
-
-	EVisibility GetSpeakerStateVisibility() const
-	{
-		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnNode ||
-			   Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnNodeAndEdge
-			   ? EVisibility::Visible : EVisibility::Hidden;
-	}
-
-	EVisibility GetGenericDataVisibility() const
-	{
-		return GetDefault<UDlgSystemSettings>()->bShowGenericData ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 private:
@@ -117,14 +86,14 @@ private:
 	TSharedPtr<IPropertyHandle> TextPropertyHandle;
 	TSharedPtr<IPropertyHandle> EdgeTextPropertyHandle;
 
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
 	IDetailPropertyRow* VoiceSoundWavePropertyRow = nullptr;
 	IDetailPropertyRow* VoiceDialogueWavePropertyRow = nullptr;
 	IDetailPropertyRow* GenericDataPropertyRow = nullptr;
 	IDetailPropertyRow* NodeDataPropertyRow = nullptr;
-	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
-	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> EdgeTextPropertyRow;
+	TSharedPtr<FDialogueMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
+	TSharedPtr<FDialogueMultiLineEditableTextBox_CustomRowHelper> EdgeTextPropertyRow;
 
 	/** Hold a reference to dialogue we are displaying. */
 	UDlgDialogue* Dialogue = nullptr;

@@ -222,7 +222,7 @@ public:
 UDialogueK2Node_Select::UDialogueK2Node_Select(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	VariableType = EDlgVariableType::DlgVariableTypeInt;
+	VariableType = EDlgVariableType::Int;
 	AdvancedPinDisplay = ENodeAdvancedPins::NoPins;
 }
 
@@ -443,7 +443,7 @@ void UDialogueK2Node_Select::GetMenuActions(FBlueprintActionDatabaseRegistrar& A
 
 FText UDialogueK2Node_Select::GetMenuCategory() const
 {
-	return LOCTEXT("DlgGetMenuCategory", "Dialogue Select");
+	return LOCTEXT("DlgGetMenuCategory", "Dialogue|Select");
 }
 
 void UDialogueK2Node_Select::PostReconstructNode()
@@ -519,7 +519,7 @@ bool UDialogueK2Node_Select::RefreshPinNames()
 	}
 
 	const FName ParticipantName = FDialogueBlueprintUtilities::GetParticipantNameFromNode(this);
-	if (ParticipantName == NAME_None && VariableType != EDlgVariableType::DlgVariableTypeSpeakerState)
+	if (ParticipantName == NAME_None && VariableType != EDlgVariableType::SpeakerState)
 	{
 		return false;
 	}
@@ -527,19 +527,19 @@ bool UDialogueK2Node_Select::RefreshPinNames()
 	TArray<FName> NewPinNames;
 	switch (VariableType)
 	{
-		case EDlgVariableType::DlgVariableTypeFloat:
+		case EDlgVariableType::Float:
 			UDlgManager::GetAllDialoguesFloatNames(ParticipantName, NewPinNames);
 			break;
 
-		case EDlgVariableType::DlgVariableTypeInt:
+		case EDlgVariableType::Int:
 			UDlgManager::GetAllDialoguesIntNames(ParticipantName, NewPinNames);
 			break;
 
-		case EDlgVariableType::DlgVariableTypeName:
+		case EDlgVariableType::Name:
 			UDlgManager::GetAllDialoguesNameNames(ParticipantName, NewPinNames);
 			break;
 
-		case EDlgVariableType::DlgVariableTypeSpeakerState:
+		case EDlgVariableType::SpeakerState:
 			UDlgManager::GetAllDialoguesSpeakerStates(NewPinNames);
 			break;
 
@@ -575,7 +575,7 @@ bool UDialogueK2Node_Select::RefreshPinNames()
 UDialogueK2Node_SelectFloat::UDialogueK2Node_SelectFloat(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	VariableType = EDlgVariableType::DlgVariableTypeFloat;
+	VariableType = EDlgVariableType::Float;
 }
 
 FText UDialogueK2Node_SelectFloat::GetTooltipText() const
@@ -593,7 +593,7 @@ FText UDialogueK2Node_SelectFloat::GetNodeTitle(ENodeTitleType::Type TitleType) 
 UDialogueK2Node_SelectName::UDialogueK2Node_SelectName(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	VariableType = EDlgVariableType::DlgVariableTypeName;
+	VariableType = EDlgVariableType::Name;
 }
 
 FText UDialogueK2Node_SelectName::GetTooltipText() const
@@ -611,7 +611,7 @@ FText UDialogueK2Node_SelectName::GetNodeTitle(ENodeTitleType::Type TitleType) c
 UDialogueK2Node_SelectOnSpeakerState::UDialogueK2Node_SelectOnSpeakerState(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	VariableType = EDlgVariableType::DlgVariableTypeSpeakerState;
+	VariableType = EDlgVariableType::SpeakerState;
 }
 
 FText UDialogueK2Node_SelectOnSpeakerState::GetTooltipText() const

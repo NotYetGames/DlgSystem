@@ -8,6 +8,8 @@
 #include <functional>
 
 
+class UDlgSystemSettings;
+
 // Const version of FScriptArrayHelper
 class FDlgConstScriptArrayHelper : public FScriptArrayHelper
 {
@@ -182,6 +184,33 @@ class DLGSYSTEM_API FDlgHelper
 {
 	typedef FDlgHelper Self;
 public:
+	FORCEINLINE static int64 RandomInt64() { return static_cast<int64>(FMath::Rand()) << 32 | FMath::Rand(); }
+	FORCEINLINE static bool IsFloatEqual(const float A, const float B) { return FMath::IsNearlyEqual(A, B, KINDA_SMALL_NUMBER); }
+	FORCEINLINE static bool IsPathInProjectDirectory(const FString& Path) { return Path.StartsWith("/Game");  }
+
+	static FString GetFullNameFromObject(const UObject* Object)
+	{
+		if (!IsValid(Object))
+		{
+			return TEXT("nullptr");
+		}
+		return Object->GetFullName();
+	}
+
+	static FString GetClassNameFromObject(const UObject* Object)
+	{
+		if (!IsValid(Object))
+		{
+			return TEXT("INVALID CLASS");
+		}
+		return Object->GetClass()->GetName();
+	}
+
+	// FileSystem
+	static bool DeleteFile(const FString& PathName, bool bVerbose = true);
+	static bool RenameFile(const FString& OldPathName, const FString& NewPathName, bool bOverWrite = false, bool bVerbose = true);
+	
+	
 	// Is FirstSet == SecondSet
 	// NOTE for SetType = float this won't work, what are you even doing?
 	template <typename SetType>

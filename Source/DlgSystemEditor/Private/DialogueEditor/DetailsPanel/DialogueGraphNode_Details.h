@@ -9,8 +9,8 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueDetailsPanelUtils.h"
 
-class FTextPropertyPickList_CustomRowHelper;
-class FMultiLineEditableTextBox_CustomRowHelper;
+class FDialogueTextPropertyPickList_CustomRowHelper;
+class FDialogueMultiLineEditableTextBox_CustomRowHelper;
 
 /**
  * How the details customization panel looks for UDialogueGraphNode object
@@ -27,8 +27,13 @@ public:
 	// IDetailCustomization interface
 	/** Called when details should be customized */
 	void CustomizeDetails(IDetailLayoutBuilder& DetailBuilder) override;
+	
 private:
+	/** Handler for when the text is changed */
+	void HandleTextCommitted(const FText& InText, ETextCommit::Type CommitInfo);
+	void HandleTextChanged(const FText& InText);
 
+	
 	/** Gets the ParticipantNames from all Dialogues. */
 	TArray<FName> GetAllDialoguesParticipantNames() const
 	{
@@ -54,47 +59,17 @@ private:
 	/** Handler for when text in the editable text box changed */
 	void HandleParticipantTextCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo)
 	{
-		Dialogue->RefreshData();
+		Dialogue->UpdateAndRefreshData();
 	}
 
 	/** Handler for when the speaker state is changed */
 	void HandleSpeakerStateCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo)
 	{
-		Dialogue->RefreshData();
+		Dialogue->UpdateAndRefreshData();
 	}
 
 	// The IsVirtualParent property changed
 	void OnIsVirtualParentChanged();
-
-	// Getters for visibility of some properties
-	EVisibility GetVoiceSoundWaveVisibility() const
-	{
-		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWave ||
-			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWaveAndDialogueWave
-			   ? EVisibility::Visible : EVisibility::Hidden;
-	}
-
-	EVisibility GetVoiceDialogueWaveVisibility() const
-	{
-		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedDialogueWave ||
-			   Settings->DialogueDisplayedVoiceFields == EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWaveAndDialogueWave
-			   ? EVisibility::Visible : EVisibility::Hidden;
-	}
-
-	EVisibility GetGenericDataVisibility() const
-	{
-		return GetDefault<UDlgSystemSettings>()->bShowGenericData ? EVisibility::Visible : EVisibility::Hidden;
-	}
-
-	EVisibility GetSpeakerStateVisibility() const
-	{
-		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnNode ||
-			   Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::DlgShowOnNodeAndEdge
-			   ? EVisibility::Visible : EVisibility::Hidden;
-	}
 
 private:
 	/** Hold the reference to the Graph Node this represents */
@@ -106,9 +81,10 @@ private:
 	TSharedPtr<IPropertyHandle> TextPropertyHandle;
 
 	// Property rows
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
-	TSharedPtr<FMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
+	TSharedPtr<FDialogueMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
+	IDetailPropertyRow* NodeDataPropertyRow = nullptr;
 	IDetailPropertyRow* VoiceSoundWavePropertyRow = nullptr;
 	IDetailPropertyRow* VoiceDialogueWavePropertyRow = nullptr;
 	IDetailPropertyRow* GenericDataPropertyRow = nullptr;

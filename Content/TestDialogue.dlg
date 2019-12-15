@@ -1,11 +1,11 @@
-DlgVersion 7
+DlgVersion 8
 DlgName "TestDialogue"
 DlgGuid {  A -743047120 B 1156639802 C 1124860857 D 1676713096 }
 Node_Speech StartNode
 {
+	bIsVirtualParent False
 	Text ""
 	SpeakerState "None"
-	bIsVirtualParent False
 	OwnerName "None"
 	bCheckChildrenOnEvaluation False
 	NodeData ""
@@ -14,8 +14,8 @@ Node_Speech StartNode
 	GenericData ""
 	Children
 	{
-		{  TargetIndex 0 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True }
-		{  TargetIndex 1 Text "" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True }
+		{  TargetIndex 0 SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True Text "Next Remapped" }
+		{  TargetIndex 1 SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True Text "" }
 	}
 }
 DlgParticipantClasses
@@ -28,48 +28,48 @@ Node Nodes
 	// 0
 	Node_Speech 
 	{
+		bIsVirtualParent False
 		Text "I can talk!"
 		SpeakerState "None"
-		bIsVirtualParent False
 		OwnerName "TestOwner"
 		bCheckChildrenOnEvaluation False
 		NodeData ""
 		VoiceSoundWave ""
 		VoiceDialogueWave ""
 		GenericData ""
-		EnterConditions { {  Strength "EDlgConditionStrength::DlgConditionStrengthStrong" ConditionType "EDlgConditionType::DlgConditionIntCall" ParticipantName "None" CallbackName "NodeVariable" Operation "EDlgOperation::DlgEqual" CompareType "EDlgCompareType::DlgCompareToConst" OtherParticipantName "None" OtherVariableName "None" IntValue 0 FloatValue 0.0 NameValue "None" bBoolValue True bLongTermMemory True } }
-		EnterEvents { {  ParticipantName "None" EventType "EDlgEventType::DlgEventModifyInt" EventName "NodeVariable" IntValue 0 FloatValue 0.0 NameValue "None" bDelta False bValue False } }
+		EnterConditions { {  Strength "EDlgConditionStrength::Strong" ConditionType "EDlgConditionType::IntCall" ParticipantName "None" CallbackName "NodeVariable" Operation "EDlgOperation::Equal" CompareType "EDlgCompare::ToConst" OtherParticipantName "None" OtherVariableName "None" IntValue 0 FloatValue 0.0 NameValue "None" bBoolValue True bLongTermMemory True } }
+		EnterEvents { {  ParticipantName "None" EventType "EDlgEventType::ModifyInt" EventName "NodeVariable" IntValue 0 FloatValue 0.0 NameValue "None" bDelta False bValue False } }
 		Children
 		{
 			{
 				TargetIndex 2
-				Text "Next"
 				SpeakerState "None"
 				bIncludeInAllOptionListIfUnsatisfied True
-				Conditions { {  Strength "EDlgConditionStrength::DlgConditionStrengthStrong" ConditionType "EDlgConditionType::DlgConditionIntCall" ParticipantName "None" CallbackName "EdgeVariable" Operation "EDlgOperation::DlgEqual" CompareType "EDlgCompareType::DlgCompareToConst" OtherParticipantName "None" OtherVariableName "None" IntValue 100 FloatValue 0.0 NameValue "None" bBoolValue True bLongTermMemory True } }
+				Text "Next Remapped"
+				Conditions { {  Strength "EDlgConditionStrength::Strong" ConditionType "EDlgConditionType::IntCall" ParticipantName "None" CallbackName "EdgeVariable" Operation "EDlgOperation::Equal" CompareType "EDlgCompare::ToConst" OtherParticipantName "None" OtherVariableName "None" IntValue 100 FloatValue 0.0 NameValue "None" bBoolValue True bLongTermMemory True } }
 			}
 		}
 	}
 	// 1
 	Node_Speech 
 	{
+		bIsVirtualParent False
 		Text "Meow. Yeah I can speak too"
 		SpeakerState "None"
-		bIsVirtualParent False
 		OwnerName "Cat"
 		bCheckChildrenOnEvaluation False
 		NodeData ""
 		VoiceSoundWave ""
 		VoiceDialogueWave ""
 		GenericData ""
-		Children { {  TargetIndex 2 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+		Children { {  TargetIndex 2 SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True Text "Next Remapped" } }
 	}
 	// 2
 	Node_Speech 
 	{
+		bIsVirtualParent False
 		Text "You don't say?"
 		SpeakerState "None"
-		bIsVirtualParent False
 		OwnerName "TestOwner"
 		bCheckChildrenOnEvaluation False
 		NodeData ""
@@ -78,10 +78,10 @@ Node Nodes
 		GenericData ""
 		EnterEvents
 		{
-			{  ParticipantName "None" EventType "EDlgEventType::DlgEventModifyInt" EventName "DefaultValue" IntValue 0 FloatValue 0.0 NameValue "None" bDelta False bValue False }
-			{  ParticipantName "None" EventType "EDlgEventType::DlgEventModifyInt" EventName "Default" IntValue 0 FloatValue 0.0 NameValue "None" bDelta False bValue False }
+			{  ParticipantName "None" EventType "EDlgEventType::ModifyInt" EventName "DefaultValue" IntValue 0 FloatValue 0.0 NameValue "None" bDelta False bValue False }
+			{  ParticipantName "None" EventType "EDlgEventType::ModifyInt" EventName "Default" IntValue 0 FloatValue 0.0 NameValue "None" bDelta False bValue False }
 		}
-		Children { {  TargetIndex 3 Text "Finish" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+		Children { {  TargetIndex 3 SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True Text "Finish" } }
 	}
 	// 3
 	Node_End 

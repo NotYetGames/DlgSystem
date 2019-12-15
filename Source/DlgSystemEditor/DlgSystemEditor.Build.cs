@@ -31,10 +31,10 @@ public class DlgSystemEditor : ModuleRules
 			});
 
 
-        string PrivateDirectory = Path.Combine(ModuleDirectory, "Private");
-        PrivateIncludePaths.AddRange(
+		string PrivateDirectory = Path.Combine(ModuleDirectory, "Private");
+		PrivateIncludePaths.AddRange(
 			new string[] {
-                PrivateDirectory,
+				PrivateDirectory,
 				Path.Combine(PrivateDirectory, "Commandlets")
 				// ... add other private include paths required here ...
 			});

@@ -67,7 +67,7 @@ void UDialogueK2Node_SwitchDialogueCallback::GetMenuActions(FBlueprintActionData
 
 FText UDialogueK2Node_SwitchDialogueCallback::GetMenuCategory() const
 {
-	return LOCTEXT("DlgCallbackSwitch_MenuCategory", "Dialogue Switch");
+	return LOCTEXT("DlgCallbackSwitch_MenuCategory", "Dialogue|Switch");
 }
 
 void UDialogueK2Node_SwitchDialogueCallback::CreateSelectionPin()
@@ -180,27 +180,27 @@ bool UDialogueK2Node_SwitchDialogueCallback::RefreshPinNames()
 	TArray<FName> NewPinNames;
 	switch (CallbackType)
 	{
-		case EDlgDialogueCallback::DlgEvent:
+		case EDlgDialogueCallback::Event:
 			UDlgManager::GetAllDialoguesEventNames(ParticipantName, NewPinNames);
 			break;
 
-		case EDlgDialogueCallback::DlgCondition:
+		case EDlgDialogueCallback::Condition:
 			UDlgManager::GetAllDialoguesConditionNames(ParticipantName, NewPinNames);
 			break;
 
-		case EDlgDialogueCallback::DlgFloatValue:
+		case EDlgDialogueCallback::FloatValue:
 			UDlgManager::GetAllDialoguesFloatNames(ParticipantName, NewPinNames);
 			break;
 
-		case EDlgDialogueCallback::DlgIntValue:
+		case EDlgDialogueCallback::IntValue:
 			UDlgManager::GetAllDialoguesIntNames(ParticipantName, NewPinNames);
 			break;
 
-		case EDlgDialogueCallback::DlgBoolValue:
+		case EDlgDialogueCallback::BoolValue:
 			UDlgManager::GetAllDialoguesBoolNames(ParticipantName, NewPinNames);
 			break;
 
-		case EDlgDialogueCallback::DlgNameValue:
+		case EDlgDialogueCallback::NameValue:
 			UDlgManager::GetAllDialoguesNameNames(ParticipantName, NewPinNames);
 			break;
 

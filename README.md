@@ -22,35 +22,54 @@ Not yet convinced? Have you seen our [`showcase page`](https://gitlab.com/NotYet
 
 ## General Information
 
+This plugin is primary developed and used for our own [game (WarriOrb)](http://www.warriorb.com).
+We have put significant effort into it and decided to make it open source in order to help out other teams facing similar challenges.
+
+Contribution, feedback and constructive criticism are appreciated and we would be really happy to hear about your game using our tool.
+
+See [Support](#support) for how to support this project.
+
 See the [Wiki](https://gitlab.com/NotYetGames/DlgSystem/wikis/home) for the manual and tutorials.
 
 [DlgSystemExample project](https://gitlab.com/NotYetGames/DlgSystemExample/tree/4.23) is also provided.
 
-This plugin is primary developed and used for our own [game](http://www.warriorb.com).
-We have put significant effort into it and decided to make it open source in order to help out other teams facing similar challenges.
-Contribution, feedback and constructive criticism are appreciated and we would be really happy to hear about your game using our tool.
-Should it prove useful to you, the best way to say thanks is to mention us and our game to your own audience.
-
 Brought to you by Not Yet:
-* Discord: https://discord.notyet.eu
-* Website: [notyet.eu](http://www.notyet.eu)
+* Discord: https://discord.gg/NotYet
+* Website: [warriorb.com](http://www.warriorb.com)
 * Twitter: https://twitter.com/NotYetDevs
 * [Plugin Forum post](https://forums.unrealengine.com/community/community-content-tools-and-tutorials/1424923-open-source-dialogue-system-plugin)
 * [Plugin Marketplace](https://www.unrealengine.com/marketplace/not-yet-dialogue-system)
 
+## Support
+
+NOTE: that initially the plugin was free on the marketplace but later we switched to a small fee because maintaining all of the binary versions for different engine targets took a lot of time, consider buying the plugin on the marketplace as a donation :).
+
+### Buy us some tea/coffee
+
+You can buy [this plugin](https://www.unrealengine.com/marketplace/not-yet-dialogue-system) or our other plugins on the [unreal engine marketplace](https://www.unrealengine.com/marketplace/en-US/profile/Not+Yet) and always get binary support for the latest 3 engine versions.
+
+Or you can just donate for that cup of tea/coffee :):
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MMCAD7TZL8N48&source=url)
+
+### Spread the word
+
+Should it prove useful to you, the best way to say thanks is to mention us and our game to your own audience.
 
 ## Modules dependency
+
 ```mermaid
 graph TD;
     A[DlgSystemEditor]-->B[UnrealEd];
     A-->C[DlgSystem];
     C-. WITH_EDITOR .->B;
-    C-. WITH_EDITOR using IDlgDialogueEditorModule .->A
+    C-. WITH_EDITOR using IDlgDialogueEditorAccess .->A
 ```
 
 ## Conventions
 
 ### Branches
+
 The supported unreal versions have their own branches.
 The outdated version branches are kept but not updated anymore.
 

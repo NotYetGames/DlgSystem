@@ -3,6 +3,8 @@
 
 #include "DlgContextInternal.h"
 #include "DlgSystemPrivatePCH.h"
+#include "Logging/DlgLogger.h"
+#include "DlgLocalizationHelper.h"
 
 #if WITH_EDITOR
 void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -10,42 +12,47 @@ void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
 	const FName PropertyName = PropertyChangedEvent.Property != nullptr ? PropertyChangedEvent.Property->GetFName() : NAME_None;
-	const bool bTextChanged = PropertyName == UDlgNode_Speech::GetMemberNameText();
-	// rebuild text arguments
-	if (bTextChanged || PropertyName == UDlgNode_Speech::GetMemberNameTextArguments())
-	{
-		RebuildTextArguments();
+	const bool bTextChanged = PropertyName == GetMemberNameText();
 
-		if (bTextChanged)
-		{
-			// TODO: maybe store key in preeditchangeproperty to preserve it?!
-			UpdateTextNamespace(Text);
-		}
+	// rebuild text arguments
+	if (bTextChanged || PropertyName == GetMemberNameTextArguments())
+	{
+		RebuildTextArguments(true);
 	}
 }
 
 #endif
 
-void UDlgNode_Speech::RebuildTextArguments()
+void UDlgNode_Speech::UpdateTextsValuesFromDefaultsAndRemappings(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
 {
-	FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments);
-	ConstructedText = Text;
+	FDlgLocalizationHelper::UpdateTextFromRemapping(Settings, Text);
+	Super::UpdateTextsValuesFromDefaultsAndRemappings(Settings, bEdges, bUpdateGraphNode);
+}
+
+void UDlgNode_Speech::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
+{
+	FDlgLocalizationHelper::UpdateTextNamespaceAndKey(GetOuter(), Settings, Text);
+	Super::UpdateTextsNamespacesAndKeys(Settings, bEdges, bUpdateGraphNode);
+}
+
+void UDlgNode_Speech::RebuildConstructedText(const UDlgContextInternal* DlgContext)
+{
+	if (TextArguments.Num() <= 0)
+	{
+		return;
+	}
+
+	FFormatNamedArguments OrderedArguments;
+	for (const FDlgTextArgument& DlgArgument : TextArguments)
+	{
+		OrderedArguments.Add(DlgArgument.DisplayString, DlgArgument.ConstructFormatArgumentValue(DlgContext, OwnerName));
+	}
+	ConstructedText = FText::AsCultureInvariant(FText::Format(Text, OrderedArguments));
 }
 
 bool UDlgNode_Speech::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
-	if (TextArguments.Num() > 0)
-	{
-		FFormatNamedArguments OrderedArguments;
-
-		for (const FDlgTextArgument& DlgArgument : TextArguments)
-		{
-			OrderedArguments.Add(DlgArgument.DisplayString, DlgArgument.ConstructFormatArgumentValue(DlgContext, OwnerName));
-		}
-
-		ConstructedText = FText::Format(Text, OrderedArguments);
-	}
-
+	RebuildConstructedText(DlgContext);
 	return Super::HandleNodeEnter(DlgContext, NodesEnteredWithThisStep);
 }
 
@@ -60,8 +67,10 @@ bool UDlgNode_Speech::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<c
 		// stop endless loop
 		if (AlreadyEvaluated.Contains(this))
 		{
-			UE_LOG(LogDlgSystem, Warning, TEXT("Endless loop detected in ReevaluateChildren call: a virtual parent became his own parent!"
-												"This is not supposed to happen, the dialogue is terminated!"));
+			FDlgLogger::Get().Warning(
+				TEXT("Endless loop detected in ReevaluateChildren call: a virtual parent became his own parent!"
+							"This is not supposed to happen, the dialogue is terminated!")
+			);
 			return false;
 		}
 

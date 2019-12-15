@@ -63,7 +63,7 @@ public:
 	static bool GetBoundsForSelectedNodes(const UEdGraph* Graph, class FSlateRect& Rect, float Padding = 0.0f);
 
 	/** Refreshes the details panel for the editor of the specified Graph. */
-	static void RefreshDetailsView(const UEdGraph* Graph);
+	static void RefreshDetailsView(const UEdGraph* Graph, bool bRestorePreviousSelection);
 
 	/** Useful for setting the last target edge on drap operations. */
 	static UDialogueGraphNode_Edge* GetLastTargetGraphEdgeBeforeDrag(const UEdGraph* Graph);
@@ -188,7 +188,7 @@ public:
 
 	/**
 	 * Replaces all references to old Node indices from the provided GraphNodes with new indices.
-	 * This can happen inside Conditions of type DlgConditionNodeVisited and DlgConditionHasSatisfiedChild because the NodeIndex is a weak reference.
+	 * This can happen inside Conditions of type WasNodeVisited and HasSatisfiedChild because the NodeIndex is a weak reference.
 	 *
 	 * @param	GraphNodes			The nodes we are replacing the old references
 	 * @param	OldToNewIndexMap	Map that tells us the mapping from old index to new index. Maps from old index -> new index

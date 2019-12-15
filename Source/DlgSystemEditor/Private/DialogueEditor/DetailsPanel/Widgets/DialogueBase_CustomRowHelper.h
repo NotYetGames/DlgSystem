@@ -9,39 +9,39 @@ class FDetailWidgetRow;
  * Base class for all Custom Row Helpers.
  * Makes sure that the ToolTips and Display Names are in sync with the PropertyHandle and the SWidget that is represented by.
  */
-class FBase_CustomRowHelper
+class FDialogueBase_CustomRowHelper
 {
-	typedef FBase_CustomRowHelper Self;
+	typedef FDialogueBase_CustomRowHelper Self;
 public:
-	FBase_CustomRowHelper(FDetailWidgetRow* InDetailWidgetRow, const TSharedPtr<IPropertyHandle>& InPropertyHandle);
-	virtual ~FBase_CustomRowHelper() {}
+	FDialogueBase_CustomRowHelper(FDetailWidgetRow* InDetailWidgetRow, const TSharedPtr<IPropertyHandle>& InPropertyHandle);
+	virtual ~FDialogueBase_CustomRowHelper() {}
 
 	/** Sets the localized display name of the property. */
-	Self* SetDisplayName(const FText& InDisplayName)
+	Self& SetDisplayName(const FText& InDisplayName)
 	{
 		DisplayName = InDisplayName;
-		return this;
+		return *this;
 	}
 
 	/** Sets the localized tooltip of the property. */
-	Self* SetToolTip(const FText& InToolTip)
+	Self& SetToolTip(const FText& InToolTip)
 	{
 		ToolTip = InToolTip;
-		return this;
+		return *this;
 	}
 
 	/** Sets the visibility of this property. */
-	Self* SetVisibility(const TAttribute<EVisibility>& InVisibility)
+	Self& SetVisibility(const TAttribute<EVisibility>& InVisibility)
 	{
 		DetailWidgetRow->Visibility(InVisibility);
-		return this;
+		return *this;
 	}
 
 	/** Set the optional utils */
-	Self* SetPropertyUtils(const TSharedPtr<IPropertyUtilities>& Utils)
+	Self& SetPropertyUtils(const TSharedPtr<IPropertyUtilities>& Utils)
 	{
 		PropertyUtils = Utils;
-		return this;
+		return *this;
 	}
 
 	/** Update the full property row. */

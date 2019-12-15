@@ -2,6 +2,7 @@
 #include "Nodes/DlgNode_Selector.h"
 #include "DlgSystemPrivatePCH.h"
 #include "DlgContextInternal.h"
+#include "Logging/DlgLogger.h"
 
 
 bool UDlgNode_Selector::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)
@@ -11,16 +12,19 @@ bool UDlgNode_Selector::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<co
 
 	if (NodesEnteredWithThisStep.Contains(this))
 	{
-		UE_LOG(LogDlgSystem, Warning, TEXT("Failed to enter selector node: it was entered multiple times in a single step."
-										    "Theoretically with some condition magic it could make sense, but chances are that it is an endless loop,"
-											"thus entering the same selector twice with a single step is not supported. Dialogue is terminated!"));
+		FDlgLogger::Get().Warning(
+			TEXT("Failed to enter selector node: it was entered multiple times in a single step."
+					"Theoretically with some condition magic it could make sense, but chances are that it is an endless loop,"
+					"thus entering the same selector twice with a single step is not supported. Dialogue is terminated!")
+		);
+
 		return false;
 	}
 	NodesEnteredWithThisStep.Add(this);
 
 	switch (SelectorType)
 	{
-	case EDlgNodeSelectorType::DlgNodeSelectorFirst:
+	case EDlgNodeSelectorType::First:
 		{
 			// Find first child with satisfies conditions
 			for (const FDlgEdge& Edge : Children)
@@ -30,7 +34,7 @@ bool UDlgNode_Selector::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<co
 			break;
 		}
 
-	case EDlgNodeSelectorType::DlgNodeSelectorRandom:
+	case EDlgNodeSelectorType::Random:
 		{
 			// Build the list of all valid children
 			TArray<int32> Candidates;
@@ -51,6 +55,6 @@ bool UDlgNode_Selector::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<co
 		checkNoEntry();
 	}
 
-	UE_LOG(LogDlgSystem, Warning, TEXT("Dialogue stucked: selector node entered, no satisfied child!"));
+	FDlgLogger::Get().Warningf(TEXT("Dialogue = %s got stuck: selector node entered, no satisfied child!"), *DlgContext->GetDialoguePathName());
 	return false;
 }

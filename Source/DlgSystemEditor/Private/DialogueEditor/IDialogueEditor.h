@@ -19,10 +19,10 @@ public:
 	virtual bool GetBoundsForSelectedNodes(class FSlateRect& Rect, float Padding) const = 0;
 
 	/** Refreshes the details panel with the Dialogue */
-	virtual void RefreshDetailsView() = 0;
+	virtual void RefreshDetailsView(bool bRestorePreviousSelection) = 0;
 
 	/** Refresh the viewport and property/details panel. */
-	virtual void Refresh() = 0;
+	virtual void Refresh(bool bRestorePreviousSelection) = 0;
 
 	/** Useful for setting the last target node on drop operations. */
 	virtual UDialogueGraphNode_Edge* GetLastTargetGraphEdgeBeforeDrag() const = 0;

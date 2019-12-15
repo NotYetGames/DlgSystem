@@ -14,6 +14,7 @@
 #include "Nodes/DlgNode_SpeechSequence.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DlgCommandletHelper.h"
+#include "DlgHelper.h"
 
 
 DEFINE_LOG_CATEGORY(LogDlgExportTwineCommandlet);
@@ -108,7 +109,7 @@ int32 UDlgExportTwineCommandlet::Main(const FString& Params)
 		FString DialoguePath = OriginalDialoguePath;
 
 		// Only export game dialogues
-		if (!FDlgCommandletHelper::IsDialoguePathInProjectDirectory(DialoguePath))
+		if (!FDlgHelper::IsPathInProjectDirectory(DialoguePath))
 		{
 			UE_LOG(LogDlgExportTwineCommandlet, Warning, TEXT("Dialogue = `%s` is not in the game directory, ignoring"), *DialoguePath);
 			continue;
@@ -416,7 +417,15 @@ FString UDlgExportTwineCommandlet::CreateTwinePassageDataLinksFromEdges(const UD
 			continue;
 		}
 
-		const FString EdgeText = bNoTextOnEdges || Edge.Text.IsEmpty() ? FString::Printf(TEXT("~ignore~ To Node %d"), Edge.TargetIndex) : EscapeHtml(Edge.Text.ToString());
+		FString EdgeText;
+		if (bNoTextOnEdges || Edge.GetUnformattedText().IsEmpty())
+		{
+			EdgeText = FString::Printf(TEXT("~ignore~ To Node %d"), Edge.TargetIndex);
+		}
+		else
+		{
+			EdgeText = EscapeHtml(Edge.GetUnformattedText().ToString());
+		}
 		Links += FString::Printf(TEXT("[[%s|%s]]\n"), *EdgeText, *GetNodeNameFromNode(*Nodes[Edge.TargetIndex], Edge.TargetIndex, false));
 	}
 	Links.RemoveFromEnd(TEXT("\n"));

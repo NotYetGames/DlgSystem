@@ -7,18 +7,19 @@
 #include "DlgDialogueParticipant.h"
 #include "DlgMemory.h"
 #include "Engine/Texture2D.h"
+#include "Logging/DlgLogger.h"
 
 bool UDlgContext::ChooseChildBasedOnAllOptionIndex(int32 Index)
 {
 	if (!AllChildren.IsValidIndex(Index))
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("Invalid index %d in UDlgContext::ChooseChildBasedOnAllOptionIndex!"), Index);
+		FDlgLogger::Get().Errorf(TEXT("Invalid index %d in UDlgContext::ChooseChildBasedOnAllOptionIndex!"), Index);
 		return false;
 	}
 
 	if (!AllChildren[Index].bSatisfied)
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("Index %d is an unsatisfied edge! (UDlgContext::ChooseChildBasedOnAllOptionIndex!) Call failed!"), Index);
+		FDlgLogger::Get().Errorf(TEXT("Index %d is an unsatisfied edge! (UDlgContext::ChooseChildBasedOnAllOptionIndex!) Call failed!"), Index);
 		return false;
 	}
 
@@ -40,11 +41,11 @@ const FText& UDlgContext::GetOptionText(int32 OptionIndex) const
 
 	if (!AvailableChildren.IsValidIndex(OptionIndex))
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("Invalid option = %d in GetOptionText!"), OptionIndex);
+		FDlgLogger::Get().Errorf(TEXT("Invalid option = %d in GetOptionText!"), OptionIndex);
 		return FText::GetEmpty();
 	}
 
-	return AvailableChildren[OptionIndex]->GetEdgeText();
+	return AvailableChildren[OptionIndex]->GetText();
 }
 
 FName UDlgContext::GetOptionSpeakerState(int32 OptionIndex) const
@@ -53,7 +54,7 @@ FName UDlgContext::GetOptionSpeakerState(int32 OptionIndex) const
 
 	if (!AvailableChildren.IsValidIndex(OptionIndex))
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("Invalid option = %d in GetOptionSpeakerState!"), OptionIndex);
+		FDlgLogger::Get().Errorf(TEXT("Invalid option = %d in GetOptionSpeakerState!"), OptionIndex);
 		return NAME_None;
 	}
 
@@ -66,7 +67,7 @@ const FDlgEdge& UDlgContext::GetOption(int32 OptionIndex) const
 
 	if (!AvailableChildren.IsValidIndex(OptionIndex))
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("Invalid option index %d in GetOption!"), OptionIndex);
+		FDlgLogger::Get().Errorf(TEXT("Invalid option index %d in GetOption!"), OptionIndex);
 		return FDlgEdge::GetInvalidEdge();
 	}
 
@@ -79,11 +80,11 @@ const FText& UDlgContext::GetOptionTextFromAll(int32 Index) const
 
 	if (!AllChildren.IsValidIndex(Index))
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("Invalid option = %d in GetOptionTextFromAll!"), Index);
+		FDlgLogger::Get().Errorf(TEXT("Invalid option = %d in GetOptionTextFromAll!"), Index);
 		return FText::GetEmpty();
 	}
 
-	return AllChildren[Index].EdgePtr->GetEdgeText();
+	return AllChildren[Index].EdgePtr->GetText();
 }
 
 bool UDlgContext::IsOptionSatisfied(int32 Index) const
@@ -92,7 +93,7 @@ bool UDlgContext::IsOptionSatisfied(int32 Index) const
 
 	if (!AllChildren.IsValidIndex(Index))
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("Invalid option index %d in IsOptionSatisfied!"), Index);
+		FDlgLogger::Get().Errorf(TEXT("Invalid option index %d in IsOptionSatisfied!"), Index);
 		return false;
 	}
 
@@ -105,7 +106,7 @@ FName UDlgContext::GetOptionSpeakerStateFromAll(int32 Index) const
 
 	if (!AllChildren.IsValidIndex(Index))
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("Invalid option = %d in GetOptionSpeakerStateFromAll!"), Index);
+		FDlgLogger::Get().Errorf(TEXT("Invalid option = %d in GetOptionSpeakerStateFromAll!"), Index);
 		return NAME_None;
 	}
 
@@ -118,7 +119,7 @@ const FDlgEdge& UDlgContext::GetOptionFromAll(int32 Index) const
 
 	if (!AvailableChildren.IsValidIndex(Index))
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("Invalid option index %d in GetOptionFromAll!"), Index);
+		FDlgLogger::Get().Errorf(TEXT("Invalid option index %d in GetOptionFromAll!"), Index);
 		return FDlgEdge::GetInvalidEdge();
 	}
 
@@ -137,7 +138,7 @@ const FText& UDlgContext::GetActiveNodeText() const
 	return Node->GetNodeText();
 }
 
-FName UDlgContext::GetActiveSpeakerState() const
+FName UDlgContext::GetActiveNodeSpeakerState() const
 {
 	const UDlgNode* Node = GetActiveNode();
 	if (!IsValid(Node))
@@ -192,7 +193,7 @@ UDlgNodeData* UDlgContext::GetActiveNodeData() const
 	return Node->GetNodeData();
 }
 
-UTexture2D* UDlgContext::GetActiveParticipantIcon() const
+UTexture2D* UDlgContext::GetActiveNodeParticipantIcon() const
 {
 	if (!IsValid(Dialogue))
 	{
@@ -215,7 +216,7 @@ UTexture2D* UDlgContext::GetActiveParticipantIcon() const
 	return IDlgDialogueParticipant::Execute_GetParticipantIcon(*Item, SpeakerName, Node->GetSpeakerState());
 }
 
-UObject* UDlgContext::GetActiveParticipant() const
+UObject* UDlgContext::GetActiveNodeParticipant() const
 {
 	if (!IsValid(Dialogue))
 	{
@@ -232,7 +233,7 @@ UObject* UDlgContext::GetActiveParticipant() const
 	return Item == nullptr ? nullptr : *Item;
 }
 
-FName UDlgContext::GetActiveParticipantName() const
+FName UDlgContext::GetActiveNodeParticipantName() const
 {
 	if (!IsValid(Dialogue))
 	{
@@ -269,7 +270,7 @@ bool UDlgContext::IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory, 
 	{
 		if (!AvailableChildren.IsValidIndex(Index))
 		{
-			UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToVisitedNode failed - invalid index %d"), Index);
+			FDlgLogger::Get().Errorf(TEXT("UDlgContext::IsEdgeConnectedToVisitedNode failed - invalid index %d"), Index);
 			return false;
 		}
 		TargetIndex = AvailableChildren[Index]->TargetIndex;
@@ -278,7 +279,7 @@ bool UDlgContext::IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory, 
 	{
 		if (!AllChildren.IsValidIndex(Index))
 		{
-			UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToVisitedNode failed - invalid index %d"), Index);
+			FDlgLogger::Get().Errorf(TEXT("UDlgContext::IsEdgeConnectedToVisitedNode failed - invalid index %d"), Index);
 			return false;
 		}
 		TargetIndex = AllChildren[Index].EdgePtr->TargetIndex;
@@ -291,7 +292,7 @@ bool UDlgContext::IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory, 
 	
 	if (Dialogue == nullptr)
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToVisitedNode called, but the context does not have a valid dialogue!"));
+		FDlgLogger::Get().Errorf(TEXT("UDlgContext::IsEdgeConnectedToVisitedNode called, but the context does not have a valid dialogue!"), Index);
 		return false;
 	}
 
@@ -307,7 +308,7 @@ bool UDlgContext::IsEdgeConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisf
 	{
 		if (!AvailableChildren.IsValidIndex(Index))
 		{
-			UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToEndNode failed - invalid index %d"), Index);
+			FDlgLogger::Get().Errorf(TEXT("UDlgContext::IsEdgeConnectedToEndNode failed - AvailableChildren invalid index %d"), Index);
 			return false;
 		}
 		TargetIndex = AvailableChildren[Index]->TargetIndex;
@@ -316,7 +317,7 @@ bool UDlgContext::IsEdgeConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisf
 	{
 		if (!AllChildren.IsValidIndex(Index))
 		{
-			UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToEndNode failed - invalid index %d"), Index);
+			FDlgLogger::Get().Errorf(TEXT("UDlgContext::IsEdgeConnectedToEndNode failed - AllChildren invalid index %d"), Index);
 			return false;
 		}
 		TargetIndex = AllChildren[Index].EdgePtr->TargetIndex;
@@ -324,7 +325,7 @@ bool UDlgContext::IsEdgeConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisf
 
 	if (Dialogue == nullptr)
 	{
-		UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToEndNode called, but the context does not have a valid dialogue!"));
+		FDlgLogger::Get().Error(TEXT("UDlgContext::IsEdgeConnectedToEndNode called, but the context does not have a valid dialogue!"));
 		return false;
 	}
 
@@ -335,7 +336,7 @@ bool UDlgContext::IsEdgeConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisf
 		return Cast<UDlgNode_End>(Nodes[TargetIndex]) != nullptr;
 	}
 
-	UE_LOG(LogDlgSystem, Error, TEXT("UDlgContext::IsEdgeConnectedToEndNode called, but the examined edge does not point to a valid node!"));
+	FDlgLogger::Get().Error(TEXT("UDlgContext::IsEdgeConnectedToEndNode called, but the examined edge does not point to a valid node!"));
 	return false;
 }
 

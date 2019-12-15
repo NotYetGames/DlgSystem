@@ -132,8 +132,7 @@ public:
 	/** Sets the DialogueEdge.Text */
 	void SetDialogueEdgeText(const FText& InText)
 	{
-		DialogueEdge.Text = InText;
-		DialogueEdge.RebuildTextArgumentsArray();
+		DialogueEdge.SetText(InText);
 	}
 
 	/** Tells us if this edge has any conditions set. */

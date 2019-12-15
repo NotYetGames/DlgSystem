@@ -4,7 +4,6 @@
 
 #include "DlgDialogue.h"
 #include "DlgDialogueParticipant.h"
-#include "DlgHelper.h"
 #include "DlgMemory.h"
 
 #include "DlgManager.generated.h"
@@ -32,8 +31,16 @@ public:
 	 *
 	 * @returns The dialogue context object or nullptr if something wrong happened
 	 */
-	UFUNCTION(BlueprintCallable, Category = DialogueLaunch)
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
 	static UDlgContext* StartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants);
+
+	/**
+	 * Checks if there is any child of the start node which can be enterred based on the conditions
+	 *
+	 * @returns true if there is an enterable node from the start node
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
+	static bool CouldStartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants);
 
 	/**
 	 * Starts a Dialogue with the provided Dialogue and Participants array, at the given entry point
@@ -52,7 +59,7 @@ public:
 	 * @param bFireEnterEvents		- decides if the enter events should be fired on the resumed node or not
 	 * @returns The dialogue context object or nullptr if something wrong happened
 	 */
-	UFUNCTION(BlueprintCallable, Category = DialogueLaunch)
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
 	static UDlgContext* ResumeDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants,
 									   int32 StartIndex, const TSet<int32>& AlreadyVisitedNodes, bool bFireEnterEvents);
 
@@ -60,16 +67,16 @@ public:
 	/**
 	 * Helper methods, same as StartDialogue but with fixed amount of participant(s)
 	 */
-	UFUNCTION(BlueprintCallable, Category = DialogueLaunch)
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
 	static UDlgContext* StartMonologue(UDlgDialogue* Dialogue, UObject* Participant);
 
-	UFUNCTION(BlueprintCallable, Category = DialogueLaunch)
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
 	static UDlgContext* StartDialogue2(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1);
 
-	UFUNCTION(BlueprintCallable, Category = DialogueLaunch)
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
 	static UDlgContext* StartDialogue3(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1, UObject* Participant2);
 
-	UFUNCTION(BlueprintCallable, Category = DialogueLaunch)
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
 	static UDlgContext* StartDialogue4(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1, UObject* Participant2, UObject* Participant3);
 
 	/**
@@ -94,51 +101,51 @@ public:
 	static TArray<UDlgDialogue*> GetAllDialoguesForParticipantName(const FName& ParticipantName);
 
 	/** Sets the FDlgMemory Dialogue history. */
-	UFUNCTION(BlueprintCallable, Category = DialogueData)
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Memory")
 	static void SetDialogueHistory(const TMap<FGuid, FDlgHistory>& DlgHistory);
 
 	/** Empties the FDlgMemory Dialogue history. */
-	UFUNCTION(BlueprintCallable, Category = DialogueData)
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Memory")
 	static void ClearDialogueHistory();
 
 	/** Gets the Dialogue History from the FDlgMemory. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Memory")
 	static const TMap<FGuid, FDlgHistory>& GetDialogueHistory();
 
 	/** Does the Object implement the Dialogue Participant Interface? */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
 	static bool DoesObjectImplementDialogueParticipantInterface(const UObject* Object);
 
 	/** Gets all the unique participant names sorted alphabetically from all the Dialogues loaded into memory. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	static void GetAllDialoguesParticipantNames(TArray<FName>& OutArray);
 
 	/** Gets all the used speaker states sorted alphabetically from all the Dialogues loaded into memory. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	static void GetAllDialoguesSpeakerStates(TArray<FName>& OutArray);
 
 	/** Gets all the unique int variable names sorted alphabetically for the specified ParticipantName from the loaded Dialogues */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	static void GetAllDialoguesIntNames(const FName& ParticipantName, TArray<FName>& OutArray);
 
 	/** Gets all the unique float variable names sorted alphabetically for the specified ParticipantName from the loaded Dialogues */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	static void GetAllDialoguesFloatNames(const FName& ParticipantName, TArray<FName>& OutArray);
 
 	/** Gets all the unique bool variable names sorted alphabetically for the specified ParticipantName from the loaded Dialogues */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	static void GetAllDialoguesBoolNames(const FName& ParticipantName, TArray<FName>& OutArray);
 
 	/** Gets all the unique name variable names sorted alphabetically for the specified ParticipantName from the loaded Dialogues */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	static void GetAllDialoguesNameNames(const FName& ParticipantName, TArray<FName>& OutArray);
 
 	/** Gets all the unique condition names sorted alphabetically for the specified ParticipantName from the loaded Dialogues */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	static void GetAllDialoguesConditionNames(const FName& ParticipantName, TArray<FName>& OutArray);
 
 	/** Gets all the unique event names sorted alphabetically for the specified ParticipantName from the loaded Dialogues */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	static void GetAllDialoguesEventNames(const FName& ParticipantName, TArray<FName>& OutArray);
 
 	/**
@@ -146,14 +153,14 @@ public:
 	 * @param InReferenceActor - The reference actor for the World. Without this the runtime module won't know how to get the UWorld.
 	 * @return true on success, false otherwise
 	 */
-	UFUNCTION(BlueprintCallable, Category = DialogueModule)
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Module")
 	static bool RegisterDialogueModuleConsoleCommands(AActor* InReferenceActor);
 
 	/**
 	 * Unregister all the DlgSystem Module console commands.
 	 * @return true on success, false otherwise
 	 */
-	UFUNCTION(BlueprintCallable, Category = DialogueModule)
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Module")
 	static bool UnRegisterDialogueModuleConsoleCommands();
 
 private:

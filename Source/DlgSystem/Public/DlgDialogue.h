@@ -3,7 +3,7 @@
 
 #include "Templates/SubclassOf.h"
 
-#include "DlgIDialogueEditorModule.h"
+#include "IDlgDialogueEditorAccess.h"
 #include "DlgSystemSettings.h"
 #include "DlgDialogueParticipantData.h"
 
@@ -25,6 +25,8 @@ struct DLGSYSTEM_API FDlgDialogueObjectVersion
 		AddGuid,
 		AddComparisonWithOtherParticipant,
 		AddTextFormatArguments,
+		AddLocalizationOverwrittenNamespacesAndKeys,
+		
 
 		// -----<new versions can be added above this line>-------------------------------------------------
 		VersionPlusOne,
@@ -45,13 +47,13 @@ struct DLGSYSTEM_API FDlgParticipantClass
 {
 	GENERATED_USTRUCT_BODY()
 
-	/** FName based conditions (aka conditions of type DlgConditionEventCall). */
+	/** FName based conditions (aka conditions of type EventCall). */
 	UPROPERTY(VisibleAnywhere, Category = DialogueParticipantData)
-	FName ParticipantName;
+	FName ParticipantName = NAME_None;
 
 	/** FName based events (aka events of type EDlgEventType) */
 	UPROPERTY(EditAnywhere, Category = DialogueParticipantData, meta = (MustImplement = "DlgDialogueParticipant"))
-	UClass* ParticipantClass;
+	UClass* ParticipantClass = nullptr;
 };
 
 
@@ -197,19 +199,19 @@ public:
 		bWasCompiledAtLeastOnce = true;
 	}
 
-	/** Compiles the dialogue nodes from the graph nodes. Meaning it transofrms the graph data -> (into) dialogue data. */
+	/** Compiles the dialogue nodes from the graph nodes. Meaning it transforms the graph data -> (into) dialogue data. */
 	void CompileDialogueNodesFromGraphNodes();
 
 	/** Sets the dialogue editor implementation. This is called in the constructor of the DlgDialogueGraph in the DlgSytemEditor module. */
-	static void SetDialogueEditorModule(const TSharedPtr<IDlgDialogueEditorModule>& InDialogueEditor)
+	static void SetDialogueEditorAccess(const TSharedPtr<IDlgDialogueEditorAccess>& InDialogueEditor)
 	{
-		check(!DialogueEditorModule.IsValid());
+		check(!DialogueEditorAccess.IsValid());
 		check(InDialogueEditor.IsValid());
-		DialogueEditorModule = InDialogueEditor;
+		DialogueEditorAccess = InDialogueEditor;
 	}
 
 	/** Gets the dialogue editor implementation. */
-	static TSharedPtr<IDlgDialogueEditorModule> GetDialogueEditorModule() { return DialogueEditorModule; }
+	static TSharedPtr<IDlgDialogueEditorAccess> GetDialogueEditorAccess() { return DialogueEditorAccess; }
 
 	// Enables/disables the compilation of the dialogues in the editor, use with care. Mainly used for optimization.
 	void EnableCompileDialogue() { bCompileDialogue = true; }
@@ -427,11 +429,14 @@ public:
 	/** Sets the Node at index NodeIndex. Use with care. */
 	void SetNode(int32 NodeIndex, UDlgNode* InNode) { Nodes[NodeIndex] = InNode; }
 
-	/** Check if a ".dlg" text file in the same folder with the same name (DlgName) exists and loads the data from that file. */
-	void ReloadFromFile();
+	// Is the Node at NodeIndex (if it exists) an end node?
+	bool IsEndNode(int32 NodeIndex) const;
+	
+	/** Check if a text file in the same folder with the same name (DlgName) exists and loads the data from that file. */
+	void ImportFromFile();
 
 	/** Method to handle when this asset is going to be saved. Compiles the dialogue and saves to the text file. */
-	void OnAssetSaved();
+	void OnPreAssetSaved();
 
 	/** Useful for initially reloading the data from the text file so that the dialogue is always in sync. */
 	void InitialSyncWithTextFile()
@@ -441,15 +446,17 @@ public:
 			return;
 		}
 
-		ReloadFromFile();
+		ImportFromFile();
 		bIsSyncedWithTextFile = true;
 	}
 
 	/** Exports this dialogue data into it's corresponding ".dlg" text file with the same name as this (DlgName). */
 	void ExportToFile() const;
 
-	/** Gathers data from the Dialogue to fill DlgData (used at runtime) */
-	void RefreshData();
+	// Updates the data of some nodes
+	// Fills the DlgData with the updated data
+	// NOTE: this can do a dialogue data -> graph node data update
+	void UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys = false);
 
 	/** Adds a new node to this dialogue, returns the index location of the added node in the Nodes array. */
 	int32 AddNode(UDlgNode* NodeToAdd) { return Nodes.Add(NodeToAdd); }
@@ -459,6 +466,15 @@ public:
 	 * @return The path (as a relative path) and name of the text file, or empty string if something is wrong.
 	 */
 	FString GetTextFilePathName(bool bAddExtension = true) const;
+	FString GetTextFilePathName(EDlgDialogueTextFormat TextFormat, bool bAddExtension = true) const;
+
+	// Perform deletion on the text files
+	bool DeleteTextFileForTextFormat(EDlgDialogueTextFormat TextFormat) const;
+	bool DeleteTextFileForExtension(const FString& FileExtension) const;
+	bool DeleteAllTextFiles() const;
+
+	// Is this dialogue located inside the project directory
+	bool IsInProjectDirectory() const;
 
 	/**
 	 * @return the text file path name (as a relative path) from the asset path name.
@@ -466,10 +482,19 @@ public:
 	 */
 	static FString GetTextFilePathNameFromAssetPathName(const FString& AssetPathName);
 
-	/** @return the extension of the text file depending on the InTextFormat. */
-	static FString GetTextFileExtension(EDlgDialogueTextFormat InTextFormat);
-
 private:
+	// Adds conditions from the edges of this Node.
+	void AddConditionsDataFromNodeEdges(const UDlgNode* Node, int32 NodeIndex);
+	
+	// Gets the map entry - creates it first if it is not yet there
+	FDlgParticipantData& GetParticipantDataEntry(FName ParticipantName, FName FallbackNodeOwnerName, bool bCheckNone, const FString& ContextMessage);
+
+	// Rebuild & Update and node and its edges
+	void RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings* Settings, bool bUpdateTextsNamespacesAndKeys);
+	
+	void ImportFromFileFormat(EDlgDialogueTextFormat TextFormat);
+	void ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const;
+
 	/**
 	 * Tries to fix the internal graph of this Dialogue in the following ways:
 	 * 1. If there is no start node, we create one pointing to the first node
@@ -526,8 +551,8 @@ private:
 	UPROPERTY(Meta = (DlgNoExport))
 	UEdGraph* DlgGraph;
 
-	// Ptr to interface to dialogue editor operations. See function SetDialogueEditorModule for more details.
-	static TSharedPtr<IDlgDialogueEditorModule> DialogueEditorModule;
+	// Ptr to interface to dialogue editor operations. See function SetDialogueEditorAccess for more details.
+	static TSharedPtr<IDlgDialogueEditorAccess> DialogueEditorAccess;
 
 	/** Flag used for optimization, used to enable/disable compiling of the dialogue for bulk operations. */
 	bool bCompileDialogue = true;

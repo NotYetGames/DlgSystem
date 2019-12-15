@@ -66,7 +66,7 @@ bool UDlgTestObjectPrimitives_ChildA::IsEqual(const Super* Other, FString& OutEr
 	const Self* SelfOther = Cast<Self>(Other);
 	if (SelfOther == nullptr)
 	{
-		OutError += FString::Printf(TEXT("This.Class (%s) != Other.Class (%s)\n"), *FDlgTestHelper::GetClassNameFromObject(this), *FDlgTestHelper::GetClassNameFromObject(Other));
+		OutError += FString::Printf(TEXT("This.Class (%s) != Other.Class (%s)\n"), *FDlgHelper::GetClassNameFromObject(this), *FDlgHelper::GetClassNameFromObject(Other));
 		return false;
 	}
 
@@ -100,7 +100,7 @@ bool UDlgTestObjectPrimitives_ChildB::IsEqual(const Super* Other, FString& OutEr
 	const Self* SelfOther = Cast<Self>(Other);
 	if (SelfOther == nullptr)
 	{
-		OutError += FString::Printf(TEXT("This.Class (%s) != Other.Class (%s)\n"), *FDlgTestHelper::GetClassNameFromObject(this), *FDlgTestHelper::GetClassNameFromObject(Other));
+		OutError += FString::Printf(TEXT("This.Class (%s) != Other.Class (%s)\n"), *FDlgHelper::GetClassNameFromObject(this), *FDlgHelper::GetClassNameFromObject(Other));
 		return false;
 	}
 
@@ -133,7 +133,7 @@ bool UDlgTestObjectPrimitives_GrandChildA_Of_ChildA::IsEqual(const SuperBase* Ot
 	const Self* SelfOther = Cast<Self>(Other);
 	if (SelfOther == nullptr)
 	{
-		OutError += FString::Printf(TEXT("This.Class (%s) != Other.Class (%s)\n"), *FDlgTestHelper::GetClassNameFromObject(this), *FDlgTestHelper::GetClassNameFromObject(Other));
+		OutError += FString::Printf(TEXT("This.Class (%s) != Other.Class (%s)\n"), *FDlgHelper::GetClassNameFromObject(this), *FDlgHelper::GetClassNameFromObject(Other));
 		return false;
 	}
 
@@ -158,11 +158,11 @@ void FDlgTestStructPrimitives::GenerateRandomData(const FDlgIOTesterOptions& InO
 	bBoolean = FMath::RandBool();
 	// Random negative too
 	Integer32 = FMath::Rand() * (FMath::RandBool() ? 1 : -1);
-	Integer64 = FDlgTestHelper::RandomInt64() * (FMath::RandBool() ? 1 : -1);
+	Integer64 = FDlgHelper::RandomInt64() * (FMath::RandBool() ? 1 : -1);
 	Float = FMath::SRand();
 	String = FString::SanitizeFloat(Float);
 	Name = FName(*String);
-	Enum = static_cast<EDlgTestEnum>(FMath::RandHelper(static_cast<int32>(EDlgTestEnum::ETE_NumOf)));
+	Enum = static_cast<EDlgTestEnum>(FMath::RandHelper(static_cast<int32>(EDlgTestEnum::NumOf)));
 	Text = FText::FromString(String);
 
 	if (Options.bSupportsColorPrimitives)
@@ -264,7 +264,7 @@ bool FDlgTestStructPrimitives::IsEqual(const Self& Other, FString& OutError) con
 		OutError += FString::Printf(TEXT("\tThis.Integer64 (%lld) != Other.Integer64 (%lld)\n"), Integer64, Other.Integer64);
 	}
 
-	if (!FDlgTestHelper::IsFloatEqual(Float, Other.Float))
+	if (!FDlgHelper::IsFloatEqual(Float, Other.Float))
 	{
 		bIsEqual = false;
 		OutError += FString::Printf(TEXT("\tThis.Float (%f) != Other.Float (%f)\n"), Float, Other.Float);
@@ -363,7 +363,7 @@ bool FDlgTestStructPrimitives::IsEqual(const Self& Other, FString& OutError) con
 	if (Class != Other.Class)
 	{
 		bIsEqual = false;
-		OutError += FString::Printf(TEXT("\tThis.Class (%s) != Other.Class (%s)\n"), *FDlgTestHelper::GetFullNameFromObject(Class), *FDlgTestHelper::GetFullNameFromObject(Other.Class));
+		OutError += FString::Printf(TEXT("\tThis.Class (%s) != Other.Class (%s)\n"), *FDlgHelper::GetFullNameFromObject(Class), *FDlgHelper::GetFullNameFromObject(Other.Class));
 	}
 
 	if (EmptyObjectInitialized != Other.EmptyObjectInitialized || EmptyObjectInitialized != nullptr || Other.EmptyObjectInitialized != nullptr)
@@ -381,49 +381,49 @@ bool FDlgTestStructPrimitives::IsEqual(const Self& Other, FString& OutError) con
 	if (Texture2DReference != Other.Texture2DReference)
 	{
 		bIsEqual = false;
-		OutError += FString::Printf(TEXT("\tThis.Texture2D (%s) != Other.Texture2D (%s)\n"), *FDlgTestHelper::GetFullNameFromObject(Texture2DReference), *FDlgTestHelper::GetFullNameFromObject(Other.Texture2DReference));
+		OutError += FString::Printf(TEXT("\tThis.Texture2D (%s) != Other.Texture2D (%s)\n"), *FDlgHelper::GetFullNameFromObject(Texture2DReference), *FDlgHelper::GetFullNameFromObject(Other.Texture2DReference));
 	}
 
 	if (!ObjectPrimitivesBase->IsEqual(Other.ObjectPrimitivesBase, OutError))
 	{
 		bIsEqual = false;
-		OutError += FString::Printf(TEXT("\tThis.ObjectPrimitives (%s) != Other.ObjectPrimitives (%s)\n"), *FDlgTestHelper::GetFullNameFromObject(ObjectPrimitivesBase), *FDlgTestHelper::GetFullNameFromObject(Other.ObjectPrimitivesBase));
+		OutError += FString::Printf(TEXT("\tThis.ObjectPrimitives (%s) != Other.ObjectPrimitives (%s)\n"), *FDlgHelper::GetFullNameFromObject(ObjectPrimitivesBase), *FDlgHelper::GetFullNameFromObject(Other.ObjectPrimitivesBase));
 	}
 
 	if (!ObjectPrimitivesChildA->IsEqual(Other.ObjectPrimitivesChildA, OutError))
 	{
 		bIsEqual = false;
-		OutError += FString::Printf(TEXT("\tThis.ObjectPrimitivesChildA (%s) != Other.ObjectPrimitivesChildA (%s)\n"), *FDlgTestHelper::GetFullNameFromObject(ObjectPrimitivesChildA), *FDlgTestHelper::GetFullNameFromObject(Other.ObjectPrimitivesChildA));
+		OutError += FString::Printf(TEXT("\tThis.ObjectPrimitivesChildA (%s) != Other.ObjectPrimitivesChildA (%s)\n"), *FDlgHelper::GetFullNameFromObject(ObjectPrimitivesChildA), *FDlgHelper::GetFullNameFromObject(Other.ObjectPrimitivesChildA));
 	}
 
 	if (!ObjectPrimitivesPolymorphismChildA->IsEqual(Other.ObjectPrimitivesPolymorphismChildA, OutError))
 	{
 		bIsEqual = false;
-		OutError += FString::Printf(TEXT("\tThis.ObjectPrimitivesPolymorphismChildA (%s) != Other.ObjectPrimitivesPolymorphismChildA (%s)\n"), *FDlgTestHelper::GetFullNameFromObject(ObjectPrimitivesPolymorphismChildA), *FDlgTestHelper::GetFullNameFromObject(Other.ObjectPrimitivesPolymorphismChildA));
+		OutError += FString::Printf(TEXT("\tThis.ObjectPrimitivesPolymorphismChildA (%s) != Other.ObjectPrimitivesPolymorphismChildA (%s)\n"), *FDlgHelper::GetFullNameFromObject(ObjectPrimitivesPolymorphismChildA), *FDlgHelper::GetFullNameFromObject(Other.ObjectPrimitivesPolymorphismChildA));
 	}
 
 	if (!ObjectPrimitivesPolymorphismChildB->IsEqual(Other.ObjectPrimitivesPolymorphismChildB, OutError))
 	{
 		bIsEqual = false;
-		OutError += FString::Printf(TEXT("\tThis.ObjectPrimitivesPolymorphismChildB (%s) != Other.ObjectPrimitivesPolymorphismChildB (%s)\n"), *FDlgTestHelper::GetFullNameFromObject(ObjectPrimitivesPolymorphismChildB), *FDlgTestHelper::GetFullNameFromObject(Other.ObjectPrimitivesPolymorphismChildB));
+		OutError += FString::Printf(TEXT("\tThis.ObjectPrimitivesPolymorphismChildB (%s) != Other.ObjectPrimitivesPolymorphismChildB (%s)\n"), *FDlgHelper::GetFullNameFromObject(ObjectPrimitivesPolymorphismChildB), *FDlgHelper::GetFullNameFromObject(Other.ObjectPrimitivesPolymorphismChildB));
 	}
 
 	if (!ObjectPrimitivesGrandChildA->IsEqual(Other.ObjectPrimitivesGrandChildA, OutError))
 	{
 		bIsEqual = false;
-		OutError += FString::Printf(TEXT("\tThis.ObjectPrimitivesGrandChildA (%s) != Other.ObjectPrimitivesGrandChildA (%s)\n"), *FDlgTestHelper::GetFullNameFromObject(ObjectPrimitivesGrandChildA), *FDlgTestHelper::GetFullNameFromObject(Other.ObjectPrimitivesGrandChildA));
+		OutError += FString::Printf(TEXT("\tThis.ObjectPrimitivesGrandChildA (%s) != Other.ObjectPrimitivesGrandChildA (%s)\n"), *FDlgHelper::GetFullNameFromObject(ObjectPrimitivesGrandChildA), *FDlgHelper::GetFullNameFromObject(Other.ObjectPrimitivesGrandChildA));
 	}
 
 	if (!ObjectPrimitivesPolymorphismBaseGrandChildA->IsEqual(Other.ObjectPrimitivesPolymorphismBaseGrandChildA, OutError))
 	{
 		bIsEqual = false;
-		OutError += FString::Printf(TEXT("\tThis.ObjectPrimitivesPolymorphismBaseGrandChildA (%s) != Other.ObjectPrimitivesPolymorphismBaseGrandChildA (%s)\n"), *FDlgTestHelper::GetFullNameFromObject(ObjectPrimitivesPolymorphismBaseGrandChildA), *FDlgTestHelper::GetFullNameFromObject(Other.ObjectPrimitivesPolymorphismBaseGrandChildA));
+		OutError += FString::Printf(TEXT("\tThis.ObjectPrimitivesPolymorphismBaseGrandChildA (%s) != Other.ObjectPrimitivesPolymorphismBaseGrandChildA (%s)\n"), *FDlgHelper::GetFullNameFromObject(ObjectPrimitivesPolymorphismBaseGrandChildA), *FDlgHelper::GetFullNameFromObject(Other.ObjectPrimitivesPolymorphismBaseGrandChildA));
 	}
 
 	if (!ObjectPrimitivesPolymorphismChildGrandChildA->IsEqual(Other.ObjectPrimitivesPolymorphismChildGrandChildA, OutError))
 	{
 		bIsEqual = false;
-		OutError += FString::Printf(TEXT("\tThis.ObjectPrimitivesPolymorphismChildGrandChildA (%s) != Other.ObjectPrimitivesPolymorphismChildGrandChildA (%s)\n"), *FDlgTestHelper::GetFullNameFromObject(ObjectPrimitivesPolymorphismChildGrandChildA), *FDlgTestHelper::GetFullNameFromObject(Other.ObjectPrimitivesPolymorphismChildGrandChildA));
+		OutError += FString::Printf(TEXT("\tThis.ObjectPrimitivesPolymorphismChildGrandChildA (%s) != Other.ObjectPrimitivesPolymorphismChildGrandChildA (%s)\n"), *FDlgHelper::GetFullNameFromObject(ObjectPrimitivesPolymorphismChildGrandChildA), *FDlgHelper::GetFullNameFromObject(Other.ObjectPrimitivesPolymorphismChildGrandChildA));
 	}
 
 	// Clear error message
@@ -439,7 +439,7 @@ void FDlgTestStructPrimitives::SetToDefaults()
 	Integer32 = 42;
 	Integer64 = 223372036854775807;
 	bBoolean = true;
-	Enum = EDlgTestEnum::ETE_Second;
+	Enum = EDlgTestEnum::Second;
 	Float = -23.549f;
 	Name = NAME_None;
 	String.Empty();
@@ -569,11 +569,11 @@ void FDlgTestArrayPrimitive::GenerateRandomData(const FDlgIOTesterOptions& InOpt
 	for (int32 i = 0; i < Num; ++i)
 	{
 		Int32Array[i] = FMath::Rand();
-		Int64Array[i] = FDlgTestHelper::RandomInt64();
+		Int64Array[i] = FDlgHelper::RandomInt64();
 		BoolArray[i] = FMath::RandBool();
 		if (Options.bSupportsPureEnumContainer)
 		{
-			EnumArray[i] = static_cast<EDlgTestEnum>(FMath::RandHelper(static_cast<int32>(EDlgTestEnum::ETE_NumOf)));
+			EnumArray[i] = static_cast<EDlgTestEnum>(FMath::RandHelper(static_cast<int32>(EDlgTestEnum::NumOf)));
 		}
 		FloatArray[i] = FMath::SRand();
 		StringArray[i] = FString::SanitizeFloat(FloatArray[i]);
@@ -759,10 +759,10 @@ void FDlgTestSetPrimitive::GenerateRandomData(const FDlgIOTesterOptions& InOptio
 	for (int32 i = 0; i < Num; ++i)
 	{
 		Int32Set.Add(FMath::Rand());
-		Int64Set.Add(FDlgTestHelper::RandomInt64());
+		Int64Set.Add(FDlgHelper::RandomInt64());
 		if (Options.bSupportsPureEnumContainer)
 		{
-			EnumSet.Add(static_cast<EDlgTestEnum>(FMath::RandHelper(static_cast<int32>(EDlgTestEnum::ETE_NumOf))));
+			EnumSet.Add(static_cast<EDlgTestEnum>(FMath::RandHelper(static_cast<int32>(EDlgTestEnum::NumOf))));
 		}
 		const float Float = FMath::SRand();
 		const FString String = FString::SanitizeFloat(Float);
@@ -888,7 +888,7 @@ void FDlgTestMapPrimitive::GenerateRandomData(const FDlgIOTesterOptions& InOptio
 	for (int32 i = 0; i < Num; ++i)
 	{
 		Int32ToInt32Map.Add(FMath::Rand(), FMath::Rand());
-		Int64ToInt64Map.Add(FDlgTestHelper::RandomInt64(), FDlgTestHelper::RandomInt64());
+		Int64ToInt64Map.Add(FDlgHelper::RandomInt64(), FDlgHelper::RandomInt64());
 		Int32ToStringMap.Add(FMath::Rand(), FString::SanitizeFloat(FMath::SRand()));
 		Int32ToNameMap.Add(FMath::Rand(), FName(*FString::SanitizeFloat(FMath::SRand())));
 

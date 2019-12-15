@@ -6,8 +6,9 @@
 
 #include "DlgTextArgument.h"
 #include "DialogueDetailsPanelUtils.h"
+#include "DlgManager.h"
 
-class FTextPropertyPickList_CustomRowHelper;
+class FDialogueTextPropertyPickList_CustomRowHelper;
 
 /**
  * How the details panel renders the FDlgTextArgument
@@ -51,7 +52,7 @@ private:
 	// Getters for the visibility of some properties
 	EVisibility GetVariableNameVisibility() const
 	{
-		return (ArgumentType != EDlgTextArgumentType::DlgTextArgumentDisplayName && ArgumentType != EDlgTextArgumentType::DlgTextArgumentGender)
+		return (ArgumentType != EDlgTextArgumentType::DisplayName && ArgumentType != EDlgTextArgumentType::Gender)
 			   ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
@@ -89,13 +90,13 @@ private:
 	{
 		if (Dialogue)
 		{
-			Dialogue->RefreshData();
+			Dialogue->UpdateAndRefreshData();
 		}
 	}
 
 private:
 	// The current Event type of the struct.
-	EDlgTextArgumentType ArgumentType = EDlgTextArgumentType::DlgTextArgumentDisplayName;
+	EDlgTextArgumentType ArgumentType = EDlgTextArgumentType::DisplayName;
 
 	// Cache the some property handles
 	TSharedPtr<IPropertyHandle> StructPropertyHandle;
@@ -108,8 +109,8 @@ private:
 	TSharedPtr<IPropertyUtilities> PropertyUtils;
 
 	// Cache the rows of the properties, created in CustomizeChildren
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
-	TSharedPtr<FTextPropertyPickList_CustomRowHelper> VariableNamePropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
+	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> VariableNamePropertyRow;
 
 	/** Hold a reference to dialogue we are displaying. */
 	UDlgDialogue* Dialogue = nullptr;

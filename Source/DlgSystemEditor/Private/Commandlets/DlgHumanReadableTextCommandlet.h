@@ -13,6 +13,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogDlgHumanReadableTextCommandlet, All, All);
 class UDlgDialogue;
 class UDlgNode;
 class UDialogueGraphNode;
+class UDlgSystemSettings;
 
 USTRUCT()
 struct FDlgNodeContext_FormatHumanReadable
@@ -170,7 +171,7 @@ public:
 	bool ImportHumanReadableFormatIntoDialogue(const FDlgDialogue_FormatHumanReadable& Format, UDlgDialogue* Dialogue);
 
 	// Tells us if the edge text is default
-	static bool IsEdgeTextDefault(const FText& EdgeText);
+	bool IsEdgeTextDefault(const FText& EdgeText);
 
 protected:
 	// Own methods
@@ -185,7 +186,8 @@ protected:
 	FString OutputInputDirectory;
 
 	TArray<UPackage*> PackagesToSave;
-
+	const UDlgSystemSettings* Settings = nullptr;
+	
 	bool bSaveAllDialogues = false;
 	bool bExport = false;
 	bool bImport = false;

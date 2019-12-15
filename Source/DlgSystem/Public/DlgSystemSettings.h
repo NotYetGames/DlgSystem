@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
 #include "Layout/Margin.h"
+#include "Logging/INYLogger.h"
 
 #include "DlgSystemSettings.generated.h"
 
@@ -12,17 +13,26 @@
 UENUM()
 enum class EDlgDialogueTextFormat : uint8
 {
-	/** No Text Format used. Only the uasset */
-	DlgDialogueNoTextFormat			UMETA(DisplayName = "No Text Format"),
+	/** No Text Format used. */
+	None	UMETA(DisplayName = "No Text Format"),
 
-	/** The own Dialogue Text format */
-	DlgDialogueTextFormatDialogue	UMETA(DisplayName = "DlgText"),
+	// Output all text formats, mostly used for debugging
+	All     UMETA(Hidden),
+
+	/**
+	 * DEPRECATED. The own Dialogue Text format. DEPRECATED.
+	 * NOTE: this format is deprecated AND in the next version it will be removed
+	 */
+	DialogueDEPRECATED	UMETA(DisplayName = "[DEPRECATED] DlgText"),
+
+	// Hidden represents the start of the text formats index
+	StartTextFormats = DialogueDEPRECATED 	UMETA(Hidden),
 
 	/** The JSON format. */
-	DlgDialogueTextFormatJson		UMETA(DisplayName = "JSON"),
+	JSON				UMETA(DisplayName = "JSON"),
 
 	/** Hidden, represents the number of text formats */
-	DlgDialogueTextFormat_Num 		UMETA(Hidden),
+	NumTextFormats 		UMETA(Hidden),
 };
 
 /**
@@ -32,16 +42,16 @@ UENUM()
 enum class EDlgVoiceDisplayedFields : uint8
 {
 	/** No Voice fields are displayed. */
-	DlgVoiceDisplayedNoVoice					UMETA(DisplayName = "No Voice"),
+	None						UMETA(DisplayName = "No Voice"),
 
 	/** Only display the SoundWave voice fields. */
-	DlgVoiceDisplayedSoundWave					UMETA(DisplayName = "Sound Wave"),
+	SoundWave					UMETA(DisplayName = "Sound Wave"),
 
 	/** Only display the DialogueWave voice fields. */
-	DlgVoiceDisplayedDialogueWave				UMETA(DisplayName = "Dialogue Wave"),
+	DialogueWave				UMETA(DisplayName = "Dialogue Wave"),
 
 	/** Display both SoundWave and DialogueWave fields. */
-	DlgVoiceDisplayedSoundWaveAndDialogueWave	UMETA(DisplayName = "Sound Wave & Dialogue Wave")
+	SoundWaveAndDialogueWave	UMETA(DisplayName = "Sound Wave & Dialogue Wave")
 };
 
 /**
@@ -51,16 +61,16 @@ UENUM()
 enum class EDlgSpeakerStateVisibility : uint8
 {
 	/** No visibility fields are displayed. */
-	DlgHideAll					UMETA(DisplayName = "Hide All"),
+	HideAll					UMETA(DisplayName = "Hide All"),
 
 	/** Only display the SoundWave voice fields. */
-	DlgShowOnEdge				UMETA(DisplayName = "Show On Edge"),
+	ShowOnEdge				UMETA(DisplayName = "Show On Edge"),
 
 	/** Only display the DialogueWave voice fields. */
-	DlgShowOnNode				UMETA(DisplayName = "Show On Node"),
+	ShowOnNode				UMETA(DisplayName = "Show On Node"),
 
 	/** Display both SoundWave and DialogueWave fields. */
-	DlgShowOnNodeAndEdge		UMETA(DisplayName = "Show On Both")
+	ShowOnNodeAndEdge		UMETA(DisplayName = "Show On Both (Edge + Node)")
 };
 
 /**
@@ -70,45 +80,47 @@ UENUM()
 enum class EDlgTextInputKeyForNewLine : uint8
 {
 	/** Press 'Enter' to add a new line. */
-	DlgTextInputKeyForNewLineEnter					UMETA(DisplayName = "Enter"),
+	Enter				UMETA(DisplayName = "Enter"),
 
-	/** Presst 'Shift + Enter' to add a new line. (like in blueprints) */
-	DlgTextInputKeyForNewLineShiftPlusEnter			UMETA(DisplayName = "Shift + Enter"),
+	/** Preset 'Shift + Enter' to add a new line. (like in blueprints) */
+	ShiftPlusEnter		UMETA(DisplayName = "Shift + Enter"),
 };
 
 /**
- *  Defines the visibility of the SpeakerState values
+ *  Defines how the overriden namespace will be set
  */
 UENUM()
-enum class EDlgTextLocalization : uint8
+enum class EDlgTextNamespaceLocalization : uint8
 {
-	/** The system does not modify the Namespace and Key values of the Text fields. */
-	DlgIgnore					UMETA(DisplayName = "Ignore"),
+	// The system does not modify the Namespace and Key values of the Text fields.
+	Ignore			UMETA(DisplayName = "Ignore"),
 
-	/** The system sets the Namespace for Text fields for each dialogue separately. Unique keys are also generated. */
-	DlgNamespacePerDialogue		UMETA(DisplayName = "Namespace Per Dialogue"),
+	// The system sets the Namespace for Text fields for each dialogue separately. Unique keys are also generated.
+	PerDialogue		UMETA(DisplayName = "Namespace Per Dialogue (DialogueName)"),
 
-	/** The system sets the Namespace for Text fields for each dialogue into the same value. Unique keys are also generated. */
-	DlgGlobalNamespace			UMETA(DisplayName = "Global Namespace")
+	// Same as PerDialogue only we will have a prefix set
+	WithPrefixPerDialogue UMETA(DisplayName = "Prefix + Namespace Per Dialogue (Prefix.DialogueName)"),
+
+	// The system sets the Namespace for Text fields for each dialogue into the same value. Unique keys are also generated.
+	Global				UMETA(DisplayName = "Global Namespace")
+
+	
 };
 
-// Config = DlgSystemPlugin, DefaultConfig
-// UDeveloperSettings classes are autodiscovered https://wiki.unrealengine.com/CustomSettings
-UCLASS(Config = EditorPerProjectUserSettings, DefaultConfig, meta = (DisplayName = "Dialogue Editor Settings"))
+// UDeveloperSettings classes are auto discovered https://wiki.unrealengine.com/CustomSettings
+UCLASS(Config = Engine, DefaultConfig, meta = (DisplayName = "Dialogue System Settings"))
 class DLGSYSTEM_API UDlgSystemSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
-
-	typedef UDlgSystemSettings Self;
 
 public:
 	UDlgSystemSettings();
 
 	// UDeveloperSettings interface
 	/** Gets the settings container name for the settings, either Project or Editor */
-	FName GetContainerName() const override { return "Project"; }
+	FName GetContainerName() const override { return TEXT("Project"); }
 	/** Gets the category for the settings, some high level grouping like, Editor, Engine, Game...etc. */
-	FName GetCategoryName() const override { return "Editor"; };
+	FName GetCategoryName() const override { return TEXT("Editor"); };
 	/** The unique name for your section of settings, uses the class's FName. */
 	FName GetSectionName() const override { return Super::GetSectionName(); };
 
@@ -144,6 +156,17 @@ public:
 
 #undef CREATE_SETTER
 
+	// Depends on:
+	// - LocalizationIgnoredTexts
+	// - LocalizationIgnoredStrings
+	bool IsIgnoredTextForLocalization(const FText& Text) const;
+
+	// Is this text remapped
+	FORCEINLINE bool IsTextRemapped(const FText& Text) const { return IsSourceStringRemapped(*FTextInspector::GetSourceString(Text));  }
+	FORCEINLINE bool IsSourceStringRemapped(const FString& SourceString) const { return LocalizationRemapSourceStringsToTexts.Contains(SourceString); }
+	FORCEINLINE const FText& GetTextRemappedText(const FText& Text) const { return GetSourceStringRemappedText(*FTextInspector::GetSourceString(Text)); }
+	FORCEINLINE const FText& GetSourceStringRemappedText(const FString& SourceString) const { return LocalizationRemapSourceStringsToTexts.FindChecked(SourceString); }
+	
 	/** Saves the settings to the config file depending on the settings of this class. */
 	void SaveSettings()
 	{
@@ -162,47 +185,147 @@ public:
 		}
 	}
 
-public:
-	// Some constants used. TODO make these configurable
-	static const FText EdgeTextFinish;
-	static const FText EdgeTextNext;
+	/** @return the extension of the text file depending on the InTextFormat. */
+	static FString GetTextFileExtension(EDlgDialogueTextFormat TextFormat);
+	static bool HasTextFileExtension(EDlgDialogueTextFormat TextFormat) { return !GetTextFileExtension(TextFormat).IsEmpty(); }
+
+	// Only the current ones from the enum
+	static const TSet<FString>& GetAllCurrentTextFileExtensions();
+
+	// GetAllCurrentTextFileExtensions() + AdditionalTextFormatFileExtensionsToLookFor
+	TSet<FString> GetAllTextFileExtensions() const;
 
 public:
 	/** If enabled this clears the dialogue history automatically on Editor Start PIE and On Load New Map */
 	UPROPERTY(Category = "Runtime", Config, EditAnywhere)
 	bool bClearDialogueHistoryAutomatically = true;
 
+
 	/** The dialogue text format used for saving and reloading from text files. */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Format")
-	EDlgDialogueTextFormat DialogueTextFormat = EDlgDialogueTextFormat::DlgDialogueTextFormatDialogue;
-
-	/** What Voice fields to show in the Dialogue Editor, if any. */
-	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Displayed Voice Fields")
-	EDlgVoiceDisplayedFields DialogueDisplayedVoiceFields = EDlgVoiceDisplayedFields::DlgVoiceDisplayedSoundWave;
-
-	/** Where to display the SpeakerState FName property */
-	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "SpeakerState Visibility")
-	EDlgSpeakerStateVisibility DialogueSpeakerStateVisibility = EDlgSpeakerStateVisibility::DlgHideAll;
-
-	/** Generic data is an UObject* which can be assigned to nodes and can be asked from the active one */
-	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Generic Data Visibility")
-	bool bShowGenericData = false;
-
-	/** Defines what the system should do with Text Namespaces and Keys for localization */
-	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Localization Method")
-	EDlgTextLocalization DialogueTextLocalizationMode = EDlgTextLocalization::DlgIgnore;
-
-	/** Depending on DialogueTextLocalizationMode it can be used as the namespace for all dialogue text fields or as their prefix */
-	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Generic Data Visibility")
-	FString DialogueTextNamespaceName = "Dialogue";
+	EDlgDialogueTextFormat DialogueTextFormat = EDlgDialogueTextFormat::None;
 
 	/** What key combination to press to add a new line for FText fields in the Dialogue Editor. */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Input Key for NewLine")
-	EDlgTextInputKeyForNewLine DialogueTextInputKeyForNewLine = EDlgTextInputKeyForNewLine::DlgTextInputKeyForNewLineEnter;
+	EDlgTextInputKeyForNewLine DialogueTextInputKeyForNewLine = EDlgTextInputKeyForNewLine::Enter;
 
-	/** Any properties that belong to these classes wont't be shown in the suggestion list when you use the reflection system (class variables). */
+	
+	// Shows the NodeData that you can customize yourself
+	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere, DisplayName = "Node Data Visibility")
+	bool bShowNodeData = true;
+	
+	/** Where to display the SpeakerState FName property */
+	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere, DisplayName = "SpeakerState Visibility")
+	EDlgSpeakerStateVisibility DialogueSpeakerStateVisibility = EDlgSpeakerStateVisibility::ShowOnNodeAndEdge;
+
+	/** What Voice fields to show in the Dialogue Editor, if any. */
+	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere, DisplayName = "Displayed Voice Fields")
+	EDlgVoiceDisplayedFields DialogueDisplayedVoiceFields = EDlgVoiceDisplayedFields::None;
+
+	/** Generic data is an UObject* which can be assigned to nodes and can be asked from the active one */
+	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere, DisplayName = "Generic Data Visibility")
+	bool bShowGenericData = false;
+
+
+	/** Any properties that belong to these classes won't be shown in the suggestion list when you use the reflection system (class variables). */
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
 	TArray<UClass*> BlacklistedReflectionClasses;
+
+
+	/** Should we only process batch dialogues that are only in the /Game folder. This is used for saving all dialogues or deleting all text files. */
+	UPROPERTY(Category = "Batch", Config, EditAnywhere)
+	bool bBatchOnlyInGameDialogues = true;
+
+	/**
+	 * Additional file extension to look for when doing operations with dialogue text formats, like: deleting/renaming.
+	 * NOTE: file extensions must start with a full stop
+	 */
+	UPROPERTY(Category = "Batch", Config, EditAnywhere)
+	TSet<FString> AdditionalTextFormatFileExtensionsToLookFor;
+
+
+	// Should the dialogue system set the default texts on empty edges on save dialogue and when creating them?
+	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Set Default Edge Texts")
+	bool bSetDefaultEdgeTexts = true;
+
+	// If true the default text will be only applied to the first child instead of all children from a node
+	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Set Default Edge Texts on First Child Only")
+	bool bSetDefaultEdgeTextOnFirstChildOnly = true;
+	
+	// Default text that appears on empty edges that lead to an end node
+	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Edge Text To End Node")
+	FText DefaultTextEdgeToEndNode;
+
+	// Default text that appears on empty edges texts that lead to a normal node (not an end node).
+	UPROPERTY(Category = "Default Texts", Config, EditAnywhere, DisplayName = "Edge Text To Normal Node")
+	FText DefaultTextEdgeToNormalNode;
+	
+	
+	// Defines what the system should do with Text Namespaces for localization
+	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Namespace")
+	EDlgTextNamespaceLocalization DialogueTextNamespaceLocalization = EDlgTextNamespaceLocalization::Ignore;
+
+	// Depending on TextLocalizationMode it can be used as the namespace for all dialogue
+	// Only used for GlobalNamespace
+	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Global Namespace Name")
+	FString DialogueTextGlobalNamespaceName = "Dialogue";
+
+	// Depending on TextLocalizationMode it can be used as the prefix for all dialogues namespace name
+	// Only used for WithPrefixPerDialogue
+	UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Text Namespace Name Prefix")
+	FString DialogueTextPrefixNamespaceName = "Dialogue_";
+
+	// Additional Array of texts that this system won't overwrite the namespace or key for
+	//UPROPERTY(Category = "Localization", Config, EditAnywhere, DisplayName = "Ignored Texts")
+	//TArray<FText> LocalizationIgnoredTexts;
+
+	// Additional Array of source strings that this system won't overwrite the namespace or key for
+	UPROPERTY(Category = "Localization", Config, EditAnywhere, AdvancedDisplay, DisplayName = "Ignored Strings")
+	TSet<FString> LocalizationIgnoredStrings;
+
+	// Map used to remap some SourceStrings texts found in the dialogues with a new Text value/namespace/key
+	// Key: SourceString we are searching for
+	// Value: Text replacement. NOTE: if the text value is usually not empty
+	UPROPERTY(Category = "Localization", Config, EditAnywhere, AdvancedDisplay, DisplayName = "Remap Source Strings to Texts")
+	TMap<FString, FText> LocalizationRemapSourceStringsToTexts;
+	
+
+	// Enables the message log to output info/errors/warnings to it
+	UPROPERTY(Category = "Logger", Config, EditAnywhere)
+	bool bEnableMessageLog = true;
+
+	// Should the message log mirror the message with the output log, used even if the output log is disabled.
+	UPROPERTY(Category = "Logger", Config, EditAnywhere)
+	bool bMessageLogMirrorToOutputLog = true;
+
+	// Opens the message log in front of the user if messages are displayed
+	// See OpenMessageLogLevelsHigherThan for the filter
+	UPROPERTY(Category = "Logger", Config, EditAnywhere)
+	bool bMessageLogOpen = true;
+
+	// NOTE: Not editable is intended so that not to allow the user to disable logging completely
+	UPROPERTY(Config)
+	bool bEnableOutputLog = false;
+
+	// By default the message log does not support debug output, latest is info.
+	// For the sake of sanity we redirect all levels higher than RedirectMessageLogLevelsHigherThan to the output log
+	// even if the output log is disabled.
+	// So that not to output for example debug output to the message log only to the output log.
+	// NOTE: A value of ENYLoggerLogLevel::NoLogging means no log level will get redirected
+	UPROPERTY(Category = "Logger", Config, EditAnywhere, AdvancedDisplay)
+	ENYLoggerLogLevel RedirectMessageLogLevelsHigherThan = ENYLoggerLogLevel::Warning;
+
+
+	// All the log levels messages that will open the message log window if bMessageLogOpen is true
+	// NOTE: A value of  ENYLoggerLogLevel::NoLogging means all log levels will be opened if bMessageLogOpen is true
+	UPROPERTY(Category = "Logger", Config, EditAnywhere, AdvancedDisplay)
+	ENYLoggerLogLevel OpenMessageLogLevelsHigherThan = ENYLoggerLogLevel::NoLogging;
+
+
+	/** Should we hide the categories in the Dialogue browser that do not have any children? */
+	UPROPERTY(Category = "Browser", Config, EditAnywhere)
+	bool bHideEmptyDialogueBrowserCategories = true;
+
 
 	/** Whether the description text wraps onto a new line when it's length exceeds this width; if this value is zero or negative, no wrapping occurs. */
 	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
@@ -235,39 +358,39 @@ public:
 	// Colors based on https://material.io/guidelines/style/color.html#color-color-palette
 
 	/** The background color of the normal speech node. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor SpeechNodeColor = FLinearColor{0.050980f, 0.278431f, 0.631373f, 1.f}; // blueish
 
 	/** The background color of the root node. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor RootNodeColor = FLinearColor{0.105882f, 0.368627f, 0.125490f, 1.f}; // greenish
 
 	/** The background color of the end node. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor EndNodeColor = FLinearColor{0.835294f, 0.f, 0.f, 1.f}; // redish
 
 	/** The background color of the virtual parent node. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor VirtualParentNodeColor = FLinearColor{0.129412f, 0.129412f, 0.129412f, 1.0f}; // dark gray
 
 	/** The background color of the selector first node. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor SelectorFirstNodeColor = FLinearColor{0.f, 0.721569f, 0.831373f, 1.f};  // cyan
 
 	/** The background color of the selector random node. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor SelectorRandomNodeColor = FLinearColor{1.f, 0.839216f, 0.f, 1.f}; // yellow
 
 	/** The background color of the selector random node. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor SpeechSequenceNodeColor = FLinearColor{0.050980f, 0.278431f, 0.631373f, 1.f}; // blueish
 
 	/** The background color of the node borders. */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor BorderBackgroundColor = FLinearColor::Black;
 
 	/** The background color of the node borders when hovered over */
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor BorderHoveredBackgroundColor = FLinearColor(0.380392f, 0.380392f, 0.380392f, 1.0f); // gray
 
 	/** The amount of blank space left around the edges of the speaker text area in case of speech sequence nodes. */
@@ -278,6 +401,7 @@ public:
 	UPROPERTY(Category = "Graph Node Speech Sequence", Config, EditAnywhere)
 	TEnumAsByte<EHorizontalAlignment> DescriptionSpeakerHorizontalAlignment = HAlign_Center;
 
+	
 	/** The wire thickness of the connections between nodes. */
 	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
 	float WireThickness = 2.0f;
@@ -291,19 +415,19 @@ public:
 	bool bShowEdgeHasConditionsIcon = true;
 
 	/** The base color of the wire. */
-	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
 	FLinearColor WireBaseColor = FLinearColor{1.0f, 1.0f, 1.0f, 1.0f}; // white
 
 	/** Does the wire use the condition color (if it has conditions) in the normal mode? */
-	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
 	bool bShowDifferentColorForConditionWires = true;
 
 	/** The color of the wire if the edge has any conditions. */
-	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
 	FLinearColor WireWithConditionsColor = FLinearColor{1.f, 0.341176f, 0.133333f, 1.0f}; // orangeish
 
 	/** The color of the wire when hovered over */
-	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
 	FLinearColor WireHoveredColor = FLinearColor{1.0f, 0.596078f, 0.0f, 1.0f}; // orange
 
 	/** Is the the viewing of primary/secondary edges enabled? */
@@ -319,17 +443,14 @@ public:
 	bool bDrawSecondaryEdges = true;
 
 	/** The Color of the wire when the edge is primary. */
-	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
 	FLinearColor WirePrimaryEdgeColor = FLinearColor{0.717647f, 0.109804f, 0.109804f, 1.0f}; // redish
 
 	 /** The Color of the wire when the edge is secondary. */
-	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
+	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
 	FLinearColor WireSecondaryEdgeColor = FLinearColor{0.101961f, 0.137255f, 0.494118f, 1.f}; // blueish
 
-	/** Should we hide the categories in the Dialogue browser that do not have any children? */
-	UPROPERTY(Category = "Browser", Config, EditAnywhere)
-	bool bHideEmptyDialogueBrowserCategories = true;
-
+	
 	// Advanced Section
 	/**  The offset on the X axis (left/right) to use when automatically positioning nodes. */
 	UPROPERTY(Category = "Position", Config, EditAnywhere, AdvancedDisplay)

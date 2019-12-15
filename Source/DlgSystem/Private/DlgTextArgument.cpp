@@ -7,6 +7,7 @@
 #include "DlgContextInternal.h"
 #include "DlgDialogueParticipant.h"
 #include "DlgReflectionHelper.h"
+#include "Logging/DlgLogger.h"
 
 
 FArchive& operator<<(FArchive &Ar, FDlgTextArgument& DlgCondition)
@@ -20,40 +21,40 @@ FArchive& operator<<(FArchive &Ar, FDlgTextArgument& DlgCondition)
 
 FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgContextInternal* DlgContext, FName NodeOwner) const
 {
-	// If participant name is not valid we use the node owner namne
+	// If participant name is not valid we use the node owner name
 	const FName ValidParticipantName = ParticipantName == NAME_None ? NodeOwner : ParticipantName;
 
 	const UObject* Participant = DlgContext->GetConstParticipant(ValidParticipantName);
 	if (Participant == nullptr)
 	{
-		UE_LOG(LogDlgSystem,
-			Error,
+		FDlgLogger::Get().Errorf(
 			TEXT("Failed to construct text argument = %s, invalid owner name = %s, NodeOwner = %s"),
-			*DisplayString, *ValidParticipantName.ToString(), *NodeOwner.ToString());
+			*DisplayString, *ValidParticipantName.ToString(), *NodeOwner.ToString()
+		);
 		return FFormatArgumentValue(0);
 	}
 
 	switch (Type)
 	{
-		case EDlgTextArgumentType::DlgTextArgumentDialogueInt:
+		case EDlgTextArgumentType::DialogueInt:
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetIntValue(Participant, VariableName));
 
-		case EDlgTextArgumentType::DlgTextArgumentClassInt:
+		case EDlgTextArgumentType::ClassInt:
 			return FFormatArgumentValue(UDlgReflectionHelper::GetVariable<UIntProperty, int32>(Participant, VariableName));
 
-		case EDlgTextArgumentType::DlgTextArgumentDialogueFloat:
+		case EDlgTextArgumentType::DialogueFloat:
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetFloatValue(Participant, VariableName));
 
-		case EDlgTextArgumentType::DlgTextArgumentClassFloat:
+		case EDlgTextArgumentType::ClassFloat:
 			return FFormatArgumentValue(UDlgReflectionHelper::GetVariable<UFloatProperty, float>(Participant, VariableName));
 
-		case EDlgTextArgumentType::DlgTextArgumentClassText:
+		case EDlgTextArgumentType::ClassText:
 			return FFormatArgumentValue(UDlgReflectionHelper::GetVariable<UTextProperty, FText>(Participant, VariableName));
 
-		case EDlgTextArgumentType::DlgTextArgumentDisplayName:
+		case EDlgTextArgumentType::DisplayName:
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetParticipantDisplayName(Participant, NodeOwner));
 
-		case EDlgTextArgumentType::DlgTextArgumentGender:
+		case EDlgTextArgumentType::Gender:
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetParticipantGender(Participant));
 
 		default:

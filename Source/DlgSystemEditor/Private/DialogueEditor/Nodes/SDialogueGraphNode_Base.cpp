@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Csaba Molnar, Daniel Butum
-#include "SGraphNode_DialogueBase.h"
+#include "SDialogueGraphNode_Base.h"
 
 #include "Widgets/Layout/SBox.h"
 #include "DialogueGraphNode_Root.h"
@@ -12,15 +12,15 @@
 
 
 /////////////////////////////////////////////////////
-// SGraphNode_DialogueBase
-void SGraphNode_DialogueBase::Construct(const FArguments& InArgs, UDialogueGraphNode_Base* InNode)
+// SDialogueGraphNode_Base
+void SDialogueGraphNode_Base::Construct(const FArguments& InArgs, UDialogueGraphNode_Base* InNode)
 {
 	GraphNode = Cast<UEdGraphNode>(InNode);
 	DialogueGraphNode_Base = InNode;
 	Settings = GetDefault<UDlgSystemSettings>();
 }
 
-void SGraphNode_DialogueBase::CreatePinWidgets()
+void SDialogueGraphNode_Base::CreatePinWidgets()
 {
 	// Create only one pin, the output one, the rest is handled by FDialogueGraphConnectionDrawingPolicy
 	UEdGraphPin* OutputPin = DialogueGraphNode_Base->GetOutputPin();
@@ -42,12 +42,12 @@ void SGraphNode_DialogueBase::CreatePinWidgets()
 	CreateStandardPinWidget(OutputPin);
 }
 
-void SGraphNode_DialogueBase::CreateStandardPinWidget(UEdGraphPin* Pin)
+void SDialogueGraphNode_Base::CreateStandardPinWidget(UEdGraphPin* Pin)
 {
 	Super::CreateStandardPinWidget(Pin);
 }
 
-void SGraphNode_DialogueBase::UpdateGraphNode()
+void SDialogueGraphNode_Base::UpdateGraphNode()
 {
 	// Reset variables that are going to be exposed, in case we are refreshing an already setup node.
 	InputPins.Empty();
@@ -61,7 +61,7 @@ void SGraphNode_DialogueBase::UpdateGraphNode()
 	SetVisibility(TAttribute<EVisibility>::Create(TAttribute<EVisibility>::FGetter::CreateSP(this, &Self::GetNodeVisibility)));
 }
 
-void SGraphNode_DialogueBase::SetOwner(const TSharedRef<SGraphPanel>& OwnerPanel)
+void SDialogueGraphNode_Base::SetOwner(const TSharedRef<SGraphPanel>& OwnerPanel)
 {
 	check(!OwnerGraphPanelPtr.IsValid());
 	SetParentPanel(OwnerPanel);
@@ -76,13 +76,13 @@ void SGraphNode_DialogueBase::SetOwner(const TSharedRef<SGraphPanel>& OwnerPanel
 	}
 }
 
-TSharedPtr<SGraphPin> SGraphNode_DialogueBase::CreatePinWidget(UEdGraphPin* Pin) const
+TSharedPtr<SGraphPin> SDialogueGraphNode_Base::CreatePinWidget(UEdGraphPin* Pin) const
 {
 	// Called by CreateStandardPinWidget
 	return SNew(SDialogueGraphPin, Pin);
 }
 
-void SGraphNode_DialogueBase::AddPin(const TSharedRef<SGraphPin>& PinToAdd)
+void SDialogueGraphNode_Base::AddPin(const TSharedRef<SGraphPin>& PinToAdd)
 {
 	PinToAdd->SetOwner(SharedThis(this));
 	PinsNodeBox->AddSlot()

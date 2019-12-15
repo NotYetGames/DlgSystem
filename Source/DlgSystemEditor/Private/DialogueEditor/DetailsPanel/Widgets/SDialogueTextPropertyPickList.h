@@ -11,24 +11,24 @@
 class IPropertyHandle;
 
 /**
- * A widget to edit a Text property but it alows you to pick from a list of possible values and search in it.
+ * A widget to edit a Text property but it allows you to pick from a list of possible values and search in it.
  * Inspired from SPropertyMenuAssetPicker and SAssetPicker and SAssetView
  */
-class STextPropertyPickList : public SCompoundWidget
+class SDialogueTextPropertyPickList : public SCompoundWidget
 {
 	typedef TSharedPtr<FName> TextListItem;
-	typedef STextPropertyPickList Self;
+	typedef SDialogueTextPropertyPickList Self;
 
 public:
 	SLATE_BEGIN_ARGS(Self)
 		: _PropertyHandle()
 		, _HasContextCheckbox(false)
 		, _IsContextCheckBoxChecked(false)
-		, _ContextCheckBoxText(NSLOCTEXT("STextPropertyPickList", "ContextCheckBoxText", "Local Search"))
-		, _ContextCheckBoxToolTipText(NSLOCTEXT("STextPropertyPickList", "ContextCheckBoxToolTipText",
+		, _ContextCheckBoxText(NSLOCTEXT("SDialogueTextPropertyPickList", "ContextCheckBoxText", "Local Search"))
+		, _ContextCheckBoxToolTipText(NSLOCTEXT("SDialogueTextPropertyPickList", "ContextCheckBoxToolTipText",
 									 "Should the search be local? If not checked the search is global."))
-		, _ToolTipText(NSLOCTEXT("STextPropertyPickList", "DefaultToolTip", "REPLACE ME"))
-		, _HintText(NSLOCTEXT("STextPropertyPickList", "SearchBoxHint", "Search Names"))
+		, _ToolTipText(NSLOCTEXT("SDialogueTextPropertyPickList", "DefaultToolTip", "REPLACE ME"))
+		, _HintText(NSLOCTEXT("SDialogueTextPropertyPickList", "SearchBoxHint", "Search Names"))
 		, _CurrentContextAvailableSuggestions(TArray<FName>())
 		, _AvailableSuggestions(TArray<FName>())
 		, _OnTextChanged()

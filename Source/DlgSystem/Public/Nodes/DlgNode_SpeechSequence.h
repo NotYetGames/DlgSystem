@@ -23,28 +23,32 @@ public:
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
 	FText Text;
 
-	/** Node data that you can customize yourself with your own data types */
-	UPROPERTY(EditAnywhere, Instanced, Category = DialogueNodeData)
-	UDlgNodeData* NodeData;
-
-	/** Voice attached to the entry. The Sound Wave variant. */
-	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
-	USoundWave* VoiceSoundWave;
-
-	/** Voice attached to the entry. The Dialogue Wave variant. Only the first wave from the dialogue context array should be used. */
-	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
-	UDialogueWave* VoiceDialogueWave;
+	/** Text that will appear when you want to continue down this edge to the next conversation. Usually "Next". */
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
+	FText EdgeText;
 
 	/** State of the speaker attached to the entry. Passed to the GetParticipantIcon function. */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	FName SpeakerState;
+	
+	/** Node data that you can customize yourself with your own data types */
+	UPROPERTY(EditAnywhere, Instanced, Category = DialogueNodeData)
+	UDlgNodeData* NodeData;
 
-	/** Text that will appear when you want to continue down this edge to the next conversation. Usually "Next". */
-	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
-	FText EdgeText = UDlgSystemSettings::EdgeTextNext;
-
+	// Voice attached to this node. The Sound Wave variant.
+	// NOTE: You should probably use the NodeData
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
-	UObject* GenericData;
+	USoundWave* VoiceSoundWave = nullptr;
+
+	// Voice attached to this node. The Dialogue Wave variant. Only the first wave from the dialogue context array should be used.
+	// NOTE: You should probably use the NodeData
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
+	UDialogueWave* VoiceDialogueWave = nullptr;
+
+	// Any generic object you would like
+	// NOTE: You should probably use the NodeData
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
+	UObject* GenericData = nullptr;
 };
 
 
@@ -69,6 +73,8 @@ public:
 #endif
 
 	// Begin UDlgNode interface
+	void UpdateTextsValuesFromDefaultsAndRemappings(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true) override;
+	void UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true) override;
 	bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
 	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated) override;
 	bool OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext) override;
@@ -79,11 +85,11 @@ public:
 	USoundWave* GetNodeVoiceSoundWave() const override;
 	UDialogueWave* GetNodeVoiceDialogueWave() const override;
 	FName GetSpeakerState() const override;
-	void AddAllSpeakerStatesIntoSet(TSet<FName>& States) const override;
+	void AddAllSpeakerStatesIntoSet(TSet<FName>& OutStates) const override;
 	UObject* GetGenericData() const override;
 	FName GetNodeParticipantName() const override;
 	void GetAssociatedParticipants(TArray<FName>& OutArray) const override;
-
+	
 #if WITH_EDITOR
 	FString GetNodeTypeString() const override { return TEXT("Speech Sequence"); }
 #endif
@@ -105,7 +111,7 @@ public:
 	static FName GetMemberNameSpeechSequence() { return GET_MEMBER_NAME_CHECKED(UDlgNode_SpeechSequence, SpeechSequence); }
 
 protected:
-	/** array of important stuff to say */
+	/** Array of important stuff to say */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	TArray<FDlgSpeechSequenceEntry> SpeechSequence;
 

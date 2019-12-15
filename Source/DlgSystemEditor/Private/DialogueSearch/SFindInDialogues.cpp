@@ -503,7 +503,26 @@ TSharedRef<SWidget> SFindInDialogues::FillFilterEntries()
 		NAME_None,
 		EUserInterfaceActionType::ToggleButton
 	);
-
+	MenuBuilder.AddMenuEntry(
+		LOCTEXT("IncludeTextLocalizationData", "Include text localization data in search"),
+		LOCTEXT("IncludeTextLocalizationData_ToolTip", "Include text localization data in search (key/namespace)"),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]()
+			{
+				CurrentFilter.bIncludeTextLocalizationData = !CurrentFilter.bIncludeTextLocalizationData;
+				MakeSearchQuery(CurrentFilter, bIsInFindWithinDialogueMode);
+			}),
+			FCanExecuteAction(),
+			FIsActionChecked::CreateLambda([this]() -> bool
+			{
+				return CurrentFilter.bIncludeTextLocalizationData;
+			})
+		),
+		NAME_None,
+		EUserInterfaceActionType::ToggleButton
+	);
+	
 	return MenuBuilder.MakeWidget();
 }
 
