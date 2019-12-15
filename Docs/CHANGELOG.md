@@ -8,15 +8,19 @@ Moved the config of the `DlgSystemSettings` from `DefaultEditorPerProjectUserSet
 
 Reasons:
 - The dialogue settings were already in the DlgSystem runtime module
-- Previous location DefaultEditorPerProjectUserSettings.ini was only loaded for editor builds
+- Previous location `DefaultEditorPerProjectUserSettings.ini` was only loaded for editor builds
 - We have some runtime values in the dialogue settings
 
 ## Other changes
 
 - **Deprecated** the *DlgText* text file format, the only supported format now is the JSON one, this will be removed in a future version.
 
+- **Deprecated** the following functions: `GetActiveSpeakerState`, `GetActiveParticipantIcon`, `GetActiveParticipant`, `GetActiveParticipantName` in favour of variants with `Node` in their name. For now you will get a warning about this, but the deprecated functions will be removed in a future version.
+
 - **Fix** localization support so that you can set the same namespace to multiple dialogues texts at the same time if you resave them.
 **NOTE:** the text files do not export the localization information yet
+
+- **Fix** Dialogue PostInitProperties spam (by checking for default class object and if not loaded)
 
 - **Add** new logger type that also logs to the MessageLog. This is configurable in the dialogue settings
 
