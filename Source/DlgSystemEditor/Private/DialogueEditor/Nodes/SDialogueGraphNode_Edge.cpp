@@ -151,12 +151,6 @@ void SDialogueGraphNode_Edge::UpdateGraphNode()
 			+SOverlay::Slot()
 			[
 				SNew(SImage)
-				.Image(FEditorStyle::GetBrush("Graph.TransitionNode.Body"))
-			]
-
-			+SOverlay::Slot()
-			[
-				SNew(SImage)
 				.Image(FEditorStyle::GetBrush("Graph.TransitionNode.ColorSpill"))
 				.ColorAndOpacity(this, &Self::GetTransitionColor)
 			]
@@ -167,11 +161,19 @@ void SDialogueGraphNode_Edge::UpdateGraphNode()
 				.Image(FEditorStyle::GetBrush("Graph.TransitionNode.Icon"))
 			]
 
+#if ENGINE_MINOR_VERSION < 24
 			+SOverlay::Slot()
 			[
 				SNew(SImage)
 				.Image(FEditorStyle::GetBrush("Graph.TransitionNode.Gloss"))
 			]
+
+			+SOverlay::Slot()
+			[
+				SNew(SImage)
+				.Image(FEditorStyle::GetBrush("Graph.TransitionNode.Body"))
+			]
+#endif // ENGINE_MINOR_VERSION < 24
 		];
 }
 //  End SGraphNode Interface
