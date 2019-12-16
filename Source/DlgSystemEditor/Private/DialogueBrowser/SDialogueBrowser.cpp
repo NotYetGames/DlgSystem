@@ -21,7 +21,7 @@
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 
 #define LOCTEXT_NAMESPACE "SDialogueBrowser"
-
+#define DEFAULT_FONT(...) FCoreStyle::GetDefaultFontStyle(__VA_ARGS__)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename ItemType>
@@ -946,7 +946,7 @@ TSharedRef<SWidget> SDialogueBrowser::MakeButtonWidgetForGraphNodes(const TArray
 					[
 						SNew(STextBlock)
 						.Text(ChildItem->GetDisplayText())
-						.Font(FEditorStyle::GetFontStyle(TEXT("FontAwesome.10")))
+						.Font(DEFAULT_FONT("Regular", 10))
 					]
 				];
 		}
@@ -1089,7 +1089,7 @@ TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(TSharedPtr<FDialogueBr
 	TSharedPtr<STextBlock> DefaultTextBlock = SNew(STextBlock)
 			.Text(InItem->GetDisplayText())
 			.HighlightText(this, &Self::GetFilterText)
-			.Font(FEditorStyle::GetFontStyle(TEXT("FontAwesome.10")));
+			.Font(DEFAULT_FONT("Regular", 10));
 
 	TSharedPtr<SWidget> RowContent = DefaultTextBlock;
 	TSharedPtr<SHorizontalBox> RowContainer;
@@ -1136,7 +1136,7 @@ TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(TSharedPtr<FDialogueBr
 				.VAlign(VAlign_Center)
 				[
 					SNew(STextBlock)
-					.Font(FEditorStyle::GetFontStyle(TEXT("FontAwesome.16")))
+					.Font(DEFAULT_FONT("Regular", 16))
 					.Text(InItem->GetDisplayText())
 					.HighlightText(this, &Self::GetFilterText)
 				]
@@ -1147,14 +1147,14 @@ TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(TSharedPtr<FDialogueBr
 				.VAlign(VAlign_Center)
 				[
 					SNew(STextBlock)
-					.Font(FEditorStyle::GetFontStyle(TEXT("FontAwesome.9")))
+					.Font(DEFAULT_FONT("Regular", 9))
 					.Text(FText::FromString(FString::Printf(TEXT("Dialogue references %d"), DialogueReferences)))
 				];
 		}
 		else
 		{
 			RowContent = SNew(STextBlock)
-				.Font(FEditorStyle::GetFontStyle(TEXT("FontAwesome.12")))
+				.Font(DEFAULT_FONT("Regular", 12))
 				.Text(InItem->GetDisplayText())
 				.HighlightText(this, &Self::GetFilterText);
 		}
@@ -1520,3 +1520,4 @@ TSharedRef<SWidget> SDialogueBrowser::FillViewOptionsEntries()
 }
 
 #undef LOCTEXT_NAMESPACE
+#undef DEFAULT_FONT
