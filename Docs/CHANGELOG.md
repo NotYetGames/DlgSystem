@@ -1,3 +1,7 @@
+# 8.0.1
+
+Fixed marketplace version of the plugin not handling renamed redirects properly.
+
 # 8.0
 
 ## Important breaking change
