@@ -28,8 +28,11 @@ UDlgContext* UDlgManager::StartDialogueWithDefaultParticipants(UObject* WorldCon
 	TSet<FName> ParticipantSet;
 	Dialogue->GetAllParticipantNames(ParticipantSet);
 
+	TMap<FName, TArray<UObject*>> What;
+	What.Add(NAME_None, {});
+
 	TArray<UObject*> Participants;
-	TMap<FName, FDlgObjectArray> ObjectMap;
+	TMap<FName, TArray<UObject*>> ObjectMap;
 	for (const FName& Name : ParticipantSet)
 	{
 		ObjectMap.Add(Name, {});
@@ -40,7 +43,7 @@ UDlgContext* UDlgManager::StartDialogueWithDefaultParticipants(UObject* WorldCon
 		const FName ParticipantName = IDlgDialogueParticipant::Execute_GetParticipantName(Participant);
 		if (ObjectMap.Contains(ParticipantName))
 		{
-			ObjectMap[ParticipantName].ObjectArray.AddUnique(Participant);
+			ObjectMap[ParticipantName].AddUnique(Participant);
 			Participants.AddUnique(Participant);
 		}
 	}
@@ -49,13 +52,13 @@ UDlgContext* UDlgManager::StartDialogueWithDefaultParticipants(UObject* WorldCon
 	TArray<FString> DuplicatedNames;
 	for (const auto& Pair : ObjectMap)
 	{
-		if (Pair.Value.ObjectArray.Num() == 0)
+		if (Pair.Value.Num() == 0)
 		{
 			MissingNames.Add(Pair.Key.ToString());
 		}
-		else if (Pair.Value.ObjectArray.Num() > 1)
+		else if (Pair.Value.Num() > 1)
 		{
-			for (UObject* Obj : Pair.Value.ObjectArray)
+			for (UObject* Obj : Pair.Value)
 			{
 				DuplicatedNames.Add(Obj->GetName() + "(" + Pair.Key.ToString() + ")");
 			}
