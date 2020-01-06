@@ -28,9 +28,6 @@ UDlgContext* UDlgManager::StartDialogueWithDefaultParticipants(UObject* WorldCon
 	TSet<FName> ParticipantSet;
 	Dialogue->GetAllParticipantNames(ParticipantSet);
 
-	TMap<FName, TArray<UObject*>> What;
-	What.Add(NAME_None, {});
-
 	TArray<UObject*> Participants;
 	TMap<FName, TArray<UObject*>> ObjectMap;
 	for (const FName& Name : ParticipantSet)
