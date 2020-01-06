@@ -14,12 +14,14 @@ bool UDlgContext::ChooseChildBasedOnAllOptionIndex(int32 Index)
 	if (!AllChildren.IsValidIndex(Index))
 	{
 		FDlgLogger::Get().Errorf(TEXT("Invalid index %d in UDlgContext::ChooseChildBasedOnAllOptionIndex!"), Index);
+		bDialogueEnded = true;
 		return false;
 	}
 
 	if (!AllChildren[Index].bSatisfied)
 	{
 		FDlgLogger::Get().Errorf(TEXT("Index %d is an unsatisfied edge! (UDlgContext::ChooseChildBasedOnAllOptionIndex!) Call failed!"), Index);
+		bDialogueEnded = true;
 		return false;
 	}
 
@@ -32,6 +34,7 @@ bool UDlgContext::ChooseChildBasedOnAllOptionIndex(int32 Index)
 	}
 
 	ensure(false);
+	bDialogueEnded = true;
 	return false;
 }
 

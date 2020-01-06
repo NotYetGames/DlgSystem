@@ -107,9 +107,13 @@ bool UDlgContextInternal::ChooseChild(int32 OptionIndex)
 	check(Dialogue);
 	if (UDlgNode* Node = GetActiveNode())
 	{
-		return Node->OptionSelected(OptionIndex, this);
+		if (Node->OptionSelected(OptionIndex, this))
+		{
+			return true;
+		}
 	}
 
+	bDialogueEnded = true;
 	return false;
 }
 

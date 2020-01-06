@@ -16,6 +16,31 @@
 #include "Logging/DlgLogger.h"
 #include "DlgHelper.h"
 
+
+UDlgContext* UDlgManager::StartDialogueWithDefaultParticipants(UObject* WorldContextObject, UDlgDialogue* Dialogue)
+{
+	if (!IsValid(Dialogue))
+	{
+		FDlgLogger::Get().Error(TEXT("Failed to start dialogue - Invalid dialogue (is nullptr)!"));
+		return nullptr;
+	}
+
+	TSet<FName> ParticipantSet;
+	Dialogue->GetAllParticipantNames(ParticipantSet);
+
+	TArray<UObject*> Participants;
+	for (UObject* Participant : GetAllObjectsWithDialogueParticipantInterface(WorldContextObject))
+	{
+		if (ParticipantSet.Contains(IDlgDialogueParticipant::Execute_GetParticipantName(Participant)))
+		{
+			Participants.Add(Participant);
+		}
+	}
+
+	return StartDialogue(Dialogue, Participants);
+}
+
+
 UDlgContext* UDlgManager::StartDialogue(UDlgDialogue* Dialogue, const TArray<UObject*>& Participants)
 {
 	TMap<FName, UObject*> ParticipantBinding;
@@ -174,6 +199,35 @@ TArray<TWeakObjectPtr<AActor>> UDlgManager::GetAllActorsImplementingDialoguePart
 		if (IsValid(Actor) && Actor->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
 		{
 			Array.Add(Actor);
+		}
+	}
+	return Array;
+}
+
+TArray<UObject*> UDlgManager::GetAllObjectsWithDialogueParticipantInterface(UObject* WorldContextObject)
+{
+	TArray<UObject*> Array;
+	if (WorldContextObject != nullptr)
+	{
+		if (UWorld* World = WorldContextObject->GetWorld())
+		{
+			// TObjectIterator has some weird ghost objects in editor, I failed to find a way to validate them
+			// Instead of this ActorIterate is used and the properties inside the actors are examined in a recursive way
+			// Containers are not supported yet
+			TSet<UObject*> VisitedSet;
+			for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
+			{
+				GatherParticipantsRecursive(*Itr, Array, VisitedSet);
+			}
+
+			//for (TObjectIterator<UObject> Itr(World); Itr; ++Itr)
+			//{
+			//	UObject* Object = *Itr;
+			//	if (IsValid(Object) && Object->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
+			//	{
+			//		Array.AddUnique(Object);
+			//	}
+			//}
 		}
 	}
 	return Array;
@@ -474,3 +528,26 @@ bool UDlgManager::ConstructParticipantMap(const UDlgDialogue* Dialogue, const TA
 
 	return true;
 }
+
+void UDlgManager::GatherParticipantsRecursive(UObject* Object, TArray<UObject*>& Array, TSet<UObject*>& AlreadyVisited)
+{
+	if (IsValid(Object) && !AlreadyVisited.Contains(Object))
+	{
+		AlreadyVisited.Add(Object);
+		if (Object->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
+		{
+			Array.Add(Object);
+		}
+
+		for (UProperty* Property = Object->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
+		{
+			if (UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
+			{
+				GatherParticipantsRecursive(ObjectProperty->GetPropertyValue_InContainer(Object), Array, AlreadyVisited);
+			}
+
+			// TODO: handle containers and structs
+		}
+	}
+}
+
