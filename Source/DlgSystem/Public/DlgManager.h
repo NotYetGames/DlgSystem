@@ -187,3 +187,15 @@ private:
 
 	static void GatherParticipantsRecursive(UObject* Object, TArray<UObject*>& Array, TSet<UObject*>& AlreadyVisited);
 };
+
+
+USTRUCT()
+struct FDlgObjectArray
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY()
+	TArray<UObject*> ObjectArray;
+};

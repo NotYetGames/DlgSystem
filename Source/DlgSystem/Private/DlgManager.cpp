@@ -29,12 +29,57 @@ UDlgContext* UDlgManager::StartDialogueWithDefaultParticipants(UObject* WorldCon
 	Dialogue->GetAllParticipantNames(ParticipantSet);
 
 	TArray<UObject*> Participants;
+	TMap<FName, FDlgObjectArray> ObjectMap;
+	for (const FName& Name : ParticipantSet)
+	{
+		ObjectMap.Add(Name, {});
+	}
+	
 	for (UObject* Participant : GetAllObjectsWithDialogueParticipantInterface(WorldContextObject))
 	{
-		if (ParticipantSet.Contains(IDlgDialogueParticipant::Execute_GetParticipantName(Participant)))
+		const FName ParticipantName = IDlgDialogueParticipant::Execute_GetParticipantName(Participant);
+		if (ObjectMap.Contains(ParticipantName))
 		{
-			Participants.Add(Participant);
+			ObjectMap[ParticipantName].ObjectArray.AddUnique(Participant);
+			Participants.AddUnique(Participant);
 		}
+	}
+
+	TArray<FString> MissingNames;
+	TArray<FString> DuplicatedNames;
+	for (const auto& Pair : ObjectMap)
+	{
+		if (Pair.Value.ObjectArray.Num() == 0)
+		{
+			MissingNames.Add(Pair.Key.ToString());
+		}
+		else if (Pair.Value.ObjectArray.Num() > 1)
+		{
+			for (UObject* Obj : Pair.Value.ObjectArray)
+			{
+				DuplicatedNames.Add(Obj->GetName() + "(" + Pair.Key.ToString() + ")");
+			}
+		}
+	}
+
+	if (MissingNames.Num() > 0)
+	{
+		const FString NameList = FString::Join(MissingNames, *FString(", "));
+		FDlgLogger::Get().Errorf(TEXT("StartDialogueWithDefaultParticipants failed for Dialogue = `%s`, the system failed to find the following participant(s): %s"),
+			*Dialogue->GetName(), *NameList);
+
+	}
+
+	if (DuplicatedNames.Num() > 0)
+	{
+		const FString NameList = FString::Join(DuplicatedNames, *FString(", "));
+		FDlgLogger::Get().Errorf(TEXT("StartDialogueWithDefaultParticipants failed for Dialogue = `%s`, the system found multiple participants using the same name: %s"),
+			*Dialogue->GetName(), *NameList);
+	}
+
+	if (MissingNames.Num() > 0 || DuplicatedNames.Num() > 0)
+	{
+		return false;
 	}
 
 	return StartDialogue(Dialogue, Participants);
