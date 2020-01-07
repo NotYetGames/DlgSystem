@@ -79,7 +79,7 @@ UDlgContext* UDlgManager::StartDialogueWithDefaultParticipants(UObject* WorldCon
 
 	if (MissingNames.Num() > 0 || DuplicatedNames.Num() > 0)
 	{
-		return false;
+		return nullptr;
 	}
 
 	return StartDialogue(Dialogue, Participants);
