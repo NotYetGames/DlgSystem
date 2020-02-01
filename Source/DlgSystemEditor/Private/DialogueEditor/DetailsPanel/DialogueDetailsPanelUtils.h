@@ -13,11 +13,11 @@
 	TAttribute<EVisibility>::Create(TAttribute<EVisibility>::FGetter::CreateStatic(_StaticMethod))
 
 // Constants used in this file
-static constexpr TCHAR* META_ShowOnlyInnerProperties = TEXT("ShowOnlyInnerProperties");
-static constexpr TCHAR* META_UIMin = TEXT("UIMin");
-static constexpr TCHAR* META_UIMax = TEXT("UIMax");
-static constexpr TCHAR* META_ClampMin = TEXT("ClampMin");
-static constexpr TCHAR* META_ClampMax = TEXT("ClampMax");
+static const TCHAR* META_ShowOnlyInnerProperties = TEXT("ShowOnlyInnerProperties");
+static const TCHAR* META_UIMin = TEXT("UIMin");
+static const TCHAR* META_UIMax = TEXT("UIMax");
+static const TCHAR* META_ClampMin = TEXT("ClampMin");
+static const TCHAR* META_ClampMax = TEXT("ClampMax");
 
 struct FDialogueDetailsPanelUtils
 {
@@ -51,12 +51,12 @@ public:
 	{
 		return GetDefault<UDlgSystemSettings>()->bShowNodeData ? EVisibility::Visible : EVisibility::Hidden;
 	}
-	
+
 	static EVisibility GetGenericDataVisibility()
 	{
 		return GetDefault<UDlgSystemSettings>()->bShowGenericData ? EVisibility::Visible : EVisibility::Hidden;
 	}
-	
+
 	/** Gets the appropriate modifier key for an input field depending on the Dialogue System Settings */
 	static EModifierKey::Type GetModifierKeyFromDialogueSettings()
 	{

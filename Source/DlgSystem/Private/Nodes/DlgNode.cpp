@@ -145,7 +145,6 @@ bool UDlgNode::CheckNodeEnterConditions(const UDlgContextInternal* DlgContext, T
 	}
 
 	AlreadyVisitedNodes.Add(this);
-
 	if (!FDlgCondition::EvaluateArray(EnterConditions, DlgContext, OwnerName))
 	{
 		return false;
@@ -248,7 +247,7 @@ void UDlgNode::UpdateTextsValuesFromDefaultsAndRemappings(
 			FDlgLocalizationHelper::UpdateTextFromRemapping(Settings, Edge.GetMutableUnformattedText());
 		}
 	}
-	
+
 	if (bUpdateGraphNode)
 	{
 		UpdateGraphNode();
@@ -265,7 +264,7 @@ void UDlgNode::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, 
 			Edge.UpdateTextsNamespacesAndKeys(Outer, Settings);
 		}
 	}
-	
+
 	if (bUpdateGraphNode)
 	{
 		UpdateGraphNode();

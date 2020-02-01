@@ -22,6 +22,20 @@ class DLGSYSTEM_API UDlgManager : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
+
+	/**
+	 * Starts a Dialogue with the provided Dialogue
+	 * The function checks all the objects in the world to gather the participants
+	 * This method can fail in the following situations:
+	 *  - The Dialogue has a Participant which does not exist in the World
+	 *	- Multiple Objects are using the same Participant Name in the World
+	 *
+	 * @returns The dialogue context object or nullptr if something went wrong
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch", meta = (WorldContext = "WorldContextObject"))
+	static UDlgContext* StartDialogueWithDefaultParticipants(UObject* WorldContextObject, UDlgDialogue* Dialogue);
+
+
 	/**
 	 * Starts a Dialogue with the provided Dialogue and Participants array
 	 * This method can fail in the following situations:
@@ -88,8 +102,12 @@ public:
 	/** Gets all loaded dialogues from memory. LoadAllDialoguesIntoMemory must be called before this */
 	static TArray<UDlgDialogue*> GetAllDialoguesFromMemory();
 
-	/** Gets all the actors from the provided World that implement the Dialogue Participant Interface */
+	/** Gets all the objects from the provided World that implement the Dialogue Participant Interface. Iterates through all objects, DO NOT CALL EACH FRAME */
 	static TArray<TWeakObjectPtr<AActor>> GetAllActorsImplementingDialogueParticipantInterface(UWorld* World);
+
+	/** Gets all objects from the World that implement the Dialogue Participant Interface */
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper", meta = (WorldContext = "WorldContextObject"))
+	static TArray<UObject*> GetAllObjectsWithDialogueParticipantInterface(UObject* WorldContextObject);
 
 	/** Gets all the dialogues that have a duplicate GUID, should not happen, like ever. */
 	static TArray<UDlgDialogue*> GetDialoguesWithDuplicateGuid();
@@ -166,4 +184,6 @@ public:
 private:
 	static bool ValidateParticipant(const FString& ContextMessageFailure, const UDlgDialogue* ContextDialogue, UObject* Participant);
 	static bool ConstructParticipantMap(const UDlgDialogue* Dialogue, const TArray<UObject*>& Participants, TMap<FName, UObject*>& OutMap);
+
+	static void GatherParticipantsRecursive(UObject* Object, TArray<UObject*>& Array, TSet<UObject*>& AlreadyVisited);
 };
