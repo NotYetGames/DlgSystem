@@ -45,7 +45,7 @@ public:
 	 * @return true if the dialogue did not end, false otherwise
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
-	virtual bool ChooseChild(int32 OptionIndex) { return false; }
+	virtual bool ChooseChild(int32 OptionIndex) { bDialogueEnded = false; return false; }
 
 	/**
 	 *  Exactly as above but expects an index from the AllOptions array
@@ -60,6 +60,9 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
 	virtual void ReevaluateChildren() {}
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Control")
+	bool HasDialogueEnded() const { return bDialogueEnded; }
 
 	/** Use these functions if you don't care about unsatisfied player options: */
 
@@ -161,6 +164,8 @@ public:
 	}
 
 	const UObject* GetConstParticipant(FName DlgParticipantName) const;
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	const TMap<FName, UObject*>& GetParticipantMap() const { return Participants; }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
@@ -202,6 +207,7 @@ public:
 	FString GetDialoguePathName() const { check(Dialogue); return Dialogue->GetPathName(); }
 
 protected:
+
 	// Methods implemented by UDlgContextInternal
 
 	/** the Dialogue jumps to the defined node, or the function returns with false, if the conversation is over */
@@ -237,4 +243,7 @@ protected:
 
 	/** Node indices visited in this specific Dialogue instance (isn't serialized) */
 	TSet<int32> VisitedNodeIndices;
+
+	/** cache the result of the last ChooseChild call */
+	bool bDialogueEnded = false;
 };

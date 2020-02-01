@@ -70,8 +70,10 @@ bool UDlgContextInternal::Initialize(UDlgDialogue* InDialogue, const TMap<FName,
 	}
 
 	if (bFireEnterEvents)
+	{
 		return EnterNode(StartIndex, {});
-	
+	}
+
 	ActiveNodeIndex = StartIndex;
 	FDlgMemory::GetInstance()->SetNodeVisited(Dialogue->GetDlgGuid(), ActiveNodeIndex);
 	VisitedNodeIndices.Add(ActiveNodeIndex);
@@ -88,8 +90,8 @@ bool UDlgContextInternal::EnterNode(int32 NodeIndex, TSet<const UDlgNode*> Nodes
 	if (!IsValid(Node))
 	{
 		FDlgLogger::Get().Errorf(
-			TEXT("Dialogue = `%s`. Failed to enter dialouge node - invalid node index %d"),
-			 *Dialogue->GetPathName(), NodeIndex
+			TEXT("Dialogue = `%s`. Failed to enter dialogue node - invalid node index %d"),
+			*Dialogue->GetPathName(), NodeIndex
 		);
 		return false;
 	}
@@ -107,9 +109,13 @@ bool UDlgContextInternal::ChooseChild(int32 OptionIndex)
 	check(Dialogue);
 	if (UDlgNode* Node = GetActiveNode())
 	{
-		return Node->OptionSelected(OptionIndex, this);
+		if (Node->OptionSelected(OptionIndex, this))
+		{
+			return true;
+		}
 	}
 
+	bDialogueEnded = true;
 	return false;
 }
 
@@ -134,7 +140,7 @@ void UDlgContextInternal::ReevaluateChildren()
 	{
 		FDlgLogger::Get().Errorf(
 			TEXT("Dialogue = `%s` Failed to update dialogue options for  - invalid ActiveNodeIndex %d"),
-			 *Dialogue->GetPathName(), ActiveNodeIndex
+			*Dialogue->GetPathName(), ActiveNodeIndex
 		);
 		return;
 	}
@@ -154,4 +160,3 @@ const UDlgNode* UDlgContextInternal::GetNode(int32 NodeIndex) const
 
 	return Nodes[NodeIndex];
 }
-
