@@ -90,7 +90,9 @@ public:
 
 	// Getters/Setters:
 	// For the ParticipantName
+	UFUNCTION(BlueprintCallable, Category = DlgNode)
 	virtual FName GetNodeParticipantName() const { return OwnerName; }
+
 	virtual void SetNodeParticipantName(const FName& InName) { OwnerName = InName; }
 
 	// For the EnterConditions
@@ -174,27 +176,34 @@ public:
 	};
 
 	/** Gets the Text of this Node. This can be the final formatted string. */
+	UFUNCTION(BlueprintCallable, Category = DlgNode)
 	virtual const FText& GetNodeText() const { return FText::GetEmpty(); }
 
 	/**
 	 * Gets the Raw unformatted Text of this Node. Usually the same as GetNodeText but in case the node supports formatted string this
 	 * is the raw form with all the arguments intact. To get the text arguments call GetTextArguments.
 	 */
+	UFUNCTION(BlueprintCallable, Category = DlgNode)
 	virtual const FText& GetNodeUnformattedText() const { return GetNodeText(); }
 
 	/** Gets the voice of this Node as a SoundWave. */
+	UFUNCTION(BlueprintCallable, Category = DlgNode)
 	virtual USoundWave* GetNodeVoiceSoundWave() const { return nullptr; }
 
 	/** Gets the voice of this Node as a DialogueWave. Only the first Dialogue context in the wave should be used. */
+	UFUNCTION(BlueprintCallable, Category = DlgNode)
 	virtual UDialogueWave* GetNodeVoiceDialogueWave() const { return nullptr; }
 
 	/** Gets the speaker state ordered to this node (can be used e.g. for icon selection) */
+	UFUNCTION(BlueprintCallable, Category = DlgNode)
 	virtual FName GetSpeakerState() const { return NAME_None; }
 	virtual void AddAllSpeakerStatesIntoSet(TSet<FName>& OutStates) const {};
 
 	/** Gets the generic data asset of this Node. */
+	UFUNCTION(BlueprintCallable, Category = DlgNode)
 	virtual UObject* GetGenericData() const { return nullptr; }
 
+	UFUNCTION(BlueprintCallable, Category = DlgNode)
 	virtual UDlgNodeData* GetNodeData() const { return nullptr; }
 
 	/** Helper method to get directly the Dialogue */

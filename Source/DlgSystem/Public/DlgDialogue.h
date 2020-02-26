@@ -503,7 +503,7 @@ private:
 	 */
 	void AutoFixGraph();
 
-private:
+protected:
 	/** Used to keep track of the version in text  file too, besides being written in the .uasset file. */
 	UPROPERTY()
 	int32 DlgVersion = FDlgDialogueObjectVersion::LatestVersion;
@@ -540,7 +540,7 @@ private:
 	 * to other nodes in this array.
 	 * NOTE: Add VisibleAnywhere to make it easier to debug
 	 */
-	UPROPERTY(AdvancedDisplay, EditFixedSize, Instanced, Meta = (DlgWriteIndex))
+	UPROPERTY(AdvancedDisplay, EditFixedSize, BlueprintReadOnly, Instanced, Meta = (DlgWriteIndex))
 	TArray<UDlgNode*> Nodes;
 
 	// Useful for syncing on the first run with the text file.
