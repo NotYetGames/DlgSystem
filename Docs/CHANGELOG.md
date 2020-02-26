@@ -1,3 +1,25 @@
+# 8.0.2
+
+- **Fix** Linux Editor Compile
+
+- **Add** `HasDialogueEnded()` function to the Dialogue Context
+
+- **Add** `StartDialogueWithDefaultParticipants()` helper function to the Dialogue Manager
+```cpp
+	/**
+	 * Starts a Dialogue with the provided Dialogue
+	 * The function checks all the objects in the world to gather the participants
+	 * This method can fail in the following situations:
+	 *  - The Dialogue has a Participant which does not exist in the World
+	 *	- Multiple Objects are using the same Participant Name in the World
+	 *
+	 * @returns The dialogue context object or nullptr if something went wrong
+	 *
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch", meta = (WorldContext = "WorldContextObject"))
+	static UDlgContext* StartDialogueWithDefaultParticipants(UObject* WorldContextObject, UDlgDialogue* Dialogue);
+```
+
 # 8.0.1
 
 Fixed marketplace version of the plugin not handling renamed redirects properly.

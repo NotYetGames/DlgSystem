@@ -131,8 +131,14 @@ void FDlgSystemEditorModule::StartupModule()
 
 	// Bind Editor commands
 	FileMenuEditorCommands = MakeShared<FUICommandList>();
-	FileMenuEditorCommands->MapAction(FDialogueEditorCommands::Get().SaveAllDialogues, FExecuteAction::CreateStatic(&Self::HandleOnSaveAllDialogues));
-	FileMenuEditorCommands->MapAction(FDialogueEditorCommands::Get().DeleteAllDialoguesTextFiles, FExecuteAction::CreateStatic(&Self::HandleOnDeleteAllDialoguesTextFiles));
+	FileMenuEditorCommands->MapAction(
+		FDialogueEditorCommands::Get().SaveAllDialogues,
+		FExecuteAction::CreateStatic(&Self::HandleOnSaveAllDialogues)
+	);
+	FileMenuEditorCommands->MapAction(
+		FDialogueEditorCommands::Get().DeleteAllDialoguesTextFiles,
+		FExecuteAction::CreateStatic(&Self::HandleOnDeleteAllDialoguesTextFiles)
+	);
 
 	// Content Browser extension
 	FDlgContentBrowserExtensions::InstallHooks();
@@ -236,7 +242,8 @@ void FDlgSystemEditorModule::HandleOnSaveAllDialogues()
 {
 	const EAppReturnType::Type Response = FPlatformMisc::MessageBoxExt(EAppMsgType::YesNo,
 		TEXT("Save all Dialogue assets/files? This will save both the .uasset and the text files depending on the TextFormat from the Dialogue Settings."),
-		TEXT("Save Dialogues?"));
+		TEXT("Save Dialogues?")
+	);
 	if (Response == EAppReturnType::No)
 	{
 		return;
