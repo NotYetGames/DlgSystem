@@ -63,8 +63,7 @@ bool FDlgEvent::ValidateIsParticipantValid(const UObject* Participant) const
 	);
 	return false;
 }
-
-FArchive& operator<<(FArchive &Ar, FDlgEvent& DlgEvent)
+FArchive& operator<<(FArchive& Ar, FDlgEvent& DlgEvent)
 {
 	Ar << DlgEvent.ParticipantName;
 	Ar << DlgEvent.EventName;
@@ -74,5 +73,12 @@ FArchive& operator<<(FArchive &Ar, FDlgEvent& DlgEvent)
 	Ar << DlgEvent.bDelta;
 	Ar << DlgEvent.bValue;
 	Ar << DlgEvent.EventType;
+	return Ar;
+}
+FArchive& operator<<(FArchive &Ar, FDlgCustomEvent& DlgEvent)
+{
+	Ar << DlgEvent.ParticipantClass;
+	Ar << DlgEvent.Event;
+
 	return Ar;
 }
