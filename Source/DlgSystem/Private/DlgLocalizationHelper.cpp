@@ -1,4 +1,4 @@
-// // Copyright 2017-2019 Csaba Molnar, Daniel Butum
+// Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DlgLocalizationHelper.h"
 
 #include "DlgSystemSettings.h"

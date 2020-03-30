@@ -1,4 +1,4 @@
-// Copyright 2017-2018 Csaba Molnar, Daniel Butum
+// Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DialogueK2Node_SwitchDialogueCallbackVariants.h"
 
 UDialogueK2Node_SwitchDialogueCallbackEvent::UDialogueK2Node_SwitchDialogueCallbackEvent(const FObjectInitializer& ObjectInitializer)
