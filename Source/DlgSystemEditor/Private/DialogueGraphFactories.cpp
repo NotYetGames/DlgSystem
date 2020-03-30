@@ -1,4 +1,4 @@
-// Copyright 2017-2018 Csaba Molnar, Daniel Butum
+// Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DialogueGraphFactories.h"
 
 #include "K2Node.h"

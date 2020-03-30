@@ -1,5 +1,4 @@
-
-// Copyright 2017-2018 Csaba Molnar, Daniel Butum
+// Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #pragma once
 
 #include <functional>
