@@ -26,7 +26,7 @@ struct DLGSYSTEM_API FDlgDialogueObjectVersion
 		AddComparisonWithOtherParticipant,
 		AddTextFormatArguments,
 		AddLocalizationOverwrittenNamespacesAndKeys,
-		
+
 
 		// -----<new versions can be added above this line>-------------------------------------------------
 		VersionPlusOne,
@@ -124,7 +124,7 @@ public:
 	 * @return true if the object was saved to the transaction buffer
 	 */
 	bool Modify(bool bAlwaysMarkDirty = true) override;
-	
+
 	/**
 	 * Called by the editor to query whether a property of this object is allowed to be modified.
 	 * The property editor uses this to disable controls for properties that should not be changed.
@@ -431,7 +431,7 @@ public:
 
 	// Is the Node at NodeIndex (if it exists) an end node?
 	bool IsEndNode(int32 NodeIndex) const;
-	
+
 	/** Check if a text file in the same folder with the same name (DlgName) exists and loads the data from that file. */
 	void ImportFromFile();
 
@@ -485,13 +485,13 @@ public:
 private:
 	// Adds conditions from the edges of this Node.
 	void AddConditionsDataFromNodeEdges(const UDlgNode* Node, int32 NodeIndex);
-	
+
 	// Gets the map entry - creates it first if it is not yet there
 	FDlgParticipantData& GetParticipantDataEntry(FName ParticipantName, FName FallbackNodeOwnerName, bool bCheckNone, const FString& ContextMessage);
 
 	// Rebuild & Update and node and its edges
 	void RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings* Settings, bool bUpdateTextsNamespacesAndKeys);
-	
+
 	void ImportFromFileFormat(EDlgDialogueTextFormat TextFormat);
 	void ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const;
 
@@ -540,7 +540,7 @@ protected:
 	 * to other nodes in this array.
 	 * NOTE: Add VisibleAnywhere to make it easier to debug
 	 */
-	UPROPERTY(AdvancedDisplay, EditFixedSize, BlueprintReadOnly, Instanced, Meta = (DlgWriteIndex))
+	UPROPERTY(AdvancedDisplay, EditFixedSize, BlueprintReadOnly, Instanced, Category = DialogueData, Meta = (DlgWriteIndex))
 	TArray<UDlgNode*> Nodes;
 
 	// Useful for syncing on the first run with the text file.
