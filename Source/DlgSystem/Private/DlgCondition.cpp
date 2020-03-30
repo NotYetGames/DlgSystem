@@ -6,7 +6,7 @@
 #include "Nodes/DlgNode.h"
 #include "DlgContextInternal.h"
 #include "DlgReflectionHelper.h"
-
+#include "Kismet/GameplayStatics.h"
 #include "DlgDialogueParticipant.h"
 #include "Logging/DlgLogger.h"
 
@@ -286,5 +286,49 @@ FArchive& operator<<(FArchive &Ar, FDlgCondition& DlgCondition)
 	Ar << DlgCondition.CompareType;
 	Ar << DlgCondition.OtherParticipantName;
 	Ar << DlgCondition.OtherVariableName;
+	return Ar;
+}
+
+bool FDlgCustomCondition::EvaluateArray(const TArray<FDlgCustomCondition>& DlgConditionArray, const UDlgContextInternal* DlgContext, FName DefaultParticipantName /*= NAME_None*/)
+{
+	bool bHasAnyWeak = false;
+	bool bHasSuccessfulWeak = false;
+
+	for (const FDlgCustomCondition& Condition : DlgConditionArray)
+	{
+		//const FName ParticipantName = Condition.ParticipantName == NAME_None ? DefaultParticipantName : Condition.ParticipantName;
+		if (Condition.ParticipantClass != nullptr)
+		{
+			TArray<AActor*> outarray;
+			UWorld* myworld = DlgContext->GetWorld();
+			UGameplayStatics::GetAllActorsOfClass(myworld, Condition.ParticipantClass, outarray);
+			if (outarray.Num()==0)
+			{
+				return false;
+			}
+			for (auto Participant : outarray)
+			{
+				bool bSatisfied = Condition.Condition->EnterCondition(UGameplayStatics::GetPlayerController(DlgContext, 0), Participant);
+				if (!bSatisfied)
+				{
+					return false;
+				}
+				
+			}
+		}
+		//const bool bSatisfied = Condition.Evaluate(DlgContext, DlgContext->GetConstParticipant(ParticipantName));
+		//if (!bSatisfied)
+		//{
+		//	// All must be satisfied
+		//	return false;
+		//}
+	}
+
+	return true;
+}
+FArchive& operator<<(FArchive& Ar, FDlgCustomCondition& DlgCondition)
+{
+	Ar << DlgCondition.ParticipantClass;
+	Ar << DlgCondition.Condition;
 	return Ar;
 }

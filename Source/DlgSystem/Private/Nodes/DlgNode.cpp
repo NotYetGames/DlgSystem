@@ -4,7 +4,8 @@
 #include "EngineUtils.h"
 #include "Logging/DlgLogger.h"
 #include "DlgLocalizationHelper.h"
-
+#include "DlgDialogueParticipant.h"
+#include "Kismet/GameplayStatics.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin UObject interface
@@ -99,6 +100,20 @@ void UDlgNode::FireNodeEnterEvents(UDlgContextInternal* DlgContext)
 
 		Event.Call(Participant);
 	}
+	for (FDlgCustomEvent Event : CustomEvents)
+	{
+		if (Event.ParticipantClass != nullptr)
+		{
+			TArray<AActor*> outarray;
+			UWorld* myworld = DlgContext->GetWorld();
+			UGameplayStatics::GetAllActorsOfClass(myworld, Event.ParticipantClass, outarray);
+			for (auto Participant : outarray)
+			{
+				Event.Event->EnterEvent(UGameplayStatics::GetPlayerController(this, 0), Participant);
+			}
+		}
+
+	}
 }
 
 bool UDlgNode::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated)
@@ -149,7 +164,10 @@ bool UDlgNode::CheckNodeEnterConditions(const UDlgContextInternal* DlgContext, T
 	{
 		return false;
 	}
-
+	if (!FDlgCustomCondition::EvaluateArray(CustomEnterConditions, DlgContext, OwnerName))
+	{
+		return false;
+	}
 	if (!bCheckChildrenOnEvaluation)
 	{
 		return true;

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DlgNodeEvent.h"
 #include "DlgEvent.generated.h"
 
 UENUM()
@@ -84,7 +85,38 @@ public:
 	// Operator overload for serialization
 	friend FArchive& operator<<(FArchive &Ar, FDlgEvent& DlgEvent);
 };
+USTRUCT()
+struct DLGSYSTEM_API FDlgCustomEvent
+{
+	GENERATED_USTRUCT_BODY()
 
+public:
+	//bool operator==(const FDlgCustomEvent& Other) const;
+
+	/**
+	 * Executes the event
+	 * TargetParticipant is expected to implement IDlgDialogueParticipant interface
+	 */
+	void Call(UObject* TargetParticipant) const;
+
+protected:
+	bool ValidateIsParticipantValid(const UObject* Participant) const;
+
+public:
+
+	/** Name of the participant (speaker) the event is called on. */
+	UPROPERTY(EditAnywhere, Category = DialogueEventData)
+	TSubclassOf<AActor> ParticipantClass;
+
+	/** Type of the event, can be a simple event or a call to modify a bool/int/float variable */
+	UPROPERTY(Instanced, EditAnywhere, Category = DialogueNodeData)
+	UDlgNodeEvent* Event;
+
+public:
+
+	// Operator overload for serialization
+	friend FArchive& operator<<(FArchive& Ar, FDlgCustomEvent& DlgEvent);
+};
 
 FORCEINLINE bool FDlgEvent::operator==(const FDlgEvent& Other) const
 {
@@ -96,3 +128,9 @@ FORCEINLINE bool FDlgEvent::operator==(const FDlgEvent& Other) const
 		   bValue == Other.bValue &&
 		   EventType == Other.EventType;
 }
+//FORCEINLINE bool FDlgCustomEvent::operator==(const FDlgCustomEvent& Other) const
+//{
+//	return ParticipantName == Other.ParticipantName &&
+//		Events == Other.Events;
+//		
+//}

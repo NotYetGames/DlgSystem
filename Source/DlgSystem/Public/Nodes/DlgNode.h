@@ -10,7 +10,7 @@
 #include "DlgCondition.h"
 #include "DlgEvent.h"
 #include "DlgNodeData.h"
-
+#include "DlgNodeEvent.h"
 #include "DlgNode.generated.h"
 
 
@@ -98,6 +98,10 @@ public:
 	// For the EnterConditions
 	virtual const TArray<FDlgCondition>& GetNodeEnterConditions() const { return EnterConditions; }
 	virtual void SetNodeEnterConditions(const TArray<FDlgCondition>& InEnterConditions) { EnterConditions = InEnterConditions; }
+	virtual const TArray<FDlgCustomCondition>& GetNodeCustomEnterConditions() const { return CustomEnterConditions; }
+	virtual void SetNodeEnterConditions(const TArray<FDlgCustomCondition>& InEnterConditions) { CustomEnterConditions = InEnterConditions; }
+
+
 
 	/** Gets the mutable enter condition at location EnterConditionIndex. */
 	virtual FDlgCondition* GetMutableEnterConditionAt(int32 EnterConditionIndex)
@@ -109,6 +113,10 @@ public:
 	// For the EnterEvents
 	virtual const TArray<FDlgEvent>& GetNodeEnterEvents() const { return EnterEvents; }
 	virtual void SetNodeEnterEvents(const TArray<FDlgEvent>& InEnterEvents) { EnterEvents = InEnterEvents; }
+
+	virtual const TArray<FDlgCustomEvent>& GetNodeCustomEvents() const { return CustomEvents; }
+	virtual void SetNodeCustomEvents(const TArray<FDlgCustomEvent>& InEnterEvents) { CustomEvents = InEnterEvents; }
+	
 
 	// For the Children
 	/** Gets this nodes children (edges) as a const/mutable array */
@@ -213,7 +221,9 @@ public:
 	static FName GetMemberNameOwnerName() { return GET_MEMBER_NAME_CHECKED(UDlgNode, OwnerName); }
 	static FName GetMemberNameCheckChildrenOnEvaluation() { return GET_MEMBER_NAME_CHECKED(UDlgNode, bCheckChildrenOnEvaluation); }
 	static FName GetMemberNameEnterConditions() { return GET_MEMBER_NAME_CHECKED(UDlgNode, EnterConditions); }
+	static FName GetMemberNameCustomEnterConditions() { return GET_MEMBER_NAME_CHECKED(UDlgNode, CustomEnterConditions); }
 	static FName GetMemberNameEnterEvents() { return GET_MEMBER_NAME_CHECKED(UDlgNode, EnterEvents); }
+	static FName GetMemberNameCustomEvents() { return GET_MEMBER_NAME_CHECKED(UDlgNode, CustomEvents); }
 	static FName GetMemberNameChildren() { return GET_MEMBER_NAME_CHECKED(UDlgNode, Children); }
 
 	// Syncs the GraphNode Edges with our edges
@@ -247,9 +257,17 @@ protected:
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	TArray<FDlgCondition> EnterConditions;
 
+	/** Conditions necessary to enter this node */
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
+	TArray<FDlgCustomCondition> CustomEnterConditions;
+
 	/** Events fired when the node is reached in the dialogue */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	TArray<FDlgEvent> EnterEvents;
+
+
+	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
+	TArray<FDlgCustomEvent> CustomEvents;
 
 	/** Edges that point to Children of this Node */
 	UPROPERTY(EditAnywhere, EditFixedSize, AdvancedDisplay, Category = DialogueNodeData)

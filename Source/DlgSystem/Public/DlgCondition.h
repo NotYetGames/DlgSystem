@@ -1,6 +1,6 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #pragma once
-
+#include "DlgNodeCondition.h"
 #include "DlgCondition.generated.h"
 
 class IDlgDialogueParticipant;
@@ -188,4 +188,35 @@ FORCEINLINE bool FDlgCondition::operator==(const FDlgCondition& Other) const
 			CompareType == Other.CompareType &&
 			OtherParticipantName == Other.OtherParticipantName &&
 			OtherVariableName == Other.OtherVariableName;
+}
+USTRUCT(Blueprintable, BlueprintType)
+struct DLGSYSTEM_API FDlgCustomCondition
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	bool operator==(const FDlgCustomCondition& Other) const;
+
+	static bool EvaluateArray(const TArray<FDlgCustomCondition>& DlgConditionArray, const UDlgContextInternal* DlgContext, FName DefaultParticipantName = NAME_None);
+
+	bool Evaluate(const UDlgContextInternal* DlgContext, const UObject* DlgParticipant) const;
+	bool IsSecondParticipantInvolved() const;
+public:
+
+	/** Name of the participant (speaker) the event is called on. */
+	UPROPERTY(EditAnywhere, Category = DialogueEventData)
+		TSubclassOf<AActor> ParticipantClass;
+	UPROPERTY(Instanced, EditAnywhere, Category = DialogueConditionData)
+		UDlgNodeCondition* Condition;
+public:
+
+	// Operator overload for serialization
+	friend FArchive& operator<<(FArchive& Ar, FDlgCustomCondition& DlgCondition);
+};
+FORCEINLINE bool FDlgCustomCondition::operator==(const FDlgCustomCondition& Other) const
+{
+	return	ParticipantClass == Other.ParticipantClass &&
+			Condition ==  Other.Condition;
+
+		
 }
