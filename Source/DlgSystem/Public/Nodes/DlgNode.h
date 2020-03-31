@@ -15,7 +15,7 @@
 
 
 class UDlgSystemSettings;
-class UDlgContextInternal;
+class UDlgContext;
 class UDlgNode;
 class USoundWave;
 class UDialogueWave;
@@ -79,162 +79,175 @@ public:
 	DECLARE_EVENT_TwoParams(UDlgNode, FDialogueNodePropertyChanged, const FPropertyChangedEvent& /* PropertyChangedEvent */, int32 /* EdgeIndexChanged */);
 	FDialogueNodePropertyChanged OnDialogueNodePropertyChanged;
 
-	virtual bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep);
+	virtual bool HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> NodesEnteredWithThisStep);
 
-	virtual bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated);
+	virtual bool ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> AlreadyEvaluated);
 
-	virtual bool CheckNodeEnterConditions(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
-	virtual bool HasAnySatisfiedChild(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
+	virtual bool CheckNodeEnterConditions(const UDlgContext* Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
+	virtual bool HasAnySatisfiedChild(const UDlgContext* Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
-	virtual bool OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext);
+	virtual bool OptionSelected(int32 OptionIndex, UDlgContext* Context);
 
+	//
 	// Getters/Setters:
+	//
+
+	//
 	// For the ParticipantName
+	//
+
 	UFUNCTION(BlueprintCallable, Category = DlgNode)
 	virtual FName GetNodeParticipantName() const { return OwnerName; }
 
 	virtual void SetNodeParticipantName(const FName& InName) { OwnerName = InName; }
 
+	//
 	// For the EnterConditions
+	//
+
+	virtual bool HasAnyEnterConditions() const { return GetNodeEnterConditions().Num() > 0 || GetNodeCustomEnterConditions().Num() > 0; }
 	virtual const TArray<FDlgCondition>& GetNodeEnterConditions() const { return EnterConditions; }
 	virtual void SetNodeEnterConditions(const TArray<FDlgCondition>& InEnterConditions) { EnterConditions = InEnterConditions; }
 	virtual const TArray<FDlgCustomCondition>& GetNodeCustomEnterConditions() const { return CustomEnterConditions; }
-	virtual void SetNodeEnterConditions(const TArray<FDlgCustomCondition>& InEnterConditions) { CustomEnterConditions = InEnterConditions; }
+	virtual void SetNodeCustomEnterConditions(const TArray<FDlgCustomCondition>& InEnterConditions) { CustomEnterConditions = InEnterConditions; }
 
-
-
-	/** Gets the mutable enter condition at location EnterConditionIndex. */
+	// Gets the mutable enter condition at location EnterConditionIndex.
 	virtual FDlgCondition* GetMutableEnterConditionAt(int32 EnterConditionIndex)
 	{
 		check(EnterConditions.IsValidIndex(EnterConditionIndex));
 		return &EnterConditions[EnterConditionIndex];
 	}
 
+	//
 	// For the EnterEvents
+	//
+
+	virtual bool HasAnyEnterEvents() const { return GetNodeEnterEvents().Num() > 0 || GetNodeCustomEnterEvents().Num() > 0; }
 	virtual const TArray<FDlgEvent>& GetNodeEnterEvents() const { return EnterEvents; }
 	virtual void SetNodeEnterEvents(const TArray<FDlgEvent>& InEnterEvents) { EnterEvents = InEnterEvents; }
+	virtual const TArray<FDlgCustomEvent>& GetNodeCustomEnterEvents() const { return CustomEnterEvents; }
+	virtual void SetNodeCustomEntervents(const TArray<FDlgCustomEvent>& InEnterEvents) { CustomEnterEvents = InEnterEvents; }
 
-	virtual const TArray<FDlgCustomEvent>& GetNodeCustomEvents() const { return CustomEvents; }
-	virtual void SetNodeCustomEvents(const TArray<FDlgCustomEvent>& InEnterEvents) { CustomEvents = InEnterEvents; }
-	
-
+	//
 	// For the Children
-	/** Gets this nodes children (edges) as a const/mutable array */
+	//
+
+	/// Gets this nodes children (edges) as a const/mutable array
 	virtual const TArray<FDlgEdge>& GetNodeChildren() const { return Children; }
 	virtual void SetNodeChildren(const TArray<FDlgEdge>& InChildren) { Children = InChildren; }
 	virtual int32 GetNumNodeChildren() const { return Children.Num(); }
 	virtual const FDlgEdge& GetNodeChildAt(int32 EdgeIndex) const { return Children[EdgeIndex]; }
-	
-	
-	/** Adds an Edge to the end of the Children Array. */
+
+
+	// Adds an Edge to the end of the Children Array.
 	virtual void AddNodeChild(const FDlgEdge& InChild) { Children.Add(InChild); }
 
-	/** Removes the Edge at the specified EdgeIndex location. */
+	// Removes the Edge at the specified EdgeIndex location.
 	virtual void RemoveChildAt(int32 EdgeIndex)
 	{
 		check(Children.IsValidIndex(EdgeIndex));
 		Children.RemoveAt(EdgeIndex);
 	}
 
-	/** Removes all edges/children */
+	// Removes all edges/children
 	virtual void RemoveAllChildren() { Children.Empty(); }
 
-	/** Gets the mutable edge/child at location EdgeIndex. */
+	// Gets the mutable edge/child at location EdgeIndex.
 	virtual FDlgEdge* GetSafeMutableNodeChildAt(int32 EdgeIndex)
 	{
 		check(Children.IsValidIndex(EdgeIndex));
 		return &Children[EdgeIndex];
 	}
 
-	/** Unsafe version, can be null */
+	// Unsafe version, can be null
 	virtual FDlgEdge* GetMutableNodeChildAt(int32 EdgeIndex)
 	{
-		return Children.IsValidIndex(EdgeIndex) ? &Children[EdgeIndex] : nullptr; 
+		return Children.IsValidIndex(EdgeIndex) ? &Children[EdgeIndex] : nullptr;
 	}
 
-	/** Gets the mutable Edge that corresponds to the provided TargetIndex or nullptr if nothing was found. */
+	// Gets the mutable Edge that corresponds to the provided TargetIndex or nullptr if nothing was found.
 	virtual FDlgEdge* GetMutableNodeChildForTargetIndex(int32 TargetIndex);
 
-	/** Gets all the edges (children) indices that DO NOT have a valid TargetIndex (is negative). */
+	// Gets all the edges (children) indices that DO NOT have a valid TargetIndex (is negative).
 	const TArray<int32> GetNodeOpenChildren_DEPRECATED() const;
 
-	/** Gathers associated participants, they are only added to the array if they are not yet there */
+	// Gathers associated participants, they are only added to the array if they are not yet there
 	virtual void GetAssociatedParticipants(TArray<FName>& OutArray) const;
 
 	// Updates the value of the texts from the default values or the remappings (if any)
 	virtual void UpdateTextsValuesFromDefaultsAndRemappings(
 		const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true
 	);
-	
+
 	// Updates the namespace and key of all the texts depending on the settings
 	virtual void UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true);
-	
+
 	// Rebuilds ConstructedText
 	virtual void RebuildTextArguments(bool bEdges, bool bUpdateGraphNode = true);
 	virtual void RebuildTextArgumentsFromPreview(const FText& Preview) {}
 
 	// Constructs the ConstructedText.
-	virtual void RebuildConstructedText(const UDlgContextInternal* DlgContext) {}
-	
-	/** Gets the text arguments for this Node (if any). Used for FText::Format */
+	virtual void RebuildConstructedText(const UDlgContext* Context) {}
+
+	// Gets the text arguments for this Node (if any). Used for FText::Format
 	virtual const TArray<FDlgTextArgument>& GetTextArguments() const
 	{
 		static TArray<FDlgTextArgument> EmptyArray;
 		return EmptyArray;
 	};
 
-	/** Gets the Text of this Node. This can be the final formatted string. */
-	UFUNCTION(BlueprintCallable, Category = DlgNode)
+	// Gets the Text of this Node. This can be the final formatted string.
+	UFUNCTION(BlueprintPure, Category = NodeData)
 	virtual const FText& GetNodeText() const { return FText::GetEmpty(); }
 
 	/**
 	 * Gets the Raw unformatted Text of this Node. Usually the same as GetNodeText but in case the node supports formatted string this
 	 * is the raw form with all the arguments intact. To get the text arguments call GetTextArguments.
 	 */
-	UFUNCTION(BlueprintCallable, Category = DlgNode)
+	UFUNCTION(BlueprintPure, Category = NodeData)
 	virtual const FText& GetNodeUnformattedText() const { return GetNodeText(); }
 
-	/** Gets the voice of this Node as a SoundWave. */
-	UFUNCTION(BlueprintCallable, Category = DlgNode)
+	// Gets the voice of this Node as a SoundWave.
+	UFUNCTION(BlueprintPure, Category = NodeData)
 	virtual USoundWave* GetNodeVoiceSoundWave() const { return nullptr; }
 
-	/** Gets the voice of this Node as a DialogueWave. Only the first Dialogue context in the wave should be used. */
-	UFUNCTION(BlueprintCallable, Category = DlgNode)
+	// Gets the voice of this Node as a DialogueWave. Only the first Dialogue context in the wave should be used.
+	UFUNCTION(BlueprintPure, Category = NodeData)
 	virtual UDialogueWave* GetNodeVoiceDialogueWave() const { return nullptr; }
 
-	/** Gets the speaker state ordered to this node (can be used e.g. for icon selection) */
-	UFUNCTION(BlueprintCallable, Category = DlgNode)
+	// Gets the speaker state ordered to this node (can be used e.g. for icon selection)
+	UFUNCTION(BlueprintPure, Category = NodeData)
 	virtual FName GetSpeakerState() const { return NAME_None; }
 	virtual void AddAllSpeakerStatesIntoSet(TSet<FName>& OutStates) const {};
 
-	/** Gets the generic data asset of this Node. */
-	UFUNCTION(BlueprintCallable, Category = DlgNode)
+	// Gets the generic data asset of this Node.
+	UFUNCTION(BlueprintPure, Category = NodeData)
 	virtual UObject* GetGenericData() const { return nullptr; }
 
-	UFUNCTION(BlueprintCallable, Category = DlgNode)
+	UFUNCTION(BlueprintPure, Category = NodeData)
 	virtual UDlgNodeData* GetNodeData() const { return nullptr; }
 
-	/** Helper method to get directly the Dialogue */
+	// Helper method to get directly the Dialogue
 	UDlgDialogue* GetDialogue() const;
 
-	/** Helper functions to get the names of some properties. Used by the DlgSystemEditor module. */
+	// Helper functions to get the names of some properties. Used by the DlgSystemEditor module.
 	static FName GetMemberNameOwnerName() { return GET_MEMBER_NAME_CHECKED(UDlgNode, OwnerName); }
 	static FName GetMemberNameCheckChildrenOnEvaluation() { return GET_MEMBER_NAME_CHECKED(UDlgNode, bCheckChildrenOnEvaluation); }
 	static FName GetMemberNameEnterConditions() { return GET_MEMBER_NAME_CHECKED(UDlgNode, EnterConditions); }
 	static FName GetMemberNameCustomEnterConditions() { return GET_MEMBER_NAME_CHECKED(UDlgNode, CustomEnterConditions); }
 	static FName GetMemberNameEnterEvents() { return GET_MEMBER_NAME_CHECKED(UDlgNode, EnterEvents); }
-	static FName GetMemberNameCustomEvents() { return GET_MEMBER_NAME_CHECKED(UDlgNode, CustomEvents); }
+	static FName GetMemberNameCustomEnterEvents() { return GET_MEMBER_NAME_CHECKED(UDlgNode, CustomEnterEvents); }
 	static FName GetMemberNameChildren() { return GET_MEMBER_NAME_CHECKED(UDlgNode, Children); }
 
 	// Syncs the GraphNode Edges with our edges
 	void UpdateGraphNode();
-	
+
 protected:
-	void FireNodeEnterEvents(UDlgContextInternal* DlgContext);
+	void FireNodeEnterEvents(UDlgContext* Context);
 
 protected:
 #if WITH_EDITORONLY_DATA
-	/** Node's Graph representation, used to get position. */
+	// Node's Graph representation, used to get position.
 	UPROPERTY(Meta = (DlgNoExport))
 	UEdGraphNode* GraphNode = nullptr;
 
@@ -242,7 +255,7 @@ protected:
 	int32 BroadcastPropertyEdgeIndexChanged = INDEX_NONE;
 #endif // WITH_EDITORONLY_DATA
 
-	/** Name of a participant (speaker) associated with this node. */
+	// Name of a participant (speaker) associated with this node.
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DisplayName = "Participant Name"))
 	FName OwnerName;
 
@@ -253,23 +266,23 @@ protected:
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	bool bCheckChildrenOnEvaluation = false;
 
-	/** Conditions necessary to enter this node */
+	// Conditions necessary to enter this node
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	TArray<FDlgCondition> EnterConditions;
 
-	/** Conditions necessary to enter this node */
+	// Custom Conditions necessary to enter this node
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	TArray<FDlgCustomCondition> CustomEnterConditions;
 
-	/** Events fired when the node is reached in the dialogue */
+	// Events fired when the node is reached in the dialogue
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	TArray<FDlgEvent> EnterEvents;
 
-
+	// Events events fired when the node is reached in the dialogue
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
-	TArray<FDlgCustomEvent> CustomEvents;
+	TArray<FDlgCustomEvent> CustomEnterEvents;
 
-	/** Edges that point to Children of this Node */
+	// Edges that point to Children of this Node
 	UPROPERTY(EditAnywhere, EditFixedSize, AdvancedDisplay, Category = DialogueNodeData)
 	TArray<FDlgEdge> Children;
 };

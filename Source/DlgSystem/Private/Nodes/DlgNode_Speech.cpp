@@ -35,7 +35,7 @@ void UDlgNode_Speech::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Set
 	Super::UpdateTextsNamespacesAndKeys(Settings, bEdges, bUpdateGraphNode);
 }
 
-void UDlgNode_Speech::RebuildConstructedText(const UDlgContextInternal* DlgContext)
+void UDlgNode_Speech::RebuildConstructedText(const UDlgContext* Context)
 {
 	if (TextArguments.Num() <= 0)
 	{
@@ -45,24 +45,24 @@ void UDlgNode_Speech::RebuildConstructedText(const UDlgContextInternal* DlgConte
 	FFormatNamedArguments OrderedArguments;
 	for (const FDlgTextArgument& DlgArgument : TextArguments)
 	{
-		OrderedArguments.Add(DlgArgument.DisplayString, DlgArgument.ConstructFormatArgumentValue(DlgContext, OwnerName));
+		OrderedArguments.Add(DlgArgument.DisplayString, DlgArgument.ConstructFormatArgumentValue(Context, OwnerName));
 	}
 	ConstructedText = FText::AsCultureInvariant(FText::Format(Text, OrderedArguments));
 }
 
-bool UDlgNode_Speech::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)
+bool UDlgNode_Speech::HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
-	RebuildConstructedText(DlgContext);
-	return Super::HandleNodeEnter(DlgContext, NodesEnteredWithThisStep);
+	RebuildConstructedText(Context);
+	return Super::HandleNodeEnter(Context, NodesEnteredWithThisStep);
 }
 
-bool UDlgNode_Speech::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated)
+bool UDlgNode_Speech::ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> AlreadyEvaluated)
 {
 	if (bIsVirtualParent)
 	{
-		check(DlgContext != nullptr);
-		DlgContext->GetOptionArray().Empty();
-		DlgContext->GetAllOptionsArray().Empty();
+		check(Context != nullptr);
+		Context->GetOptionArray().Empty();
+		Context->GetAllOptionsArray().Empty();
 
 		// stop endless loop
 		if (AlreadyEvaluated.Contains(this))
@@ -79,13 +79,13 @@ bool UDlgNode_Speech::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<c
 		for (const FDlgEdge& Edge : Children)
 		{
 			// Find first satisfied child
-			if (Edge.Evaluate(DlgContext, { this }))
+			if (Edge.Evaluate(Context, { this }))
 			{
-				UDlgNode* Node = DlgContext->GetNode(Edge.TargetIndex);
+				UDlgNode* Node = Context->GetNode(Edge.TargetIndex);
 				if (Node != nullptr)
 				{
 					// Get Grandchildren
-					return Node->ReevaluateChildren(DlgContext, AlreadyEvaluated);
+					return Node->ReevaluateChildren(Context, AlreadyEvaluated);
 				}
 			}
 		}
@@ -93,7 +93,7 @@ bool UDlgNode_Speech::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<c
 	}
 
 	// Normal speech node
-	return Super::ReevaluateChildren(DlgContext, AlreadyEvaluated);
+	return Super::ReevaluateChildren(Context, AlreadyEvaluated);
 }
 
 

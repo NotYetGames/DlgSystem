@@ -39,13 +39,13 @@ public:
 #endif
 
 	// Begin UDlgNode Interface.
-	bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
-	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated) override;
+	bool HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
+	bool ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> AlreadyEvaluated) override;
 	void GetAssociatedParticipants(TArray<FName>& OutArray) const override;
 
 	void UpdateTextsValuesFromDefaultsAndRemappings(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true) override;
 	void UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true) override;
-	void RebuildConstructedText(const UDlgContextInternal* DlgContext) override;
+	void RebuildConstructedText(const UDlgContext* Context) override;
 	void RebuildTextArguments(bool bEdges, bool bUpdateGraphNode = true) override
 	{
 		Super::RebuildTextArguments(bEdges, bUpdateGraphNode);
@@ -116,7 +116,7 @@ protected:
 	 */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	bool bIsVirtualParent = false;
-	
+
 	/** Text that will appear when this node participant name speaks to someone else. */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (MultiLine = true))
 	FText Text;

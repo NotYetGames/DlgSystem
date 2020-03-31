@@ -51,7 +51,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 	DetailLayoutBuilder->HideCategory(UDialogueGraphNode::StaticClass()->GetFName());
 
 	// Fill with the properties of the DialogueNode
-	IDetailCategoryBuilder& BaseDataCategory = DetailLayoutBuilder->EditCategory(TEXT("Base Node"),FText::GetEmpty(),ECategoryPriority::Important);
+	IDetailCategoryBuilder& BaseDataCategory = DetailLayoutBuilder->EditCategory(TEXT("Base Node"), FText::GetEmpty(), ECategoryPriority::Important);
 	BaseDataCategory.InitiallyCollapsed(false);
 	const TSharedPtr<IPropertyHandle> PropertyDialogueNode =
 		DetailLayoutBuilder->GetProperty(UDialogueGraphNode::GetMemberNameDialogueNode(), UDialogueGraphNode::StaticClass());
@@ -80,15 +80,15 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 		}
 
 		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameCheckChildrenOnEvaluation()));
+
 		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameEnterConditions()))
 			.ShouldAutoExpand(true);
-
 		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameCustomEnterConditions()))
 			.ShouldAutoExpand(true);
-		
+
 		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameEnterEvents()))
 			.ShouldAutoExpand(true);
-		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameCustomEvents()))
+		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameCustomEnterEvents()))
 			.ShouldAutoExpand(true);
 
 	}

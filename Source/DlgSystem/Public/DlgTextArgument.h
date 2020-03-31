@@ -4,7 +4,7 @@
 #include "DlgTextArgument.generated.h"
 
 class IDlgDialogueParticipant;
-class UDlgContextInternal;
+class UDlgContext;
 
 
 /**
@@ -40,7 +40,7 @@ public:
 	bool operator==(const FDlgTextArgument& Other) const;
 
 	/** Construct the argument for usage in FText::Format */
-	FFormatArgumentValue ConstructFormatArgumentValue(const UDlgContextInternal* DlgContext, FName NodeOwner) const;
+	FFormatArgumentValue ConstructFormatArgumentValue(const UDlgContext* Context, FName NodeOwner) const;
 
 	/** Helper method to update the array InOutArgumentArray with the new arguments from Text. */
 	static void UpdateTextArgumentArray(const FText& Text, TArray<FDlgTextArgument>& InOutArgumentArray);

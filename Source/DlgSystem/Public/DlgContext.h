@@ -11,7 +11,7 @@ class UTexture2D;
 class UDlgNodeData;
 class UDlgNode;
 
-/** Used to store temporary state of edges */
+// Used to store temporary state of edges
 struct FDlgEdgeData
 {
 public:
@@ -45,7 +45,7 @@ public:
 	 * @return true if the dialogue did not end, false otherwise
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
-	virtual bool ChooseChild(int32 OptionIndex) { bDialogueEnded = false; return false; }
+	virtual bool ChooseChild(int32 OptionIndex);
 
 	/**
 	 *  Exactly as above but expects an index from the AllOptions array
@@ -59,7 +59,7 @@ public:
 	 * If an option can appear/disappear real time in the middle of the conversation this function should be called manually each frame
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
-	virtual void ReevaluateChildren() {}
+	virtual void ReevaluateChildren();
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Control")
 	bool HasDialogueEnded() const { return bDialogueEnded; }
@@ -118,7 +118,7 @@ public:
 	/** Gets the SpeakerState of the active node index */
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	FName GetActiveNodeSpeakerState() const;
-	
+
 	/** Gets the Voice as a Sound Wave of the active node index */
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	USoundWave* GetActiveNodeVoiceSoundWave() const;
@@ -140,7 +140,7 @@ public:
 	/** Gets the Icon associated with the active node participant name (owner name). */
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	UTexture2D* GetActiveNodeParticipantIcon() const;
-	
+
 	UE_DEPRECATED(4.21, "Use GetActiveNodeParticipant Instead.")
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode",  meta=(DeprecatedFunction, DeprecationMessage="Use GetActiveNodeParticipant Instead"))
 	UObject* GetActiveParticipant() const { return GetActiveNodeParticipant(); }
@@ -206,15 +206,34 @@ public:
 	FGuid GetDialogueGuid() const { check(Dialogue); return Dialogue->GetDlgGuid(); }
 	FString GetDialoguePathName() const { check(Dialogue); return Dialogue->GetPathName(); }
 
-protected:
+	TArray<const FDlgEdge*>& GetOptionArray() { return AvailableChildren; }
+	TArray<FDlgEdgeData>& GetAllOptionsArray() { return AllChildren; }
+	const TMap<FName, UObject*>& GetParticipants() const { return Participants; }
 
+	//
 	// Methods implemented by UDlgContextInternal
+	//
 
-	/** the Dialogue jumps to the defined node, or the function returns with false, if the conversation is over */
-	virtual bool EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep) { return false; }
+	// the Dialogue jumps to the defined node, or the function returns with false, if the conversation is over
+	// the Dialogue jumps to the defined node, or the function returns with false if the conversation is over
+	// Depending on the node the EnterNode() call can lead to other EnterNode() calls - having NodeIndex as active node after the call
+	// is not granted
+	// Conditions are not checked here - they are expected to be satisfied
+	virtual bool EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep);
 
-	virtual UDlgNode* GetActiveNode() { return nullptr; }
-	virtual const UDlgNode* GetActiveNode() const { return nullptr; }
+	virtual UDlgNode* GetActiveNode() { return GetNode(ActiveNodeIndex); }
+	virtual const UDlgNode* GetActiveNode() const { return GetNode(ActiveNodeIndex); }
+
+	// Gets the Node at the NodeIndex index
+	virtual UDlgNode* GetNode(int32 NodeIndex);
+	virtual const UDlgNode* GetNode(int32 NodeIndex) const;
+
+	// Was node with NodeIndex visited?
+	virtual bool WasNodeVisitedInThisContext(int32 NodeIndex) const { return VisitedNodeIndices.Contains(NodeIndex); }
+
+	// Checks the enter conditions of the node.
+	// return false if they are not satisfied or if the index is invalid
+	virtual bool IsNodeEnterable(int32 NodeIndex, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
 protected:
 	/** Current Dialogue used in this context at runtime. */

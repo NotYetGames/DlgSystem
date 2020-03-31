@@ -9,6 +9,21 @@
 #include "Engine/Texture2D.h"
 #include "Logging/DlgLogger.h"
 
+bool UDlgContext::ChooseChild(int32 OptionIndex)
+{
+	check(Dialogue);
+	if (UDlgNode* Node = GetActiveNode())
+	{
+		if (Node->OptionSelected(OptionIndex, this))
+		{
+			return true;
+		}
+	}
+
+	bDialogueEnded = true;
+	return false;
+}
+
 bool UDlgContext::ChooseChildBasedOnAllOptionIndex(int32 Index)
 {
 	if (!AllChildren.IsValidIndex(Index))
@@ -36,6 +51,22 @@ bool UDlgContext::ChooseChildBasedOnAllOptionIndex(int32 Index)
 	ensure(false);
 	bDialogueEnded = true;
 	return false;
+}
+
+void UDlgContext::ReevaluateChildren()
+{
+	check(Dialogue);
+	UDlgNode* Node = GetActiveNode();
+	if (!IsValid(Node))
+	{
+		FDlgLogger::Get().Errorf(
+			TEXT("Dialogue = `%s` Failed to update dialogue options for  - invalid ActiveNodeIndex %d"),
+			*Dialogue->GetPathName(), ActiveNodeIndex
+		);
+		return;
+	}
+
+	Node->ReevaluateChildren(this, {});
 }
 
 const FText& UDlgContext::GetOptionText(int32 OptionIndex) const
@@ -292,7 +323,7 @@ bool UDlgContext::IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory, 
 	{
 		return VisitedNodeIndices.Contains(TargetIndex);
 	}
-	
+
 	if (Dialogue == nullptr)
 	{
 		FDlgLogger::Get().Errorf(TEXT("UDlgContext::IsEdgeConnectedToVisitedNode called, but the context does not have a valid dialogue!"), Index);
@@ -343,3 +374,58 @@ bool UDlgContext::IsEdgeConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisf
 	return false;
 }
 
+bool UDlgContext::EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep)
+{
+	check(Dialogue);
+
+	UDlgNode* Node = GetNode(NodeIndex);
+	if (!IsValid(Node))
+	{
+		FDlgLogger::Get().Errorf(
+			TEXT("Dialogue = `%s`. Failed to enter dialogue node - invalid node index %d"),
+			*Dialogue->GetPathName(), NodeIndex
+		);
+		return false;
+	}
+
+	ActiveNodeIndex = NodeIndex;
+	FDlgMemory::GetInstance()->SetNodeVisited(Dialogue->GetDlgGuid(), ActiveNodeIndex);
+	VisitedNodeIndices.Add(ActiveNodeIndex);
+
+	return Node->HandleNodeEnter(this, NodesEnteredWithThisStep);
+}
+
+UDlgNode* UDlgContext::GetNode(int32 NodeIndex)
+{
+	check(Dialogue);
+	const TArray<UDlgNode*>& Nodes = Dialogue->GetNodes();
+	if (!Nodes.IsValidIndex(NodeIndex))
+	{
+		return nullptr;
+	}
+
+	return Nodes[NodeIndex];
+}
+
+const UDlgNode* UDlgContext::GetNode(int32 NodeIndex) const
+{
+	check(Dialogue);
+	const TArray<UDlgNode*>& Nodes = Dialogue->GetNodes();
+	if (!Nodes.IsValidIndex(NodeIndex))
+	{
+		return nullptr;
+	}
+
+	return Nodes[NodeIndex];
+}
+
+bool UDlgContext::IsNodeEnterable(int32 NodeIndex, TSet<const UDlgNode*> AlreadyVisitedNodes) const
+{
+	check(Dialogue);
+	if (const UDlgNode* Node = GetNode(NodeIndex))
+	{
+		return Node->CheckNodeEnterConditions(this, AlreadyVisitedNodes);
+	}
+
+	return false;
+}

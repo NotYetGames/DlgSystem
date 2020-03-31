@@ -3,17 +3,7 @@
 #include "DlgNodeEvent.h"
 #include "UObject/Object.h"
 
-
-#include "DlgDialogue.h"
-
-
-UDlgNodeEvent::UDlgNodeEvent()
-{
-	
-}
-
-
-void UDlgNodeEvent::EnterEvent_Implementation(APlayerController* PlayerController, UObject* Participant)
+void UDlgNodeEvent::EnterEvent_Implementation(UObject* Participant)
 {
 	return;
 }

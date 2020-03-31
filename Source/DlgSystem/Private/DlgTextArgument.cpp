@@ -19,12 +19,12 @@ FArchive& operator<<(FArchive &Ar, FDlgTextArgument& DlgCondition)
 	return Ar;
 }
 
-FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgContextInternal* DlgContext, FName NodeOwner) const
+FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgContext* Context, FName NodeOwner) const
 {
 	// If participant name is not valid we use the node owner name
 	const FName ValidParticipantName = ParticipantName == NAME_None ? NodeOwner : ParticipantName;
 
-	const UObject* Participant = DlgContext->GetConstParticipant(ValidParticipantName);
+	const UObject* Participant = Context->GetConstParticipant(ValidParticipantName);
 	if (Participant == nullptr)
 	{
 		FDlgLogger::Get().Errorf(

@@ -3,18 +3,9 @@
 #include "DlgNodeCondition.h"
 #include "UObject/Object.h"
 
-
 #include "DlgDialogue.h"
 
-
-UDlgNodeCondition::UDlgNodeCondition()
-{
-	
-}
-
-
-
-bool UDlgNodeCondition::EnterCondition_Implementation(APlayerController* PlayerController, UObject* Participant)
+bool UDlgNodeCondition::IsConditionMet_Implementation(const UObject* Participant)
 {
 	return false;
 }

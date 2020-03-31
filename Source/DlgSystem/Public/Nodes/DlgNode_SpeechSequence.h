@@ -30,7 +30,7 @@ public:
 	/** State of the speaker attached to the entry. Passed to the GetParticipantIcon function. */
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	FName SpeakerState;
-	
+
 	/** Node data that you can customize yourself with your own data types */
 	UPROPERTY(EditAnywhere, Instanced, Category = DialogueNodeData)
 	UDlgNodeData* NodeData;
@@ -75,9 +75,9 @@ public:
 	// Begin UDlgNode interface
 	void UpdateTextsValuesFromDefaultsAndRemappings(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true) override;
 	void UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true) override;
-	bool HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
-	bool ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated) override;
-	bool OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext) override;
+	bool HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
+	bool ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> AlreadyEvaluated) override;
+	bool OptionSelected(int32 OptionIndex, UDlgContext* Context) override;
 
 	// Getters
 	const FText& GetNodeText() const override;
@@ -89,7 +89,7 @@ public:
 	UObject* GetGenericData() const override;
 	FName GetNodeParticipantName() const override;
 	void GetAssociatedParticipants(TArray<FName>& OutArray) const override;
-	
+
 #if WITH_EDITOR
 	FString GetNodeTypeString() const override { return TEXT("Speech Sequence"); }
 #endif

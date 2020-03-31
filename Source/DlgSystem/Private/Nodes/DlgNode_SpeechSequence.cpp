@@ -41,7 +41,7 @@ void UDlgNode_SpeechSequence::UpdateTextsNamespacesAndKeys(const UDlgSystemSetti
 	{
 		return;
 	}
-	
+
 	for (FDlgSpeechSequenceEntry& Entry : SpeechSequence)
 	{
 		FDlgLocalizationHelper::UpdateTextNamespaceAndKey(Outer, Settings, Entry.Text);
@@ -51,22 +51,22 @@ void UDlgNode_SpeechSequence::UpdateTextsNamespacesAndKeys(const UDlgSystemSetti
 	Super::UpdateTextsNamespacesAndKeys(Settings, bEdges, bUpdateGraphNode);
 }
 
-bool UDlgNode_SpeechSequence::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)
+bool UDlgNode_SpeechSequence::HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
 	ActualIndex = 0;
-	return Super::HandleNodeEnter(DlgContext, NodesEnteredWithThisStep);
+	return Super::HandleNodeEnter(Context, NodesEnteredWithThisStep);
 }
 
-bool UDlgNode_SpeechSequence::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated)
+bool UDlgNode_SpeechSequence::ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> AlreadyEvaluated)
 {
-	TArray<const FDlgEdge*>& Options = DlgContext->GetOptionArray();
-	TArray<FDlgEdgeData>& AllOptions = DlgContext->GetAllOptionsArray();
+	TArray<const FDlgEdge*>& Options = Context->GetOptionArray();
+	TArray<FDlgEdgeData>& AllOptions = Context->GetAllOptionsArray();
 	Options.Empty();
 	AllOptions.Empty();
 
 	// If the last entry is active the real edges are used
 	if (ActualIndex == SpeechSequence.Num() - 1)
-		return Super::ReevaluateChildren(DlgContext, AlreadyEvaluated);
+		return Super::ReevaluateChildren(Context, AlreadyEvaluated);
 
 	// give the context the fake inner edge
 	if (InnerEdges.IsValidIndex(ActualIndex))
@@ -79,19 +79,19 @@ bool UDlgNode_SpeechSequence::ReevaluateChildren(UDlgContextInternal* DlgContext
 	return false;
 }
 
-bool UDlgNode_SpeechSequence::OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext)
+bool UDlgNode_SpeechSequence::OptionSelected(int32 OptionIndex, UDlgContext* Context)
 {
 	// Actual index is valid, and not the last node in the speech sequence, increment
 	if (ActualIndex >= 0 && ActualIndex < SpeechSequence.Num() - 1)
 	{
 		ActualIndex += 1;
-		return ReevaluateChildren(DlgContext, {this});
+		return ReevaluateChildren(Context, {this});
 	}
 
 	ActualIndex = 0;
 	// node finished -> generate true children
-	Super::ReevaluateChildren(DlgContext, { this });
-	return Super::OptionSelected(OptionIndex, DlgContext);
+	Super::ReevaluateChildren(Context, { this });
+	return Super::OptionSelected(OptionIndex, Context);
 }
 
 const FText& UDlgNode_SpeechSequence::GetNodeText() const

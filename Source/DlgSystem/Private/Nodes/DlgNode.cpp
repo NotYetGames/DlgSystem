@@ -63,71 +63,69 @@ void UDlgNode::AddReferencedObjects(UObject* InThis, FReferenceCollector& Collec
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin own function
-bool UDlgNode::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)
+bool UDlgNode::HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
-	check(DlgContext != nullptr);
+	check(Context != nullptr);
 
 	// Fire all the node enter events
-	FireNodeEnterEvents(DlgContext);
+	FireNodeEnterEvents(Context);
 
 	for (FDlgEdge& Edge : Children)
 	{
-		Edge.RebuildConstructedText(DlgContext, OwnerName);
+		Edge.RebuildConstructedText(Context, OwnerName);
 	}
 
-	return ReevaluateChildren(DlgContext, {});
+	return ReevaluateChildren(Context, {});
 }
 
-void UDlgNode::FireNodeEnterEvents(UDlgContextInternal* DlgContext)
+void UDlgNode::FireNodeEnterEvents(UDlgContext* Context)
 {
 	for (const FDlgEvent& Event : EnterEvents)
 	{
-		UObject* Participant = DlgContext->GetParticipant(Event.ParticipantName);
-
-		// Try parent
+		// Get Participant from either event or parent
+		UObject* Participant = Context->GetParticipant(Event.ParticipantName);
 		if (!IsValid(Participant))
 		{
-			Participant = DlgContext->GetParticipant(OwnerName);
+			Participant = Context->GetParticipant(OwnerName);
 		}
 
 		if (Participant == nullptr)
 		{
 			FDlgLogger::Get().Errorf(
 				TEXT("FireNodeEnterEvents: Dialogue = `%s`, NodeIndex = %d. Got non existent Participant Name, event call will fail!"),
-				*GetDialogue()->GetPathName(), DlgContext->GetActiveNodeIndex()
+				*GetDialogue()->GetPathName(), Context->GetActiveNodeIndex()
 			);
 		}
 
 		Event.Call(Participant);
 	}
-	for (FDlgCustomEvent Event : CustomEvents)
+
+	// Custom Events
+	for (const FDlgCustomEvent& Event : CustomEnterEvents)
 	{
-		if (Event.ParticipantClass != nullptr)
+		// Get Participant from either event or parent
+		UObject* Participant = Context->GetParticipant(Event.ParticipantName);
+		if (!IsValid(Participant))
 		{
-			TArray<AActor*> outarray;
-			UWorld* myworld = DlgContext->GetWorld();
-			UGameplayStatics::GetAllActorsOfClass(myworld, Event.ParticipantClass, outarray);
-			for (auto Participant : outarray)
-			{
-				Event.Event->EnterEvent(UGameplayStatics::GetPlayerController(this, 0), Participant);
-			}
+			Participant = Context->GetParticipant(OwnerName);
 		}
 
+		Event.Call(Participant);
 	}
 }
 
-bool UDlgNode::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyEvaluated)
+bool UDlgNode::ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> AlreadyEvaluated)
 {
-	check(DlgContext != nullptr);
+	check(Context != nullptr);
 
-	TArray<const FDlgEdge*>& AvailableChildren = DlgContext->GetOptionArray();
-	TArray<FDlgEdgeData>& AllChildren = DlgContext->GetAllOptionsArray();
+	TArray<const FDlgEdge*>& AvailableChildren = Context->GetOptionArray();
+	TArray<FDlgEdgeData>& AllChildren = Context->GetAllOptionsArray();
 	AvailableChildren.Empty();
 	AllChildren.Empty();
 
 	for (const FDlgEdge& Edge : Children)
 	{
-		const bool bSatisfied = Edge.Evaluate(DlgContext, { this });
+		const bool bSatisfied = Edge.Evaluate(Context, { this });
 
 		if (bSatisfied || Edge.bIncludeInAllOptionListIfUnsatisfied)
 		{
@@ -144,7 +142,7 @@ bool UDlgNode::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UD
 	{
 		FDlgLogger::Get().Warningf(
 			TEXT("Dialogue = %s got stuck: no valid child for a node!"),
-			*DlgContext->GetDialoguePathName()
+			*Context->GetDialoguePathName()
 		);
 		return false;
 	}
@@ -152,7 +150,7 @@ bool UDlgNode::ReevaluateChildren(UDlgContextInternal* DlgContext, TSet<const UD
 	return true;
 }
 
-bool UDlgNode::CheckNodeEnterConditions(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const
+bool UDlgNode::CheckNodeEnterConditions(const UDlgContext* Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const
 {
 	if (AlreadyVisitedNodes.Contains(this))
 	{
@@ -160,11 +158,11 @@ bool UDlgNode::CheckNodeEnterConditions(const UDlgContextInternal* DlgContext, T
 	}
 
 	AlreadyVisitedNodes.Add(this);
-	if (!FDlgCondition::EvaluateArray(EnterConditions, DlgContext, OwnerName))
+	if (!FDlgCondition::EvaluateArray(EnterConditions, Context, OwnerName))
 	{
 		return false;
 	}
-	if (!FDlgCustomCondition::EvaluateArray(CustomEnterConditions, DlgContext, OwnerName))
+	if (!FDlgCustomCondition::EvaluateArray(CustomEnterConditions, Context, OwnerName))
 	{
 		return false;
 	}
@@ -174,14 +172,14 @@ bool UDlgNode::CheckNodeEnterConditions(const UDlgContextInternal* DlgContext, T
 	}
 
 	// Has a valid child?
-	return HasAnySatisfiedChild(DlgContext, AlreadyVisitedNodes);
+	return HasAnySatisfiedChild(Context, AlreadyVisitedNodes);
 }
 
-bool UDlgNode::HasAnySatisfiedChild(const UDlgContextInternal* DlgContext, TSet<const UDlgNode*> AlreadyVisitedNodes) const
+bool UDlgNode::HasAnySatisfiedChild(const UDlgContext* Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const
 {
 	for (const FDlgEdge& Edge : Children)
 	{
-		if (Edge.Evaluate(DlgContext, AlreadyVisitedNodes))
+		if (Edge.Evaluate(Context, AlreadyVisitedNodes))
 		{
 			return true;
 		}
@@ -190,14 +188,14 @@ bool UDlgNode::HasAnySatisfiedChild(const UDlgContextInternal* DlgContext, TSet<
 	return false;
 }
 
-bool UDlgNode::OptionSelected(int32 OptionIndex, UDlgContextInternal* DlgContext)
+bool UDlgNode::OptionSelected(int32 OptionIndex, UDlgContext* Context)
 {
-	TArray<const FDlgEdge*>& AvailableChildren = DlgContext->GetOptionArray();
+	TArray<const FDlgEdge*>& AvailableChildren = Context->GetOptionArray();
 
 	if (AvailableChildren.IsValidIndex(OptionIndex))
 	{
 		check(AvailableChildren[OptionIndex] != nullptr);
-		return DlgContext->EnterNode(AvailableChildren[OptionIndex]->TargetIndex, {});
+		return Context->EnterNode(AvailableChildren[OptionIndex]->TargetIndex, {});
 	}
 
 	FDlgLogger::Get().Errorf(

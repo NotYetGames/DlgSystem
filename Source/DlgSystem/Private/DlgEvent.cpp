@@ -63,6 +63,7 @@ bool FDlgEvent::ValidateIsParticipantValid(const UObject* Participant) const
 	);
 	return false;
 }
+
 FArchive& operator<<(FArchive& Ar, FDlgEvent& DlgEvent)
 {
 	Ar << DlgEvent.ParticipantName;
@@ -75,10 +76,40 @@ FArchive& operator<<(FArchive& Ar, FDlgEvent& DlgEvent)
 	Ar << DlgEvent.EventType;
 	return Ar;
 }
+
+bool FDlgEvent::operator==(const FDlgEvent& Other) const
+{
+	return ParticipantName == Other.ParticipantName &&
+		   EventName == Other.EventName &&
+		   IntValue == Other.IntValue &&
+		   FMath::IsNearlyEqual(FloatValue, Other.FloatValue, KINDA_SMALL_NUMBER) &&
+		   bDelta == Other.bDelta &&
+		   bValue == Other.bValue &&
+		   EventType == Other.EventType;
+}
+
+void FDlgCustomEvent::Call(UObject* Participant) const
+{
+	if (!IsValid())
+	{
+		FDlgLogger::Get().Warning(TEXT("Custom Event is empty (not valid)"));
+		return;
+	}
+
+	Event->EnterEvent(Participant);
+}
+
+
 FArchive& operator<<(FArchive &Ar, FDlgCustomEvent& DlgEvent)
 {
-	Ar << DlgEvent.ParticipantClass;
+	Ar << DlgEvent.ParticipantName;
 	Ar << DlgEvent.Event;
 
 	return Ar;
+}
+
+bool FDlgCustomEvent::operator==(const FDlgCustomEvent& Other) const
+{
+	return ParticipantName == Other.ParticipantName &&
+		   Event == Other.Event;
 }

@@ -112,7 +112,7 @@ public:
 	/** Gets all the dialogues that have a duplicate GUID, should not happen, like ever. */
 	static TArray<UDlgDialogue*> GetDialoguesWithDuplicateGuid();
 
-	/** Helper methods that gets all the dialouges in a map by guid. */
+	/** Helper methods that gets all the dialogues in a map by guid. */
 	static TMap<FGuid, UDlgDialogue*> GetAllDialoguesGuidMap();
 
 	/** Gets all the loaded dialogues from memory that have the ParticipantName included inside them. */

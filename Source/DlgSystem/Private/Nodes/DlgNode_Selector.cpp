@@ -5,10 +5,10 @@
 #include "Logging/DlgLogger.h"
 
 
-bool UDlgNode_Selector::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<const UDlgNode*> NodesEnteredWithThisStep)
+bool UDlgNode_Selector::HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
-	check(DlgContext != nullptr);
-	FireNodeEnterEvents(DlgContext);
+	check(Context != nullptr);
+	FireNodeEnterEvents(Context);
 
 	if (NodesEnteredWithThisStep.Contains(this))
 	{
@@ -28,8 +28,8 @@ bool UDlgNode_Selector::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<co
 		{
 			// Find first child with satisfies conditions
 			for (const FDlgEdge& Edge : Children)
-				if (Edge.Evaluate(DlgContext, {this}))
-					return DlgContext->EnterNode(Edge.TargetIndex, NodesEnteredWithThisStep);
+				if (Edge.Evaluate(Context, {this}))
+					return Context->EnterNode(Edge.TargetIndex, NodesEnteredWithThisStep);
 
 			break;
 		}
@@ -39,7 +39,7 @@ bool UDlgNode_Selector::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<co
 			// Build the list of all valid children
 			TArray<int32> Candidates;
 			for (int32 EdgeIndex = 0; EdgeIndex < Children.Num(); ++EdgeIndex)
-				if (Children[EdgeIndex].Evaluate(DlgContext, { this }))
+				if (Children[EdgeIndex].Evaluate(Context, { this }))
 					Candidates.Add(EdgeIndex);
 
 			// No candidates :(
@@ -49,12 +49,12 @@ bool UDlgNode_Selector::HandleNodeEnter(UDlgContextInternal* DlgContext, TSet<co
 			// Select Random
 			const int32 SelectedIndex = FMath::RandHelper(Candidates.Num());
 			const int32 TargetNodeIndex = Children[Candidates[SelectedIndex]].TargetIndex;
-			return DlgContext->EnterNode(TargetNodeIndex, NodesEnteredWithThisStep);
+			return Context->EnterNode(TargetNodeIndex, NodesEnteredWithThisStep);
 		}
 	default:
 		checkNoEntry();
 	}
 
-	FDlgLogger::Get().Warningf(TEXT("Dialogue = %s got stuck: selector node entered, no satisfied child!"), *DlgContext->GetDialoguePathName());
+	FDlgLogger::Get().Warningf(TEXT("Dialogue = %s got stuck: selector node entered, no satisfied child!"), *Context->GetDialoguePathName());
 	return false;
 }
