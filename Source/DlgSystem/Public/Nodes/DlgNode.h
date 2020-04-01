@@ -10,7 +10,6 @@
 #include "DlgCondition.h"
 #include "DlgEvent.h"
 #include "DlgNodeData.h"
-#include "DlgNodeEvent.h"
 #include "DlgNode.generated.h"
 
 
@@ -105,11 +104,9 @@ public:
 	// For the EnterConditions
 	//
 
-	virtual bool HasAnyEnterConditions() const { return GetNodeEnterConditions().Num() > 0 || GetNodeCustomEnterConditions().Num() > 0; }
+	virtual bool HasAnyEnterConditions() const { return GetNodeEnterConditions().Num() > 0; }
 	virtual const TArray<FDlgCondition>& GetNodeEnterConditions() const { return EnterConditions; }
 	virtual void SetNodeEnterConditions(const TArray<FDlgCondition>& InEnterConditions) { EnterConditions = InEnterConditions; }
-	virtual const TArray<FDlgCustomCondition>& GetNodeCustomEnterConditions() const { return CustomEnterConditions; }
-	virtual void SetNodeCustomEnterConditions(const TArray<FDlgCustomCondition>& InEnterConditions) { CustomEnterConditions = InEnterConditions; }
 
 	// Gets the mutable enter condition at location EnterConditionIndex.
 	virtual FDlgCondition* GetMutableEnterConditionAt(int32 EnterConditionIndex)
@@ -122,11 +119,9 @@ public:
 	// For the EnterEvents
 	//
 
-	virtual bool HasAnyEnterEvents() const { return GetNodeEnterEvents().Num() > 0 || GetNodeCustomEnterEvents().Num() > 0; }
+	virtual bool HasAnyEnterEvents() const { return GetNodeEnterEvents().Num() > 0; }
 	virtual const TArray<FDlgEvent>& GetNodeEnterEvents() const { return EnterEvents; }
 	virtual void SetNodeEnterEvents(const TArray<FDlgEvent>& InEnterEvents) { EnterEvents = InEnterEvents; }
-	virtual const TArray<FDlgCustomEvent>& GetNodeCustomEnterEvents() const { return CustomEnterEvents; }
-	virtual void SetNodeCustomEntervents(const TArray<FDlgCustomEvent>& InEnterEvents) { CustomEnterEvents = InEnterEvents; }
 
 	//
 	// For the Children
@@ -234,9 +229,7 @@ public:
 	static FName GetMemberNameOwnerName() { return GET_MEMBER_NAME_CHECKED(UDlgNode, OwnerName); }
 	static FName GetMemberNameCheckChildrenOnEvaluation() { return GET_MEMBER_NAME_CHECKED(UDlgNode, bCheckChildrenOnEvaluation); }
 	static FName GetMemberNameEnterConditions() { return GET_MEMBER_NAME_CHECKED(UDlgNode, EnterConditions); }
-	static FName GetMemberNameCustomEnterConditions() { return GET_MEMBER_NAME_CHECKED(UDlgNode, CustomEnterConditions); }
 	static FName GetMemberNameEnterEvents() { return GET_MEMBER_NAME_CHECKED(UDlgNode, EnterEvents); }
-	static FName GetMemberNameCustomEnterEvents() { return GET_MEMBER_NAME_CHECKED(UDlgNode, CustomEnterEvents); }
 	static FName GetMemberNameChildren() { return GET_MEMBER_NAME_CHECKED(UDlgNode, Children); }
 
 	// Syncs the GraphNode Edges with our edges
@@ -270,17 +263,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	TArray<FDlgCondition> EnterConditions;
 
-	// Custom Conditions necessary to enter this node
-	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
-	TArray<FDlgCustomCondition> CustomEnterConditions;
-
 	// Events fired when the node is reached in the dialogue
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
 	TArray<FDlgEvent> EnterEvents;
-
-	// Events events fired when the node is reached in the dialogue
-	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
-	TArray<FDlgCustomEvent> CustomEnterEvents;
 
 	// Edges that point to Children of this Node
 	UPROPERTY(EditAnywhere, EditFixedSize, AdvancedDisplay, Category = DialogueNodeData)

@@ -51,6 +51,12 @@ private:
 	void OnEventTypeChanged(bool bForceRefresh);
 
 	// Getters for the visibility of some properties
+	EVisibility GetEventNameVisibility() const
+	{
+		return EventType != EDlgEventType::Custom
+			? EVisibility::Visible : EVisibility::Hidden;
+	}
+
 	EVisibility GetIntValueVisibility() const
 	{
 		return EventType == EDlgEventType::ModifyInt
@@ -88,13 +94,18 @@ private:
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
-	/** Gets all the event name suggestions depending on EventType from all Dialogues. */
+	EVisibility GetCustomEventVisibility() const
+	{
+		return EventType == EDlgEventType::Custom ? EVisibility::Visible : EVisibility::Hidden;
+	}
+
+	// Gets all the event name suggestions depending on EventType from all Dialogues.
 	TArray<FName> GetAllDialoguesEventNames() const;
 
-	/** Gets all the event name suggestions depending on EventType from the current Dialogue */
+	// Gets all the event name suggestions depending on EventType from the current Dialogue
 	TArray<FName> GetCurrentDialogueEventNames() const;
 
-	/** Gets the ParticipantNames from all Dialogues. */
+	// Gets the ParticipantNames from all Dialogues.
 	TArray<FName> GetAllDialoguesParticipantNames() const
 	{
 		TArray<FName> OutArray;
@@ -102,13 +113,13 @@ private:
 		return OutArray;
 	}
 
-	/** Gets the current Dialogue Participant Names. */
+	// Gets the current Dialogue Participant Names.
 	TArray<FName> GetCurrentDialogueParticipantNames() const
 	{
 		return FDialogueDetailsPanelUtils::GetDialogueSortedParticipantNames(Dialogue);
 	}
 
-	/** Handler for when text in the editable text box changed */
+	// Handler for when text in the editable text box changed
 	void HandleTextCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo) const
 	{
 		if (Dialogue)
@@ -139,7 +150,8 @@ private:
 	IDetailPropertyRow* NameValuePropertyRow = nullptr;
 	IDetailPropertyRow* BoolDeltaPropertyRow = nullptr;
 	IDetailPropertyRow* BoolValuePropertyRow = nullptr;
+	IDetailPropertyRow* CustomEventPropertyRow = nullptr;
 
-	/** Hold a reference to dialogue we are displaying. */
+	// Hold a reference to dialogue we are displaying.
 	UDlgDialogue* Dialogue = nullptr;
 };

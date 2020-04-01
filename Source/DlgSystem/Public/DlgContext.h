@@ -37,6 +37,16 @@ class DLGSYSTEM_API UDlgContext : public UObject
 	GENERATED_BODY()
 public:
 
+	//
+	// UObject Interface
+	//
+
+	UWorld* GetWorld() const override;
+
+	//
+	// Own methods
+	//
+
 	/**
 	 * Chooses the option with index OptionIndex of the active node index and it enters that node.
 	 * Typically called based on user input.

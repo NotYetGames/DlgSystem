@@ -83,14 +83,8 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 
 		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameEnterConditions()))
 			.ShouldAutoExpand(true);
-		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameCustomEnterConditions()))
-			.ShouldAutoExpand(true);
-
 		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameEnterEvents()))
 			.ShouldAutoExpand(true);
-		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameCustomEnterEvents()))
-			.ShouldAutoExpand(true);
-
 	}
 	if (!bIsEndNode)
 	{

@@ -181,9 +181,36 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Module")
 	static bool UnRegisterDialogueModuleConsoleCommands();
 
+	// This tries to get the source world for the dialogues
+	// In the following order (the first one that is valid, returns that):
+	// 1. The user set one UserWorldContextObjectPtr (if it is set):
+	//    - Set - SetPersistentWorldContextObject
+	//    - Clear - ClearPersistentWorldContextObject
+	// 2. The first PIE world
+	// 3. The first Game World
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Persistence")
+	static UWorld* GetDialogueWorld();
+
+	// If the user wants to set the world context object manually
+	// Otherwise just use GetDialogueWorld()
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Persistence")
+	static void SetPersistentWorldContextObject(const UObject* WorldContextObject)
+	{
+		UserWorldContextObjectPtr = WorldContextObject;
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Persistence")
+	static void ClearPersistentWorldContextObject()
+	{
+		UserWorldContextObjectPtr.Reset();
+	}
+
 private:
 	static bool ValidateParticipant(const FString& ContextMessageFailure, const UDlgDialogue* ContextDialogue, UObject* Participant);
 	static bool ConstructParticipantMap(const UDlgDialogue* Dialogue, const TArray<UObject*>& Participants, TMap<FName, UObject*>& OutMap);
 
 	static void GatherParticipantsRecursive(UObject* Object, TArray<UObject*>& Array, TSet<UObject*>& AlreadyVisited);
+
+	// Set by the user, we will default to automagically resolve the world
+	static TWeakObjectPtr<const UObject> UserWorldContextObjectPtr;
 };

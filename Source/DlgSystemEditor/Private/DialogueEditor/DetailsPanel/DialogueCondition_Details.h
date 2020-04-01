@@ -75,6 +75,7 @@ private:
 	{
 		return ConditionType != EDlgConditionType::WasNodeVisited
 			&& ConditionType != EDlgConditionType::HasSatisfiedChild
+			&& ConditionType != EDlgConditionType::Custom
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
@@ -141,13 +142,18 @@ private:
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
-	/** Gets all the condition name suggestions depending on ConditionType from all Dialogues. */
+	EVisibility GetCustomConditionVisibility() const
+	{
+		return ConditionType == EDlgConditionType::Custom ? EVisibility::Visible : EVisibility::Hidden;
+	}
+
+	// Gets all the condition name suggestions depending on ConditionType from all Dialogues.
 	TArray<FName> GetAllDialoguesCallbackNames() const
 	{
 		return GetCallbackNamesForParticipant(false, false);
 	}
 
-	/** Gets all the condition name suggestions depending on EventType from the current Dialogue */
+	// Gets all the condition name suggestions depending on EventType from the current Dialogue
 	TArray<FName> GetCurrentDialogueCallbackNames() const
 	{
 		return GetCallbackNamesForParticipant(true, false);
@@ -165,7 +171,7 @@ private:
 
 	TArray<FName> GetCallbackNamesForParticipant(bool bCurrentOnly, bool bOtherValue) const;
 
-	/** Gets the ParticipantNames from all Dialogues. */
+	// Gets the ParticipantNames from all Dialogues.
 	TArray<FName> GetAllDialoguesParticipantNames() const
 	{
 		TArray<FName> OutArray;
@@ -173,13 +179,13 @@ private:
 		return OutArray;
 	}
 
-	/** Gets the current Dialogue Participant Names.  */
+	// Gets the current Dialogue Participant Names.
 	TArray<FName> GetCurrentDialogueParticipantNames() const
 	{
 		return FDialogueDetailsPanelUtils::GetDialogueSortedParticipantNames(Dialogue);
 	}
 
-	/** Handler for when text in the editable text box changed */
+	// Handler for when text in the editable text box changed
 	void HandleTextCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo) const
 	{
 		if (Dialogue)
@@ -216,9 +222,11 @@ private:
 	IDetailPropertyRow* LongTermMemoryPropertyRow = nullptr;
 	IDetailPropertyRow* OperationPropertyRow = nullptr;
 	IDetailPropertyRow* CompareTypePropertyRow = nullptr;
+	IDetailPropertyRow* CustomConditionPropertyRow = nullptr;
+
 	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> OtherParticipantNamePropertyRow;
 	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> OtherVariableNamePropertyRow;
 
-	/** Hold a reference to dialogue we are displaying. */
+	// Hold a reference to dialogue we are displaying.
 	UDlgDialogue* Dialogue = nullptr;
 };

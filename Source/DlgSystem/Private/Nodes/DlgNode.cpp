@@ -91,23 +91,10 @@ void UDlgNode::FireNodeEnterEvents(UDlgContext* Context)
 
 		if (Participant == nullptr)
 		{
-			FDlgLogger::Get().Errorf(
+			FDlgLogger::Get().Warningf(
 				TEXT("FireNodeEnterEvents: Dialogue = `%s`, NodeIndex = %d. Got non existent Participant Name, event call will fail!"),
 				*GetDialogue()->GetPathName(), Context->GetActiveNodeIndex()
 			);
-		}
-
-		Event.Call(Participant);
-	}
-
-	// Custom Events
-	for (const FDlgCustomEvent& Event : CustomEnterEvents)
-	{
-		// Get Participant from either event or parent
-		UObject* Participant = Context->GetParticipant(Event.ParticipantName);
-		if (!IsValid(Participant))
-		{
-			Participant = Context->GetParticipant(OwnerName);
 		}
 
 		Event.Call(Participant);
@@ -159,10 +146,6 @@ bool UDlgNode::CheckNodeEnterConditions(const UDlgContext* Context, TSet<const U
 
 	AlreadyVisitedNodes.Add(this);
 	if (!FDlgCondition::EvaluateArray(EnterConditions, Context, OwnerName))
-	{
-		return false;
-	}
-	if (!FDlgCustomCondition::EvaluateArray(CustomEnterConditions, Context, OwnerName))
 	{
 		return false;
 	}

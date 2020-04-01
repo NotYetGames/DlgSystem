@@ -1,6 +1,9 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #pragma once
-#include "DlgNodeCondition.h"
+
+#include "CoreMinimal.h"
+#include "DlgConditionCustom.h"
+
 #include "DlgCondition.generated.h"
 
 class IDlgDialogueParticipant;
@@ -48,7 +51,10 @@ enum class EDlgConditionType : uint8
 	WasNodeVisited		UMETA(DisplayName = "Was node already visited"),
 
 	// Checks if target node has any satisfied child
-	HasSatisfiedChild	UMETA(DisplayName = "Has satisfied child")
+	HasSatisfiedChild	UMETA(DisplayName = "Has satisfied child"),
+
+	// Custom User defined
+	Custom				UMETA(DisplayName = "Custom Condition")
 };
 
 // Operation the return value of a IntCall/FloatCall is checked with
@@ -107,86 +113,65 @@ protected:
 
 public:
 	// Defines the way the condition is interpreted inside the condition array
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	EDlgConditionStrength Strength = EDlgConditionStrength::Strong;
 
 	// Type of the condition, defines the behavior
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	EDlgConditionType ConditionType = EDlgConditionType::IntCall;
 
 	// Name of the participant (speaker) the event is called on.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	FName ParticipantName;
 
 	// Name of the variable or event, passed in the function call to the participant
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	FName CallbackName;
 
 	// The desired operation on the selected variable
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	EDlgOperation Operation = EDlgOperation::Equal;
 
 	// Type of value to check against
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	EDlgCompare CompareType = EDlgCompare::ToConst;
 
 
 	// Name of the other participant (speaker) the check is performed against (with some compare types)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	FName OtherParticipantName;
 
 	// Name of the variable of the other participant the value is checked against (with some compare types)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	FName OtherVariableName;
 
 
 	// Node index for "node already visited" condition, the value the participant's int is checked against otherwise
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	int32 IntValue = 0;
 
 	// Float the participants float is checked against
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	float FloatValue = 0.f;
 
 	// FName the participants name is checked against
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	FName NameValue;
 
 	// Weather the result defined by the other params has to be true or false in order for this condition to be satisfied
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	bool bBoolValue = true;
 
 	// Weather to check if the node was visited at all (in the long term).
 	// Set it to false to check if it was visited in the actual dialogue context
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	bool bLongTermMemory = true;
+
+	// The custom Condition you must extend via blueprint
+	UPROPERTY(Instanced, EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
+	UDlgConditionCustom* CustomCondition;
 
 public:
 	// Operator overload for serialization
-	friend FArchive& operator<<(FArchive &Ar, FDlgCondition& DlgCondition);
-};
-
-
-USTRUCT(Blueprintable, BlueprintType)
-struct DLGSYSTEM_API FDlgCustomCondition
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-	bool IsValid() const { return Condition != nullptr; }
-
-	static bool EvaluateArray(const TArray<FDlgCustomCondition>& ConditionsArray, const UDlgContext* Context, FName DefaultParticipantName = NAME_None);
-	bool IsConditionMet(const UDlgContext* Context, const UObject* Participant) const;
-
-	bool operator==(const FDlgCustomCondition& Other) const;
-	friend FArchive& operator<<(FArchive& Ar, FDlgCustomCondition& Condition);
-
-public:
-	// Name of the participant (speaker) the condition is passed on
-	UPROPERTY(EditAnywhere, Category = DialogueEventData)
-	FName ParticipantName;
-
-	// The custom Condition you must extend via blueprint
-	UPROPERTY(Instanced, EditAnywhere, BlueprintReadOnly, Category = DialogueConditionData)
-	UDlgNodeCondition* Condition;
+	friend FArchive& operator<<(FArchive &Ar, FDlgCondition& Condition);
 };

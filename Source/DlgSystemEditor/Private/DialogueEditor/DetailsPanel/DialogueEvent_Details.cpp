@@ -16,7 +16,7 @@
 #define LOCTEXT_NAMESPACE "DialogueEvent_Details"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FDialogueEventCustomization
+// FDialogueCustomEventization
 void FDialogueEvent_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InStructPropertyHandle,
 	FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
@@ -83,8 +83,9 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 				.HasContextCheckbox(bHasDialogue)
 				.IsContextCheckBoxChecked(false)
 				.CurrentContextAvailableSuggestions(this, &Self::GetCurrentDialogueEventNames)
-		);
-		EventNamePropertyRow->Update();
+		)
+		.SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetEventNameVisibility))
+		.Update();
 	}
 
 	// IntValue
@@ -120,6 +121,13 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 		BoolValuePropertyRow = &StructBuilder.AddProperty(
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEvent, bValue)).ToSharedRef());
 		BoolValuePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetBoolValueVisibility));
+	}
+
+	// CustomEvent
+	{
+		CustomEventPropertyRow = &StructBuilder.AddProperty(
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEvent, CustomEvent)).ToSharedRef());
+		CustomEventPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCustomEventVisibility));
 	}
 
 	// Cache the initial event type

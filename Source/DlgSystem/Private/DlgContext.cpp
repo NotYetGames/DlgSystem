@@ -5,9 +5,30 @@
 #include "Nodes/DlgNode.h"
 #include "Nodes/DlgNode_End.h"
 #include "DlgDialogueParticipant.h"
+#include "DlgManager.h"
 #include "DlgMemory.h"
 #include "Engine/Texture2D.h"
 #include "Logging/DlgLogger.h"
+
+UWorld* UDlgContext::GetWorld() const
+{
+	if (HasAnyFlags(RF_ArchetypeObject | RF_ClassDefaultObject))
+	{
+		return nullptr;
+	}
+
+	// Get from outer
+	if (UObject* Outer = GetOuter())
+	{
+		if (UWorld* World = Outer->GetWorld())
+		{
+			return World;
+		}
+	}
+
+	// Last resort
+	return UDlgManager::GetDialogueWorld();
+}
 
 bool UDlgContext::ChooseChild(int32 OptionIndex)
 {

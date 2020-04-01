@@ -36,11 +36,35 @@ bool FDlgCondition::EvaluateArray(const TArray<FDlgCondition>& ConditionsArray, 
 
 bool FDlgCondition::IsConditionMet(const UDlgContext* Context, const UObject* Participant) const
 {
-	if (!IsValid(Context) || (IsParticipantInvolved() && !ValidateIsParticipantValid(Participant, TEXT("Evaluate"))))
+	if (!IsValid(Context))
 	{
+		FDlgLogger::Get().Error(TEXT("Condition failed: Dialogue Context is nullptr. How is this even possible???"));
 		return false;
 	}
 
+	bool bHasParticipant = true;
+	if (IsParticipantInvolved())
+	{
+		bHasParticipant = ValidateIsParticipantValid(Participant, TEXT("IsConditionMet"));
+	}
+
+	// We don't care if it has a participant, but warn nonetheless by calling validate it before this
+	if (ConditionType == EDlgConditionType::Custom)
+	{
+		if (CustomCondition == nullptr)
+		{
+			FDlgLogger::Get().Error(TEXT("Custom Condition is empty (not valid). IsConditionMet returning false."));
+			return false;
+		}
+
+		return CustomCondition->IsConditionMet(Participant);
+	}
+
+	// Must have participant from this point onwards
+	if (!bHasParticipant)
+	{
+		return false;
+	}
 	switch (ConditionType)
 	{
 		case EDlgConditionType::EventCall:
@@ -271,21 +295,22 @@ bool FDlgCondition::IsSecondParticipantInvolved() const
 		&& CompareType != EDlgCompare::ToConst;
 }
 
-FArchive& operator<<(FArchive &Ar, FDlgCondition& DlgCondition)
+FArchive& operator<<(FArchive &Ar, FDlgCondition& Condition)
 {
-	Ar << DlgCondition.Strength;
-	Ar << DlgCondition.ParticipantName;
-	Ar << DlgCondition.CallbackName;
-	Ar << DlgCondition.IntValue;
-	Ar << DlgCondition.FloatValue;
-	Ar << DlgCondition.NameValue;
-	Ar << DlgCondition.bBoolValue;
-	Ar << DlgCondition.Operation;
-	Ar << DlgCondition.ConditionType;
-	Ar << DlgCondition.bLongTermMemory;
-	Ar << DlgCondition.CompareType;
-	Ar << DlgCondition.OtherParticipantName;
-	Ar << DlgCondition.OtherVariableName;
+	Ar << Condition.Strength;
+	Ar << Condition.ParticipantName;
+	Ar << Condition.CallbackName;
+	Ar << Condition.IntValue;
+	Ar << Condition.FloatValue;
+	Ar << Condition.NameValue;
+	Ar << Condition.bBoolValue;
+	Ar << Condition.Operation;
+	Ar << Condition.ConditionType;
+	Ar << Condition.bLongTermMemory;
+	Ar << Condition.CompareType;
+	Ar << Condition.OtherParticipantName;
+	Ar << Condition.OtherVariableName;
+	Ar << Condition.CustomCondition;
 	return Ar;
 }
 
@@ -303,43 +328,6 @@ bool FDlgCondition::operator==(const FDlgCondition& Other) const
 			Operation == Other.Operation &&
 			CompareType == Other.CompareType &&
 			OtherParticipantName == Other.OtherParticipantName &&
-			OtherVariableName == Other.OtherVariableName;
-}
-
-bool FDlgCustomCondition::EvaluateArray(const TArray<FDlgCustomCondition>& ConditionsArray, const UDlgContext* Context, FName DefaultParticipantName /*= NAME_None*/)
-{
-	for (const FDlgCustomCondition& Condition : ConditionsArray)
-	{
-		const FName ParticipantName = Condition.ParticipantName == NAME_None ? DefaultParticipantName : Condition.ParticipantName;
-		if (!Condition.IsConditionMet(Context, Context->GetConstParticipant(ParticipantName)))
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
-
-bool FDlgCustomCondition::IsConditionMet(const UDlgContext* Context, const UObject* Participant) const
-{
-	if (!IsValid())
-	{
-		FDlgLogger::Get().Warning(TEXT("Custom Condition is empty (not valid)"));
-		return false;
-	}
-
-	return Condition->IsConditionMet(Participant);
-}
-
-FArchive& operator<<(FArchive& Ar, FDlgCustomCondition& Condition)
-{
-	Ar << Condition.ParticipantName;
-	Ar << Condition.Condition;
-	return Ar;
-}
-
-bool FDlgCustomCondition::operator==(const FDlgCustomCondition& Other) const
-{
-	return	ParticipantName == Other.ParticipantName &&
-			Condition ==  Other.Condition;
+			OtherVariableName == Other.OtherVariableName &&
+			CustomCondition == Other.CustomCondition;
 }

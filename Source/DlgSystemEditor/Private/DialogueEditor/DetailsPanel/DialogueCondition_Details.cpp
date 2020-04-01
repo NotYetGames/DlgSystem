@@ -183,6 +183,13 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 		LongTermMemoryPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetLongTermMemoryVisibility));
 	}
 
+	// CustomCondition
+	{
+		CustomConditionPropertyRow = &StructBuilder.AddProperty(
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, CustomCondition)).ToSharedRef());
+		CustomConditionPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCustomConditionVisibility));
+	}
+
 	// Cache the initial values
 	OnCompareTypeChanged(false);
 	OnConditionTypeChanged(false);
@@ -199,8 +206,8 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 	ConditionType = static_cast<EDlgConditionType>(Value);
 
 	// Update the display names/tooltips
-	FText CalllBackNameDisplayName = LOCTEXT("CalllBackNameDisplayName", "Variable Name");
-	FText CalllBackNameToolTip = LOCTEXT("CalllBackNameToolTip", "The name of the checked variable");
+	FText CallBackNameDisplayName = LOCTEXT("CallBackNameDisplayName", "Variable Name");
+	FText CallBackNameToolTip = LOCTEXT("CallBackNameToolTip", "The name of the checked variable");
 	FText BoolValueDisplayName = LOCTEXT("BoolValueDisplayName", "Return Value");
 	FText BoolValueToolTip = LOCTEXT("BoolValueToolTip", "SHOULD NOT BE VISIBLE");
 	// TODO remove the "equal" operations for float values as they are imprecise
@@ -214,8 +221,8 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 	switch (ConditionType)
 	{
 	case EDlgConditionType::EventCall:
-		CalllBackNameDisplayName = LOCTEXT("ConditionEvent_CallBackNameDisplayName", "Condition Name");
-		CalllBackNameToolTip = LOCTEXT("ConditionEvent_CallBackNameToolTip", "Name parameter of the event call the participant gets");
+		CallBackNameDisplayName = LOCTEXT("ConditionEvent_CallBackNameDisplayName", "Condition Name");
+		CallBackNameToolTip = LOCTEXT("ConditionEvent_CallBackNameToolTip", "Name parameter of the event call the participant gets");
 		BoolValueToolTip = LOCTEXT("ConditionEvent_BoolValueToolTip", "Does the return result of the Event/Condition has this boolean value?");
 		break;
 
@@ -262,12 +269,15 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 		BoolValueToolTip = LOCTEXT("ConditionHasSatisfiedChild_BoolValueToolTip", "Should the node have satisfied child(ren)?");
 		break;
 
+	case EDlgConditionType::Custom:
+		break;
+
 	default:
 		checkNoEntry();
 	}
 
-	CallbackNamePropertyRow->SetDisplayName(CalllBackNameDisplayName)
-		.SetToolTip(CalllBackNameToolTip)
+	CallbackNamePropertyRow->SetDisplayName(CallBackNameDisplayName)
+		.SetToolTip(CallBackNameToolTip)
 		.Update();
 
 	BoolValuePropertyRow->DisplayName(BoolValueDisplayName);
@@ -320,7 +330,6 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 						|| ConditionType == EDlgConditionType::FloatVariable
 						|| ConditionType == EDlgConditionType::ClassNameVariable;
 	}
-
 
 	switch (ConditionType)
 	{

@@ -16,6 +16,7 @@
 #include "Logging/DlgLogger.h"
 #include "DlgHelper.h"
 
+TWeakObjectPtr<const UObject> UDlgManager::UserWorldContextObjectPtr = nullptr;
 
 UDlgContext* UDlgManager::StartDialogueWithDefaultParticipants(UObject* WorldContextObject, UDlgDialogue* Dialogue)
 {
@@ -25,16 +26,19 @@ UDlgContext* UDlgManager::StartDialogueWithDefaultParticipants(UObject* WorldCon
 		return nullptr;
 	}
 
+	// Create empty map of participants we need
 	TSet<FName> ParticipantSet;
 	Dialogue->GetAllParticipantNames(ParticipantSet);
-
 	TArray<UObject*> Participants;
+
+	// Maps from Participant Name => Objects that have that participant name
 	TMap<FName, TArray<UObject*>> ObjectMap;
 	for (const FName& Name : ParticipantSet)
 	{
 		ObjectMap.Add(Name, {});
 	}
-	
+
+	// Gather all objects that have our participant name
 	for (UObject* Participant : GetAllObjectsWithDialogueParticipantInterface(WorldContextObject))
 	{
 		const FName ParticipantName = IDlgDialogueParticipant::Execute_GetParticipantName(Participant);
@@ -65,16 +69,19 @@ UDlgContext* UDlgManager::StartDialogueWithDefaultParticipants(UObject* WorldCon
 	if (MissingNames.Num() > 0)
 	{
 		const FString NameList = FString::Join(MissingNames, *FString(", "));
-		FDlgLogger::Get().Errorf(TEXT("StartDialogueWithDefaultParticipants failed for Dialogue = `%s`, the system failed to find the following participant(s): %s"),
-			*Dialogue->GetName(), *NameList);
-
+		FDlgLogger::Get().Errorf(
+			TEXT("StartDialogueWithDefaultParticipants failed for Dialogue = `%s`, the system failed to find the following participant(s): %s"),
+			*Dialogue->GetName(), *NameList
+		);
 	}
 
 	if (DuplicatedNames.Num() > 0)
 	{
 		const FString NameList = FString::Join(DuplicatedNames, *FString(", "));
-		FDlgLogger::Get().Errorf(TEXT("StartDialogueWithDefaultParticipants failed for Dialogue = `%s`, the system found multiple participants using the same name: %s"),
-			*Dialogue->GetName(), *NameList);
+		FDlgLogger::Get().Errorf(
+			TEXT("StartDialogueWithDefaultParticipants failed for Dialogue = `%s`, the system found multiple participants using the same name: %s"),
+			*Dialogue->GetName(), *NameList
+		);
 	}
 
 	if (MissingNames.Num() > 0 || DuplicatedNames.Num() > 0)
@@ -596,3 +603,48 @@ void UDlgManager::GatherParticipantsRecursive(UObject* Object, TArray<UObject*>&
 	}
 }
 
+UWorld* UDlgManager::GetDialogueWorld()
+{
+	// Try to use the user set one
+	if (UserWorldContextObjectPtr.IsValid())
+	{
+		if (auto* WorldContextObject = UserWorldContextObjectPtr.Get())
+		{
+			if (auto* World = WorldContextObject->GetWorld())
+			{
+				return World;
+			}
+		}
+	}
+
+	// Fallback to default autodetection
+	if (GEngine)
+	{
+		// Get first PIE world
+		// Copied from TakeUtils::GetFirstPIEWorld()
+		for (const FWorldContext& Context : GEngine->GetWorldContexts())
+		{
+			UWorld* World = Context.World();
+			if (!World || !World->IsPlayInEditor())
+				continue;
+
+			if (World->GetNetMode() == ENetMode::NM_Standalone ||
+				(World->GetNetMode() == ENetMode::NM_Client && Context.PIEInstance == 2))
+			{
+				return World;
+			}
+		}
+
+		// Otherwise get the first Game World
+		for (const FWorldContext& Context : GEngine->GetWorldContexts())
+		{
+			UWorld* World = Context.World();
+			if (!World || !World->IsGameWorld())
+				continue;
+
+			return World;
+		}
+	}
+
+	return nullptr;
+}
