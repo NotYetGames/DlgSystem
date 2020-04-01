@@ -181,7 +181,6 @@ const FDlgEdge& UDlgContext::GetOptionFromAll(int32 Index) const
 	return *AllChildren[Index].EdgePtr;
 }
 
-
 const FText& UDlgContext::GetActiveNodeText() const
 {
 	const UDlgNode* Node = GetActiveNode();
@@ -304,7 +303,6 @@ FName UDlgContext::GetActiveNodeParticipantName() const
 	return Node->GetNodeParticipantName();
 }
 
-
 const UObject* UDlgContext::GetConstParticipant(FName DlgParticipantName) const
 {
 	auto* ParticipantPtr = Participants.Find(DlgParticipantName);
@@ -315,7 +313,6 @@ const UObject* UDlgContext::GetConstParticipant(FName DlgParticipantName) const
 
 	return nullptr;
 }
-
 
 bool UDlgContext::IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory, bool bIndexSkipsUnsatisfiedEdges) const
 {
@@ -351,9 +348,8 @@ bool UDlgContext::IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory, 
 		return false;
 	}
 
-	return FDlgMemory::GetInstance()->IsNodeVisited(Dialogue->GetDlgGuid(), TargetIndex);
+	return FDlgMemory::Get().IsNodeVisited(Dialogue->GetDlgGuid(), TargetIndex);
 }
-
 
 bool UDlgContext::IsEdgeConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisfiedEdges) const
 {
@@ -410,7 +406,7 @@ bool UDlgContext::EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredW
 	}
 
 	ActiveNodeIndex = NodeIndex;
-	FDlgMemory::GetInstance()->SetNodeVisited(Dialogue->GetDlgGuid(), ActiveNodeIndex);
+	FDlgMemory::Get().SetNodeVisited(Dialogue->GetDlgGuid(), ActiveNodeIndex);
 	VisitedNodeIndices.Add(ActiveNodeIndex);
 
 	return Node->HandleNodeEnter(this, NodesEnteredWithThisStep);

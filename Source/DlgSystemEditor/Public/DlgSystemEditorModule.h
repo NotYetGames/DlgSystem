@@ -15,76 +15,80 @@ class UDlgDialogue;
 struct FGraphPanelNodeFactory;
 struct FGraphPanelPinFactory;
 
-/**
- * Implementation of the DlgSystemEditor Module
- */
+// Implementation of the DlgSystemEditor Module
 class DLGSYSTEMEDITOR_API FDlgSystemEditorModule : public IDlgSystemEditorModule
 {
 	typedef FDlgSystemEditorModule Self;
 public:
 	FDlgSystemEditorModule();
 
-	/** IModuleInterface implementation */
+	//
+	// IModuleInterface interface
+	//
+
 	void StartupModule() override;
 	void ShutdownModule() override;
 
+	//
 	// Own functions
-	/**
-	 * Save all the dialogues.
-	 * @return True on success or false on failure.
-	 */
+	//
+
+	// Save all the dialogues.
+	// @return True on success or false on failure.
 	static bool SaveAllDialogues();
 
-	/**
-	 * Deletes all teh dialogues text files
-	 * @return True on success or false on failure.
-	 */
+
+	// Deletes all teh dialogues text files
+	// @return True on success or false on failure.
 	static bool DeleteAllDialoguesTextFiles(const TSet<FString>& TextFileExtensions);
 
 private:
-	/** Handle clicking on save all dialogues. */
+	// Handle clicking on save all dialogues.
 	static void HandleOnSaveAllDialogues();
 
-	/** Handle clicking on delete all dialogues text files. */
+	// Handle clicking on delete all dialogues text files.
 	static void HandleOnDeleteAllDialoguesTextFiles();
-	
-	/** Handle on post engine init event */
+
+	// Handle on post engine init event
 	void HandleOnPostEngineInit();
 
-	/** Extend the Menus of the editor */
+	// Handle PIE events
 	void HandleOnBeginPIE(bool bIsSimulating);
+	void HandleOnPostPIEStarted(bool bIsSimulating);
+	void HandleOnEndPIEHandle(bool bIsSimulating);
 
-	/** Extend the Menus of the editor */
+	// Extend the Menus of the editor
 	void ExtendMenu();
 
 private:
-	/** The submenu type of the dialog system */
+	// The submenu type of the dialog system
 	EAssetTypeCategories::Type DlgSystemAssetCategoryBit;
 
-	/** All registered asset type actions. Cached here so that we can unregister them during shutdown. */
+	// All registered asset type actions. Cached here so that we can unregister them during shutdown.
 	TArray<TSharedPtr<IAssetTypeActions>> RegisteredAssetTypeActions;
 
-	/** All registered custom class layouts for the details panel. Cached here so that we can unregister them during shutdown. */
+	// All registered custom class layouts for the details panel. Cached here so that we can unregister them during shutdown.
 	TArray<FName> RegisteredCustomClassLayouts;
 
-	/** All registered custom property layouts for the details panel. Cached here so that we can unregister them during shutdown. */
+	// All registered custom property layouts for the details panel. Cached here so that we can unregister them during shutdown.
 	TArray<FName> RegisteredCustomPropertyTypeLayout;
 
-	/** The factory of how the nodes look. */
+	// The factory of how the nodes look.
 	TSharedPtr<FGraphPanelNodeFactory> DialogueGraphNodeFactory;
 
-	/** The factory of how the pins look. */
+	// The factory of how the pins look.
 	TSharedPtr<FGraphPanelPinFactory> DialogueGraphPinFactory;
 
-	/**
-	 * File menu Editor commands bound from this plugin.
-	 */
+	// File menu Editor commands bound from this plugin.
 	TSharedPtr<FUICommandList> FileMenuEditorCommands;
 
-	/** The Tools Dialogue category. */
+	// The Tools Dialogue category.
 	TSharedPtr<FWorkspaceItem> ToolsDialogueCategory;
 
 	// Handlers
 	FDelegateHandle OnPostEngineInitHandle;
 	FDelegateHandle OnBeginPIEHandle;
+	FDelegateHandle OnPostPIEStartedHandle; // after BeginPlay() has been called
+	FDelegateHandle OnEndPIEHandle;
+	
 };

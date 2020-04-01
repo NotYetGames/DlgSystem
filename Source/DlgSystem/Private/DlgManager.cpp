@@ -6,6 +6,7 @@
 #include "Interfaces/IPluginManager.h"
 #include "Engine/Blueprint.h"
 #include "EngineUtils.h"
+#include "Engine/Engine.h"
 
 #include "IDlgSystemModule.h"
 #include "DlgSystemPrivatePCH.h"
@@ -333,17 +334,17 @@ TMap<FGuid, UDlgDialogue*> UDlgManager::GetAllDialoguesGuidMap()
 
 const TMap<FGuid, FDlgHistory>& UDlgManager::GetDialogueHistory()
 {
-	return FDlgMemory::GetInstance()->GetHistoryMaps();
+	return FDlgMemory::Get().GetHistoryMaps();
 }
 
 void UDlgManager::SetDialogueHistory(const TMap<FGuid, FDlgHistory>& DlgHistory)
 {
-	FDlgMemory::GetInstance()->SetHistoryMap(DlgHistory);
+	FDlgMemory::Get().SetHistoryMap(DlgHistory);
 }
 
 void UDlgManager::ClearDialogueHistory()
 {
-	FDlgMemory::GetInstance()->Empty();
+	FDlgMemory::Get().Empty();
 }
 
 bool UDlgManager::DoesObjectImplementDialogueParticipantInterface(const UObject* Object)
@@ -472,18 +473,26 @@ void UDlgManager::GetAllDialoguesEventNames(const FName& ParticipantName, TArray
 	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
 }
 
-bool UDlgManager::RegisterDialogueModuleConsoleCommands(AActor* InReferenceActor)
+bool UDlgManager::RegisterDialogueConsoleCommands()
 {
 	if (!IDlgSystemModule::IsAvailable())
 	{
 		return false;
 	}
 
-	IDlgSystemModule::Get().RegisterConsoleCommands(InReferenceActor);
+	// Try the user set one
+	if (UserWorldContextObjectPtr.IsValid())
+	{
+		IDlgSystemModule::Get().RegisterConsoleCommands(UserWorldContextObjectPtr);
+		return true;
+	}
+
+	// Fallback
+	IDlgSystemModule::Get().RegisterConsoleCommands(GetDialogueWorld());
 	return true;
 }
 
-bool UDlgManager::UnRegisterDialogueModuleConsoleCommands()
+bool UDlgManager::UnregisterDialogueConsoleCommands()
 {
 	if (!IDlgSystemModule::IsAvailable())
 	{

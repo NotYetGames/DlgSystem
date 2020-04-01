@@ -16,7 +16,7 @@ bool UDlgContextInternal::Initialize(UDlgDialogue* InDialogue, const TMap<FName,
 	const UDlgNode& StartNode = Dialogue->GetStartNode();
 	for (const FDlgEdge& ChildLink : StartNode.GetNodeChildren())
 	{
-		if (ChildLink.TargetIndex != INDEX_NONE && ChildLink.Evaluate(this, {}))
+		if (ChildLink.IsValid() && ChildLink.Evaluate(this, {}))
 		{
 			if (EnterNode(ChildLink.TargetIndex, {}))
 			{
@@ -42,7 +42,7 @@ bool UDlgContextInternal::CouldBeInitialized(UDlgDialogue* InDialogue, const TMa
 	const UDlgNode& StartNode = Dialogue->GetStartNode();
 	for (const FDlgEdge& ChildLink : StartNode.GetNodeChildren())
 	{
-		if (ChildLink.TargetIndex != INDEX_NONE && ChildLink.Evaluate(this, {}))
+		if (ChildLink.IsValid() && ChildLink.Evaluate(this, {}))
 		{
 			return true;
 		}
@@ -73,7 +73,7 @@ bool UDlgContextInternal::Initialize(UDlgDialogue* InDialogue, const TMap<FName,
 	}
 
 	ActiveNodeIndex = StartIndex;
-	FDlgMemory::GetInstance()->SetNodeVisited(Dialogue->GetDlgGuid(), ActiveNodeIndex);
+	FDlgMemory::Get().SetNodeVisited(Dialogue->GetDlgGuid(), ActiveNodeIndex);
 	VisitedNodeIndices.Add(ActiveNodeIndex);
 
 	return Node->ReevaluateChildren(this, {});

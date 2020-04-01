@@ -40,7 +40,8 @@ void FDlgSystemModule::StartupModule()
 	FDlgLogger::Get().Info(TEXT("DlgSystemModule: StartupModule"));
 
 	OnPreLoadMapHandle = FCoreUObjectDelegates::PreLoadMap.AddRaw(this, &Self::HandlePreLoadMap);
-
+	OnPostLoadMapWithWorldHandle = FCoreUObjectDelegates::PostLoadMapWithWorld.AddRaw(this, &Self::HandlePostLoadMapWithWorld);
+	
 	// Listen for deleted assets
 	// Maybe even check OnAssetRemoved if not loaded into memory?
 	IAssetRegistry& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(NAME_MODULE_AssetRegistry).Get();
@@ -118,6 +119,10 @@ void FDlgSystemModule::ShutdownModule()
 	{
 		FCoreUObjectDelegates::PreLoadMap.Remove(OnPreLoadMapHandle);
 	}
+	if (OnPostLoadMapWithWorldHandle.IsValid())
+	{
+		FCoreUObjectDelegates::PostLoadMapWithWorld.Remove(OnPostLoadMapWithWorldHandle);
+	}
 
 	FDlgLogger::Get().Info(TEXT("DlgSystemModule: ShutdownModule"));
 	FDlgLogger::OnShutdown();
@@ -128,19 +133,23 @@ TSharedRef<SWidget> FDlgSystemModule::GetDialogueDataDisplayWindow()
 	TSharedPtr<SDlgDataDisplay> DialogueData = DialogueDataDisplayWidget.Pin();
 	if (!DialogueData.IsValid())
 	{
-		DialogueData = SNew(SDlgDataDisplay, ReferenceActor);
+		DialogueData = SNew(SDlgDataDisplay, WorldContextObjectPtr);
 		DialogueDataDisplayWidget = DialogueData;
 	}
 
 	return DialogueData.ToSharedRef();
 }
 
-void FDlgSystemModule::RegisterConsoleCommands(AActor* InReferenceActor)
+void FDlgSystemModule::RegisterConsoleCommands(const TWeakObjectPtr<const UObject>& InWorldContextObjectPtr)
 {
 	// Unregister first to prevent double register of commands
 	UnregisterConsoleCommands();
 
-	ReferenceActor = InReferenceActor;
+	if (InWorldContextObjectPtr.IsValid())
+	{
+		WorldContextObjectPtr = InWorldContextObjectPtr;
+	}
+	
 	IConsoleManager& ConsoleManager = IConsoleManager::Get();
 	ConsoleCommands.Add(ConsoleManager.RegisterConsoleCommand(TEXT("Dlg.DataDisplay"),
 		TEXT("Displays the Dialogue Data Window"),
@@ -159,10 +168,10 @@ void FDlgSystemModule::RegisterConsoleCommands(AActor* InReferenceActor)
 
 void FDlgSystemModule::UnregisterConsoleCommands()
 {
-	ReferenceActor = nullptr;
-	for (IConsoleCommand* Comand : ConsoleCommands)
+	WorldContextObjectPtr.Reset();
+	for (IConsoleCommand* Command : ConsoleCommands)
 	{
-		IConsoleManager::Get().UnregisterConsoleObject(Comand);
+		IConsoleManager::Get().UnregisterConsoleObject(Command);
 	}
 	ConsoleCommands.Empty();
 }
@@ -188,11 +197,11 @@ bool FDlgSystemModule::RefreshDisplayDialogueDataWindow(bool bFocus)
 		FGlobalTabmanager::Get()->FindExistingLiveTab(FTabId(DIALOGUE_DATA_DISPLAY_TAB_ID));
 	if (DlgDisplayDataTab.IsValid())
 	{
-		// Set the new ReferenceActor.
+		// Set the new WorldContextObjectPtr.
 		TSharedRef<SDlgDataDisplay> Window = StaticCastSharedRef<SDlgDataDisplay>(DlgDisplayDataTab->GetContent());
-		if (ReferenceActor)
+		if (WorldContextObjectPtr.IsValid())
 		{
-			Window->SetReferenceActor(ReferenceActor);
+			Window->SetWorldContextObject(WorldContextObjectPtr);
 			Window->RefreshTree(false);
 		}
 
@@ -282,19 +291,43 @@ void FDlgSystemModule::HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, cons
 
 void FDlgSystemModule::HandlePreLoadMap(const FString& MapName)
 {
+	// NOTE: only in NON editor game
 	if (!OnPreLoadMapHandle.IsValid())
 	{
 		return;
 	}
-	if (const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>())
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+	if (!Settings)
 	{
-		if (Settings->bClearDialogueHistoryAutomatically)
-		{
-			FDlgLogger::Get().Debugf(TEXT("PreLoadMap = %s. Clearing Dialogue History"), *MapName);
-			UDlgManager::ClearDialogueHistory();
-		}
+		return;
 	}
 
+	if (Settings->bClearDialogueHistoryAutomatically)
+	{
+		FDlgLogger::Get().Debugf(TEXT("PreLoadMap = %s. Clearing Dialogue History"), *MapName);
+		UDlgManager::ClearDialogueHistory();
+	}
+}
+
+void FDlgSystemModule::HandlePostLoadMapWithWorld(UWorld* LoadedWorld)
+{
+	// NOTE: only in NON editor game
+	if (!OnPostLoadMapWithWorldHandle.IsValid())
+	{
+		return;
+	}
+	LastLoadedWorld = LoadedWorld;
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+	if (!Settings)
+	{
+		return;
+	}
+
+	if (Settings->bRegisterDialogueConsoleCommandsAutomatically)
+	{
+		FDlgLogger::Get().Debugf(TEXT("PostLoadMapWithWorld = %s. Registering Console commands"), *LoadedWorld->GetMapName());
+		RegisterConsoleCommands(LoadedWorld);
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

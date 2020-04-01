@@ -166,20 +166,29 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	static void GetAllDialoguesEventNames(const FName& ParticipantName, TArray<FName>& OutArray);
 
+	UE_DEPRECATED(4.21, "Use RegisterDialogueConsoleCommands Instead.")
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Console", meta=(DeprecatedFunction, DeprecationMessage="Use RegisterDialogueConsoleCommands Instead"))
+	static bool RegisterDialogueModuleConsoleCommands(AActor* InReferenceActor) { return RegisterDialogueConsoleCommands(); }
+
 	/**
 	 * Registers all the DlgSystem Module console commands.
-	 * @param InReferenceActor - The reference actor for the World. Without this the runtime module won't know how to get the UWorld.
+	 * To set the custom reference WorldContextObjectPtr, set it with SetPersistentWorldContextObject
 	 * @return true on success, false otherwise
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Dialogue|Module")
-	static bool RegisterDialogueModuleConsoleCommands(AActor* InReferenceActor);
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Console")
+	static bool RegisterDialogueConsoleCommands();
+
+	UE_DEPRECATED(4.21, "Use UnregisterDialogueConsoleCommands Instead.")
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Console", meta=(DeprecatedFunction, DeprecationMessage="Use UnregisterDialogueConsoleCommands Instead"))
+	static bool UnRegisterDialogueModuleConsoleCommands() { return UnregisterDialogueConsoleCommands(); }
 
 	/**
 	 * Unregister all the DlgSystem Module console commands.
 	 * @return true on success, false otherwise
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Dialogue|Module")
-	static bool UnRegisterDialogueModuleConsoleCommands();
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Console")
+	static bool UnregisterDialogueConsoleCommands();
+
 
 	// This tries to get the source world for the dialogues
 	// In the following order (the first one that is valid, returns that):

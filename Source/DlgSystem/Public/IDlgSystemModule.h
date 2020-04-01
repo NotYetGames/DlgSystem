@@ -44,9 +44,9 @@ public:
 
 	/**
 	 * Registers all the console commands.
-	 * @param InReferenceActor - The reference actor for the World. Without this the runtime module won't know how to get the UWorld.
+	 * @param WorldConextObjectPtr - The reference actor for the World. Without this the runtime module won't know how to get the UWorld.
 	 */
-	virtual void RegisterConsoleCommands(AActor* InReferenceActor = nullptr) = 0;
+	virtual void RegisterConsoleCommands(const TWeakObjectPtr<const UObject>& WorldContextObjectPtr) = 0;
 
 	/** Unregister all the console commands. */
 	virtual void UnregisterConsoleCommands() = 0;
