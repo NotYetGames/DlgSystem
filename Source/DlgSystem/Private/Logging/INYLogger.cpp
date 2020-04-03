@@ -3,6 +3,7 @@
 #include "CoreGlobals.h"
 #include "Misc/OutputDevice.h"
 #include "Misc/UObjectToken.h"
+#include "Misc/FeedbackContext.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/Engine.h"
 #include "Logging/MessageLog.h"

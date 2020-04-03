@@ -11,6 +11,7 @@
 #include "IDialogueEditor.h"
 #include "Nodes/DialogueGraphNode.h"
 #include "Nodes/DialogueGraphNode_Edge.h"
+#include "DlgHelper.h"
 
 /** Useful for auto positioning */
 struct NodeWithParentPosition
@@ -559,7 +560,7 @@ bool FDialogueEditorUtilities::CanConvertSpeechSequenceNodeToSpeechNodes(const T
 	// Is the node a speech sequence? and has at least one speech sequence inside it
 	if (SelectedNodes.Num() == 1)
 	{
-		if (UDialogueGraphNode* SelectedNode = Cast<UDialogueGraphNode>(*GetFirstSetElement(SelectedNodes)))
+		if (UDialogueGraphNode* SelectedNode = Cast<UDialogueGraphNode>(*FDlgHelper::GetFirstSetElement(SelectedNodes)))
 		{
 			return SelectedNode->IsSpeechSequenceNode() &&
 				   SelectedNode->GetDialogueNode<UDlgNode_SpeechSequence>().HasSpeechSequences();
@@ -589,7 +590,7 @@ bool FDialogueEditorUtilities::OpenEditorForAsset(const UObject* Asset)
 	{
 		return false;
 	}
-	
+
 #if ENGINE_MINOR_VERSION >= 24
 	return GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->OpenEditorForAsset(const_cast<UObject*>(Asset));
 #else

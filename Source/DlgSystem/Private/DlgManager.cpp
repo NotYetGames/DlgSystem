@@ -600,9 +600,9 @@ void UDlgManager::GatherParticipantsRecursive(UObject* Object, TArray<UObject*>&
 			Array.Add(Object);
 		}
 
-		for (UProperty* Property = Object->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
+		for (auto* Property = Object->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 		{
-			if (UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
+			if (auto* ObjectProperty = Cast<UObjectProperty>(Property))
 			{
 				GatherParticipantsRecursive(ObjectProperty->GetPropertyValue_InContainer(Object), Array, AlreadyVisited);
 			}

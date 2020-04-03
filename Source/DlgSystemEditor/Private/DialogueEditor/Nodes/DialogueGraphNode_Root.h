@@ -14,18 +14,6 @@ class UDialogueGraphNode_Root : public UDialogueGraphNode
 	GENERATED_BODY()
 
 public:
-	// Begin UObject Interface.
-	/**
-	 * Called by the editor to query whether a property of this object is allowed to be modified.
-	 * The property editor uses this to disable controls for properties that should not be changed.
-	 * When overriding this function you should always call the parent implementation first.
-	 *
-	 * @param	InProperty	The property to query
-	 *
-	 * @return	true if the property can be modified in the editor, otherwise false
-	 */
-	bool CanEditChange(const UProperty* InProperty) const override;
-
 	// Begin UEdGraphNode interface
 	/** Gets the name of this node, shown in title bar */
 	FText GetNodeTitle(ENodeTitleType::Type TitleType) const override

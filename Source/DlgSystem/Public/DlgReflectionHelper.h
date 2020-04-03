@@ -56,7 +56,7 @@ VariableType UDlgReflectionHelper::GetVariable(const UObject* ParticipantObject,
 		return VariableType{};
 	}
 
-	for (UProperty* Property = ParticipantObject->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
+	for (auto* Property = ParticipantObject->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 	{
 		const PropertyType* CastedProperty = Cast<PropertyType>(Property);
 		if (CastedProperty != nullptr && CastedProperty->GetFName() == VariableName)
@@ -93,7 +93,7 @@ void UDlgReflectionHelper::ModifyVariable(UObject* ParticipantObject, const FNam
 	}
 
 	// Modify the current variable
-	for (UProperty* Property = ParticipantObject->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
+	for (auto* Property = ParticipantObject->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 	{
 		const PropertyType* CastedProperty = Cast<PropertyType>(Property);
 		if (CastedProperty != nullptr && CastedProperty->GetFName() == VariableName)
@@ -123,7 +123,7 @@ void UDlgReflectionHelper::SetVariable(UObject* ParticipantObject, const FName V
 		return;
 	}
 
-	for (UProperty* Property = ParticipantObject->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
+	for (auto* Property = ParticipantObject->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 	{
 		const PropertyType* CastedProperty = Cast<PropertyType>(Property);
 		if (CastedProperty != nullptr && CastedProperty->GetFName() == VariableName)

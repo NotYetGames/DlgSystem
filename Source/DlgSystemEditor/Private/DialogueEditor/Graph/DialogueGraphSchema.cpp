@@ -75,7 +75,7 @@ void UDialogueGraphSchema::GetContextMenuActions(UToolMenu* Menu, UGraphNodeCont
 	{
 		// Menu for right clicking on node
 		FToolMenuSection& Section = Menu->AddSection("DialogueGraphSchemaNodeActions", LOCTEXT("NodeActionsMenuHeader", "Node Actions"));
-		
+
 		// This action is handled in UDialogueGraphSchema::BreakNodeLinks, and the action is registered in SGraphEditorImpl (not by us)
 		Section.AddMenuEntry(FGraphEditorCommands::Get().BreakNodeLinks);
 	}
@@ -98,7 +98,7 @@ void UDialogueGraphSchema::GetContextMenuActions(const UEdGraph* CurrentGraph, c
 		}
 		MenuBuilder->EndSection();
 	}
-	
+
 	// The rest of the menus are implemented in the each nodes GetContextMenuActions method
 	Super::GetContextMenuActions(CurrentGraph, InGraphNode, InGraphPin, MenuBuilder, bIsDebugging);
 }
@@ -254,7 +254,11 @@ bool UDialogueGraphSchema::CreateAutomaticConversionNodeAndConnections(UEdGraphP
 	UDialogueGraphNode* NodeA = CastChecked<UDialogueGraphNode>(PinA->GetOwningNode());
 	UDialogueGraphNode* NodeB = CastChecked<UDialogueGraphNode>(PinB->GetOwningNode());
 
-	UDialogueGraphNode_Edge* GraphNode_Edge = Graph::SpawnGraphNodeFromTemplate<UDialogueGraphNode_Edge>(NodeA->GetGraph(), FVector2D(0.0f, 0.0f), false);
+	UDialogueGraphNode_Edge* GraphNode_Edge =
+		FDialogueEditorUtilities::SpawnGraphNodeFromTemplate<UDialogueGraphNode_Edge>(
+			NodeA->GetGraph(), FVector2D(0.0f, 0.0f), false
+		);
+
 	// Create proxy connection from output -> input
 	if (PinA->Direction == EGPD_Output)
 	{

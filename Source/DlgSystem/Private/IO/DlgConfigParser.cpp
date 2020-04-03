@@ -82,7 +82,7 @@ bool FDlgConfigParser::ReadProperty(const UStruct* ReferenceClass, void* TargetO
 	check(From < String.Len());
 
 	const FString PropertyName = GetActiveWord();
-	UProperty* PropertyBase = ReferenceClass->FindPropertyByName(*PropertyName);
+	auto* PropertyBase = ReferenceClass->FindPropertyByName(*PropertyName);
 	if (PropertyBase != nullptr)
 	{
 		// check primitive types and enums
@@ -92,24 +92,24 @@ bool FDlgConfigParser::ReadProperty(const UStruct* ReferenceClass, void* TargetO
 		}
 
 		// check <MAP>
-		UMapProperty* MapProperty = Cast<UMapProperty>(PropertyBase);
+		auto* MapProperty = Cast<UMapProperty>(PropertyBase);
 		if (MapProperty != nullptr)
 		{
 			return ReadMap(TargetObject, *MapProperty, DefaultObjectOuter);
 		}
 
 		// check <SET>
-		USetProperty* SetProperty = Cast<USetProperty>(PropertyBase);
+		auto* SetProperty = Cast<USetProperty>(PropertyBase);
 		if (SetProperty != nullptr)
 		{
 			return ReadSet(TargetObject, *SetProperty, DefaultObjectOuter);
 		}
 	}
 
-	UProperty* ComplexPropBase = ReferenceClass->FindPropertyByName(*PropertyName);
+	auto* ComplexPropBase = ReferenceClass->FindPropertyByName(*PropertyName);
 
 	// struct
-	if (UStructProperty* StructProperty = SmartCastProperty<UStructProperty>(ComplexPropBase))
+	if (auto* StructProperty = SmartCastProperty<UStructProperty>(ComplexPropBase))
 	{
 		return ReadComplexProperty<UStructProperty>(TargetObject,
 													ComplexPropBase,
@@ -158,7 +158,7 @@ bool FDlgConfigParser::ReadProperty(const UStruct* ReferenceClass, void* TargetO
 	{
 		ComplexPropBase = ReferenceClass->FindPropertyByName(*VariableName);
 	}
-	if (UObjectProperty* ObjectProperty = SmartCastProperty<UObjectProperty>(ComplexPropBase))
+	if (auto* ObjectProperty = SmartCastProperty<UObjectProperty>(ComplexPropBase))
 	{
 		const UClass* Class = SmartGetPropertyClass(ComplexPropBase, TypeName);
 		if (Class == nullptr)
@@ -448,9 +448,9 @@ int32 FDlgConfigParser::GetActiveLineNumber() const
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void FDlgConfigParser::ConstructConfigFileInternal(const UStruct* ReferenceType, int32 TabCount, void* SourceObject, FString& OutString)
 {
-	for (UField* Field = ReferenceType->Children; Field != nullptr; Field = Field->Next)
+	for (auto* Field = ReferenceType->Children; Field != nullptr; Field = Field->Next)
 	{
-		UBoolProperty* BoolProp = Cast<UBoolProperty>(Field);
+		auto* BoolProp = Cast<UBoolProperty>(Field);
 		if (BoolProp != nullptr)
 		{
 			OutString += BoolProp->GetName() + " " + (BoolProp->GetPropertyValue_InContainer(SourceObject) ? "True\n" : "False\n");
@@ -508,7 +508,7 @@ bool FDlgConfigParser::TryToReadEnum(void* Target, UProperty* PropertyBase)
 			Value = FName(*String.Mid(From, Len));
 		}
 
-		UEnumProperty* Prop = SmartCastProperty<UEnumProperty>(PropertyBase);
+		auto* Prop = SmartCastProperty<UEnumProperty>(PropertyBase);
 		if (Prop == nullptr || Prop->GetEnum() == nullptr)
 		{
 			return 0;
@@ -517,8 +517,9 @@ bool FDlgConfigParser::TryToReadEnum(void* Target, UProperty* PropertyBase)
 		check(Cast<UByteProperty>(Prop->GetUnderlyingProperty()));
 		return uint8(Prop->GetEnum()->GetIndexByName(Value));
 	};
+
 	// enum can't be pure array atm!!!
-	UEnumProperty* EnumProp = Cast<UEnumProperty>(PropertyBase);
+	auto* EnumProp = Cast<UEnumProperty>(PropertyBase);
 	if (EnumProp != nullptr)
 	{
 		FindNextWord();
@@ -607,7 +608,7 @@ bool FDlgConfigParser::ReadMap(void* TargetObject, UMapProperty& Property, UObje
 			else if (i == 1 && bHasNullptr)				{ bDone = true; } // Value is nullptr, ignore
 			// else if (Cast<UByteProperty>(Props[i]))		{ *(uint8*)Ptrs[i]	 = OnGetAsEnum();	bDone = true; } // would not work, check enum above
 
-			UStructProperty* StructVal = Cast<UStructProperty>(Props[i]);
+			auto* StructVal = Cast<UStructProperty>(Props[i]);
 			if (StructVal != nullptr)
 			{
 				if (!CompareToActiveWord("{"))
@@ -658,7 +659,7 @@ void* FDlgConfigParser::OnInitObject(void* ValuePtr, const UClass* ChildClass, U
 /** gets the UClass from an UObject or from an array of UObjects */
 const UClass* FDlgConfigParser::SmartGetPropertyClass(UProperty* Property, const FString& TypeName)
 {
-	UObjectProperty* ObjectProperty = SmartCastProperty<UObjectProperty>(Property);
+	auto* ObjectProperty = SmartCastProperty<UObjectProperty>(Property);
 	check(ObjectProperty != nullptr);
 
 	const UClass* Class = nullptr;

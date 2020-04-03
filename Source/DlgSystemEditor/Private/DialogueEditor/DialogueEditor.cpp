@@ -19,6 +19,7 @@
 
 #include "DlgSystemEditorPrivatePCH.h"
 #include "DlgDialogue.h"
+#include "DlgHelper.h"
 #include "SDialoguePalette.h"
 #include "SDialogueActionMenu.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Root.h"
@@ -423,7 +424,7 @@ void FDialogueEditor::SetDialogueBeingEdited(UDlgDialogue* NewDialogue)
 	// Update the asset picker to select the new active dialogue
 }
 
-void FDialogueEditor::NotifyPostChange(const FPropertyChangedEvent& PropertyChangedEvent, class UProperty* PropertyThatChanged)
+void FDialogueEditor::NotifyPostChange(const FPropertyChangedEvent& PropertyChangedEvent, UProperty* PropertyThatChanged)
 {
 	if (GraphEditorView.IsValid() && PropertyChangedEvent.ChangeType != EPropertyChangeType::Interactive)
 	{
@@ -732,7 +733,7 @@ void FDialogueEditor::OnCommandConvertSpeechSequenceNodeToSpeechNodes() const
 {
 	const TSet<UObject*> SelectedNodes = GetSelectedNodes();
 	check(SelectedNodes.Num() == 1);
-	UDialogueGraphNode* SpeechSequence_GraphNode = CastChecked<UDialogueGraphNode>(*GetFirstSetElement(SelectedNodes));
+	UDialogueGraphNode* SpeechSequence_GraphNode = CastChecked<UDialogueGraphNode>(*FDlgHelper::GetFirstSetElement(SelectedNodes));
 	check(SpeechSequence_GraphNode->IsSpeechSequenceNode());
 
 	FConvertSpeechSequenceNodeToSpeechNodes_DialogueGraphSchemaAction ConvertAction(SpeechSequence_GraphNode);
@@ -864,7 +865,7 @@ bool FDialogueEditor::CanDeleteNodes() const
 	// Return false if only root node is selected, as it can't be deleted
 	if (SelectedNodes.Num() == 1)
 	{
-		const UObject* SelectedNode = *GetFirstSetElement(SelectedNodes);
+		const UObject* SelectedNode = *FDlgHelper::GetFirstSetElement(SelectedNodes);
 		return !SelectedNode->IsA(UDialogueGraphNode_Root::StaticClass());
 	}
 

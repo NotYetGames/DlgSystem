@@ -57,13 +57,13 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 	};
 
 	// Enum, export enums as strings
-	if (const UEnumProperty* EnumProperty = Cast<UEnumProperty>(Property))
+	if (const auto* EnumProperty = Cast<UEnumProperty>(Property))
 	{
 		return GetJsonStringForEnum(EnumProperty->GetEnum(), EnumProperty->GetUnderlyingProperty());
 	}
 
 	// Numeric, int, float, possible enum
-	if (const UNumericProperty* NumericProperty = Cast<UNumericProperty>(Property))
+	if (const auto* NumericProperty = Cast<UNumericProperty>(Property))
 	{
 		// See if it's an enum Numeric property
 		if (UEnum* EnumDef = NumericProperty->GetIntPropertyEnum())
@@ -94,19 +94,19 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 	}
 
 	// Bool, Export bools as JSON bools
-	if (const UBoolProperty* BoolProperty = Cast<UBoolProperty>(Property))
+	if (const auto* BoolProperty = Cast<UBoolProperty>(Property))
 	{
 		return MakeShared<FJsonValueBoolean>(BoolProperty->GetOptionalPropertyValue(ValuePtr));
 	}
 
 	// FString
-	if (const UStrProperty* StringProperty = Cast<UStrProperty>(Property))
+	if (const auto* StringProperty = Cast<UStrProperty>(Property))
 	{
 		return MakeShared<FJsonValueString>(StringProperty->GetOptionalPropertyValue(ValuePtr));
 	}
 
 	// FName
-	if (const UNameProperty* NameProperty = Cast<UNameProperty>(Property))
+	if (const auto* NameProperty = Cast<UNameProperty>(Property))
 	{
 		auto* NamePtr = static_cast<const FName*>(ValuePtr);
 		if (NamePtr == nullptr)
@@ -127,13 +127,13 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 	}
 
 	// FText
-	if (const UTextProperty* TextProperty = Cast<UTextProperty>(Property))
+	if (const auto* TextProperty = Cast<UTextProperty>(Property))
 	{
 		return MakeShared<FJsonValueString>(TextProperty->GetOptionalPropertyValue(ValuePtr).ToString());
 	}
 
 	// TArray
-	if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
+	if (const auto* ArrayProperty = Cast<UArrayProperty>(Property))
 	{
 		TArray<TSharedPtr<FJsonValue>> Array;
 		const FDlgConstScriptArrayHelper Helper(ArrayProperty, ValuePtr);
@@ -153,7 +153,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 	}
 
 	// TSet
-	if (const USetProperty* SetProperty = Cast<USetProperty>(Property))
+	if (const auto* SetProperty = Cast<USetProperty>(Property))
 	{
 		TArray<TSharedPtr<FJsonValue>> Array;
 		const FScriptSetHelper Helper(SetProperty, ValuePtr);
@@ -181,7 +181,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 	}
 
 	// TMap
-	if (const UMapProperty* MapProperty = Cast<UMapProperty>(Property))
+	if (const auto* MapProperty = Cast<UMapProperty>(Property))
 	{
 		const TSharedRef<FJsonObject> OutObject = MakeShared<FJsonObject>();
 		const FDlgConstScriptMapHelper Helper(MapProperty, ValuePtr);
@@ -209,7 +209,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 				check(MapKeyPtr);
 
 				FString KeyString;
-				if (UStructProperty* KeyStructProperty = Cast<UStructProperty>(MapProperty->KeyProp))
+				if (auto* KeyStructProperty = Cast<UStructProperty>(MapProperty->KeyProp))
 				{
 					// Key is a struct
 					MapProperty->KeyProp->ExportTextItem(KeyString, MapKeyPtr, MapKeyPtr, nullptr, PPF_None);
@@ -241,7 +241,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 	}
 
 	// UStruct
-	if (const UStructProperty* StructProperty = Cast<UStructProperty>(Property))
+	if (const auto* StructProperty = Cast<UStructProperty>(Property))
 	{
 		// Intentionally exclude the JSON Object wrapper, which specifically needs to export JSON in an object representation instead of a string
 		UScriptStruct::ICppStructOps* TheCppStructOps = StructProperty->Struct->GetCppStructOps();
@@ -266,7 +266,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 	}
 
 	// UObject
-	if (const UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
+	if (const auto* ObjectProperty = Cast<UObjectProperty>(Property))
 	{
 		auto returnNullptr = [this, &ObjectProperty]() -> TSharedPtr<FJsonValue>
 		{
@@ -282,7 +282,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarUPropertyToJsonValue(const U
 		// NOTE: The ValuePtr here should be a pointer to a pointer
 		// Because the UObjects are pointers, we must deference it. So instead of it being a void** we want it to be a void*
 		const UObject* ObjectPtr = ObjectProperty->GetObjectPropertyValue_InContainer(ValuePtr);
-		
+
 		// To find out if in nested containers the object is nullptr we must go a level up
 		const UObject* ContainerObjectPtr = ObjectProperty->GetObjectPropertyValue_InContainer(ContainerPtr);
 		if (ObjectPtr == nullptr || ContainerObjectPtr == nullptr)
@@ -450,7 +450,7 @@ bool FDlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, co
 	// Iterate over all the properties of the struct
 	for (TFieldIterator<const UProperty> It(StructDefinition); It; ++It)
 	{
-		const UProperty* Property = *It;
+		const auto* Property = *It;
 		if (!ensure(Property))
 			continue;
 

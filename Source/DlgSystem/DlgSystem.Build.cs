@@ -13,7 +13,8 @@ public class DlgSystem : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		bEnforceIWYU = true;
 		//MinFilesUsingPrecompiledHeaderOverride = 1;
-		//bFasterWithoutUnity = true;
+		// bFasterWithoutUnity = true;
+		// bUseUnity = false;
 		//PrivatePCHHeaderFile = "Private/DlgSystemPrivatePCH.h";
 
 		PublicIncludePaths.AddRange(

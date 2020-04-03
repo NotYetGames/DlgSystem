@@ -10,8 +10,7 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "Nodes/DlgNode.h"
 #include "DlgDialogue.h"
-#include "DlgSystemSettings.h"
-
+#include "DlgHelper.h"
 
 void FDialogueCompilerContext::Compile()
 {
@@ -278,7 +277,7 @@ void FDialogueCompilerContext::PruneIsolatedNodes()
 		// Cyclic orphan subgraph found, choose first node
 		if (!IsValid(RootOrphan))
 		{
-			RootOrphan = CastChecked<UDialogueGraphNode>(*GetFirstSetElement(OrphanedNodes));
+			RootOrphan = CastChecked<UDialogueGraphNode>(*FDlgHelper::GetFirstSetElement(OrphanedNodes));
 		}
 
 		// Queue and assign node

@@ -209,8 +209,19 @@ public:
 	// FileSystem
 	static bool DeleteFile(const FString& PathName, bool bVerbose = true);
 	static bool RenameFile(const FString& OldPathName, const FString& NewPathName, bool bOverWrite = false, bool bVerbose = true);
-	
-	
+
+	// Gets the first element from a set. From https://answers.unrealengine.com/questions/332443/how-to-get-the-firstonly-element-in-tset.html
+	template <typename SetType>
+	static typename TCopyQualifiersFromTo<SetType, typename SetType::ElementType>::Type* GetFirstSetElement(SetType& Set)
+	{
+		for (auto& Element : Set)
+		{
+			return &Element;
+		}
+
+		return nullptr;
+	}
+
 	// Is FirstSet == SecondSet
 	// NOTE for SetType = float this won't work, what are you even doing?
 	template <typename SetType>

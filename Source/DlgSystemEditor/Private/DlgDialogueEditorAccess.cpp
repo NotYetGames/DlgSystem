@@ -101,7 +101,10 @@ void FDlgDialogueEditorAccess::UpdateDialogueToVersion_UseOnlyOneOutputAndInputP
 
 			UDialogueGraphNode* ConnectedNode = CastChecked<UDialogueGraphNode>(OldPin->LinkedTo[0]->GetOwningNode());
 			// Make a proxy (selectable) edge graph node
-			UDialogueGraphNode_Edge* GraphNode_Edge = Graph::SpawnGraphNodeFromTemplate<UDialogueGraphNode_Edge>(DialogueGraph, FVector2D(0.0f, 0.0f), false);
+			UDialogueGraphNode_Edge* GraphNode_Edge =
+				FDialogueEditorUtilities::SpawnGraphNodeFromTemplate<UDialogueGraphNode_Edge>(
+					DialogueGraph, FVector2D(0.0f, 0.0f), false
+				);
 			GraphNode_Edge->CreateConnections(GraphNode, ConnectedNode);
 		}
 		GraphNode->CheckAll();

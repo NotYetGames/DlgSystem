@@ -116,7 +116,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// Enum
-	if (UEnumProperty* EnumProperty = Cast<UEnumProperty>(Property))
+	if (auto* EnumProperty = Cast<UEnumProperty>(Property))
 	{
 		if (JsonValue->Type == EJson::String)
 		{
@@ -146,7 +146,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// Numeric, int, float, possible enum
-	if (UNumericProperty* NumericProperty = Cast<UNumericProperty>(Property))
+	if (auto* NumericProperty = Cast<UNumericProperty>(Property))
 	{
 		if (NumericProperty->IsEnum() && JsonValue->Type == EJson::String)
 		{
@@ -196,7 +196,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// Bool
-	if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(Property))
+	if (auto* BoolProperty = Cast<UBoolProperty>(Property))
 	{
 		// AsBool will log an error for completely inappropriate types (then give us a default)
 		BoolProperty->SetPropertyValue(ValuePtr, JsonValue->AsBool());
@@ -204,7 +204,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// FString
-	if (UStrProperty* StringProperty = Cast<UStrProperty>(Property))
+	if (auto* StringProperty = Cast<UStrProperty>(Property))
 	{
 		// Seems unsafe: AsString will log an error for completely inappropriate types (then give us a default)
 		FString String = JsonValue->AsString();
@@ -213,7 +213,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// FName
-	if (UNameProperty* NameProperty = Cast<UNameProperty>(Property))
+	if (auto* NameProperty = Cast<UNameProperty>(Property))
 	{
 		FString String;
 		const FName StringFName = FName(*JsonValue->AsString());
@@ -222,7 +222,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// FText
-	if (UTextProperty* TextProperty = Cast<UTextProperty>(Property))
+	if (auto* TextProperty = Cast<UTextProperty>(Property))
 	{
 		if (JsonValue->Type == EJson::String)
 		{
@@ -260,7 +260,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// TArray
-	if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
+	if (auto* ArrayProperty = Cast<UArrayProperty>(Property))
 	{
 		if (JsonValue->Type == EJson::Array)
 		{
@@ -301,7 +301,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// Set
-	if (USetProperty* SetProperty = Cast<USetProperty>(Property))
+	if (auto* SetProperty = Cast<USetProperty>(Property))
 	{
 		if (JsonValue->Type == EJson::Array)
 		{
@@ -343,7 +343,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// TMap
-	if (UMapProperty* MapProperty = Cast<UMapProperty>(Property))
+	if (auto* MapProperty = Cast<UMapProperty>(Property))
 	{
 		if (JsonValue->Type == EJson::Object)
 		{
@@ -391,7 +391,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// UStruct
-	if (UStructProperty* StructProperty = Cast<UStructProperty>(Property))
+	if (auto* StructProperty = Cast<UStructProperty>(Property))
 	{
 		static const FName NAME_DateTime(TEXT("DateTime"));
 		static const FName NAME_Color(TEXT("Color"));
@@ -498,7 +498,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// UObject
-	if (UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
+	if (auto* ObjectProperty = Cast<UObjectProperty>(Property))
 	{
 		// NOTE: The Value here should be a pointer to a pointer
 		// Because the UObjects are pointers, we must deference it. So instead of it being a void** we want it to be a void*
@@ -726,9 +726,9 @@ bool FDlgJsonParser::JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJso
 	}
 
 	// iterate over the struct properties
-	for  (TFieldIterator<UProperty> PropIt(StructDefinition); PropIt; ++PropIt)
+	for (TFieldIterator<UProperty> PropIt(StructDefinition); PropIt; ++PropIt)
 	{
-		UProperty* Property = *PropIt;
+		auto* Property = *PropIt;
 		if (!ensure(Property))
 			continue;
 

@@ -17,20 +17,10 @@ class UEdGraphSchema;
 struct FDlgNode;
 class UEdGraph;
 
-/** Gets the first element from a set. From https://answers.unrealengine.com/questions/332443/how-to-get-the-firstonly-element-in-tset.html */
-template <typename SetType>
-typename TCopyQualifiersFromTo<SetType, typename SetType::ElementType>::Type* GetFirstSetElement(SetType& Set)
-{
-	for (auto& Element : Set)
-	{
-		return &Element;
-	}
 
-	return nullptr;
-}
-
-namespace Graph
+class FDialogueEditorUtilities
 {
+public:
 	/** Spawns a GraphNode in the specified ParentGraph and at Location. */
 	template <typename GraphNodeType>
 	static GraphNodeType* SpawnGraphNodeFromTemplate(class UEdGraph* ParentGraph, const FVector2D Location, bool bSelectNewNode = true)
@@ -44,11 +34,7 @@ namespace Graph
 
 		return GraphNode;
 	}
-}
 
-class FDialogueEditorUtilities
-{
-public:
 	/** Gets the nodes that are currently selected */
 	static const TSet<UObject*> GetSelectedNodes(const UEdGraph* Graph);
 
@@ -138,7 +124,7 @@ public:
 
 	/** Close any editor which is not this one */
 	static void CloseOtherEditors(UObject* Asset, IAssetEditorInstance* OnlyEditor);
-	
+
 	/**
 	 * Tries to open the editor for the specified asset. Returns true if the asset is opened in an editor.
 	 * If the file is already open in an editor, it will not create another editor window but instead bring it to front

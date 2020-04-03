@@ -79,7 +79,7 @@ public:
 			return;
 		}
 
-		UProperty* Property = PropertyHandle->GetProperty();
+		auto* Property = PropertyHandle->GetProperty();
 		Property->RemoveMetaData(META_UIMin);
 		Property->RemoveMetaData(META_UIMax);
 		Property->RemoveMetaData(META_ClampMin);
@@ -108,7 +108,7 @@ public:
 
 		const FString MinString = FString::FromInt(Min);
 		const FString MaxString = FString::FromInt(Max);
-		UProperty* Property = PropertyHandle->GetProperty();
+		auto* Property = PropertyHandle->GetProperty();
 
 		// min
 		Property->SetMetaData(META_UIMin, *MinString);

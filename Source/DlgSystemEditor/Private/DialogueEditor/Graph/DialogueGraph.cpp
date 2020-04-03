@@ -185,7 +185,10 @@ void UDialogueGraph::LinkGraphNodeToChildren(const TArray<UDlgNode*>& NodesDialo
 		UDialogueGraphNode* ChildGraphNode = CastChecked<UDialogueGraphNode>(ChildNode.GetGraphNode());
 
 		// Make connection
-		UDialogueGraphNode_Edge* GraphNode_Edge = Graph::SpawnGraphNodeFromTemplate<UDialogueGraphNode_Edge>(GraphNode->GetGraph(), FVector2D(0.0f, 0.0f), false);
+		UDialogueGraphNode_Edge* GraphNode_Edge =
+			FDialogueEditorUtilities::SpawnGraphNodeFromTemplate<UDialogueGraphNode_Edge>(
+				GraphNode->GetGraph(), FVector2D(0.0f, 0.0f), false
+			);
 
 		// Create proxy connection from output -> input
 		GraphNode_Edge->CreateConnections(GraphNode, ChildGraphNode);

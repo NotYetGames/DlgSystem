@@ -14,6 +14,7 @@
 #include "DlgManager.h"
 #include "DlgContext.h"
 #include "GameplayDebugger/SDlgDataPropertyValues.h"
+#include "Logging/DlgLogger.h"
 
 //////////////////////////////////////////////////////////////////////////
 DEFINE_LOG_CATEGORY(LogDlgSystemDataDisplay)
