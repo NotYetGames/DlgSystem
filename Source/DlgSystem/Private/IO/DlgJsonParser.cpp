@@ -1,6 +1,7 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "IO/DlgJsonParser.h"
 
+
 #include "Logging/LogMacros.h"
 #include "UObject/Object.h"
 #include "Misc/FileHelper.h"
@@ -8,14 +9,17 @@
 #include "UObject/UnrealType.h"
 #include "UObject/EnumProperty.h"
 #include "UObject/UObjectIterator.h"
-#include "JsonObjectConverter.h"
-#include "JsonObjectWrapper.h"
 #include "UObject/TextProperty.h"
 #include "UObject/PropertyPortFlags.h"
+#include "JsonObjectConverter.h"
+#include "JsonObjectWrapper.h"
 #include "Internationalization/CulturePointer.h"
 #include "Internationalization/Culture.h"
 #include "Misc/OutputDevice.h"
 #include "Misc/FeedbackContext.h"
+
+#include "NYReflectionHelper.h"
+
 
 DEFINE_LOG_CATEGORY(LogDlgJsonParser);
 
@@ -116,7 +120,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// Enum
-	if (auto* EnumProperty = Cast<UEnumProperty>(Property))
+	if (auto* EnumProperty = FNYReflectionHelper::CastProperty<UEnumProperty>(Property))
 	{
 		if (JsonValue->Type == EJson::String)
 		{
@@ -146,7 +150,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// Numeric, int, float, possible enum
-	if (auto* NumericProperty = Cast<UNumericProperty>(Property))
+	if (auto* NumericProperty = FNYReflectionHelper::CastProperty<UNumericProperty>(Property))
 	{
 		if (NumericProperty->IsEnum() && JsonValue->Type == EJson::String)
 		{
@@ -157,10 +161,12 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 			const int64 IntValue = Enum->GetValueByName(FName(*StrValue));
 			if (IntValue == INDEX_NONE)
 			{
-				UE_LOG(LogDlgJsonParser,
-					   Error,
-					   TEXT("ConvertScalarJsonValueToUProperty - Unable import enum %s from string value %s for property %s"),
-					   *Enum->CppType, *StrValue, *Property->GetNameCPP());
+				UE_LOG(
+					LogDlgJsonParser,
+					Error,
+					TEXT("ConvertScalarJsonValueToUProperty - Unable import enum %s from string value %s for property %s"),
+					*Enum->CppType, *StrValue, *Property->GetNameCPP()
+				);
 				return false;
 			}
 			NumericProperty->SetIntPropertyValue(ValuePtr, IntValue);
@@ -185,10 +191,12 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 		}
 		else
 		{
-			UE_LOG(LogDlgJsonParser,
-				   Error,
-				   TEXT("ConvertScalarJsonValueToUProperty - Unable to set numeric property type %s for property %s"),
-				   *Property->GetClass()->GetName(), *Property->GetNameCPP());
+			UE_LOG(
+				LogDlgJsonParser,
+				Error,
+				TEXT("ConvertScalarJsonValueToUProperty - Unable to set numeric property type %s for property %s"),
+				*Property->GetClass()->GetName(), *Property->GetNameCPP()
+			);
 			return false;
 		}
 
@@ -196,7 +204,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// Bool
-	if (auto* BoolProperty = Cast<UBoolProperty>(Property))
+	if (auto* BoolProperty = FNYReflectionHelper::CastProperty<UBoolProperty>(Property))
 	{
 		// AsBool will log an error for completely inappropriate types (then give us a default)
 		BoolProperty->SetPropertyValue(ValuePtr, JsonValue->AsBool());
@@ -204,7 +212,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// FString
-	if (auto* StringProperty = Cast<UStrProperty>(Property))
+	if (auto* StringProperty = FNYReflectionHelper::CastProperty<UStrProperty>(Property))
 	{
 		// Seems unsafe: AsString will log an error for completely inappropriate types (then give us a default)
 		FString String = JsonValue->AsString();
@@ -213,7 +221,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// FName
-	if (auto* NameProperty = Cast<UNameProperty>(Property))
+	if (auto* NameProperty = FNYReflectionHelper::CastProperty<UNameProperty>(Property))
 	{
 		FString String;
 		const FName StringFName = FName(*JsonValue->AsString());
@@ -222,7 +230,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// FText
-	if (auto* TextProperty = Cast<UTextProperty>(Property))
+	if (auto* TextProperty = FNYReflectionHelper::CastProperty<UTextProperty>(Property))
 	{
 		if (JsonValue->Type == EJson::String)
 		{
@@ -239,20 +247,24 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 			FText Text;
 			if (!GetTextFromObject(Obj.ToSharedRef(), Text))
 			{
-				UE_LOG(LogDlgJsonParser,
-					   Error,
-					   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import FText from JSON object with invalid keys for property %s"),
-					   *Property->GetNameCPP());
+				UE_LOG(
+					LogDlgJsonParser,
+					Error,
+					TEXT("ConvertScalarJsonValueToUProperty - Attempted to import FText from JSON object with invalid keys for property %s"),
+					*Property->GetNameCPP()
+				);
 				return false;
 			}
 			TextProperty->SetPropertyValue(ValuePtr, Text);
 		}
 		else
 		{
-			UE_LOG(LogDlgJsonParser,
-				   Error,
-				   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import FText from JSON that was neither string nor object for property %s"),
-				   *Property->GetNameCPP());
+			UE_LOG(
+				LogDlgJsonParser,
+				Error,
+				TEXT("ConvertScalarJsonValueToUProperty - Attempted to import FText from JSON that was neither string nor object for property %s"),
+				*Property->GetNameCPP()
+			);
 			return false;
 		}
 
@@ -260,7 +272,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// TArray
-	if (auto* ArrayProperty = Cast<UArrayProperty>(Property))
+	if (auto* ArrayProperty = FNYReflectionHelper::CastProperty<UArrayProperty>(Property))
 	{
 		if (JsonValue->Type == EJson::Array)
 		{
@@ -282,10 +294,12 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 					if (!JsonValueToUProperty(ArrayValueItem, ArrayProperty->Inner, ContainerPtr, Helper.GetRawPtr(Index)))
 					{
 						bReturnStatus = false;
-						UE_LOG(LogDlgJsonParser,
-							   Error,
-							   TEXT("ConvertScalarJsonValueToUProperty - Unable to deserialize array element [%d] for property %s"),
-							   Index, *Property->GetNameCPP());
+						UE_LOG(
+							LogDlgJsonParser,
+							Error,
+							TEXT("ConvertScalarJsonValueToUProperty - Unable to deserialize array element [%d] for property %s"),
+							Index, *Property->GetNameCPP()
+						);
 					}
 				}
 			}
@@ -301,7 +315,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// Set
-	if (auto* SetProperty = Cast<USetProperty>(Property))
+	if (auto* SetProperty = FNYReflectionHelper::CastProperty<USetProperty>(Property))
 	{
 		if (JsonValue->Type == EJson::Array)
 		{
@@ -322,11 +336,13 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 					if (!JsonValueToUProperty(ArrayValueItem, SetProperty->ElementProp, ContainerPtr, Helper.GetElementPtr(NewIndex)))
 					{
 						bReturnStatus = false;
-						UE_LOG(LogDlgJsonParser,
-							   Error,
-							   TEXT("ConvertScalarJsonValueToUProperty - Unable to deserialize set element [%d] for property %s"),
-							   Index,
-							   *Property->GetNameCPP());
+						UE_LOG(
+							LogDlgJsonParser,
+							Error,
+							TEXT("ConvertScalarJsonValueToUProperty - Unable to deserialize set element [%d] for property %s"),
+							Index,
+							*Property->GetNameCPP()
+						);
 					}
 				}
 			}
@@ -335,15 +351,17 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 			return bReturnStatus;
 		}
 
-		UE_LOG(LogDlgJsonParser,
-			   Error,
-			   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import TSet from non-array (JsonValue->Type = `%s`) JSON key for property %s"),
-			   *GetStringForJsonType(JsonValue->Type), *Property->GetNameCPP());
+		UE_LOG(
+			LogDlgJsonParser,
+			Error,
+			TEXT("ConvertScalarJsonValueToUProperty - Attempted to import TSet from non-array (JsonValue->Type = `%s`) JSON key for property %s"),
+			*GetStringForJsonType(JsonValue->Type), *Property->GetNameCPP()
+		);
 		return false;
 	}
 
 	// TMap
-	if (auto* MapProperty = Cast<UMapProperty>(Property))
+	if (auto* MapProperty = FNYReflectionHelper::CastProperty<UMapProperty>(Property))
 	{
 		if (JsonValue->Type == EJson::Object)
 		{
@@ -371,10 +389,12 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 					{
 						Helper.RemoveAt(NewIndex);
 						bReturnStatus = false;
-						UE_LOG(LogDlgJsonParser,
+						UE_LOG(
+							LogDlgJsonParser,
 							Error,
 							TEXT("ConvertScalarJsonValueToUProperty - Unable to deserialize map element [key: %s] for property %s"),
-							*Entry.Key, *Property->GetNameCPP());
+							*Entry.Key, *Property->GetNameCPP()
+						);
 					}
 				}
 			}
@@ -391,7 +411,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// UStruct
-	if (auto* StructProperty = Cast<UStructProperty>(Property))
+	if (auto* StructProperty = FNYReflectionHelper::CastProperty<UStructProperty>(Property))
 	{
 		static const FName NAME_DateTime(TEXT("DateTime"));
 		static const FName NAME_Color(TEXT("Color"));
@@ -404,10 +424,12 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 			check(Obj.IsValid()); // should not fail if Type == EJson::Object
 			if (!JsonObjectToUStruct(Obj.ToSharedRef(), StructProperty->Struct, ValuePtr))
 			{
-				UE_LOG(LogDlgJsonParser,
-					   Error,
-					   TEXT("ConvertScalarJsonValueToUProperty - JsonObjectToUStruct failed for property %s"),
-					   *Property->GetNameCPP());
+				UE_LOG(
+					LogDlgJsonParser,
+					Error,
+					TEXT("ConvertScalarJsonValueToUProperty - JsonObjectToUStruct failed for property %s"),
+					*Property->GetNameCPP()
+				);
 				return false;
 			}
 		}
@@ -455,10 +477,12 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 			}
 			else
 			{
-				UE_LOG(LogDlgJsonParser,
-					   Warning,
-					   TEXT("ConvertScalarJsonValueToUProperty - Unable to import FDateTime for property %s"),
-					   *Property->GetNameCPP());
+				UE_LOG(
+					LogDlgJsonParser,
+					Warning,
+					TEXT("ConvertScalarJsonValueToUProperty - Unable to import FDateTime for property %s"),
+					*Property->GetNameCPP()
+				);
 				return false;
 			}
 		}
@@ -487,10 +511,12 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 		}
 		else
 		{
-			UE_LOG(LogDlgJsonParser,
-				   Error,
-				   TEXT("ConvertScalarJsonValueToUProperty - Attempted to import UStruct from non-object JSON key for property %s"),
-				   *Property->GetNameCPP());
+			UE_LOG(
+				LogDlgJsonParser,
+				Error,
+				TEXT("ConvertScalarJsonValueToUProperty - Attempted to import UStruct from non-object JSON key for property %s"),
+				*Property->GetNameCPP()
+			);
 			return false;
 		}
 
@@ -498,17 +524,19 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	}
 
 	// UObject
-	if (auto* ObjectProperty = Cast<UObjectProperty>(Property))
+	if (auto* ObjectProperty = FNYReflectionHelper::CastProperty<UObjectProperty>(Property))
 	{
 		// NOTE: The Value here should be a pointer to a pointer
 		// Because the UObjects are pointers, we must deference it. So instead of it being a void** we want it to be a void*
 		auto* ObjectPtrPtr = static_cast<UObject**>(ObjectProperty->ContainerPtrToValuePtr<void>(ValuePtr, 0));
 		if (ObjectPtrPtr == nullptr)
 		{
-			UE_LOG(LogDlgJsonParser,
+			UE_LOG(
+				LogDlgJsonParser,
 				Error,
 				TEXT("PropertyName = `%s` Is a UObjectProperty but can't get non null ContainerPtrToValuePtr from it's StructObject"),
-				*Property->GetNameCPP());
+				*Property->GetNameCPP()
+			);
 			return false;
 		}
 
@@ -548,10 +576,12 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 		const FString SpecialKeyType = TEXT("__type__");
 		if (!JsonObject->HasField(SpecialKeyType))
 		{
-			UE_LOG(LogDlgJsonParser,
-				   Error,
-				   TEXT("ConvertScalarJsonValueToUProperty - PropertyName = `%s` JSON does not have the __type__ special property."),
-				   *Property->GetNameCPP());
+			UE_LOG(
+				LogDlgJsonParser,
+				Error,
+				TEXT("ConvertScalarJsonValueToUProperty - PropertyName = `%s` JSON does not have the __type__ special property."),
+				*Property->GetNameCPP()
+			);
 			return false;
 		}
 
@@ -562,10 +592,12 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 		const UClass* ChildClass = GetChildClassFromName(ObjectClass, JsonObjectType);
 		if (ChildClass == nullptr)
 		{
-			UE_LOG(LogDlgJsonParser,
-					Error,
-					TEXT("ConvertScalarJsonValueToUProperty - Trying to load by string reference. Could not find class `%s` for UObjectProperty = `%s`. Ignored."),
-					*JsonObjectType, *Property->GetNameCPP());
+			UE_LOG(
+				LogDlgJsonParser,
+				Error,
+				TEXT("ConvertScalarJsonValueToUProperty - Trying to load by string reference. Could not find class `%s` for UObjectProperty = `%s`. Ignored."),
+				*JsonObjectType, *Property->GetNameCPP()
+			);
 			return false;
 		}
 		*ObjectPtrPtr = CreateNewUObject(ChildClass, DefaultObjectOuter);
@@ -573,20 +605,24 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 		// Something is wrong
 		if (*ObjectPtrPtr == nullptr || !(*ObjectPtrPtr)->IsValidLowLevelFast())
 		{
-			UE_LOG(LogDlgJsonParser,
+			UE_LOG(
+				LogDlgJsonParser,
 				Error,
 				TEXT("JsonValueToUProperty - PropertyName = `%s` Is a UObjectProperty but could not build any valid UObject"),
-				*Property->GetNameCPP());
+				*Property->GetNameCPP()
+			);
 			return false;
 		}
 
 		// Write the json object
 		if (!JsonObjectToUStruct(JsonObject.ToSharedRef(), ObjectClass, *ObjectPtrPtr))
 		{
-			UE_LOG(LogDlgJsonParser,
-				   Error,
-				   TEXT("JsonValueToUProperty - JsonObjectToUStruct failed for property %s"),
-				   *Property->GetNameCPP());
+			UE_LOG(
+				LogDlgJsonParser,
+				Error,
+				TEXT("JsonValueToUProperty - JsonObjectToUStruct failed for property %s"),
+				*Property->GetNameCPP()
+			);
 			return false;
 		}
 
@@ -598,10 +634,12 @@ bool FDlgJsonParser::ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonVal
 	const FString Buffer = JsonValue->AsString();
 	if (Property->ImportText(*Buffer, ValuePtr, PPF_None, nullptr) == nullptr)
 	{
-		UE_LOG(LogDlgJsonParser,
-			   Error,
-			   TEXT("JsonValueToUProperty - Unable import property type %s from string value for property %s"),
-			   *Property->GetClass()->GetName(), *Property->GetNameCPP());
+		UE_LOG(
+			LogDlgJsonParser,
+			Error,
+			TEXT("JsonValueToUProperty - Unable import property type %s from string value for property %s"),
+			*Property->GetClass()->GetName(), *Property->GetNameCPP()
+		);
 		return false;
 	}
 	return true;
@@ -630,18 +668,22 @@ bool FDlgJsonParser::JsonValueToUProperty(const TSharedPtr<FJsonValue>& JsonValu
 	{
 		if (bArrayProperty)
 		{
-			UE_LOG(LogDlgJsonParser,
-				  Error,
-				  TEXT("JsonValueToUProperty - Attempted to import TArray from non-array JSON type = `%s`"),
-				  *GetStringForJsonType(JsonValue->Type));
+			UE_LOG(
+				LogDlgJsonParser,
+				Error,
+				TEXT("JsonValueToUProperty - Attempted to import TArray from non-array JSON type = `%s`"),
+				*GetStringForJsonType(JsonValue->Type)
+			);
 			return false;
 		}
 		if (bSetProperty)
 		{
-			UE_LOG(LogDlgJsonParser,
-				   Error,
-				   TEXT("JsonValueToUProperty - Attempted to import TSet from non-array JSON type = `%s`"),
-				   *GetStringForJsonType(JsonValue->Type));
+			UE_LOG(
+				LogDlgJsonParser,
+				Error,
+				TEXT("JsonValueToUProperty - Attempted to import TSet from non-array JSON type = `%s`"),
+				*GetStringForJsonType(JsonValue->Type)
+			);
 			return false;
 		}
 
@@ -708,20 +750,24 @@ bool FDlgJsonParser::JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJso
 		const UObject* UnrealObject = static_cast<const UObject*>(ContainerPtr);
 		if (!UnrealObject->IsValidLowLevelFast())
 		{
-			UE_LOG(LogDlgJsonParser,
+			UE_LOG(
+				LogDlgJsonParser,
 				Error,
 				TEXT("JsonAttributesToUStruct: StructDefinition = `%s` is a UClass and expected ContainerPtr to be an UObject. Memory corruption?"),
-				*StructDefinition->GetPathName());
+				*StructDefinition->GetPathName()
+			);
 			return false;
 		}
 		StructDefinition = UnrealObject->GetClass();
 	}
 	if (!StructDefinition->IsValidLowLevelFast())
 	{
-		UE_LOG(LogDlgJsonParser,
+		UE_LOG(
+			LogDlgJsonParser,
 			Error,
 			TEXT("JsonAttributesToUStruct: StructDefinition = `%s` is a UClass and expected ContainerPtr.Class to be valid. Memory corruption?"),
-			*StructDefinition->GetPathName());
+			*StructDefinition->GetPathName()
+		);
 		return false;
 	}
 
@@ -774,10 +820,12 @@ bool FDlgJsonParser::JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJso
 		// Convert the JsonValue to the Property
 		if (!JsonValueToUProperty(JsonValue, Property, ContainerPtr, ValuePtr))
 		{
-			UE_LOG(LogDlgJsonParser,
-				   Error,
-				   TEXT("JsonObjectToUStruct - Unable to parse %s.%s from JSON"),
-				   *StructDefinition->GetName(), *PropertyName);
+			UE_LOG(
+				LogDlgJsonParser,
+				Error,
+				TEXT("JsonObjectToUStruct - Unable to parse %s.%s from JSON"),
+				*StructDefinition->GetName(), *PropertyName
+			);
 			continue;
 		}
 	}

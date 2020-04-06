@@ -46,7 +46,6 @@ struct FNYMessageLogInitializationOptions
 };
 
 
-
 UENUM()
 enum class ENYLoggerLogLevel : uint8
 {

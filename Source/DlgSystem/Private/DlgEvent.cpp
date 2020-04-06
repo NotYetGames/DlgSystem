@@ -2,7 +2,7 @@
 #include "DlgEvent.h"
 
 #include "DlgSystemPrivatePCH.h"
-#include "DlgReflectionHelper.h"
+#include "NYReflectionHelper.h"
 #include "DlgDialogueParticipant.h"
 #include "Logging/DlgLogger.h"
 
@@ -48,16 +48,16 @@ void FDlgEvent::Call(UObject* TargetParticipant) const
 		break;
 
 	case EDlgEventType::ModifyClassIntVariable:
-		UDlgReflectionHelper::ModifyVariable<UIntProperty>(TargetParticipant, EventName, IntValue, bDelta);
+		FNYReflectionHelper::ModifyVariable<UIntProperty>(TargetParticipant, EventName, IntValue, bDelta);
 		break;
 	case EDlgEventType::ModifyClassFloatVariable:
-		UDlgReflectionHelper::ModifyVariable<UFloatProperty>(TargetParticipant, EventName, FloatValue, bDelta);
+		FNYReflectionHelper::ModifyVariable<UFloatProperty>(TargetParticipant, EventName, FloatValue, bDelta);
 		break;
 	case EDlgEventType::ModifyClassBoolVariable:
-		UDlgReflectionHelper::SetVariable<UBoolProperty>(TargetParticipant, EventName, bValue);
+		FNYReflectionHelper::SetVariable<UBoolProperty>(TargetParticipant, EventName, bValue);
 		break;
 	case EDlgEventType::ModifyClassNameVariable:
-		UDlgReflectionHelper::SetVariable<UNameProperty>(TargetParticipant, EventName, NameValue);
+		FNYReflectionHelper::SetVariable<UNameProperty>(TargetParticipant, EventName, NameValue);
 		break;
 
 	default:

@@ -34,22 +34,6 @@ public:
 	void SetLogVerbose(bool bValue) { bLogVerbose = bValue; }
 
 protected:
-	// the old removed engine function this code still uses a lot:
-	template<typename T>
-	T* SmartCastProperty(UProperty* Src)
-	{
-		T* Result = dynamic_cast<T*>(Src);
-		if (Result == nullptr)
-		{
-			UArrayProperty* ArrayProp = dynamic_cast<UArrayProperty*>(Src);
-			if (ArrayProp != nullptr)
-			{
-				Result = dynamic_cast<T*>(ArrayProp->Inner);
-			}
-		}
-		return Result;
-	}
-
 	/**
 	 * Searches the proper not abstract class
 	 *

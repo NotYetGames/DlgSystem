@@ -6,7 +6,7 @@
 #include "DlgSystemPrivatePCH.h"
 #include "DlgContextInternal.h"
 #include "DlgDialogueParticipant.h"
-#include "DlgReflectionHelper.h"
+#include "NYReflectionHelper.h"
 #include "Logging/DlgLogger.h"
 
 
@@ -40,16 +40,16 @@ FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgCo
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetIntValue(Participant, VariableName));
 
 		case EDlgTextArgumentType::ClassInt:
-			return FFormatArgumentValue(UDlgReflectionHelper::GetVariable<UIntProperty, int32>(Participant, VariableName));
+			return FFormatArgumentValue(FNYReflectionHelper::GetVariable<UIntProperty, int32>(Participant, VariableName));
 
 		case EDlgTextArgumentType::DialogueFloat:
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetFloatValue(Participant, VariableName));
 
 		case EDlgTextArgumentType::ClassFloat:
-			return FFormatArgumentValue(UDlgReflectionHelper::GetVariable<UFloatProperty, float>(Participant, VariableName));
+			return FFormatArgumentValue(FNYReflectionHelper::GetVariable<UFloatProperty, float>(Participant, VariableName));
 
 		case EDlgTextArgumentType::ClassText:
-			return FFormatArgumentValue(UDlgReflectionHelper::GetVariable<UTextProperty, FText>(Participant, VariableName));
+			return FFormatArgumentValue(FNYReflectionHelper::GetVariable<UTextProperty, FText>(Participant, VariableName));
 
 		case EDlgTextArgumentType::DisplayName:
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetParticipantDisplayName(Participant, NodeOwner));

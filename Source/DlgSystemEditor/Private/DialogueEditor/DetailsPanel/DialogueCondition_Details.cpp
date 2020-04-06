@@ -5,7 +5,7 @@
 #include "IDetailChildrenBuilder.h"
 
 #include "Nodes/DlgNode.h"
-#include "DlgReflectionHelper.h"
+#include "NYReflectionHelper.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "Widgets/SDialogueTextPropertyPickList.h"
@@ -337,7 +337,12 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 	case EDlgConditionType::BoolCall:
 		if (bReflectionBased && Dialogue)
 		{
-			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UBoolProperty::StaticClass(), Suggestions);
+			FNYReflectionHelper::GetVariableNames(
+				Dialogue->GetParticipantClass(ParticipantName),
+				UBoolProperty::StaticClass(),
+				Suggestions,
+				GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses
+			);
 		}
 		else
 		{
@@ -357,7 +362,12 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 	case EDlgConditionType::FloatCall:
 		if (bReflectionBased && Dialogue)
 		{
-			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UFloatProperty::StaticClass(), Suggestions);
+			FNYReflectionHelper::GetVariableNames(
+				Dialogue->GetParticipantClass(ParticipantName),
+				UFloatProperty::StaticClass(),
+				Suggestions,
+				GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses
+			);
 		}
 		else
 		{
@@ -376,7 +386,12 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 	case EDlgConditionType::IntCall:
 		if (bReflectionBased && Dialogue)
 		{
-			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UIntProperty::StaticClass(), Suggestions);
+			FNYReflectionHelper::GetVariableNames(
+				Dialogue->GetParticipantClass(ParticipantName),
+				UIntProperty::StaticClass(),
+				Suggestions,
+				GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses
+			);
 		}
 		else
 		{
@@ -395,7 +410,12 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 	case EDlgConditionType::ClassNameVariable:
 		if (bReflectionBased && Dialogue)
 		{
-			UDlgReflectionHelper::GetVariableNames(Dialogue->GetParticipantClass(ParticipantName), UNameProperty::StaticClass(), Suggestions);
+			FNYReflectionHelper::GetVariableNames(
+				Dialogue->GetParticipantClass(ParticipantName),
+				UNameProperty::StaticClass(),
+				Suggestions,
+				GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses
+			);
 		}
 		else
 		{

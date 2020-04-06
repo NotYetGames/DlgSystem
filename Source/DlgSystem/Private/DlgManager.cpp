@@ -16,6 +16,7 @@
 #include "DlgContextInternal.h"
 #include "Logging/DlgLogger.h"
 #include "DlgHelper.h"
+#include "NYReflectionHelper.h"
 
 TWeakObjectPtr<const UObject> UDlgManager::UserWorldContextObjectPtr = nullptr;
 
@@ -602,7 +603,7 @@ void UDlgManager::GatherParticipantsRecursive(UObject* Object, TArray<UObject*>&
 
 		for (auto* Property = Object->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 		{
-			if (auto* ObjectProperty = Cast<UObjectProperty>(Property))
+			if (auto* ObjectProperty = FNYReflectionHelper::CastProperty<UObjectProperty>(Property))
 			{
 				GatherParticipantsRecursive(ObjectProperty->GetPropertyValue_InContainer(Object), Array, AlreadyVisited);
 			}

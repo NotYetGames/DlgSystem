@@ -280,10 +280,10 @@ bool FDlgConfigParser::ReadPrimitiveProperty(void* Target,
 	{
 		// Array
 		// No property found, let's check if there is an array with the same name
-		auto* ArrayProp = Cast<UArrayProperty>(PropertyBase);
+		auto* ArrayProp = FNYReflectionHelper::CastProperty<UArrayProperty>(PropertyBase);
 
 		// SmartCastProperty gets the inner type of the array and uses dynamic_cast to cast it to the proper type
-		if (ArrayProp == nullptr || SmartCastProperty<PropertyType>(ArrayProp) == nullptr)
+		if (ArrayProp == nullptr || FNYReflectionHelper::SmartCastProperty<PropertyType>(ArrayProp) == nullptr)
 		{
 			return false;
 		}
@@ -335,8 +335,8 @@ bool FDlgConfigParser::ReadComplexProperty(void* Target,
 	PropertyType* ElementProp = Cast<PropertyType>(Property);
 	if (ElementProp == nullptr)
 	{
-		auto* ArrayProp = Cast<UArrayProperty>(Property);
-		if (ArrayProp == nullptr || SmartCastProperty<PropertyType>(ArrayProp) == nullptr)
+		auto* ArrayProp = FNYReflectionHelper::CastProperty<UArrayProperty>(Property);
+		if (ArrayProp == nullptr || FNYReflectionHelper::SmartCastProperty<PropertyType>(ArrayProp) == nullptr)
 		{
 			return false;
 		}
