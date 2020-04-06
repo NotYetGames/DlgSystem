@@ -4,6 +4,7 @@
 #include "Engine/Engine.h"
 
 #include "Tests/DlgTesterHelper.h"
+#include "NYReflectionTypes.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,8 +185,8 @@ void FDlgTestStructPrimitives::GenerateRandomData(const FDlgIOTesterOptions& InO
 	Guid = FGuid::NewGuid();
 
 	const TArray<UClass*> ClassesPool = {
-		UField::StaticClass(), UStruct::StaticClass(), nullptr, UObject::StaticClass(), FNYBoolProperty::StaticClass(), FNYIntProperty::StaticClass(),
-		FNYStructProperty::StaticClass(), FNYStrProperty::StaticClass(), nullptr
+		UField::StaticClass(), UStruct::StaticClass(), nullptr, UObject::StaticClass(),
+		AActor::StaticClass(), APawn::StaticClass(), nullptr
 	};
 	Class = ClassesPool[FMath::RandHelper(ClassesPool.Num())];
 

@@ -6,6 +6,7 @@
 #include "Logging/LogMacros.h"
 
 #include "IDlgParser.h"
+#include "NYReflectionHelper.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogDlgConfigParser, Log, All);
 
@@ -275,7 +276,7 @@ bool FDlgConfigParser::ReadPrimitiveProperty(void* Target,
 											 bool bCanBeEmpty)
 {
 	// try to find a member variable with the name
-	PropertyType* Property = Cast<PropertyType>(PropertyBase);
+	PropertyType* Property = FNYReflectionHelper::CastProperty<PropertyType>(PropertyBase);
 	if (Property == nullptr)
 	{
 		// Array
@@ -332,7 +333,7 @@ bool FDlgConfigParser::ReadComplexProperty(void* Target,
 										   std::function<void*(void*, const UClass*, UObject*)> OnInitValue,
 										   UObject* Outer)
 {
-	PropertyType* ElementProp = Cast<PropertyType>(Property);
+	PropertyType* ElementProp = FNYReflectionHelper::CastProperty<PropertyType>(Property);
 	if (ElementProp == nullptr)
 	{
 		auto* ArrayProp = FNYReflectionHelper::CastProperty<FNYArrayProperty>(Property);
@@ -354,7 +355,7 @@ bool FDlgConfigParser::ReadComplexProperty(void* Target,
 			const UClass* ReferenceClass = Cast<UClass>(ReferenceType);
 			if (ReferenceClass != nullptr)
 			{
-				if (IsActualWordString() && Cast<UObject>(ArrayProp->Inner) != nullptr) // UObject by reference
+				if (IsActualWordString() && ArrayProp->Inner != nullptr) // UObject by reference
 				{
 					const FString Path = GetActiveWord();
 					void* TargetPtr = Helper.GetRawPtr(Helper.AddValue());

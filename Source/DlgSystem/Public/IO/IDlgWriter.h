@@ -40,7 +40,7 @@ public:
 	/** Can we skip this property from exporting? */
 	static bool CanSkipProperty(const FNYProperty* Property)
 	{
-		if (!IsValid(Property))
+		if (!Property)
 		{
 			return true;
 		}
@@ -63,7 +63,7 @@ public:
 	static bool CanWriteOneLinePerItem(const FNYProperty* Property)
 	{
 #if WITH_EDITOR
-		return IsValid(Property) && Property->HasMetaData(TEXT("DlgLinePerItem"));
+		return Property && Property->HasMetaData(TEXT("DlgLinePerItem"));
 #else
 		return false;
 #endif
@@ -73,7 +73,7 @@ public:
 	static bool CanWriteIndex(const FNYProperty* Property)
 	{
 #if WITH_EDITOR
-		return IsValid(Property) && Property->HasMetaData(TEXT("DlgWriteIndex"));
+		return Property && Property->HasMetaData(TEXT("DlgWriteIndex"));
 #else
 		return false;
 #endif
@@ -83,7 +83,7 @@ public:
 	virtual bool CanSaveAsReference(const FNYProperty* Property, const UObject* Object)
 	{
 		// UClass
-		if (IsValid(Property) && Property->IsA<FNYClassProperty>())
+		if (Property && Property->IsA<FNYClassProperty>())
 		{
 			return true;
 		}
@@ -98,7 +98,7 @@ public:
 		}
 
 #if WITH_EDITOR
-		return IsValid(Property) && Property->HasMetaData(TEXT("DlgSaveOnlyReference"));
+		return Property && Property->HasMetaData(TEXT("DlgSaveOnlyReference"));
 #else
 		return false;
 #endif

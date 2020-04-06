@@ -13,6 +13,43 @@ DEFINE_LOG_CATEGORY_STATIC(LogDlgSystemReflectionHelper, All, All)
 class DLGSYSTEM_API FNYReflectionHelper
 {
 public:
+
+#if ENGINE_MINOR_VERSION >= 25
+	// From 4.25 UProperties are different
+	template<typename FieldType>
+	FORCEINLINE static FieldType* CastProperty(FField* Src)
+	{
+		return Src && Src->HasAnyCastFlags(FieldType::StaticClassCastFlagsPrivate()) ? static_cast<FieldType*>(Src) : nullptr;
+	}
+	// Const Version
+	template<typename FieldType>
+	FORCEINLINE static const FieldType* CastProperty(const FField* Src)
+	{
+		return Src && Src->HasAnyCastFlags(FieldType::StaticClassCastFlagsPrivate()) ? static_cast<const FieldType*>(Src) : nullptr;
+	}
+
+	FORCEINLINE static FField* GetStructChildren(const UStruct* Struct)
+	{
+		return Struct ? Struct->ChildProperties : nullptr;
+	}
+
+	// the old removed engine function this code still uses a lot:
+	template <typename To, typename From>
+	static To* SmartCastProperty(From* Src)
+	{
+		To* Result = CastProperty<To>(Src);
+		if (Result == nullptr)
+		{
+			FNYArrayProperty* ArrayProp = CastProperty<FNYArrayProperty>(Src);
+			if (ArrayProp != nullptr)
+			{
+				Result = CastProperty<To>(ArrayProp->Inner);
+			}
+		}
+		return Result;
+	}
+	
+#else
 	template <typename To, typename From>
 	FORCEINLINE static To* CastProperty(From* Src)
 	{
@@ -23,6 +60,11 @@ public:
 	FORCEINLINE static const To* CastProperty(const From* Src)
 	{
 		return CastProperty<To>(const_cast<From*>(Src));
+	}
+
+	FORCEINLINE static UField* GetStructChildren(const UStruct* Struct)
+	{
+		return Struct ? Struct->Children : nullptr;
 	}
 
 	// the old removed engine function this code still uses a lot:
@@ -40,6 +82,9 @@ public:
 		}
 		return Result;
 	}
+#endif // ENGINE_MINOR_VERSION >= 25
+	
+
 
 	// Attempts to get the property VariableName from Object
 	template <typename PropertyType, typename VariableType>
@@ -155,12 +200,12 @@ public:
 	template <typename ContainerType>
 	static void GetVariableNames(
 		const UClass* ParticipantClass,
-		const UClass* PropertyClass,
+		const FNYPropertyClass* PropertyClass,
 		ContainerType& OutContainer,
 		const TArray<UClass*>& BlacklistedClasses
 	)
 	{
-		if (!IsValid(ParticipantClass) || !IsValid(PropertyClass))
+		if (!IsValid(ParticipantClass) || !PropertyClass)
 		{
 			return;
 		}

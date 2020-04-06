@@ -30,7 +30,12 @@ FText UDlgSystemSettings::GetSectionDescription() const
 	return LOCTEXT("SectionDescription", "Configure how the Dialogue Editor behaves + Runtime behaviour");
 }
 
+
+#if ENGINE_MINOR_VERSION >= 25
+bool UDlgSystemSettings::CanEditChange(const FProperty* InProperty) const
+#else
 bool UDlgSystemSettings::CanEditChange(const UProperty* InProperty) const
+#endif
 {
 	const bool bIsEditable = Super::CanEditChange(InProperty);
 	if (bIsEditable && InProperty)
@@ -149,7 +154,7 @@ FString UDlgSystemSettings::GetTextFileExtension(EDlgDialogueTextFormat TextForm
 			return FString();
 	}
 }
- 
+
 const TSet<FString>& UDlgSystemSettings::GetAllCurrentTextFileExtensions()
 {
 	static TSet<FString> Extensions;
@@ -184,6 +189,3 @@ TSet<FString> UDlgSystemSettings::GetAllTextFileExtensions() const
 
 	return CurrentFileExtensions;
 }
-
-
-

@@ -10,9 +10,3 @@ UDlgDialogueThumbnailRenderer::UDlgDialogueThumbnailRenderer(const FObjectInitia
 	: Super(ObjectInitializer)
 {
 }
-
-void UDlgDialogueThumbnailRenderer::Draw(UObject* Object, int32 X, int32 Y, uint32 Width, uint32 Height,
-										 FRenderTarget*, FCanvas* Canvas)
-{
-	// TODO maybe
-}

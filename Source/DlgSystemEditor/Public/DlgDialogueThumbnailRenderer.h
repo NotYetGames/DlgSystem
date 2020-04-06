@@ -15,6 +15,9 @@ public:
 	UDlgDialogueThumbnailRenderer(const FObjectInitializer& ObjectInitializer);
 
 	// UThumbnailRenderer interface
-	void Draw(UObject* Object, int32 X, int32 Y, uint32 Width, uint32 Height, FRenderTarget* Target, FCanvas* Canvas) override;
-	// End of UThumbnailRenderer interface
+// #if ENGINE_MINOR_VERSION >= 25
+// 	void Draw(UObject* Object, int32 X, int32 Y, uint32 Width, uint32 Height, FRenderTarget* Target, FCanvas* Canvas, bool bAdditionalViewFamily) override;
+// #else
+// 	void Draw(UObject* Object, int32 X, int32 Y, uint32 Width, uint32 Height, FRenderTarget* Target, FCanvas* Canvas,) override;
+// #endif
 };

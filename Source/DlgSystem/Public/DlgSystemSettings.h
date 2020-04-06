@@ -120,7 +120,12 @@ public:
 	bool SupportsAutoRegistration() const override { return true; }
 
 	// UObject interface
+#if ENGINE_MINOR_VERSION >= 25
+	bool CanEditChange(const FProperty* InProperty) const override;
+#else
 	bool CanEditChange(const UProperty* InProperty) const override;
+#endif
+
 	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif // WITH_EDITOR
 

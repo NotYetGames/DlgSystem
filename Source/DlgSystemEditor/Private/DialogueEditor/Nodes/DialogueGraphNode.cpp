@@ -45,7 +45,7 @@ void UDialogueGraphNode::PostEditImport()
 void UDialogueGraphNode::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	if (!IsValid(PropertyChangedEvent.Property))
+	if (!PropertyChangedEvent.Property)
 	{
 		return;
 	}
@@ -713,7 +713,7 @@ void UDialogueGraphNode::SortChildrenBasedOnXLocation()
 
 void UDialogueGraphNode::OnDialogueNodePropertyChanged(const FPropertyChangedEvent& PropertyChangedEvent, int32 EdgeIndexChanged)
 {
-	if (!IsValid(PropertyChangedEvent.Property))
+	if (!PropertyChangedEvent.Property)
 	{
 		return;
 	}

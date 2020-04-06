@@ -140,7 +140,11 @@ void UDialogueK2Node_SwitchDialogueCallback::CreateFunctionPin()
 	FunctionPin->bNotConnectable = true;
 	FunctionPin->bHidden = true;
 
+#if ENGINE_MINOR_VERSION >= 25
+	UFunction* Function = FindUField<UFunction>(FunctionClass, FunctionName);
+#else
 	UFunction* Function = FindField<UFunction>(FunctionClass, FunctionName);
+#endif
 	const bool bIsStaticFunc = Function->HasAllFunctionFlags(FUNC_Static);
 	if (bIsStaticFunc)
 	{

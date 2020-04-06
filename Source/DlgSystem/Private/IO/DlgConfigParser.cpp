@@ -450,7 +450,7 @@ int32 FDlgConfigParser::GetActiveLineNumber() const
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void FDlgConfigParser::ConstructConfigFileInternal(const UStruct* ReferenceType, int32 TabCount, void* SourceObject, FString& OutString)
 {
-	for (auto* Field = ReferenceType->Children; Field != nullptr; Field = Field->Next)
+	for (auto* Field = FNYReflectionHelper::GetStructChildren(ReferenceType); Field != nullptr; Field = Field->Next)
 	{
 		auto* BoolProp = FNYReflectionHelper::CastProperty<FNYBoolProperty>(Field);
 		if (BoolProp != nullptr)

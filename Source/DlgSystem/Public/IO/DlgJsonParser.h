@@ -7,6 +7,7 @@
 #include "Dom/JsonObject.h"
 
 #include "IDlgParser.h"
+#include "NYReflectionTypes.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogDlgJsonParser, All, All);
 

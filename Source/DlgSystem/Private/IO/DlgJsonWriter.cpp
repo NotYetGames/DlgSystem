@@ -354,7 +354,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::PropertyToJsonValue(const FNYProperty* Pr
 
 	if (ContainerPtr == nullptr || ValuePtr == nullptr)
 	{
-		const UClass* PropertyClass = Property->GetClass();
+		const auto* PropertyClass = Property->GetClass();
 		if (Property->IsA<FNYObjectProperty>())
 		{
 			// Object property, can be nullptr
@@ -508,7 +508,7 @@ bool FDlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, co
 		const TSharedPtr<FJsonValue> JsonValue = PropertyToJsonValue(Property, ContainerPtr, ValuePtr);
 		if (!JsonValue.IsValid())
 		{
-			const UClass* PropertyClass = Property->GetClass();
+			const auto* PropertyClass = Property->GetClass();
 			if (Property->IsA<FNYObjectProperty>())
 			{
 				// Object property, can be nullptr

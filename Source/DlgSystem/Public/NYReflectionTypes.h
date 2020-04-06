@@ -5,6 +5,53 @@
 #ifndef NY_REFLECTION_TYPES
 #define NY_REFLECTION_TYPES
 
+#if ENGINE_MINOR_VERSION >= 25
+// 4.25 Reflection system changes
+
+typedef FFieldClass FNYPropertyClass;
+typedef FProperty FNYProperty;
+
+typedef FNumericProperty FNYNumericProperty;
+typedef FByteProperty FNYByteProperty;
+typedef FInt8Property FNYInt8Property;
+typedef FInt16Property FNYInt16Property;
+typedef FInt16Property FNYInt16Property;
+typedef FIntProperty FNYIntProperty;
+typedef FInt64Property FNYInt64Property;
+typedef FUInt16Property FNYUInt16Property;
+typedef FUInt32Property FNYUInt32Property;
+typedef FUInt64Property FNYUInt64Property;
+typedef FFloatProperty FNYFloatProperty;
+typedef FDoubleProperty FNYDoubleProperty;
+typedef FBoolProperty FNYBoolProperty;
+
+typedef FObjectPropertyBase FNYObjectPropertyBase;
+typedef FObjectProperty FNYObjectProperty;
+typedef FWeakObjectProperty FNYWeakObjectProperty;
+typedef FLazyObjectProperty FNYLazyObjectProperty;
+typedef FSoftObjectProperty FNYSofObjectProperty;
+typedef FClassProperty FNYClassProperty;
+typedef FSoftClassProperty FNYSoftClassProperty;
+typedef FInterfaceProperty FNYInterfaceProperty;
+
+typedef FNameProperty FNYNameProperty;
+typedef FStrProperty FNYStrProperty;
+typedef FTextProperty FNYTextProperty;
+
+typedef FArrayProperty FNYArrayProperty;
+typedef FMapProperty FNYMapProperty;
+typedef FSetProperty FNYSetProperty;
+
+typedef FStructProperty FNYStructProperty;
+typedef FMulticastDelegateProperty FNYMulticastDelegateProperty;
+typedef FMulticastInlineDelegateProperty FNYMulticastInlineDelegateProperty;
+typedef FMulticastSparseDelegateProperty FNYMulticastSparseDelegateProperty;
+typedef FEnumProperty FNYEnumProperty;
+
+#else
+// 4.24 and before where properties where UObjects
+
+typedef UClass FNYPropertyClass;
 typedef UProperty FNYProperty;
 
 typedef UNumericProperty FNYNumericProperty;
@@ -43,6 +90,8 @@ typedef UMulticastDelegateProperty FNYMulticastDelegateProperty;
 typedef UMulticastInlineDelegateProperty FNYMulticastInlineDelegateProperty;
 typedef UMulticastSparseDelegateProperty FNYMulticastSparseDelegateProperty;
 typedef UEnumProperty FNYEnumProperty;
+
+#endif //  ENGINE_MINOR_VERSION >= 25
 
 
 #endif // NY_REFLECTION_TYPES

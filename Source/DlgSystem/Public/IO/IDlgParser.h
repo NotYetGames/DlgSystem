@@ -6,8 +6,6 @@
 #include "Containers/Array.h"
 #include "UObject/Object.h"
 
-#include "NYReflectionTypes.h"
-
 class DLGSYSTEM_API IDlgParser
 {
 public:

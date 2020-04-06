@@ -8,6 +8,7 @@
 #include "UObject/TextProperty.h"
 
 #include "IDlgWriter.h"
+#include "NYReflectionHelper.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogDlgConfigWriter, Log, All);
 
@@ -150,7 +151,7 @@ protected:
 												const FString& PostString,
 												FString& Target)
 	{
-		const PropertyType* CastedProperty = Cast<PropertyType>(Property);
+		const PropertyType* CastedProperty = FNYReflectionHelper::CastProperty<PropertyType>(Property);
 		if (CastedProperty != nullptr)
 		{
 			Target += PreString +
@@ -172,7 +173,7 @@ protected:
 											  const FString& PostString,
 											  FString& Target)
 	{
-		if (Cast<PropertyType>(ArrayProp->Inner) == nullptr)
+		if (FNYReflectionHelper::CastProperty<PropertyType>(ArrayProp->Inner) == nullptr)
 		{
 			return false;
 		}
@@ -230,7 +231,7 @@ protected:
 										 const FString& PostString,
 										 FString& Target)
 	{
-		const PropertyType* CastedProperty = Cast<PropertyType>(Property);
+		const PropertyType* CastedProperty = FNYReflectionHelper::CastProperty<PropertyType>(Property);
 		if (CastedProperty != nullptr)
 		{
 			Target += PreString +
