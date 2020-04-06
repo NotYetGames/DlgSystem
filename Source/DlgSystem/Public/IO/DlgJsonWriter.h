@@ -30,9 +30,9 @@ class DLGSYSTEM_API FDlgJsonWriter : public IDlgWriter
 	 *		- UStructToJsonString
 	 *			- UStructToJsonObject
 	 *				- UStructToJsonAttributes
-	 *					- UPropertyToJsonValue
-	 *						- ConvertScalarUPropertyToJsonValue
-	 *							- UPropertyToJsonValue
+	 *					- PropertyToJsonValue
+	 *						- ConvertScalarPropertyToJsonValue
+	 *							- PropertyToJsonValue
 	 *							- UStructToJsonObject
 	 */
 public:
@@ -60,19 +60,19 @@ public:
 private: // UStruct -> JSON
 	/**
 	 * Convert property to JSON, assuming either the property is not an array or the value is an individual array element
-	 * Used by UPropertyToJsonValue
+	 * Used by PropertyToJsonValue
 	 */
-	TSharedPtr<FJsonValue> ConvertScalarUPropertyToJsonValue(const UProperty* Property, const void* const ContainerPtr, const void* const ValuePtr);
+	TSharedPtr<FJsonValue> ConvertScalarPropertyToJsonValue(const FNYProperty* Property, const void* const ContainerPtr, const void* const ValuePtr);
 
 	/**
-	 * Converts from a UProperty to a Json Value using exportText
+	 * Converts from a Property to a Json Value using exportText
 	 *
 	 * @param Property			The property to export
 	 * @param ValuePtr			Pointer to the value of the property
 	 *
 	 * @return					The constructed JsonValue from the property
 	 */
-	TSharedPtr<FJsonValue> UPropertyToJsonValue(const UProperty* Property, const void* const ContainerPtr, const void* const ValuePtr);
+	TSharedPtr<FJsonValue> PropertyToJsonValue(const FNYProperty* Property, const void* const ContainerPtr, const void* const ValuePtr);
 
 	/**
 	 * Converts from a UStruct to a set of json attributes (possibly from within a JsonObject)

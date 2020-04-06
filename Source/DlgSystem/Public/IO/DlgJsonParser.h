@@ -24,9 +24,9 @@ class DLGSYSTEM_API FDlgJsonParser : public IDlgParser
 	 *			- JsonObjectStringToUStruct
 	 *				- JsonObjectToUStruct
 	 *					- JsonAttributesToUStruct
-	 *						- JsonValueToUProperty
-	 *							- ConvertScalarJsonValueToUProperty
-	 *								- JsonValueToUProperty
+	 *						- JsonValueToProperty
+	 *							- ConvertScalarJsonValueToProperty
+	 *								- JsonValueToProperty
 	 *								- JsonObjectToUStruct
 	 */
 
@@ -49,20 +49,20 @@ private: // JSON -> UStruct
 
 	/**
 	 * Convert JSON to property, assuming either the property is not an array or the value is an individual array element
-	 * Used by JsonValueToUProperty
+	 * Used by JsonValueToProperty
 	 */
-	bool ConvertScalarJsonValueToUProperty(const TSharedPtr<FJsonValue>& JsonValue, UProperty* Property, void* ContainerPtr, void* ValuePtr);
+	bool ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValue>& JsonValue, FNYProperty* Property, void* ContainerPtr, void* ValuePtr);
 
 	/**
-	 * Converts a single JsonValue to the corresponding UProperty (this may recurse if the property is a UStruct for instance).
+	 * Converts a single JsonValue to the corresponding Property (this may recurse if the property is a UStruct for instance).
 	 *
 	 * @param JsonValue The value to assign to this property
-	 * @param Property The UProperty definition of the property we're setting.
+	 * @param Property The Property definition of the property we're setting.
 	 * @param ValuePtr Pointer to the property instance to be modified.
 	 *
 	 * @return False if the property failed to serialize
 	 */
-	bool JsonValueToUProperty(const TSharedPtr<FJsonValue>& JsonValue, UProperty* Property, void* ContainerPtr, void* ValuePtr);
+	bool JsonValueToProperty(const TSharedPtr<FJsonValue>& JsonValue, FNYProperty* Property, void* ContainerPtr, void* ValuePtr);
 
 	/**
 	 * Converts a set of json attributes (possibly from within a JsonObject) to a UStruct, using importText

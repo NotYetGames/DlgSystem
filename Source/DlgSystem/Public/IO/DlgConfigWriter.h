@@ -64,7 +64,7 @@ public:
 protected:
 
 	void WriteComplexToString(const UStruct* StructDefinition,
-							  const UProperty* Property,
+							  const FNYProperty* Property,
 							  const void* Object,
 							  const FString& PreString,
 							  const FString& PostString,
@@ -78,7 +78,7 @@ protected:
 									 const FString& PostString,
 									 FString& Target);
 
-	bool WritePropertyToString(const UProperty* Property,
+	bool WritePropertyToString(const FNYProperty* Property,
 							   const void* Object,
 							   bool bContainerElement,
 							   const FString& PreString,
@@ -87,20 +87,20 @@ protected:
 							   FString& Target);
 
 	// object is pointer to the owner
-	bool WritePrimitiveElementToString(const UProperty* Property,
+	bool WritePrimitiveElementToString(const FNYProperty* Property,
 									   const void* Object,
 									   bool bContainerElement,
 									   const FString& PreString,
 									   const FString& PostString,
 									   FString& Target);
 
-	bool WritePrimitiveArrayToString(const UProperty* Property,
+	bool WritePrimitiveArrayToString(const FNYProperty* Property,
 									 const void* Object,
 									 const FString& PreString,
 									 const FString& PostString,
 									 FString& Target);
 
-	bool WriteComplexElementToString(const UProperty* Property,
+	bool WriteComplexElementToString(const FNYProperty* Property,
 									 const void* Object,
 									 bool bContainerElement,
 									 const FString& PreString,
@@ -108,41 +108,41 @@ protected:
 									 bool bPointerAsRef,
 									 FString& Target);
 
-	bool WriteComplexArrayToString(const UProperty* Property,
+	bool WriteComplexArrayToString(const FNYProperty* Property,
 								   const void* Object,
 								   const FString& PreString,
 								   const FString& PostString,
 								   FString& Target);
 
-	bool WriteMapToString(const UProperty* Property,
+	bool WriteMapToString(const FNYProperty* Property,
 						  const void* Object,
 						  const FString& PreString,
 						  const FString& PostString,
 						  FString& Target);
 
-	bool WriteSetToString(const UProperty* Property,
+	bool WriteSetToString(const FNYProperty* Property,
 						  const void* Object,
 						  const FString& PreString,
 						  const FString& PostString,
 						  FString& Target);
 
-	bool IsPrimitive(const UProperty* Property);
-	bool IsContainer(const UProperty* Property);
-	bool IsPrimitiveContainer(const UProperty* Property);
+	bool IsPrimitive(const FNYProperty* Property);
+	bool IsContainer(const FNYProperty* Property);
+	bool IsPrimitiveContainer(const FNYProperty* Property);
 
 	bool WouldWriteNonPrimitive(const UStruct* StructDefinition, const void* Owner);
 
-	const UStruct* GetComplexType(const UProperty* Property);
+	const UStruct* GetComplexType(const FNYProperty* Property);
 
 
 	// expects object or struct property, returns empty string otherwise
-	FString GetNameWithoutPrefix(const UProperty* StructDefinition, const UObject* ObjectPtr = nullptr);
+	FString GetNameWithoutPrefix(const FNYProperty* StructDefinition, const UObject* ObjectPtr = nullptr);
 	FString GetStringWithoutPrefix(const FString& String);
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	template <typename PropertyType, typename VariableType>
-	bool WritePrimitiveElementToStringTemplated(const UProperty* Property,
+	bool WritePrimitiveElementToStringTemplated(const FNYProperty* Property,
 												const void* Object,
 												bool bContainerElement,
 												std::function<FString(const VariableType&)> GetAsString,
@@ -165,7 +165,7 @@ protected:
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	template <typename PropertyType, typename VariableType>
-	bool WritePrimitiveArrayToStringTemplated(const UArrayProperty* ArrayProp,
+	bool WritePrimitiveArrayToStringTemplated(const FNYArrayProperty* ArrayProp,
 											  const void* Object,
 											  std::function<FString(const VariableType&)> ToString,
 											  const FString& PreString,
@@ -222,7 +222,7 @@ protected:
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	template <typename PropertyType, typename VariableType>
-	bool WritePrimitiveToStringTemplated(const UProperty* Property,
+	bool WritePrimitiveToStringTemplated(const FNYProperty* Property,
 										 const void* Object,
 										 bool bContainerElement,
 										 std::function<FString(const VariableType&)> GetAsString,

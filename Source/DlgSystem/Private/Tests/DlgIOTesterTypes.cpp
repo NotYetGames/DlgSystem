@@ -184,8 +184,8 @@ void FDlgTestStructPrimitives::GenerateRandomData(const FDlgIOTesterOptions& InO
 	Guid = FGuid::NewGuid();
 
 	const TArray<UClass*> ClassesPool = {
-		UField::StaticClass(), UStruct::StaticClass(), nullptr, UObject::StaticClass(), UBoolProperty::StaticClass(), UIntProperty::StaticClass(),
-		UStructProperty::StaticClass(), UStrProperty::StaticClass(), nullptr
+		UField::StaticClass(), UStruct::StaticClass(), nullptr, UObject::StaticClass(), FNYBoolProperty::StaticClass(), FNYIntProperty::StaticClass(),
+		FNYStructProperty::StaticClass(), FNYStrProperty::StaticClass(), nullptr
 	};
 	Class = ClassesPool[FMath::RandHelper(ClassesPool.Num())];
 

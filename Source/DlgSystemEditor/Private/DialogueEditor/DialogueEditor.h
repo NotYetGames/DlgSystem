@@ -12,6 +12,7 @@
 #include "DialogueEditor/DialogueEditorUtilities.h"
 #include "DlgDialogue.h"
 #include "DlgSystemSettings.h"
+#include "NYReflectionTypes.h"
 
 class IDetailsView;
 class UDlgDialogue;
@@ -157,7 +158,7 @@ public:
 
 private:
 	/** FNotifyHook interface */
-	void NotifyPostChange(const FPropertyChangedEvent& PropertyChangedEvent, UProperty* PropertyThatChanged) override;
+	void NotifyPostChange(const FPropertyChangedEvent& PropertyChangedEvent, FNYProperty* PropertyThatChanged) override;
 
 	/** Creates all internal widgets for the tabs to point at */
 	void CreateInternalWidgets();
@@ -290,7 +291,7 @@ private:
 
 	// Keep track of the previous selected objects so that we can reverse selection
 	TArray<TWeakObjectPtr<UObject>> PreviousSelectedNodeObjects;
-	
+
 	/**	The tab ids for all the tabs used */
 	static const FName DetailsTabID;
 	static const FName GraphCanvasTabID;

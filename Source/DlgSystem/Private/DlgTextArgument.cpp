@@ -40,16 +40,16 @@ FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgCo
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetIntValue(Participant, VariableName));
 
 		case EDlgTextArgumentType::ClassInt:
-			return FFormatArgumentValue(FNYReflectionHelper::GetVariable<UIntProperty, int32>(Participant, VariableName));
+			return FFormatArgumentValue(FNYReflectionHelper::GetVariable<FNYIntProperty, int32>(Participant, VariableName));
 
 		case EDlgTextArgumentType::DialogueFloat:
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetFloatValue(Participant, VariableName));
 
 		case EDlgTextArgumentType::ClassFloat:
-			return FFormatArgumentValue(FNYReflectionHelper::GetVariable<UFloatProperty, float>(Participant, VariableName));
+			return FFormatArgumentValue(FNYReflectionHelper::GetVariable<FNYFloatProperty, float>(Participant, VariableName));
 
 		case EDlgTextArgumentType::ClassText:
-			return FFormatArgumentValue(FNYReflectionHelper::GetVariable<UTextProperty, FText>(Participant, VariableName));
+			return FFormatArgumentValue(FNYReflectionHelper::GetVariable<FNYTextProperty, FText>(Participant, VariableName));
 
 		case EDlgTextArgumentType::DisplayName:
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetParticipantDisplayName(Participant, NodeOwner));

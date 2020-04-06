@@ -6,6 +6,7 @@
 #define NY_REFLECTION_HELPER
 
 #include "CoreMinimal.h"
+#include "NYReflectionTypes.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogDlgSystemReflectionHelper, All, All)
 
@@ -31,7 +32,7 @@ public:
 		To* Result = dynamic_cast<To*>(Src);
 		if (Result == nullptr)
 		{
-			UArrayProperty* ArrayProp = dynamic_cast<UArrayProperty*>(Src);
+			FNYArrayProperty* ArrayProp = dynamic_cast<FNYArrayProperty*>(Src);
 			if (ArrayProp != nullptr)
 			{
 				Result = dynamic_cast<To*>(ArrayProp->Inner);
@@ -164,7 +165,7 @@ public:
 			return;
 		}
 
-		auto IsPropertyAtStartOfBlacklistedClass = [&BlacklistedClasses](UProperty* CheckProperty) -> bool
+		auto IsPropertyAtStartOfBlacklistedClass = [&BlacklistedClasses](FNYProperty* CheckProperty) -> bool
 		{
 			for (UClass* Class : BlacklistedClasses)
 			{
