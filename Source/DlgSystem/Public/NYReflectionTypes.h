@@ -45,9 +45,9 @@ typedef FMapProperty FNYMapProperty;
 typedef FSetProperty FNYSetProperty;
 
 typedef FStructProperty FNYStructProperty;
-typedef FMulticastDelegateProperty FNYMulticastDelegateProperty;
-typedef FMulticastInlineDelegateProperty FNYMulticastInlineDelegateProperty;
-typedef FMulticastSparseDelegateProperty FNYMulticastSparseDelegateProperty;
+// typedef FMulticastDelegateProperty FNYMulticastDelegateProperty;
+// typedef FMulticastInlineDelegateProperty FNYMulticastInlineDelegateProperty;
+// typedef FMulticastSparseDelegateProperty FNYMulticastSparseDelegateProperty;
 typedef FEnumProperty FNYEnumProperty;
 
 #else
@@ -88,9 +88,9 @@ typedef UMapProperty FNYMapProperty;
 typedef USetProperty FNYSetProperty;
 
 typedef UStructProperty FNYStructProperty;
-typedef UMulticastDelegateProperty FNYMulticastDelegateProperty;
-typedef UMulticastInlineDelegateProperty FNYMulticastInlineDelegateProperty;
-typedef UMulticastSparseDelegateProperty FNYMulticastSparseDelegateProperty;
+// typedef UMulticastDelegateProperty FNYMulticastDelegateProperty;
+// typedef UMulticastInlineDelegateProperty FNYMulticastInlineDelegateProperty;
+// typedef UMulticastSparseDelegateProperty FNYMulticastSparseDelegateProperty;
 typedef UEnumProperty FNYEnumProperty;
 
 #endif //  ENGINE_MINOR_VERSION >= 25
