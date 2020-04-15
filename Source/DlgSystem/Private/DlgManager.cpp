@@ -481,14 +481,6 @@ bool UDlgManager::RegisterDialogueConsoleCommands()
 		return false;
 	}
 
-	// Try the user set one
-	if (UserWorldContextObjectPtr.IsValid())
-	{
-		IDlgSystemModule::Get().RegisterConsoleCommands(UserWorldContextObjectPtr);
-		return true;
-	}
-
-	// Fallback
 	IDlgSystemModule::Get().RegisterConsoleCommands(GetDialogueWorld());
 	return true;
 }

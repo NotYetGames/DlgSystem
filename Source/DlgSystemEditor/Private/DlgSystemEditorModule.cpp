@@ -366,6 +366,15 @@ void FDlgSystemEditorModule::HandleOnBeginPIE(bool bIsSimulating)
 	{
 		return;
 	}
+}
+
+void FDlgSystemEditorModule::HandleOnPostPIEStarted(bool bIsSimulating)
+{
+	if (!OnPostPIEStartedHandle.IsValid())
+	{
+		return;
+	}
+
 	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 	if (!Settings)
 	{
@@ -382,14 +391,6 @@ void FDlgSystemEditorModule::HandleOnBeginPIE(bool bIsSimulating)
 	{
 		FDlgLogger::Get().Debugf(TEXT("BeginPIE(bIsSimulating = %d). Registering Console commands"), bIsSimulating);
 		UDlgManager::RegisterDialogueConsoleCommands();
-	}
-}
-
-void FDlgSystemEditorModule::HandleOnPostPIEStarted(bool bIsSimulating)
-{
-	if (!OnPostPIEStartedHandle.IsValid())
-	{
-		return;
 	}
 }
 
