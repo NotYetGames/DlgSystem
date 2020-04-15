@@ -560,10 +560,20 @@ bool UDlgManager::ConstructParticipantMap(const UDlgDialogue* Dialogue, const TA
 		// Be sure it is a participant
 		if (!Participant->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
 		{
-			FDlgLogger::Get().Errorf(
-				TEXT("Failed to start dialogue = `%s` - Participant object at index = %d and Path = `%s` does not implement the IDlgDialogueParticipant interface!"),
-				*Dialogue->GetPathName(), ParticipantIndex, *Participant->GetPathName()
-			);
+			if (Participant->IsA<UBlueprint>())
+			{
+				FDlgLogger::Get().Errorf(
+					TEXT("Failed to start dialogue = `%s` - Participant object at index = %d and Path = `%s` is a Blueprint Class (from the content browser) and NOT a Blueprint Instance (from the level world)."),
+					*Dialogue->GetPathName(), ParticipantIndex, *Participant->GetPathName()
+				);
+			}
+			else
+			{
+				FDlgLogger::Get().Errorf(
+					TEXT("Failed to start dialogue = `%s` - Participant object at index = %d and Path = `%s` does not implement the IDlgDialogueParticipant/UDlgDialogueParticipant interface!"),
+					*Dialogue->GetPathName(), ParticipantIndex, *Participant->GetPathName()
+				);
+			}
 			return false;
 		}
 
