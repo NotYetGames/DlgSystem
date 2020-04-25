@@ -1,11 +1,14 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "Nodes/DlgNode.h"
-#include "DlgContextInternal.h"
+
+#include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
+
+#include "DlgContextInternal.h"
 #include "Logging/DlgLogger.h"
 #include "DlgLocalizationHelper.h"
 #include "DlgDialogueParticipant.h"
-#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundWave.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin UObject interface
@@ -305,5 +308,11 @@ UDlgDialogue* UDlgNode::GetDialogue() const
 {
 	return CastChecked<UDlgDialogue>(GetOuter());
 }
+
+USoundWave* UDlgNode::GetNodeVoiceSoundWave() const
+{
+	return Cast<USoundWave>(GetNodeVoiceSoundBase());
+}
+
 // End own functions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

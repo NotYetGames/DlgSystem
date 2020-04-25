@@ -214,6 +214,17 @@ USoundWave* UDlgContext::GetActiveNodeVoiceSoundWave() const
 	return Node->GetNodeVoiceSoundWave();
 }
 
+USoundBase* UDlgContext::GetActiveNodeVoiceSoundBase() const
+{
+	const UDlgNode* Node = GetActiveNode();
+	if (!IsValid(Node))
+	{
+		return nullptr;
+	}
+
+	return Node->GetNodeVoiceSoundBase();
+}
+
 UDialogueWave* UDlgContext::GetActiveNodeVoiceDialogueWave() const
 {
 	const UDlgNode* Node = GetActiveNode();

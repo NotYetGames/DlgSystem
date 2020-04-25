@@ -16,6 +16,7 @@
 class UDlgSystemSettings;
 class UDlgContext;
 class UDlgNode;
+class USoundBase;
 class USoundWave;
 class UDialogueWave;
 struct FDlgTextArgument;
@@ -95,7 +96,7 @@ public:
 	// For the ParticipantName
 	//
 
-	UFUNCTION(BlueprintCallable, Category = DlgNode)
+	UFUNCTION(BlueprintPure, Category = DlgNode)
 	virtual FName GetNodeParticipantName() const { return OwnerName; }
 
 	virtual void SetNodeParticipantName(const FName& InName) { OwnerName = InName; }
@@ -204,7 +205,11 @@ public:
 
 	// Gets the voice of this Node as a SoundWave.
 	UFUNCTION(BlueprintPure, Category = NodeData)
-	virtual USoundWave* GetNodeVoiceSoundWave() const { return nullptr; }
+	USoundWave* GetNodeVoiceSoundWave() const;
+
+	// Gets the voice of this Node as a SoundWave.
+	UFUNCTION(BlueprintPure, Category = NodeData)
+	virtual USoundBase* GetNodeVoiceSoundBase() const { return nullptr; }
 
 	// Gets the voice of this Node as a DialogueWave. Only the first Dialogue context in the wave should be used.
 	UFUNCTION(BlueprintPure, Category = NodeData)

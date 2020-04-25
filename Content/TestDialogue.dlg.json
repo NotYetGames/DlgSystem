@@ -75,7 +75,8 @@
 					"FloatValue": 0,
 					"NameValue": "None",
 					"bBoolValue": true,
-					"bLongTermMemory": true
+					"bLongTermMemory": true,
+					"CustomCondition": null
 				}
 			],
 			"EnterEvents": [
@@ -87,7 +88,8 @@
 					"FloatValue": 0,
 					"NameValue": "None",
 					"bDelta": false,
-					"bValue": false
+					"bValue": false,
+					"CustomEvent": null
 				}
 			],
 			"Children": [
@@ -107,7 +109,8 @@
 							"FloatValue": 0,
 							"NameValue": "None",
 							"bBoolValue": true,
-							"bLongTermMemory": true
+							"bLongTermMemory": true,
+							"CustomCondition": null
 						}
 					],
 					"SpeakerState": "None",
@@ -166,7 +169,8 @@
 					"FloatValue": 0,
 					"NameValue": "None",
 					"bDelta": false,
-					"bValue": false
+					"bValue": false,
+					"CustomEvent": null
 				},
 				{
 					"ParticipantName": "None",
@@ -176,7 +180,8 @@
 					"FloatValue": 0,
 					"NameValue": "None",
 					"bDelta": false,
-					"bValue": false
+					"bValue": false,
+					"CustomEvent": null
 				}
 			],
 			"Children": [

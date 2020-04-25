@@ -6,6 +6,7 @@
 #include "DlgNode_SpeechSequence.generated.h"
 
 class USoundWave;
+class USoundBase;
 class UDialogueWave;
 
 USTRUCT(BlueprintType, Blueprintable)
@@ -38,7 +39,7 @@ public:
 	// Voice attached to this node. The Sound Wave variant.
 	// NOTE: You should probably use the NodeData
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
-	USoundWave* VoiceSoundWave = nullptr;
+	USoundBase* VoiceSoundWave = nullptr;
 
 	// Voice attached to this node. The Dialogue Wave variant. Only the first wave from the dialogue context array should be used.
 	// NOTE: You should probably use the NodeData
@@ -82,7 +83,7 @@ public:
 	// Getters
 	const FText& GetNodeText() const override;
 	UDlgNodeData* GetNodeData() const override;
-	USoundWave* GetNodeVoiceSoundWave() const override;
+	USoundBase* GetNodeVoiceSoundBase() const override;
 	UDialogueWave* GetNodeVoiceDialogueWave() const override;
 	FName GetSpeakerState() const override;
 	void AddAllSpeakerStatesIntoSet(TSet<FName>& OutStates) const override;

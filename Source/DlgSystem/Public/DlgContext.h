@@ -6,6 +6,7 @@
 #include "DlgContext.generated.h"
 
 class USoundWave;
+class USoundBase;
 class UDialogueWave;
 class UTexture2D;
 class UDlgNodeData;
@@ -76,19 +77,19 @@ public:
 
 	/** Use these functions if you don't care about unsatisfied player options: */
 
-	/** Gets the number of children with satisfied conditions (number of options) */
+	// Gets the number of children with satisfied conditions (number of options)
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	int32 GetOptionNum() const { return AvailableChildren.Num(); }
 
-	/** Gets the Text of the (satisfied) option with index OptionIndex  */
+	// Gets the Text of the (satisfied) option with index OptionIndex
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	const FText& GetOptionText(int32 OptionIndex) const;
 
-	/** Gets the SpeakerState of the (satisfied) edge with index OptionIndex */
+	// Gets the SpeakerState of the (satisfied) edge with index OptionIndex
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	FName GetOptionSpeakerState(int32 OptionIndex) const;
 
-	/** Gets the edge representing a player option from the satisfied options */
+	// Gets the edge representing a player option from the satisfied options
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	const FDlgEdge& GetOption(int32 OptionIndex) const;
 
@@ -98,26 +99,26 @@ public:
 	 *  DO NOT missuse the indices above and bellow! The functions above expect < GetOptionNum(), bellow < GetAllOptionNum()
 	 */
 
-	/** Gets the number of children (both satisfied and unsatisfied ones are counted) */
+	// Gets the number of children (both satisfied and unsatisfied ones are counted)
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	int32 GetAllOptionNum() const { return AllChildren.Num(); }
 
-	/** Gets the Text of an option from the all list, which includes the unsatisfied ones as well */
+	// Gets the Text of an option from the all list, which includes the unsatisfied ones as well
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	const FText& GetOptionTextFromAll(int32 Index) const;
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	bool IsOptionSatisfied(int32 Index) const;
 
-	/** Gets the SpeakerState of the edge with index OptionIndex */
+	// Gets the SpeakerState of the edge with index OptionIndex
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	FName GetOptionSpeakerStateFromAll(int32 Index) const;
 
-	/** Gets the edge representing a player option from all options */
+	// Gets the edge representing a player option from all options
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options")
 	const FDlgEdge& GetOptionFromAll(int32 Index) const;
 
-	/** Gets the Text of the active node index */
+	// Gets the Text of the active node index
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	const FText& GetActiveNodeText() const;
 
@@ -125,15 +126,21 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode", meta=(DeprecatedFunction, DeprecationMessage="Use GetActiveNodeSpeakerState Instead"))
 	FName GetActiveSpeakerState() const { return GetActiveNodeSpeakerState(); }
 
-	/** Gets the SpeakerState of the active node index */
+	// Gets the SpeakerState of the active node index
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	FName GetActiveNodeSpeakerState() const;
 
-	/** Gets the Voice as a Sound Wave of the active node index */
+	// Gets the Voice as a Sound Wave of the active node index
+	// This will get cast to USoundWave from a USoundBase
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	USoundWave* GetActiveNodeVoiceSoundWave() const;
 
-	/** Gets the Voice as a Dialogue Wave of the active node index */
+	// Same as GetActiveNodeVoiceSoundWave but this just returns the variable without casting it
+	// to a USoundWave
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
+	USoundBase* GetActiveNodeVoiceSoundBase() const;
+
+	// Gets the Voice as a Dialogue Wave of the active node index
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	UDialogueWave* GetActiveNodeVoiceDialogueWave() const;
 
@@ -147,7 +154,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode",  meta=(DeprecatedFunction, DeprecationMessage="Use GetActiveNodeParticipantIcon Instead"))
 	UTexture2D* GetActiveParticipantIcon() const { return GetActiveNodeParticipantIcon(); }
 
-	/** Gets the Icon associated with the active node participant name (owner name). */
+	// Gets the Icon associated with the active node participant name (owner name).
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	UTexture2D* GetActiveNodeParticipantIcon() const;
 
@@ -155,7 +162,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode",  meta=(DeprecatedFunction, DeprecationMessage="Use GetActiveNodeParticipant Instead"))
 	UObject* GetActiveParticipant() const { return GetActiveNodeParticipant(); }
 
-	/** Gets the Object associated with the active node participant name (owner name). */
+	// Gets the Object associated with the active node participant name (owner name).
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	UObject* GetActiveNodeParticipant() const;
 
@@ -163,7 +170,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode", meta=(DeprecatedFunction, DeprecationMessage="Use GetActiveNodeParticipantName Instead"))
 	FName GetActiveParticipantName() const { return GetActiveNodeParticipantName(); }
 
-	/** Gets the active node participant name (owner name). */
+	// Gets the active node participant name (owner name).
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	FName GetActiveNodeParticipantName() const;
 
@@ -181,7 +188,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	int32 GetActiveNodeIndex() const { return ActiveNodeIndex; }
 
-	/** Returns the indices which were visited inside this single context. For global data check DlgMemory */
+	// Returns the indices which were visited inside this single context. For global data check DlgMemory
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	const TSet<int32>& GetVisitedNodeIndices() const { return VisitedNodeIndices; }
 
@@ -250,17 +257,16 @@ protected:
 	UPROPERTY()
 	UDlgDialogue* Dialogue = nullptr;
 
-	/**
-	 * All object is expected to implement the IDlgDialogueParticipant interface
-	 * the key is the return value of IDlgDialogueParticipant::GetParticipantName()
-	 */
+
+	// All object is expected to implement the IDlgDialogueParticipant interface
+	// the key is the return value of IDlgDialogueParticipant::GetParticipantName()
 	UPROPERTY()
 	TMap<FName, UObject*> Participants;
 
-	/** The index of the active node in the dialogues Nodes array */
+	// The index of the active node in the dialogues Nodes array
 	int32 ActiveNodeIndex = INDEX_NONE;
 
-	/** Children of the active node with satisfied conditions - the options the player can choose from */
+	// Children of the active node with satisfied conditions - the options the player can choose from
 	TArray<const FDlgEdge*> AvailableChildren;
 
 	/**
@@ -270,9 +276,9 @@ protected:
 	 */
 	TArray<FDlgEdgeData> AllChildren;
 
-	/** Node indices visited in this specific Dialogue instance (isn't serialized) */
+	// Node indices visited in this specific Dialogue instance (isn't serialized)
 	TSet<int32> VisitedNodeIndices;
 
-	/** cache the result of the last ChooseChild call */
+	// cache the result of the last ChooseChild call
 	bool bDialogueEnded = false;
 };

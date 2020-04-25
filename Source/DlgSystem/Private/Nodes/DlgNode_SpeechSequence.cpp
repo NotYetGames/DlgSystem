@@ -114,7 +114,7 @@ UDlgNodeData* UDlgNode_SpeechSequence::GetNodeData() const
 	return nullptr;
 }
 
-USoundWave* UDlgNode_SpeechSequence::GetNodeVoiceSoundWave() const
+USoundBase* UDlgNode_SpeechSequence::GetNodeVoiceSoundBase() const
 {
 	if (SpeechSequence.IsValidIndex(ActualIndex))
 	{

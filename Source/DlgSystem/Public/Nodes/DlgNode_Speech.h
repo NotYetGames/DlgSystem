@@ -68,7 +68,7 @@ public:
 
 	/** stuff we have to keep for legacy reason (but would make more sense to remove them from the plugin as they could be created in NodeData): */
 	FName GetSpeakerState() const override { return SpeakerState; }
-	USoundWave* GetNodeVoiceSoundWave() const override { return VoiceSoundWave; }
+	USoundBase* GetNodeVoiceSoundBase() const override { return VoiceSoundWave; }
 	UDialogueWave* GetNodeVoiceDialogueWave() const override { return VoiceDialogueWave; }
 	UObject* GetGenericData() const override { return GenericData; }
 
@@ -94,7 +94,7 @@ public:
 
 	void SetNodeData(UDlgNodeData* InNodeData) { NodeData = InNodeData; }
 	void SetSpeakerState(FName InSpeakerState) { SpeakerState = InSpeakerState; }
-	void SetVoiceSoundWave(USoundWave* InVoiceSoundWave) { VoiceSoundWave = InVoiceSoundWave; }
+	void SetVoiceSoundBase(USoundBase* InVoiceSoundBase) { VoiceSoundWave = InVoiceSoundBase; }
 	void SetVoiceDialogueWave(UDialogueWave* InVoiceDialogueWave) { VoiceDialogueWave = InVoiceDialogueWave; }
 	void SetGenericData(UObject* InGenericData) { GenericData = InGenericData; }
 
@@ -136,7 +136,7 @@ protected:
 	// Voice attached to this node. The Sound Wave variant.
 	// NOTE: You should probably use the NodeData
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
-	USoundWave* VoiceSoundWave;
+	USoundBase* VoiceSoundWave;
 
 	// Voice attached to this node. The Dialogue Wave variant. Only the first wave from the dialogue context array should be used.
 	// NOTE: You should probably use the NodeData
