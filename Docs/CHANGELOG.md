@@ -1,3 +1,28 @@
+# 8.1
+
+- **Deprecated** `RegisterDialogueModuleConsoleCommands` and `UnRegisterDialogueModuleConsoleCommands`, you should use `RegisterDialogueConsoleCommands` and `UnregisterDialogueConsoleCommands` instead
+
+- **Renamed** `UDlgReflectionHelper` to `FNYReflectionHelper`
+
+
+- **Add** Custom Events and Conditions
+	- Custom Event - Create a new blueprint with parent class `UDlgEventCustom` or `UDlgEventCustomHideCategories` (This is the same as UDlgEventCustom but it does NOT show the categories)
+	- Custom Condition - Create a new blueprint with parent class `UDlgConditionCustom` or `UDlgConditionCustomHideCategories` ( This is the same as UDlgConditionCustom but it does NOT show the categories)
+
+- **Add** setting option `bRegisterDialogueConsoleCommandsAutomatically` (default true) to automatically register the dialogue console commands on Begin Play
+
+- **Improve** Error message on start dialogue when you give it a Blueprint Class instead of a Blueprint Instance
+
+- **Improve** The Sound wave is now a `USoundBase` instead of a `USoundWave` to include more sound objects like cues.
+  - **Added** `GetActiveNodeVoiceSoundBase` to the Dialogue Context. `GetActiveNodeVoiceSoundWave` just calls the SoundBase getter and casts to a `USoundWave`
+
+- **Improvement** All getters of `UDlgNode` are blueprint accessible
+
+- **Improvement** Reflection code is now engine version independent (so that it supports 4.25 more nicely)
+
+- **Improvement** The Dialogue system gets the World from the game automatically (see `UDlgManger::GetDialogueWorld`), if you want to or need to set the  world manually, call `UDlgManger::SetPersistentWorldContextObject`
+
+
 # 8.0.2
 
 - **Fix** Linux Editor Compile
