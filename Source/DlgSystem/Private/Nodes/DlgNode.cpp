@@ -100,7 +100,7 @@ void UDlgNode::FireNodeEnterEvents(UDlgContext* Context)
 			);
 		}
 
-		Event.Call(Participant);
+		Event.Call(Context, Participant);
 	}
 }
 
@@ -148,7 +148,7 @@ bool UDlgNode::CheckNodeEnterConditions(const UDlgContext* Context, TSet<const U
 	}
 
 	AlreadyVisitedNodes.Add(this);
-	if (!FDlgCondition::EvaluateArray(EnterConditions, Context, OwnerName))
+	if (!FDlgCondition::EvaluateArray(Context, EnterConditions, OwnerName))
 	{
 		return false;
 	}

@@ -148,7 +148,7 @@ void SDlgDataPropertyValue::UpdateVariableNodeFromActor()
 		}
 		case EDlgDataDisplayVariableTreeNodeType::Condition:
 		{
-			const bool Value = IDlgDialogueParticipant::Execute_CheckCondition(Actor.Get(), VariableName);
+			const bool Value = IDlgDialogueParticipant::Execute_CheckCondition(Actor.Get(), nullptr, VariableName);
 			VariableNode->SetVariableValue(BoolToFString(Value));
 			break;
 		}
@@ -340,7 +340,7 @@ FReply SDlgDataEventPropertyValue::HandleTriggerEventClicked()
 
 	// Trigger the event
 	const FName EventName = VariableNode->GetVariableName();
-	IDlgDialogueParticipant::Execute_OnDialogueEvent(Actor.Get(), EventName);
+	IDlgDialogueParticipant::Execute_OnDialogueEvent(Actor.Get(), nullptr, EventName);
 
 	return FReply::Handled();
 }

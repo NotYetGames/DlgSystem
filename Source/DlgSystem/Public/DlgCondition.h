@@ -90,7 +90,7 @@ struct DLGSYSTEM_API FDlgCondition
 public:
 	bool operator==(const FDlgCondition& Other) const;
 
-	static bool EvaluateArray(const TArray<FDlgCondition>& ConditionsArray, const UDlgContext* Context, FName DefaultParticipantName = NAME_None);
+	static bool EvaluateArray(const UDlgContext* Context, const TArray<FDlgCondition>& ConditionsArray, FName DefaultParticipantName = NAME_None);
 	bool IsConditionMet(const UDlgContext* Context, const UObject* Participant) const;
 
 	bool IsSecondParticipantInvolved() const;
@@ -100,10 +100,10 @@ protected:
 	// Helper functions doing the check on the primary value based on EDlgCompare
 	//
 
-	bool CheckFloat(float Value, const UDlgContext* Context) const;
-	bool CheckInt(int32 Value, const UDlgContext* Context) const;
-	bool CheckBool(bool bValue, const UDlgContext* Context) const;
-	bool CheckName(FName Value, const UDlgContext* Context) const;
+	bool CheckFloat(const UDlgContext* Context, float Value) const;
+	bool CheckInt(const UDlgContext* Context, int32 Value) const;
+	bool CheckBool(const UDlgContext* Context, bool bValue) const;
+	bool CheckName(const UDlgContext* Context, FName Value) const;
 
 	// Checks Participant, prints warning if it is nullptr
 	bool ValidateIsParticipantValid(const UObject* Participant, const FString& ContextMessage) const;

@@ -10,7 +10,7 @@
 #include "DlgDialogueParticipant.h"
 #include "Logging/DlgLogger.h"
 
-bool FDlgCondition::EvaluateArray(const TArray<FDlgCondition>& ConditionsArray, const UDlgContext* Context, FName DefaultParticipantName)
+bool FDlgCondition::EvaluateArray(const UDlgContext* Context, const TArray<FDlgCondition>& ConditionsArray, FName DefaultParticipantName)
 {
 	bool bHasAnyWeak = false;
 	bool bHasSuccessfulWeak = false;
@@ -68,33 +68,33 @@ bool FDlgCondition::IsConditionMet(const UDlgContext* Context, const UObject* Pa
 	switch (ConditionType)
 	{
 		case EDlgConditionType::EventCall:
-			return IDlgDialogueParticipant::Execute_CheckCondition(Participant, CallbackName) == bBoolValue;
+			return IDlgDialogueParticipant::Execute_CheckCondition(Participant, Context, CallbackName) == bBoolValue;
 
 
 		case EDlgConditionType::BoolCall:
-			return CheckBool(IDlgDialogueParticipant::Execute_GetBoolValue(Participant, CallbackName), Context);
+			return CheckBool(Context, IDlgDialogueParticipant::Execute_GetBoolValue(Participant, CallbackName));
 
 		case EDlgConditionType::FloatCall:
-			return CheckFloat(IDlgDialogueParticipant::Execute_GetFloatValue(Participant, CallbackName), Context);
+			return CheckFloat(Context, IDlgDialogueParticipant::Execute_GetFloatValue(Participant, CallbackName));
 
 		case EDlgConditionType::IntCall:
-			return CheckInt(IDlgDialogueParticipant::Execute_GetIntValue(Participant, CallbackName), Context);
+			return CheckInt(Context, IDlgDialogueParticipant::Execute_GetIntValue(Participant, CallbackName));
 
 		case EDlgConditionType::NameCall:
-			return CheckName(IDlgDialogueParticipant::Execute_GetNameValue(Participant, CallbackName), Context);
+			return CheckName(Context, IDlgDialogueParticipant::Execute_GetNameValue(Participant, CallbackName));
 
 
 		case EDlgConditionType::ClassBoolVariable:
-			return CheckBool(FNYReflectionHelper::GetVariable<FNYBoolProperty, bool>(Participant, CallbackName), Context);
+			return CheckBool(Context, FNYReflectionHelper::GetVariable<FNYBoolProperty, bool>(Participant, CallbackName));
 
 		case EDlgConditionType::FloatVariable:
-			return CheckFloat(FNYReflectionHelper::GetVariable<FNYFloatProperty, float>(Participant, CallbackName), Context);
+			return CheckFloat(Context, FNYReflectionHelper::GetVariable<FNYFloatProperty, float>(Participant, CallbackName));
 
 		case EDlgConditionType::ClassIntVariable:
-			return CheckInt(FNYReflectionHelper::GetVariable<FNYIntProperty, int32>(Participant, CallbackName), Context);
+			return CheckInt(Context, FNYReflectionHelper::GetVariable<FNYIntProperty, int32>(Participant, CallbackName));
 
 		case EDlgConditionType::ClassNameVariable:
-			return CheckName(FNYReflectionHelper::GetVariable<FNYNameProperty, FName>(Participant, CallbackName), Context);
+			return CheckName(Context, FNYReflectionHelper::GetVariable<FNYNameProperty, FName>(Participant, CallbackName));
 
 
 		case EDlgConditionType::WasNodeVisited:
@@ -117,7 +117,7 @@ bool FDlgCondition::IsConditionMet(const UDlgContext* Context, const UObject* Pa
 	}
 }
 
-bool FDlgCondition::CheckFloat(float Value, const UDlgContext* Context) const
+bool FDlgCondition::CheckFloat(const UDlgContext* Context, float Value) const
 {
 	float ValueToCheckAgainst = FloatValue;
 	if (CompareType == EDlgCompare::ToVariable || CompareType == EDlgCompare::ToClassVariable)
@@ -164,7 +164,7 @@ bool FDlgCondition::CheckFloat(float Value, const UDlgContext* Context) const
 	}
 }
 
-bool FDlgCondition::CheckInt(int32 Value, const UDlgContext* Context) const
+bool FDlgCondition::CheckInt(const UDlgContext* Context, int32 Value) const
 {
 	int32 ValueToCheckAgainst = IntValue;
 	if (CompareType == EDlgCompare::ToVariable || CompareType == EDlgCompare::ToClassVariable)
@@ -211,7 +211,7 @@ bool FDlgCondition::CheckInt(int32 Value, const UDlgContext* Context) const
 	}
 }
 
-bool FDlgCondition::CheckBool(bool bValue, const UDlgContext* Context) const
+bool FDlgCondition::CheckBool(const UDlgContext* Context, bool bValue) const
 {
 	if (CompareType == EDlgCompare::ToVariable || CompareType == EDlgCompare::ToClassVariable)
 	{
@@ -237,7 +237,7 @@ bool FDlgCondition::CheckBool(bool bValue, const UDlgContext* Context) const
 	return bValue == bBoolValue;
 }
 
-bool FDlgCondition::CheckName(FName Value, const UDlgContext* Context) const
+bool FDlgCondition::CheckName(const UDlgContext* Context, FName Value) const
 {
 	FName ValueToCheckAgainst = NameValue;
 	if (CompareType == EDlgCompare::ToVariable || CompareType == EDlgCompare::ToClassVariable)

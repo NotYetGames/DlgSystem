@@ -102,7 +102,7 @@ bool FDlgEdge::Evaluate(const UDlgContext* Context, TSet<const UDlgNode*> Alread
 	}
 
 	// Check this edge conditions
-	return FDlgCondition::EvaluateArray(Conditions, Context);
+	return FDlgCondition::EvaluateArray(Context, Conditions);
 }
 
 void FDlgEdge::RebuildConstructedText(const UDlgContext* Context, FName NodeOwnerName)

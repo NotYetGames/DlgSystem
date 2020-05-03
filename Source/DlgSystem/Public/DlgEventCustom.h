@@ -4,6 +4,8 @@
 
 #include "DlgEventCustom.generated.h"
 
+class UDlgContext;
+
 // Abstract base class for node data
 // Defining class via inheriting from UNYTaskBase outside of the plugin is possible both in Blueprint and C++
 // Extend this class to define additional data you want to store on your nodes
@@ -18,8 +20,8 @@ public:
 
 	// Called when the event is triggered.
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = DialogueEvents, DisplayName = "Enter")
-	void EnterEvent(UObject* Participant);
-	void EnterEvent_Implementation(UObject* Participant) {}
+	void EnterEvent(UDlgContext* Context, UObject* Participant);
+	void EnterEvent_Implementation(UDlgContext* Context, UObject* Participant) {}
 };
 
 // This is the same as UDlgEventCustom but it does NOT show the categories

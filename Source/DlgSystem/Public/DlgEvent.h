@@ -6,6 +6,8 @@
 
 #include "DlgEvent.generated.h"
 
+class UDlgContext;
+
 UENUM()
 enum class EDlgEventType : uint8
 {
@@ -39,7 +41,7 @@ struct DLGSYSTEM_API FDlgEvent
 public:
 	// Executes the event
 	// TargetParticipant is expected to implement IDlgDialogueParticipant interface
-	void Call(UObject* TargetParticipant) const;
+	void Call(UDlgContext* Context, UObject* TargetParticipant) const;
 
 	bool operator==(const FDlgEvent& Other) const;
 	friend FArchive& operator<<(FArchive &Ar, FDlgEvent& Event);

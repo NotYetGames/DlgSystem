@@ -6,7 +6,7 @@
 #include "DlgDialogueParticipant.h"
 #include "Logging/DlgLogger.h"
 
-void FDlgEvent::Call(UObject* TargetParticipant) const
+void FDlgEvent::Call(UDlgContext* Context, UObject* TargetParticipant) const
 {
 	const bool bHasParticipant = ValidateIsParticipantValid(TargetParticipant);
 
@@ -19,7 +19,7 @@ void FDlgEvent::Call(UObject* TargetParticipant) const
 			return;
 		}
 
-		CustomEvent->EnterEvent(TargetParticipant);
+		CustomEvent->EnterEvent(Context, TargetParticipant);
 		return;
 	}
 
@@ -31,7 +31,7 @@ void FDlgEvent::Call(UObject* TargetParticipant) const
 	switch (EventType)
 	{
 	case EDlgEventType::Event:
-		IDlgDialogueParticipant::Execute_OnDialogueEvent(TargetParticipant, EventName);
+		IDlgDialogueParticipant::Execute_OnDialogueEvent(TargetParticipant, Context, EventName);
 		break;
 
 	case EDlgEventType::ModifyInt:

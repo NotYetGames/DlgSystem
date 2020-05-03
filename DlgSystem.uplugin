@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 8,
-	"VersionName": "8.1",
+	"Version": 9,
+	"VersionName": "9.0",
 	"EngineVersion" : "4.22.0",
 	"FriendlyName": "DlgSystem",
 	"Description": "Dialogue system (with text based dialogues) and nice Editor for editing dialogues",
@@ -20,7 +20,7 @@
 			"Name": "DlgSystem",
 			"Type": "Runtime",
 			"LoadingPhase": "PreDefault",
-			"WhitelistPlatforms": ["Win64", "Win32", "Linux", "XboxOne"]
+			"WhitelistPlatforms": ["Win64", "Win32", "Linux", "XboxOne", "Switch"]
 		},
 		{
 			"Name": "DlgSystemEditor",

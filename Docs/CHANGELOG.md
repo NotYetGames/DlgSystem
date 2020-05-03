@@ -1,9 +1,16 @@
-# 8.1
+# 9.0
 
-- **Deprecated** `RegisterDialogueModuleConsoleCommands` and `UnRegisterDialogueModuleConsoleCommands`, you should use `RegisterDialogueConsoleCommands` and `UnregisterDialogueConsoleCommands` instead
+## Important breaking change
+
+- **Modified**  `IDlgDialogueParticipant` interface functions signature
+	- Removed `const FName&` in favour of `FName` from all methods
+	- Added `UDlgContext` as an argument to `CheckCondition` and `OnDialogueEvent`. This was done because if you start a Dialogue where the start (root) node has an enter event and in that enter event you want to get the current dialogue context you can't. Because the dialogue context returns after the start dialogue is called.
 
 - **Renamed** `UDlgReflectionHelper` to `FNYReflectionHelper`
 
+## Other Changes
+
+- **Deprecated** `RegisterDialogueModuleConsoleCommands` and `UnRegisterDialogueModuleConsoleCommands`, you should use `RegisterDialogueConsoleCommands` and `UnregisterDialogueConsoleCommands` instead
 
 - **Add** Custom Events and Conditions
 	- Custom Event - Create a new blueprint with parent class `UDlgEventCustom` or `UDlgEventCustomHideCategories` (This is the same as UDlgEventCustom but it does NOT show the categories)
@@ -22,6 +29,8 @@
 
 - **Improvement** The Dialogue system gets the World from the game automatically (see `UDlgManger::GetDialogueWorld`), if you want to or need to set the  world manually, call `UDlgManger::SetPersistentWorldContextObject`
 
+- **Fix** Null pointer check for LoadedWorld
+- **Fix** Blueprint Nativization for 4.24
 
 # 8.0.2
 
