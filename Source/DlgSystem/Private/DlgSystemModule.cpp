@@ -41,7 +41,7 @@ void FDlgSystemModule::StartupModule()
 
 	OnPreLoadMapHandle = FCoreUObjectDelegates::PreLoadMap.AddRaw(this, &Self::HandlePreLoadMap);
 	OnPostLoadMapWithWorldHandle = FCoreUObjectDelegates::PostLoadMapWithWorld.AddRaw(this, &Self::HandlePostLoadMapWithWorld);
-	
+
 	// Listen for deleted assets
 	// Maybe even check OnAssetRemoved if not loaded into memory?
 	IAssetRegistry& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(NAME_MODULE_AssetRegistry).Get();
@@ -149,7 +149,7 @@ void FDlgSystemModule::RegisterConsoleCommands(const TWeakObjectPtr<const UObjec
 	{
 		WorldContextObjectPtr = InWorldContextObjectPtr;
 	}
-	
+
 	IConsoleManager& ConsoleManager = IConsoleManager::Get();
 	ConsoleCommands.Add(ConsoleManager.RegisterConsoleCommand(TEXT("Dlg.DataDisplay"),
 		TEXT("Displays the Dialogue Data Window"),
@@ -316,6 +316,11 @@ void FDlgSystemModule::HandlePostLoadMapWithWorld(UWorld* LoadedWorld)
 	{
 		return;
 	}
+	if (!LoadedWorld)
+	{
+		return;
+	}
+
 	LastLoadedWorld = LoadedWorld;
 	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 	if (!Settings)
