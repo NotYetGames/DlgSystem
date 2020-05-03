@@ -53,12 +53,21 @@ FDlgSystemEditorModule::FDlgSystemEditorModule() : DlgSystemAssetCategoryBit(EAs
 
 void FDlgSystemEditorModule::StartupModule()
 {
+#if ENGINE_MINOR_VERSION >= 24
+	// Fix blueprint Nativization https://gitlab.com/NotYetGames/DlgSystem/-/issues/28
+	const FString LongName = FPackageName::ConvertToLongScriptPackageName(TEXT("DlgSystemEditor"));
+	if (UPackage* Package = Cast<UPackage>(StaticFindObjectFast(UPackage::StaticClass(), nullptr, *LongName, false, false)))
+	{
+		Package->SetPackageFlags(PKG_EditorOnly);
+	}
+#endif
+
 	UE_LOG(LogDlgSystemEditor, Log, TEXT("DlgSystemEditorModule: StartupModule"));
 	OnPostEngineInitHandle = FCoreDelegates::OnPostEngineInit.AddRaw(this, &Self::HandleOnPostEngineInit);
 	OnBeginPIEHandle = FEditorDelegates::BeginPIE.AddRaw(this, &Self::HandleOnBeginPIE);
 	OnPostPIEStartedHandle = FEditorDelegates::PostPIEStarted.AddRaw(this, &Self::HandleOnPostPIEStarted);
 	OnEndPIEHandle = FEditorDelegates::EndPIE.AddRaw(this, &Self::HandleOnEndPIEHandle);
-	
+
 	// Register slate style overrides
 	FDialogueStyle::Initialize();
 
@@ -221,7 +230,7 @@ void FDlgSystemEditorModule::ShutdownModule()
 	{
 		FEditorDelegates::EndPIE.Remove(OnEndPIEHandle);
 	}
-	
+
 	UE_LOG(LogDlgSystemEditor, Log, TEXT("DlgSystemEditorModule: ShutdownModule"));
 }
 

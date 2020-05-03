@@ -1,7 +1,10 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #pragma once
 
-#include "CoreTypes.h"
+#include "CoreMinimal.h"
+#include "Misc/Build.h"
+#include "UObject/Object.h"
+
 #if WITH_EDITOR
 #include "EdGraph/EdGraphNode.h"
 #endif

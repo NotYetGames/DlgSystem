@@ -1,6 +1,8 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #pragma once
 #include "CoreMinimal.h"
+#include "Misc/Build.h"
+
 #include "Engine/DeveloperSettings.h"
 #include "Layout/Margin.h"
 #include "Logging/INYLogger.h"
