@@ -1,6 +1,6 @@
 # DlgSystem (Dialogue System) Plugin
 
-Branch Unreal version: `4.24`
+Branch Unreal version: `4.25`
 
 ## Features:
 
@@ -31,7 +31,7 @@ See [Support](#support) for how to support this project.
 
 See the [Wiki](https://gitlab.com/NotYetGames/DlgSystem/wikis/home) for the manual and tutorials.
 
-[DlgSystemExample project](https://gitlab.com/NotYetGames/DlgSystemExample/tree/4.24) is also provided.
+[DlgSystemExample project](https://gitlab.com/NotYetGames/DlgSystemExample/tree/4.25) is also provided.
 
 Brought to you by Not Yet:
 * Discord: https://discord.gg/NotYet
