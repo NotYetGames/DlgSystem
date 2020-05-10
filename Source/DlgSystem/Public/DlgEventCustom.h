@@ -21,7 +21,7 @@ public:
 	// Called when the event is triggered.
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = DialogueEvents, DisplayName = "Enter")
 	void EnterEvent(UDlgContext* Context, UObject* Participant);
-	void EnterEvent_Implementation(UDlgContext* Context, UObject* Participant) {}
+	virtual void EnterEvent_Implementation(UDlgContext* Context, UObject* Participant) {}
 };
 
 // This is the same as UDlgEventCustom but it does NOT show the categories
