@@ -18,7 +18,7 @@ public:
 	// Checks if the condition is met
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = DialogueConditions)
 	bool IsConditionMet(const UObject* Participant);
-	bool IsConditionMet_Implementation(const UObject* Participant)
+	virtual bool IsConditionMet_Implementation(const UObject* Participant)
 	{
 		return false;
 	}
