@@ -542,7 +542,7 @@ FDlgParticipantData& UDlgDialogue::GetParticipantDataEntry(FName ParticipantName
 	if (bCheckNone && ValidParticipantName == NAME_None)
 	{
 		FDlgLogger::Get().Warningf(
-			TEXT("Ignoring ParticipantName = None, Context = %s. Either your node name is None or your participant name is None."),
+			TEXT("Ignoring ParticipantName = None, Context = `%s`. Either your node participant name is None or your participant name is None."),
 			*ContextMessage
 		);
 		return BlackHoleParticipant;
@@ -562,13 +562,15 @@ void UDlgDialogue::AddConditionsDataFromNodeEdges(const UDlgNode* Node, int32 No
 
 		for (const FDlgCondition& Condition : Edge.Conditions)
 		{
-			FString ContextMessage = FString::Printf(TEXT("Adding Edge primary condition data from %s, to Node %d"), *NodeContext, TargetIndex);
-			GetParticipantDataEntry(Condition.ParticipantName, FallbackNodeOwnerName, true, ContextMessage)
-				.AddConditionPrimaryData(Condition);
-
+			if (Condition.IsParticipantInvolved())
+			{
+				const FString ContextMessage = FString::Printf(TEXT("Adding Edge primary condition data from %s to Node %d"), *NodeContext, TargetIndex);
+				GetParticipantDataEntry(Condition.ParticipantName, FallbackNodeOwnerName, true, ContextMessage)
+                    .AddConditionPrimaryData(Condition);
+			}
 			if (Condition.IsSecondParticipantInvolved())
 			{
-				ContextMessage = FString::Printf(TEXT("Adding Edge secondary condition data from %s, to Node %d"), *NodeContext, TargetIndex);
+				const FString ContextMessage = FString::Printf(TEXT("Adding Edge secondary condition data from %s to Node %d"), *NodeContext, TargetIndex);
 				GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName, true, ContextMessage)
 					.AddConditionSecondaryData(Condition);
 			}
@@ -637,13 +639,15 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 		// Conditions from nodes
 		for (const FDlgCondition& Condition : Node->GetNodeEnterConditions())
 		{
-			FString ContextMessage = FString::Printf(TEXT("Adding primary condition data for %s"), *NodeContext);
-			GetParticipantDataEntry(Condition.ParticipantName, NodeParticipantName, true, ContextMessage)
-				.AddConditionPrimaryData(Condition);
-
+			if (Condition.IsParticipantInvolved())
+			{
+				const FString ContextMessage = FString::Printf(TEXT("Adding primary condition data for %s"), *NodeContext);
+				GetParticipantDataEntry(Condition.ParticipantName, NodeParticipantName, true, ContextMessage)
+                    .AddConditionPrimaryData(Condition);
+			}
 			if (Condition.IsSecondParticipantInvolved())
 			{
-				ContextMessage = FString::Printf(TEXT("Adding secondary condition data for %s"), *NodeContext);
+				const FString ContextMessage = FString::Printf(TEXT("Adding secondary condition data for %s"), *NodeContext);
 				GetParticipantDataEntry(Condition.OtherParticipantName, NodeParticipantName, true, ContextMessage)
                     .AddConditionSecondaryData(Condition);
 			}

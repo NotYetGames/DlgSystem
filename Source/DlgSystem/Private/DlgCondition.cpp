@@ -277,20 +277,13 @@ bool FDlgCondition::ValidateIsParticipantValid(const UObject* Participant, const
 
 bool FDlgCondition::IsParticipantInvolved() const
 {
-	switch (ConditionType)
-	{
-		case EDlgConditionType::HasSatisfiedChild:
-		case EDlgConditionType::WasNodeVisited:
-			return false;
-
-		default:
-			return true;
-	}
+	return ConditionType != EDlgConditionType::HasSatisfiedChild
+		&& ConditionType != EDlgConditionType::WasNodeVisited;
 }
 
 bool FDlgCondition::IsSecondParticipantInvolved() const
 {
-	return ConditionType != EDlgConditionType::WasNodeVisited
-		&& ConditionType != EDlgConditionType::HasSatisfiedChild
-		&& CompareType != EDlgCompare::ToConst;
+	return CompareType != EDlgCompare::ToConst
+		&& ConditionType != EDlgConditionType::WasNodeVisited
+		&& ConditionType != EDlgConditionType::HasSatisfiedChild;
 }

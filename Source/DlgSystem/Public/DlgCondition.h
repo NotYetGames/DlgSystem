@@ -117,6 +117,8 @@ public:
 	static bool EvaluateArray(const UDlgContext* Context, const TArray<FDlgCondition>& ConditionsArray, FName DefaultParticipantName = NAME_None);
 	bool IsConditionMet(const UDlgContext* Context, const UObject* Participant) const;
 
+	// returns true if ParticipantName has to belong to match with a valid Participant in order for the condition type to work */
+	bool IsParticipantInvolved() const;
 	bool IsSecondParticipantInvolved() const;
 
 protected:
@@ -131,9 +133,6 @@ protected:
 
 	// Checks Participant, prints warning if it is nullptr
 	bool ValidateIsParticipantValid(const UObject* Participant, const FString& ContextMessage) const;
-
-	// returns true if ParticipantName has to belong to match with a valid Participant in order for the condition type to work */
-	bool IsParticipantInvolved() const;
 
 public:
 	// Defines the way the condition is interpreted inside the condition array
