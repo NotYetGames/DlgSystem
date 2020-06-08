@@ -17,20 +17,37 @@ void UDlgNode::Serialize(FArchive& Ar)
 	Super::Serialize(Ar);
 	if (Ar.UE4Ver() >= VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
 	{
+		// NOTE: This modifies the Archive
+		// DO NOT REMOVE THIS
 		const FStripDataFlags StripFlags(Ar);
+
+		// Only in editor, add the graph node
 #if WITH_EDITOR
 		if (!StripFlags.IsEditorDataStripped())
 		{
 			Ar << GraphNode;
 		}
-#endif
+#endif // WITH_EDITOR
 	}
-#if WITH_EDITOR
 	else
 	{
+		// Super old version, is this possible?
+#if WITH_EDITOR
 		Ar << GraphNode;
+#endif // WITH_EDITOR
 	}
+}
+
+void UDlgNode::AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector)
+{
+	UDlgNode* This = CastChecked<UDlgNode>(InThis);
+
+	// Add the GraphNode to the referenced objects
+#if WITH_EDITOR
+	Collector.AddReferencedObject(This->GraphNode, This);
 #endif
+
+	Super::AddReferencedObjects(InThis, Collector);
 }
 
 #if WITH_EDITOR
@@ -53,13 +70,7 @@ void UDlgNode::PostEditChangeChainProperty(struct FPropertyChangedChainEvent& Pr
 	Super::PostEditChangeChainProperty(PropertyChangedEvent);
 }
 
-void UDlgNode::AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector)
-{
-	// Add the GraphNode to the referenced objects
-	UDlgNode* This = CastChecked<UDlgNode>(InThis);
-	Collector.AddReferencedObject(This->GraphNode, This);
-	Super::AddReferencedObjects(InThis, Collector);
-}
+
 #endif //WITH_EDITOR
 // End UObject interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

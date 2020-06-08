@@ -131,22 +131,22 @@ protected:
 
 	/** Node data that you can customize yourself with your own data types */
 	UPROPERTY(EditAnywhere, Instanced, Category = DialogueNodeData)
-	UDlgNodeData* NodeData;
+	UDlgNodeData* NodeData = nullptr;
 
 	// Voice attached to this node. The Sound Wave variant.
 	// NOTE: You should probably use the NodeData
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
-	USoundBase* VoiceSoundWave;
+	USoundBase* VoiceSoundWave = nullptr;
 
 	// Voice attached to this node. The Dialogue Wave variant. Only the first wave from the dialogue context array should be used.
 	// NOTE: You should probably use the NodeData
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
-	UDialogueWave* VoiceDialogueWave;
+	UDialogueWave* VoiceDialogueWave = nullptr;
 
 	// Any generic object you would like
 	// NOTE: You should probably use the NodeData
 	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DlgSaveOnlyReference))
-	UObject* GenericData;
+	UObject* GenericData = nullptr;
 
 	/** Constructed at runtime from the original text and the arguments if there is any. */
 	FText ConstructedText;

@@ -297,6 +297,32 @@ bool FDialogueEditorUtilities::AreDialogueNodesInSyncWithGraphNodes(const UDlgDi
 	return false;
 }
 
+UDlgNode* FDialogueEditorUtilities::GetClosestNodeFromGraphNode(UEdGraphNode* GraphNode)
+{
+	const UDialogueGraphNode_Base* BaseNode = Cast<UDialogueGraphNode_Base>(GraphNode);
+	if (!BaseNode)
+	{
+		return nullptr;
+	}
+
+	// Node
+	if (const UDialogueGraphNode* Node = Cast<UDialogueGraphNode>(BaseNode))
+	{
+		return Node->GetMutableDialogueNode();
+	}
+
+	// Edge
+	if (const UDialogueGraphNode_Edge* EdgeNode = Cast<UDialogueGraphNode_Edge>(BaseNode))
+	{
+		if (EdgeNode->HasParentNode())
+			return EdgeNode->GetParentNode()->GetMutableDialogueNode();
+		if (EdgeNode->HasChildNode())
+			return EdgeNode->GetChildNode()->GetMutableDialogueNode();
+	}
+
+	return nullptr;
+}
+
 void FDialogueEditorUtilities::AutoPositionGraphNodes(UDialogueGraphNode* RootNode,
 	const TArray<UDialogueGraphNode*>& GraphNodes, int32 OffsetBetweenColumnsX, int32 OffsetBetweenRowsY,
 	bool bIsDirectionVertical)
@@ -687,7 +713,7 @@ EAppReturnType::Type FDialogueEditorUtilities::ShowMessageBox(EAppMsgType::Type 
 	return FPlatformMisc::MessageBoxExt(MsgType, *Text, *Caption);
 }
 
-void FDialogueEditorUtilities::ReplaceReferencesToOldIndiciesWithNew(const TArray<UDialogueGraphNode*>& GraphNodes,
+void FDialogueEditorUtilities::ReplaceReferencesToOldIndicesWithNew(const TArray<UDialogueGraphNode*>& GraphNodes,
 	const TMap<int32, int32>& OldToNewIndexMap)
 {
 	// helper function to set the new IntValue on the condition if it exists in the history and it is different

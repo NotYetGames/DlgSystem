@@ -4,6 +4,7 @@
 #include "CoreMinimal.h"
 #include "DlgConditionCustom.h"
 
+
 #include "DlgCondition.generated.h"
 
 class IDlgDialogueParticipant;
@@ -88,7 +89,30 @@ struct DLGSYSTEM_API FDlgCondition
 	GENERATED_USTRUCT_BODY()
 
 public:
-	bool operator==(const FDlgCondition& Other) const;
+	//
+	// ICppStructOps Interface
+	//
+	bool operator==(const FDlgCondition& Other) const
+	{
+		return Strength == Other.Strength &&
+	        ConditionType == Other.ConditionType &&
+	        ParticipantName == Other.ParticipantName &&
+	        CallbackName == Other.CallbackName &&
+	        IntValue == Other.IntValue &&
+	        FMath::IsNearlyEqual(FloatValue, Other.FloatValue) &&
+	        NameValue == Other.NameValue &&
+	        bBoolValue == Other.bBoolValue &&
+	        bLongTermMemory == Other.bLongTermMemory &&
+	        Operation == Other.Operation &&
+	        CompareType == Other.CompareType &&
+	        OtherParticipantName == Other.OtherParticipantName &&
+	        OtherVariableName == Other.OtherVariableName &&
+	        CustomCondition == Other.CustomCondition;
+	}
+
+	//
+	// Own methods
+	//
 
 	static bool EvaluateArray(const UDlgContext* Context, const TArray<FDlgCondition>& ConditionsArray, FName DefaultParticipantName = NAME_None);
 	bool IsConditionMet(const UDlgContext* Context, const UObject* Participant) const;
@@ -136,7 +160,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	EDlgCompare CompareType = EDlgCompare::ToConst;
 
-
 	// Name of the other participant (speaker) the check is performed against (with some compare types)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	FName OtherParticipantName;
@@ -144,7 +167,6 @@ public:
 	// Name of the variable of the other participant the value is checked against (with some compare types)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
 	FName OtherVariableName;
-
 
 	// Node index for "node already visited" condition, the value the participant's int is checked against otherwise
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
@@ -169,9 +191,14 @@ public:
 
 	// The custom Condition you must extend via blueprint
 	UPROPERTY(Instanced, EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
-	UDlgConditionCustom* CustomCondition;
+	UDlgConditionCustom* CustomCondition = nullptr;
+};
 
-public:
-	// Operator overload for serialization
-	friend FArchive& operator<<(FArchive &Ar, FDlgCondition& Condition);
+template<>
+struct TStructOpsTypeTraits<FDlgCondition> : public TStructOpsTypeTraitsBase2<FDlgCondition>
+{
+	enum
+	{
+		WithIdenticalViaEquality = true
+    };
 };
