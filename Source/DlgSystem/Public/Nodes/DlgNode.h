@@ -30,18 +30,17 @@ class UDlgDialogue;
  *  Depending on the implementation in the child class the dialogue node can contain one or more lines of one or more participants,
  *  or simply some logic to go on in the UDlgNode graph
  */
-UCLASS(BlueprintType, Abstract, EditInlineNew)
+UCLASS(BlueprintType, Abstract, EditInlineNew, ClassGroup = "Dialogue")
 class DLGSYSTEM_API UDlgNode : public UObject
 {
 	GENERATED_BODY()
 
 public:
 	// Begin UObject Interface.
-	/** UObject serializer. */
 	void Serialize(FArchive& Ar) override;
-
-	/** @return a one line description of an object. */
 	FString GetDesc() override { return TEXT("INVALID DESCRIPTION"); }
+
+	static void AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector);
 
 #if WITH_EDITOR
 	/**
@@ -56,15 +55,6 @@ public:
 	 * is located at the tail of the list.  The head of the list of the FNYStructProperty member variable that contains the property that was modified.
 	 */
 	void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent) override;
-
-	/**
-	 * Callback used to allow object register its direct object references that are not already covered by
-	 * the token stream.
-	 *
-	 * @param InThis Object to collect references from.
-	 * @param Collector	FReferenceCollector objects to be used to collect references.
-	*/
-	static void AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector);
 	// End UObject Interface.
 
 	// Begin own function

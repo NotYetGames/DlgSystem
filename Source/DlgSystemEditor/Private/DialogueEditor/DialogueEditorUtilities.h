@@ -14,7 +14,7 @@
 
 class UDlgDialogue;
 class UEdGraphSchema;
-struct FDlgNode;
+class UDlgNode;
 class UEdGraph;
 
 
@@ -83,6 +83,9 @@ public:
 
 	/** Tells us if the number of dialogue nodes matches with the number of graph nodes (corresponding to dialogues). */
 	static bool AreDialogueNodesInSyncWithGraphNodes(const UDlgDialogue* Dialogue);
+
+	// Tries to get the closest UDlgNode for a  UEdGraphNode
+	static UDlgNode* GetClosestNodeFromGraphNode(UEdGraphNode* GraphNode);
 
 	/** Gets the Dialogue from the Graph */
 	static UDlgDialogue* GetDialogueForGraph(const UEdGraph* Graph)
@@ -179,7 +182,7 @@ public:
 	 * @param	GraphNodes			The nodes we are replacing the old references
 	 * @param	OldToNewIndexMap	Map that tells us the mapping from old index to new index. Maps from old index -> new index
 	 */
-	static void ReplaceReferencesToOldIndiciesWithNew(const TArray<UDialogueGraphNode*>& GraphNodes,
+	static void ReplaceReferencesToOldIndicesWithNew(const TArray<UDialogueGraphNode*>& GraphNodes,
 													  const TMap<int32, int32>& OldToNewIndexMap);
 
 	/** Gets the Dialogue for the provided UEdGraphNode_Comment  */

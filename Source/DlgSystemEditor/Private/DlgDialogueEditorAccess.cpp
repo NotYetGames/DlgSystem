@@ -124,3 +124,20 @@ void FDlgDialogueEditorAccess::UpdateDialogueToVersion_UseOnlyOneOutputAndInputP
 	Dialogue->EnableCompileDialogue();
 	Dialogue->MarkPackageDirty();
 }
+
+
+void FDlgDialogueEditorAccess::SetNewOuterForObjectFromGraphNode(UObject* Object, UEdGraphNode* GraphNode) const
+{
+	if (!Object || !GraphNode)
+	{
+		return;
+	}
+
+	UDlgNode* ClosestNode = FDialogueEditorUtilities::GetClosestNodeFromGraphNode(GraphNode);
+	if (!ClosestNode)
+	{
+		return;
+	}
+
+	Object->Rename(nullptr, ClosestNode,  REN_DontCreateRedirectors);
+}

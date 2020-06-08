@@ -1,11 +1,25 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #pragma once
-#include "DlgEventCustom.h"
+
+#include "DlgObject.h"
+
 
 #include "DlgManager.h"
 #include "UObject/Object.h"
 
-UWorld* UDlgEventCustom::GetWorld() const
+void UDlgObject::PostInitProperties()
+{
+#if WITH_EDITOR
+	if (UEdGraphNode* GraphNode =  Cast<UEdGraphNode>(GetOuter()))
+	{
+		UDlgDialogue::GetDialogueEditorAccess()->SetNewOuterForObjectFromGraphNode(this, GraphNode);
+	}
+#endif
+
+	Super::PostInitProperties();
+}
+
+UWorld* UDlgObject::GetWorld() const
 {
 	if (HasAnyFlags(RF_ArchetypeObject | RF_ClassDefaultObject))
 	{
