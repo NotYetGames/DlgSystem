@@ -4,7 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 
-#include "DlgContextInternal.h"
+#include "DlgContext.h"
 #include "Logging/DlgLogger.h"
 #include "DlgLocalizationHelper.h"
 #include "DlgDialogueParticipant.h"

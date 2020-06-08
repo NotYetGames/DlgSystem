@@ -3,7 +3,6 @@
 
 #include "DlgObject.h"
 
-
 #include "DlgManager.h"
 #include "UObject/Object.h"
 

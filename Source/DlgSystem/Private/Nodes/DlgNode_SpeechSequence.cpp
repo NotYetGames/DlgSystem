@@ -1,6 +1,6 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "Nodes/DlgNode_SpeechSequence.h"
-#include "DlgContextInternal.h"
+#include "DlgContext.h"
 #include "DlgLocalizationHelper.h"
 
 

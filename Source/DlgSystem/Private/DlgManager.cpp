@@ -13,7 +13,7 @@
 #include "DlgDialogueParticipant.h"
 #include "DlgDialogue.h"
 #include "DlgMemory.h"
-#include "DlgContextInternal.h"
+#include "DlgContext.h"
 #include "Logging/DlgLogger.h"
 #include "DlgHelper.h"
 #include "NYReflectionHelper.h"
@@ -104,8 +104,8 @@ UDlgContext* UDlgManager::StartDialogue(UDlgDialogue* Dialogue, const TArray<UOb
 		return nullptr;
 	}
 
-	UDlgContextInternal* Context = NewObject<UDlgContextInternal>(Participants[0], UDlgContextInternal::StaticClass());
-	if (Context->Initialize(Dialogue, ParticipantBinding))
+	auto* Context = NewObject<UDlgContext>(Participants[0], UDlgContext::StaticClass());
+	if (Context->Start(Dialogue, ParticipantBinding))
 	{
 		return Context;
 	}
@@ -117,16 +117,14 @@ UDlgContext* UDlgManager::StartDialogue(UDlgDialogue* Dialogue, const TArray<UOb
 bool UDlgManager::CouldStartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants)
 {
 	TMap<FName, UObject*> ParticipantBinding;
-
 	if (!ConstructParticipantMap(Dialogue, Participants, ParticipantBinding))
 	{
 		return false;
 	}
 
-	UDlgContextInternal* Context = NewObject<UDlgContextInternal>(Participants[0], UDlgContextInternal::StaticClass());
-	return Context->CouldBeInitialized(Dialogue, ParticipantBinding);
+	const auto* Context = NewObject<UDlgContext>(Participants[0], UDlgContext::StaticClass());
+	return Context->CouldBeStarted(Dialogue, ParticipantBinding);
 }
-
 
 UDlgContext* UDlgManager::ResumeDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants, int32 StartIndex, const TSet<int32>& AlreadyVisitedNodes, bool bFireEnterEvents)
 {
@@ -137,8 +135,8 @@ UDlgContext* UDlgManager::ResumeDialogue(UDlgDialogue* Dialogue, UPARAM(ref)cons
 		return nullptr;
 	}
 
-	UDlgContextInternal* Context = NewObject<UDlgContextInternal>(Participants[0], UDlgContextInternal::StaticClass());
-	if (Context->Initialize(Dialogue, ParticipantBinding, StartIndex, AlreadyVisitedNodes, bFireEnterEvents))
+	auto* Context = NewObject<UDlgContext>(Participants[0], UDlgContext::StaticClass());
+	if (Context->StartFromIndex(Dialogue, ParticipantBinding, StartIndex, AlreadyVisitedNodes, bFireEnterEvents))
 	{
 		return Context;
 	}

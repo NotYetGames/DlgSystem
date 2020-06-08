@@ -1,7 +1,8 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DlgEdge.h"
+
 #include "DlgSystemPrivatePCH.h"
-#include "DlgContextInternal.h"
+#include "DlgContext.h"
 #include "DlgLocalizationHelper.h"
 #include "Nodes/DlgNode_Selector.h"
 #include "Nodes/DlgNode_Speech.h"

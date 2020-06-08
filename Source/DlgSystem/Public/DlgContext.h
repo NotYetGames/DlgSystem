@@ -1,8 +1,10 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #pragma once
 
+#include "DlgObject.h"
 #include "DlgDialogue.h"
 #include "Nodes/DlgNode.h"
+
 #include "DlgContext.generated.h"
 
 class USoundWave;
@@ -32,8 +34,8 @@ public:
  *  If the return value is false the dialogue is over and the context should be dropped
  *  This abstract class contains the outer functionality only
  */
-UCLASS(BlueprintType, Abstract)
-class DLGSYSTEM_API UDlgContext : public UObject
+UCLASS(BlueprintType)
+class DLGSYSTEM_API UDlgContext : public UDlgObject
 {
 	GENERATED_BODY()
 public:
@@ -42,7 +44,7 @@ public:
 	// UObject Interface
 	//
 
-	UWorld* GetWorld() const override;
+	void PostInitProperties() override { Super::PostInitProperties(); }
 
 	//
 	// Own methods
@@ -56,7 +58,7 @@ public:
 	 * @return true if the dialogue did not end, false otherwise
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
-	virtual bool ChooseChild(int32 OptionIndex);
+	bool ChooseChild(int32 OptionIndex);
 
 	/**
 	 *  Exactly as above but expects an index from the AllOptions array
@@ -70,7 +72,7 @@ public:
 	 * If an option can appear/disappear real time in the middle of the conversation this function should be called manually each frame
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
-	virtual void ReevaluateChildren();
+	void ReevaluateChildren();
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Control")
 	bool HasDialogueEnded() const { return bDialogueEnded; }
@@ -227,36 +229,60 @@ public:
 	TArray<FDlgEdgeData>& GetAllOptionsArray() { return AllChildren; }
 	const TMap<FName, UObject*>& GetParticipants() const { return Participants; }
 
-	//
-	// Methods implemented by UDlgContextInternal
-	//
+	UDlgNode* GetActiveNode() { return GetNode(ActiveNodeIndex); }
+	const UDlgNode* GetActiveNode() const { return GetNode(ActiveNodeIndex); }
 
 	// the Dialogue jumps to the defined node, or the function returns with false, if the conversation is over
 	// the Dialogue jumps to the defined node, or the function returns with false if the conversation is over
 	// Depending on the node the EnterNode() call can lead to other EnterNode() calls - having NodeIndex as active node after the call
 	// is not granted
 	// Conditions are not checked here - they are expected to be satisfied
-	virtual bool EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep);
-
-	virtual UDlgNode* GetActiveNode() { return GetNode(ActiveNodeIndex); }
-	virtual const UDlgNode* GetActiveNode() const { return GetNode(ActiveNodeIndex); }
+	bool EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep);
 
 	// Gets the Node at the NodeIndex index
-	virtual UDlgNode* GetNode(int32 NodeIndex);
-	virtual const UDlgNode* GetNode(int32 NodeIndex) const;
+	UDlgNode* GetNode(int32 NodeIndex);
+	const UDlgNode* GetNode(int32 NodeIndex) const;
 
 	// Was node with NodeIndex visited?
-	virtual bool WasNodeVisitedInThisContext(int32 NodeIndex) const { return VisitedNodeIndices.Contains(NodeIndex); }
+	bool WasNodeVisitedInThisContext(int32 NodeIndex) const { return VisitedNodeIndices.Contains(NodeIndex); }
 
 	// Checks the enter conditions of the node.
 	// return false if they are not satisfied or if the index is invalid
-	virtual bool IsNodeEnterable(int32 NodeIndex, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
+	bool IsNodeEnterable(int32 NodeIndex, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
+
+	/**
+	* Initializes/Starts the context, the first (start) node is selected and the first valid child node is entered.
+	* Called by the UDlgManager which creates the context
+	*
+	* @return true on success or false otherwise.
+	*/
+	bool Start(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
+
+	/**
+	* Initializes/Start the context using the given node as entry point
+	* This is useful to resume a dialogue
+	*
+	* @return true on success or false otherwise.
+	*/
+	bool StartFromIndex(
+		UDlgDialogue* InDialogue,
+		const TMap<FName, UObject*>& InParticipants,
+		int32 StartIndex,
+		const TSet<int32>& VisitedNodes,
+		bool bFireEnterEvents
+	);
+
+	/**
+	* Checks if the context could be started, used to check if there is any reachable node from the start node
+	*
+	* @return true if could be, false otherwise.
+	*/
+	bool CouldBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants) const;
 
 protected:
-	/** Current Dialogue used in this context at runtime. */
+	// Current Dialogue used in this context at runtime.
 	UPROPERTY()
 	UDlgDialogue* Dialogue = nullptr;
-
 
 	// All object is expected to implement the IDlgDialogueParticipant interface
 	// the key is the return value of IDlgDialogueParticipant::GetParticipantName()

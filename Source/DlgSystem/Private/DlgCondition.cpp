@@ -3,8 +3,8 @@
 
 #include "DlgSystemPrivatePCH.h"
 #include "DlgMemory.h"
+#include "DlgContext.h"
 #include "Nodes/DlgNode.h"
-#include "DlgContextInternal.h"
 #include "NYReflectionHelper.h"
 #include "Kismet/GameplayStatics.h"
 #include "DlgDialogueParticipant.h"

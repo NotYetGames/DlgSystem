@@ -5,30 +5,9 @@
 #include "Nodes/DlgNode.h"
 #include "Nodes/DlgNode_End.h"
 #include "DlgDialogueParticipant.h"
-#include "DlgManager.h"
 #include "DlgMemory.h"
 #include "Engine/Texture2D.h"
 #include "Logging/DlgLogger.h"
-
-UWorld* UDlgContext::GetWorld() const
-{
-	if (HasAnyFlags(RF_ArchetypeObject | RF_ClassDefaultObject))
-	{
-		return nullptr;
-	}
-
-	// Get from outer
-	if (UObject* Outer = GetOuter())
-	{
-		if (UWorld* World = Outer->GetWorld())
-		{
-			return World;
-		}
-	}
-
-	// Last resort
-	return UDlgManager::GetDialogueWorld();
-}
 
 bool UDlgContext::ChooseChild(int32 OptionIndex)
 {
@@ -81,7 +60,7 @@ void UDlgContext::ReevaluateChildren()
 	if (!IsValid(Node))
 	{
 		FDlgLogger::Get().Errorf(
-			TEXT("Dialogue = `%s` Failed to update dialogue options for  - invalid ActiveNodeIndex %d"),
+			TEXT("Dialogue = `%s` Failed to update dialogue options for - invalid ActiveNodeIndex %d"),
 			*Dialogue->GetPathName(), ActiveNodeIndex
 		);
 		return;
@@ -392,7 +371,6 @@ bool UDlgContext::IsEdgeConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisf
 	}
 
 	const TArray<UDlgNode*>& Nodes = Dialogue->GetNodes();
-
 	if (Nodes.IsValidIndex(TargetIndex))
 	{
 		return Cast<UDlgNode_End>(Nodes[TargetIndex]) != nullptr;
@@ -456,4 +434,96 @@ bool UDlgContext::IsNodeEnterable(int32 NodeIndex, TSet<const UDlgNode*> Already
 	}
 
 	return false;
+}
+
+bool UDlgContext::CouldBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants) const
+{
+	if (!InDialogue)
+	{
+		return false;
+	}
+
+	// Evaluate edges/children of the start node
+	const UDlgNode& StartNode = InDialogue->GetStartNode();
+	for (const FDlgEdge& ChildLink : StartNode.GetNodeChildren())
+	{
+		if (ChildLink.IsValid() && ChildLink.Evaluate(this, {}))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool UDlgContext::Start(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants)
+{
+	if (!InDialogue)
+	{
+		FDlgLogger::Get().Errorf(TEXT("Failed to start Dialogue because the supplied Dialogue Asset is Invalid (nullptr)"));
+		return false;
+	}
+
+	Dialogue = InDialogue;
+	Participants = InParticipants;
+
+	// Evaluate edges/children of the start node
+	const UDlgNode& StartNode = Dialogue->GetStartNode();
+	for (const FDlgEdge& ChildLink : StartNode.GetNodeChildren())
+	{
+		if (ChildLink.IsValid() && ChildLink.Evaluate(this, {}))
+		{
+			if (EnterNode(ChildLink.TargetIndex, {}))
+			{
+				return true;
+			}
+		}
+	}
+
+	FDlgLogger::Get().Errorf(
+        TEXT("Failed to start Dialogue = `%s` - all possible start node condition failed. "
+            "Edge conditions and children enter conditions from the start node are not satisfied."),
+        *InDialogue->GetPathName()
+    );
+	return false;
+}
+
+bool UDlgContext::StartFromIndex(
+	UDlgDialogue* InDialogue,
+	const TMap<FName, UObject*>& InParticipants,
+	int32 StartIndex,
+	const TSet<int32>& VisitedNodes,
+	bool bFireEnterEvents
+)
+{
+	if (!InDialogue)
+	{
+		FDlgLogger::Get().Errorf(TEXT("Failed to start Dialogue from Index because the supplied Dialogue Asset is Invalid (nullptr)"));
+		return false;
+	}
+
+	Dialogue = InDialogue;
+	Participants = InParticipants;
+	VisitedNodeIndices = VisitedNodes;
+
+	UDlgNode* Node = GetNode(StartIndex);
+	if (!IsValid(Node))
+	{
+		FDlgLogger::Get().Errorf(
+            TEXT("Failed to start dialogue = `%s` at index %d - is it invalid index?!"),
+            *Dialogue->GetPathName(), StartIndex
+        );
+		return false;
+	}
+
+	if (bFireEnterEvents)
+	{
+		return EnterNode(StartIndex, {});
+	}
+
+	ActiveNodeIndex = StartIndex;
+	FDlgMemory::Get().SetNodeVisited(Dialogue->GetDlgGuid(), ActiveNodeIndex);
+	VisitedNodeIndices.Add(ActiveNodeIndex);
+
+	return Node->ReevaluateChildren(this, {});
 }

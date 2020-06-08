@@ -4,7 +4,7 @@
 #include "UObject/TextProperty.h"
 
 #include "DlgSystemPrivatePCH.h"
-#include "DlgContextInternal.h"
+#include "DlgContext.h"
 #include "DlgDialogueParticipant.h"
 #include "NYReflectionHelper.h"
 #include "Logging/DlgLogger.h"
