@@ -9,16 +9,6 @@
 #include "NYReflectionHelper.h"
 #include "Logging/DlgLogger.h"
 
-
-FArchive& operator<<(FArchive &Ar, FDlgTextArgument& DlgCondition)
-{
-	Ar << DlgCondition.DisplayString;
-	Ar << DlgCondition.Type;
-	Ar << DlgCondition.ParticipantName;
-	Ar << DlgCondition.VariableName;
-	return Ar;
-}
-
 FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgContext* Context, FName NodeOwner) const
 {
 	// If participant name is not valid we use the node owner name

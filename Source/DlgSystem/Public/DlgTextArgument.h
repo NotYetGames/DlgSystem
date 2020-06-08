@@ -36,13 +36,26 @@ struct DLGSYSTEM_API FDlgTextArgument
 	GENERATED_USTRUCT_BODY()
 
 public:
+	//
+	// ICppStructOps Interface
+	//
 
-	bool operator==(const FDlgTextArgument& Other) const;
+	bool operator==(const FDlgTextArgument& Other) const
+	{
+		return	DisplayString == Other.DisplayString &&
+			Type == Other.Type &&
+			ParticipantName == Other.ParticipantName &&
+			VariableName == Other.VariableName;
+	}
 
-	/** Construct the argument for usage in FText::Format */
+	//
+	// Own methods
+	//
+
+	// Construct the argument for usage in FText::Format
 	FFormatArgumentValue ConstructFormatArgumentValue(const UDlgContext* Context, FName NodeOwner) const;
 
-	/** Helper method to update the array InOutArgumentArray with the new arguments from Text. */
+	// Helper method to update the array InOutArgumentArray with the new arguments from Text.
 	static void UpdateTextArgumentArray(const FText& Text, TArray<FDlgTextArgument>& InOutArgumentArray);
 
 public:
@@ -57,18 +70,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueTextArgument)
 	FName VariableName;
-
-public:
-
-	// Operator overload for serialization
-	friend FArchive& operator<<(FArchive &Ar, FDlgTextArgument& DlgCondition);
 };
 
-
-FORCEINLINE bool FDlgTextArgument::operator==(const FDlgTextArgument& Other) const
+template<>
+struct TStructOpsTypeTraits<FDlgTextArgument> : public TStructOpsTypeTraitsBase2<FDlgTextArgument>
 {
-	return	DisplayString == Other.DisplayString &&
-			Type == Other.Type &&
-			ParticipantName == Other.ParticipantName &&
-			VariableName == Other.VariableName;
-}
+	enum
+	{
+		WithIdenticalViaEquality = true
+    };
+};

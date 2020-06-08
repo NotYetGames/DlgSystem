@@ -307,7 +307,7 @@ void FDialogueCompilerContext::FixBrokenOldIndices()
 		return;
 	}
 
-	FDialogueEditorUtilities::ReplaceReferencesToOldIndiciesWithNew(DialogueGraphNodes, IndicesHistory);
+	FDialogueEditorUtilities::ReplaceReferencesToOldIndicesWithNew(DialogueGraphNodes, IndicesHistory);
 }
 
 void FDialogueCompilerContext::SetNextAvailableIndexToNode(UDialogueGraphNode* GraphNode)

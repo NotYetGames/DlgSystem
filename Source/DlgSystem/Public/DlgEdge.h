@@ -23,11 +23,21 @@ struct DLGSYSTEM_API FDlgEdge
 	GENERATED_USTRUCT_BODY()
 
 public:
+	// Creates a simple edge without text, without conditions
+	FDlgEdge(int32 InTargetIndex = INDEX_NONE) : TargetIndex(InTargetIndex) {}
+
+	//
+	// ICppStructOps Interface
+	//
+
 	bool operator==(const FDlgEdge& Other) const
 	{
 		return TargetIndex == Other.TargetIndex &&
-			Text.EqualTo(Other.Text) &&
-			Conditions == Other.Conditions;
+            SpeakerState == Other.SpeakerState &&
+            Text.EqualTo(Other.Text) &&
+            bIncludeInAllOptionListIfUnsatisfied == Other.bIncludeInAllOptionListIfUnsatisfied &&
+            TextArguments == Other.TextArguments &&
+            Conditions == Other.Conditions;
 	}
 
 	bool operator!=(const FDlgEdge& Other) const
@@ -35,11 +45,9 @@ public:
 		return !(*this == Other);
 	}
 
-	// Operator overload for serialization
-	friend FArchive& operator<<(FArchive &Ar, FDlgEdge& DlgEdge);
-
-	/** Creates a simple edge without text, without conditions */
-	FDlgEdge(int32 InTargetIndex = INDEX_NONE) : TargetIndex(InTargetIndex) {}
+	//
+	// Own methods
+	//
 
 	// Is the Text property visible on this edge, the edges comes from the ParentNode
 	static bool IsTextVisible(const UDlgNode* ParentNode);
@@ -56,10 +64,10 @@ public:
 	void RebuildTextArguments() { FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments); }
 	void RebuildTextArgumentsFromPreview(const FText& Preview) { FDlgTextArgument::UpdateTextArgumentArray(Preview, TextArguments); }
 
-	/** Returns with true if every condition attached to the edge and every enter condition of the target node are satisfied */
+	// Returns with true if every condition attached to the edge and every enter condition of the target node are satisfied //
 	bool Evaluate(const UDlgContext* Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
-	/** Constructs the ConstructedText. */
+	// Constructs the ConstructedText.
 	void RebuildConstructedText(const UDlgContext* Context, FName NodeOwnerName);
 
 	const TArray<FDlgTextArgument>& GetTextArguments() const { return TextArguments; }
@@ -92,11 +100,8 @@ public:
 	const FText& GetUnformattedText() const { return Text; }
 	FText& GetMutableUnformattedText() { return Text; }
 
-	/** Returns if the Edge is valid, has the TargetIndex non negative  */
-	bool IsValid() const
-	{
-		return TargetIndex > INDEX_NONE;
-	}
+	// Returns if the Edge is valid, has the TargetIndex non negative
+	bool IsValid() const { return TargetIndex > INDEX_NONE; }
 
 	static const FDlgEdge& GetInvalidEdge();
 
@@ -134,4 +139,13 @@ protected:
 
 	/** Constructed at runtime from the original text and the arguments if there is any.*/
 	FText ConstructedText;
+};
+
+template<>
+struct TStructOpsTypeTraits<FDlgEdge> : public TStructOpsTypeTraitsBase2<FDlgEdge>
+{
+	enum
+	{
+		WithIdenticalViaEquality = true
+    };
 };

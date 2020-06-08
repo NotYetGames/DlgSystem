@@ -39,12 +39,30 @@ struct DLGSYSTEM_API FDlgEvent
 	GENERATED_USTRUCT_BODY()
 
 public:
+	//
+	// ICppStructOps Interface
+	//
+
+	bool operator==(const FDlgEvent& Other) const
+	{
+		return ParticipantName == Other.ParticipantName &&
+			EventName == Other.EventName &&
+			IntValue == Other.IntValue &&
+			FMath::IsNearlyEqual(FloatValue, Other.FloatValue, KINDA_SMALL_NUMBER) &&
+			bDelta == Other.bDelta &&
+			bValue == Other.bValue &&
+			EventType == Other.EventType &&
+			CustomEvent == Other.CustomEvent;
+	}
+
+	//
+	// Own methods
+	//
+
 	// Executes the event
 	// TargetParticipant is expected to implement IDlgDialogueParticipant interface
 	void Call(UDlgContext* Context, UObject* TargetParticipant) const;
 
-	bool operator==(const FDlgEvent& Other) const;
-	friend FArchive& operator<<(FArchive &Ar, FDlgEvent& Event);
 
 protected:
 	bool ValidateIsParticipantValid(const UObject* Participant) const;
@@ -84,5 +102,14 @@ public:
 
 	// The custom Event you must extend via blueprint
 	UPROPERTY(EditAnywhere, Instanced, Category = DialogueEventData)
-	UDlgEventCustom* CustomEvent;
+	UDlgEventCustom* CustomEvent = false;
+};
+
+template<>
+struct TStructOpsTypeTraits<FDlgEvent> : public TStructOpsTypeTraitsBase2<FDlgEvent>
+{
+	enum
+	{
+		WithIdenticalViaEquality = true
+    };
 };

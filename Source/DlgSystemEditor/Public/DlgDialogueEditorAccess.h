@@ -14,11 +14,12 @@ public:
 	FDlgDialogueEditorAccess() {}
 	~FDlgDialogueEditorAccess() {}
 
-	void UpdateGraphNodeEdges(UEdGraphNode* GraphNode);
+	void UpdateGraphNodeEdges(UEdGraphNode* GraphNode) override;
 	UEdGraph* CreateNewDialogueGraph(UDlgDialogue* Dialogue) const override;
 	void CompileDialogueNodesFromGraphNodes(UDlgDialogue* Dialogue) const override;
 	void RemoveAllGraphNodes(UDlgDialogue* Dialogue) const override;
 	void UpdateDialogueToVersion_UseOnlyOneOutputAndInputPin(UDlgDialogue* Dialogue) const override;
+	void SetNewOuterForObjectFromGraphNode(UObject* Object, UEdGraphNode* GraphNode) const override;
 
 	bool AreDialogueNodesInSyncWithGraphNodes(UDlgDialogue* Dialogue) const override
 	{

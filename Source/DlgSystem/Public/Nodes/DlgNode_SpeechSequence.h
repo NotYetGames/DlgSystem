@@ -34,7 +34,7 @@ public:
 
 	/** Node data that you can customize yourself with your own data types */
 	UPROPERTY(EditAnywhere, Instanced, Category = DialogueNodeData)
-	UDlgNodeData* NodeData;
+	UDlgNodeData* NodeData = nullptr;
 
 	// Voice attached to this node. The Sound Wave variant.
 	// NOTE: You should probably use the NodeData
