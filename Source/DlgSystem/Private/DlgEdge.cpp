@@ -120,13 +120,3 @@ void FDlgEdge::RebuildConstructedText(const UDlgContext* Context, FName NodeOwne
 	ConstructedText = FText::AsCultureInvariant(FText::Format(Text, OrderedArguments));
 }
 
-
-FArchive& operator<<(FArchive &Ar, FDlgEdge& DlgEdge)
-{
-	Ar << DlgEdge.TargetIndex;
-	Ar << DlgEdge.Text;
-	Ar << DlgEdge.Conditions;
-	Ar << DlgEdge.SpeakerState;
-	Ar << DlgEdge.bIncludeInAllOptionListIfUnsatisfied;
-	return Ar;
-}

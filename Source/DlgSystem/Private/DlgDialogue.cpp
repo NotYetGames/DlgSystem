@@ -641,9 +641,12 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 			GetParticipantDataEntry(Condition.ParticipantName, NodeParticipantName, true, ContextMessage)
 				.AddConditionPrimaryData(Condition);
 
-			ContextMessage = FString::Printf(TEXT("Adding secondary condition data for %s"), *NodeContext);
-			GetParticipantDataEntry(Condition.OtherParticipantName, NodeParticipantName, true, ContextMessage)
-				.AddConditionSecondaryData(Condition);
+			if (Condition.IsSecondParticipantInvolved())
+			{
+				ContextMessage = FString::Printf(TEXT("Adding secondary condition data for %s"), *NodeContext);
+				GetParticipantDataEntry(Condition.OtherParticipantName, NodeParticipantName, true, ContextMessage)
+                    .AddConditionSecondaryData(Condition);
+			}
 		}
 
 		// Gather Edge Data

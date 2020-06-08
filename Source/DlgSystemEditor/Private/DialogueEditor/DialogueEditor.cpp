@@ -1041,7 +1041,7 @@ void FDialogueEditor::PasteNodesHere(const FVector2D& Location)
 	}
 
 	// First fix weak references
-	FDialogueEditorUtilities::ReplaceReferencesToOldIndiciesWithNew(GraphNodes, OldToNewIndexMap);
+	FDialogueEditorUtilities::ReplaceReferencesToOldIndicesWithNew(GraphNodes, OldToNewIndexMap);
 
 	// Compile
 	CheckAll();

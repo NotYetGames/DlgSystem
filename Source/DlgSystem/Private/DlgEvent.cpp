@@ -78,29 +78,3 @@ bool FDlgEvent::ValidateIsParticipantValid(const UObject* Participant) const
 	);
 	return false;
 }
-
-FArchive& operator<<(FArchive& Ar, FDlgEvent& Event)
-{
-	Ar << Event.ParticipantName;
-	Ar << Event.EventName;
-	Ar << Event.IntValue;
-	Ar << Event.FloatValue;
-	Ar << Event.NameValue;
-	Ar << Event.bDelta;
-	Ar << Event.bValue;
-	Ar << Event.EventType;
-	Ar << Event.CustomEvent;
-	return Ar;
-}
-
-bool FDlgEvent::operator==(const FDlgEvent& Other) const
-{
-	return ParticipantName == Other.ParticipantName &&
-		   EventName == Other.EventName &&
-		   IntValue == Other.IntValue &&
-		   FMath::IsNearlyEqual(FloatValue, Other.FloatValue, KINDA_SMALL_NUMBER) &&
-		   bDelta == Other.bDelta &&
-		   bValue == Other.bValue &&
-		   EventType == Other.EventType &&
-		   CustomEvent == Other.CustomEvent;
-}
