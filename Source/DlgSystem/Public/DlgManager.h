@@ -166,10 +166,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	static void GetAllDialoguesEventNames(const FName& ParticipantName, TArray<FName>& OutArray);
 
-	UE_DEPRECATED(4.21, "Use RegisterDialogueConsoleCommands Instead")
-	UFUNCTION(BlueprintCallable, Category = "Dialogue|Console", meta=(DeprecatedFunction, DeprecationMessage="Use RegisterDialogueConsoleCommands Instead"))
-	static bool RegisterDialogueModuleConsoleCommands(AActor* InReferenceActor) { return RegisterDialogueConsoleCommands(); }
-
 	/**
 	 * Registers all the DlgSystem Module console commands.
 	 * To set the custom reference WorldContextObjectPtr, set it with SetPersistentWorldContextObject
@@ -177,10 +173,6 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Console")
 	static bool RegisterDialogueConsoleCommands();
-
-	UE_DEPRECATED(4.21, "Use UnregisterDialogueConsoleCommands Instead")
-	UFUNCTION(BlueprintCallable, Category = "Dialogue|Console", meta=(DeprecatedFunction, DeprecationMessage="Use UnregisterDialogueConsoleCommands Instead"))
-	static bool UnRegisterDialogueModuleConsoleCommands() { return UnregisterDialogueConsoleCommands(); }
 
 	/**
 	 * Unregister all the DlgSystem Module console commands.

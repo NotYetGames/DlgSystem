@@ -151,10 +151,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
     const FText& GetActiveNodeText() const;
 
-	UE_DEPRECATED(4.21, "Use GetActiveNodeSpeakerState Instead.")
-	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode", meta=(DeprecatedFunction, DeprecationMessage="Use GetActiveNodeSpeakerState Instead"))
-	FName GetActiveSpeakerState() const { return GetActiveNodeSpeakerState(); }
-
 	// Gets the SpeakerState of the active node index
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	FName GetActiveNodeSpeakerState() const;
@@ -179,25 +175,13 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	UDlgNodeData* GetActiveNodeData() const;
 
-	UE_DEPRECATED(4.21, "Use GetActiveNodeParticipantIcon Instead.")
-	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode",  meta=(DeprecatedFunction, DeprecationMessage="Use GetActiveNodeParticipantIcon Instead"))
-	UTexture2D* GetActiveParticipantIcon() const { return GetActiveNodeParticipantIcon(); }
-
 	// Gets the Icon associated with the active node participant name (owner name).
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	UTexture2D* GetActiveNodeParticipantIcon() const;
 
-	UE_DEPRECATED(4.21, "Use GetActiveNodeParticipant Instead.")
-	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode",  meta=(DeprecatedFunction, DeprecationMessage="Use GetActiveNodeParticipant Instead"))
-	UObject* GetActiveParticipant() const { return GetActiveNodeParticipant(); }
-
 	// Gets the Object associated with the active node participant name (owner name).
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	UObject* GetActiveNodeParticipant() const;
-
-	UE_DEPRECATED(4.21, "Use GetActiveNodeParticipantName Instead.")
-	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode", meta=(DeprecatedFunction, DeprecationMessage="Use GetActiveNodeParticipantName Instead"))
-	FName GetActiveParticipantName() const { return GetActiveNodeParticipantName(); }
 
 	// Gets the active node participant name (owner name).
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")

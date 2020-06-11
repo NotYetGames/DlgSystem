@@ -391,10 +391,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	int32 GetDialogueVersion() const { return DlgVersion; }
 
-	UE_DEPRECATED(4.22, "Use GetDialogueName Instead.")
-	UFUNCTION(BlueprintPure, Category = "Dialogue", meta=(DeprecatedFunction, DeprecationMessage="Use GetDialogueName Instead"))
-	FString GetDlgName() const { return GetDialogueName(); }
-
 	// Gets/extracts the name (without extension) of the dialog from the uasset filename
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	FString GetDialogueName() const
@@ -405,17 +401,9 @@ public:
 		return GetName();
 	}
 
-	UE_DEPRECATED(4.22, "Use GetDialogueFName Instead.")
-	UFUNCTION(BlueprintPure, Category = "Dialogue", meta=(DeprecatedFunction, DeprecationMessage="Use GetDialogueFName Instead"))
-	FName GetDlgFName() const { return GetDialogueFName(); }
-
 	// Same as the GetDialogueName only it returns a FName.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	FName GetDialogueFName() const { return GetFName(); }
-
-	UE_DEPRECATED(4.22, "Use GetDialogueGUID Instead.")
-	UFUNCTION(BlueprintPure, Category = "Dialogue", meta=(DeprecatedFunction, DeprecationMessage="Use GetDialogueGUID Instead"))
-	FGuid GetDlgGuid() const { return GetDialogueGUID(); }
 
 	// Gets the unique identifier for this dialogue.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
