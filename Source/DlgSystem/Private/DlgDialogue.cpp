@@ -55,7 +55,7 @@ void UpdateDialogueToVersion_UseOnlyOneOutputAndInputPin(UDlgDialogue* Dialogue)
 void UDlgDialogue::PreSave(const class ITargetPlatform* TargetPlatform)
 {
 	Super::PreSave(TargetPlatform);
-	DlgName = GetDlgFName();
+	DlgName = GetDialogueFName();
 	OnPreAssetSaved();
 }
 
@@ -174,7 +174,7 @@ void UDlgDialogue::PostInitProperties()
 #endif // #if WITH_EDITOR
 
 	// Keep Name in sync with the file name
-	DlgName = GetDlgFName();
+	DlgName = GetDialogueFName();
 
 	// Used when creating new Dialogues
 	// Initialize with a valid GUID
@@ -191,7 +191,7 @@ void UDlgDialogue::PostInitProperties()
 void UDlgDialogue::PostRename(UObject* OldOuter, const FName OldName)
 {
 	Super::PostRename(OldOuter, OldName);
-	DlgName = GetDlgFName();
+	DlgName = GetDialogueFName();
 }
 
 void UDlgDialogue::PostDuplicate(bool bDuplicateForPIE)
@@ -455,7 +455,7 @@ void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
 		}
 	}
 
-	DlgName = GetDlgFName();
+	DlgName = GetDialogueFName();
 	AutoFixGraph();
 	UpdateAndRefreshData(true);
 }

@@ -268,7 +268,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 	TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
 	for (const UDlgDialogue* Dialogue : Dialogues)
 	{
-		const FGuid DialogueGuid = Dialogue->GetDlgGuid();
+		const FGuid DialogueGuid = Dialogue->GetDialogueGUID();
 
 		// Populate Participants
 		TSet<FName> ParticipantsNames;
@@ -540,7 +540,7 @@ void SDialogueBrowser::AddDialogueChildrenToItemFromProperty(const TSharedPtr<FD
 		}
 
 		const TSharedPtr<FDialogueBrowserTreeNode> DialogueItem =
-			MakeShared<FDialogueBrowserTreeDialogueNode>(FText::FromName(Dialogue->GetDlgFName()), InItem, Dialogue);
+			MakeShared<FDialogueBrowserTreeDialogueNode>(FText::FromName(Dialogue->GetDialogueFName()), InItem, Dialogue);
 		DialogueItem->SetTextType(TextType);
 		InItem->AddChild(DialogueItem);
 	}
@@ -611,7 +611,7 @@ void SDialogueBrowser::AddGraphNodeBaseChildrenToItemFromProperty(const TSharedP
 
 	const TSharedPtr<FDialogueBrowserTreeVariableProperties> Property = *PropertyPtr;
 	const UDlgDialogue* Dialogue = DialogueItem->GetDialogue().Get();
-	const FGuid DialogueGuid = Dialogue->GetDlgGuid();
+	const FGuid DialogueGuid = Dialogue->GetDialogueGUID();
 
 	// Display the GraphNode
 	if (Property->HasGraphNodeSet(DialogueGuid))
@@ -676,7 +676,7 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 				}
 
 				const TSharedPtr<FDialogueBrowserTreeNode> DialogueItem =
-					MakeShared<FDialogueBrowserTreeDialogueNode>(FText::FromName(Dialogue->GetDlgFName()), Item, Dialogue);
+					MakeShared<FDialogueBrowserTreeDialogueNode>(FText::FromName(Dialogue->GetDialogueFName()), Item, Dialogue);
 				DialogueItem->SetTextType(EDialogueTreeNodeTextType::ParticipantDialogue);
 				Item->AddChild(DialogueItem);
 

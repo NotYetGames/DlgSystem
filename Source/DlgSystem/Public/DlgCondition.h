@@ -11,7 +11,7 @@ class IDlgDialogueParticipant;
 class UDlgContext;
 
 // Defines the way the condition is interpreted inside a condition array
-UENUM()
+UENUM(BlueprintType)
 enum class EDlgConditionStrength : uint8
 {
 	/// All strong condition must be satisfied inside the condition array
@@ -24,7 +24,7 @@ enum class EDlgConditionStrength : uint8
 };
 
 // The Type of condition FDlgCondition is based upon
-UENUM()
+UENUM(BlueprintType)
 enum class EDlgConditionType : uint8
 {
 	// A logical operation on a requested int variable acquired via the IDlgParticipant getter function
@@ -59,7 +59,7 @@ enum class EDlgConditionType : uint8
 };
 
 // Operation the return value of a IntCall/FloatCall is checked with
-UENUM()
+UENUM(BlueprintType)
 enum class EDlgOperation : uint8
 {
 	Equal = 0		UMETA(DisplayName = "== (Is Equal To)"),
@@ -71,7 +71,7 @@ enum class EDlgOperation : uint8
 };
 
 // Type of value the participant's value is checked against
-UENUM()
+UENUM(BlueprintType)
 enum class EDlgCompare : uint8
 {
 	ToConst = 0			UMETA(DisplayName = "Compare to Constant"),
@@ -83,7 +83,7 @@ enum class EDlgCompare : uint8
 // A condition is a logical operation which is evaluated based on a participant or on the local (context based) or global dialogue memory.
 // More conditions are stored together in condition arrays in FDlgEdge and in UDlgNode, the node (or the edge's target node) is only visitable
 // if the condition array is satisfied
-USTRUCT(Blueprintable, BlueprintType)
+USTRUCT(Blueprintable)
 struct DLGSYSTEM_API FDlgCondition
 {
 	GENERATED_USTRUCT_BODY()
@@ -136,60 +136,60 @@ protected:
 
 public:
 	// Defines the way the condition is interpreted inside the condition array
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	EDlgConditionStrength Strength = EDlgConditionStrength::Strong;
 
 	// Type of the condition, defines the behavior
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	EDlgConditionType ConditionType = EDlgConditionType::IntCall;
 
 	// Name of the participant (speaker) the event is called on.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	FName ParticipantName;
 
 	// Name of the variable or event, passed in the function call to the participant
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	FName CallbackName;
 
 	// The desired operation on the selected variable
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	EDlgOperation Operation = EDlgOperation::Equal;
 
 	// Type of value to check against
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	EDlgCompare CompareType = EDlgCompare::ToConst;
 
 	// Name of the other participant (speaker) the check is performed against (with some compare types)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	FName OtherParticipantName;
 
 	// Name of the variable of the other participant the value is checked against (with some compare types)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	FName OtherVariableName;
 
 	// Node index for "node already visited" condition, the value the participant's int is checked against otherwise
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	int32 IntValue = 0;
 
 	// Float the participants float is checked against
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	float FloatValue = 0.f;
 
 	// FName the participants name is checked against
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	FName NameValue;
 
 	// Weather the result defined by the other params has to be true or false in order for this condition to be satisfied
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	bool bBoolValue = true;
 
 	// Weather to check if the node was visited at all (in the long term).
 	// Set it to false to check if it was visited in the actual dialogue context
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	bool bLongTermMemory = true;
 
 	// The custom Condition you must extend via blueprint
-	UPROPERTY(Instanced, EditAnywhere, BlueprintReadWrite, Category = DialogueConditionData)
+	UPROPERTY(Instanced, EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	UDlgConditionCustom* CustomCondition = nullptr;
 };
 

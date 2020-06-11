@@ -89,7 +89,7 @@ public:
 	// For the ParticipantName
 	//
 
-	UFUNCTION(BlueprintPure, Category = DlgNode)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual FName GetNodeParticipantName() const { return OwnerName; }
 
 	virtual void SetNodeParticipantName(const FName& InName) { OwnerName = InName; }
@@ -98,8 +98,12 @@ public:
 	// For the EnterConditions
 	//
 
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual bool HasAnyEnterConditions() const { return GetNodeEnterConditions().Num() > 0; }
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual const TArray<FDlgCondition>& GetNodeEnterConditions() const { return EnterConditions; }
+
 	virtual void SetNodeEnterConditions(const TArray<FDlgCondition>& InEnterConditions) { EnterConditions = InEnterConditions; }
 
 	// Gets the mutable enter condition at location EnterConditionIndex.
@@ -113,8 +117,12 @@ public:
 	// For the EnterEvents
 	//
 
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual bool HasAnyEnterEvents() const { return GetNodeEnterEvents().Num() > 0; }
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual const TArray<FDlgEvent>& GetNodeEnterEvents() const { return EnterEvents; }
+
 	virtual void SetNodeEnterEvents(const TArray<FDlgEvent>& InEnterEvents) { EnterEvents = InEnterEvents; }
 
 	//
@@ -122,11 +130,16 @@ public:
 	//
 
 	/// Gets this nodes children (edges) as a const/mutable array
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual const TArray<FDlgEdge>& GetNodeChildren() const { return Children; }
 	virtual void SetNodeChildren(const TArray<FDlgEdge>& InChildren) { Children = InChildren; }
-	virtual int32 GetNumNodeChildren() const { return Children.Num(); }
-	virtual const FDlgEdge& GetNodeChildAt(int32 EdgeIndex) const { return Children[EdgeIndex]; }
 
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
+	virtual int32 GetNumNodeChildren() const { return Children.Num(); }
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
+	virtual const FDlgEdge& GetNodeChildAt(int32 EdgeIndex) const { return Children[EdgeIndex]; }
 
 	// Adds an Edge to the end of the Children Array.
 	virtual void AddNodeChild(const FDlgEdge& InChild) { Children.Add(InChild); }
@@ -179,6 +192,7 @@ public:
 	virtual void RebuildConstructedText(const UDlgContext* Context) {}
 
 	// Gets the text arguments for this Node (if any). Used for FText::Format
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual const TArray<FDlgTextArgument>& GetTextArguments() const
 	{
 		static TArray<FDlgTextArgument> EmptyArray;
@@ -186,38 +200,41 @@ public:
 	};
 
 	// Gets the Text of this Node. This can be the final formatted string.
-	UFUNCTION(BlueprintPure, Category = NodeData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual const FText& GetNodeText() const { return FText::GetEmpty(); }
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
+	virtual bool GetCheckChildrenOnEvaluation() const { return bCheckChildrenOnEvaluation; }
 
 	/**
 	 * Gets the Raw unformatted Text of this Node. Usually the same as GetNodeText but in case the node supports formatted string this
 	 * is the raw form with all the arguments intact. To get the text arguments call GetTextArguments.
 	 */
-	UFUNCTION(BlueprintPure, Category = NodeData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual const FText& GetNodeUnformattedText() const { return GetNodeText(); }
 
 	// Gets the voice of this Node as a SoundWave.
-	UFUNCTION(BlueprintPure, Category = NodeData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	USoundWave* GetNodeVoiceSoundWave() const;
 
 	// Gets the voice of this Node as a SoundWave.
-	UFUNCTION(BlueprintPure, Category = NodeData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual USoundBase* GetNodeVoiceSoundBase() const { return nullptr; }
 
 	// Gets the voice of this Node as a DialogueWave. Only the first Dialogue context in the wave should be used.
-	UFUNCTION(BlueprintPure, Category = NodeData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual UDialogueWave* GetNodeVoiceDialogueWave() const { return nullptr; }
 
 	// Gets the speaker state ordered to this node (can be used e.g. for icon selection)
-	UFUNCTION(BlueprintPure, Category = NodeData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual FName GetSpeakerState() const { return NAME_None; }
 	virtual void AddAllSpeakerStatesIntoSet(TSet<FName>& OutStates) const {};
 
 	// Gets the generic data asset of this Node.
-	UFUNCTION(BlueprintPure, Category = NodeData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual UObject* GetGenericData() const { return nullptr; }
 
-	UFUNCTION(BlueprintPure, Category = NodeData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual UDlgNodeData* GetNodeData() const { return nullptr; }
 
 	// Helper method to get directly the Dialogue
@@ -247,25 +264,25 @@ protected:
 #endif // WITH_EDITORONLY_DATA
 
 	// Name of a participant (speaker) associated with this node.
-	UPROPERTY(EditAnywhere, Category = DialogueNodeData, Meta = (DisplayName = "Participant Name"))
+	UPROPERTY(EditAnywhere, Category = "Dialogue|Node", Meta = (DisplayName = "Participant Name"))
 	FName OwnerName;
 
 	/**
 	 *  If it is set the node is only satisfied if at least one of its children is
 	 *  Should not be used if entering this node can modify the condition results of its children.
 	 */
-	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
+	UPROPERTY(EditAnywhere, Category = "Dialogue|Node")
 	bool bCheckChildrenOnEvaluation = false;
 
 	// Conditions necessary to enter this node
-	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
+	UPROPERTY(EditAnywhere, Category = "Dialogue|Node")
 	TArray<FDlgCondition> EnterConditions;
 
 	// Events fired when the node is reached in the dialogue
-	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
+	UPROPERTY(EditAnywhere, Category = "Dialogue|Node")
 	TArray<FDlgEvent> EnterEvents;
 
 	// Edges that point to Children of this Node
-	UPROPERTY(EditAnywhere, EditFixedSize, AdvancedDisplay, Category = DialogueNodeData)
+	UPROPERTY(EditAnywhere, EditFixedSize, AdvancedDisplay, Category = "Dialogue|Node")
 	TArray<FDlgEdge> Children;
 };

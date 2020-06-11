@@ -59,8 +59,8 @@ bool UDlgNode_SpeechSequence::HandleNodeEnter(UDlgContext* Context, TSet<const U
 
 bool UDlgNode_SpeechSequence::ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> AlreadyEvaluated)
 {
-	TArray<const FDlgEdge*>& Options = Context->GetOptionArray();
-	TArray<FDlgEdgeData>& AllOptions = Context->GetAllOptionsArray();
+	TArray<FDlgEdgeData>& Options = Context->GetMutableOptionsArray();
+	TArray<FDlgEdgeData>& AllOptions = Context->GetAllMutableOptionsArray();
 	Options.Empty();
 	AllOptions.Empty();
 
@@ -71,8 +71,8 @@ bool UDlgNode_SpeechSequence::ReevaluateChildren(UDlgContext* Context, TSet<cons
 	// give the context the fake inner edge
 	if (InnerEdges.IsValidIndex(ActualIndex))
 	{
-		Options.Add(&InnerEdges[ActualIndex]);
-		AllOptions.Add({ true, &InnerEdges[ActualIndex] });
+		Options.Add(FDlgEdgeData{ true, &InnerEdges[ActualIndex] });
+		AllOptions.Add(FDlgEdgeData{ true, &InnerEdges[ActualIndex] });
 		return true;
 	}
 

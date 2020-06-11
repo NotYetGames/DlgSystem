@@ -61,8 +61,8 @@ bool UDlgNode_Speech::ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNo
 	if (bIsVirtualParent)
 	{
 		check(Context != nullptr);
-		Context->GetOptionArray().Empty();
-		Context->GetAllOptionsArray().Empty();
+		Context->GetMutableOptionsArray().Empty();
+		Context->GetAllMutableOptionsArray().Empty();
 
 		// stop endless loop
 		if (AlreadyEvaluated.Contains(this))

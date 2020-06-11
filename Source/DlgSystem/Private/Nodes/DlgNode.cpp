@@ -119,8 +119,8 @@ bool UDlgNode::ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> Al
 {
 	check(Context != nullptr);
 
-	TArray<const FDlgEdge*>& AvailableChildren = Context->GetOptionArray();
-	TArray<FDlgEdgeData>& AllChildren = Context->GetAllOptionsArray();
+	TArray<FDlgEdgeData>& AvailableChildren = Context->GetMutableOptionsArray();
+	TArray<FDlgEdgeData>& AllChildren = Context->GetAllMutableOptionsArray();
 	AvailableChildren.Empty();
 	AllChildren.Empty();
 
@@ -134,7 +134,7 @@ bool UDlgNode::ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> Al
 		}
 		if (bSatisfied)
 		{
-			AvailableChildren.Add(&Edge);
+			AvailableChildren.Add(FDlgEdgeData{ true, &Edge });
 		}
 	}
 
@@ -187,12 +187,11 @@ bool UDlgNode::HasAnySatisfiedChild(const UDlgContext* Context, TSet<const UDlgN
 
 bool UDlgNode::OptionSelected(int32 OptionIndex, UDlgContext* Context)
 {
-	TArray<const FDlgEdge*>& AvailableChildren = Context->GetOptionArray();
-
+	const TArray<FDlgEdgeData>& AvailableChildren = Context->GetOptionsArray();
 	if (AvailableChildren.IsValidIndex(OptionIndex))
 	{
-		check(AvailableChildren[OptionIndex] != nullptr);
-		return Context->EnterNode(AvailableChildren[OptionIndex]->TargetIndex, {});
+		check(AvailableChildren[OptionIndex].IsValid());
+		return Context->EnterNode(AvailableChildren[OptionIndex].GetEdge().TargetIndex, {});
 	}
 
 	FDlgLogger::Get().Errorf(

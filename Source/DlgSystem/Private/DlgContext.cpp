@@ -33,7 +33,7 @@ bool UDlgContext::ChooseChildBasedOnAllOptionIndex(int32 Index)
 		return false;
 	}
 
-	if (!AllChildren[Index].bSatisfied)
+	if (!AllChildren[Index].IsSatisfied())
 	{
 		FDlgLogger::Get().Errorf(TEXT("Index %d is an unsatisfied edge! (UDlgContext::ChooseChildBasedOnAllOptionIndex!) Call failed!"), Index);
 		bDialogueEnded = true;
@@ -42,7 +42,7 @@ bool UDlgContext::ChooseChildBasedOnAllOptionIndex(int32 Index)
 
 	for (int32 i = 0; i < AvailableChildren.Num(); ++i)
 	{
-		if (AvailableChildren[i] == AllChildren[Index].EdgePtr)
+		if (AvailableChildren[i].GetEdge() == AllChildren[Index].GetEdge())
 		{
 			return ChooseChild(i);
 		}
@@ -79,7 +79,7 @@ const FText& UDlgContext::GetOptionText(int32 OptionIndex) const
 		return FText::GetEmpty();
 	}
 
-	return AvailableChildren[OptionIndex]->GetText();
+	return AvailableChildren[OptionIndex].GetEdge().GetText();
 }
 
 FName UDlgContext::GetOptionSpeakerState(int32 OptionIndex) const
@@ -92,7 +92,7 @@ FName UDlgContext::GetOptionSpeakerState(int32 OptionIndex) const
 		return NAME_None;
 	}
 
-	return AvailableChildren[OptionIndex]->SpeakerState;
+	return AvailableChildren[OptionIndex].GetEdge().SpeakerState;
 }
 
 const FDlgEdge& UDlgContext::GetOption(int32 OptionIndex) const
@@ -105,7 +105,7 @@ const FDlgEdge& UDlgContext::GetOption(int32 OptionIndex) const
 		return FDlgEdge::GetInvalidEdge();
 	}
 
-	return *AvailableChildren[OptionIndex];
+	return AvailableChildren[OptionIndex].GetEdge();
 }
 
 const FText& UDlgContext::GetOptionTextFromAll(int32 Index) const
@@ -118,7 +118,7 @@ const FText& UDlgContext::GetOptionTextFromAll(int32 Index) const
 		return FText::GetEmpty();
 	}
 
-	return AllChildren[Index].EdgePtr->GetText();
+	return AllChildren[Index].GetEdge().GetText();
 }
 
 bool UDlgContext::IsOptionSatisfied(int32 Index) const
@@ -131,7 +131,7 @@ bool UDlgContext::IsOptionSatisfied(int32 Index) const
 		return false;
 	}
 
-	return AllChildren[Index].bSatisfied;
+	return AllChildren[Index].IsSatisfied();
 }
 
 FName UDlgContext::GetOptionSpeakerStateFromAll(int32 Index) const
@@ -144,7 +144,7 @@ FName UDlgContext::GetOptionSpeakerStateFromAll(int32 Index) const
 		return NAME_None;
 	}
 
-	return AllChildren[Index].EdgePtr->SpeakerState;
+	return AllChildren[Index].GetEdge().SpeakerState;
 }
 
 const FDlgEdge& UDlgContext::GetOptionFromAll(int32 Index) const
@@ -157,7 +157,7 @@ const FDlgEdge& UDlgContext::GetOptionFromAll(int32 Index) const
 		return FDlgEdge::GetInvalidEdge();
 	}
 
-	return *AllChildren[Index].EdgePtr;
+	return AllChildren[Index].GetEdge();
 }
 
 const FText& UDlgContext::GetActiveNodeText() const
@@ -293,9 +293,20 @@ FName UDlgContext::GetActiveNodeParticipantName() const
 	return Node->GetNodeParticipantName();
 }
 
-const UObject* UDlgContext::GetConstParticipant(FName DlgParticipantName) const
+UObject* UDlgContext::GetParticipant(FName ParticipantName)
 {
-	auto* ParticipantPtr = Participants.Find(DlgParticipantName);
+	auto* ParticipantPtr = Participants.Find(ParticipantName);
+	if (ParticipantPtr != nullptr && IsValid(*ParticipantPtr))
+	{
+		return *ParticipantPtr;
+	}
+
+	return nullptr;
+}
+
+const UObject* UDlgContext::GetConstParticipant(FName ParticipantName) const
+{
+	auto* ParticipantPtr = Participants.Find(ParticipantName);
 	if (ParticipantPtr != nullptr && IsValid(*ParticipantPtr))
 	{
 		return *ParticipantPtr;
@@ -315,7 +326,7 @@ bool UDlgContext::IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory, 
 			FDlgLogger::Get().Errorf(TEXT("UDlgContext::IsEdgeConnectedToVisitedNode failed - invalid index %d"), Index);
 			return false;
 		}
-		TargetIndex = AvailableChildren[Index]->TargetIndex;
+		TargetIndex = AvailableChildren[Index].GetEdge().TargetIndex;
 	}
 	else
 	{
@@ -324,7 +335,7 @@ bool UDlgContext::IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory, 
 			FDlgLogger::Get().Errorf(TEXT("UDlgContext::IsEdgeConnectedToVisitedNode failed - invalid index %d"), Index);
 			return false;
 		}
-		TargetIndex = AllChildren[Index].EdgePtr->TargetIndex;
+		TargetIndex = AllChildren[Index].GetEdge().TargetIndex;
 	}
 
 	if (bLocalHistory)
@@ -338,7 +349,7 @@ bool UDlgContext::IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory, 
 		return false;
 	}
 
-	return FDlgMemory::Get().IsNodeVisited(Dialogue->GetDlgGuid(), TargetIndex);
+	return FDlgMemory::Get().IsNodeVisited(Dialogue->GetDialogueGUID(), TargetIndex);
 }
 
 bool UDlgContext::IsEdgeConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisfiedEdges) const
@@ -352,7 +363,7 @@ bool UDlgContext::IsEdgeConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisf
 			FDlgLogger::Get().Errorf(TEXT("UDlgContext::IsEdgeConnectedToEndNode failed - AvailableChildren invalid index %d"), Index);
 			return false;
 		}
-		TargetIndex = AvailableChildren[Index]->TargetIndex;
+		TargetIndex = AvailableChildren[Index].GetEdge().TargetIndex;
 	}
 	else
 	{
@@ -361,7 +372,7 @@ bool UDlgContext::IsEdgeConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisf
 			FDlgLogger::Get().Errorf(TEXT("UDlgContext::IsEdgeConnectedToEndNode failed - AllChildren invalid index %d"), Index);
 			return false;
 		}
-		TargetIndex = AllChildren[Index].EdgePtr->TargetIndex;
+		TargetIndex = AllChildren[Index].GetEdge().TargetIndex;
 	}
 
 	if (Dialogue == nullptr)
@@ -395,7 +406,7 @@ bool UDlgContext::EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredW
 	}
 
 	ActiveNodeIndex = NodeIndex;
-	FDlgMemory::Get().SetNodeVisited(Dialogue->GetDlgGuid(), ActiveNodeIndex);
+	FDlgMemory::Get().SetNodeVisited(Dialogue->GetDialogueGUID(), ActiveNodeIndex);
 	VisitedNodeIndices.Add(ActiveNodeIndex);
 
 	return Node->HandleNodeEnter(this, NodesEnteredWithThisStep);
@@ -522,7 +533,7 @@ bool UDlgContext::StartFromIndex(
 	}
 
 	ActiveNodeIndex = StartIndex;
-	FDlgMemory::Get().SetNodeVisited(Dialogue->GetDlgGuid(), ActiveNodeIndex);
+	FDlgMemory::Get().SetNodeVisited(Dialogue->GetDialogueGUID(), ActiveNodeIndex);
 	VisitedNodeIndices.Add(ActiveNodeIndex);
 
 	return Node->ReevaluateChildren(this, {});

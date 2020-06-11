@@ -17,7 +17,7 @@ class UDlgDialogue;
 /**
  * The representation of a child in a node. Defined by a TargetIndex which points to the index array in the Dialogue.Nodes
  */
-USTRUCT(BlueprintType, Blueprintable)
+USTRUCT(BlueprintType)
 struct DLGSYSTEM_API FDlgEdge
 {
 	GENERATED_USTRUCT_BODY()
@@ -105,39 +105,39 @@ public:
 
 	static const FDlgEdge& GetInvalidEdge();
 
-	/** Helper functions to get the names of some properties. Used by the DlgSystemEditor module. */
+	// Helper functions to get the names of some properties. Used by the DlgSystemEditor module.
 	static FName GetMemberNameText() { return GET_MEMBER_NAME_CHECKED(FDlgEdge, Text); }
 	static FName GetMemberNameTextArguments() { return GET_MEMBER_NAME_CHECKED(FDlgEdge, TextArguments); }
 
 public:
-	/** Index of the node in the Nodes TArray of the dialogue this edge is leading to */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = DialogueEdgeData, Meta = (ClampMin = -1))
+	// Index of the node in the Nodes TArray of the dialogue this edge is leading to
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Dialogue|Edge", Meta = (ClampMin = -1))
 	int32 TargetIndex = INDEX_NONE;
 
-	/** Required but not sufficient conditions - target node's enter conditions are checked too */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueEdgeData)
+	// Required but not sufficient conditions - target node's enter conditions are checked too
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Edge")
 	TArray<FDlgCondition> Conditions;
 
-	/** player emotion/state attached to this player choice */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueEdgeData)
+	// Player emotion/state attached to this player choice
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Edge")
 	FName SpeakerState;
 
-	/** Set this to false in order to skip this edge in the AllChildren array (which lists both satisfied and not satisfied player choices */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueEdgeData)
+	// Set this to false in order to skip this edge in the AllChildren array (which lists both satisfied and not satisfied player choices
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Edge")
 	bool bIncludeInAllOptionListIfUnsatisfied = true;
 
 protected:
 	// Some Variables are here to stop misuse
 
-	/** Text associated with the child, can be used for user choices */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DialogueEdgeData, Meta = (MultiLine = true))
+	// Text associated with the child, can be used for user choices
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Edge", Meta = (MultiLine = true))
 	FText Text;
 
 	// If you want replaceable portions inside your Text nodes just add {identifier} inside it and set the value it should have at runtime.
-	UPROPERTY(EditAnywhere, EditFixedSize, Category = DialogueEdgeData)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, EditFixedSize, Category = "Dialogue|Edge")
 	TArray<FDlgTextArgument> TextArguments;
 
-	/** Constructed at runtime from the original text and the arguments if there is any.*/
+	// Constructed at runtime from the original text and the arguments if there is any.
 	FText ConstructedText;
 };
 

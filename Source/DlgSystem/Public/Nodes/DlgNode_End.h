@@ -13,7 +13,7 @@
  * Does not have text, if it is entered the Dialogue is over.
  * Events and enter conditions are taken into account.
  */
-UCLASS(BlueprintType)
+UCLASS(BlueprintType, ClassGroup = "Dialogue")
 class DLGSYSTEM_API UDlgNode_End : public UDlgNode
 {
 	GENERATED_BODY()

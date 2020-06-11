@@ -10,13 +10,13 @@ FDialogueBrowserTreeVariableProperties::FDialogueBrowserTreeVariableProperties(c
 	// Empty initialize the graph nodes
 	for (TWeakObjectPtr<const UDlgDialogue> Dialogue: InDialogues)
 	{
-		GraphNodes.Add(Dialogue->GetDlgGuid(), {});
+		GraphNodes.Add(Dialogue->GetDialogueGUID(), {});
 	}
 
 	// Empty initialize the edge nodes
 	for (TWeakObjectPtr<const UDlgDialogue> Dialogue : InDialogues)
 	{
-		EdgeNodes.Add(Dialogue->GetDlgGuid(), {});
+		EdgeNodes.Add(Dialogue->GetDialogueGUID(), {});
 	}
 }
 
@@ -26,7 +26,7 @@ void FDialogueBrowserTreeVariableProperties::AddDialogue(TWeakObjectPtr<const UD
 
 	// Initialize the graph nodes
 	{
-		const FGuid Id = Dialogue->GetDlgGuid();
+		const FGuid Id = Dialogue->GetDialogueGUID();
 		auto* SetPtr = GraphNodes.Find(Id);
 		if (SetPtr == nullptr)
 		{
@@ -38,12 +38,12 @@ void FDialogueBrowserTreeVariableProperties::AddDialogue(TWeakObjectPtr<const UD
 	// Initialize the edge nodes
 	{
 
-		const FGuid Id = Dialogue->GetDlgGuid();
-		auto* SetPtr = EdgeNodes.Find(Id);
+		const FGuid ID = Dialogue->GetDialogueGUID();
+		auto* SetPtr = EdgeNodes.Find(ID);
 		if (SetPtr == nullptr)
 		{
 			// Does not exist, empty initialize.
-			EdgeNodes.Add(Id, {});
+			EdgeNodes.Add(ID, {});
 		}
 	}
 }

@@ -19,29 +19,23 @@ struct FNYMessageLogInitializationOptions
 {
 	FNYMessageLogInitializationOptions() {}
 
-	/** Whether to show the filters menu */
+	// Whether to show the filters menu
 	bool bShowFilters = true;
 
-	/**
-	 * Whether to initially  show the pages widget. Setting this to false will allow the user to manually clear the log.
-	 * If this is not set & NewPage() is called on the log, the pages widget will show itself
-	 */
+	// Whether to initially  show the pages widget. Setting this to false will allow the user to manually clear the log.
+	// If this is not set & NewPage() is called on the log, the pages widget will show itself
 	bool bShowPages = false;
 
-	/**
-	* Whether to allow the user to clear this log.
-	*/
+	// Whether to allow the user to clear this log.
 	bool bAllowClear = true;
 
-	/**
-	 * Whether to check for duplicate messages & discard them
-	 */
+	/// Whether to check for duplicate messages & discard them
 	bool bDiscardDuplicates = false;
 
-	/** The maximum number of pages this log can hold. Pages are managed in a first in, last out manner */
+	// The maximum number of pages this log can hold. Pages are managed in a first in, last out manner
 	uint32 MaxPageCount = 20;
 
-	/** Whether to show this log in the main log window */
+	// Whether to show this log in the main log window
 	bool bShowInLogWindow = true;
 };
 

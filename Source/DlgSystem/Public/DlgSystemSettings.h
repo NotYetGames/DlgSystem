@@ -313,7 +313,6 @@ public:
 	UPROPERTY(Category = "Logger", Config, EditAnywhere, AdvancedDisplay)
 	ENYLoggerLogLevel RedirectMessageLogLevelsHigherThan = ENYLoggerLogLevel::Warning;
 
-
 	// All the log levels messages that will open the message log window if bMessageLogOpen is true
 	// NOTE: A value of  ENYLoggerLogLevel::NoLogging means all log levels will be opened if bMessageLogOpen is true
 	UPROPERTY(Category = "Logger", Config, EditAnywhere, AdvancedDisplay)
