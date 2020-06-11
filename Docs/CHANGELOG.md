@@ -1,3 +1,27 @@
+# 9.1
+
+## Important Bug Fixes
+
+- **Fixed** Custom Condition when set on edges in packaged build. **TO FIX THEM** in your project you have to reset them on all edges where they are used.
+
+## Other Changes
+
+- **Improve** fixed some false positive warning messages when using condition types that did not require a participant
+
+- **Improvement** Make everything more blueprint friendly, everything that is dialogue data related should be read accessible from Blueprints
+
+- **Removed** deprecated functions, if you used them in your C++ code you need to use the new versions, otherwise the redirect is done for you in Blueprints automatically. The following functions were removed in favour of other:
+	- `GetDialogueGuid` -> `GetDialogueGUID`
+	- `GetActiveSpeakerState` -> `GetActiveNodeSpeakerState`
+	- `GetActiveParticipantIcon` -> `GetActiveNodeParticipantIcon`
+	- `GetActiveParticipant` -> `GetActiveNodeParticipant`
+	- `GetActiveParticipantName` -> `GetActiveNodeParticipantName`
+	- `GetDlgName` -> `GetDialogueName`
+	- `GetDlgFName` -> `GetDialogueFName`
+	- `GetDlgGuid` -> `GetDialogueGUID`
+	- `RegisterDialogueModuleConsoleCommands` -> `RegisterDialogueConsoleCommands`
+	- `UnRegisterDialogueModuleConsoleCommands` -> `UnregisterDialogueConsoleCommands`
+
 # 9.0
 
 ## Important breaking change
