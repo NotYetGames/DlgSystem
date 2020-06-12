@@ -26,13 +26,16 @@
 
 FText SDialogueTextPropertyEditableTextBox::MultipleValuesText(NSLOCTEXT("PropertyEditor", "MultipleValues", "Multiple Values"));
 
-void SDialogueTextPropertyEditableTextBox::Construct(const FArguments& InArgs,
-	const TSharedRef<IEditableTextProperty>& InEditableTextProperty, const TSharedRef<IPropertyHandle>& InPropertyHandle)
+void SDialogueTextPropertyEditableTextBox::Construct(
+	const FArguments& InArgs,
+	const TSharedRef<IEditableTextProperty>& InEditableTextProperty,
+	const TSharedRef<IPropertyHandle>& InPropertyHandle
+)
 {
 	EditableTextProperty = InEditableTextProperty;
 	PropertyHandle = InPropertyHandle;
 	bAddResetToDefaultWidget = InArgs._AddResetToDefaultWidget;
-	
+
 	TSharedPtr<SHorizontalBox> HorizontalBox;
 
 	//const bool bIsPassword = EditableTextProperty->IsPassword();
@@ -343,7 +346,7 @@ EVisibility SDialogueTextPropertyEditableTextBox::GetDiffersFromDefaultAsVisibil
 	{
 		return PropertyHandle->DiffersFromDefault() ? EVisibility::Visible : EVisibility::Hidden;
 	}
-	
+
 	return EVisibility::Visible;
 }
 
@@ -394,7 +397,7 @@ FReply SDialogueTextPropertyEditableTextBox::OnFocusReceived(const FGeometry& My
 	return FReply::Handled().SetUserFocus(PrimaryWidget.ToSharedRef(), InFocusEvent.GetCause());
 }
 
-void SDialogueTextPropertyEditableTextBox::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
+void SDialogueTextPropertyEditableTextBox::Tick(const FGeometry& AllottedGeometry, double InCurrentTime, float InDeltaTime)
 {
 	const float CurrentHeight = AllottedGeometry.GetLocalSize().Y;
 	if (bIsMultiLine && PreviousHeight.IsSet() && PreviousHeight.GetValue() != CurrentHeight)

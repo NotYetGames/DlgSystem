@@ -16,14 +16,14 @@ class UDlgDialogue;
 class UEdGraphSchema;
 class UDlgNode;
 class UEdGraph;
-
+class FSlateRect;
 
 class FDialogueEditorUtilities
 {
 public:
 	/** Spawns a GraphNode in the specified ParentGraph and at Location. */
 	template <typename GraphNodeType>
-	static GraphNodeType* SpawnGraphNodeFromTemplate(class UEdGraph* ParentGraph, const FVector2D Location, bool bSelectNewNode = true)
+	static GraphNodeType* SpawnGraphNodeFromTemplate(UEdGraph* ParentGraph, const FVector2D Location, bool bSelectNewNode = true)
 	{
 		FGraphNodeCreator<GraphNodeType> NodeCreator(*ParentGraph);
 		GraphNodeType* GraphNode = NodeCreator.CreateUserInvokedNode(bSelectNewNode);
@@ -46,7 +46,7 @@ public:
 	 *
 	 * @return false if nothing is selected
 	 */
-	static bool GetBoundsForSelectedNodes(const UEdGraph* Graph, class FSlateRect& Rect, float Padding = 0.0f);
+	static bool GetBoundsForSelectedNodes(const UEdGraph* Graph, FSlateRect& Rect, float Padding = 0.0f);
 
 	/** Refreshes the details panel for the editor of the specified Graph. */
 	static void RefreshDetailsView(const UEdGraph* Graph, bool bRestorePreviousSelection);
@@ -67,8 +67,12 @@ public:
 	 *
 	 * @return	nullptr if it fails, else ther new created graph
 	 */
-	static UEdGraph* CreateNewGraph(UObject* ParentScope, const FName& GraphName, TSubclassOf<UEdGraph> GraphClass,
-								   TSubclassOf<UEdGraphSchema> SchemaClass);
+	static UEdGraph* CreateNewGraph(
+		UObject* ParentScope,
+		FName GraphName,
+		TSubclassOf<UEdGraph> GraphClass,
+		TSubclassOf<UEdGraphSchema> SchemaClass
+	);
 
 	/** Helper function that checks if the data is valid in the Dialogue/Graph and tries to fix the data. */
 	static bool CheckAndTryToFixDialogue(UDlgDialogue* Dialogue, bool bDisplayWarning = true);
@@ -102,8 +106,13 @@ public:
 	 * @param	OffsetBetweenRowsY		The offset between nodes on the Y axis
 	 * @param	bIsDirectionVertical	Is direction vertical? If false it is horizontal
 	 */
-	static void AutoPositionGraphNodes(UDialogueGraphNode* RootNode, const TArray<UDialogueGraphNode*>& GraphNodes,
-									int32 OffsetBetweenColumnsX, int32 OffsetBetweenRowsY, bool bIsDirectionVertical);
+	static void AutoPositionGraphNodes(
+		UDialogueGraphNode* RootNode,
+		const TArray<UDialogueGraphNode*>& GraphNodes,
+		int32 OffsetBetweenColumnsX,
+		int32 OffsetBetweenRowsY,
+		bool bIsDirectionVertical
+	);
 
 	/**
 	 * Tells us if the selected nodes can be converted to a speech sequence node.
@@ -114,8 +123,10 @@ public:
 	 * @return bool		If true, the selected graph nodes (filtered and sorted) will be in set in the OutSelectedGraphNodes array.
 	 *					If false, the OutSelectedGraphNodes will be empty
 	*/
-	static bool CanConvertSpeechNodesToSpeechSequence(const TSet<UObject*>& SelectedNodes,
-													  TArray<UDialogueGraphNode*>& OutSelectedGraphNodes);
+	static bool CanConvertSpeechNodesToSpeechSequence(
+		const TSet<UObject*>& SelectedNodes,
+		TArray<UDialogueGraphNode*>& OutSelectedGraphNodes
+	);
 
 	/**
 	 * Tells us if the selected nodes (should be only one) can be converted from a speech sequence to speech nodes
@@ -182,8 +193,10 @@ public:
 	 * @param	GraphNodes			The nodes we are replacing the old references
 	 * @param	OldToNewIndexMap	Map that tells us the mapping from old index to new index. Maps from old index -> new index
 	 */
-	static void ReplaceReferencesToOldIndicesWithNew(const TArray<UDialogueGraphNode*>& GraphNodes,
-													  const TMap<int32, int32>& OldToNewIndexMap);
+	static void ReplaceReferencesToOldIndicesWithNew(
+		const TArray<UDialogueGraphNode*>& GraphNodes,
+		const TMap<int32, int32>& OldToNewIndexMap
+	);
 
 	/** Gets the Dialogue for the provided UEdGraphNode_Comment  */
 	static UDlgDialogue* GetDialogueFromGraphNodeComment(const UEdGraphNode_Comment* CommentNode)

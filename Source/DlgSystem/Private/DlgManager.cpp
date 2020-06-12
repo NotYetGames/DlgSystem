@@ -95,7 +95,7 @@ UDlgContext* UDlgManager::StartDialogueWithDefaultParticipants(UObject* WorldCon
 }
 
 
-UDlgContext* UDlgManager::StartDialogue(UDlgDialogue* Dialogue, const TArray<UObject*>& Participants)
+UDlgContext* UDlgManager::StartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants)
 {
 	TMap<FName, UObject*> ParticipantBinding;
 
@@ -126,7 +126,13 @@ bool UDlgManager::CouldStartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TA
 	return Context->CouldBeStarted(Dialogue, ParticipantBinding);
 }
 
-UDlgContext* UDlgManager::ResumeDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants, int32 StartIndex, const TSet<int32>& AlreadyVisitedNodes, bool bFireEnterEvents)
+UDlgContext* UDlgManager::ResumeDialogue(
+	UDlgDialogue* Dialogue,
+	UPARAM(ref)const TArray<UObject*>& Participants,
+	int32 StartIndex,
+	const TSet<int32>& AlreadyVisitedNodes,
+	bool bFireEnterEvents
+)
 {
 	TMap<FName, UObject*> ParticipantBinding;
 
@@ -370,7 +376,7 @@ bool UDlgManager::DoesObjectImplementDialogueParticipantInterface(const UObject*
 	return Object->GetClass()->ImplementsInterface(DialogueParticipantClass);
 }
 
-TArray<UDlgDialogue*> UDlgManager::GetAllDialoguesForParticipantName(const FName& ParticipantName)
+TArray<UDlgDialogue*> UDlgManager::GetAllDialoguesForParticipantName(FName ParticipantName)
 {
 	TArray<UDlgDialogue*> DialoguesArray;
 	for (UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
@@ -406,7 +412,7 @@ void UDlgManager::GetAllDialoguesSpeakerStates(TArray<FName>& OutArray)
 	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
 }
 
-void UDlgManager::GetAllDialoguesIntNames(const FName& ParticipantName, TArray<FName>& OutArray)
+void UDlgManager::GetAllDialoguesIntNames(FName ParticipantName, TArray<FName>& OutArray)
 {
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
@@ -417,7 +423,7 @@ void UDlgManager::GetAllDialoguesIntNames(const FName& ParticipantName, TArray<F
 	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
 }
 
-void UDlgManager::GetAllDialoguesFloatNames(const FName& ParticipantName, TArray<FName>& OutArray)
+void UDlgManager::GetAllDialoguesFloatNames(FName ParticipantName, TArray<FName>& OutArray)
 {
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
@@ -428,7 +434,7 @@ void UDlgManager::GetAllDialoguesFloatNames(const FName& ParticipantName, TArray
 	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
 }
 
-void UDlgManager::GetAllDialoguesBoolNames(const FName& ParticipantName, TArray<FName>& OutArray)
+void UDlgManager::GetAllDialoguesBoolNames(FName ParticipantName, TArray<FName>& OutArray)
 {
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
@@ -439,7 +445,7 @@ void UDlgManager::GetAllDialoguesBoolNames(const FName& ParticipantName, TArray<
 	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
 }
 
-void UDlgManager::GetAllDialoguesNameNames(const FName& ParticipantName, TArray<FName>& OutArray)
+void UDlgManager::GetAllDialoguesNameNames(FName ParticipantName, TArray<FName>& OutArray)
 {
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
@@ -450,7 +456,7 @@ void UDlgManager::GetAllDialoguesNameNames(const FName& ParticipantName, TArray<
 	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
 }
 
-void UDlgManager::GetAllDialoguesConditionNames(const FName& ParticipantName, TArray<FName>& OutArray)
+void UDlgManager::GetAllDialoguesConditionNames(FName ParticipantName, TArray<FName>& OutArray)
 {
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
@@ -461,7 +467,7 @@ void UDlgManager::GetAllDialoguesConditionNames(const FName& ParticipantName, TA
 	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
 }
 
-void UDlgManager::GetAllDialoguesEventNames(const FName& ParticipantName, TArray<FName>& OutArray)
+void UDlgManager::GetAllDialoguesEventNames(FName ParticipantName, TArray<FName>& OutArray)
 {
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())

@@ -122,8 +122,12 @@ bool FDialogueEditorUtilities::RemoveNode(UEdGraphNode* NodeToRemove)
 	return Graph->RemoveGraphNode(NodeToRemove);
 }
 
-UEdGraph* FDialogueEditorUtilities::CreateNewGraph(UObject* ParentScope, const FName& GraphName,
-	TSubclassOf<UEdGraph> GraphClass, TSubclassOf<UEdGraphSchema> SchemaClass)
+UEdGraph* FDialogueEditorUtilities::CreateNewGraph(
+	UObject* ParentScope,
+	FName GraphName,
+	TSubclassOf<UEdGraph> GraphClass,
+	TSubclassOf<UEdGraphSchema> SchemaClass
+)
 {
 	// Mostly copied from FBlueprintEditorUtils::CreateNewGraph
 	UEdGraph* NewGraph;
@@ -323,9 +327,13 @@ UDlgNode* FDialogueEditorUtilities::GetClosestNodeFromGraphNode(UEdGraphNode* Gr
 	return nullptr;
 }
 
-void FDialogueEditorUtilities::AutoPositionGraphNodes(UDialogueGraphNode* RootNode,
-	const TArray<UDialogueGraphNode*>& GraphNodes, int32 OffsetBetweenColumnsX, int32 OffsetBetweenRowsY,
-	bool bIsDirectionVertical)
+void FDialogueEditorUtilities::AutoPositionGraphNodes(
+	UDialogueGraphNode* RootNode,
+	const TArray<UDialogueGraphNode*>& GraphNodes,
+	int32 OffsetBetweenColumnsX,
+	int32 OffsetBetweenRowsY,
+	bool bIsDirectionVertical
+)
 {
 	TSet<UDialogueGraphNode*> VisitedNodes;
 	VisitedNodes.Add(RootNode);
@@ -472,8 +480,10 @@ void FDialogueEditorUtilities::AutoPositionGraphNodes(UDialogueGraphNode* RootNo
 	}
 }
 
-bool FDialogueEditorUtilities::CanConvertSpeechNodesToSpeechSequence(const TSet<UObject*>& SelectedNodes,
-	TArray<UDialogueGraphNode*>& OutSelectedGraphNodes)
+bool FDialogueEditorUtilities::CanConvertSpeechNodesToSpeechSequence(
+	const TSet<UObject*>& SelectedNodes,
+	TArray<UDialogueGraphNode*>& OutSelectedGraphNodes
+)
 {
 	OutSelectedGraphNodes.Empty();
 	if (SelectedNodes.Num() == 0)
@@ -638,8 +648,10 @@ IAssetEditorInstance* FDialogueEditorUtilities::FindEditorForAsset(UObject* Asse
 #endif
 }
 
-bool FDialogueEditorUtilities::OpenEditorAndJumpToGraphNode(const UEdGraphNode* GraphNode,
-															bool bFocusIfOpen /*= false*/)
+bool FDialogueEditorUtilities::OpenEditorAndJumpToGraphNode(
+	const UEdGraphNode* GraphNode,
+	bool bFocusIfOpen /*= false*/
+)
 {
 	if (!IsValid(GraphNode))
 	{

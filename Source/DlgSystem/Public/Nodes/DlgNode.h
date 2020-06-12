@@ -92,7 +92,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual FName GetNodeParticipantName() const { return OwnerName; }
 
-	virtual void SetNodeParticipantName(const FName& InName) { OwnerName = InName; }
+	virtual void SetNodeParticipantName(FName InName) { OwnerName = InName; }
 
 	//
 	// For the EnterConditions

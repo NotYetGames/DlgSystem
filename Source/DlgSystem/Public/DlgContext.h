@@ -187,17 +187,18 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	FName GetActiveNodeParticipantName() const;
 
-	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
-	UObject* GetParticipant(FName ParticipantName);
-	const UObject* GetConstParticipant(FName ParticipantName) const;
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "GetParticipant")
+	UObject* GetMutableParticipant(FName ParticipantName) const;
+	const UObject* GetParticipant(FName ParticipantName) const;
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
-	const TMap<FName, UObject*>& GetParticipantMap() const { return Participants; }
+	const TMap<FName, UObject*>& GetParticipantsMap() const { return Participants; }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	int32 GetActiveNodeIndex() const { return ActiveNodeIndex; }
 
-	UDlgNode* GetActiveNode() { return GetNode(ActiveNodeIndex); }
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode", DisplayName = "GetActiveNode")
+	UDlgNode* GetMutableActiveNode() const { return GetMutableNode(ActiveNodeIndex); }
 	const UDlgNode* GetActiveNode() const { return GetNode(ActiveNodeIndex); }
 
 	//
@@ -259,10 +260,12 @@ public:
 	bool EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep);
 
 	// Gets the Node at the NodeIndex index
-	UDlgNode* GetNode(int32 NodeIndex);
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "GetNode")
+	UDlgNode* GetMutableNode(int32 NodeIndex) const;
 	const UDlgNode* GetNode(int32 NodeIndex) const;
 
 	// Was node with NodeIndex visited?
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Context")
 	bool WasNodeVisitedInThisContext(int32 NodeIndex) const { return VisitedNodeIndices.Contains(NodeIndex); }
 
 	// Checks the enter conditions of the node.

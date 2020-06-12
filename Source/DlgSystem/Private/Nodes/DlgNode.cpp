@@ -97,10 +97,10 @@ void UDlgNode::FireNodeEnterEvents(UDlgContext* Context)
 	for (const FDlgEvent& Event : EnterEvents)
 	{
 		// Get Participant from either event or parent
-		UObject* Participant = Context->GetParticipant(Event.ParticipantName);
+		UObject* Participant = Context->GetMutableParticipant(Event.ParticipantName);
 		if (!IsValid(Participant))
 		{
-			Participant = Context->GetParticipant(OwnerName);
+			Participant = Context->GetMutableParticipant(OwnerName);
 		}
 
 		if (Participant == nullptr)

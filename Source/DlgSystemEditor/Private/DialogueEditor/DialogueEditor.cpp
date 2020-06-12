@@ -277,9 +277,11 @@ void FDialogueEditor::SummonSearchUI(bool bSetFindWithinDialogue, FString NewSea
 	}
 }
 
-void FDialogueEditor::InitDialogueEditor(const EToolkitMode::Type Mode,
-										 const TSharedPtr<IToolkitHost>& InitToolkitHost,
-										 UDlgDialogue* InitDialogue)
+void FDialogueEditor::InitDialogueEditor(
+	EToolkitMode::Type Mode,
+	const TSharedPtr<IToolkitHost>& InitToolkitHost,
+	UDlgDialogue* InitDialogue
+)
 {
 	Settings = GetMutableDefault<UDlgSystemSettings>();
 

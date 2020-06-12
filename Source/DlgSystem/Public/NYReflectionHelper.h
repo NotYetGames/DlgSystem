@@ -48,7 +48,7 @@ public:
 		}
 		return Result;
 	}
-	
+
 #else
 	template <typename To, typename From>
 	FORCEINLINE static To* CastProperty(From* Src)
@@ -83,8 +83,6 @@ public:
 		return Result;
 	}
 #endif // ENGINE_MINOR_VERSION >= 25
-	
-
 
 	// Attempts to get the property VariableName from Object
 	template <typename PropertyType, typename VariableType>

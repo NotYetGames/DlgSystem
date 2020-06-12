@@ -101,7 +101,7 @@ public:
 	void PostInitProperties() override;
 
 	/** Executed after Rename is executed. */
-	void PostRename(UObject* OldOuter, const FName OldName) override;
+	void PostRename(UObject* OldOuter, FName OldName) override;
 
 	/**
 	 * Called after duplication & serialization and before PostLoad. Used to e.g. make sure UStaticMesh's UModel gets copied as well.
@@ -416,17 +416,13 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	const TArray<UDlgNode*>& GetNodes() const { return Nodes; }
 
-	// Gets the Start Node
+	// Gets the Start Node as a mutable pointer.
+	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "GetStartNode")
+	UDlgNode* GetMutableStartNode() const { return StartNode; }
 	const UDlgNode& GetStartNode() const { return *StartNode; }
 
-	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "GetStartNode")
-	UDlgNode* GetStartNodePtr() const { return StartNode; }
-
-	// Gets the Start Node as a mutable pointer.
-	UDlgNode* GetMutableStartNode() { return StartNode; }
-
 	// Gets the Node as a mutable pointer.
-	UDlgNode* GetMutableNode(int32 NodeIndex) { return Nodes.IsValidIndex(NodeIndex) ? Nodes[NodeIndex] : nullptr; }
+	UDlgNode* GetMutableNode(int32 NodeIndex) const { return Nodes.IsValidIndex(NodeIndex) ? Nodes[NodeIndex] : nullptr; }
 
 	// Sets a new Start Node. Use with care.
 	void SetStartNode(UDlgNode* InStartNode) { StartNode = InStartNode; }

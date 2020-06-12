@@ -18,7 +18,7 @@ bool FDlgCondition::EvaluateArray(const UDlgContext* Context, const TArray<FDlgC
 	for (const FDlgCondition& Condition : ConditionsArray)
 	{
 		const FName ParticipantName = Condition.ParticipantName == NAME_None ? DefaultParticipantName : Condition.ParticipantName;
-		const bool bSatisfied = Condition.IsConditionMet(Context, Context->GetConstParticipant(ParticipantName));
+		const bool bSatisfied = Condition.IsConditionMet(Context, Context->GetParticipant(ParticipantName));
 		if (Condition.Strength == EDlgConditionStrength::Weak)
 		{
 			bHasAnyWeak = true;
@@ -122,7 +122,7 @@ bool FDlgCondition::CheckFloat(const UDlgContext* Context, float Value) const
 	float ValueToCheckAgainst = FloatValue;
 	if (CompareType == EDlgCompare::ToVariable || CompareType == EDlgCompare::ToClassVariable)
 	{
-		const UObject* OtherParticipant = Context->GetConstParticipant(OtherParticipantName);
+		const UObject* OtherParticipant = Context->GetParticipant(OtherParticipantName);
 		if (!ValidateIsParticipantValid(OtherParticipant, TEXT("CheckFloat")))
 		{
 			return false;
@@ -169,7 +169,7 @@ bool FDlgCondition::CheckInt(const UDlgContext* Context, int32 Value) const
 	int32 ValueToCheckAgainst = IntValue;
 	if (CompareType == EDlgCompare::ToVariable || CompareType == EDlgCompare::ToClassVariable)
 	{
-		const UObject* OtherParticipant = Context->GetConstParticipant(OtherParticipantName);
+		const UObject* OtherParticipant = Context->GetParticipant(OtherParticipantName);
 		if (!ValidateIsParticipantValid(OtherParticipant, TEXT("CheckInt")))
 		{
 			return false;
@@ -215,7 +215,7 @@ bool FDlgCondition::CheckBool(const UDlgContext* Context, bool bValue) const
 {
 	if (CompareType == EDlgCompare::ToVariable || CompareType == EDlgCompare::ToClassVariable)
 	{
-		const UObject* OtherParticipant = Context->GetConstParticipant(OtherParticipantName);
+		const UObject* OtherParticipant = Context->GetParticipant(OtherParticipantName);
 		if (!ValidateIsParticipantValid(OtherParticipant, TEXT("CheckBool")))
 		{
 			return false;
@@ -242,7 +242,7 @@ bool FDlgCondition::CheckName(const UDlgContext* Context, FName Value) const
 	FName ValueToCheckAgainst = NameValue;
 	if (CompareType == EDlgCompare::ToVariable || CompareType == EDlgCompare::ToClassVariable)
 	{
-		const UObject* OtherParticipant = Context->GetConstParticipant(OtherParticipantName);
+		const UObject* OtherParticipant = Context->GetParticipant(OtherParticipantName);
 		if (!ValidateIsParticipantValid(OtherParticipant, TEXT("CheckName")))
 		{
 			return false;

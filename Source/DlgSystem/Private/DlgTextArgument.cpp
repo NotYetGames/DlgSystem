@@ -14,7 +14,7 @@ FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgCo
 	// If participant name is not valid we use the node owner name
 	const FName ValidParticipantName = ParticipantName == NAME_None ? NodeOwner : ParticipantName;
 
-	const UObject* Participant = Context->GetConstParticipant(ValidParticipantName);
+	const UObject* Participant = Context->GetParticipant(ValidParticipantName);
 	if (Participant == nullptr)
 	{
 		FDlgLogger::Get().Errorf(

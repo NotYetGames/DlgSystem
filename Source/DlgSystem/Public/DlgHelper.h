@@ -287,7 +287,7 @@ public:
 	}
 
 	// Default comparison function
-	static bool PredicateSortFNameAlphabeticallyAscending(const FName& A, const FName& B)
+	static bool PredicateSortFNameAlphabeticallyAscending(FName A, FName B)
 	{
 		return A.Compare(B) < 0;
 	}

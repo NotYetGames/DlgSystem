@@ -16,7 +16,7 @@ struct FDialogueBrowserSortOption
 {
 
 public:
-	FDialogueBrowserSortOption(const EDialogueBrowserSortOption InOption, const FName& InName)
+	FDialogueBrowserSortOption(EDialogueBrowserSortOption InOption, FName InName)
 		: Option(InOption), Name(InName) {}
 
 	FName GetFName() const { return Name; }
@@ -38,8 +38,10 @@ class FDialogueBrowserUtilities
 {
 public:
 	/** Compare two FDialogueBrowserTreeNode */
-	static bool PredicateCompareDialogueTreeNode(const TSharedPtr<FDialogueBrowserTreeNode>& FirstNode,
-		const TSharedPtr<FDialogueBrowserTreeNode> SecondNode)
+	static bool PredicateCompareDialogueTreeNode(
+		const TSharedPtr<FDialogueBrowserTreeNode>& FirstNode,
+		const TSharedPtr<FDialogueBrowserTreeNode> SecondNode
+	)
 	{
 		check(FirstNode.IsValid());
 		check(SecondNode.IsValid());
@@ -47,8 +49,11 @@ public:
 	}
 
 	/** Predicate that sorts participants by dialogue number references, in descending order. */
-	static bool PredicateSortByDialoguesNumDescending(const FName& FirstParticipant, const FName& SecondParticipant,
-		const TMap<FName, TSharedPtr<FDialogueBrowserTreeParticipantProperties>>& ParticipantsProperties)
+	static bool PredicateSortByDialoguesNumDescending(
+		FName FirstParticipant,
+		FName SecondParticipant,
+		const TMap<FName, TSharedPtr<FDialogueBrowserTreeParticipantProperties>>& ParticipantsProperties
+	)
 	{
 		int32 FirstNum = 0;
 		int32 SecondNum = 0;

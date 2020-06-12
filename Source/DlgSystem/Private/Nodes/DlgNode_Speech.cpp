@@ -81,8 +81,7 @@ bool UDlgNode_Speech::ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNo
 			// Find first satisfied child
 			if (Edge.Evaluate(Context, { this }))
 			{
-				UDlgNode* Node = Context->GetNode(Edge.TargetIndex);
-				if (Node != nullptr)
+				if (UDlgNode* Node = Context->GetMutableNode(Edge.TargetIndex))
 				{
 					// Get Grandchildren
 					return Node->ReevaluateChildren(Context, AlreadyEvaluated);

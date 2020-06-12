@@ -12,7 +12,7 @@
 bool UDlgContext::ChooseChild(int32 OptionIndex)
 {
 	check(Dialogue);
-	if (UDlgNode* Node = GetActiveNode())
+	if (UDlgNode* Node = GetMutableActiveNode())
 	{
 		if (Node->OptionSelected(OptionIndex, this))
 		{
@@ -56,7 +56,7 @@ bool UDlgContext::ChooseChildBasedOnAllOptionIndex(int32 Index)
 void UDlgContext::ReevaluateChildren()
 {
 	check(Dialogue);
-	UDlgNode* Node = GetActiveNode();
+	UDlgNode* Node = GetMutableActiveNode();
 	if (!IsValid(Node))
 	{
 		FDlgLogger::Get().Errorf(
@@ -293,7 +293,7 @@ FName UDlgContext::GetActiveNodeParticipantName() const
 	return Node->GetNodeParticipantName();
 }
 
-UObject* UDlgContext::GetParticipant(FName ParticipantName)
+UObject* UDlgContext::GetMutableParticipant(FName ParticipantName) const
 {
 	auto* ParticipantPtr = Participants.Find(ParticipantName);
 	if (ParticipantPtr != nullptr && IsValid(*ParticipantPtr))
@@ -304,7 +304,7 @@ UObject* UDlgContext::GetParticipant(FName ParticipantName)
 	return nullptr;
 }
 
-const UObject* UDlgContext::GetConstParticipant(FName ParticipantName) const
+const UObject* UDlgContext::GetParticipant(FName ParticipantName) const
 {
 	auto* ParticipantPtr = Participants.Find(ParticipantName);
 	if (ParticipantPtr != nullptr && IsValid(*ParticipantPtr))
@@ -395,7 +395,7 @@ bool UDlgContext::EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredW
 {
 	check(Dialogue);
 
-	UDlgNode* Node = GetNode(NodeIndex);
+	UDlgNode* Node = GetMutableNode(NodeIndex);
 	if (!IsValid(Node))
 	{
 		FDlgLogger::Get().Errorf(
@@ -412,7 +412,7 @@ bool UDlgContext::EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredW
 	return Node->HandleNodeEnter(this, NodesEnteredWithThisStep);
 }
 
-UDlgNode* UDlgContext::GetNode(int32 NodeIndex)
+UDlgNode* UDlgContext::GetMutableNode(int32 NodeIndex) const
 {
 	check(Dialogue);
 	const TArray<UDlgNode*>& Nodes = Dialogue->GetNodes();
@@ -517,7 +517,7 @@ bool UDlgContext::StartFromIndex(
 	Participants = InParticipants;
 	VisitedNodeIndices = VisitedNodes;
 
-	UDlgNode* Node = GetNode(StartIndex);
+	UDlgNode* Node = GetMutableNode(StartIndex);
 	if (!IsValid(Node))
 	{
 		FDlgLogger::Get().Errorf(
