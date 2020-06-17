@@ -78,8 +78,10 @@ public:
 private:
 	UDialogueGraph(const FObjectInitializer& ObjectInitializer);
 
-	/** Link the specified node to all it's children */
-	void LinkGraphNodeToChildren(const TArray<UDlgNode*>& NodesDialogue,
-								 const UDlgNode& NodeDialogue,
-								 UDialogueGraphNode* NodeGraph) const;
+	// Link the specified node to all it's children
+	void LinkGraphNodeToChildren(
+		const TArray<UDlgNode*>& NodesDialogue,
+		const UDlgNode& NodeDialogue,
+		UDialogueGraphNode* NodeGraph
+	) const;
 };

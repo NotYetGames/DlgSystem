@@ -155,9 +155,11 @@ void UDialogueGraph::LinkGraphNodesFromDialogue() const
 	}
 }
 
-void UDialogueGraph::LinkGraphNodeToChildren(const TArray<UDlgNode*>& NodesDialogue,
-											 const UDlgNode& NodeDialogue,
-											 UDialogueGraphNode* GraphNode) const
+void UDialogueGraph::LinkGraphNodeToChildren(
+	const TArray<UDlgNode*>& NodesDialogue,
+	const UDlgNode& NodeDialogue,
+	UDialogueGraphNode* GraphNode
+) const
 {
 	// Assume we are starting from scratch, no output connections
 	GraphNode->GetOutputPin()->BreakAllPinLinks();

@@ -31,32 +31,46 @@ class FDialogueGraphConnectionDrawingPolicy : public FConnectionDrawingPolicy
 	 */
 
 public:
-	FDialogueGraphConnectionDrawingPolicy(int32 InBackLayerID, int32 InFrontLayerID, float ZoomFactor,
-			const FSlateRect& InClippingRect, FSlateWindowElementList& InDrawElements, UEdGraph* InGraphObj);
+	FDialogueGraphConnectionDrawingPolicy(
+		int32 InBackLayerID,
+		int32 InFrontLayerID,
+		float ZoomFactor,
+		const FSlateRect& InClippingRect,
+		FSlateWindowElementList& InDrawElements,
+		UEdGraph* InGraphObj
+	);
 
+	//
 	// FConnectionDrawingPolicy interface
-	/** Determine how the wires looks */
+	//
+
+	// Determine how the wires looks
 	void DetermineWiringStyle(UEdGraphPin* OutputPin, UEdGraphPin* InputPin, /*inout*/ FConnectionParams& Params) override;
 
-	/** Determinte to what geometries the wires are connected. */
-	void DetermineLinkGeometry(FArrangedChildren& ArrangedNodes, TSharedRef<SWidget>& OutputPinWidget,
-		UEdGraphPin* OutputPin, UEdGraphPin* InputPin,
-		/*out*/ FArrangedWidget*& StartWidgetGeometry, /*out*/ FArrangedWidget*& EndWidgetGeometry) override;
+	// Determinte to what geometries the wires are connected.
+	void DetermineLinkGeometry(
+		FArrangedChildren& ArrangedNodes,
+		TSharedRef<SWidget>& OutputPinWidget,
+		UEdGraphPin* OutputPin,
+		UEdGraphPin* InputPin,
+		/*out*/ FArrangedWidget*& StartWidgetGeometry,
+		/*out*/ FArrangedWidget*& EndWidgetGeometry
+	) override;
 
-	/** How should we draw the spline and arrow arrow? */
+	// How should we draw the spline and arrow arrow?
 	void DrawSplineWithArrow(const FGeometry& StartGeom, const FGeometry& EndGeom, const FConnectionParams& Params) override;
 	void DrawSplineWithArrow(const FVector2D& StartPoint, const FVector2D& EndPoint, const FConnectionParams& Params) override;
 
-	/** The method that actually draws the spline */
+	// The method that actually draws the spline
 	void DrawConnection(int32 LayerId, const FVector2D& Start, const FVector2D& End, const FConnectionParams& Params) override;
 
-	/** Sometimes the panel draws a preview connector; e.g. when the user is connecting pins */
+	// Sometimes the panel draws a preview connector; e.g. when the user is connecting pins
 	void DrawPreviewConnector(const FGeometry& PinGeometry, const FVector2D& StartPoint, const FVector2D& EndPoint, UEdGraphPin* Pin) override;
 
-	/** Compute the tangent of the spline. */
+	// Compute the tangent of the spline.
 	FVector2D ComputeSplineTangent(const FVector2D& Start, const FVector2D& End) const override;
 
-	/** Draws the wire */
+	// Draws the wire
 	void Draw(TMap<TSharedRef<SWidget>, FArrangedWidget>& PinGeometries, FArrangedChildren& ArrangedNodes) override;
 
 	// End of FConnectionDrawingPolicy interface
@@ -66,11 +80,11 @@ protected:
 
 protected:
 	// Map for widgets
-	UEdGraph* Graph;
+	UEdGraph* Graph = nullptr;
 
 	// Map for widgets
 	TMap<UEdGraphNode*, int32> NodeWidgetMap;
 
 	// Cache the settings
-	const UDlgSystemSettings* DialogueSettings;
+	const UDlgSystemSettings* DialogueSettings = nullptr;
 };

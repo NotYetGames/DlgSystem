@@ -59,8 +59,12 @@ public:
 	 */
 	static TSharedPtr<FDialogueSearchFoundResult> GetGraphNodesForIntVariableName(FName IntVariableName, const UDlgDialogue* Dialogue)
 	{
-		TSharedPtr<FDialogueSearchFoundResult> FoundResult = GetGraphNodesForVariablesOfNameAndType(IntVariableName, Dialogue,
-			EDlgEventType::ModifyInt, EDlgConditionType::IntCall);
+		TSharedPtr<FDialogueSearchFoundResult> FoundResult = GetGraphNodesForVariablesOfNameAndType(
+			IntVariableName,
+			Dialogue,
+			EDlgEventType::ModifyInt,
+			EDlgConditionType::IntCall
+		);
 		GetGraphNodesForTextArgumentVariable(IntVariableName, Dialogue, EDlgTextArgumentType::DialogueInt, FoundResult);
 		return FoundResult;
 	}
@@ -71,8 +75,12 @@ public:
 	 */
 	static TSharedPtr<FDialogueSearchFoundResult> GetGraphNodesForFloatVariableName(FName FloatVariableName, const UDlgDialogue* Dialogue)
 	{
-		TSharedPtr<FDialogueSearchFoundResult> FoundResult = GetGraphNodesForVariablesOfNameAndType(FloatVariableName, Dialogue,
-			EDlgEventType::ModifyFloat, EDlgConditionType::FloatCall);
+		TSharedPtr<FDialogueSearchFoundResult> FoundResult = GetGraphNodesForVariablesOfNameAndType(
+			FloatVariableName,
+			Dialogue,
+			EDlgEventType::ModifyFloat,
+			EDlgConditionType::FloatCall
+		);
 		GetGraphNodesForTextArgumentVariable(FloatVariableName, Dialogue, EDlgTextArgumentType::DialogueInt, FoundResult);
 		return FoundResult;
 	}
@@ -111,8 +119,12 @@ public:
 	 */
 	static TSharedPtr<FDialogueSearchFoundResult> GetGraphNodesForClassIntVariableName(FName IntVariableName, const UDlgDialogue* Dialogue)
 	{
-		TSharedPtr<FDialogueSearchFoundResult> FoundResult = GetGraphNodesForVariablesOfNameAndType(IntVariableName, Dialogue,
-			EDlgEventType::ModifyClassIntVariable, EDlgConditionType::ClassIntVariable);
+		TSharedPtr<FDialogueSearchFoundResult> FoundResult = GetGraphNodesForVariablesOfNameAndType(
+			IntVariableName,
+			Dialogue,
+			EDlgEventType::ModifyClassIntVariable,
+			EDlgConditionType::ClassIntVariable
+		);
 		GetGraphNodesForTextArgumentVariable(IntVariableName, Dialogue, EDlgTextArgumentType::ClassInt, FoundResult);
 		return FoundResult;
 	}
@@ -124,8 +136,12 @@ public:
 	static TSharedPtr<FDialogueSearchFoundResult> GetGraphNodesForClassFloatVariableName(FName FloatVariableName, const UDlgDialogue* Dialogue)
 	{
 
-		TSharedPtr<FDialogueSearchFoundResult> FoundResult = GetGraphNodesForVariablesOfNameAndType(FloatVariableName, Dialogue,
-			EDlgEventType::ModifyClassFloatVariable, EDlgConditionType::FloatVariable);
+		TSharedPtr<FDialogueSearchFoundResult> FoundResult = GetGraphNodesForVariablesOfNameAndType(
+			FloatVariableName,
+			Dialogue,
+			EDlgEventType::ModifyClassFloatVariable,
+			EDlgConditionType::FloatVariable
+		);
 		GetGraphNodesForTextArgumentVariable(FloatVariableName, Dialogue, EDlgTextArgumentType::ClassFloat, FoundResult);
 		return FoundResult;
 	}

@@ -86,7 +86,13 @@ void UDialogueGraphSchema::GetContextMenuActions(UToolMenu* Menu, UGraphNodeCont
 
 #else
 
-void UDialogueGraphSchema::GetContextMenuActions(const UEdGraph* CurrentGraph, const UEdGraphNode* InGraphNode, const UEdGraphPin* InGraphPin, FMenuBuilder* MenuBuilder, bool bIsDebugging) const
+void UDialogueGraphSchema::GetContextMenuActions(
+	const UEdGraph* CurrentGraph,
+	const UEdGraphNode* InGraphNode,
+	const UEdGraphPin* InGraphPin,
+	FMenuBuilder* MenuBuilder,
+	bool bIsDebugging
+) const
 {
 	if (InGraphNode && !bIsDebugging)
 	{

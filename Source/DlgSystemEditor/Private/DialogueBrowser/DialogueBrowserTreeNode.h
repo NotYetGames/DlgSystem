@@ -153,7 +153,7 @@ public:
 	bool IsDialogueText() const
 	{
 		return IsText() &&
-		      (TextType == EDialogueTreeNodeTextType::ParticipantDialogue
+			  (TextType == EDialogueTreeNodeTextType::ParticipantDialogue
 			|| TextType == EDialogueTreeNodeTextType::EventDialogue
 			|| TextType == EDialogueTreeNodeTextType::ConditionDialogue
 			|| TextType == EDialogueTreeNodeTextType::IntVariableDialogue
@@ -176,22 +176,24 @@ public:
 	}
 	bool IsGraphNodeText() const
 	{
-		return IsText() && (TextType == EDialogueTreeNodeTextType::EventGraphNode ||
-							TextType == EDialogueTreeNodeTextType::ConditionGraphNode ||
-							TextType == EDialogueTreeNodeTextType::IntVariableGraphNode ||
-							TextType == EDialogueTreeNodeTextType::FloatVariableGraphNode ||
-							TextType == EDialogueTreeNodeTextType::BoolVariableGraphNode ||
-							TextType == EDialogueTreeNodeTextType::FTextVariableGraphNode ||
-							TextType == EDialogueTreeNodeTextType::FNameVariableGraphNode);
+		return IsText() &&
+			  (TextType == EDialogueTreeNodeTextType::EventGraphNode
+			|| TextType == EDialogueTreeNodeTextType::ConditionGraphNode
+			|| TextType == EDialogueTreeNodeTextType::IntVariableGraphNode
+			|| TextType == EDialogueTreeNodeTextType::FloatVariableGraphNode
+			|| TextType == EDialogueTreeNodeTextType::BoolVariableGraphNode
+			|| TextType == EDialogueTreeNodeTextType::FTextVariableGraphNode
+			|| TextType == EDialogueTreeNodeTextType::FNameVariableGraphNode);
 	}
 	bool IsEdgeNodeText()
 	{
-		return IsText() && (TextType == EDialogueTreeNodeTextType::ConditionEdgeNode ||
-							TextType == EDialogueTreeNodeTextType::IntVariableEdgeNode ||
-							TextType == EDialogueTreeNodeTextType::FloatVariableEdgeNode ||
-							TextType == EDialogueTreeNodeTextType::BoolVariableEdgeNode ||
-							TextType == EDialogueTreeNodeTextType::FTextVariableEdgeNode ||
-							TextType == EDialogueTreeNodeTextType::FNameVariableEdgeNode);
+		return IsText() &&
+			  (TextType == EDialogueTreeNodeTextType::ConditionEdgeNode
+			|| TextType == EDialogueTreeNodeTextType::IntVariableEdgeNode
+			|| TextType == EDialogueTreeNodeTextType::FloatVariableEdgeNode
+			|| TextType == EDialogueTreeNodeTextType::BoolVariableEdgeNode
+			|| TextType == EDialogueTreeNodeTextType::FTextVariableEdgeNode
+			|| TextType == EDialogueTreeNodeTextType::FNameVariableEdgeNode);
 	}
 
 	/** Gets the textual representation of this item */

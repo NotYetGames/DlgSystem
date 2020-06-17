@@ -5,6 +5,8 @@
 
 #include "DlgDialogue.h"
 
+class IToolkitHost;
+
 /**
  * Defines the look and actions the editor takes when clicking/viewing a Dialogue asset.
  * See FDlgSystemEditorModule::StartupModule for usage.
@@ -32,7 +34,7 @@ public:
 	void GetActions(const TArray<UObject*>& InObjects, FMenuBuilder& MenuBuilder) override;
 
 	/** Opens the asset editor for the specified objects. If EditWithinLevelEditor is valid, the world-centric editor will be used. */
-	void OpenAssetEditor(const TArray<UObject*>& InObjects, TSharedPtr<class IToolkitHost> EditWithinLevelEditor = TSharedPtr<IToolkitHost>()) override;
+	void OpenAssetEditor(const TArray<UObject*>& InObjects, TSharedPtr<IToolkitHost> EditWithinLevelEditor = TSharedPtr<IToolkitHost>()) override;
 
 	/** Returns the categories that this asset type. The return value is one or more flags from EAssetTypeCategories.  */
 	uint32 GetCategories() override { return AssetCategory; }
