@@ -124,13 +124,13 @@ public:
 	}
 
 	/** Gets the position in the Graph canvas of this node. */
-	FVector2D GetPosition() const { return FVector2D(NodePosX, NodePosY); }
+	virtual FIntPoint GetPosition() const { return FIntPoint(NodePosX, NodePosY); }
 
 	/** Sets the position in the Graph canvas of this node. */
-	void SetPosition(const FVector2D& NewPosition)
+	virtual void SetPosition(int32 X, int32 Y)
 	{
-		NodePosX = NewPosition.X;
-		NodePosY = NewPosition.Y;
+		NodePosX = X;
+		NodePosY = Y;
 	}
 
 	// Compiler methods

@@ -53,9 +53,9 @@ TArray<FOverlayWidgetInfo> SDialogueGraphNode::GetOverlayWidgets(bool bSelected,
 	check(EventOverlayWidget.IsValid());
 	check(VoiceOverlayWidget.IsValid());
 	check(GenericOverlayWidget.IsValid());
-	
+
 	TArray<FOverlayWidgetInfo> Widgets;
-	constexpr float DistanceBetweenWidgetsY = 1.5f;
+	static constexpr float DistanceBetweenWidgetsY = 1.5f;
 	FVector2D OriginRightSide(0.0f, 0.0f);
 	FVector2D OriginLeftSide(0.0f, 0.0f);
 
@@ -143,8 +143,8 @@ void SDialogueGraphNode::UpdateGraphNode()
 		.OnGetBackgroundColor(this, &Self::GetOverlayWidgetBackgroundColor);
 
 	// Fit to content
-	constexpr int WidthOverride = 24;
-	constexpr int HeightOverride = 24;
+	static constexpr int WidthOverride = 24;
+	static constexpr int HeightOverride = 24;
 	ConditionOverlayWidget = SNew(SDialogueNodeOverlayWidget)
 		.OverlayBody(
 			SNew(SBox)

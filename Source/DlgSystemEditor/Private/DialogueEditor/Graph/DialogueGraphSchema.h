@@ -50,7 +50,7 @@ public:
 		const UEdGraph* CurrentGraph,
 		const UEdGraphNode* InGraphNode,
 		const UEdGraphPin* InGraphPin,
-		class FMenuBuilder* MenuBuilder,
+		FMenuBuilder* MenuBuilder,
 		bool bIsDebugging
 	) const override;
 #endif

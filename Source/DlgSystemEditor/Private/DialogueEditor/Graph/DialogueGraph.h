@@ -52,13 +52,13 @@ public:
 	const TArray<UEdGraphNode*>& GetAllGraphNodes() const { return Nodes;  }
 
 	/** Gets the all the dialogue graph nodes (that inherit from UDialogueGraphNode_Base). Includes Root node. */
-	const TArray<UDialogueGraphNode_Base*> GetAllBaseDialogueGraphNodes() const;
+	TArray<UDialogueGraphNode_Base*> GetAllBaseDialogueGraphNodes() const;
 
 	/** Gets the all the dialogue graph nodes (that inherit from UDialogueGraphNode). Includes Root node. */
-	const TArray<UDialogueGraphNode*> GetAllDialogueGraphNodes() const;
+	TArray<UDialogueGraphNode*> GetAllDialogueGraphNodes() const;
 
 	/** Gets the all the dialogue graph nodes (that inherit from UDialogueGraphNode_Edge). */
-	const TArray<UDialogueGraphNode_Edge*> GetAllEdgeDialogueGraphNodes() const;
+	TArray<UDialogueGraphNode_Edge*> GetAllEdgeDialogueGraphNodes() const;
 
 	/** Creates the graph nodes from the Dialogue that contains this graph */
 	void CreateGraphNodesFromDialogue();

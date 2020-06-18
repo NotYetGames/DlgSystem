@@ -58,6 +58,15 @@ void FDialogueEditorUtilities::RefreshDetailsView(const UEdGraph* Graph, bool bR
 	}
 }
 
+void FDialogueEditorUtilities::Refresh(const UEdGraph* Graph, bool bRestorePreviousSelection)
+{
+	TSharedPtr<IDialogueEditor> DialogueEditor = GetDialogueEditorForGraph(Graph);
+	if (DialogueEditor.IsValid())
+	{
+		DialogueEditor->Refresh(bRestorePreviousSelection);
+	}
+}
+
 UDialogueGraphNode_Edge* FDialogueEditorUtilities::GetLastTargetGraphEdgeBeforeDrag(const UEdGraph* Graph)
 {
 	TSharedPtr<IDialogueEditor> DialogueEditor = GetDialogueEditorForGraph(Graph);
@@ -375,14 +384,18 @@ void FDialogueEditorUtilities::AutoPositionGraphNodes(
 		if (bIsDirectionVertical)
 		{
 			// Position this node at the same level only one row further (down)
-			Node->NodePosX = NodeWithPosition.ParentNodeX;
-			Node->NodePosY = NodeWithPosition.ParentNodeY + OffsetBetweenRowsY;
+			Node->SetPosition(
+				NodeWithPosition.ParentNodeX,
+				NodeWithPosition.ParentNodeY + OffsetBetweenRowsY
+			);
 		}
 		else
 		{
 			// Position this node at the same level only one column further (to the right)
-			Node->NodePosX = NodeWithPosition.ParentNodeX + OffsetBetweenColumnsX;
-			Node->NodePosY = NodeWithPosition.ParentNodeY;
+			Node->SetPosition(
+				NodeWithPosition.ParentNodeX + OffsetBetweenColumnsX,
+				NodeWithPosition.ParentNodeY
+			);
 		}
 
 		// Gather the list of unvisited child nodes, useful for not drawing weird children
@@ -427,13 +440,11 @@ void FDialogueEditorUtilities::AutoPositionGraphNodes(
 			UDialogueGraphNode* ChildNode = ChildNodesUnvisited[ChildIndex];
 			if (bIsDirectionVertical)
 			{
-				ChildNode->NodePosX = ChildOffsetPos;
-				ChildNode->NodePosY = Node->NodePosY;
+				ChildNode->SetPosition(ChildOffsetPos, Node->NodePosY);
 			}
 			else
 			{
-				ChildNode->NodePosX = Node->NodePosX;
-				ChildNode->NodePosY = ChildOffsetPos;
+				ChildNode->SetPosition(Node->NodePosX, ChildOffsetPos);
 			}
 
 			VisitedNodes.Add(ChildNode);
@@ -468,13 +479,17 @@ void FDialogueEditorUtilities::AutoPositionGraphNodes(
 			const FVector2D NodePos = Node->GetGraph()->GetGoodPlaceForNewNode();
 			if (bIsDirectionVertical)
 			{
-				Node->NodePosX = NodePos.X;
-				Node->NodePosY = NodePos.Y + OffsetBetweenRowsY;
+				Node->SetPosition(
+					NodePos.X,
+					NodePos.Y + OffsetBetweenRowsY
+				);
 			}
 			else
 			{
-				Node->NodePosX = NodePos.X + OffsetBetweenColumnsX;
-				Node->NodePosY = NodePos.Y;
+				Node->SetPosition(
+					NodePos.X + OffsetBetweenColumnsX,
+					NodePos.Y
+				);
 			}
 		}
 	}
@@ -648,10 +663,7 @@ IAssetEditorInstance* FDialogueEditorUtilities::FindEditorForAsset(UObject* Asse
 #endif
 }
 
-bool FDialogueEditorUtilities::OpenEditorAndJumpToGraphNode(
-	const UEdGraphNode* GraphNode,
-	bool bFocusIfOpen /*= false*/
-)
+bool FDialogueEditorUtilities::OpenEditorAndJumpToGraphNode(const UEdGraphNode* GraphNode, bool bFocusIfOpen /*= false*/)
 {
 	if (!IsValid(GraphNode))
 	{
@@ -659,26 +671,33 @@ bool FDialogueEditorUtilities::OpenEditorAndJumpToGraphNode(
 	}
 
 	// Open if not already.
-	UDlgDialogue* Dialogue = nullptr;
-	if (const UDialogueGraphNode_Base* DialogueBaseNode = Cast<UDialogueGraphNode_Base>(GraphNode))
-	{
-		Dialogue = DialogueBaseNode->GetDialogue();
-	}
-	else if (const UEdGraphNode_Comment* CommentNode = Cast<UEdGraphNode_Comment>(GraphNode))
-	{
-		Dialogue = FDialogueEditorUtilities::GetDialogueFromGraphNodeComment(CommentNode);
-	}
-
+	UDlgDialogue* Dialogue = GetDialogueFromGraphNode(GraphNode);
 	if (!OpenEditorForAsset(Dialogue))
 	{
 		return false;
 	}
 
 	// Could still fail focus on the graph node
-	IAssetEditorInstance* EditorInstance = FindEditorForAsset(Dialogue, bFocusIfOpen);
-	if (EditorInstance)
+	if (IAssetEditorInstance* EditorInstance = FindEditorForAsset(Dialogue, bFocusIfOpen))
 	{
 		EditorInstance->FocusWindow(const_cast<UEdGraphNode*>(GraphNode));
+		return true;
+	}
+
+	return false;
+}
+
+bool FDialogueEditorUtilities::JumpToGraphNode(const UEdGraphNode* GraphNode)
+{
+	if (!IsValid(GraphNode))
+	{
+		return false;
+	}
+
+	TSharedPtr<IDialogueEditor> DialogueEditor = GetDialogueEditorForGraph(GraphNode->GetGraph());
+	if (DialogueEditor.IsValid())
+	{
+		DialogueEditor->JumpToObject(GraphNode);
 		return true;
 	}
 
@@ -725,8 +744,10 @@ EAppReturnType::Type FDialogueEditorUtilities::ShowMessageBox(EAppMsgType::Type 
 	return FPlatformMisc::MessageBoxExt(MsgType, *Text, *Caption);
 }
 
-void FDialogueEditorUtilities::ReplaceReferencesToOldIndicesWithNew(const TArray<UDialogueGraphNode*>& GraphNodes,
-	const TMap<int32, int32>& OldToNewIndexMap)
+void FDialogueEditorUtilities::ReplaceReferencesToOldIndicesWithNew(
+	const TArray<UDialogueGraphNode*>& GraphNodes,
+	const TMap<int32, int32>& OldToNewIndexMap
+)
 {
 	// helper function to set the new IntValue on the condition if it exists in the history and it is different
 	auto UpdateConditionIndex = [&OldToNewIndexMap](FDlgCondition* ModifiedCondition) -> bool
@@ -789,4 +810,20 @@ void FDialogueEditorUtilities::ReplaceReferencesToOldIndicesWithNew(const TArray
 
 		GraphNode->CheckDialogueNodeSyncWithGraphNode(true);
 	}
+}
+
+UDlgDialogue* FDialogueEditorUtilities::GetDialogueFromGraphNode(const UEdGraphNode* GraphNode)
+{
+	if (const UDialogueGraphNode_Base* DialogueBaseNode = Cast<UDialogueGraphNode_Base>(GraphNode))
+	{
+		return DialogueBaseNode->GetDialogue();
+	}
+
+	// Last change
+	if (const UDialogueGraph* DialogueGraph = Cast<UDialogueGraph>(GraphNode->GetGraph()))
+	{
+		return DialogueGraph->GetDialogue();
+	}
+
+	return nullptr;
 }

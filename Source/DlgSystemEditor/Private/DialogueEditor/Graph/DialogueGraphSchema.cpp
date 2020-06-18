@@ -194,6 +194,7 @@ const FPinConnectionResponse UDialogueGraphSchema::CanCreateConnection(const UEd
 	// Create and Edge by the means of conversion
 	if (!bPinAIsEdge && !bPinBIsEdge)
 	{
+		// Calls CreateAutomaticConversionNodeAndConnections()
 		return FPinConnectionResponse(CONNECT_RESPONSE_MAKE_WITH_CONVERSION_NODE, TEXT("Create an Edge"));
 	}
 
@@ -259,10 +260,12 @@ bool UDialogueGraphSchema::CreateAutomaticConversionNodeAndConnections(UEdGraphP
 {
 	UDialogueGraphNode* NodeA = CastChecked<UDialogueGraphNode>(PinA->GetOwningNode());
 	UDialogueGraphNode* NodeB = CastChecked<UDialogueGraphNode>(PinB->GetOwningNode());
+	UEdGraph* Graph = NodeA->GetGraph();
 
+	// NOTE: NodeB does not have a valid position yet so we can't use it
 	UDialogueGraphNode_Edge* GraphNode_Edge =
 		FDialogueEditorUtilities::SpawnGraphNodeFromTemplate<UDialogueGraphNode_Edge>(
-			NodeA->GetGraph(), FVector2D(0.0f, 0.0f), false
+			Graph, NodeA->GetDefaultEdgePosition(), false
 		);
 
 	// Create proxy connection from output -> input
@@ -276,7 +279,6 @@ bool UDialogueGraphSchema::CreateAutomaticConversionNodeAndConnections(UEdGraphP
 	}
 
 	// Was this from a modify drag and drop event? copy from the previous node
-	UEdGraph* Graph = NodeA->GetGraph();
 	if (UDialogueGraphNode_Edge* GraphNode_Edge_DragDop = FDialogueEditorUtilities::GetLastTargetGraphEdgeBeforeDrag(Graph))
 	{
 		// Copy the data from the old node, without the target index
@@ -290,6 +292,7 @@ bool UDialogueGraphSchema::CreateAutomaticConversionNodeAndConnections(UEdGraphP
 		GraphNode_Edge->SetDialogueEdge(NewEdge);
 		GraphNode_Edge->PostEditChange();
 	}
+	Graph->NotifyGraphChanged();
 
 	return true;
 }

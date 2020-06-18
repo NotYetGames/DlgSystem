@@ -13,7 +13,7 @@
  * Represents the graph node for edges, corresponds to the runtime FDlgEdge.
  * Allows us to have selectable edges.
  * This class has an additional constraint over the base class UDialogueGraphNode_Base such that the input and output pin
- * have only one conection (aka Pin.LinkedTo.Num() == 1 at all times) otherwise this does not make sense to simulate an Edge.
+ * have only one connection (aka Pin.LinkedTo.Num() == 1 at all times) otherwise this does not make sense to simulate an Edge.
  */
 UCLASS()
 class UDialogueGraphNode_Edge : public UDialogueGraphNode_Base
