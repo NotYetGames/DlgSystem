@@ -103,7 +103,11 @@ public:
 	// Returns if the Edge is valid, has the TargetIndex non negative
 	bool IsValid() const { return TargetIndex > INDEX_NONE; }
 
-	static const FDlgEdge& GetInvalidEdge();
+	static const FDlgEdge& GetInvalidEdge()
+	{
+		static FDlgEdge DlgEdge;
+		return DlgEdge;
+	}
 
 	// Helper functions to get the names of some properties. Used by the DlgSystemEditor module.
 	static FName GetMemberNameText() { return GET_MEMBER_NAME_CHECKED(FDlgEdge, Text); }

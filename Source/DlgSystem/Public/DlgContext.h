@@ -22,11 +22,17 @@ struct DLGSYSTEM_API FDlgEdgeData
 	GENERATED_USTRUCT_BODY()
 public:
 	FDlgEdgeData() {}
-	FDlgEdgeData(bool bInSatisfied, const FDlgEdge* Ptr) : bSatisfied(bInSatisfied), EdgePtr(Ptr) {};
+	FDlgEdgeData(bool bInSatisfied, const FDlgEdge& InEdge) : bSatisfied(bInSatisfied), Edge(InEdge) {};
 
-	bool IsValid() const { return EdgePtr != nullptr; }
+	bool IsValid() const { return Edge.IsValid(); }
 	bool IsSatisfied() const { return bSatisfied; }
-	const FDlgEdge& GetEdge() const { return *EdgePtr; }
+	const FDlgEdge& GetEdge() const { return Edge; }
+
+	static const FDlgEdgeData& GetInvalidEdge()
+	{
+		static FDlgEdgeData DlgEdge{false, FDlgEdge::GetInvalidEdge()};
+		return DlgEdge;
+	}
 
 	// FDlgEdge& GetMutableEdge() { return *EdgePtr; }
 
@@ -34,7 +40,8 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Dialogue|Edge")
 	bool bSatisfied = false;
 
-	const FDlgEdge* EdgePtr = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Dialogue|Edge")
+	FDlgEdge Edge;
 };
 
 /**
@@ -98,12 +105,19 @@ public:
 	int32 GetOptionNum() const { return AvailableChildren.Num(); }
 
 	// Gets the Text of the (satisfied) option with index OptionIndex
+	// NOTE: This is just a helper method, you could have called GetOption
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|Satisfied")
 	const FText& GetOptionText(int32 OptionIndex) const;
 
 	// Gets the SpeakerState of the (satisfied) edge with index OptionIndex
+	// NOTE: This is just a helper method, you could have called GetOption
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|Satisfied")
 	FName GetOptionSpeakerState(int32 OptionIndex) const;
+
+	// Gets the Enter Conditions of the (satisfied) edge with index OptionIndex
+	// NOTE: This is just a helper method, you could have called GetOption
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|Satisfied")
+    const TArray<FDlgCondition>& GetOptionEnterConditions(int32 OptionIndex) const;
 
 	// Gets the edge representing a player option from the satisfied options
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|Satisfied")
@@ -111,8 +125,8 @@ public:
 
 	// Gets all satisfied edges
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|Satisfied")
-	const TArray<FDlgEdgeData>& GetOptionsArray() const { return AvailableChildren; }
-	TArray<FDlgEdgeData>& GetMutableOptionsArray() { return AvailableChildren; }
+	const TArray<FDlgEdge>& GetOptionsArray() const { return AvailableChildren; }
+	TArray<FDlgEdge>& GetMutableOptionsArray() { return AvailableChildren; }
 
 	//
 	//  Use these functions bellow if you don't care about unsatisfied player options:
@@ -127,6 +141,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|All")
 	const FText& GetOptionTextFromAll(int32 Index) const;
 
+	// Is the option at Index satisfied? (Does it meet all the conditions)
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|All")
 	bool IsOptionSatisfied(int32 Index) const;
 
@@ -136,12 +151,38 @@ public:
 
 	// Gets the edge representing a player option from all options
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|All")
-	const FDlgEdge& GetOptionFromAll(int32 Index) const;
+	const FDlgEdgeData& GetOptionFromAll(int32 Index) const;
 
 	// Gets all edges (both satisfied and unsatisfied)
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|All")
 	const TArray<FDlgEdgeData>& GetAllOptionsArray() const { return AllChildren; }
 	TArray<FDlgEdgeData>& GetAllMutableOptionsArray() { return AllChildren; }
+
+	/**
+	*  Checks if the node connected directly to one of the active player choices was already visited or not
+	*  Does not handle complicated logic - if the said node is a logical one it will still check that node, and not one
+	*  of its children
+	*
+	* @param Index  Index of the edge/player option to test
+	* @param bLocalHistory If true, only the history of this dialogue context is checked. If false, it is a global check
+	* @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionNum()[ interval (if true), or in the [0, GetAllOptionNum()[ (if false)
+	* @return true if the node was already IsOptionConnectedToVisitedNode
+	*/
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
+    bool IsOptionConnectedToVisitedNode(int32 Index, bool bLocalHistory = false, bool bIndexSkipsUnsatisfiedEdges = true) const;
+
+	/**
+	*  Checks if the node is connected directly to an end node or not
+	*  Does not handle complicated logic - if the said node is a logical one it will still check that node, and not one
+	*  of its children
+	*
+	* @param Index  Index of the edge/player option to test
+	* @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionNum()[ interval (if true), or in the [0, GetAllOptionNum()[ (if false)
+	* @return true if the node is an end node
+	*/
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
+    bool IsOptionConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisfiedEdges = true) const;
+
 
 	//
 	// Active Node
@@ -209,32 +250,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	const TSet<int32>& GetVisitedNodeIndices() const { return VisitedNodeIndices; }
 
-	/**
-	 *  Checks if the node connected directly to one of the active player choices was already visited or not
-	 *  Does not handle complicated logic - if the said node is a logical one it will still check that node, and not one
-	 *  of its children
-	 *
-	 * @param Index  Index of the edge/player choice to test
-	 * @param bLocalHistory If true, only the history of this dialogue context is checked. If false, it is a global check
-	 * @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionNum()[ interval (if true), or in the [0, GetAllOptionNum()[ (if false)
-	 * @return true if the node was already visited
-	 */
-	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
-	bool IsEdgeConnectedToVisitedNode(int32 Index, bool bLocalHistory = false, bool bIndexSkipsUnsatisfiedEdges = true) const;
-
-
-	/**
-	 *  Checks if the node is connected directly to an end node or not
-	 *  Does not handle complicated logic - if the said node is a logical one it will still check that node, and not one
-	 *  of its children
-	 *
-	 * @param Index  Index of the edge/player choice to test
-	 * @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionNum()[ interval (if true), or in the [0, GetAllOptionNum()[ (if false)
-	 * @return true if the node is an end node
-	 */
-	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
-	bool IsEdgeConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisfiedEdges = true) const;
-
 	// Helper methods to get some Dialogue properties
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
     UDlgDialogue* GetDialogue() const { return Dialogue; }
@@ -272,20 +287,12 @@ public:
 	// return false if they are not satisfied or if the index is invalid
 	bool IsNodeEnterable(int32 NodeIndex, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
-	/**
-	* Initializes/Starts the context, the first (start) node is selected and the first valid child node is entered.
-	* Called by the UDlgManager which creates the context
-	*
-	* @return true on success or false otherwise.
-	*/
+	// Initializes/Starts the context, the first (start) node is selected and the first valid child node is entered.
+	// Called by the UDlgManager which creates the context
 	bool Start(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
 
-	/**
-	* Initializes/Start the context using the given node as entry point
-	* This is useful to resume a dialogue
-	*
-	* @return true on success or false otherwise.
-	*/
+	// Initializes/Start the context using the given node as entry point
+	// This is useful to resume a dialogue
 	bool StartFromIndex(
 		UDlgDialogue* InDialogue,
 		const TMap<FName, UObject*>& InParticipants,
@@ -294,12 +301,14 @@ public:
 		bool bFireEnterEvents
 	);
 
-	/**
-	* Checks if the context could be started, used to check if there is any reachable node from the start node
-	*
-	* @return true if could be, false otherwise.
-	*/
-	bool CouldBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants) const;
+	// Checks if the context could be started, used to check if there is any reachable node from the start node
+	bool CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants) const;
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Context")
+	FString GetContextString() const;
+
+protected:
+	void LogErrorWithContext(const FString& ErrorMessage) const;
 
 protected:
 	// Current Dialogue used in this context at runtime.
@@ -315,8 +324,7 @@ protected:
 	int32 ActiveNodeIndex = INDEX_NONE;
 
 	// Children of the active node with satisfied conditions - the options the player can choose from
-	// NOTE: all of these should have bSatisfied = true
-	TArray<FDlgEdgeData> AvailableChildren;
+	TArray<FDlgEdge> AvailableChildren;
 
 	/**
 	 *  List of options which is possible, or would be with satisfied conditions

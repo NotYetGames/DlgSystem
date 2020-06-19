@@ -73,7 +73,7 @@ public:
 	FName GetSpeakerState() const override { return SpeakerState; }
 	USoundBase* GetNodeVoiceSoundBase() const override { return VoiceSoundWave; }
 	UDialogueWave* GetNodeVoiceDialogueWave() const override { return VoiceDialogueWave; }
-	UObject* GetGenericData() const override { return GenericData; }
+	UObject* GetNodeGenericData() const override { return GenericData; }
 
 	void AddAllSpeakerStatesIntoSet(TSet<FName>& OutStates) const override { OutStates.Add(SpeakerState); }
 

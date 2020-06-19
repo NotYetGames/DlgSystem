@@ -232,7 +232,7 @@ public:
 
 	// Gets the generic data asset of this Node.
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
-	virtual UObject* GetGenericData() const { return nullptr; }
+	virtual UObject* GetNodeGenericData() const { return nullptr; }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual UDlgNodeData* GetNodeData() const { return nullptr; }

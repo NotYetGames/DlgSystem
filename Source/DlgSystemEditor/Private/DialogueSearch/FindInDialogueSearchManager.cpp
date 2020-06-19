@@ -894,7 +894,7 @@ void FFindInDialogueSearchManager::UnInitialize()
 
 void FFindInDialogueSearchManager::BuildCache()
 {
-	// Difference between this and the UDlgManger::GetAllDialoguesFromMemory is that this loads all Dialogues
+	// Difference between this and the UDlgManager::GetAllDialoguesFromMemory is that this loads all Dialogues
 	// even those that are not loaded into memory.
 	// TODO this seems slow :(
 	// AssetRegistryModule = &FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));

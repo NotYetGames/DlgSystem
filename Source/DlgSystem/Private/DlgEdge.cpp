@@ -7,12 +7,6 @@
 #include "Nodes/DlgNode_Selector.h"
 #include "Nodes/DlgNode_Speech.h"
 
-const FDlgEdge& FDlgEdge::GetInvalidEdge()
-{
-	static FDlgEdge DlgEdge;
-	return DlgEdge;
-}
-
 bool FDlgEdge::IsTextVisible(const UDlgNode* ParentNode)
 {
 	if (!::IsValid(ParentNode))

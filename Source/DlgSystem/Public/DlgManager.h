@@ -54,7 +54,7 @@ public:
 	 * @returns true if there is an enterable node from the start node
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
-	static bool CouldStartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants);
+	static bool CanStartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants);
 
 	/**
 	 * Starts a Dialogue with the provided Dialogue and Participants array, at the given entry point
