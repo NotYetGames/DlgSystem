@@ -5,9 +5,8 @@
 #include "Logging/DlgLogger.h"
 
 
-bool UDlgNode_Selector::HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> NodesEnteredWithThisStep)
+bool UDlgNode_Selector::HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
-	check(Context != nullptr);
 	FireNodeEnterEvents(Context);
 
 	if (NodesEnteredWithThisStep.Contains(this))
@@ -24,17 +23,17 @@ bool UDlgNode_Selector::HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNod
 
 	switch (SelectorType)
 	{
-	case EDlgNodeSelectorType::First:
+		case EDlgNodeSelectorType::First:
 		{
 			// Find first child with satisfies conditions
 			for (const FDlgEdge& Edge : Children)
 				if (Edge.Evaluate(Context, {this}))
-					return Context->EnterNode(Edge.TargetIndex, NodesEnteredWithThisStep);
+					return Context.EnterNode(Edge.TargetIndex, NodesEnteredWithThisStep);
 
 			break;
 		}
 
-	case EDlgNodeSelectorType::Random:
+		case EDlgNodeSelectorType::Random:
 		{
 			// Build the list of all valid children
 			TArray<int32> Candidates;
@@ -49,12 +48,13 @@ bool UDlgNode_Selector::HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNod
 			// Select Random
 			const int32 SelectedIndex = FMath::RandHelper(Candidates.Num());
 			const int32 TargetNodeIndex = Children[Candidates[SelectedIndex]].TargetIndex;
-			return Context->EnterNode(TargetNodeIndex, NodesEnteredWithThisStep);
+			return Context.EnterNode(TargetNodeIndex, NodesEnteredWithThisStep);
 		}
-	default:
-		checkNoEntry();
+
+		default:
+			checkNoEntry();
 	}
 
-	FDlgLogger::Get().Warningf(TEXT("Dialogue = %s got stuck: selector node entered, no satisfied child!"), *Context->GetDialoguePathName());
+	FDlgLogger::Get().Warningf(TEXT("Dialogue = %s got stuck: selector node entered, no satisfied child!"), *Context.GetDialoguePathName());
 	return false;
 }

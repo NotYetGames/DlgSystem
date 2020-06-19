@@ -42,13 +42,13 @@ public:
 	// Begin UDlgNode Interface.
 	//
 
-	bool HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
-	bool ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> AlreadyEvaluated) override;
+	bool HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
+	bool ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> AlreadyEvaluated) override;
 	void GetAssociatedParticipants(TArray<FName>& OutArray) const override;
 
-	void UpdateTextsValuesFromDefaultsAndRemappings(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true) override;
-	void UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true) override;
-	void RebuildConstructedText(const UDlgContext* Context) override;
+	void UpdateTextsValuesFromDefaultsAndRemappings(const UDlgSystemSettings& Settings, bool bEdges, bool bUpdateGraphNode = true) override;
+	void UpdateTextsNamespacesAndKeys(const UDlgSystemSettings& Settings, bool bEdges, bool bUpdateGraphNode = true) override;
+	void RebuildConstructedText(const UDlgContext& Context) override;
 	void RebuildTextArguments(bool bEdges, bool bUpdateGraphNode = true) override
 	{
 		Super::RebuildTextArguments(bEdges, bUpdateGraphNode);

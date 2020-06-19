@@ -50,25 +50,25 @@ public:
 	//
 
 	// Is the Text property visible on this edge, the edges comes from the ParentNode
-	static bool IsTextVisible(const UDlgNode* ParentNode);
+	static bool IsTextVisible(const UDlgNode& ParentNode);
 
 	// Updates the text value of the Edge Text from the default value and text remapping (if any)
 	void UpdateTextValueFromDefaultAndRemapping(
-		const UDlgDialogue* ParentDialogue, const UDlgNode* ParentNode, const UDlgSystemSettings* Settings, bool bUpdateFromRemapping
+		const UDlgDialogue& ParentDialogue, const UDlgNode& ParentNode, const UDlgSystemSettings& Settings, bool bUpdateFromRemapping
 	);
 
 	// Updates the namespace or keys depending on the settings
-	void UpdateTextsNamespacesAndKeys(const UObject* ParentObject, const UDlgSystemSettings* Settings);
+	void UpdateTextsNamespacesAndKeys(const UObject* ParentObject, const UDlgSystemSettings& Settings);
 
 	// Rebuilds TextArguments
 	void RebuildTextArguments() { FDlgTextArgument::UpdateTextArgumentArray(Text, TextArguments); }
 	void RebuildTextArgumentsFromPreview(const FText& Preview) { FDlgTextArgument::UpdateTextArgumentArray(Preview, TextArguments); }
 
 	// Returns with true if every condition attached to the edge and every enter condition of the target node are satisfied //
-	bool Evaluate(const UDlgContext* Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
+	bool Evaluate(const UDlgContext& Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
 	// Constructs the ConstructedText.
-	void RebuildConstructedText(const UDlgContext* Context, FName NodeOwnerName);
+	void RebuildConstructedText(const UDlgContext& Context, FName NodeOwnerName);
 
 	const TArray<FDlgTextArgument>& GetTextArguments() const { return TextArguments; }
 

@@ -494,7 +494,7 @@ private:
 	FDlgParticipantData& GetParticipantDataEntry(FName ParticipantName, FName FallbackNodeOwnerName, bool bCheckNone, const FString& ContextMessage);
 
 	// Rebuild & Update and node and its edges
-	void RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings* Settings, bool bUpdateTextsNamespacesAndKeys);
+	void RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings& Settings, bool bUpdateTextsNamespacesAndKeys);
 
 	void ImportFromFileFormat(EDlgDialogueTextFormat TextFormat);
 	void ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const;

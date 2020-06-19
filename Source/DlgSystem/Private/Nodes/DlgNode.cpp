@@ -77,10 +77,8 @@ void UDlgNode::PostEditChangeChainProperty(struct FPropertyChangedChainEvent& Pr
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin own function
-bool UDlgNode::HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> NodesEnteredWithThisStep)
+bool UDlgNode::HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
-	check(Context != nullptr);
-
 	// Fire all the node enter events
 	FireNodeEnterEvents(Context);
 
@@ -92,22 +90,22 @@ bool UDlgNode::HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> Nodes
 	return ReevaluateChildren(Context, {});
 }
 
-void UDlgNode::FireNodeEnterEvents(UDlgContext* Context)
+void UDlgNode::FireNodeEnterEvents(UDlgContext& Context)
 {
 	for (const FDlgEvent& Event : EnterEvents)
 	{
 		// Get Participant from either event or parent
-		UObject* Participant = Context->GetMutableParticipant(Event.ParticipantName);
+		UObject* Participant = Context.GetMutableParticipant(Event.ParticipantName);
 		if (!IsValid(Participant))
 		{
-			Participant = Context->GetMutableParticipant(OwnerName);
+			Participant = Context.GetMutableParticipant(OwnerName);
 		}
 
 		if (Participant == nullptr)
 		{
 			FDlgLogger::Get().Warningf(
 				TEXT("FireNodeEnterEvents: Dialogue = `%s`, NodeIndex = %d. Got non existent Participant Name, event call will fail!"),
-				*GetDialogue()->GetPathName(), Context->GetActiveNodeIndex()
+				*GetDialogue()->GetPathName(), Context.GetActiveNodeIndex()
 			);
 		}
 
@@ -115,12 +113,10 @@ void UDlgNode::FireNodeEnterEvents(UDlgContext* Context)
 	}
 }
 
-bool UDlgNode::ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> AlreadyEvaluated)
+bool UDlgNode::ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> AlreadyEvaluated)
 {
-	check(Context != nullptr);
-
-	TArray<FDlgEdge>& AvailableChildren = Context->GetMutableOptionsArray();
-	TArray<FDlgEdgeData>& AllChildren = Context->GetAllMutableOptionsArray();
+	TArray<FDlgEdge>& AvailableChildren = Context.GetMutableOptionsArray();
+	TArray<FDlgEdgeData>& AllChildren = Context.GetAllMutableOptionsArray();
 	AvailableChildren.Empty();
 	AllChildren.Empty();
 
@@ -143,7 +139,7 @@ bool UDlgNode::ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> Al
 	{
 		FDlgLogger::Get().Warningf(
 			TEXT("Dialogue = %s got stuck: no valid child for a node!"),
-			*Context->GetDialoguePathName()
+			*Context.GetDialoguePathName()
 		);
 		return false;
 	}
@@ -151,7 +147,7 @@ bool UDlgNode::ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> Al
 	return true;
 }
 
-bool UDlgNode::CheckNodeEnterConditions(const UDlgContext* Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const
+bool UDlgNode::CheckNodeEnterConditions(const UDlgContext& Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const
 {
 	if (AlreadyVisitedNodes.Contains(this))
 	{
@@ -172,7 +168,7 @@ bool UDlgNode::CheckNodeEnterConditions(const UDlgContext* Context, TSet<const U
 	return HasAnySatisfiedChild(Context, AlreadyVisitedNodes);
 }
 
-bool UDlgNode::HasAnySatisfiedChild(const UDlgContext* Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const
+bool UDlgNode::HasAnySatisfiedChild(const UDlgContext& Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const
 {
 	for (const FDlgEdge& Edge : Children)
 	{
@@ -185,13 +181,13 @@ bool UDlgNode::HasAnySatisfiedChild(const UDlgContext* Context, TSet<const UDlgN
 	return false;
 }
 
-bool UDlgNode::OptionSelected(int32 OptionIndex, UDlgContext* Context)
+bool UDlgNode::OptionSelected(int32 OptionIndex, UDlgContext& Context)
 {
-	const TArray<FDlgEdge>& AvailableChildren = Context->GetOptionsArray();
+	const TArray<FDlgEdge>& AvailableChildren = Context.GetOptionsArray();
 	if (AvailableChildren.IsValidIndex(OptionIndex))
 	{
 		check(AvailableChildren[OptionIndex].IsValid());
-		return Context->EnterNode(AvailableChildren[OptionIndex].TargetIndex, {});
+		return Context.EnterNode(AvailableChildren[OptionIndex].TargetIndex, {});
 	}
 
 	FDlgLogger::Get().Errorf(
@@ -231,19 +227,19 @@ FDlgEdge* UDlgNode::GetMutableNodeChildForTargetIndex(int32 TargetIndex)
 
 
 void UDlgNode::UpdateTextsValuesFromDefaultsAndRemappings(
-	const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode
+	const UDlgSystemSettings& Settings, bool bEdges, bool bUpdateGraphNode
 )
 {
 	// We only care about edges here
 	if (bEdges)
 	{
-		const bool bSkipAfterFirstChild = Settings->bSetDefaultEdgeTextOnFirstChildOnly;
-		if (Settings->bSetDefaultEdgeTexts)
+		const bool bSkipAfterFirstChild = Settings.bSetDefaultEdgeTextOnFirstChildOnly;
+		if (Settings.bSetDefaultEdgeTexts)
 		{
 			const UDlgDialogue* Dialogue = GetDialogue();
 			for (FDlgEdge& Edge : Children)
 			{
-				Edge.UpdateTextValueFromDefaultAndRemapping(Dialogue, this, Settings, false);
+				Edge.UpdateTextValueFromDefaultAndRemapping(*Dialogue, *this, Settings, false);
 
 				// Set only one, kill the rest
 				if (bSkipAfterFirstChild)
@@ -266,7 +262,7 @@ void UDlgNode::UpdateTextsValuesFromDefaultsAndRemappings(
 	}
 }
 
-void UDlgNode::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
+void UDlgNode::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings& Settings, bool bEdges, bool bUpdateGraphNode)
 {
 	if (bEdges)
 	{

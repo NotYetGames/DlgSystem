@@ -72,14 +72,14 @@ public:
 	DECLARE_EVENT_TwoParams(UDlgNode, FDialogueNodePropertyChanged, const FPropertyChangedEvent& /* PropertyChangedEvent */, int32 /* EdgeIndexChanged */);
 	FDialogueNodePropertyChanged OnDialogueNodePropertyChanged;
 
-	virtual bool HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> NodesEnteredWithThisStep);
+	virtual bool HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNode*> NodesEnteredWithThisStep);
 
-	virtual bool ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> AlreadyEvaluated);
+	virtual bool ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> AlreadyEvaluated);
 
-	virtual bool CheckNodeEnterConditions(const UDlgContext* Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
-	virtual bool HasAnySatisfiedChild(const UDlgContext* Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
+	virtual bool CheckNodeEnterConditions(const UDlgContext& Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
+	virtual bool HasAnySatisfiedChild(const UDlgContext& Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
-	virtual bool OptionSelected(int32 OptionIndex, UDlgContext* Context);
+	virtual bool OptionSelected(int32 OptionIndex, UDlgContext& Context);
 
 	//
 	// Getters/Setters:
@@ -178,18 +178,18 @@ public:
 
 	// Updates the value of the texts from the default values or the remappings (if any)
 	virtual void UpdateTextsValuesFromDefaultsAndRemappings(
-		const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true
+		const UDlgSystemSettings& Settings, bool bEdges, bool bUpdateGraphNode = true
 	);
 
 	// Updates the namespace and key of all the texts depending on the settings
-	virtual void UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode = true);
+	virtual void UpdateTextsNamespacesAndKeys(const UDlgSystemSettings& Settings, bool bEdges, bool bUpdateGraphNode = true);
 
 	// Rebuilds ConstructedText
 	virtual void RebuildTextArguments(bool bEdges, bool bUpdateGraphNode = true);
 	virtual void RebuildTextArgumentsFromPreview(const FText& Preview) {}
 
 	// Constructs the ConstructedText.
-	virtual void RebuildConstructedText(const UDlgContext* Context) {}
+	virtual void RebuildConstructedText(const UDlgContext& Context) {}
 
 	// Gets the text arguments for this Node (if any). Used for FText::Format
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
@@ -251,7 +251,7 @@ public:
 	void UpdateGraphNode();
 
 protected:
-	void FireNodeEnterEvents(UDlgContext* Context);
+	void FireNodeEnterEvents(UDlgContext& Context);
 
 protected:
 #if WITH_EDITORONLY_DATA

@@ -168,8 +168,11 @@ void FDialogueCompilerContext::CompileGraph()
 	}
 }
 
-bool FDialogueCompilerContext::GetPathToNode(const UDialogueGraphNode* SourceNode, const UDialogueGraphNode* TargetNode,
-	TArray<const UDialogueGraphNode*>& OutPath)
+bool FDialogueCompilerContext::GetPathToNode(
+	const UDialogueGraphNode* SourceNode,
+	const UDialogueGraphNode* TargetNode,
+	TArray<const UDialogueGraphNode*>& OutPath
+)
 {
 	OutPath.Empty();
 	OutPath.Add(TargetNode);
@@ -196,8 +199,11 @@ bool FDialogueCompilerContext::GetPathToNode(const UDialogueGraphNode* SourceNod
 	return true;
 }
 
-bool FDialogueCompilerContext::GetPathToNodeAsSet(const UDialogueGraphNode* SourceNode, const UDialogueGraphNode* TargetNode,
-	TSet<const UDialogueGraphNode*>& OutNodesInPath)
+bool FDialogueCompilerContext::GetPathToNodeAsSet(
+	const UDialogueGraphNode* SourceNode,
+	const UDialogueGraphNode* TargetNode,
+	TSet<const UDialogueGraphNode*>& OutNodesInPath
+)
 {
 	OutNodesInPath.Empty();
 	OutNodesInPath.Add(TargetNode);

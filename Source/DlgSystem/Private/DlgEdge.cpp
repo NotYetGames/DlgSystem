@@ -7,21 +7,16 @@
 #include "Nodes/DlgNode_Selector.h"
 #include "Nodes/DlgNode_Speech.h"
 
-bool FDlgEdge::IsTextVisible(const UDlgNode* ParentNode)
+bool FDlgEdge::IsTextVisible(const UDlgNode& ParentNode)
 {
-	if (!::IsValid(ParentNode))
-	{
-		return false;
-	}
-
 	// Selector node
-	if (ParentNode->IsA<UDlgNode_Selector>())
+	if (ParentNode.IsA<UDlgNode_Selector>())
 	{
 		return false;
 	}
 
 	// Virtual parent node
-	if (const UDlgNode_Speech* Node = Cast<UDlgNode_Speech>(ParentNode))
+	if (const UDlgNode_Speech* Node = Cast<UDlgNode_Speech>(&ParentNode))
 	{
 		if (Node->IsVirtualParent())
 		{
@@ -33,7 +28,7 @@ bool FDlgEdge::IsTextVisible(const UDlgNode* ParentNode)
 }
 
 void FDlgEdge::UpdateTextValueFromDefaultAndRemapping(
-	const UDlgDialogue* ParentDialogue, const UDlgNode* ParentNode, const UDlgSystemSettings* Settings, bool bUpdateFromRemapping
+	const UDlgDialogue& ParentDialogue, const UDlgNode& ParentNode, const UDlgSystemSettings& Settings, bool bUpdateFromRemapping
 )
 {
 	if (!IsValid())
@@ -48,20 +43,20 @@ void FDlgEdge::UpdateTextValueFromDefaultAndRemapping(
 		return;
 	}
 
-	if (Settings->bSetDefaultEdgeTexts)
+	if (Settings.bSetDefaultEdgeTexts)
 	{
 		// Only if empty
 		if (GetUnformattedText().IsEmpty())
 		{
-			if (ParentDialogue->IsEndNode(TargetIndex))
+			if (ParentDialogue.IsEndNode(TargetIndex))
 			{
 				// End Node
-				SetText(Settings->DefaultTextEdgeToEndNode);
+				SetText(Settings.DefaultTextEdgeToEndNode);
 			}
 			else
 			{
 				// Normal node
-				SetText(Settings->DefaultTextEdgeToNormalNode);
+				SetText(Settings.DefaultTextEdgeToNormalNode);
 			}
 		}
 	}
@@ -73,7 +68,7 @@ void FDlgEdge::UpdateTextValueFromDefaultAndRemapping(
 	}
 }
 
-void FDlgEdge::UpdateTextsNamespacesAndKeys(const UObject* ParentObject, const UDlgSystemSettings* Settings)
+void FDlgEdge::UpdateTextsNamespacesAndKeys(const UObject* ParentObject, const UDlgSystemSettings& Settings)
 {
 	if (!IsValid())
 	{
@@ -83,7 +78,7 @@ void FDlgEdge::UpdateTextsNamespacesAndKeys(const UObject* ParentObject, const U
 	FDlgLocalizationHelper::UpdateTextNamespaceAndKey(ParentObject, Settings, Text);
 }
 
-bool FDlgEdge::Evaluate(const UDlgContext* Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const
+bool FDlgEdge::Evaluate(const UDlgContext& Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const
 {
 	if (!IsValid())
 	{
@@ -91,7 +86,7 @@ bool FDlgEdge::Evaluate(const UDlgContext* Context, TSet<const UDlgNode*> Alread
 	}
 
 	// Check target node enter conditions
-	if (!Context->IsNodeEnterable(TargetIndex, AlreadyVisitedNodes))
+	if (!Context.IsNodeEnterable(TargetIndex, AlreadyVisitedNodes))
 	{
 		return false;
 	}
@@ -100,7 +95,7 @@ bool FDlgEdge::Evaluate(const UDlgContext* Context, TSet<const UDlgNode*> Alread
 	return FDlgCondition::EvaluateArray(Context, Conditions);
 }
 
-void FDlgEdge::RebuildConstructedText(const UDlgContext* Context, FName NodeOwnerName)
+void FDlgEdge::RebuildConstructedText(const UDlgContext& Context, FName NodeOwnerName)
 {
 	if (TextArguments.Num() <= 0)
 	{
@@ -114,4 +109,3 @@ void FDlgEdge::RebuildConstructedText(const UDlgContext* Context, FName NodeOwne
 	}
 	ConstructedText = FText::AsCultureInvariant(FText::Format(Text, OrderedArguments));
 }
-

@@ -114,8 +114,8 @@ public:
 	// Own methods
 	//
 
-	static bool EvaluateArray(const UDlgContext* Context, const TArray<FDlgCondition>& ConditionsArray, FName DefaultParticipantName = NAME_None);
-	bool IsConditionMet(const UDlgContext* Context, const UObject* Participant) const;
+	static bool EvaluateArray(const UDlgContext& Context, const TArray<FDlgCondition>& ConditionsArray, FName DefaultParticipantName = NAME_None);
+	bool IsConditionMet(const UDlgContext& Context, const UObject* Participant) const;
 
 	// returns true if ParticipantName has to belong to match with a valid Participant in order for the condition type to work */
 	bool IsParticipantInvolved() const;
@@ -126,13 +126,13 @@ protected:
 	// Helper functions doing the check on the primary value based on EDlgCompare
 	//
 
-	bool CheckFloat(const UDlgContext* Context, float Value) const;
-	bool CheckInt(const UDlgContext* Context, int32 Value) const;
-	bool CheckBool(const UDlgContext* Context, bool bValue) const;
-	bool CheckName(const UDlgContext* Context, FName Value) const;
+	bool CheckFloat(const UDlgContext& Context, float Value) const;
+	bool CheckInt(const UDlgContext& Context, int32 Value) const;
+	bool CheckBool(const UDlgContext& Context, bool bValue) const;
+	bool CheckName(const UDlgContext& Context, FName Value) const;
 
 	// Checks Participant, prints warning if it is nullptr
-	bool ValidateIsParticipantValid(const UObject* Participant, const FString& ContextMessage) const;
+	bool ValidateIsParticipantValid(const UDlgContext& Context, const FString& ContextString, const UObject* Participant) const;
 
 public:
 	// Defines the way the condition is interpreted inside the condition array

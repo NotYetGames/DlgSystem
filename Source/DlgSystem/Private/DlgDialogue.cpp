@@ -578,7 +578,7 @@ void UDlgDialogue::AddConditionsDataFromNodeEdges(const UDlgNode* Node, int32 No
 	}
 }
 
-void UDlgDialogue::RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings* Settings, bool bUpdateTextsNamespacesAndKeys)
+void UDlgDialogue::RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings& Settings, bool bUpdateTextsNamespacesAndKeys)
 {
 	static constexpr bool bEdges = true;
 	static constexpr bool bUpdateGraphNode = false;
@@ -608,7 +608,7 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 	if (IsValid(StartNode))
 	{
 		AddConditionsDataFromNodeEdges(StartNode, INDEX_NONE);
-		RebuildAndUpdateNode(StartNode, Settings, bUpdateTextsNamespacesAndKeys);
+		RebuildAndUpdateNode(StartNode, *Settings, bUpdateTextsNamespacesAndKeys);
 	}
 
 	// Regular Nodes
@@ -620,7 +620,7 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 		const FName NodeParticipantName = Node->GetNodeParticipantName();
 
 		// Rebuild & Update
-		RebuildAndUpdateNode(Node, Settings, bUpdateTextsNamespacesAndKeys);
+		RebuildAndUpdateNode(Node, *Settings, bUpdateTextsNamespacesAndKeys);
 
 		// participant names
 		TArray<FName> Participants;
@@ -783,7 +783,7 @@ void UDlgDialogue::AutoFixGraph()
 		}
 
 		// Add some text to the edges.
-		Node->UpdateTextsValuesFromDefaultsAndRemappings(Settings, true, true);
+		Node->UpdateTextsValuesFromDefaultsAndRemappings(*Settings, true, true);
 	}
 }
 

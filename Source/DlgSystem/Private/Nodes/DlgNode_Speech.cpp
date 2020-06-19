@@ -23,19 +23,19 @@ void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 
 #endif
 
-void UDlgNode_Speech::UpdateTextsValuesFromDefaultsAndRemappings(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
+void UDlgNode_Speech::UpdateTextsValuesFromDefaultsAndRemappings(const UDlgSystemSettings& Settings, bool bEdges, bool bUpdateGraphNode)
 {
 	FDlgLocalizationHelper::UpdateTextFromRemapping(Settings, Text);
 	Super::UpdateTextsValuesFromDefaultsAndRemappings(Settings, bEdges, bUpdateGraphNode);
 }
 
-void UDlgNode_Speech::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
+void UDlgNode_Speech::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings& Settings, bool bEdges, bool bUpdateGraphNode)
 {
 	FDlgLocalizationHelper::UpdateTextNamespaceAndKey(GetOuter(), Settings, Text);
 	Super::UpdateTextsNamespacesAndKeys(Settings, bEdges, bUpdateGraphNode);
 }
 
-void UDlgNode_Speech::RebuildConstructedText(const UDlgContext* Context)
+void UDlgNode_Speech::RebuildConstructedText(const UDlgContext& Context)
 {
 	if (TextArguments.Num() <= 0)
 	{
@@ -50,19 +50,18 @@ void UDlgNode_Speech::RebuildConstructedText(const UDlgContext* Context)
 	ConstructedText = FText::AsCultureInvariant(FText::Format(Text, OrderedArguments));
 }
 
-bool UDlgNode_Speech::HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> NodesEnteredWithThisStep)
+bool UDlgNode_Speech::HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
 	RebuildConstructedText(Context);
 	return Super::HandleNodeEnter(Context, NodesEnteredWithThisStep);
 }
 
-bool UDlgNode_Speech::ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> AlreadyEvaluated)
+bool UDlgNode_Speech::ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> AlreadyEvaluated)
 {
 	if (bIsVirtualParent)
 	{
-		check(Context != nullptr);
-		Context->GetMutableOptionsArray().Empty();
-		Context->GetAllMutableOptionsArray().Empty();
+		Context.GetMutableOptionsArray().Empty();
+		Context.GetAllMutableOptionsArray().Empty();
 
 		// stop endless loop
 		if (AlreadyEvaluated.Contains(this))
@@ -81,7 +80,7 @@ bool UDlgNode_Speech::ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNo
 			// Find first satisfied child
 			if (Edge.Evaluate(Context, { this }))
 			{
-				if (UDlgNode* Node = Context->GetMutableNode(Edge.TargetIndex))
+				if (UDlgNode* Node = Context.GetMutableNode(Edge.TargetIndex))
 				{
 					// Get Grandchildren
 					return Node->ReevaluateChildren(Context, AlreadyEvaluated);

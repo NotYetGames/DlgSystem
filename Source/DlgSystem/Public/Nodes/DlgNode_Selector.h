@@ -47,7 +47,7 @@ public:
 	// Begin UDlgNode Interface.
 	//
 
-	bool HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
+	bool HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
 
 #if WITH_EDITOR
 	FString GetNodeTypeString() const override { return TEXT("Selector"); }

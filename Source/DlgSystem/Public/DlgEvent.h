@@ -61,7 +61,7 @@ public:
 
 	// Executes the event
 	// TargetParticipant is expected to implement IDlgDialogueParticipant interface
-	void Call(UDlgContext* Context, UObject* TargetParticipant) const;
+	void Call(UDlgContext& Context, UObject* TargetParticipant) const;
 
 
 protected:

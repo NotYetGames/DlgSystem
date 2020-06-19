@@ -14,7 +14,7 @@ bool UDlgContext::ChooseChild(int32 OptionIndex)
 	check(Dialogue);
 	if (UDlgNode* Node = GetMutableActiveNode())
 	{
-		if (Node->OptionSelected(OptionIndex, this))
+		if (Node->OptionSelected(OptionIndex, *this))
 		{
 			return true;
 		}
@@ -63,7 +63,7 @@ void UDlgContext::ReevaluateChildren()
 		return;
 	}
 
-	Node->ReevaluateChildren(this, {});
+	Node->ReevaluateChildren(*this, {});
 }
 
 const FText& UDlgContext::GetOptionText(int32 OptionIndex) const
@@ -417,7 +417,7 @@ bool UDlgContext::EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredW
 	FDlgMemory::Get().SetNodeVisited(Dialogue->GetDialogueGUID(), ActiveNodeIndex);
 	VisitedNodeIndices.Add(ActiveNodeIndex);
 
-	return Node->HandleNodeEnter(this, NodesEnteredWithThisStep);
+	return Node->HandleNodeEnter(*this, NodesEnteredWithThisStep);
 }
 
 UDlgNode* UDlgContext::GetMutableNode(int32 NodeIndex) const
@@ -449,7 +449,7 @@ bool UDlgContext::IsNodeEnterable(int32 NodeIndex, TSet<const UDlgNode*> Already
 	check(Dialogue);
 	if (const UDlgNode* Node = GetNode(NodeIndex))
 	{
-		return Node->CheckNodeEnterConditions(this, AlreadyVisitedNodes);
+		return Node->CheckNodeEnterConditions(*this, AlreadyVisitedNodes);
 	}
 
 	return false;
@@ -466,7 +466,7 @@ bool UDlgContext::CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObje
 	const UDlgNode& StartNode = InDialogue->GetStartNode();
 	for (const FDlgEdge& ChildLink : StartNode.GetNodeChildren())
 	{
-		if (ChildLink.IsValid() && ChildLink.Evaluate(this, {}))
+		if (ChildLink.IsValid() && ChildLink.Evaluate(*this, {}))
 		{
 			return true;
 		}
@@ -492,7 +492,7 @@ bool UDlgContext::StartFromContext(const FString& ContextString, UDlgDialogue* I
 	const UDlgNode& StartNode = Dialogue->GetStartNode();
 	for (const FDlgEdge& ChildLink : StartNode.GetNodeChildren())
 	{
-		if (ChildLink.IsValid() && ChildLink.Evaluate(this, {}))
+		if (ChildLink.IsValid() && ChildLink.Evaluate(*this, {}))
 		{
 			if (EnterNode(ChildLink.TargetIndex, {}))
 			{
@@ -548,7 +548,7 @@ bool UDlgContext::StartFromContextFromIndex(
 	FDlgMemory::Get().SetNodeVisited(Dialogue->GetDialogueGUID(), ActiveNodeIndex);
 	VisitedNodeIndices.Add(ActiveNodeIndex);
 
-	return Node->ReevaluateChildren(this, {});
+	return Node->ReevaluateChildren(*this, {});
 }
 
 FString UDlgContext::GetContextString() const

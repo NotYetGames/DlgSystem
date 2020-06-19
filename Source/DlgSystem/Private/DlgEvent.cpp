@@ -6,7 +6,7 @@
 #include "DlgDialogueParticipant.h"
 #include "Logging/DlgLogger.h"
 
-void FDlgEvent::Call(UDlgContext* Context, UObject* TargetParticipant) const
+void FDlgEvent::Call(UDlgContext& Context, UObject* TargetParticipant) const
 {
 	const bool bHasParticipant = ValidateIsParticipantValid(TargetParticipant);
 
@@ -19,7 +19,7 @@ void FDlgEvent::Call(UDlgContext* Context, UObject* TargetParticipant) const
 			return;
 		}
 
-		CustomEvent->EnterEvent(Context, TargetParticipant);
+		CustomEvent->EnterEvent(&Context, TargetParticipant);
 		return;
 	}
 
@@ -30,38 +30,38 @@ void FDlgEvent::Call(UDlgContext* Context, UObject* TargetParticipant) const
 	}
 	switch (EventType)
 	{
-	case EDlgEventType::Event:
-		IDlgDialogueParticipant::Execute_OnDialogueEvent(TargetParticipant, Context, EventName);
-		break;
+		case EDlgEventType::Event:
+			IDlgDialogueParticipant::Execute_OnDialogueEvent(TargetParticipant, &Context, EventName);
+			break;
 
-	case EDlgEventType::ModifyInt:
-		IDlgDialogueParticipant::Execute_ModifyIntValue(TargetParticipant, EventName, bDelta, IntValue);
-		break;
-	case EDlgEventType::ModifyFloat:
-		IDlgDialogueParticipant::Execute_ModifyFloatValue(TargetParticipant, EventName, bDelta, FloatValue);
-		break;
-	case EDlgEventType::ModifyBool:
-		IDlgDialogueParticipant::Execute_ModifyBoolValue(TargetParticipant, EventName, bValue);
-		break;
-	case EDlgEventType::ModifyName:
-		IDlgDialogueParticipant::Execute_ModifyNameValue(TargetParticipant, EventName, NameValue);
-		break;
+		case EDlgEventType::ModifyInt:
+			IDlgDialogueParticipant::Execute_ModifyIntValue(TargetParticipant, EventName, bDelta, IntValue);
+			break;
+		case EDlgEventType::ModifyFloat:
+			IDlgDialogueParticipant::Execute_ModifyFloatValue(TargetParticipant, EventName, bDelta, FloatValue);
+			break;
+		case EDlgEventType::ModifyBool:
+			IDlgDialogueParticipant::Execute_ModifyBoolValue(TargetParticipant, EventName, bValue);
+			break;
+		case EDlgEventType::ModifyName:
+			IDlgDialogueParticipant::Execute_ModifyNameValue(TargetParticipant, EventName, NameValue);
+			break;
 
-	case EDlgEventType::ModifyClassIntVariable:
-		FNYReflectionHelper::ModifyVariable<FNYIntProperty>(TargetParticipant, EventName, IntValue, bDelta);
-		break;
-	case EDlgEventType::ModifyClassFloatVariable:
-		FNYReflectionHelper::ModifyVariable<FNYFloatProperty>(TargetParticipant, EventName, FloatValue, bDelta);
-		break;
-	case EDlgEventType::ModifyClassBoolVariable:
-		FNYReflectionHelper::SetVariable<FNYBoolProperty>(TargetParticipant, EventName, bValue);
-		break;
-	case EDlgEventType::ModifyClassNameVariable:
-		FNYReflectionHelper::SetVariable<FNYNameProperty>(TargetParticipant, EventName, NameValue);
-		break;
+		case EDlgEventType::ModifyClassIntVariable:
+			FNYReflectionHelper::ModifyVariable<FNYIntProperty>(TargetParticipant, EventName, IntValue, bDelta);
+			break;
+		case EDlgEventType::ModifyClassFloatVariable:
+			FNYReflectionHelper::ModifyVariable<FNYFloatProperty>(TargetParticipant, EventName, FloatValue, bDelta);
+			break;
+		case EDlgEventType::ModifyClassBoolVariable:
+			FNYReflectionHelper::SetVariable<FNYBoolProperty>(TargetParticipant, EventName, bValue);
+			break;
+		case EDlgEventType::ModifyClassNameVariable:
+			FNYReflectionHelper::SetVariable<FNYNameProperty>(TargetParticipant, EventName, NameValue);
+			break;
 
-	default:
-		checkNoEntry();
+		default:
+			checkNoEntry();
 	}
 }
 
