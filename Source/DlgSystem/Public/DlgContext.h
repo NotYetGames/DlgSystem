@@ -44,6 +44,26 @@ protected:
 	FDlgEdge Edge;
 };
 
+
+UENUM()
+enum class EDlgValidateStatus : uint8
+{
+	Valid = 0,
+
+	// Either the participant or dialogue is invalid
+	ParticipantIsNull,
+	DialogueIsNull,
+
+	// Is an instance but does not implement the UDlgDialogueParticipant interface
+	ParticipantDoesNotImplementInterface,
+
+	// Is a blueprint class from the content browser and does not implement the UDlgDialogueParticipant interface
+	ParticipantIsABlueprintClassAndDoesNotImplementInterface,
+
+	// The Participant does not exist in the Dialogue
+	// DialogueDoesNotContainParticipant
+};
+
 /**
  *  Class representing an active dialogue, can be used to gain information and to control it
  *  Should be controlled from Player Character/Player controller
@@ -289,7 +309,8 @@ public:
 
 	// Initializes/Starts the context, the first (start) node is selected and the first valid child node is entered.
 	// Called by the UDlgManager which creates the context
-	bool Start(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
+	bool Start(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants) { return StartFromContext(TEXT(""), InDialogue, InParticipants); }
+	bool StartFromContext(const FString& ContextString, UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
 
 	// Initializes/Start the context using the given node as entry point
 	// This is useful to resume a dialogue
@@ -299,6 +320,24 @@ public:
 		int32 StartIndex,
 		const TSet<int32>& VisitedNodes,
 		bool bFireEnterEvents
+	)
+	{
+		return StartFromContextFromIndex(
+			TEXT(""),
+			InDialogue,
+			InParticipants,
+			StartIndex,
+			VisitedNodes,
+			bFireEnterEvents
+		);
+	}
+	bool StartFromContextFromIndex(
+		const FString& ContextString,
+	    UDlgDialogue* InDialogue,
+	    const TMap<FName, UObject*>& InParticipants,
+	    int32 StartIndex,
+	    const TSet<int32>& VisitedNodes,
+	    bool bFireEnterEvents
 	);
 
 	// Checks if the context could be started, used to check if there is any reachable node from the start node
@@ -307,8 +346,40 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Context")
 	FString GetContextString() const;
 
+	// Checks if the Participant object is a valid participant for starting the Dialogue
+	static EDlgValidateStatus IsValidParticipantForDialogue(const UDlgDialogue* Dialogue, const UObject* Participant);
+
+	// Same as IsValidParticipantForDialogue but this just returns a bool and logs to the output log if something is wrong
+	// If bLog = true then this act exactly as IsValidParticipantForDialogue
+	static bool ValidateParticipantForDialogue(
+		const FString& ContextString,
+		const UDlgDialogue* Dialogue,
+		const UObject* Participant,
+		bool bLog = true
+	);
+
+	// Same as ValidateParticipantForDialogue but works on a Map of Participants
+	static bool ValidateParticipantsMapForDialogue(
+		const FString& ContextString,
+		const UDlgDialogue* Dialogue,
+		const TMap<FName, UObject*>& ParticipantsMap,
+		bool bLog = true
+	);
+
+	// Just converts the array to a map, this does minimal checking just for the conversion to work
+	// NOTE: this outputs to log if an error occurs
+	static bool ConvertArrayOfParticipantsToMap(
+		const FString& ContextString,
+		const UDlgDialogue* Dialogue,
+		const TArray<UObject*>& ParticipantsArray,
+		TMap<FName, UObject*>& OutParticipantsMap,
+		bool bLog = true
+	);
+
 protected:
+	// bool StartInternal(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants, bool bLog, FString& OutErrorMessage);
 	void LogErrorWithContext(const FString& ErrorMessage) const;
+	FString GetErrorMessageWithContext(const FString& ErrorMessage) const;
 
 protected:
 	// Current Dialogue used in this context at runtime.

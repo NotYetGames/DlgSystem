@@ -36,6 +36,9 @@ public:
 	static UDlgContext* StartDialogueWithDefaultParticipants(UObject* WorldContextObject, UDlgDialogue* Dialogue);
 
 
+	// Supplies where we called this from
+	static UDlgContext* StartDialogueFromContext(const FString& ContextString, UDlgDialogue* Dialogue, const TArray<UObject*>& Participants);
+
 	/**
 	 * Starts a Dialogue with the provided Dialogue and Participants array
 	 * This method can fail in the following situations:
@@ -46,7 +49,10 @@ public:
 	 * @returns The dialogue context object or nullptr if something wrong happened
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
-	static UDlgContext* StartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants);
+	static UDlgContext* StartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants)
+	{
+		return StartDialogueFromContext(TEXT("StartDialogue"), Dialogue, Participants);
+	}
 
 	/**
 	 * Checks if there is any child of the start node which can be enterred based on the conditions
@@ -209,9 +215,6 @@ public:
 	}
 
 private:
-	static bool ValidateParticipant(const FString& ContextMessageFailure, const UDlgDialogue* ContextDialogue, UObject* Participant);
-	static bool ConstructParticipantMap(const UDlgDialogue* Dialogue, const TArray<UObject*>& Participants, TMap<FName, UObject*>& OutMap);
-
 	static void GatherParticipantsRecursive(UObject* Object, TArray<UObject*>& Array, TSet<UObject*>& AlreadyVisited);
 
 	// Set by the user, we will default to automagically resolve the world

@@ -455,32 +455,9 @@ bool UDlgContext::IsNodeEnterable(int32 NodeIndex, TSet<const UDlgNode*> Already
 	return false;
 }
 
-
-FString UDlgContext::GetContextString() const
-{
-	FString ContextParticipants;
-	TSet<FString> ParticipantsNames;
-	for (const auto& KeyValue : Participants)
-	{
-		ParticipantsNames.Add(KeyValue.Key.ToString());
-	}
-
-	return FString::Printf(
-		TEXT("Dialogue = `%s`, ActiveNodeIndex = %d, Participants Names = `%s`"),
-		Dialogue ? *Dialogue->GetPathName() : TEXT("INVALID"),
-		ActiveNodeIndex,
-		*FString::Join(ParticipantsNames, TEXT(", "))
-	);
-}
-
-void UDlgContext::LogErrorWithContext(const FString& ErrorMessage) const
-{
-	FDlgLogger::Get().Errorf(TEXT("%s.\nContext:\n\t%s"), *ErrorMessage, *GetContextString());
-}
-
 bool UDlgContext::CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants) const
 {
-	if (!InDialogue)
+	if (!ValidateParticipantsMapForDialogue(TEXT("CanBeStarted"), Dialogue, Participants, false))
 	{
 		return false;
 	}
@@ -498,14 +475,16 @@ bool UDlgContext::CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObje
 	return false;
 }
 
-bool UDlgContext::Start(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants)
+bool UDlgContext::StartFromContext(const FString& ContextString, UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants)
 {
+	const FString ContextMessage = ContextString.IsEmpty()
+		? TEXT("Start")
+		: FString::Printf(TEXT("%s - Start"), *ContextString);
+
 	Dialogue = InDialogue;
 	Participants = InParticipants;
-
-	if (!Dialogue)
+	if (!ValidateParticipantsMapForDialogue(ContextMessage, Dialogue, Participants))
 	{
-		LogErrorWithContext(TEXT("Start - FAILED because the supplied Dialogue Asset is INVALID (nullptr)"));
 		return false;
 	}
 
@@ -522,13 +501,15 @@ bool UDlgContext::Start(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& I
 		}
 	}
 
-	LogErrorWithContext(
-		TEXT("Start - FAILED because all possible start node condition failed. Edge conditions and children enter conditions from the start node are not satisfied")
-	);
+	LogErrorWithContext(FString::Printf(
+        TEXT("%s - FAILED because all possible start node condition failed. Edge conditions and children enter conditions from the start node are not satisfied"),
+        *ContextMessage
+    ));
 	return false;
 }
 
-bool UDlgContext::StartFromIndex(
+bool UDlgContext::StartFromContextFromIndex(
+	const FString& ContextString,
 	UDlgDialogue* InDialogue,
 	const TMap<FName, UObject*>& InParticipants,
 	int32 StartIndex,
@@ -536,13 +517,15 @@ bool UDlgContext::StartFromIndex(
 	bool bFireEnterEvents
 )
 {
+	const FString ContextMessage = ContextString.IsEmpty()
+        ? TEXT("StartFromIndex")
+        : FString::Printf(TEXT("%s - StartFromIndex"), *ContextString);
+
 	Dialogue = InDialogue;
 	Participants = InParticipants;
 	VisitedNodeIndices = VisitedNodes;
-
-	if (!Dialogue)
+	if (!ValidateParticipantsMapForDialogue(ContextMessage, Dialogue, Participants))
 	{
-		LogErrorWithContext(TEXT("StartFromIndex - FAILED because the supplied Dialogue Asset is INVALID (nullptr)"));
 		return false;
 	}
 
@@ -550,8 +533,8 @@ bool UDlgContext::StartFromIndex(
 	if (!IsValid(Node))
 	{
 		LogErrorWithContext(FString::Printf(
-			TEXT("StartFromIndex - FAILED because StartIndex = %d is an INVALID index"),
-			StartIndex
+			TEXT("%s - FAILED because StartIndex = %d is an INVALID index"),
+			*ContextMessage, StartIndex
 		));
 		return false;
 	}
@@ -566,4 +549,290 @@ bool UDlgContext::StartFromIndex(
 	VisitedNodeIndices.Add(ActiveNodeIndex);
 
 	return Node->ReevaluateChildren(this, {});
+}
+
+FString UDlgContext::GetContextString() const
+{
+	FString ContextParticipants;
+	TSet<FString> ParticipantsNames;
+	for (const auto& KeyValue : Participants)
+	{
+		ParticipantsNames.Add(KeyValue.Key.ToString());
+	}
+
+	return FString::Printf(
+        TEXT("Dialogue = `%s`, ActiveNodeIndex = %d, Participants Names = `%s`"),
+        Dialogue ? *Dialogue->GetPathName() : TEXT("INVALID"),
+        ActiveNodeIndex,
+        *FString::Join(ParticipantsNames, TEXT(", "))
+    );
+}
+
+void UDlgContext::LogErrorWithContext(const FString& ErrorMessage) const
+{
+	FDlgLogger::Get().Error(GetErrorMessageWithContext(ErrorMessage));
+}
+
+FString UDlgContext::GetErrorMessageWithContext(const FString& ErrorMessage) const
+{
+	return FString::Printf(TEXT("%s.\nContext:\n\t%s"), *ErrorMessage, *GetContextString());
+}
+
+EDlgValidateStatus UDlgContext::IsValidParticipantForDialogue(const UDlgDialogue* Dialogue, const UObject* Participant)
+{
+	if (!IsValid(Participant))
+	{
+		return EDlgValidateStatus::ParticipantIsNull;
+	}
+	if (!IsValid(Dialogue))
+	{
+		return EDlgValidateStatus::DialogueIsNull;
+	}
+
+	// Does not implement interface
+	if (!Participant->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
+	{
+		if (Participant->IsA<UBlueprint>())
+		{
+			return EDlgValidateStatus::ParticipantIsABlueprintClassAndDoesNotImplementInterface;
+		}
+
+		return EDlgValidateStatus::ParticipantDoesNotImplementInterface;
+	}
+
+	// We are more relaxed about this
+	// Even if the user supplies more participants that required we still allow them to start the dialogue if the number of participants is bigger
+
+	// Does the participant name exist in the Dialogue?
+	// const FName ParticipantName = IDlgDialogueParticipant::Execute_GetParticipantName(Participant);
+	// if (!Dialogue->IsParticipant(ParticipantName))
+	// {
+	// 	return EDlgValidateStatus::DialogueDoesNotContainParticipant;
+	// }
+
+	return EDlgValidateStatus::Valid;
+}
+
+bool UDlgContext::ValidateParticipantForDialogue(
+	const FString& ContextString,
+	const UDlgDialogue* Dialogue,
+	const UObject* Participant,
+	bool bLog
+)
+{
+	const EDlgValidateStatus Status = IsValidParticipantForDialogue(Dialogue, Participant);
+
+	// Act as IsValidParticipantForDialogue
+	if (!bLog)
+	{
+		return Status == EDlgValidateStatus::Valid;
+	}
+
+	switch (Status)
+	{
+		case EDlgValidateStatus::Valid:
+			return true;
+
+		case EDlgValidateStatus::DialogueIsNull:
+			FDlgLogger::Get().Errorf(
+			    TEXT("%s - Dialogue is INVALID (not set or null).\nContext:\n\tParticipant = `%s`"),
+			    *ContextString, Participant ? *Participant->GetPathName() : TEXT("INVALID")
+			);
+			return false;
+
+		case EDlgValidateStatus::ParticipantIsNull:
+			FDlgLogger::Get().Errorf(
+	            TEXT("%s - Participant is INVALID (not set or null).\nContext:\n\tDialogue = `%s`"),
+	            *ContextString, Dialogue ? *Dialogue->GetPathName() : TEXT("INVALID")
+	        );
+			return false;
+
+		case EDlgValidateStatus::ParticipantDoesNotImplementInterface:
+			FDlgLogger::Get().Errorf(
+	            TEXT("%s - Participant Path = `%s` does not implement the IDlgDialogueParticipant/UDlgDialogueParticipant interface.\nContext:\n\tDialogue = `%s`"),
+	            *ContextString, *Participant->GetPathName(), *Dialogue->GetPathName()
+	        );
+			return false;
+
+		case EDlgValidateStatus::ParticipantIsABlueprintClassAndDoesNotImplementInterface:
+	        FDlgLogger::Get().Errorf(
+	            TEXT("%s - Participant Path = `%s` is a Blueprint Class (from the content browser) and NOT a Blueprint Instance (from the level world).\nContext:\n\tDialogue = `%s`"),
+	            *ContextString, *Participant->GetPathName(), *Dialogue->GetPathName()
+	        );
+			return false;
+
+		// case EDlgValidateStatus::DialogueDoesNotContainParticipant:
+	 //        FDlgLogger::Get().Errorf(
+	 //            TEXT("%s - Participant Path = `%s` with ParticipantName = `%s` is NOT referenced (DOES) not exist inside the Dialogue.\nContext:\n\tDialogue = `%s`"),
+	 //            *ContextString, *Participant->GetPathName(), *IDlgDialogueParticipant::Execute_GetParticipantName(Participant).ToString(), *Dialogue->GetPathName()
+	 //        );
+		// 	return false;
+
+		default:
+			FDlgLogger::Get().Errorf(TEXT("%s - ValidateParticipantForDialogue - Error EDlgValidateStatus Unhandled = %d"), *ContextString, static_cast<int32>(Status));
+			return false;
+	}
+}
+
+bool UDlgContext::ValidateParticipantsMapForDialogue(
+	const FString& ContextString,
+	const UDlgDialogue* Dialogue,
+	const TMap<FName, UObject*>& ParticipantsMap,
+	bool bLog
+)
+{
+	const FString ContextMessage = ContextString.IsEmpty()
+        ? FString::Printf(TEXT("ValidateParticipantsMapForDialogue"))
+        : FString::Printf(TEXT("%s - ValidateParticipantsMapForDialogue"), *ContextString);
+
+	if (!IsValid(Dialogue))
+	{
+		if (bLog)
+		{
+			FDlgLogger::Get().Errorf(TEXT("%s - FAILED because the supplied Dialogue Asset is INVALID (nullptr)"), *ContextMessage);
+		}
+		return false;
+	}
+	if (Dialogue->GetParticipantData().Num() == 0)
+	{
+		if (bLog)
+		{
+			FDlgLogger::Get().Errorf(TEXT("%s - Dialogue = `%s` does not have any participants"), *ContextMessage, *Dialogue->GetPathName());
+		}
+		return false;
+	}
+
+	// Check if at least these participants are required
+	const TMap<FName, FDlgParticipantData>& DialogueParticipants = Dialogue->GetParticipantData();
+	TArray<FName> ParticipantsRequiredArray;
+	const int32 ParticipantsNum = DialogueParticipants.GetKeys(ParticipantsRequiredArray);
+	TSet<FName> ParticipantsRequiredSet{ParticipantsRequiredArray};
+
+	// Iterate over Map
+	for (const auto& KeyValue : ParticipantsMap)
+	{
+		const FName ParticipantName = KeyValue.Key;
+		const UObject* Participant = KeyValue.Value;
+
+		// We must check this otherwise we can't get the name
+		if (!ValidateParticipantForDialogue(ContextMessage, Dialogue, Participant, bLog))
+		{
+			return false;
+		}
+
+		// Check the Map Key matches the Participant Name
+		// This should only happen if you constructed the map incorrectly by mistake
+		// If you used ConvertArrayOfParticipantsToMap this should have NOT happened
+		{
+			const FName ObjectParticipantName = IDlgDialogueParticipant::Execute_GetParticipantName(Participant);
+			if (ParticipantName != ObjectParticipantName)
+			{
+				if (bLog)
+				{
+					FDlgLogger::Get().Errorf(
+					    TEXT("%s - The Map has a KEY Participant Name = `%s` DIFFERENT to the VALUE of the Participant Path = `%s` with the Name = `%s` (KEY Participant Name != VALUE Participant Name)"),
+					    *ContextMessage, *ParticipantName.ToString(), *Participant->GetPathName(), *ObjectParticipantName.ToString()
+					);
+				}
+				return false;
+			}
+		}
+
+		// We found one participant from our set
+		if (ParticipantsRequiredSet.Contains(ParticipantName))
+		{
+			ParticipantsRequiredSet.Remove(ParticipantName);
+		}
+		else
+		{
+			// Participant does note exist, just warn about it, we are relaxed about this
+			if (bLog)
+			{
+				FDlgLogger::Get().Warningf(
+                    TEXT("%s - Participant Path = `%s` with Participant Name = `%s` is NOT referenced (DOES) not exist inside the Dialogue. It is going to be IGNORED.\nContext:\n\tDialogue = `%s`"),
+                    *ContextMessage, *Participant->GetPathName(), *ParticipantName.ToString(), *Dialogue->GetPathName()
+                );
+			}
+		}
+	}
+
+	// Some participants are missing
+	if (ParticipantsRequiredSet.Num() > 0)
+	{
+		if (bLog)
+		{
+			TArray<FString> ParticipantsMissing;
+			for (const auto Name : ParticipantsRequiredSet)
+			{
+				ParticipantsMissing.Add(Name.ToString());
+			}
+
+			const FString NameList = FString::Join(ParticipantsMissing, TEXT(", "));
+			FDlgLogger::Get().Errorf(
+                TEXT("%s - FAILED for Dialogue = `%s` because the following Participant Names are MISSING: `%s"),
+                *ContextMessage,  *Dialogue->GetPathName(), *NameList
+            );
+		}
+		return false;
+	}
+
+	return true;
+}
+
+bool UDlgContext::ConvertArrayOfParticipantsToMap(
+    const FString& ContextString,
+    const UDlgDialogue* Dialogue,
+    const TArray<UObject*>& ParticipantsArray,
+    TMap<FName, UObject*>& OutParticipantsMap,
+    bool bLog
+)
+{
+	const FString ContextMessage = ContextString.IsEmpty()
+        ? FString::Printf(TEXT("ConvertArrayOfParticipantsToMap"))
+        : FString::Printf(TEXT("%s - ConvertArrayOfParticipantsToMap"), *ContextString);
+
+	// We don't allow to convert empty arrays
+	OutParticipantsMap.Empty();
+	if (ParticipantsArray.Num() == 0)
+	{
+		if (bLog)
+		{
+			FDlgLogger::Get().Errorf(
+			    TEXT("%s - Participants Array is EMPTY, can't convert anything. Dialogue = `%s`"),
+			    *ContextMessage, Dialogue ? *Dialogue->GetPathName() : TEXT("INVALID")
+			);
+		}
+		return false;
+	}
+
+	for (int32 Index = 0; Index < ParticipantsArray.Num(); Index++)
+	{
+		UObject* Participant = ParticipantsArray[Index];
+		const FString ContextMessageWithIndex = FString::Printf(TEXT("%s - Participant at Index = %d"), *ContextMessage,  Index);
+
+		// We must check this otherwise we can't get the name
+		if (!ValidateParticipantForDialogue(ContextMessageWithIndex, Dialogue, Participant, bLog))
+		{
+			return false;
+		}
+
+		// Is Duplicate?
+		// Just warn the user about it, but still continue our conversion
+		const FName ParticipantName = IDlgDialogueParticipant::Execute_GetParticipantName(Participant);
+		if (OutParticipantsMap.Contains(ParticipantName))
+		{
+			if (bLog)
+			{
+				FDlgLogger::Get().Warningf(
+				    TEXT("%s - Participant Path = `%s`, Participant Name = `%s` already exists in the Array. Ignoring it!"),
+				    *ContextMessageWithIndex, *Participant->GetPathName(), *ParticipantName.ToString()
+				);
+			}
+			continue;
+		}
+
+		OutParticipantsMap.Add(ParticipantName, Participant);
+	}
+
+	return true;
 }
