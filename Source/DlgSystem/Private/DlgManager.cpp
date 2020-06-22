@@ -119,7 +119,6 @@ UDlgContext* UDlgManager::StartDialogueFromContext(const FString& ContextString,
 	return nullptr;
 }
 
-
 bool UDlgManager::CanStartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants)
 {
 	TMap<FName, UObject*> ParticipantBinding;
@@ -155,7 +154,6 @@ UDlgContext* UDlgManager::ResumeDialogue(
 
 	return nullptr;
 }
-
 
 UDlgContext* UDlgManager::StartMonologue(UDlgDialogue* Dialogue, UObject* Participant)
 {

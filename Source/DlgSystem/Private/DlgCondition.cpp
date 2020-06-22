@@ -8,6 +8,7 @@
 #include "NYReflectionHelper.h"
 #include "Kismet/GameplayStatics.h"
 #include "DlgDialogueParticipant.h"
+#include "DlgHelper.h"
 #include "Logging/DlgLogger.h"
 
 bool FDlgCondition::EvaluateArray(const UDlgContext& Context, const TArray<FDlgCondition>& ConditionsArray, FName DefaultParticipantName)
@@ -47,7 +48,10 @@ bool FDlgCondition::IsConditionMet(const UDlgContext& Context, const UObject* Pa
 	{
 		if (CustomCondition == nullptr)
 		{
-			FDlgLogger::Get().Error(TEXT("Custom Condition is empty (not valid). IsConditionMet returning false."));
+			FDlgLogger::Get().Errorf(
+				TEXT("Custom Condition is empty (not valid). IsConditionMet returning false.\nContext:\n\t%s, Participant = %s"),
+				*Context.GetContextString(), Participant ? *Participant->GetPathName() : TEXT("INVALID")
+			);
 			return false;
 		}
 
@@ -80,7 +84,7 @@ bool FDlgCondition::IsConditionMet(const UDlgContext& Context, const UObject* Pa
 		case EDlgConditionType::ClassBoolVariable:
 			return CheckBool(Context, FNYReflectionHelper::GetVariable<FNYBoolProperty, bool>(Participant, CallbackName));
 
-		case EDlgConditionType::FloatVariable:
+		case EDlgConditionType::ClassFloatVariable:
 			return CheckFloat(Context, FNYReflectionHelper::GetVariable<FNYFloatProperty, float>(Participant, CallbackName));
 
 		case EDlgConditionType::ClassIntVariable:
@@ -152,7 +156,10 @@ bool FDlgCondition::CheckFloat(const UDlgContext& Context, float Value) const
 			return !FMath::IsNearlyEqual(Value, ValueToCheckAgainst);
 
 		default:
-			FDlgLogger::Get().Error(TEXT("Invalid Operation in float based condition!"));
+			FDlgLogger::Get().Errorf(
+				TEXT("Invalid Operation in float based condition.\nContext:\n\t%s"),
+				*Context.GetContextString()
+			);
 			return false;
 	}
 }
@@ -199,13 +206,17 @@ bool FDlgCondition::CheckInt(const UDlgContext& Context, int32 Value) const
 			return Value != ValueToCheckAgainst;
 
 		default:
-			FDlgLogger::Get().Error(TEXT("Invalid Operation in int based condition!"));
+			FDlgLogger::Get().Errorf(
+				TEXT("Invalid Operation in int based condition.\nContext:\n\t%s"),
+				*Context.GetContextString()
+			);
 			return false;
 	}
 }
 
 bool FDlgCondition::CheckBool(const UDlgContext& Context, bool bValue) const
 {
+	bool bResult = bValue;
 	if (CompareType == EDlgCompare::ToVariable || CompareType == EDlgCompare::ToClassVariable)
 	{
 		const UObject* OtherParticipant = Context.GetParticipant(OtherParticipantName);
@@ -224,10 +235,11 @@ bool FDlgCondition::CheckBool(const UDlgContext& Context, bool bValue) const
 			bValueToCheckAgainst = FNYReflectionHelper::GetVariable<FNYBoolProperty, bool>(OtherParticipant, OtherVariableName);
 		}
 
-		return (bValue == bValueToCheckAgainst) == bBoolValue;
+		// Check if value matches other variable
+		bResult = bValue == bValueToCheckAgainst;
 	}
 
-	return bValue == bBoolValue;
+	return bResult == bBoolValue;
 }
 
 bool FDlgCondition::CheckName(const UDlgContext& Context, FName Value) const
@@ -251,7 +263,8 @@ bool FDlgCondition::CheckName(const UDlgContext& Context, FName Value) const
 		}
 	}
 
-	return (ValueToCheckAgainst == Value) == bBoolValue;
+	const bool bResult = ValueToCheckAgainst == Value;
+	return bResult == bBoolValue;
 }
 
 bool FDlgCondition::ValidateIsParticipantValid(const UDlgContext& Context, const FString& ContextString, const UObject* Participant) const
@@ -262,8 +275,8 @@ bool FDlgCondition::ValidateIsParticipantValid(const UDlgContext& Context, const
 	}
 
 	FDlgLogger::Get().Errorf(
-		TEXT("Condition failed: invalid participant! ParticipantName = %s, ConditionName = %s with Context = %s"),
-		*ParticipantName.ToString(), *CallbackName.ToString(), *ContextString
+		TEXT("%s FAILED because the PARTICIPANT is INVALID.\nContext:\n\t%s, ConditionType = %s"),
+		*ContextString, *Context.GetContextString(), *ConditionTypeToString(ConditionType)
 	);
 	return false;
 }
@@ -279,4 +292,13 @@ bool FDlgCondition::IsSecondParticipantInvolved() const
 	return CompareType != EDlgCompare::ToConst
 		&& ConditionType != EDlgConditionType::WasNodeVisited
 		&& ConditionType != EDlgConditionType::HasSatisfiedChild;
+}
+
+FString FDlgCondition::ConditionTypeToString(EDlgConditionType Type)
+{
+	FString EnumValue;
+	if (FDlgHelper::ConvertEnumToString<EDlgConditionType>(TEXT("EDlgConditionType"), Type, false, EnumValue))
+		return EnumValue;
+
+	return EnumValue;
 }

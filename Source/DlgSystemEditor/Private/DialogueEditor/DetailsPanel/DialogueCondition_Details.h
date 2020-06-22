@@ -91,7 +91,7 @@ private:
 	EVisibility GetFloatValueVisibility() const
 	{
 		return (CompareType == EDlgCompare::ToConst) &&
-			(ConditionType == EDlgConditionType::FloatCall || ConditionType == EDlgConditionType::FloatVariable)
+			(ConditionType == EDlgConditionType::FloatCall || ConditionType == EDlgConditionType::ClassFloatVariable)
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
@@ -125,7 +125,7 @@ private:
 		return ConditionType == EDlgConditionType::FloatCall
 			|| ConditionType == EDlgConditionType::IntCall
 			|| ConditionType == EDlgConditionType::ClassIntVariable
-			|| ConditionType == EDlgConditionType::FloatVariable
+			|| ConditionType == EDlgConditionType::ClassFloatVariable
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
@@ -136,7 +136,7 @@ private:
 			|| ConditionType == EDlgConditionType::BoolCall
 			|| ConditionType == EDlgConditionType::NameCall
 			|| ConditionType == EDlgConditionType::ClassIntVariable
-			|| ConditionType == EDlgConditionType::FloatVariable
+			|| ConditionType == EDlgConditionType::ClassFloatVariable
 			|| ConditionType == EDlgConditionType::ClassNameVariable
 			|| ConditionType == EDlgConditionType::ClassBoolVariable
 			? EVisibility::Visible : EVisibility::Hidden;

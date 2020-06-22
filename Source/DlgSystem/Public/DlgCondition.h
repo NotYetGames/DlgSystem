@@ -44,7 +44,7 @@ enum class EDlgConditionType : uint8
 
 	// A logical operation on an variables acquired from the object using the UClass
 	ClassIntVariable	UMETA(DisplayName = "Check class int variable"),
-	FloatVariable		UMETA(DisplayName = "Check class float variable"),
+	ClassFloatVariable	UMETA(DisplayName = "Check class float variable"),
 	ClassBoolVariable	UMETA(DisplayName = "Check class bool variable"),
 	ClassNameVariable	UMETA(DisplayName = "Check class name variable"),
 
@@ -120,6 +120,8 @@ public:
 	// returns true if ParticipantName has to belong to match with a valid Participant in order for the condition type to work */
 	bool IsParticipantInvolved() const;
 	bool IsSecondParticipantInvolved() const;
+
+	static FString ConditionTypeToString(EDlgConditionType Type);
 
 protected:
 	//

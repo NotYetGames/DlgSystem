@@ -140,7 +140,7 @@ public:
 			FloatVariableName,
 			Dialogue,
 			EDlgEventType::ModifyClassFloatVariable,
-			EDlgConditionType::FloatVariable
+			EDlgConditionType::ClassFloatVariable
 		);
 		GetGraphNodesForTextArgumentVariable(FloatVariableName, Dialogue, EDlgTextArgumentType::ClassFloat, FoundResult);
 		return FoundResult;

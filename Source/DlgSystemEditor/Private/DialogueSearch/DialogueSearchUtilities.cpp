@@ -122,7 +122,6 @@ void FDialogueSearchUtilities::GetGraphNodesForTextArgumentVariable(
 	TSharedPtr<FDialogueSearchFoundResult>& FoundResult
 )
 {
-
 	const UDialogueGraph* Graph = CastChecked<UDialogueGraph>(Dialogue->GetGraph());
 	for (const UDialogueGraphNode_Base* GraphNodeBase : Graph->GetAllBaseDialogueGraphNodes())
 	{
