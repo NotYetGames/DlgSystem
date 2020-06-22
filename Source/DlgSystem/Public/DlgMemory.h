@@ -5,13 +5,13 @@
 
 #include "DlgMemory.generated.h"
 
-USTRUCT(Blueprintable, BlueprintType)
+USTRUCT(BlueprintType)
 struct DLGSYSTEM_API FDlgHistory
 {
 	GENERATED_USTRUCT_BODY()
 public:
 	// List of already visited node indices
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueHistoryData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|History")
 	TSet<int32> VisitedNodeIndices;
 
 public:

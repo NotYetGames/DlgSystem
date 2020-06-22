@@ -369,7 +369,7 @@ bool UDialogueGraphNode::HasGenericDataSet() const
 	}
 
 	// Try simple node
-	if (DialogueNode->GetGenericData() != nullptr)
+	if (DialogueNode->GetNodeGenericData() != nullptr)
 	{
 		return true;
 	}

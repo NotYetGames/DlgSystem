@@ -49,7 +49,7 @@ public:
 			: 0;
 	}
 
-	FText GetText(const int32 InIndex) const override
+	FText GetText(int32 InIndex) const override
 	{
 		if (PropertyHandle->IsValidHandle())
 		{
@@ -67,7 +67,7 @@ public:
 		return FText::GetEmpty();
 	}
 
-	void SetText(const int32 InIndex, const FText& InText) override
+	void SetText(int32 InIndex, const FText& InText) override
 	{
 		if (PropertyHandle->IsValidHandle())
 		{
@@ -83,9 +83,14 @@ public:
 	}
 
 #if USE_STABLE_LOCALIZATION_KEYS
-	void GetStableTextId(const int32 InIndex, const ETextPropertyEditAction InEditAction,
-		const FString& InTextSource, const FString& InProposedNamespace, const FString& InProposedKey,
-		FString& OutStableNamespace, FString& OutStableKey) const override
+	void GetStableTextId(
+		int32 InIndex,
+		ETextPropertyEditAction InEditAction,
+		const FString& InTextSource,
+		const FString& InProposedNamespace,
+		const FString& InProposedKey,
+		FString& OutStableNamespace, FString& OutStableKey
+	) const override
 	{
 		if (PropertyHandle->IsValidHandle())
 		{

@@ -48,6 +48,7 @@ void SDialogueGraphNode_Edge::OnMouseLeave(const FPointerEvent& MouseEvent)
 void SDialogueGraphNode_Edge::MoveTo(const FVector2D& NewPosition, FNodeSet& NodeFilter)
 {
 	// Ignored; position is set by the location of the attached nodes
+	Super::MoveTo(NewPosition, NodeFilter);
 }
 
 void SDialogueGraphNode_Edge::PerformSecondPassLayout(const TMap<UObject*, TSharedRef<SNode>>& NodeToWidgetLookup) const
@@ -55,8 +56,8 @@ void SDialogueGraphNode_Edge::PerformSecondPassLayout(const TMap<UObject*, TShar
 	// Find the geometry of the nodes we're connecting
 	FGeometry StartGeom;
 	FGeometry EndGeom;
-	constexpr int32 NodeIndex = 0;
-	constexpr int32 NumberOfEdges = 1;
+	static constexpr int32 NodeIndex = 0;
+	static constexpr int32 NumberOfEdges = 1;
 
 	// Get the widgets the input/output node and find the geometries and the node inde and number of edges
 	UDialogueGraphNode* ParentNode = DialogueGraphNode_Edge->GetParentNode();
@@ -206,7 +207,7 @@ void SDialogueGraphNode_Edge::PositionBetweenTwoNodesWithOffset(const FGeometry&
 	const FVector2D EndAnchorPoint = FGeometryHelper::FindClosestPointOnGeom(EndGeom, SeedPoint);
 
 	// Position ourselves halfway along the connecting line between the nodes, elevated away perpendicular to the direction of the line
-	constexpr float Height = 30.0f;
+	static constexpr float Height = 30.0f;
 	const FVector2D DesiredNodeSize = GetDesiredSize();
 
 	FVector2D DeltaPos(EndAnchorPoint - StartAnchorPoint);
@@ -223,8 +224,8 @@ void SDialogueGraphNode_Edge::PositionBetweenTwoNodesWithOffset(const FGeometry&
 	// Calculate node offset in the case of multiple transitions between the same two nodes
 	// MultiNodeOffset: the offset where 0 is the centre of the transition, -1 is 1 <size of node>
 	// towards the PrevStateNode and +1 is 1 <size of node> towards the NextStateNode.
-	constexpr float MultiNodeSpace = 0.2f; // Space between multiple edge nodes (in units of <size of node> )
-	constexpr float MultiNodeStep = (1.f + MultiNodeSpace); // Step between node centres (Size of node + size of node spacer)
+	static constexpr float MultiNodeSpace = 0.2f; // Space between multiple edge nodes (in units of <size of node> )
+	static constexpr float MultiNodeStep = 1.f + MultiNodeSpace; // Step between node centres (Size of node + size of node spacer)
 
 	const float MultiNodeStart = -((MaxNodes - 1) * MultiNodeStep) / 2.f;
 	const float MultiNodeOffset = MultiNodeStart + (NodeIndex * MultiNodeStep);

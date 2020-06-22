@@ -36,7 +36,7 @@ public:
 	// Updates the Dialogue to match the version UseOnlyOneOutputAndInputPin
 	virtual void UpdateDialogueToVersion_UseOnlyOneOutputAndInputPin(UDlgDialogue* Dialogue) const = 0;
 
-	// Tries to set the new outer for Object to the closes UDlgNoe from UEdGraphNode
+	// Tries to set the new outer for Object to the closes UDlgNode from UEdGraphNode
 	virtual void SetNewOuterForObjectFromGraphNode(UObject* Object, UEdGraphNode* GraphNode) const = 0;
 };
 #endif

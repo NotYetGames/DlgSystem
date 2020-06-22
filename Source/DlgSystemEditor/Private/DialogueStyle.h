@@ -17,7 +17,7 @@ public:
 	static FName GetStyleSetName() { return TEXT("DlgSystemStyle"); }
 
 	/** Gets the small property name variant */
-	static FName GetSmallProperty(const FName& PropertyName)
+	static FName GetSmallProperty(FName PropertyName)
 	{
 		return FName(*(PropertyName.ToString() + TEXT(".Small")));
 	}

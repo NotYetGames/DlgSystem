@@ -35,7 +35,7 @@ void FDlgParticipantData::AddConditionPrimaryData(const FDlgCondition& Condition
 		case EDlgConditionType::ClassIntVariable:
 			ClassIntVariableNames.Add(ConditionName);
 			break;
-		case EDlgConditionType::FloatVariable:
+		case EDlgConditionType::ClassFloatVariable:
 			ClassFloatVariableNames.Add(ConditionName);
 			break;
 		case EDlgConditionType::ClassBoolVariable:
@@ -64,7 +64,7 @@ void FDlgParticipantData::AddConditionSecondaryData(const FDlgCondition& Conditi
 			break;
 
 		case EDlgConditionType::FloatCall:
-		case EDlgConditionType::FloatVariable:
+		case EDlgConditionType::ClassFloatVariable:
 			(bClassVariable ? ClassFloatVariableNames : FloatVariableNames).Add(VariableName);
 			break;
 

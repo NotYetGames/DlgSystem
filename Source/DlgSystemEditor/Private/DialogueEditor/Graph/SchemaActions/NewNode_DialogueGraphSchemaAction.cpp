@@ -10,8 +10,12 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FNewNode_DialogueGraphSchemaAction
-UEdGraphNode* FNewNode_DialogueGraphSchemaAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin,
-	const FVector2D Location, bool bSelectNewNode/* = true*/)
+UEdGraphNode* FNewNode_DialogueGraphSchemaAction::PerformAction(
+	UEdGraph* ParentGraph,
+	UEdGraphPin* FromPin,
+	const FVector2D Location,
+	bool bSelectNewNode/* = true*/
+)
 {
 	const FScopedTransaction Transaction(LOCTEXT("DialogueditorNewDialgueNode", "Dialogue Editor: New Dialogue Node"));
 	UDlgDialogue* Dialogue = CastChecked<UDialogueGraph>(ParentGraph)->GetDialogue();
@@ -33,11 +37,16 @@ UEdGraphNode* FNewNode_DialogueGraphSchemaAction::PerformAction(UEdGraph* Parent
 	return GraphNode;
 }
 
-UEdGraphNode* FNewNode_DialogueGraphSchemaAction::CreateNode(UDlgDialogue* Dialogue, UEdGraph* ParentGraph, UEdGraphPin* FromPin,
-	const FVector2D Location, bool bSelectNewNode)
+UEdGraphNode* FNewNode_DialogueGraphSchemaAction::CreateNode(
+	UDlgDialogue* Dialogue,
+	UEdGraph* ParentGraph,
+	UEdGraphPin* FromPin,
+	FVector2D Location,
+	bool bSelectNewNode
+)
 {
 	// Maximum distance a drag can be off a node edge to require 'push off' from node
-	constexpr int32 NodeDistance = 60;
+	static constexpr int32 NodeDistance = 60;
 
 	// Create the dialogue node
 	auto DialogueNode = Dialogue->ConstructDialogueNode<UDlgNode>(CreateNodeType);
@@ -78,8 +87,7 @@ UEdGraphNode* FNewNode_DialogueGraphSchemaAction::CreateNode(UDlgDialogue* Dialo
 		}
 	}
 
-	GraphNode->NodePosX = XLocation;
-	GraphNode->NodePosY = Location.Y;
+	GraphNode->SetPosition(XLocation, Location.Y);
 	//ResultNode->SnapToGrid(SNAP_GRID);
 
 	return CastChecked<UEdGraphNode>(GraphNode);

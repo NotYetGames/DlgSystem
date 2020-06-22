@@ -75,7 +75,10 @@ public:
 	// End SDialogueGraphNode_Base Interface
 
 protected:
+	//
 	// SGraphNode Interface
+	//
+
 	/** Override this to provide support for an 'expensive' tooltip widget that is only built on demand */
 	TSharedPtr<SToolTip> GetComplexTooltip() override { return Super::GetComplexTooltip(); }
 
@@ -95,9 +98,11 @@ protected:
 
 	/* Populate a meta data tag with information about this graph node. sed by UpdateGraphNode() */
 	void PopulateMetaTag(class FGraphNodeMetaData* TagMeta) const override { Super::PopulateMetaTag(TagMeta); }
-	// End SGraphNode Interface
 
+	//
 	// Begin own functions
+	//
+
 	/** Gets/Creates the inner node content area. Used by UpdateGraphNode() */
 	TSharedRef<SWidget> GetNodeBodyWidget();
 

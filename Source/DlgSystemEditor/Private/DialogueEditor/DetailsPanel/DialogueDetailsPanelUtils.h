@@ -52,7 +52,7 @@ public:
 		return GetDefault<UDlgSystemSettings>()->bShowNodeData ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
-	static EVisibility GetGenericDataVisibility()
+	static EVisibility GetNodeGenericDataVisibility()
 	{
 		return GetDefault<UDlgSystemSettings>()->bShowGenericData ? EVisibility::Visible : EVisibility::Hidden;
 	}

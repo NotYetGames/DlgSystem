@@ -7,10 +7,8 @@ class IDlgDialogueParticipant;
 class UDlgContext;
 
 
-/**
- *  Argument type, which defines both the type of the argument and the way the system will acquire the value
- */
-UENUM()
+// Argument type, which defines both the type of the argument and the way the system will acquire the value
+UENUM(BlueprintType)
 enum class EDlgTextArgumentType : uint8
 {
 	DisplayName = 0	UMETA(DisplayName = "Participant Display Name"),
@@ -30,7 +28,7 @@ enum class EDlgTextArgumentType : uint8
  * It can be inserted to the FText, the same way FText::Format works
  * See: https://docs.unrealengine.com/en-us/Gameplay/Localization/Formatting
  */
-USTRUCT(Blueprintable, BlueprintType)
+USTRUCT(BlueprintType)
 struct DLGSYSTEM_API FDlgTextArgument
 {
 	GENERATED_USTRUCT_BODY()
@@ -53,22 +51,22 @@ public:
 	//
 
 	// Construct the argument for usage in FText::Format
-	FFormatArgumentValue ConstructFormatArgumentValue(const UDlgContext* Context, FName NodeOwner) const;
+	FFormatArgumentValue ConstructFormatArgumentValue(const UDlgContext& Context, FName NodeOwner) const;
 
 	// Helper method to update the array InOutArgumentArray with the new arguments from Text.
 	static void UpdateTextArgumentArray(const FText& Text, TArray<FDlgTextArgument>& InOutArgumentArray);
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = DialogueTextArgument)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Dialogue|TextArgument")
 	FString DisplayString;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueTextArgument)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|TextArgument")
 	EDlgTextArgumentType Type = EDlgTextArgumentType::DisplayName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueTextArgument)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|TextArgument")
 	FName ParticipantName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueTextArgument)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|TextArgument")
 	FName VariableName;
 };
 

@@ -9,24 +9,23 @@
 
 bool FDlgLocalizationHelper::WillTextNamespaceBeUpdated(const FText& Text)
 {
-	return WillTextNamespaceBeUpdated(Text, GetDefault<UDlgSystemSettings>());
+	const auto* Settings = GetDefault<UDlgSystemSettings>();
+	return WillTextNamespaceBeUpdated(Text, *Settings);
 }
 
-bool FDlgLocalizationHelper::WillTextNamespaceBeUpdated(const FText& Text, const UDlgSystemSettings* Settings)
+bool FDlgLocalizationHelper::WillTextNamespaceBeUpdated(const FText& Text, const UDlgSystemSettings& Settings)
 {
-	check(Settings);
-
 	// Means we can override it
-	return Settings->DialogueTextNamespaceLocalization != EDlgTextNamespaceLocalization::Ignore &&
-		   Settings->IsIgnoredTextForLocalization(Text);
+	return Settings.DialogueTextNamespaceLocalization != EDlgTextNamespaceLocalization::Ignore &&
+		   Settings.IsIgnoredTextForLocalization(Text);
 }
 
-void FDlgLocalizationHelper::UpdateTextFromRemapping(const UDlgSystemSettings* Settings, FText& OutText)
+void FDlgLocalizationHelper::UpdateTextFromRemapping(const UDlgSystemSettings& Settings, FText& OutText)
 {
-	if (Settings->IsTextRemapped(OutText))
+	if (Settings.IsTextRemapped(OutText))
 	{
 		// Remapped
-		const FText& RemappedText = Settings->GetTextRemappedText(OutText);
+		const FText& RemappedText = Settings.GetTextRemappedText(OutText);
 		OutText = RemappedText;
 		// Copy namespace and key
 		// NewNamespace = FTextInspector::GetNamespace(RemappedText).Get(DefaultValue);
@@ -36,12 +35,12 @@ void FDlgLocalizationHelper::UpdateTextFromRemapping(const UDlgSystemSettings* S
 
 #if WITH_EDITOR
 
-void FDlgLocalizationHelper::UpdateTextNamespaceAndKey(const UObject* Object, const UDlgSystemSettings* Settings, FText& Text)
+void FDlgLocalizationHelper::UpdateTextNamespaceAndKey(const UObject* Object, const UDlgSystemSettings& Settings, FText& Text)
 {
 	static const FString DefaultValue = TEXT("");
-	
+
 	// See if we can edit this
-	if (!IsValid(Object) || !IsValid(Settings))
+	if (!IsValid(Object))
 	{
 		return;
 	}
@@ -53,7 +52,7 @@ void FDlgLocalizationHelper::UpdateTextNamespaceAndKey(const UObject* Object, co
 	{
 		return;
 	}
-	
+
 	// Change namespace
 	// Don't use this as this marks the text as immutable
 	// Text = FInternationalization::ForUseOnlyByLocMacroAndGraphNodeTextLiterals_CreateText(*Text.ToString(), *NewNamespace, *CurrentKey);
@@ -62,14 +61,14 @@ void FDlgLocalizationHelper::UpdateTextNamespaceAndKey(const UObject* Object, co
 
 bool FDlgLocalizationHelper::GetNewNamespaceAndKey(
 	const UObject* Object,
-	const UDlgSystemSettings* Settings,
+	const UDlgSystemSettings& Settings,
 	const FText& Text,
 	FString& OutNewNamespace,
 	FString& OutNewKey
 )
 {
 	static const FString DefaultValue = TEXT("");
-	if (Settings->DialogueTextNamespaceLocalization == EDlgTextNamespaceLocalization::Ignore)
+	if (Settings.DialogueTextNamespaceLocalization == EDlgTextNamespaceLocalization::Ignore)
 	{
 		return false;
 	}
@@ -78,11 +77,11 @@ bool FDlgLocalizationHelper::GetNewNamespaceAndKey(
 	{
 		return false;
 	}
-	if (!Settings->IsIgnoredTextForLocalization(Text))
+	if (!Settings.IsIgnoredTextForLocalization(Text))
 	{
 		return false;
 	}
-	
+
 	bool bNamespaceChanged = false;
 	bool bKeyChanged = false;
 
@@ -91,14 +90,14 @@ bool FDlgLocalizationHelper::GetNewNamespaceAndKey(
 	FString NewKey = CurrentKey;
 
 	// Set new Namespace
-	FString NewNamespace = Settings->DialogueTextGlobalNamespaceName; // GlobalNamespace
-	if (Settings->DialogueTextNamespaceLocalization == EDlgTextNamespaceLocalization::PerDialogue)
+	FString NewNamespace = Settings.DialogueTextGlobalNamespaceName; // GlobalNamespace
+	if (Settings.DialogueTextNamespaceLocalization == EDlgTextNamespaceLocalization::PerDialogue)
 	{
 		NewNamespace = Object->GetName();
 	}
-	else if (Settings->DialogueTextNamespaceLocalization == EDlgTextNamespaceLocalization::WithPrefixPerDialogue)
+	else if (Settings.DialogueTextNamespaceLocalization == EDlgTextNamespaceLocalization::WithPrefixPerDialogue)
 	{
-		NewNamespace = Settings->DialogueTextPrefixNamespaceName + Object->GetName();
+		NewNamespace = Settings.DialogueTextPrefixNamespaceName + Object->GetName();
 	}
 
 	// Did namespace change?
@@ -115,7 +114,7 @@ bool FDlgLocalizationHelper::GetNewNamespaceAndKey(
 	// Compare only namespaces without the package
 	const FString CurrentNamespace = TextNamespaceUtil::StripPackageNamespace(CurrentFullNamespace);
 	bNamespaceChanged = !CurrentNamespace.Equals(NewNamespace, ESearchCase::CaseSensitive);
-#endif // USE_STABLE_LOCALIZATION_KEYS 
+#endif // USE_STABLE_LOCALIZATION_KEYS
 
 	// Did key change?
 	//bKeyChanged = !CurrentKey.Equals(NewKey, ESearchCase::CaseSensitive);
@@ -145,7 +144,7 @@ bool FDlgLocalizationHelper::GetNewNamespaceAndKey(
 
 	// Did key change?
 	bKeyChanged = !CurrentKey.Equals(NewKey, ESearchCase::CaseSensitive);
-	
+
 	// Something changed
 	if (bNamespaceChanged || bKeyChanged)
 	{
@@ -153,7 +152,7 @@ bool FDlgLocalizationHelper::GetNewNamespaceAndKey(
 		OutNewKey = NewKey;
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -213,6 +212,3 @@ void FDlgLocalizationHelper::StaticStableTextId(const UPackage* InPackage, IEdit
 #endif // USE_STABLE_LOCALIZATION_KEYS
 
 #endif // WITH_EDITOR
-
-
-

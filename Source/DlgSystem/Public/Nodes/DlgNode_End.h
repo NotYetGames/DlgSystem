@@ -13,7 +13,7 @@
  * Does not have text, if it is entered the Dialogue is over.
  * Events and enter conditions are taken into account.
  */
-UCLASS(BlueprintType)
+UCLASS(BlueprintType, ClassGroup = "Dialogue")
 class DLGSYSTEM_API UDlgNode_End : public UDlgNode
 {
 	GENERATED_BODY()
@@ -25,8 +25,8 @@ public:
 	FString GetDesc() override;
 
 	// Begin UDlgNode Interface.
-	bool ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> AlreadyEvaluated) override { return false; }
-	bool OptionSelected(int32 OptionIndex, UDlgContext* Context) override { return false; }
+	bool ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> AlreadyEvaluated) override { return false; }
+	bool OptionSelected(int32 OptionIndex, UDlgContext& Context) override { return false; }
 
 #if WITH_EDITOR
 	FString GetNodeTypeString() const override { return TEXT("End"); }

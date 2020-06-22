@@ -15,7 +15,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FDialogueTextChangedDelegate, const FText&);
 class SDialogueTextPropertyEditableTextBox : public SCompoundWidget
 {
 	typedef SDialogueTextPropertyEditableTextBox Self;
-	
+
 	SLATE_BEGIN_ARGS(SDialogueTextPropertyEditableTextBox)
 		: _Style(&FCoreStyle::Get().GetWidgetStyle<FEditableTextBoxStyle>("NormalEditableTextBox"))
 		, _Font()
@@ -35,19 +35,19 @@ class SDialogueTextPropertyEditableTextBox : public SCompoundWidget
 		{}
 		/** The styling of the textbox */
 		SLATE_STYLE_ARGUMENT(FEditableTextBoxStyle, Style)
-	
+
 		/** Font color and opacity (overrides Style) */
 		SLATE_ATTRIBUTE(FSlateFontInfo, Font)
-	
+
 		/** Text color and opacity (overrides Style) */
 		SLATE_ATTRIBUTE(FSlateColor, ForegroundColor)
 
 		/** Text color and opacity when read-only (overrides Style) */
 		SLATE_ATTRIBUTE(FSlateColor, ReadOnlyForegroundColor)
-	
+
 		/** Whether text wraps onto a new line when it's length exceeds this width; if this value is zero or negative, no wrapping occurs */
 		SLATE_ATTRIBUTE(float, WrapTextAt)
-	
+
 		/** Whether to wrap text automatically based on the widget's computed horizontal space */
 		SLATE_ATTRIBUTE(bool, AutoWrapText)
 
@@ -62,30 +62,33 @@ class SDialogueTextPropertyEditableTextBox : public SCompoundWidget
 
 		// Add reset to default buton
 		SLATE_ARGUMENT(bool, AddResetToDefaultWidget)
-	
+
 		/** The optional modifier key necessary to create a newline when typing into the editor. */
 		SLATE_ARGUMENT(EModifierKey::Type, ModiferKeyForNewLine)
-	
+
 		/** When specified, will report the MinDesiredWidth if larger than the content's desired width */
 		SLATE_ATTRIBUTE(FOptionalSize, MinDesiredWidth)
-	
+
 		/** When specified, will report the MaxDesiredHeight if smaller than the content's desired height */
 		SLATE_ATTRIBUTE(FOptionalSize, MaxDesiredHeight)
 	SLATE_END_ARGS()
 
 public:
-	void Construct(const FArguments& Arguments,
-		const TSharedRef<IEditableTextProperty>& InEditableTextProperty, const TSharedRef<IPropertyHandle>& InPropertyHandle);
+	void Construct(
+		const FArguments& Arguments,
+		const TSharedRef<IEditableTextProperty>& InEditableTextProperty,
+		const TSharedRef<IPropertyHandle>& InPropertyHandle
+	);
 	bool SupportsKeyboardFocus() const override;
 	FReply OnFocusReceived(const FGeometry& MyGeometry, const FFocusEvent& InFocusEvent) override;
-	void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override;
+	void Tick(const FGeometry& AllottedGeometry, double InCurrentTime, float InDeltaTime) override;
 
 	FText GetTextValue() const;
 	void SetTextValue(const FText& NewValue);
 
 	FDialogueTextCommitedDelegate& OnTextCommittedEvent() { return TextCommittedEvent; }
 	FDialogueTextChangedDelegate& OnTextChangedEvent() { return TextChangedEvent; }
-	
+
 private:
 	void GetDesiredWidth(float& OutMinDesiredWidth, float& OutMaxDesiredWidth);
 	bool CanEdit() const;
@@ -96,7 +99,7 @@ private:
 	bool IsNamespaceReadOnly() const;
 	bool IsKeyReadOnly() const { return IsIdentityReadOnly(); }
 	bool IsIdentityReadOnly() const;
-	
+
 	FText GetToolTipText() const;
 	EVisibility GetLocalizableVisibility() const;
 
@@ -129,11 +132,11 @@ private:
 	FText GetResetToolTip() const;
 	EVisibility GetDiffersFromDefaultAsVisibility() const;
 	FReply OnResetClicked();
-	
+
 protected:
 	// Events
 	FDialogueTextCommitedDelegate TextCommittedEvent;
-	FDialogueTextChangedDelegate TextChangedEvent;	
+	FDialogueTextChangedDelegate TextChangedEvent;
 
 	// Property variables
 	TSharedPtr<IEditableTextProperty> EditableTextProperty;

@@ -596,7 +596,7 @@ bool FFindInDialogueSearchManager::QuerySingleDialogue(const FDialogueSearchFilt
 	if (SearchFilter.bIncludeDialogueGUID)
 	{
 		const FString GuidToSearchFor = SearchFilter.SearchString.TrimStartAndEnd();
-		const FGuid DialogueGuid = InDialogue->GetDlgGuid();
+		const FGuid DialogueGuid = InDialogue->GetDialogueGUID();
 
 		// Test every possible format
 		const TArray<FString> DialoguGuidStrings = {
@@ -894,7 +894,7 @@ void FFindInDialogueSearchManager::UnInitialize()
 
 void FFindInDialogueSearchManager::BuildCache()
 {
-	// Difference between this and the UDlgManger::GetAllDialoguesFromMemory is that this loads all Dialogues
+	// Difference between this and the UDlgManager::GetAllDialoguesFromMemory is that this loads all Dialogues
 	// even those that are not loaded into memory.
 	// TODO this seems slow :(
 	// AssetRegistryModule = &FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));

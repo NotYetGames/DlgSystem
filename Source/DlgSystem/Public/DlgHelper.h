@@ -5,6 +5,7 @@
 #include "Math/UnrealMathUtility.h"
 #include "UObject/Object.h"
 #include "UObject/UnrealType.h"
+#include "UObject/ObjectMacros.h"
 #include <functional>
 
 #include "NYReflectionTypes.h"
@@ -212,6 +213,49 @@ public:
 	static bool DeleteFile(const FString& PathName, bool bVerbose = true);
 	static bool RenameFile(const FString& OldPathName, const FString& NewPathName, bool bOverWrite = false, bool bVerbose = true);
 
+	template<typename TEnum>
+    static bool ConvertEnumToString(const FString& EnumName, TEnum EnumValue, bool bWithNameSpace, FString& OutEnumValue)
+	{
+		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *EnumName, true);
+		if (!EnumPtr)
+		{
+			OutEnumValue = FString::Printf(TEXT("INVALID EnumName = `%s`"), *EnumName);
+			return false;
+		}
+
+		OutEnumValue = bWithNameSpace ? EnumPtr->GetNameByIndex(static_cast<int32>(EnumValue)).ToString()
+                                      : EnumPtr->GetNameStringByIndex(static_cast<int32>(EnumValue));
+		return true;
+	}
+
+	template<typename TEnum>
+    static bool ConvertStringToEnum(const FString& String, const FString& EnumName, TEnum& OutEnumValue)
+	{
+		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *EnumName, true);
+		if (!EnumPtr)
+		{
+			return false;
+		}
+
+		const int32 Index = EnumPtr->GetIndexByNameString(String);
+		OutEnumValue = static_cast<TEnum>(Index);
+		return true;
+	}
+
+	template<typename TEnum>
+    static bool ConvertFNameToEnum(FName Name, const FString& EnumName, TEnum& OutEnumValue)
+	{
+		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *EnumName, true);
+		if (!EnumPtr)
+		{
+			return false;
+		}
+
+		const int32 Index = EnumPtr->GetIndexByName(Name);
+		OutEnumValue = static_cast<TEnum>(Index);
+		return true;
+	}
+
 	// Gets the first element from a set. From https://answers.unrealengine.com/questions/332443/how-to-get-the-firstonly-element-in-tset.html
 	template <typename SetType>
 	static typename TCopyQualifiersFromTo<SetType, typename SetType::ElementType>::Type* GetFirstSetElement(SetType& Set)
@@ -287,7 +331,7 @@ public:
 	}
 
 	// Default comparison function
-	static bool PredicateSortFNameAlphabeticallyAscending(const FName& A, const FName& B)
+	static bool PredicateSortFNameAlphabeticallyAscending(FName A, FName B)
 	{
 		return A.Compare(B) < 0;
 	}
