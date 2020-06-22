@@ -530,13 +530,13 @@ void UDlgDialogue::ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const
 	}
 }
 
-FDlgParticipantData& UDlgDialogue::GetParticipantDataEntry(FName ParticipantName, FName FallbackNodeOwnerName, bool bCheckNone, const FString& ContextMessage)
+FDlgParticipantData& UDlgDialogue::GetParticipantDataEntry(FName ParticipantName, FName FallbackParticipantName, bool bCheckNone, const FString& ContextMessage)
 {
 	// Used to ignore some participants
 	static FDlgParticipantData BlackHoleParticipant;
 
 	// If the Participant Name is not set, it adopts the Node Owner Name
-	const FName& ValidParticipantName = ParticipantName == NAME_None ? FallbackNodeOwnerName : ParticipantName;
+	const FName& ValidParticipantName = ParticipantName == NAME_None ? FallbackParticipantName : ParticipantName;
 
 	// Parent/child is not valid, simply do nothing
 	if (bCheckNone && ValidParticipantName == NAME_None)
@@ -554,7 +554,7 @@ FDlgParticipantData& UDlgDialogue::GetParticipantDataEntry(FName ParticipantName
 void UDlgDialogue::AddConditionsDataFromNodeEdges(const UDlgNode* Node, int32 NodeIndex)
 {
 	const FString NodeContext = FString::Printf(TEXT("Node %s"), NodeIndex > INDEX_NONE ? *FString::FromInt(NodeIndex) : TEXT("Start") );
-	const FName FallbackNodeOwnerName = Node->GetNodeParticipantName();
+	const FName FallbackParticipantName = Node->GetNodeParticipantName();
 
 	for (const FDlgEdge& Edge : Node->GetNodeChildren())
 	{
@@ -565,13 +565,13 @@ void UDlgDialogue::AddConditionsDataFromNodeEdges(const UDlgNode* Node, int32 No
 			if (Condition.IsParticipantInvolved())
 			{
 				const FString ContextMessage = FString::Printf(TEXT("Adding Edge primary condition data from %s to Node %d"), *NodeContext, TargetIndex);
-				GetParticipantDataEntry(Condition.ParticipantName, FallbackNodeOwnerName, true, ContextMessage)
+				GetParticipantDataEntry(Condition.ParticipantName, FallbackParticipantName, true, ContextMessage)
                     .AddConditionPrimaryData(Condition);
 			}
 			if (Condition.IsSecondParticipantInvolved())
 			{
 				const FString ContextMessage = FString::Printf(TEXT("Adding Edge secondary condition data from %s to Node %d"), *NodeContext, TargetIndex);
-				GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName, true, ContextMessage)
+				GetParticipantDataEntry(Condition.OtherParticipantName, FallbackParticipantName, true, ContextMessage)
 					.AddConditionSecondaryData(Condition);
 			}
 		}

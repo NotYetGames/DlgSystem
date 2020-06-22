@@ -491,7 +491,7 @@ private:
 	void AddConditionsDataFromNodeEdges(const UDlgNode* Node, int32 NodeIndex);
 
 	// Gets the map entry - creates it first if it is not yet there
-	FDlgParticipantData& GetParticipantDataEntry(FName ParticipantName, FName FallbackNodeOwnerName, bool bCheckNone, const FString& ContextMessage);
+	FDlgParticipantData& GetParticipantDataEntry(FName ParticipantName, FName FallbackParticipantName, bool bCheckNone, const FString& ContextMessage);
 
 	// Rebuild & Update and node and its edges
 	void RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings& Settings, bool bUpdateTextsNamespacesAndKeys);
