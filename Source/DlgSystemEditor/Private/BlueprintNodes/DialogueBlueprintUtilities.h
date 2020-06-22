@@ -10,9 +10,7 @@
 class FDialogueBlueprintUtilities
 {
 public:
-	/**
-	 * Gets the blueprint for the provided Node
-	 */
+	// Gets the blueprint for the provided Node
 	static UBlueprint* GetBlueprintForGraphNode(const UK2Node* Node)
 	{
 		if (!IsValid(Node))
@@ -29,7 +27,7 @@ public:
 		return nullptr;
 	}
 
-	/** Checks if the Blueprint for the Node is loaded or not. */
+	// Checks if the Blueprint for the Node is loaded or not.
 	static bool IsBlueprintLoadedForGraphNode(const UK2Node* Node)
 	{
 		if (UBlueprint* Blueprint = GetBlueprintForGraphNode(Node))

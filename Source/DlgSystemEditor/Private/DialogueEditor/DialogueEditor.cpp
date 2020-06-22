@@ -277,9 +277,11 @@ void FDialogueEditor::SummonSearchUI(bool bSetFindWithinDialogue, FString NewSea
 	}
 }
 
-void FDialogueEditor::InitDialogueEditor(const EToolkitMode::Type Mode,
-										 const TSharedPtr<IToolkitHost>& InitToolkitHost,
-										 UDlgDialogue* InitDialogue)
+void FDialogueEditor::InitDialogueEditor(
+	EToolkitMode::Type Mode,
+	const TSharedPtr<IToolkitHost>& InitToolkitHost,
+	UDlgDialogue* InitDialogue
+)
 {
 	Settings = GetMutableDefault<UDlgSystemSettings>();
 
@@ -966,7 +968,8 @@ void FDialogueEditor::PasteNodesHere(const FVector2D& Location)
 		bool bAddToSelection = true;
 		bool bPositionNode = true;
 
-		if (UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(Node))
+
+		if (auto* GraphNode = Cast<UDialogueGraphNode>(Node))
 		{
 			// Add to the dialogue
 			const int32 OldNodeIndex = GraphNode->GetDialogueNodeIndex();
@@ -990,8 +993,18 @@ void FDialogueEditor::PasteNodesHere(const FVector2D& Location)
 
 		if (bPositionNode)
 		{
-			Node->NodePosX = (Node->NodePosX - AvgNodePosition.X) + Location.X;
-			Node->NodePosY = (Node->NodePosY - AvgNodePosition.Y) + Location.Y;
+			const float NodePosX = (Node->NodePosX - AvgNodePosition.X) + Location.X;
+			const float NodePosY = (Node->NodePosY - AvgNodePosition.Y) + Location.Y;
+
+			if (auto* GraphNodeBase = Cast<UDialogueGraphNode_Base>(Node))
+			{
+				GraphNodeBase->SetPosition(NodePosX, NodePosY);
+			}
+			else
+			{
+				Node->NodePosX = NodePosX;
+				Node->NodePosY = NodePosY;
+			}
 		}
 
 		// Assign new ID

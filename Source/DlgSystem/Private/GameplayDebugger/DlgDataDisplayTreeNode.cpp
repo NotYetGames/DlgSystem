@@ -31,9 +31,11 @@ FDlgDataDisplayTreeRootNode::FDlgDataDisplayTreeRootNode() :
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgDataDisplayTreeActorNode
-FDlgDataDisplayTreeActorNode::FDlgDataDisplayTreeActorNode(const FText& InDisplayText,
-	const TSharedPtr<FDlgDataDisplayTreeNode>& InParent, TWeakObjectPtr<AActor> InActor) :
-	Super(InDisplayText, InParent), Actor(InActor)
+FDlgDataDisplayTreeActorNode::FDlgDataDisplayTreeActorNode(
+	const FText& InDisplayText,
+	const TSharedPtr<FDlgDataDisplayTreeNode>& InParent,
+	TWeakObjectPtr<AActor> InActor
+) : Super(InDisplayText, InParent), Actor(InActor)
 {
 	TextType = EDlgDataDisplayTextTreeNodeType::Actor;
 }
@@ -52,9 +54,11 @@ TWeakObjectPtr<AActor> FDlgDataDisplayTreeActorNode::GetParentActor() const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgDataDisplayTreeCategoryNode
-FDlgDataDisplayTreeCategoryNode::FDlgDataDisplayTreeCategoryNode(const FText& InDisplayText,
-	const TSharedPtr<FDlgDataDisplayTreeNode>& InParent, const EDlgDataDisplayCategoryTreeNodeType InCategoryType) :
-	Super(InDisplayText, InParent)
+FDlgDataDisplayTreeCategoryNode::FDlgDataDisplayTreeCategoryNode(
+	const FText& InDisplayText,
+	const TSharedPtr<FDlgDataDisplayTreeNode>& InParent,
+	EDlgDataDisplayCategoryTreeNodeType InCategoryType
+) : Super(InDisplayText, InParent)
 {
 	CategoryType = InCategoryType;
 }
@@ -62,10 +66,12 @@ FDlgDataDisplayTreeCategoryNode::FDlgDataDisplayTreeCategoryNode(const FText& In
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgDataDisplayTreeVariableNode
-FDlgDataDisplayTreeVariableNode::FDlgDataDisplayTreeVariableNode(const FText& InDisplayText,
-	const TSharedPtr<FDlgDataDisplayTreeNode>& InParent, const FName& InVariableName,
-	const EDlgDataDisplayVariableTreeNodeType InVariableType) :
-	Super(InDisplayText, InParent), VariableName(InVariableName), VariableType(InVariableType)
+FDlgDataDisplayTreeVariableNode::FDlgDataDisplayTreeVariableNode(
+	const FText& InDisplayText,
+	const TSharedPtr<FDlgDataDisplayTreeNode>& InParent,
+	FName InVariableName,
+	EDlgDataDisplayVariableTreeNodeType InVariableType
+) : Super(InDisplayText, InParent), VariableName(InVariableName), VariableType(InVariableType)
 {
 	TextType = EDlgDataDisplayTextTreeNodeType::Variable;
 }

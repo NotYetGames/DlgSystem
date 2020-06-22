@@ -277,7 +277,9 @@ UEdGraphPin* SDialogueGraphPin::GetBestLinkedToPinFromSplineMousePosition(const 
 
 	// Find P and MP
 	const FVector2D ThisGraphNodeClosestPosition = FGeometryHelper::FindClosestPointOnGeom(
-		ThisGraphNodeWidget->GetCachedGeometry(), MousePosition);
+		ThisGraphNodeWidget->GetCachedGeometry(),
+		MousePosition
+	);
 	const FVector2D MP = (ThisGraphNodeClosestPosition - MousePosition).GetSafeNormal();
 
 	// Iterate over all edges, find the best one

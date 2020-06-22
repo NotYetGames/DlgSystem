@@ -1,3 +1,34 @@
+# 9.1
+
+## Important Bug Fixes
+
+- **Fixed** Custom Condition when set on edges in packaged build. **TO FIX THEM** in your project you have to reset them on all edges where they are used.
+
+- **Fixed** Edges not showing sometimes when creating a new node. See commit [671db137](https://gitlab.com/NotYetGames/DlgSystem/-/commit/671db137dd8190127f4c885f8fb795368ba56810) for more details
+
+## Other Changes
+
+- **Improved** error messages context and text so that it is easier now to know from where the error comes.
+
+- **Improve** fixed some false positive warning messages when using condition types that did not require a participant
+
+- **Improvement** Make everything more blueprint friendly, everything that is dialogue data related should be read accessible from Blueprints
+
+- **Removed** deprecated functions, if you used them in your C++ code you need to use the new versions, otherwise the redirect is done for you in Blueprints automatically. The following functions were removed in favour of other:
+	- `GetDialogueGuid` -> `GetDialogueGUID`
+	- `GetActiveSpeakerState` -> `GetActiveNodeSpeakerState`
+	- `GetActiveParticipantIcon` -> `GetActiveNodeParticipantIcon`
+	- `GetActiveParticipant` -> `GetActiveNodeParticipant`
+	- `GetActiveParticipantName` -> `GetActiveNodeParticipantName`
+	- `GetDlgName` -> `GetDialogueName`
+	- `GetDlgFName` -> `GetDialogueFName`
+	- `GetDlgGuid` -> `GetDialogueGUID`
+	- `RegisterDialogueModuleConsoleCommands` -> `RegisterDialogueConsoleCommands`
+	- `UnRegisterDialogueModuleConsoleCommands` -> `UnregisterDialogueConsoleCommands`
+	- `GetGenericData` -> `GetNodeGenericData`
+	- `IsEdgeConnectedToVisitedNode` -> `IsOptionConnectedToVisitedNode`
+	- `IsEdgeConnectedToEndNode` -> `IsOptionConnectedToEndNode`
+
 # 9.0
 
 ## Important breaking change
@@ -27,7 +58,7 @@
 
 - **Improvement** Reflection code is now engine version independent (so that it supports 4.25 more nicely)
 
-- **Improvement** The Dialogue system gets the World from the game automatically (see `UDlgManger::GetDialogueWorld`), if you want to or need to set the  world manually, call `UDlgManger::SetPersistentWorldContextObject`
+- **Improvement** The Dialogue system gets the World from the game automatically (see `UDlgManager::GetDialogueWorld`), if you want to or need to set the  world manually, call `UDlgManager::SetPersistentWorldContextObject`
 
 - **Fix** Null pointer check for LoadedWorld
 - **Fix** Blueprint Nativization for 4.24

@@ -129,8 +129,11 @@ class DLGSYSTEM_API FDlgDataDisplayTreeActorNode : public FDlgDataDisplayTreeNod
 {
 	typedef FDlgDataDisplayTreeNode Super;
 public:
-	FDlgDataDisplayTreeActorNode(const FText& InDisplayText, const TSharedPtr<FDlgDataDisplayTreeNode>& InParent,
-		TWeakObjectPtr<AActor> InActor);
+	FDlgDataDisplayTreeActorNode(
+		const FText& InDisplayText,
+		const TSharedPtr<FDlgDataDisplayTreeNode>& InParent,
+		TWeakObjectPtr<AActor> InActor
+	);
 
 	/** FDlgDataDisplayTreeNode interface */
 	TWeakObjectPtr<AActor> GetParentActor() const override;
@@ -147,8 +150,11 @@ class DLGSYSTEM_API FDlgDataDisplayTreeCategoryNode : public FDlgDataDisplayTree
 {
 	typedef FDlgDataDisplayTreeNode Super;
 public:
-	FDlgDataDisplayTreeCategoryNode(const FText& InDisplayText, const TSharedPtr<FDlgDataDisplayTreeNode>& InParent,
-		const EDlgDataDisplayCategoryTreeNodeType InCategoryType);
+	FDlgDataDisplayTreeCategoryNode(
+		const FText& InDisplayText,
+		const TSharedPtr<FDlgDataDisplayTreeNode>& InParent,
+		EDlgDataDisplayCategoryTreeNodeType InCategoryType
+	);
 
 	bool IsText() const override { return false; }
 	bool IsCategory() const  override { return CategoryType != EDlgDataDisplayCategoryTreeNodeType::Default; }
@@ -161,8 +167,12 @@ class DLGSYSTEM_API FDlgDataDisplayTreeVariableNode : public FDlgDataDisplayTree
 	typedef FDlgDataDisplayTreeVariableNode Self;
 	typedef FDlgDataDisplayTreeNode Super;
 public:
-	FDlgDataDisplayTreeVariableNode(const FText& InDisplayText, const TSharedPtr<FDlgDataDisplayTreeNode>& InParent,
-		const FName& InVariableName, const EDlgDataDisplayVariableTreeNodeType InVariableType);
+	FDlgDataDisplayTreeVariableNode(
+		const FText& InDisplayText,
+		const TSharedPtr<FDlgDataDisplayTreeNode>& InParent,
+		FName InVariableName,
+		EDlgDataDisplayVariableTreeNodeType InVariableType
+	);
 
 	// VariableName:
 	FName GetVariableName() const { return VariableName; }

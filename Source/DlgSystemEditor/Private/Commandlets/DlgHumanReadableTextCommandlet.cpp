@@ -224,8 +224,8 @@ int32 UDlgHumanReadableTextCommandlet::Import()
 
 bool UDlgHumanReadableTextCommandlet::ExportDialogueToHumanReadableFormat(const UDlgDialogue& Dialogue, FDlgDialogue_FormatHumanReadable& OutFormat)
 {
-	OutFormat.DialogueName = Dialogue.GetDlgFName();
-	OutFormat.DialogueGuid = Dialogue.GetDlgGuid();
+	OutFormat.DialogueName = Dialogue.GetDialogueFName();
+	OutFormat.DialogueGuid = Dialogue.GetDialogueGUID();
 
 	// Root Node
 	{
@@ -526,8 +526,8 @@ bool UDlgHumanReadableTextCommandlet::IsEdgeTextDefault(const FText& EdgeText)
 	return false;
 	// if (Settings->bSetDefaultEdgeTexts)
 	// {
-		
+
 	// }
-	
+
 	// return UDlgSystemSettings::EdgeTextFinish.EqualToCaseIgnored(EdgeText) || UDlgSystemSettings::EdgeTextNext.EqualToCaseIgnored(EdgeText);
 }

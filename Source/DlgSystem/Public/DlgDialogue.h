@@ -41,18 +41,19 @@ private:
 };
 
 
-/** Structure useful to cache all the names used by a participant */
+// Structure useful to cache all the names used by a participant
 USTRUCT(BlueprintType)
 struct DLGSYSTEM_API FDlgParticipantClass
 {
 	GENERATED_USTRUCT_BODY()
 
-	/** FName based conditions (aka conditions of type EventCall). */
-	UPROPERTY(VisibleAnywhere, Category = DialogueParticipantData)
+public:
+	// FName based conditions (aka conditions of type EventCall).
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Dialogue|Participant")
 	FName ParticipantName = NAME_None;
 
-	/** FName based events (aka events of type EDlgEventType) */
-	UPROPERTY(EditAnywhere, Category = DialogueParticipantData, meta = (MustImplement = "DlgDialogueParticipant"))
+	// FName based events (aka events of type EDlgEventType)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Participant", meta = (MustImplement = "DlgDialogueParticipant"))
 	UClass* ParticipantClass = nullptr;
 };
 
@@ -68,7 +69,9 @@ class DLGSYSTEM_API UDlgDialogue : public UObject
 	GENERATED_BODY()
 public:
 
+	//
 	// Begin UObject Interface.
+	//
 
 	/** @return a one line description of an object for viewing in the thumbnail view of the generic browser */
 	FString GetDesc() override { return TEXT(" DESCRIPTION = ") + GetName();  }
@@ -98,7 +101,7 @@ public:
 	void PostInitProperties() override;
 
 	/** Executed after Rename is executed. */
-	void PostRename(UObject* OldOuter, const FName OldName) override;
+	void PostRename(UObject* OldOuter, FName OldName) override;
 
 	/**
 	 * Called after duplication & serialization and before PostLoad. Used to e.g. make sure UStaticMesh's UModel gets copied as well.
@@ -148,25 +151,28 @@ public:
 	static void AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector);
 	// End UObject Interface.
 
+	//
 	// Begin own functions
-	/** Broadcasts whenever a property of this dialogue changes. */
+	//
+
+	// Broadcasts whenever a property of this dialogue changes.
 	DECLARE_EVENT_OneParam(UDlgDialogue, FDialoguePropertyChanged, const FPropertyChangedEvent& /* PropertyChangedEvent */);
 	FDialoguePropertyChanged OnDialoguePropertyChanged;
 
-	/** Helper functions to get the names of some properties. Used by the DlgSystemEditor module. */
+	// Helper functions to get the names of some properties. Used by the DlgSystemEditor module.
 	static FName GetMemberNameDlgName() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, DlgName); }
 	static FName GetMemberNameDlgGuid() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, DlgGuid); }
 	static FName GetMemberNameDlgData() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, DlgData); }
 	static FName GetMemberNameStartNode() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, StartNode); }
 	static FName GetMemberNameNodes() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, Nodes); }
 
-	/** Create the basic dialogue graph. */
+	// Create the basic dialogue graph.
 	void CreateGraph();
 
-	/** Clears all nodes from the graph. */
+	// Clears all nodes from the graph.
 	void ClearGraph();
 
-	/** Gets the editor graph of this Dialogue. */
+	// Gets the editor graph of this Dialogue.
 	UEdGraph* GetGraph()
 	{
 		check(DlgGraph);
@@ -178,7 +184,7 @@ public:
 		return DlgGraph;
 	}
 
-	/** Useful for initially compiling the Dialogue when we need the extra processing steps done by the compiler. */
+	// Useful for initially compiling the Dialogue when we need the extra processing steps done by the compiler.
 	void InitialCompileDialogueNodesFromGraphNodes()
 	{
 		if (bWasCompiledAtLeastOnce)
@@ -188,10 +194,10 @@ public:
 		bWasCompiledAtLeastOnce = true;
 	}
 
-	/** Compiles the dialogue nodes from the graph nodes. Meaning it transforms the graph data -> (into) dialogue data. */
+	// Compiles the dialogue nodes from the graph nodes. Meaning it transforms the graph data -> (into) dialogue data.
 	void CompileDialogueNodesFromGraphNodes();
 
-	/** Sets the dialogue editor implementation. This is called in the constructor of the DlgDialogueGraph in the DlgSytemEditor module. */
+	// Sets the dialogue editor implementation. This is called in the constructor of the DlgDialogueGraph in the DlgSytemEditor module.
 	static void SetDialogueEditorAccess(const TSharedPtr<IDlgDialogueEditorAccess>& InDialogueEditor)
 	{
 		check(!DialogueEditorAccess.IsValid());
@@ -199,7 +205,7 @@ public:
 		DialogueEditorAccess = InDialogueEditor;
 	}
 
-	/** Gets the dialogue editor implementation. */
+	// Gets the dialogue editor implementation.
 	static TSharedPtr<IDlgDialogueEditorAccess> GetDialogueEditorAccess() { return DialogueEditorAccess; }
 
 	// Enables/disables the compilation of the dialogues in the editor, use with care. Mainly used for optimization.
@@ -207,7 +213,7 @@ public:
 	void DisableCompileDialogue() { bCompileDialogue = false; }
 #endif
 
-	/** Construct and initialize a node within this Dialogue. */
+	// Construct and initialize a node within this Dialogue.
 	template<class T>
 	T* ConstructDialogueNode(TSubclassOf<UDlgNode> DialogueNodeClass = T::StaticClass())
 	{
@@ -216,21 +222,24 @@ public:
 		return DialogueNode;
 	}
 
-	// DlgData:
-	/** Gets the Dialogue Data Map. It maps Participant Name => Participant Data */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	//
+	// Dialogue Data
+	//
+
+	// Gets the Dialogue Data Map. It maps Participant Name => Participant Data
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	const TMap<FName, FDlgParticipantData>& GetParticipantData() const { return DlgData; }
 
-	/** Checks if the provided ParticipantName (SpeakerName) is a key in the Dialogue Data Map */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	bool IsParticipant(const FName& ParticipantName) const { return DlgData.Contains(ParticipantName); }
+	// Checks if the provided ParticipantName (SpeakerName) is a key in the Dialogue Data Map
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	bool IsParticipant(FName ParticipantName) const { return DlgData.Contains(ParticipantName); }
 
-	/** Gets the number of participants in the Dialogue Data Map. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	// Gets the number of participants in the Dialogue Data Map.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	int32 GetParticipantNum() const { return DlgData.Num(); }
 
-	/** Gets all the keys (participant names) of the DlgData Map */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	// Gets all the keys (participant names) of the DlgData Map
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetAllParticipantNames(TSet<FName>& OutSet) const
 	{
 		for (const auto& Element : DlgData)
@@ -240,9 +249,12 @@ public:
 		}
 	}
 
-	/** EDITOR function, it only works if the participant class is setup in the DlgParticipantClasses array */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	UClass* GetParticipantClass(const FName ParticipantName) const
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	const TArray<FDlgParticipantClass>& GetAllParticipantClasses() const { return DlgParticipantClasses; }
+
+	/// EDITOR function, it only works if the participant class is setup in the DlgParticipantClasses array
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	UClass* GetParticipantClass(FName ParticipantName) const
 	{
 		for (const FDlgParticipantClass& Pair : DlgParticipantClasses)
 		{
@@ -255,9 +267,9 @@ public:
 	}
 
 
-	/** Gets the Condition Names that correspond to the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	void GetConditions(const FName& ParticipantName, TSet<FName>& OutSet) const
+	// Gets the Condition Names that correspond to the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	void GetConditions(FName ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
 		{
@@ -265,9 +277,9 @@ public:
 		}
 	}
 
-	/** Gets the Event Names that correspond to the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	void GetEvents(const FName& ParticipantName, TSet<FName>& OutSet) const
+	// Gets the Event Names that correspond to the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	void GetEvents(FName ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
 		{
@@ -275,9 +287,9 @@ public:
 		}
 	}
 
-	/** Gets the int variable Names that correspond to the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	void GetIntNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	// Gets the int variable Names that correspond to the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	void GetIntNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
 		{
@@ -285,9 +297,9 @@ public:
 		}
 	}
 
-	/** Gets the float variable Names that correspond to the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	void GetFloatNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	// Gets the float variable Names that correspond to the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	void GetFloatNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
 		{
@@ -295,9 +307,9 @@ public:
 		}
 	}
 
-	/** Gets the bool variable Names that correspond to the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	void GetBoolNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	// Gets the bool variable Names that correspond to the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	void GetBoolNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
 		{
@@ -305,9 +317,9 @@ public:
 		}
 	}
 
-	/** Gets the name variable Names that correspond to the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	void GetNameNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	// Gets the name variable Names that correspond to the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	void GetNameNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
 		{
@@ -316,9 +328,9 @@ public:
 	}
 
 
-	/** Gets the int variable Names that correspond to the UClass of the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	void GetClassIntNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	// Gets the int variable Names that correspond to the UClass of the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	void GetClassIntNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
 		{
@@ -326,9 +338,9 @@ public:
 		}
 	}
 
-	/** Gets the float variable Names that correspond to the UClass of the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	void GetClassFloatNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	// Gets the float variable Names that correspond to the UClass of the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	void GetClassFloatNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
 		{
@@ -336,9 +348,9 @@ public:
 		}
 	}
 
-	/** Gets the bool variable Names that correspond to the UClass of the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	void GetClassBoolNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	// Gets the bool variable Names that correspond to the UClass of the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	void GetClassBoolNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
 		{
@@ -346,9 +358,9 @@ public:
 		}
 	}
 
-	/** Gets the name variable Names that correspond to the UClass of the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	void GetClassNameNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	// Gets the name variable Names that correspond to the UClass of the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	void GetClassNameNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
 		{
@@ -356,9 +368,9 @@ public:
 		}
 	}
 
-	/** Gets the FText variable Names that correspond to the UClass of the provided ParticipantName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	void GetClassTextNames(const FName& ParticipantName, TSet<FName>& OutSet) const
+	// Gets the FText variable Names that correspond to the UClass of the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	void GetClassTextNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
 		if (DlgData.Contains(ParticipantName))
 		{
@@ -366,19 +378,22 @@ public:
 		}
 	}
 
-	/** Gets all the SpeakerStates used inside this dialogue */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	// Gets all the SpeakerStates used inside this dialogue
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetAllSpeakerState(TSet<FName>& OutSet) const
 	{
 		OutSet.Append(DlgSpeakerStates);
 	}
 
-	UFUNCTION(BlueprintPure, Category = DialogueData)
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	const TSet<FName>& GetSpeakerStates() const { return DlgSpeakerStates; }
 
-	/** Gets/extracts the name (without extension) of the dialog from the uasset filename */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	FString GetDlgName() const
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	int32 GetDialogueVersion() const { return DlgVersion; }
+
+	// Gets/extracts the name (without extension) of the dialog from the uasset filename
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	FString GetDialogueName() const
 	{
 		// Note: GetPathName() calls this at the end, so this just gets the direct name that we want.
 		// Assumption only true for objects that have the Outer an UPackage.
@@ -386,48 +401,48 @@ public:
 		return GetName();
 	}
 
-	/** Same as the GetDlgName only it returns a FName. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	FName GetDlgFName() const { return GetFName(); }
+	// Same as the GetDialogueName only it returns a FName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	FName GetDialogueFName() const { return GetFName(); }
 
-	/** Gets the unique identifier for this dialogue. */
-	UFUNCTION(BlueprintPure, Category = DialogueData)
-	FGuid GetDlgGuid() const { check(DlgGuid.IsValid()); return DlgGuid; }
+	// Gets the unique identifier for this dialogue.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	FGuid GetDialogueGUID() const { check(DlgGuid.IsValid()); return DlgGuid; }
 
-	/** Regenerate the DlgGuid of this Dialogue */
+	// Regenerate the DlgGuid of this Dialogue
 	void RegenerateGuid() { DlgGuid = FGuid::NewGuid(); }
 
-	/** Gets all the nodes */
+	// Gets all the nodes
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	const TArray<UDlgNode*>& GetNodes() const { return Nodes; }
 
-	/** Gets the Start Node */
+	// Gets the Start Node as a mutable pointer.
+	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "GetStartNode")
+	UDlgNode* GetMutableStartNode() const { return StartNode; }
 	const UDlgNode& GetStartNode() const { return *StartNode; }
 
-	/** Gets the Start Node as a mutable pointer. */
-	UDlgNode* GetMutableStartNode() { return StartNode; }
+	// Gets the Node as a mutable pointer.
+	UDlgNode* GetMutableNode(int32 NodeIndex) const { return Nodes.IsValidIndex(NodeIndex) ? Nodes[NodeIndex] : nullptr; }
 
-	/** Gets the Node as a mutable pointer. */
-	UDlgNode* GetMutableNode(int32 NodeIndex) { return Nodes.IsValidIndex(NodeIndex) ? Nodes[NodeIndex] : nullptr; }
-
-	/** Sets a new Start Node. Use with care. */
+	// Sets a new Start Node. Use with care.
 	void SetStartNode(UDlgNode* InStartNode) { StartNode = InStartNode; }
 
-	/** Sets the Dialogue Nodes. Use with care. */
+	// Sets the Dialogue Nodes. Use with care.
 	void SetNodes(const TArray<UDlgNode*>& InNodes) { Nodes = InNodes; }
 
-	/** Sets the Node at index NodeIndex. Use with care. */
+	// Sets the Node at index NodeIndex. Use with care.
 	void SetNode(int32 NodeIndex, UDlgNode* InNode) { Nodes[NodeIndex] = InNode; }
 
 	// Is the Node at NodeIndex (if it exists) an end node?
 	bool IsEndNode(int32 NodeIndex) const;
 
-	/** Check if a text file in the same folder with the same name (DlgName) exists and loads the data from that file. */
+	// Check if a text file in the same folder with the same name (DlgName) exists and loads the data from that file.
 	void ImportFromFile();
 
-	/** Method to handle when this asset is going to be saved. Compiles the dialogue and saves to the text file. */
+	// Method to handle when this asset is going to be saved. Compiles the dialogue and saves to the text file.
 	void OnPreAssetSaved();
 
-	/** Useful for initially reloading the data from the text file so that the dialogue is always in sync. */
+	// Useful for initially reloading the data from the text file so that the dialogue is always in sync.
 	void InitialSyncWithTextFile()
 	{
 		if (bIsSyncedWithTextFile)
@@ -439,7 +454,7 @@ public:
 		bIsSyncedWithTextFile = true;
 	}
 
-	/** Exports this dialogue data into it's corresponding ".dlg" text file with the same name as this (DlgName). */
+	// Exports this dialogue data into it's corresponding ".dlg" text file with the same name as this (DlgName).
 	void ExportToFile() const;
 
 	// Updates the data of some nodes
@@ -447,7 +462,7 @@ public:
 	// NOTE: this can do a dialogue data -> graph node data update
 	void UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys = false);
 
-	/** Adds a new node to this dialogue, returns the index location of the added node in the Nodes array. */
+	// Adds a new node to this dialogue, returns the index location of the added node in the Nodes array.
 	int32 AddNode(UDlgNode* NodeToAdd) { return Nodes.Add(NodeToAdd); }
 
 	/**
@@ -476,10 +491,10 @@ private:
 	void AddConditionsDataFromNodeEdges(const UDlgNode* Node, int32 NodeIndex);
 
 	// Gets the map entry - creates it first if it is not yet there
-	FDlgParticipantData& GetParticipantDataEntry(FName ParticipantName, FName FallbackNodeOwnerName, bool bCheckNone, const FString& ContextMessage);
+	FDlgParticipantData& GetParticipantDataEntry(FName ParticipantName, FName FallbackParticipantName, bool bCheckNone, const FString& ContextMessage);
 
 	// Rebuild & Update and node and its edges
-	void RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings* Settings, bool bUpdateTextsNamespacesAndKeys);
+	void RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings& Settings, bool bUpdateTextsNamespacesAndKeys);
 
 	void ImportFromFileFormat(EDlgDialogueTextFormat TextFormat);
 	void ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const;
@@ -493,43 +508,39 @@ private:
 	void AutoFixGraph();
 
 protected:
-	/** Used to keep track of the version in text  file too, besides being written in the .uasset file. */
+	// Used to keep track of the version in text  file too, besides being written in the .uasset file.
 	UPROPERTY()
 	int32 DlgVersion = FDlgDialogueObjectVersion::LatestVersion;
 
-	/** The name of the dialog, only used for reference in the text file, as this must always match the .uasset file name and .dlg file name */
-	UPROPERTY(VisibleAnywhere, Category = DialogueData)
+	// The name of the dialog, only used for reference in the text file, as this must always match the .uasset file name and .dlg file name
+	UPROPERTY(VisibleAnywhere, Category = "Dialogue")
 	FName DlgName;
 
-	/** The Unique identifier for each dialogue. This is used to uniquely identify a Dialogue, instead of it's name or path. Much more safer. */
-	UPROPERTY(VisibleAnywhere, Category = DialogueData)
+	// The Unique identifier for each dialogue. This is used to uniquely identify a Dialogue, instead of it's name or path. Much more safer.
+	UPROPERTY(VisibleAnywhere, Category = "Dialogue")
 	FGuid DlgGuid;
 
-	/** All the Participants that require for you to define its UClass otherwise the auto completion/suggestion won't work in case you want to modify/check Class variables.  */
-	UPROPERTY(EditAnywhere, EditFixedSize, Category = DialogueData)
+	// All the Participants that require for you to define its UClass otherwise the auto completion/suggestion won't work in case you want to modify/check Class variables.
+	UPROPERTY(EditAnywhere, EditFixedSize, Category = "Dialogue")
 	TArray<FDlgParticipantClass> DlgParticipantClasses;
 
-	/** Gathered data about events/conditions for each participant (for bp nodes, suggestions, etc.) */
-	UPROPERTY(VisibleAnywhere, AdvancedDisplay, Category = DialogueData, Meta = (DlgNoExport))
+	// Gathered data about events/conditions for each participant (for bp nodes, suggestions, etc.)
+	UPROPERTY(VisibleAnywhere, AdvancedDisplay, Category = "Dialogue", Meta = (DlgNoExport))
 	TMap<FName, FDlgParticipantData> DlgData;
 
-	/** All the speaker states used inside this Dialogue. */
-	UPROPERTY(VisibleAnywhere, AdvancedDisplay, Category = DialogueData, Meta = (DlgNoExport))
+	// All the speaker states used inside this Dialogue.
+	UPROPERTY(VisibleAnywhere, AdvancedDisplay, Category = "Dialogue", Meta = (DlgNoExport))
 	TSet<FName> DlgSpeakerStates;
 
-	/**
-	 * Root node, Dialogue is started from the first child with satisfied condition (like the SelectorFirst node)
-	 * NOTE: Add VisibleAnywhere to make it easier to debug
-	 */
+	// Root node, Dialogue is started from the first child with satisfied condition (like the SelectorFirst node)
+	// NOTE: Add VisibleAnywhere to make it easier to debug
 	UPROPERTY(Instanced)
 	UDlgNode* StartNode;
 
-	/**
-	 * The new list of all nodes that belong to this Dialogue. Each nodes has children (edges) that have indices that point
-	 * to other nodes in this array.
-	 * NOTE: Add VisibleAnywhere to make it easier to debug
-	 */
-	UPROPERTY(AdvancedDisplay, EditFixedSize, BlueprintReadOnly, Instanced, Category = DialogueData, Meta = (DlgWriteIndex))
+	// The new list of all nodes that belong to this Dialogue. Each nodes has children (edges) that have indices that point
+	// to other nodes in this array.
+	// NOTE: Add VisibleAnywhere to make it easier to debug
+	UPROPERTY(AdvancedDisplay, EditFixedSize, Instanced, Meta = (DlgWriteIndex))
 	TArray<UDlgNode*> Nodes;
 
 	// Useful for syncing on the first run with the text file.
@@ -543,10 +554,10 @@ protected:
 	// Ptr to interface to dialogue editor operations. See function SetDialogueEditorAccess for more details.
 	static TSharedPtr<IDlgDialogueEditorAccess> DialogueEditorAccess;
 
-	/** Flag used for optimization, used to enable/disable compiling of the dialogue for bulk operations. */
+	// Flag used for optimization, used to enable/disable compiling of the dialogue for bulk operations.
 	bool bCompileDialogue = true;
 
-	/** Flag indicating if this Dialogue was compiled at least once in the current runtime. */
+	// Flag indicating if this Dialogue was compiled at least once in the current runtime.
 	bool bWasCompiledAtLeastOnce = false;
 
 	// Used to build the change event and broadcast it to the children

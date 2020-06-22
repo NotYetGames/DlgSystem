@@ -8,7 +8,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueSearchUtilities
 TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesForEventEventName(
-		const FName& EventName, const UDlgDialogue* Dialogue)
+	FName EventName,
+	const UDlgDialogue* Dialogue
+)
 {
 	TSharedPtr<FDialogueSearchFoundResult> FoundResult = FDialogueSearchFoundResult::Make();
 
@@ -26,7 +28,9 @@ TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesFo
 }
 
 TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesForConditionEventCallName(
-		const FName& ConditionName, const UDlgDialogue* Dialogue)
+	FName ConditionName,
+	const UDlgDialogue* Dialogue
+)
 {
 	TSharedPtr<FDialogueSearchFoundResult> FoundResult = FDialogueSearchFoundResult::Make();
 
@@ -59,8 +63,12 @@ TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesFo
 	return FoundResult;
 }
 
-TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesForVariablesOfNameAndType(const FName& VariableName,
-	const UDlgDialogue* Dialogue, const EDlgEventType EventType, const EDlgConditionType ConditionType)
+TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesForVariablesOfNameAndType(
+	FName VariableName,
+	const UDlgDialogue* Dialogue,
+	EDlgEventType EventType,
+	EDlgConditionType ConditionType
+)
 {
 	TSharedPtr<FDialogueSearchFoundResult> FoundResult = FDialogueSearchFoundResult::Make();
 
@@ -107,10 +115,13 @@ TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesFo
 }
 
 
-void FDialogueSearchUtilities::GetGraphNodesForTextArgumentVariable(const FName& VariableName,
-	const UDlgDialogue* Dialogue, const EDlgTextArgumentType ArgumentType, TSharedPtr<FDialogueSearchFoundResult>& FoundResult)
+void FDialogueSearchUtilities::GetGraphNodesForTextArgumentVariable(
+	FName VariableName,
+	const UDlgDialogue* Dialogue,
+	EDlgTextArgumentType ArgumentType,
+	TSharedPtr<FDialogueSearchFoundResult>& FoundResult
+)
 {
-
 	const UDialogueGraph* Graph = CastChecked<UDialogueGraph>(Dialogue->GetGraph());
 	for (const UDialogueGraphNode_Base* GraphNodeBase : Graph->GetAllBaseDialogueGraphNodes())
 	{
