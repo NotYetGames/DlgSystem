@@ -34,7 +34,7 @@
 				"Conditions": [],
 				"SpeakerState": "None",
 				"bIncludeInAllOptionListIfUnsatisfied": true,
-				"Text": "Next Remapped",
+				"Text": "Next",
 				"TextArguments": []
 			},
 			{
@@ -115,7 +115,7 @@
 					],
 					"SpeakerState": "None",
 					"bIncludeInAllOptionListIfUnsatisfied": true,
-					"Text": "Next Remapped",
+					"Text": "Next",
 					"TextArguments": []
 				}
 			]
@@ -141,7 +141,7 @@
 					"Conditions": [],
 					"SpeakerState": "None",
 					"bIncludeInAllOptionListIfUnsatisfied": true,
-					"Text": "Next Remapped",
+					"Text": "Next",
 					"TextArguments": []
 				}
 			]

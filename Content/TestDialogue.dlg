@@ -14,7 +14,7 @@ Node_Speech StartNode
 	GenericData ""
 	Children
 	{
-		{  TargetIndex 0 SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True Text "Next Remapped" }
+		{  TargetIndex 0 SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True Text "Next" }
 		{  TargetIndex 1 SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True Text "" }
 	}
 }
@@ -76,7 +76,7 @@ Node Nodes
 				TargetIndex 2
 				SpeakerState "None"
 				bIncludeInAllOptionListIfUnsatisfied True
-				Text "Next Remapped"
+				Text "Next"
 				Conditions
 				{
 					{
@@ -111,7 +111,7 @@ Node Nodes
 		VoiceSoundWave ""
 		VoiceDialogueWave ""
 		GenericData ""
-		Children { {  TargetIndex 2 SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True Text "Next Remapped" } }
+		Children { {  TargetIndex 2 SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True Text "Next" } }
 	}
 	// 2
 	Node_Speech 
