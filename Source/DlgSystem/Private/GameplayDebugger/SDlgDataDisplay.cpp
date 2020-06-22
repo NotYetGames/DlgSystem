@@ -372,8 +372,12 @@ TSharedRef<SWidget> SDlgDataDisplay::GetFilterTextBoxWidget()
 	return GetFilterTextBoxWidget();
 }
 
-void SDlgDataDisplay::AddVariableChildrenToItem(const TSharedPtr<FDlgDataDisplayTreeNode>& Item, const TMap<FName, TSharedPtr<FDlgDataDisplayVariableProperties>>& Variables,
-	const FText& DisplayTextFormat, const EDlgDataDisplayVariableTreeNodeType VariableType)
+void SDlgDataDisplay::AddVariableChildrenToItem(
+	const TSharedPtr<FDlgDataDisplayTreeNode>& Item,
+	const TMap<FName, TSharedPtr<FDlgDataDisplayVariableProperties>>& Variables,
+	const FText& DisplayTextFormat,
+	EDlgDataDisplayVariableTreeNodeType VariableType
+)
 {
 	if (!Item.IsValid())
 	{

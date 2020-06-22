@@ -56,33 +56,31 @@ public:
 
 	void Compile(FKismetFunctionContext& Context, UEdGraphNode* Node) override
 	{
-		/*
-		 * Pseudocode of how this is compiled to:
-		 * We have N option pins - Options[N]
-		 *
-		 * IndexValue = ConditionTerm
-		 * ReturnValue = ReturnTerm
-		 * PrevIfNotStatement = null
-		 *
-		 * for Option in Options:
-		 *    OptionValue = Value of Option
-		 *    CallConditionFunctionStatement = AddStatement `BoolTerm = ConditionFunction(IndexValue, OptionValue)`
-		 *
-		 *    // where the previous statement jumps if it fails
-		 *    if PrevIfNotStatement is not null:
-		 *       PrevIfNotStatement.JumpTarget = CallConditionFunctionStatement
-		 *
-		 *    // the target is set above
-		 *    IfNotStatement = AddStatement `GoToTargetIfNot(BoolTerm, JumpTarget=null)`
-		 *
-		 *    // Add return option for this Option
-		 *    AddStatement `ReturnValue = OptionValue`
-		 *
-		 *   PrevIfNotStatement = IfNotStatement
-		 *   // add some goto statements that allows us to to safely exit the loop
-		 *
-		 * // point goto statements to a noop at the end
-		 */
+		// Pseudocode of how this is compiled to:
+		// We have N option pins - Options[N]
+		//
+		// IndexValue = ConditionTerm
+		// ReturnValue = ReturnTerm
+		// PrevIfNotStatement = null
+		//
+		// for Option in Options:
+		//    OptionValue = Value of Option
+		//    CallConditionFunctionStatement = AddStatement `BoolTerm = ConditionFunction(IndexValue, OptionValue)`
+		//
+		//    // where the previous statement jumps if it fails
+		//    if PrevIfNotStatement is not null:
+		//       PrevIfNotStatement.JumpTarget = CallConditionFunctionStatement
+		//
+		//    // the target is set above
+		//    IfNotStatement = AddStatement `GoToTargetIfNot(BoolTerm, JumpTarget=null)`
+		//
+		//    // Add return option for this Option
+		//    AddStatement `ReturnValue = OptionValue`
+		//
+		//   PrevIfNotStatement = IfNotStatement
+		//   // add some goto statements that allows us to to safely exit the loop
+		//
+		// // point goto statements to a noop at the end
 
 		// Cast the node and get all the input pins, the options we are selecting from
 		UDialogueK2Node_Select* SelectNode = CastChecked<UDialogueK2Node_Select>(Node);

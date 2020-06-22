@@ -67,7 +67,7 @@ public:
 	void PrepareForCopying() override { Super::PrepareForCopying(); }
 
 	/** IGNORED. Removes the specified pin from the node, preserving remaining pin ordering. */
-	void RemovePinAt(int32 PinIndex, const EEdGraphPinDirection PinDirection) override {}
+	void RemovePinAt(int32 PinIndex, EEdGraphPinDirection PinDirection) override {}
 
 	/** Whether or not struct pins belonging to this node should be allowed to be split or not. */
 	bool CanSplitPin(const UEdGraphPin* Pin) const override { return false; }
@@ -124,13 +124,13 @@ public:
 	}
 
 	/** Gets the position in the Graph canvas of this node. */
-	FVector2D GetPosition() const { return FVector2D(NodePosX, NodePosY); }
+	virtual FIntPoint GetPosition() const { return FIntPoint(NodePosX, NodePosY); }
 
 	/** Sets the position in the Graph canvas of this node. */
-	void SetPosition(const FVector2D& NewPosition)
+	virtual void SetPosition(int32 X, int32 Y)
 	{
-		NodePosX = NewPosition.X;
-		NodePosY = NewPosition.Y;
+		NodePosX = X;
+		NodePosY = Y;
 	}
 
 	// Compiler methods

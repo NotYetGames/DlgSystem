@@ -238,7 +238,7 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 		break;
 
 	case EDlgConditionType::FloatCall:
-	case EDlgConditionType::FloatVariable:
+	case EDlgConditionType::ClassFloatVariable:
 		break;
 
 	case EDlgConditionType::IntCall:
@@ -327,7 +327,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 	{
 		bReflectionBased = ConditionType == EDlgConditionType::ClassBoolVariable
 						|| ConditionType == EDlgConditionType::ClassIntVariable
-						|| ConditionType == EDlgConditionType::FloatVariable
+						|| ConditionType == EDlgConditionType::ClassFloatVariable
 						|| ConditionType == EDlgConditionType::ClassNameVariable;
 	}
 
@@ -358,7 +358,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 		}
 		break;
 
-	case EDlgConditionType::FloatVariable:
+	case EDlgConditionType::ClassFloatVariable:
 	case EDlgConditionType::FloatCall:
 		if (bReflectionBased && Dialogue)
 		{

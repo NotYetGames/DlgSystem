@@ -174,7 +174,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 		GenericDataPropertyRow = &SpeechDataCategory.AddProperty(
 			PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameGenericData())
 		);
-		GenericDataPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetGenericDataVisibility));
+		GenericDataPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetNodeGenericDataVisibility));
 	}
 	else if (bIsSelectorNode)
 	{

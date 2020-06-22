@@ -28,7 +28,7 @@ void FDialogueEdge_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InStruct
 	{
 		// Virtual parents do not handle direct children, only grand children
 		// And selector node do not even touch them
-		bShowTextProperty = FDlgEdge::IsTextVisible(&GraphNode->GetDialogueNode());
+		bShowTextProperty = FDlgEdge::IsTextVisible(GraphNode->GetDialogueNode());
 	}
 
 	const bool bShowOnlyInnerProperties = StructPropertyHandle->GetProperty()->HasMetaData(META_ShowOnlyInnerProperties);
@@ -60,7 +60,7 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 		.Update();
 	TextPropertyRow->OnTextCommittedEvent().AddRaw(this, &Self::HandleTextCommitted);
 	TextPropertyRow->OnTextChangedEvent().AddRaw(this, &Self::HandleTextChanged);
-	
+
 	// Text Arguments
 	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(FDlgEdge::GetMemberNameTextArguments()).ToSharedRef())
 		.Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility));

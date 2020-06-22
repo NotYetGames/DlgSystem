@@ -13,7 +13,7 @@ class DLGSYSTEM_API UDlgConditionCustom : public UDlgObject
 	GENERATED_BODY()
 public:
 	// Checks if the condition is met
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = DialogueConditions)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Dialogue|Conditions")
 	bool IsConditionMet(const UObject* Participant);
 	virtual bool IsConditionMet_Implementation(const UObject* Participant)
 	{

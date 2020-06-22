@@ -7,13 +7,13 @@
 #include "DlgNode_Selector.generated.h"
 
 
-UENUM()
+UENUM(BlueprintType)
 enum class EDlgNodeSelectorType : uint8
 {
-	/** As soon as it is entered it selects its first satisfied child. */
+	// As soon as it is entered it selects its first satisfied child.
 	First		UMETA(DisplayName = "First"),
 
-	/** As soon as it is entered it selects a satisfied child randomly. */
+	// As soon as it is entered it selects a satisfied child randomly.
 	Random		UMETA(DisplayName = "Random"),
 };
 
@@ -21,7 +21,7 @@ enum class EDlgNodeSelectorType : uint8
  * Node without text. Selector of child depends on the type.
  * It should have at least one (satisfied child), HandleNodeEnter returns false and the Dialogue is terminated otherwise.
  */
-UCLASS(BlueprintType)
+UCLASS(BlueprintType, ClassGroup = "Dialogue")
 class DLGSYSTEM_API UDlgNode_Selector : public UDlgNode
 {
 	GENERATED_BODY()
@@ -29,7 +29,7 @@ class DLGSYSTEM_API UDlgNode_Selector : public UDlgNode
 public:
 	UDlgNode_Selector() { bCheckChildrenOnEvaluation = true; }
 
-	/** @return a one line description of an object. */
+	// @return a one line description of an object.
 	FString GetDesc() override
 	{
 		switch (SelectorType)
@@ -43,25 +43,32 @@ public:
 		}
 	}
 
+	//
 	// Begin UDlgNode Interface.
-	bool HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
+	//
+
+	bool HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
 
 #if WITH_EDITOR
 	FString GetNodeTypeString() const override { return TEXT("Selector"); }
 #endif
 
+	//
 	// Begin own functions
-	/** Gets the Selector Type */
+	//
+
+	// Gets the Selector Type
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	EDlgNodeSelectorType GetSelectorType() const { return SelectorType; }
 
-	/** Sets the Selector Type */
+	// Sets the Selector Type
 	void SetSelectorType(EDlgNodeSelectorType InType) { SelectorType = InType; }
 
-	/** Helper functions to get the names of some properties. Used by the DlgSystemEditor module. */
+	// Helper functions to get the names of some properties. Used by the DlgSystemEditor module.
 	static FName GetMemberNameSelectorType() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Selector, SelectorType); }
 
-private:
-	/** Defines the type of selector this node represents */
-	UPROPERTY(EditAnywhere, Category = DialogueNodeData)
+protected:
+	// Defines the type of selector this node represents
+	UPROPERTY(EditAnywhere, Category = "Dialogue|Node")
 	EDlgNodeSelectorType SelectorType = EDlgNodeSelectorType::First;
 };

@@ -102,10 +102,10 @@ public:
 	FDialogueBrowserTreeNode(const FText& InDisplayText, const TSharedPtr<Self>& InParent);
 
 	/** Gets the Participant Name that this Node belongs to. This must always return a valid value. */
-	virtual const FName GetParentParticipantName() const;
+	virtual FName GetParentParticipantName() const;
 
 	/** Gets the Variable name that this Node belongs to if any. This could be empty in most cases. */
-	virtual const FName GetParentVariableName() const;
+	virtual FName GetParentVariableName() const;
 
 	/** Getters for the properties */
 
@@ -153,7 +153,7 @@ public:
 	bool IsDialogueText() const
 	{
 		return IsText() &&
-		      (TextType == EDialogueTreeNodeTextType::ParticipantDialogue
+			  (TextType == EDialogueTreeNodeTextType::ParticipantDialogue
 			|| TextType == EDialogueTreeNodeTextType::EventDialogue
 			|| TextType == EDialogueTreeNodeTextType::ConditionDialogue
 			|| TextType == EDialogueTreeNodeTextType::IntVariableDialogue
@@ -176,22 +176,24 @@ public:
 	}
 	bool IsGraphNodeText() const
 	{
-		return IsText() && (TextType == EDialogueTreeNodeTextType::EventGraphNode ||
-							TextType == EDialogueTreeNodeTextType::ConditionGraphNode ||
-							TextType == EDialogueTreeNodeTextType::IntVariableGraphNode ||
-							TextType == EDialogueTreeNodeTextType::FloatVariableGraphNode ||
-							TextType == EDialogueTreeNodeTextType::BoolVariableGraphNode ||
-							TextType == EDialogueTreeNodeTextType::FTextVariableGraphNode ||
-							TextType == EDialogueTreeNodeTextType::FNameVariableGraphNode);
+		return IsText() &&
+			  (TextType == EDialogueTreeNodeTextType::EventGraphNode
+			|| TextType == EDialogueTreeNodeTextType::ConditionGraphNode
+			|| TextType == EDialogueTreeNodeTextType::IntVariableGraphNode
+			|| TextType == EDialogueTreeNodeTextType::FloatVariableGraphNode
+			|| TextType == EDialogueTreeNodeTextType::BoolVariableGraphNode
+			|| TextType == EDialogueTreeNodeTextType::FTextVariableGraphNode
+			|| TextType == EDialogueTreeNodeTextType::FNameVariableGraphNode);
 	}
 	bool IsEdgeNodeText()
 	{
-		return IsText() && (TextType == EDialogueTreeNodeTextType::ConditionEdgeNode ||
-							TextType == EDialogueTreeNodeTextType::IntVariableEdgeNode ||
-							TextType == EDialogueTreeNodeTextType::FloatVariableEdgeNode ||
-							TextType == EDialogueTreeNodeTextType::BoolVariableEdgeNode ||
-							TextType == EDialogueTreeNodeTextType::FTextVariableEdgeNode ||
-							TextType == EDialogueTreeNodeTextType::FNameVariableEdgeNode);
+		return IsText() &&
+			  (TextType == EDialogueTreeNodeTextType::ConditionEdgeNode
+			|| TextType == EDialogueTreeNodeTextType::IntVariableEdgeNode
+			|| TextType == EDialogueTreeNodeTextType::FloatVariableEdgeNode
+			|| TextType == EDialogueTreeNodeTextType::BoolVariableEdgeNode
+			|| TextType == EDialogueTreeNodeTextType::FTextVariableEdgeNode
+			|| TextType == EDialogueTreeNodeTextType::FNameVariableEdgeNode);
 	}
 
 	/** Gets the textual representation of this item */
@@ -285,8 +287,11 @@ class FDialogueBrowserTreeCategoryNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeNode Super;
 public:
-	FDialogueBrowserTreeCategoryNode(const FText& InDisplayText, const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
-									const EDialogueTreeNodeCategoryType InCategoryType);
+	FDialogueBrowserTreeCategoryNode(
+		const FText& InDisplayText,
+		const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
+		EDialogueTreeNodeCategoryType InCategoryType
+	);
 
 	bool IsText() const override { return false; }
 	bool IsCategory() const  override { return CategoryType != EDialogueTreeNodeCategoryType::Default; }
@@ -299,11 +304,14 @@ class FDialogueBrowserTreeParticipantNode : public FDialogueBrowserTreeNode
 	typedef FDialogueBrowserTreeParticipantNode Self;
 	typedef FDialogueBrowserTreeNode Super;
 public:
-	FDialogueBrowserTreeParticipantNode(const FText& InDisplayText, const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
-										const FName& InParticipantName);
+	FDialogueBrowserTreeParticipantNode(
+		const FText& InDisplayText,
+		const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
+		FName InParticipantName
+	);
 
 	// ParticipantName:
-	const FName GetParentParticipantName() const override;
+	FName GetParentParticipantName() const override;
 
 protected:
 	/** The Participant Name it represents. */
@@ -318,11 +326,14 @@ class FDialogueBrowserTreeVariableNode : public FDialogueBrowserTreeNode
 	typedef FDialogueBrowserTreeNode Super;
 
 public:
-	FDialogueBrowserTreeVariableNode(const FText& InDisplayText, const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
-									const FName& InVariableName);
+	FDialogueBrowserTreeVariableNode(
+		const FText& InDisplayText,
+		const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
+		FName InVariableName
+	);
 
 	// VariableName:
-	const FName GetParentVariableName() const override;
+	FName GetParentVariableName() const override;
 
 protected:
 	// Used to store Event, Condition, IntName, Dialogue name etc
@@ -335,8 +346,11 @@ class FDialogueBrowserTreeCategoryParticipantNode : public FDialogueBrowserTreeP
 {
 	typedef FDialogueBrowserTreeParticipantNode Super;
 public:
-	FDialogueBrowserTreeCategoryParticipantNode(const FText& InDisplayText, const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
-		const FName& InParticipantName);
+	FDialogueBrowserTreeCategoryParticipantNode(
+		const FText& InDisplayText,
+		const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
+		FName InParticipantName
+	);
 
 	bool IsText() const override { return false; }
 	bool IsCategory() const override { return true; }
@@ -349,8 +363,11 @@ class FDialogueBrowserTreeDialogueNode : public FDialogueBrowserTreeNode
 	typedef FDialogueBrowserTreeDialogueNode Self;
 	typedef FDialogueBrowserTreeNode Super;
 public:
-	FDialogueBrowserTreeDialogueNode(const FText& InDisplayText, const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
-									const TWeakObjectPtr<const UDlgDialogue>& InObject);
+	FDialogueBrowserTreeDialogueNode(
+		const FText& InDisplayText,
+		const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
+		const TWeakObjectPtr<const UDlgDialogue>& InObject
+	);
 
 	// Dialogue:
 	const TWeakObjectPtr<const UDlgDialogue>& GetDialogue() const { return Dialogue; }
@@ -377,8 +394,11 @@ class FDialogueBrowserTreeGraphNode : public FDialogueBrowserTreeNode
 	typedef FDialogueBrowserTreeGraphNode Self;
 	typedef FDialogueBrowserTreeNode Super;
 public:
-	FDialogueBrowserTreeGraphNode(const FText& InDisplayText, const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
-								const TWeakObjectPtr<const UDialogueGraphNode>& InObject);
+	FDialogueBrowserTreeGraphNode(
+		const FText& InDisplayText,
+		const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
+		const TWeakObjectPtr<const UDialogueGraphNode>& InObject
+	);
 
 	// GraphNode:
 	const TWeakObjectPtr<const UDialogueGraphNode>& GetGraphNode() const { return GraphNode; }
@@ -405,8 +425,11 @@ class FDialogueBrowserTreeEdgeNode : public FDialogueBrowserTreeNode
 	typedef FDialogueBrowserTreeEdgeNode Self;
 	typedef FDialogueBrowserTreeNode Super;
 public:
-	FDialogueBrowserTreeEdgeNode(const FText& InDisplayText, const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
-								const TWeakObjectPtr<const UDialogueGraphNode_Edge>& InObject);
+	FDialogueBrowserTreeEdgeNode(
+		const FText& InDisplayText,
+		const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
+		const TWeakObjectPtr<const UDialogueGraphNode_Edge>& InObject
+	);
 
 	// EdgeNode:
 	const TWeakObjectPtr<const UDialogueGraphNode_Edge>& GetEdgeNode() const { return EdgeNode; }

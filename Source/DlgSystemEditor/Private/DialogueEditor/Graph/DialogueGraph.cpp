@@ -51,21 +51,21 @@ UDialogueGraphNode_Root* UDialogueGraph::GetRootGraphNode() const
 	return RootNodeList[0];
 }
 
-const TArray<UDialogueGraphNode_Base*> UDialogueGraph::GetAllBaseDialogueGraphNodes() const
+TArray<UDialogueGraphNode_Base*> UDialogueGraph::GetAllBaseDialogueGraphNodes() const
 {
 	TArray<UDialogueGraphNode_Base*> AllBaseDialogueGraphNodes;
 	GetNodesOfClass<UDialogueGraphNode_Base>(/*out*/ AllBaseDialogueGraphNodes);
 	return AllBaseDialogueGraphNodes;
 }
 
-const TArray<UDialogueGraphNode*> UDialogueGraph::GetAllDialogueGraphNodes() const
+TArray<UDialogueGraphNode*> UDialogueGraph::GetAllDialogueGraphNodes() const
 {
 	TArray<UDialogueGraphNode*> AllDialogueGraphNodes;
 	GetNodesOfClass<UDialogueGraphNode>(/*out*/ AllDialogueGraphNodes);
 	return AllDialogueGraphNodes;
 }
 
-const TArray<UDialogueGraphNode_Edge*> UDialogueGraph::GetAllEdgeDialogueGraphNodes() const
+TArray<UDialogueGraphNode_Edge*> UDialogueGraph::GetAllEdgeDialogueGraphNodes() const
 {
 	TArray<UDialogueGraphNode_Edge*> AllEdgeDialogueGraphNodes;
 	GetNodesOfClass<UDialogueGraphNode_Edge>(/*out*/ AllEdgeDialogueGraphNodes);
@@ -112,8 +112,7 @@ void UDialogueGraph::CreateGraphNodesFromDialogue()
 		Dialogue->SetStartNode(StartNode);
 
 		// Finalize creation
-		StartGraphNode->NodePosX = 0;
-		StartGraphNode->NodePosY = 0;
+		StartGraphNode->SetPosition(0, 0);
 		NodeCreator.Finalize();
 	}
 
@@ -129,8 +128,7 @@ void UDialogueGraph::CreateGraphNodesFromDialogue()
 		GraphNode->SetDialogueNodeDataChecked(NodeIndex, DialogueNodes[NodeIndex]);
 
 		// Finalize creation
-		GraphNode->NodePosX = 0;
-		GraphNode->NodePosY = 0;
+		GraphNode->SetPosition(0, 0);
 		NodeCreator.Finalize();
 	}
 }
@@ -155,9 +153,11 @@ void UDialogueGraph::LinkGraphNodesFromDialogue() const
 	}
 }
 
-void UDialogueGraph::LinkGraphNodeToChildren(const TArray<UDlgNode*>& NodesDialogue,
-											 const UDlgNode& NodeDialogue,
-											 UDialogueGraphNode* GraphNode) const
+void UDialogueGraph::LinkGraphNodeToChildren(
+	const TArray<UDlgNode*>& NodesDialogue,
+	const UDlgNode& NodeDialogue,
+	UDialogueGraphNode* GraphNode
+) const
 {
 	// Assume we are starting from scratch, no output connections
 	GraphNode->GetOutputPin()->BreakAllPinLinks();
@@ -187,7 +187,7 @@ void UDialogueGraph::LinkGraphNodeToChildren(const TArray<UDlgNode*>& NodesDialo
 		// Make connection
 		UDialogueGraphNode_Edge* GraphNode_Edge =
 			FDialogueEditorUtilities::SpawnGraphNodeFromTemplate<UDialogueGraphNode_Edge>(
-				GraphNode->GetGraph(), FVector2D(0.0f, 0.0f), false
+				GraphNode->GetGraph(), GraphNode->GetDefaultEdgePosition(), false
 			);
 
 		// Create proxy connection from output -> input
@@ -206,8 +206,13 @@ void UDialogueGraph::AutoPositionGraphNodes() const
 	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 
 	// TODO investigate Node->SnapToGrid
-	FDialogueEditorUtilities::AutoPositionGraphNodes(RootNode, DialogueGraphNodes,
-		Settings->OffsetBetweenColumnsX, Settings->OffsetBetweenRowsY, bIsDirectionVertical);
+	FDialogueEditorUtilities::AutoPositionGraphNodes(
+		RootNode,
+		DialogueGraphNodes,
+		Settings->OffsetBetweenColumnsX,
+		Settings->OffsetBetweenRowsY,
+		bIsDirectionVertical
+	);
 }
 
 void UDialogueGraph::RemoveAllNodes()

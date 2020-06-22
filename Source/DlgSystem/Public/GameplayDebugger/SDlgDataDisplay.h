@@ -40,8 +40,12 @@ private:
 	TSharedRef<SWidget> GetFilterTextBoxWidget();
 
 	// Add the Variables as children to the Item
-	void AddVariableChildrenToItem(const TSharedPtr<FDlgDataDisplayTreeNode>& Item, const TMap<FName, TSharedPtr<FDlgDataDisplayVariableProperties>>& Variables,
-		const FText& DisplayTextFormat, const EDlgDataDisplayVariableTreeNodeType VariableType);
+	void AddVariableChildrenToItem(
+		const TSharedPtr<FDlgDataDisplayTreeNode>& Item,
+		const TMap<FName, TSharedPtr<FDlgDataDisplayVariableProperties>>& Variables,
+		const FText& DisplayTextFormat,
+		EDlgDataDisplayVariableTreeNodeType VariableType
+	);
 
 	// Recursively build the view item.
 	void BuildTreeViewItem(const TSharedPtr<FDlgDataDisplayTreeNode>& Item);

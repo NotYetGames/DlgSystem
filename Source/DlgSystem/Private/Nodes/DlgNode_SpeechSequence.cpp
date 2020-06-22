@@ -1,6 +1,6 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "Nodes/DlgNode_SpeechSequence.h"
-#include "DlgContextInternal.h"
+#include "DlgContext.h"
 #include "DlgLocalizationHelper.h"
 
 
@@ -14,17 +14,17 @@ void UDlgNode_SpeechSequence::PostEditChangeProperty(FPropertyChangedEvent& Prop
 }
 #endif
 
-void UDlgNode_SpeechSequence::UpdateTextsValuesFromDefaultsAndRemappings(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
+void UDlgNode_SpeechSequence::UpdateTextsValuesFromDefaultsAndRemappings(const UDlgSystemSettings& Settings, bool bEdges, bool bUpdateGraphNode)
 {
 	for (FDlgSpeechSequenceEntry& Entry : SpeechSequence)
 	{
 		// We only care about edges here
-		if (Settings->bSetDefaultEdgeTexts)
+		if (Settings.bSetDefaultEdgeTexts)
 		{
 			// Inner edges always point to a normal node and are always the unique edge child
 			if (Entry.EdgeText.IsEmpty())
 			{
-				Entry.EdgeText = Settings->DefaultTextEdgeToNormalNode;
+				Entry.EdgeText = Settings.DefaultTextEdgeToNormalNode;
 			}
 		}
 
@@ -34,7 +34,7 @@ void UDlgNode_SpeechSequence::UpdateTextsValuesFromDefaultsAndRemappings(const U
 	Super::UpdateTextsValuesFromDefaultsAndRemappings(Settings, bEdges, bUpdateGraphNode);
 }
 
-void UDlgNode_SpeechSequence::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings* Settings, bool bEdges, bool bUpdateGraphNode)
+void UDlgNode_SpeechSequence::UpdateTextsNamespacesAndKeys(const UDlgSystemSettings& Settings, bool bEdges, bool bUpdateGraphNode)
 {
 	UObject* Outer = GetOuter();
 	if (!IsValid(Outer))
@@ -51,16 +51,16 @@ void UDlgNode_SpeechSequence::UpdateTextsNamespacesAndKeys(const UDlgSystemSetti
 	Super::UpdateTextsNamespacesAndKeys(Settings, bEdges, bUpdateGraphNode);
 }
 
-bool UDlgNode_SpeechSequence::HandleNodeEnter(UDlgContext* Context, TSet<const UDlgNode*> NodesEnteredWithThisStep)
+bool UDlgNode_SpeechSequence::HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
 	ActualIndex = 0;
 	return Super::HandleNodeEnter(Context, NodesEnteredWithThisStep);
 }
 
-bool UDlgNode_SpeechSequence::ReevaluateChildren(UDlgContext* Context, TSet<const UDlgNode*> AlreadyEvaluated)
+bool UDlgNode_SpeechSequence::ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> AlreadyEvaluated)
 {
-	TArray<const FDlgEdge*>& Options = Context->GetOptionArray();
-	TArray<FDlgEdgeData>& AllOptions = Context->GetAllOptionsArray();
+	TArray<FDlgEdge>& Options = Context.GetMutableOptionsArray();
+	TArray<FDlgEdgeData>& AllOptions = Context.GetAllMutableOptionsArray();
 	Options.Empty();
 	AllOptions.Empty();
 
@@ -71,15 +71,15 @@ bool UDlgNode_SpeechSequence::ReevaluateChildren(UDlgContext* Context, TSet<cons
 	// give the context the fake inner edge
 	if (InnerEdges.IsValidIndex(ActualIndex))
 	{
-		Options.Add(&InnerEdges[ActualIndex]);
-		AllOptions.Add({ true, &InnerEdges[ActualIndex] });
+		Options.Add(InnerEdges[ActualIndex]);
+		AllOptions.Add(FDlgEdgeData{ true, InnerEdges[ActualIndex] });
 		return true;
 	}
 
 	return false;
 }
 
-bool UDlgNode_SpeechSequence::OptionSelected(int32 OptionIndex, UDlgContext* Context)
+bool UDlgNode_SpeechSequence::OptionSelected(int32 OptionIndex, UDlgContext& Context)
 {
 	// Actual index is valid, and not the last node in the speech sequence, increment
 	if (ActualIndex >= 0 && ActualIndex < SpeechSequence.Num() - 1)
@@ -134,7 +134,7 @@ UDialogueWave* UDlgNode_SpeechSequence::GetNodeVoiceDialogueWave() const
 	return nullptr;
 }
 
-UObject* UDlgNode_SpeechSequence::GetGenericData() const
+UObject* UDlgNode_SpeechSequence::GetNodeGenericData() const
 {
 	if (SpeechSequence.IsValidIndex(ActualIndex))
 	{

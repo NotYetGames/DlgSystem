@@ -3,12 +3,12 @@
 
 #include "DlgObject.h"
 
-
 #include "DlgManager.h"
 #include "UObject/Object.h"
 
 void UDlgObject::PostInitProperties()
 {
+	// We must always set the outer to be something that exists at runtime
 #if WITH_EDITOR
 	if (UEdGraphNode* GraphNode =  Cast<UEdGraphNode>(GetOuter()))
 	{

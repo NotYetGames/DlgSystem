@@ -61,7 +61,10 @@ class UDialogueGraphNode : public UDialogueGraphNode_Base
 	GENERATED_BODY()
 
 public:
+	//
 	// Begin UObject Interface.
+	//
+
 	/**
 	 * Do any object-specific cleanup required immediately after loading an object,
 	 * and immediately after any undo/redo.
@@ -99,7 +102,9 @@ public:
 	 */
 	bool Modify(bool bAlwaysMarkDirty = true) override;
 
+	//
 	// Begin UEdGraphNode interface
+	//
 
 	/** Gets the name of this node, shown in title bar */
 	FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
@@ -177,8 +182,9 @@ public:
 	/** Is this the undeletable root node */
 	virtual bool IsRootNode() const { return false; }
 
-
+	//
 	// Begin own functions
+	//
 
 	/** Is this an End Node? */
 	bool IsEndNode() const { return DialogueNode->IsA<UDlgNode_End>(); }
@@ -264,6 +270,11 @@ public:
 		check(InIndex > INDEX_NONE);
 		NodeIndex = InIndex;
 	}
+
+	// Where should the edges pointing to this node be positioned at
+	// NOTE: we use this because otherwise the edges don't get rendered
+	FIntPoint GetDefaultEdgePosition() const { return GetPosition() + FIntPoint(5, 5); }
+
 
 	/**
 	 * The same SetDialogueNodeIndex and SetDialogueNode only that it sets them both at once and it does some sanity checking
@@ -378,7 +389,10 @@ protected:
 	/** Registers all the listener this class listens to. */
 	void RegisterListeners() override;
 
+	//
 	// Begin own functions
+	//
+
 	/** This function is called after one of the properties of the DialogueNode are changed.  */
 	void OnDialogueNodePropertyChanged(const FPropertyChangedEvent& PropertyChangedEvent, int32 EdgeIndexChanged);
 

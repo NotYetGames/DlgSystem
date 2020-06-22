@@ -55,7 +55,7 @@ void UpdateDialogueToVersion_UseOnlyOneOutputAndInputPin(UDlgDialogue* Dialogue)
 void UDlgDialogue::PreSave(const class ITargetPlatform* TargetPlatform)
 {
 	Super::PreSave(TargetPlatform);
-	DlgName = GetDlgFName();
+	DlgName = GetDialogueFName();
 	OnPreAssetSaved();
 }
 
@@ -174,7 +174,7 @@ void UDlgDialogue::PostInitProperties()
 #endif // #if WITH_EDITOR
 
 	// Keep Name in sync with the file name
-	DlgName = GetDlgFName();
+	DlgName = GetDialogueFName();
 
 	// Used when creating new Dialogues
 	// Initialize with a valid GUID
@@ -191,7 +191,7 @@ void UDlgDialogue::PostInitProperties()
 void UDlgDialogue::PostRename(UObject* OldOuter, const FName OldName)
 {
 	Super::PostRename(OldOuter, OldName);
-	DlgName = GetDlgFName();
+	DlgName = GetDialogueFName();
 }
 
 void UDlgDialogue::PostDuplicate(bool bDuplicateForPIE)
@@ -455,7 +455,7 @@ void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
 		}
 	}
 
-	DlgName = GetDlgFName();
+	DlgName = GetDialogueFName();
 	AutoFixGraph();
 	UpdateAndRefreshData(true);
 }
@@ -530,19 +530,19 @@ void UDlgDialogue::ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const
 	}
 }
 
-FDlgParticipantData& UDlgDialogue::GetParticipantDataEntry(FName ParticipantName, FName FallbackNodeOwnerName, bool bCheckNone, const FString& ContextMessage)
+FDlgParticipantData& UDlgDialogue::GetParticipantDataEntry(FName ParticipantName, FName FallbackParticipantName, bool bCheckNone, const FString& ContextMessage)
 {
 	// Used to ignore some participants
 	static FDlgParticipantData BlackHoleParticipant;
 
 	// If the Participant Name is not set, it adopts the Node Owner Name
-	const FName& ValidParticipantName = ParticipantName == NAME_None ? FallbackNodeOwnerName : ParticipantName;
+	const FName& ValidParticipantName = ParticipantName == NAME_None ? FallbackParticipantName : ParticipantName;
 
 	// Parent/child is not valid, simply do nothing
 	if (bCheckNone && ValidParticipantName == NAME_None)
 	{
 		FDlgLogger::Get().Warningf(
-			TEXT("Ignoring ParticipantName = None, Context = %s. Either your node name is None or your participant name is None."),
+			TEXT("Ignoring ParticipantName = None, Context = `%s`. Either your node participant name is None or your participant name is None."),
 			*ContextMessage
 		);
 		return BlackHoleParticipant;
@@ -554,7 +554,7 @@ FDlgParticipantData& UDlgDialogue::GetParticipantDataEntry(FName ParticipantName
 void UDlgDialogue::AddConditionsDataFromNodeEdges(const UDlgNode* Node, int32 NodeIndex)
 {
 	const FString NodeContext = FString::Printf(TEXT("Node %s"), NodeIndex > INDEX_NONE ? *FString::FromInt(NodeIndex) : TEXT("Start") );
-	const FName FallbackNodeOwnerName = Node->GetNodeParticipantName();
+	const FName FallbackParticipantName = Node->GetNodeParticipantName();
 
 	for (const FDlgEdge& Edge : Node->GetNodeChildren())
 	{
@@ -562,21 +562,23 @@ void UDlgDialogue::AddConditionsDataFromNodeEdges(const UDlgNode* Node, int32 No
 
 		for (const FDlgCondition& Condition : Edge.Conditions)
 		{
-			FString ContextMessage = FString::Printf(TEXT("Adding Edge primary condition data from %s, to Node %d"), *NodeContext, TargetIndex);
-			GetParticipantDataEntry(Condition.ParticipantName, FallbackNodeOwnerName, true, ContextMessage)
-				.AddConditionPrimaryData(Condition);
-
+			if (Condition.IsParticipantInvolved())
+			{
+				const FString ContextMessage = FString::Printf(TEXT("Adding Edge primary condition data from %s to Node %d"), *NodeContext, TargetIndex);
+				GetParticipantDataEntry(Condition.ParticipantName, FallbackParticipantName, true, ContextMessage)
+                    .AddConditionPrimaryData(Condition);
+			}
 			if (Condition.IsSecondParticipantInvolved())
 			{
-				ContextMessage = FString::Printf(TEXT("Adding Edge secondary condition data from %s, to Node %d"), *NodeContext, TargetIndex);
-				GetParticipantDataEntry(Condition.OtherParticipantName, FallbackNodeOwnerName, true, ContextMessage)
+				const FString ContextMessage = FString::Printf(TEXT("Adding Edge secondary condition data from %s to Node %d"), *NodeContext, TargetIndex);
+				GetParticipantDataEntry(Condition.OtherParticipantName, FallbackParticipantName, true, ContextMessage)
 					.AddConditionSecondaryData(Condition);
 			}
 		}
 	}
 }
 
-void UDlgDialogue::RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings* Settings, bool bUpdateTextsNamespacesAndKeys)
+void UDlgDialogue::RebuildAndUpdateNode(UDlgNode* Node, const UDlgSystemSettings& Settings, bool bUpdateTextsNamespacesAndKeys)
 {
 	static constexpr bool bEdges = true;
 	static constexpr bool bUpdateGraphNode = false;
@@ -606,7 +608,7 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 	if (IsValid(StartNode))
 	{
 		AddConditionsDataFromNodeEdges(StartNode, INDEX_NONE);
-		RebuildAndUpdateNode(StartNode, Settings, bUpdateTextsNamespacesAndKeys);
+		RebuildAndUpdateNode(StartNode, *Settings, bUpdateTextsNamespacesAndKeys);
 	}
 
 	// Regular Nodes
@@ -618,7 +620,7 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 		const FName NodeParticipantName = Node->GetNodeParticipantName();
 
 		// Rebuild & Update
-		RebuildAndUpdateNode(Node, Settings, bUpdateTextsNamespacesAndKeys);
+		RebuildAndUpdateNode(Node, *Settings, bUpdateTextsNamespacesAndKeys);
 
 		// participant names
 		TArray<FName> Participants;
@@ -637,13 +639,15 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 		// Conditions from nodes
 		for (const FDlgCondition& Condition : Node->GetNodeEnterConditions())
 		{
-			FString ContextMessage = FString::Printf(TEXT("Adding primary condition data for %s"), *NodeContext);
-			GetParticipantDataEntry(Condition.ParticipantName, NodeParticipantName, true, ContextMessage)
-				.AddConditionPrimaryData(Condition);
-
+			if (Condition.IsParticipantInvolved())
+			{
+				const FString ContextMessage = FString::Printf(TEXT("Adding primary condition data for %s"), *NodeContext);
+				GetParticipantDataEntry(Condition.ParticipantName, NodeParticipantName, true, ContextMessage)
+                    .AddConditionPrimaryData(Condition);
+			}
 			if (Condition.IsSecondParticipantInvolved())
 			{
-				ContextMessage = FString::Printf(TEXT("Adding secondary condition data for %s"), *NodeContext);
+				const FString ContextMessage = FString::Printf(TEXT("Adding secondary condition data for %s"), *NodeContext);
 				GetParticipantDataEntry(Condition.OtherParticipantName, NodeParticipantName, true, ContextMessage)
                     .AddConditionSecondaryData(Condition);
 			}
@@ -779,7 +783,7 @@ void UDlgDialogue::AutoFixGraph()
 		}
 
 		// Add some text to the edges.
-		Node->UpdateTextsValuesFromDefaultsAndRemappings(Settings, true, true);
+		Node->UpdateTextsValuesFromDefaultsAndRemappings(*Settings, true, true);
 	}
 }
 

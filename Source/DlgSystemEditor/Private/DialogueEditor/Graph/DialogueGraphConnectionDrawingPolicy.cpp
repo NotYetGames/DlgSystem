@@ -11,10 +11,14 @@
 /////////////////////////////////////////////////////
 // FDialogueGraphConnectionDrawingPolicy
 FDialogueGraphConnectionDrawingPolicy::FDialogueGraphConnectionDrawingPolicy(
-	int32 InBackLayerID, int32 InFrontLayerID, float ZoomFactor, const FSlateRect& InClippingRect,
-	FSlateWindowElementList& InDrawElements, UEdGraph* InGraphObj)
-	: Super(InBackLayerID, InFrontLayerID, ZoomFactor, InClippingRect, InDrawElements),
-	  Graph(InGraphObj), DialogueSettings(GetDefault<UDlgSystemSettings>())
+	int32 InBackLayerID,
+	int32 InFrontLayerID,
+	float ZoomFactor,
+	const FSlateRect& InClippingRect,
+	FSlateWindowElementList& InDrawElements,
+	UEdGraph* InGraphObj
+) : Super(InBackLayerID, InFrontLayerID, ZoomFactor, InClippingRect, InDrawElements),
+	Graph(InGraphObj), DialogueSettings(GetDefault<UDlgSystemSettings>())
 {
 }
 
@@ -43,9 +47,14 @@ void FDialogueGraphConnectionDrawingPolicy::DetermineWiringStyle(UEdGraphPin* Ou
 	}
 }
 
-void FDialogueGraphConnectionDrawingPolicy::DetermineLinkGeometry(FArrangedChildren& ArrangedNodes, TSharedRef<SWidget>& OutputPinWidget,
-	UEdGraphPin* OutputPin, UEdGraphPin* InputPin,
-	/*out*/ FArrangedWidget*& StartWidgetGeometry, /*out*/ FArrangedWidget*& EndWidgetGeometry)
+void FDialogueGraphConnectionDrawingPolicy::DetermineLinkGeometry(
+	FArrangedChildren& ArrangedNodes,
+	TSharedRef<SWidget>& OutputPinWidget,
+	UEdGraphPin* OutputPin,
+	UEdGraphPin* InputPin,
+	/*out*/ FArrangedWidget*& StartWidgetGeometry,
+	/*out*/ FArrangedWidget*& EndWidgetGeometry
+)
 {
 	if (UDialogueGraphNode_Edge* GraphNode_Edge = Cast<UDialogueGraphNode_Edge>(InputPin->GetOwningNode()))
 	{
@@ -72,8 +81,11 @@ void FDialogueGraphConnectionDrawingPolicy::DetermineLinkGeometry(FArrangedChild
 	}
 }
 
-void FDialogueGraphConnectionDrawingPolicy::DrawSplineWithArrow(const FGeometry& StartGeom, const FGeometry& EndGeom,
-	const FConnectionParams& Params)
+void FDialogueGraphConnectionDrawingPolicy::DrawSplineWithArrow(
+	const FGeometry& StartGeom,
+	const FGeometry& EndGeom,
+	const FConnectionParams& Params
+)
 {
 	// Draw the spline and arrow from/to the closest points between the two geometries (nodes)
 	// Get a reasonable seed point (halfway between the boxes)
@@ -99,8 +111,12 @@ void FDialogueGraphConnectionDrawingPolicy::DrawSplineWithArrow(const FVector2D&
 	}
 }
 
-void FDialogueGraphConnectionDrawingPolicy::DrawConnection(int32 LayerId, const FVector2D& Start, const FVector2D& End,
-	const FConnectionParams& Params)
+void FDialogueGraphConnectionDrawingPolicy::DrawConnection(
+	int32 LayerId,
+	const FVector2D& Start,
+	const FVector2D& End,
+	const FConnectionParams& Params
+)
 {
 	// Code mostly from Super::DrawConnection
 	const FVector2D& P0 = Start;
@@ -263,8 +279,12 @@ void FDialogueGraphConnectionDrawingPolicy::DrawConnection(int32 LayerId, const 
 	}
 }
 
-void FDialogueGraphConnectionDrawingPolicy::DrawPreviewConnector(const FGeometry& PinGeometry, const FVector2D& StartPoint,
-	const FVector2D& EndPoint, UEdGraphPin* Pin)
+void FDialogueGraphConnectionDrawingPolicy::DrawPreviewConnector(
+	const FGeometry& PinGeometry,
+	const FVector2D& StartPoint,
+	const FVector2D& EndPoint,
+	UEdGraphPin* Pin
+)
 {
 	FConnectionParams Params;
 	DetermineWiringStyle(Pin, nullptr, /*inout*/ Params);
@@ -306,8 +326,11 @@ void FDialogueGraphConnectionDrawingPolicy::Draw(TMap<TSharedRef<SWidget>, FArra
 	Super::Draw(InPinGeometries, ArrangedNodes);
 }
 
-void FDialogueGraphConnectionDrawingPolicy::Internal_DrawLineWithArrow(const FVector2D& StartAnchorPoint, const FVector2D& EndAnchorPoint,
-	const FConnectionParams& Params)
+void FDialogueGraphConnectionDrawingPolicy::Internal_DrawLineWithArrow(
+	const FVector2D& StartAnchorPoint,
+	const FVector2D& EndAnchorPoint,
+	const FConnectionParams& Params
+)
 {
 	constexpr float LineSeparationAmount = 4.5f;
 

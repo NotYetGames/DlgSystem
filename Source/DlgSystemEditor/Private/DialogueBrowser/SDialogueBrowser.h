@@ -42,30 +42,39 @@ private:
 	TSharedRef<SWidget> GetFilterTextBoxWidget();
 
 	/** Add Dialogue Children of type TextType to the InItem. */
-	void AddDialogueChildrenToItemFromProperty(const TSharedPtr<FDialogueBrowserTreeNode>& InItem,
-								   const TSharedPtr<FDialogueBrowserTreeVariableProperties>* PropertyPtr,
-								   const EDialogueTreeNodeTextType TextType);
+	void AddDialogueChildrenToItemFromProperty(
+		const TSharedPtr<FDialogueBrowserTreeNode>& InItem,
+		const TSharedPtr<FDialogueBrowserTreeVariableProperties>* PropertyPtr,
+		EDialogueTreeNodeTextType TextType
+	);
 
 	/** Add GraphNode Children of type TextType to the InItem. */
-	void AddGraphNodeChildrenToItem(const TSharedPtr<FDialogueBrowserTreeNode>& InItem,
-									const TSet<TWeakObjectPtr<const UDialogueGraphNode>>& GraphNodes,
-									const EDialogueTreeNodeTextType TextType);
+	void AddGraphNodeChildrenToItem(
+		const TSharedPtr<FDialogueBrowserTreeNode>& InItem,
+		const TSet<TWeakObjectPtr<const UDialogueGraphNode>>& GraphNodes,
+		EDialogueTreeNodeTextType TextType
+	);
 
 	/** Add EdgeNode Children of type TextType to the InItem. */
-	void AddEdgeNodeChildrenToItem(const TSharedPtr<FDialogueBrowserTreeNode>& InItem,
-									const TSet<TWeakObjectPtr<const UDialogueGraphNode_Edge>>& EdgeNodes,
-									const EDialogueTreeNodeTextType TextType);
+	void AddEdgeNodeChildrenToItem(
+		const TSharedPtr<FDialogueBrowserTreeNode>& InItem,
+		const TSet<TWeakObjectPtr<const UDialogueGraphNode_Edge>>& EdgeNodes,
+		EDialogueTreeNodeTextType TextType
+	);
 
 	/** Add both GraphNode Children and EdgeNode Children to the InItem from The Property. */
-	void AddGraphNodeBaseChildrenToItemFromProperty(const TSharedPtr<FDialogueBrowserTreeNode>& InItem,
-													const TSharedPtr<FDialogueBrowserTreeVariableProperties>* PropertyPtr,
-													const EDialogueTreeNodeTextType GraphNodeTextType,
-													const EDialogueTreeNodeTextType EdgeNodeTextType);
+	void AddGraphNodeBaseChildrenToItemFromProperty(
+		const TSharedPtr<FDialogueBrowserTreeNode>& InItem,
+		const TSharedPtr<FDialogueBrowserTreeVariableProperties>* PropertyPtr,
+		EDialogueTreeNodeTextType GraphNodeTextType,
+		EDialogueTreeNodeTextType EdgeNodeTextType);
 
 	/** Adds the Variables to the Item */
-	void AddVariableChildrenToItem(const TSharedPtr<FDialogueBrowserTreeNode>& Item,
+	void AddVariableChildrenToItem(
+		const TSharedPtr<FDialogueBrowserTreeNode>& Item,
 		const TMap<FName, TSharedPtr<FDialogueBrowserTreeVariableProperties>>& Variables,
-		const EDialogueTreeNodeTextType VariableType);
+		EDialogueTreeNodeTextType VariableType
+	);
 
 	/** Recursively build the view item. */
 	void BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNode>& Item);
@@ -114,23 +123,29 @@ private:
 	TArray<TSharedPtr<FDialogueBrowserTreeNode>> MakeParticipantCategoriesChildren(
 		const TSharedPtr<FDialogueBrowserTreeNode>& Parent,
 		const TSharedPtr<FDialogueBrowserTreeParticipantProperties>& ParticipantProperties,
-		bool bHideEmptyCategories) const;
+		bool bHideEmptyCategories
+	) const;
 
 	/** Makes Variable categories. */
 	TArray<TSharedPtr<FDialogueBrowserTreeNode>> MakeVariableCategoriesChildren(
 		const TSharedPtr<FDialogueBrowserTreeNode>& Parent,
 		const TSharedPtr<FDialogueBrowserTreeParticipantProperties>& ParticipantProperties,
-		bool bHideEmptyCategories) const;
+		bool bHideEmptyCategories
+	) const;
 
 	/** Makes Class Variable categories. */
 	TArray<TSharedPtr<FDialogueBrowserTreeNode>> MakeClassVariableCategoriesChildren(
 		const TSharedPtr<FDialogueBrowserTreeNode>& Parent,
 		const TSharedPtr<FDialogueBrowserTreeParticipantProperties>& ParticipantProperties,
-		bool bHideEmptyCategories) const;
+		bool bHideEmptyCategories
+	) const;
 
 	/** Makes a widget that has IconName. Text of item. */
-	TSharedRef<SHorizontalBox> MakeIconAndTextWidget(const FText& InText,
-		const FSlateBrush* IconBrush, int32 IconSize = 24);
+	TSharedRef<SHorizontalBox> MakeIconAndTextWidget(
+		const FText& InText,
+		const FSlateBrush* IconBrush,
+		int32 IconSize = 24
+	);
 
 	/** Fills the menu of the View Options */
 	TSharedRef<SWidget>	FillViewOptionsEntries();
@@ -145,7 +160,7 @@ private:
 	/** The root data source */
 	TSharedPtr<FDialogueBrowserTreeNode> RootTreeItem;
 
-	/** The root children. Kept seperate so that we do not corrupt the data. */
+	/** The root children. Kept separate so that we do not corrupt the data. */
 	TArray<TSharedPtr<FDialogueBrowserTreeNode>> RootChildren;
 
 	/** Tree view for showing all participants, etc. */

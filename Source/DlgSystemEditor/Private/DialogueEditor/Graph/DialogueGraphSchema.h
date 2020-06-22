@@ -14,6 +14,9 @@
 class UDialogueGraphNode;
 class UGraphNodeContextMenuContext;
 class UToolMenu;
+class FMenuBuilder;
+class FSlateWindowElementList;
+class UEdGraph;
 
 UCLASS()
 class UDialogueGraphSchema : public UEdGraphSchema
@@ -43,10 +46,15 @@ public:
 #if ENGINE_MINOR_VERSION >= 24
 	void GetContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
 #else
-	void GetContextMenuActions(const UEdGraph* CurrentGraph, const UEdGraphNode* InGraphNode,
-							  const UEdGraphPin* InGraphPin, class FMenuBuilder* MenuBuilder, bool bIsDebugging) const override;
+	void GetContextMenuActions(
+		const UEdGraph* CurrentGraph,
+		const UEdGraphNode* InGraphNode,
+		const UEdGraphPin* InGraphPin,
+		FMenuBuilder* MenuBuilder,
+		bool bIsDebugging
+	) const override;
 #endif
-	
+
 	/**
 	 * Populate new graph with any default nodes
 	 *
@@ -56,7 +64,12 @@ public:
 
 
 	/** Break links on this pin and create links instead on MoveToPin */
-	FPinConnectionResponse MovePinLinks(UEdGraphPin& MoveFromPin, UEdGraphPin& MoveToPin, bool bIsIntermediateMove = false, bool bNotifyLinkedNodes = false) const override;
+	FPinConnectionResponse MovePinLinks(
+		UEdGraphPin& MoveFromPin,
+		UEdGraphPin& MoveToPin,
+		bool bIsIntermediateMove = false,
+		bool bNotifyLinkedNodes = false
+	) const override;
 
 	/** Copies pin links from one pin to another without breaking the original links */
 	FPinConnectionResponse CopyPinLinks(UEdGraphPin& CopyFromPin, UEdGraphPin& CopyToPin, bool bIsIntermediateCopy = false) const override;
@@ -146,9 +159,14 @@ public:
 	}
 
 	/* Returns new FConnectionDrawingPolicy from this schema */
-	FConnectionDrawingPolicy* CreateConnectionDrawingPolicy(int32 InBackLayerID, int32 InFrontLayerID,
-		float InZoomFactor, const FSlateRect& InClippingRect,
-		class FSlateWindowElementList& InDrawElements, class UEdGraph* InGraphObj) const override
+	FConnectionDrawingPolicy* CreateConnectionDrawingPolicy(
+		int32 InBackLayerID,
+		int32 InFrontLayerID,
+		float InZoomFactor,
+		const FSlateRect& InClippingRect,
+		FSlateWindowElementList& InDrawElements,
+		UEdGraph* InGraphObj
+	) const override
 	{
 		return new FDialogueGraphConnectionDrawingPolicy(InBackLayerID, InFrontLayerID, InZoomFactor, InClippingRect, InDrawElements, InGraphObj);
 	}

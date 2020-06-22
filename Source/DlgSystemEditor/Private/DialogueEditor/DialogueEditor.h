@@ -134,9 +134,11 @@ public:
 	/**
 	 * Edits the specified Dialogue. This is called from the TypeActions object.
 	 */
-	void InitDialogueEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost>& InitToolkitHost,
-					        UDlgDialogue* InitDialogue);
-
+	void InitDialogueEditor(
+		EToolkitMode::Type Mode,
+		const TSharedPtr<IToolkitHost>& InitToolkitHost,
+		UDlgDialogue* InitDialogue
+	);
 
 	/** Helper method to get directly the Dialogue Graph */
 	UDialogueGraph* GetDialogueGraph() const { return CastChecked<UDialogueGraph>(DialogueBeingEdited->GetGraph()); }

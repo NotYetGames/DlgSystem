@@ -8,7 +8,7 @@
 
 class UDlgContext;
 
-UENUM()
+UENUM(BlueprintType)
 enum class EDlgEventType : uint8
 {
 	// Just a notification with an FName parameter on the Participant
@@ -33,7 +33,7 @@ enum class EDlgEventType : uint8
 
 // Events are executed via calling IDlgDialogueParticipant methods on dialogue participants
 // They must be handled in game side, can be used to modify game state based on dialogue
-USTRUCT(Blueprintable, BlueprintType)
+USTRUCT(BlueprintType)
 struct DLGSYSTEM_API FDlgEvent
 {
 	GENERATED_USTRUCT_BODY()
@@ -61,48 +61,49 @@ public:
 
 	// Executes the event
 	// TargetParticipant is expected to implement IDlgDialogueParticipant interface
-	void Call(UDlgContext* Context, UObject* TargetParticipant) const;
+	void Call(UDlgContext& Context, UObject* TargetParticipant) const;
 
+	static FString EventTypeToString(EDlgEventType Type);
 
 protected:
-	bool ValidateIsParticipantValid(const UObject* Participant) const;
+	bool ValidateIsParticipantValid(const UDlgContext& Context, const FString& ContextString, const UObject* Participant) const;
 
 public:
 	// Name of the participant (speaker) the event is called on.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueEventData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Event")
 	FName ParticipantName;
 
 	// Type of the event, can be a simple event or a call to modify a bool/int/float variable
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueEventData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Event")
 	EDlgEventType EventType = EDlgEventType::Event;
 
 	// Name of the relevant variable or event
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueEventData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Event")
 	FName EventName;
 
 	// The value the participant gets
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueEventData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Event")
 	int32 IntValue = 0;
 
 	// The value the participant gets
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueEventData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Event")
 	float FloatValue = 0.f;
 
 	// The value the participant gets
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueEventData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Event")
 	FName NameValue;
 
 	// Weather to add the value to the existing one, or simply override it
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueEventData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Event")
 	bool bDelta = false;
 
 	// The value the participant gets
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DialogueEventData)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Event")
 	bool bValue = false;
 
 	// The custom Event you must extend via blueprint
-	UPROPERTY(EditAnywhere, Instanced, Category = DialogueEventData)
-	UDlgEventCustom* CustomEvent = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Dialogue|Event")
+	UDlgEventCustom* CustomEvent = nullptr;
 };
 
 template<>
