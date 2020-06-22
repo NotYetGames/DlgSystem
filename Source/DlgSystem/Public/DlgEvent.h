@@ -63,9 +63,10 @@ public:
 	// TargetParticipant is expected to implement IDlgDialogueParticipant interface
 	void Call(UDlgContext& Context, UObject* TargetParticipant) const;
 
+	static FString EventTypeToString(EDlgEventType Type);
 
 protected:
-	bool ValidateIsParticipantValid(const UObject* Participant) const;
+	bool ValidateIsParticipantValid(const UDlgContext& Context, const FString& ContextString, const UObject* Participant) const;
 
 public:
 	// Name of the participant (speaker) the event is called on.

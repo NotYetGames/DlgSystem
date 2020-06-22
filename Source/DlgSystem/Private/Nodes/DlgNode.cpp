@@ -104,8 +104,8 @@ void UDlgNode::FireNodeEnterEvents(UDlgContext& Context)
 		if (Participant == nullptr)
 		{
 			FDlgLogger::Get().Warningf(
-				TEXT("FireNodeEnterEvents: Dialogue = `%s`, NodeIndex = %d. Got non existent Participant Name, event call will fail!"),
-				*GetDialogue()->GetPathName(), Context.GetActiveNodeIndex()
+				TEXT("FireNodeEnterEvents - Got non existent Participant Name (INVALID Participant) event call will FAIL.\nContext:\n\t%s"),
+				*GetDialogue()->GetPathName(), Context.GetActiveNodeIndex(), *Context.GetContextString()
 			);
 		}
 
@@ -137,9 +137,9 @@ bool UDlgNode::ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> Al
 	// no child, but no end node?
 	if (AvailableChildren.Num() == 0)
 	{
-		FDlgLogger::Get().Warningf(
-			TEXT("Dialogue = %s got stuck: no valid child for a node!"),
-			*Context.GetDialoguePathName()
+		FDlgLogger::Get().Errorf(
+			TEXT("ReevaluateChildren - no valid child for a NODE.\nContext:\n\t%s"),
+			*Context.GetContextString()
 		);
 		return false;
 	}
@@ -191,8 +191,8 @@ bool UDlgNode::OptionSelected(int32 OptionIndex, UDlgContext& Context)
 	}
 
 	FDlgLogger::Get().Errorf(
-		TEXT("Failed to choose option index = %d - it only has %d valid options!"),
-		OptionIndex, AvailableChildren.Num()
+		TEXT("OptionSelected - Failed to choose OptionIndex = %d - it only has %d valid options.\nContext:\n\t%s"),
+		OptionIndex, AvailableChildren.Num(), *Context.GetContextString()
 	);
 	return false;
 }

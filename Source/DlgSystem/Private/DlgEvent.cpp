@@ -2,20 +2,25 @@
 #include "DlgEvent.h"
 
 #include "DlgSystemPrivatePCH.h"
+#include "DlgContext.h"
 #include "NYReflectionHelper.h"
 #include "DlgDialogueParticipant.h"
+#include "DlgHelper.h"
 #include "Logging/DlgLogger.h"
 
 void FDlgEvent::Call(UDlgContext& Context, UObject* TargetParticipant) const
 {
-	const bool bHasParticipant = ValidateIsParticipantValid(TargetParticipant);
+	const bool bHasParticipant = ValidateIsParticipantValid(Context, TEXT("Call"), TargetParticipant);
 
-	// We don't care if it has a participant, but warn nonethelss by calling validate it before this
+	// We don't care if it has a participant, but warn nonetheless by calling validate it before this
 	if (EventType == EDlgEventType::Custom)
 	{
 		if (CustomEvent == nullptr)
 		{
-			FDlgLogger::Get().Warning(TEXT("Custom Event is empty (not valid). Ignoring"));
+			FDlgLogger::Get().Warningf(
+				TEXT("Custom Event is empty (not valid). Ignoring. Context:\n\t%s, TargetParticipant = %s"),
+				*Context.GetContextString(), TargetParticipant ? *TargetParticipant->GetPathName() : TEXT("INVALID")
+			);
 			return;
 		}
 
@@ -65,7 +70,7 @@ void FDlgEvent::Call(UDlgContext& Context, UObject* TargetParticipant) const
 	}
 }
 
-bool FDlgEvent::ValidateIsParticipantValid(const UObject* Participant) const
+bool FDlgEvent::ValidateIsParticipantValid(const UDlgContext& Context, const FString& ContextString, const UObject* Participant) const
 {
 	if (IsValid(Participant))
 	{
@@ -73,8 +78,17 @@ bool FDlgEvent::ValidateIsParticipantValid(const UObject* Participant) const
 	}
 
 	FDlgLogger::Get().Errorf(
-		TEXT("Event failed: invalid participant! ParticipantName = %s, EventName = %s"),
-		*ParticipantName.ToString(), *EventName.ToString()
+		TEXT("%s Event FAILED because the PARTICIPANT is INVALID. \nContext:\n\t%s, ParticipantName = %s, EventType = %s, EventName = %s"),
+		*ContextString, *Context.GetContextString(), *ParticipantName.ToString(), *EventTypeToString(EventType), *EventName.ToString()
 	);
 	return false;
+}
+
+FString FDlgEvent::EventTypeToString(EDlgEventType Type)
+{
+	FString EnumValue;
+	if (FDlgHelper::ConvertEnumToString<EDlgEventType>(TEXT("EDlgEventType"), Type, false, EnumValue))
+		return EnumValue;
+
+	return EnumValue;
 }

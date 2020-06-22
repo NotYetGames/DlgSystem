@@ -28,7 +28,10 @@ bool FDlgEdge::IsTextVisible(const UDlgNode& ParentNode)
 }
 
 void FDlgEdge::UpdateTextValueFromDefaultAndRemapping(
-	const UDlgDialogue& ParentDialogue, const UDlgNode& ParentNode, const UDlgSystemSettings& Settings, bool bUpdateFromRemapping
+	const UDlgDialogue& ParentDialogue,
+	const UDlgNode& ParentNode,
+	const UDlgSystemSettings& Settings,
+	bool bUpdateFromRemapping
 )
 {
 	if (!IsValid())

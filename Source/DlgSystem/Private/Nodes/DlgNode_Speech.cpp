@@ -66,9 +66,9 @@ bool UDlgNode_Speech::ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNo
 		// stop endless loop
 		if (AlreadyEvaluated.Contains(this))
 		{
-			FDlgLogger::Get().Warning(
+			FDlgLogger::Get().Error(
 				TEXT("Endless loop detected in ReevaluateChildren call: a virtual parent became his own parent!"
-							"This is not supposed to happen, the dialogue is terminated!")
+					"This is not supposed to happen, the dialogue is terminated!")
 			);
 			return false;
 		}
