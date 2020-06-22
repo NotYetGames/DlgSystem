@@ -8,6 +8,8 @@
 
 ## Other Changes
 
+- **Improved** error messages context and text so that it is easier now to know from where the error comes.
+
 - **Improve** fixed some false positive warning messages when using condition types that did not require a participant
 
 - **Improvement** Make everything more blueprint friendly, everything that is dialogue data related should be read accessible from Blueprints

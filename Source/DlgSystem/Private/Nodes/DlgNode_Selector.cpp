@@ -11,10 +11,11 @@ bool UDlgNode_Selector::HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNod
 
 	if (NodesEnteredWithThisStep.Contains(this))
 	{
-		FDlgLogger::Get().Warning(
-			TEXT("Failed to enter selector node: it was entered multiple times in a single step."
+		FDlgLogger::Get().Errorf(
+			TEXT("HandleNodeEnter - Failed to enter selector node, it was entered multiple times in a single step."
 					"Theoretically with some condition magic it could make sense, but chances are that it is an endless loop,"
-					"thus entering the same selector twice with a single step is not supported. Dialogue is terminated!")
+					"thus entering the same selector twice with a single step is not supported. Dialogue is terminated.\nContext:\n\t%s"),
+			*Context.GetContextString()
 		);
 
 		return false;
@@ -55,6 +56,9 @@ bool UDlgNode_Selector::HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNod
 			checkNoEntry();
 	}
 
-	FDlgLogger::Get().Warningf(TEXT("Dialogue = %s got stuck: selector node entered, no satisfied child!"), *Context.GetDialoguePathName());
+	FDlgLogger::Get().Errorf(
+		TEXT("HandleNodeEnter - selector node entered, no satisfied child.\nContext:\n\t%s"),
+		*Context.GetContextString()
+	);
 	return false;
 }
