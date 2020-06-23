@@ -14,7 +14,7 @@
 
 - **Improvement** Make everything more blueprint friendly, everything that is dialogue data related should be read accessible from Blueprints
 
-- **Removed** deprecated functions, if you used them in your C++ code you need to use the new versions, otherwise the redirect is done for you in Blueprints automatically. The following functions were removed in favour of other:
+- **Removed** deprecated functions, if you used them in your C++ code you need to use the new versions, otherwise the redirect is done for you in Blueprints automatically. The following functions were renamed in favour of other name:
 	- `GetDialogueGuid` -> `GetDialogueGUID`
 	- `GetActiveSpeakerState` -> `GetActiveNodeSpeakerState`
 	- `GetActiveParticipantIcon` -> `GetActiveNodeParticipantIcon`
@@ -28,6 +28,8 @@
 	- `GetGenericData` -> `GetNodeGenericData`
 	- `IsEdgeConnectedToVisitedNode` -> `IsOptionConnectedToVisitedNode`
 	- `IsEdgeConnectedToEndNode` -> `IsOptionConnectedToEndNode`
+	- `CouldStartDialogue` -> `CanStartDialogue`
+	- `GetParticipantMap` -> `GetParticipantsMap`
 
 # 9.0
 
