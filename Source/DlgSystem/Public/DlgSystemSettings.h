@@ -21,7 +21,7 @@ enum class EDlgDialogueTextFormat : uint8
 
 	// DEPRECATED. The own Dialogue Text format. DEPRECATED.
 	// NOTE: this format is deprecated AND in the next version it will be removed
-	DialogueDEPRECATED	UMETA(DisplayName = "[DEPRECATED] DlgText"),
+	DialogueDEPRECATED	UMETA(Hidden),
 
 	// Hidden represents the start of the text formats index
 	StartTextFormats = DialogueDEPRECATED 	UMETA(Hidden),
