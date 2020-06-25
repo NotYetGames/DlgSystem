@@ -8,6 +8,21 @@
 #include "DlgMemory.h"
 #include "Engine/Texture2D.h"
 #include "Logging/DlgLogger.h"
+#include "Net/UnrealNetwork.h"
+
+
+UDlgContext::UDlgContext(const FObjectInitializer& ObjectInitializer)
+	: UDlgObject(ObjectInitializer)
+{
+	//UObject.bReplicates = true;
+}
+
+void UDlgContext::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ThisClass, Dialogue);
+	DOREPLIFETIME(ThisClass, Participants);
+}
 
 bool UDlgContext::ChooseChild(int32 OptionIndex)
 {

@@ -85,6 +85,12 @@ public:
 
 	void PostInitProperties() override { Super::PostInitProperties(); }
 
+	UDlgContext(const FObjectInitializer& ObjectInitializer);
+
+	// Network support
+	bool IsSupportedForNetworking() const override { return true; };
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	//
 	// Own methods
 	//
@@ -383,12 +389,12 @@ protected:
 
 protected:
 	// Current Dialogue used in this context at runtime.
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	UDlgDialogue* Dialogue = nullptr;
 
 	// All object is expected to implement the IDlgDialogueParticipant interface
 	// the key is the return value of IDlgDialogueParticipant::GetParticipantName()
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	TMap<FName, UObject*> Participants;
 
 	// The index of the active node in the dialogues Nodes array
