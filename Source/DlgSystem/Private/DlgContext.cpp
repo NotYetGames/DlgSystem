@@ -21,7 +21,28 @@ void UDlgContext::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ThisClass, Dialogue);
-	DOREPLIFETIME(ThisClass, Participants);
+	DOREPLIFETIME(ThisClass, SerializedParticipants);
+}
+
+void UDlgContext::SerializeParticipants()
+{
+	SerializedParticipants.Empty(Participants.Num());
+	for (const auto& KeyValue : Participants)
+	{
+		SerializedParticipants.Add(KeyValue.Value);
+	}
+}
+
+void UDlgContext::OnRep_SerializedParticipants()
+{
+	Participants.Empty(SerializedParticipants.Num());
+	for (UObject* Participant : SerializedParticipants)
+	{
+		if (IsValid(Participant))
+		{
+			Participants.Add(IDlgDialogueParticipant::Execute_GetParticipantName(Participant), Participant);
+		}
+	}
 }
 
 bool UDlgContext::ChooseChild(int32 OptionIndex)
@@ -497,7 +518,7 @@ bool UDlgContext::StartFromContext(const FString& ContextString, UDlgDialogue* I
 		: FString::Printf(TEXT("%s - Start"), *ContextString);
 
 	Dialogue = InDialogue;
-	Participants = InParticipants;
+	SetParticipants(InParticipants);
 	if (!ValidateParticipantsMapForDialogue(ContextMessage, Dialogue, Participants))
 	{
 		return false;
@@ -537,7 +558,7 @@ bool UDlgContext::StartFromContextFromIndex(
         : FString::Printf(TEXT("%s - StartFromIndex"), *ContextString);
 
 	Dialogue = InDialogue;
-	Participants = InParticipants;
+	SetParticipants(InParticipants);
 	VisitedNodeIndices = VisitedNodes;
 	if (!ValidateParticipantsMapForDialogue(ContextMessage, Dialogue, Participants))
 	{

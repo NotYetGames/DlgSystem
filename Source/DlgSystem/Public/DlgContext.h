@@ -95,6 +95,10 @@ public:
 	// Own methods
 	//
 
+	UFUNCTION()
+    void OnRep_SerializedParticipants();
+	void SerializeParticipants();
+
 	/**
 	 * Chooses the option with index OptionIndex of the active node index and it enters that node.
 	 * Typically called based on user input.
@@ -387,14 +391,24 @@ protected:
 	void LogErrorWithContext(const FString& ErrorMessage) const;
 	FString GetErrorMessageWithContext(const FString& ErrorMessage) const;
 
+	void SetParticipants(const TMap<FName, UObject*>& InParticipants)
+	{
+		Participants = InParticipants;
+		SerializeParticipants();
+	}
+
 protected:
 	// Current Dialogue used in this context at runtime.
 	UPROPERTY(Replicated)
 	UDlgDialogue* Dialogue = nullptr;
 
+	//helper array to serialize to Participants map for clients as well
+	UPROPERTY(Replicated, ReplicatedUsing = OnRep_SerializedParticipants)
+    TArray<UObject*> SerializedParticipants;
+
 	// All object is expected to implement the IDlgDialogueParticipant interface
 	// the key is the return value of IDlgDialogueParticipant::GetParticipantName()
-	UPROPERTY(Replicated)
+	UPROPERTY()
 	TMap<FName, UObject*> Participants;
 
 	// The index of the active node in the dialogues Nodes array
