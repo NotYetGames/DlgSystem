@@ -491,9 +491,13 @@ bool UDlgContext::IsNodeEnterable(int32 NodeIndex, TSet<const UDlgNode*> Already
 	return false;
 }
 
-bool UDlgContext::CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants) const
+bool UDlgContext::CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants)
 {
-	if (!ValidateParticipantsMapForDialogue(TEXT("CanBeStarted"), Dialogue, Participants, false))
+	// has to be stored here because other functions might need the Dialogue or the participants
+	Dialogue = InDialogue;
+	SetParticipants(InParticipants);
+
+	if (!ValidateParticipantsMapForDialogue(TEXT("CanBeStarted"), InDialogue, InParticipants, false))
 	{
 		return false;
 	}
