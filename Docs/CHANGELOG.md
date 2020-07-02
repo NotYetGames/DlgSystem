@@ -1,7 +1,9 @@
 # 10.0
 
 - Network replicate the Dialogue Context
-
+- Remove `DlgText` format (the files with the `.dlg` file extension) from being selectable in the UI Dialogue Settings.
+You can still set it manually in the config but this is not recommended as this format is DEPRECATED and is going to be removed
+as an export method in the next version.
 
 # 9.1
 
