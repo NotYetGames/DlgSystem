@@ -7,6 +7,7 @@ as an export method in the next version.
 - **Fixed** `UDlgContext::CanBeStarted` and `UDlgManager::CanStartDialogue` so that it does not always return false
   - `UDlgContext::CanBeStarted` is now a static function
 - Make the Node **Children** Array to be view only (read only) and set it as settable option inside the settings (show by default)
+- Add to whitelist `Linux Arm 64, Mac, Android, IOS, TVOS, HTML5, XboxOne, Switch, PS4, HoloLens, Lumin`. For most of these platforms we can't build ourselves but the runtime module should be platform agnostic anyways.
 
 # 9.1
 
