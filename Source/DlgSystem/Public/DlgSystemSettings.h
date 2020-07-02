@@ -210,7 +210,7 @@ public:
 
 
 	// Shows the NodeData that you can customize yourself
-	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere, DisplayName = "Node Data Visibility")
+	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere)
 	bool bShowNodeData = true;
 
 	// Where to display the SpeakerState FName property
@@ -222,9 +222,11 @@ public:
 	EDlgVoiceDisplayedFields DialogueDisplayedVoiceFields = EDlgVoiceDisplayedFields::None;
 
 	// Generic data is an UObject* which can be assigned to nodes and can be asked from the active one
-	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere, DisplayName = "Generic Data Visibility")
+	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere)
 	bool bShowGenericData = false;
 
+	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere, AdvancedDisplay)
+	bool bShowAdvancedChildren = true;
 
 	// Any properties that belong to these classes won't be shown in the suggestion list when you use the reflection system (class variables).
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)

@@ -27,13 +27,13 @@ public:
 	// IDetailCustomization interface
 	/** Called when details should be customized */
 	void CustomizeDetails(IDetailLayoutBuilder& DetailBuilder) override;
-	
+
 private:
 	/** Handler for when the text is changed */
 	void HandleTextCommitted(const FText& InText, ETextCommit::Type CommitInfo);
 	void HandleTextChanged(const FText& InText);
 
-	
+
 	/** Gets the ParticipantNames from all Dialogues. */
 	TArray<FName> GetAllDialoguesParticipantNames() const
 	{
@@ -88,6 +88,7 @@ private:
 	IDetailPropertyRow* VoiceSoundWavePropertyRow = nullptr;
 	IDetailPropertyRow* VoiceDialogueWavePropertyRow = nullptr;
 	IDetailPropertyRow* GenericDataPropertyRow = nullptr;
+	IDetailPropertyRow* ChildrenPropertyRow = nullptr;
 
 	/** The details panel layout builder reference. */
 	IDetailLayoutBuilder* DetailLayoutBuilder = nullptr;

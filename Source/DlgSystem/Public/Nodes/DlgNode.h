@@ -283,6 +283,6 @@ protected:
 	TArray<FDlgEvent> EnterEvents;
 
 	// Edges that point to Children of this Node
-	UPROPERTY(EditAnywhere, EditFixedSize, AdvancedDisplay, Category = "Dialogue|Node")
+	UPROPERTY(VisibleAnywhere, EditFixedSize, AdvancedDisplay, Category = "Dialogue|Node")
 	TArray<FDlgEdge> Children;
 };

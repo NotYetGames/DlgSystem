@@ -510,7 +510,7 @@ bool UDlgContext::CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObje
 	}
 	check(FirstParticipant != nullptr);
 
-	// Create temporary context
+	// Create temporary context that is Garbage Collected after this function returns (hopefully)
 	auto* Context = NewObject<UDlgContext>(FirstParticipant, StaticClass());
 	Context->Dialogue = InDialogue;
 	Context->SetParticipants(InParticipants);

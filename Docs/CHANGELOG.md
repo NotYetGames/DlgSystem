@@ -6,6 +6,7 @@ You can still set it manually in the config but this is not recommended as this 
 as an export method in the next version.
 - **Fixed** `UDlgContext::CanBeStarted` and `UDlgManager::CanStartDialogue` so that it does not always return false
   - `UDlgContext::CanBeStarted` is now a static function
+- Make the Node **Children** Array to be view only (read only) and set it as settable option inside the settings (show by default)
 
 # 9.1
 
