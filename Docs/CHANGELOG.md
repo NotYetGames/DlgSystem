@@ -1,9 +1,11 @@
 # 10.0
 
-- Network replicate the Dialogue Context
+- Network replicate the Dialogue Context (specifically the Dialogue and Participants)
 - Remove `DlgText` format (the files with the `.dlg` file extension) from being selectable in the UI Dialogue Settings.
 You can still set it manually in the config but this is not recommended as this format is DEPRECATED and is going to be removed
 as an export method in the next version.
+- **Fixed** `UDlgContext::CanBeStarted` and `UDlgManager::CanStartDialogue` so that it does not always return false
+  - `UDlgContext::CanBeStarted` is now a static function
 
 # 9.1
 

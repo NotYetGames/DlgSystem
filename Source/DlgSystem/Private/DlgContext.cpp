@@ -493,20 +493,33 @@ bool UDlgContext::IsNodeEnterable(int32 NodeIndex, TSet<const UDlgNode*> Already
 
 bool UDlgContext::CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants)
 {
-	// has to be stored here because other functions might need the Dialogue or the participants
-	Dialogue = InDialogue;
-	SetParticipants(InParticipants);
-
 	if (!ValidateParticipantsMapForDialogue(TEXT("CanBeStarted"), InDialogue, InParticipants, false))
 	{
 		return false;
 	}
 
+	// Get first participant
+	UObject* FirstParticipant = nullptr;
+	for (const auto& KeyValue : InParticipants)
+	{
+		if (KeyValue.Value)
+		{
+			FirstParticipant = KeyValue.Value;
+			break;
+		}
+	}
+	check(FirstParticipant != nullptr);
+
+	// Create temporary context
+	auto* Context = NewObject<UDlgContext>(FirstParticipant, StaticClass());
+	Context->Dialogue = InDialogue;
+	Context->SetParticipants(InParticipants);
+
 	// Evaluate edges/children of the start node
 	const UDlgNode& StartNode = InDialogue->GetStartNode();
 	for (const FDlgEdge& ChildLink : StartNode.GetNodeChildren())
 	{
-		if (ChildLink.IsValid() && ChildLink.Evaluate(*this, {}))
+		if (ChildLink.IsValid() && ChildLink.Evaluate(*Context, {}))
 		{
 			return true;
 		}

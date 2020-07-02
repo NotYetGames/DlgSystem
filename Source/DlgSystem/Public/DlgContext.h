@@ -351,7 +351,7 @@ public:
 	);
 
 	// Checks if the context could be started, used to check if there is any reachable node from the start node
-	bool CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
+	static bool CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Context")
 	FString GetContextString() const;
