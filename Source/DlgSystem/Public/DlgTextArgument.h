@@ -8,18 +8,29 @@ class UDlgContext;
 
 
 // Argument type, which defines both the type of the argument and the way the system will acquire the value
+// NOTE: the values are out of order here for backwards compatibility
 UENUM(BlueprintType)
 enum class EDlgTextArgumentType : uint8
 {
+	// Calls GetParticipantDisplayName on the Participant
 	DisplayName = 0	UMETA(DisplayName = "Participant Display Name"),
+
+	// Calls GetParticipantGender on the Participant
 	Gender			UMETA(DisplayName = "Participant Gender"),
 
-	DialogueInt		UMETA(DisplayName = "Dialogue Int Variable"),
-	ClassInt		UMETA(DisplayName = "Class Int Variable"),
+	// Calls GetIntValue on the Participant
+	DialogueInt 	UMETA(DisplayName = "Dialogue Int Value"),
 
-	DialogueFloat	UMETA(DisplayName = "Dialogue Float Variable"),
+	// Calls GetFloatValue on the Participant
+	DialogueFloat	UMETA(DisplayName = "Dialogue Float Value"),
+
+	// Gets the value from the Participant Int Variable
+	ClassInt 		UMETA(DisplayName = "Class Int Variable"),
+
+	// Gets the value from the Participant Float Variable
 	ClassFloat		UMETA(DisplayName = "Class Float Variable"),
 
+	// Gets the value from the Participant Text Variable
 	ClassText		UMETA(DisplayName = "Class Text Variable")
 };
 
