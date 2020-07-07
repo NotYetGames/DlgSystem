@@ -102,14 +102,16 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 	// Operation
 	{
 		OperationPropertyRow = &StructBuilder.AddProperty(
-			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, Operation)).ToSharedRef());
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, Operation)).ToSharedRef()
+		);
 		OperationPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetOperationVisibility));
 	}
 
 	// CompareType
 	{
 		CompareTypePropertyRow = &StructBuilder.AddProperty(
-			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, CompareType)).ToSharedRef());
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, CompareType)).ToSharedRef()
+		);
 		CompareTypePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCompareTypeVisibility));
 	}
 
@@ -162,35 +164,40 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 	// FloatValue
 	{
 		FloatValuePropertyRow = &StructBuilder.AddProperty(
-			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, FloatValue)).ToSharedRef());
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, FloatValue)).ToSharedRef()
+		);
 		FloatValuePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetFloatValueVisibility));
 	}
 
 	// NameValue
 	{
 		NameValuePropertyRow = &StructBuilder.AddProperty(
-			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, NameValue)).ToSharedRef());
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, NameValue)).ToSharedRef()
+		);
 		NameValuePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetNameValueVisibility));
 	}
 
 	// bBoolValue
 	{
 		BoolValuePropertyRow = &StructBuilder.AddProperty(
-			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, bBoolValue)).ToSharedRef());
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, bBoolValue)).ToSharedRef()
+		);
 		BoolValuePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetBoolValueVisibility));
 	}
 
 	// bLongTermMemory
 	{
 		LongTermMemoryPropertyRow = &StructBuilder.AddProperty(
-			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, bLongTermMemory)).ToSharedRef());
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, bLongTermMemory)).ToSharedRef()
+		);
 		LongTermMemoryPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetLongTermMemoryVisibility));
 	}
 
 	// CustomCondition
 	{
 		CustomConditionPropertyRow = &StructBuilder.AddProperty(
-			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, CustomCondition)).ToSharedRef());
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, CustomCondition)).ToSharedRef()
+		);
 		CustomConditionPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCustomConditionVisibility));
 	}
 

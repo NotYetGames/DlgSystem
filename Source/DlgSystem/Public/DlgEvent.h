@@ -75,8 +75,8 @@ public:
 	//
 
 	// Executes the event
-	// TargetParticipant is expected to implement IDlgDialogueParticipant interface
-	void Call(UDlgContext& Context, UObject* TargetParticipant) const;
+	// Participant is expected to implement IDlgDialogueParticipant interface
+	void Call(UDlgContext& Context, UObject* Participant) const;
 
 	static FString EventTypeToString(EDlgEventType Type);
 
@@ -116,7 +116,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Event")
 	bool bValue = false;
 
-	// The custom Event you must extend via blueprint
+	// User Defined Event, calls EnterEvent on the custom event object.
+	//
+	// 1. Create a new Blueprint derived from DlgEventCustom (or DlgEventCustomHideCategories)
+	// 2. Override EnterEvent
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Dialogue|Event")
 	UDlgEventCustom* CustomEvent = nullptr;
 };

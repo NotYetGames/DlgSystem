@@ -1,6 +1,9 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #pragma once
 
+#include "CoreMinimal.h"
+#include "DlgTextArgumentCustom.h"
+
 #include "DlgTextArgument.generated.h"
 
 class IDlgDialogueParticipant;
@@ -31,7 +34,14 @@ enum class EDlgTextArgumentType : uint8
 	ClassFloat		UMETA(DisplayName = "Class Float Variable"),
 
 	// Gets the value from the Participant Text Variable
-	ClassText		UMETA(DisplayName = "Class Text Variable")
+	ClassText		UMETA(DisplayName = "Class Text Variable"),
+
+
+	// User Defined Text Argument, calls GetText on the custom text arguemnt object.
+	//
+	// 1. Create a new Blueprint derived from DlgTextArgumentCustom (or DlgTextArgumentCustomHideCategories)
+	// 2. Override GetText
+	Custom						UMETA(DisplayName = "Custom Text Argument")
 };
 
 /**
@@ -54,7 +64,8 @@ public:
 		return	DisplayString == Other.DisplayString &&
 			Type == Other.Type &&
 			ParticipantName == Other.ParticipantName &&
-			VariableName == Other.VariableName;
+			VariableName == Other.VariableName &&
+			CustomTextArgument == Other.CustomTextArgument;
 	}
 
 	//
@@ -66,6 +77,8 @@ public:
 
 	// Helper method to update the array InOutArgumentArray with the new arguments from Text.
 	static void UpdateTextArgumentArray(const FText& Text, TArray<FDlgTextArgument>& InOutArgumentArray);
+
+	static FString ArgumentTypeToString(EDlgTextArgumentType Type);
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Dialogue|TextArgument")
@@ -79,6 +92,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|TextArgument")
 	FName VariableName;
+
+	// User Defined Text Argument, calls GetText on the custom text arguemnt object.
+	//
+	// 1. Create a new Blueprint derived from DlgTextArgumentCustom (or DlgTextArgumentCustomHideCategories)
+	// 2. Override GetText
+	UPROPERTY(Instanced, EditAnywhere, BlueprintReadWrite, Category = "Dialogue|TextArgument")
+	UDlgTextArgumentCustom* CustomTextArgument = nullptr;
 };
 
 template<>

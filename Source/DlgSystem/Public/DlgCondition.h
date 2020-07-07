@@ -206,7 +206,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	bool bLongTermMemory = true;
 
-	// The custom Condition you must extend via blueprint
+	// User Defined Condition, calls IsConditionMet on the custom condition object.
+	//
+	// 1. Create a new Blueprint derived from DlgConditionCustom (or DlgConditionCustomHideCategories)
+	// 2. Override IsConditionMet
+	// 3. Return true if you want the condition to succeed or false otherwise
 	UPROPERTY(Instanced, EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	UDlgConditionCustom* CustomCondition = nullptr;
 };

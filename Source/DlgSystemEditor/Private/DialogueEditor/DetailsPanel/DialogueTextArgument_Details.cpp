@@ -73,8 +73,9 @@ void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle
 
 	// VariableName
 	{
-		const TSharedPtr<IPropertyHandle> VariableNamePropertyHandle =
-			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgTextArgument, VariableName));
+		const TSharedPtr<IPropertyHandle> VariableNamePropertyHandle = StructPropertyHandle->GetChildHandle(
+			GET_MEMBER_NAME_CHECKED(FDlgTextArgument, VariableName)
+		);
 		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("VariableNameSearchKey", "Variable Name"));
 
 		VariableNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, VariableNamePropertyHandle);
@@ -88,6 +89,14 @@ void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle
 		);
 		VariableNamePropertyRow->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetVariableNameVisibility));
 		VariableNamePropertyRow->Update();
+	}
+
+	// CustomTextArgument
+	{
+		CustomTextArgumentPropertyRow = &StructBuilder.AddProperty(
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgTextArgument, CustomTextArgument)).ToSharedRef()
+		);
+		CustomTextArgumentPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCustomTextArgumentVisibility));
 	}
 
 	// Cache the initial event type
