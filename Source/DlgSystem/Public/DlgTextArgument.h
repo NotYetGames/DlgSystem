@@ -37,7 +37,7 @@ enum class EDlgTextArgumentType : uint8
 	ClassText		UMETA(DisplayName = "Class Text Variable"),
 
 
-	// User Defined Text Argument, calls GetText on the custom text arguemnt object.
+	// User Defined Text Argument, calls GetText on the custom text argument object.
 	//
 	// 1. Create a new Blueprint derived from DlgTextArgumentCustom (or DlgTextArgumentCustomHideCategories)
 	// 2. Override GetText
@@ -93,7 +93,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|TextArgument")
 	FName VariableName;
 
-	// User Defined Text Argument, calls GetText on the custom text arguemnt object.
+	// User Defined Text Argument, calls GetText on the custom text argument object.
 	//
 	// 1. Create a new Blueprint derived from DlgTextArgumentCustom (or DlgTextArgumentCustomHideCategories)
 	// 2. Override GetText
