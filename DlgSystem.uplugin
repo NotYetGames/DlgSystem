@@ -5,12 +5,12 @@
 	"EngineVersion" : "4.24.0",
 	"FriendlyName": "Not Yet: Dialogue System",
 	"Description": "Dialogue system (with text based dialogues) and nice Editor for editing dialogues",
-	"Category": "Editor",
+	"Category": "Misc",
 	"CreatedBy": "Not Yet",
-	"CreatedByURL": "https://www.notyet.eu/",
-	"DocsURL": "https://gitlab.com/NotYetGames/DlgSystem/wikis/home",
+	"CreatedByURL": "https://bit.ly/NYMarketplaceEditor",
+	"DocsURL": "https://bit.ly/DlgWikiEditor",
 	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/6d0255a60be340dfa1c556503cc57eb3",
-	"SupportURL": "https://gitlab.com/NotYetGames/DlgSystem",
+	"SupportURL": "https://bit.ly/DlgSourceEditor",
 	"CanContainContent": true,
 	"IsBetaVersion": false,
 	"Installed": false,
@@ -42,7 +42,7 @@
 			"Name": "DlgSystemEditor",
 			"Type": "UncookedOnly",
 			"LoadingPhase": "PreDefault",
-			"WhitelistPlatforms": ["Win64", "Win32", "Linux"]
+			"WhitelistPlatforms": ["Win64", "Win32", "Linux", "Mac"]
 		}
 	]
 }
