@@ -1,3 +1,21 @@
+# 10.0
+
+- **Network replicate** the Dialogue Context (specifically the Dialogue and Participants)
+- **Remove** `DlgText` format (the files with the `.dlg` file extension) from being selectable in the UI Dialogue Settings.
+You can still set it manually in the config but this is not recommended as this format is DEPRECATED and is going to be removed
+as an export method in the next version.
+- **Fixed** `UDlgContext::CanBeStarted` and `UDlgManager::CanStartDialogue` so that it does not always return false
+  - `UDlgContext::CanBeStarted` is now a static function
+- **Make** the Node **Children** Array to be view only (read only) and set it as settable option inside the settings (show by default)
+- **Add** to whitelist `Linux Arm 64, Mac, Android, IOS, TVOS, HTML5, XboxOne, Switch, PS4, HoloLens, Lumin`. For most of these platforms we can't build ourselves but the runtime module should be platform agnostic anyways.
+- **Add** The Dialogue Context as the first argument to `UDlgConditionCustom::IsConditionMet`. Only C++ users will have to add it manually in  their code.
+- **Change** Plugin category to be `Misc`
+- **Add** better tooltips to events/conditions/text arguments, it actually tells you what method it calls and where it calls it (dialogue interface or class of the participant).
+- **Add** Custom Text Argument.
+  - User Defined Text Argument, calls GetText on the custom text argument object.
+    1. Create a new Blueprint derived from `DlgTextArgumentCustom` (or `DlgTextArgumentCustomHideCategories`)
+    2. Override GetText
+
 # 9.1
 
 ## Important Bug Fixes

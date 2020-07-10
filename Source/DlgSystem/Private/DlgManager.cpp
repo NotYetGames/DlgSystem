@@ -127,8 +127,7 @@ bool UDlgManager::CanStartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArr
 		return false;
 	}
 
-	const auto* Context = NewObject<UDlgContext>(Participants[0], UDlgContext::StaticClass());
-	return Context->CanBeStarted(Dialogue, ParticipantBinding);
+	return UDlgContext::CanBeStarted(Dialogue, ParticipantBinding);
 }
 
 UDlgContext* UDlgManager::ResumeDialogue(

@@ -24,7 +24,9 @@ class DLGSYSTEM_API IDlgDialogueParticipant
 {
 	GENERATED_IINTERFACE_BODY()
 
-	// Participant information:
+	//
+	// Participant information
+	//
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback")
 	FName GetParticipantName() const;
@@ -45,7 +47,9 @@ class DLGSYSTEM_API IDlgDialogueParticipant
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback")
 	UTexture2D* GetParticipantIcon(FName ActiveSpeaker, FName ActiveSpeakerState) const;
 
-	// Conditions:
+	//
+	// Conditions
+	//
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback|Condition")
 	bool CheckCondition(const UDlgContext* Context, FName ConditionName) const;
@@ -62,8 +66,9 @@ class DLGSYSTEM_API IDlgDialogueParticipant
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback|Condition")
 	FName GetNameValue(FName ValueName) const;
 
-
-	// Events:
+	//
+	// Events
+	//
 
 	 /** @return value: irrelevant */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback|Event")

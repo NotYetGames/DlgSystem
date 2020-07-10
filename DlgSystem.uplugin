@@ -1,9 +1,9 @@
 {
 	"FileVersion": 3,
-	"Version": 9,
-	"VersionName": "9.1",
+	"Version": 10,
+	"VersionName": "10",
 	"EngineVersion" : "4.25.0",
-	"FriendlyName": "DlgSystem",
+	"FriendlyName": "Not Yet: Dialogue System",
 	"Description": "Dialogue system (with text based dialogues) and nice Editor for editing dialogues",
 	"Category": "Editor",
 	"CreatedBy": "Not Yet",
@@ -20,7 +20,22 @@
 			"Name": "DlgSystem",
 			"Type": "Runtime",
 			"LoadingPhase": "PreDefault",
-			"WhitelistPlatforms": ["Win64", "Win32", "Linux", "XboxOne", "Switch"]
+			"WhitelistPlatforms":
+			[
+				"Win64",
+				"Win32",
+				"Linux",
+				"LinuxAArch64",
+				"Mac",
+				"Android",
+				"IOS",
+				"TVOS",
+				"XboxOne",
+				"Switch",
+				"PS4",
+				"HoloLens",
+				"Lumin"
+			]
 		},
 		{
 			"Name": "DlgSystemEditor",

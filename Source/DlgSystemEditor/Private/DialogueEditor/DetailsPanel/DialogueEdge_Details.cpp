@@ -75,6 +75,7 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 		SpeakerStatePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(SpeakerStateDetailWidgetRow, SpeakerStatePropertyHandle);
 		SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
 			SNew(SDialogueTextPropertyPickList)
+			.IsEnabled(InStructPropertyHandle->IsEditable())
 			.AvailableSuggestions(this, &Self::GetAllDialoguesSpeakerStates)
 			.OnTextCommitted(this, &Self::HandleSpeakerStateCommitted)
 			.HasContextCheckbox(false)

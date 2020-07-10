@@ -5,6 +5,7 @@
 
 #include "DlgSystemPrivatePCH.h"
 #include "DlgContext.h"
+#include "DlgHelper.h"
 #include "DlgDialogueParticipant.h"
 #include "NYReflectionHelper.h"
 #include "Logging/DlgLogger.h"
@@ -13,15 +14,14 @@ FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgCo
 {
 	// If participant name is not valid we use the node owner name
 	const FName ValidParticipantName = ParticipantName == NAME_None ? NodeOwner : ParticipantName;
-
 	const UObject* Participant = Context.GetParticipant(ValidParticipantName);
 	if (Participant == nullptr)
 	{
 		FDlgLogger::Get().Errorf(
-			TEXT("Failed to construct text argument = %s, invalid owner name = %s, NodeOwner = %s"),
-			*DisplayString, *ValidParticipantName.ToString(), *NodeOwner.ToString()
+			TEXT("FAILED to construct text argument because the PARTICIPANT is INVALID (Supplied Participant = %s). \nContext:\n\t%s, DisplayString = %s, ParticipantName = %s, ArgumentType = %s"),
+			*ValidParticipantName.ToString(), *Context.GetContextString(), *DisplayString, *ParticipantName.ToString(), *ArgumentTypeToString(Type)
 		);
-		return FFormatArgumentValue(0);
+		return FFormatArgumentValue(FText::FromString(TEXT("[CustomTextArgument is INVALID. Missing Participant. Check log]")));
 	}
 
 	switch (Type)
@@ -46,6 +46,18 @@ FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgCo
 
 		case EDlgTextArgumentType::Gender:
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetParticipantGender(Participant));
+
+		case EDlgTextArgumentType::Custom:
+			if (CustomTextArgument == nullptr)
+			{
+				FDlgLogger::Get().Errorf(
+					TEXT("Custom Text Argument is INVALID. Returning Error Text. Context:\n\t%s, Participant = %s"),
+					*Context.GetContextString(), Participant ? *Participant->GetPathName() : TEXT("INVALID")
+				);
+				return FFormatArgumentValue(FText::FromString(TEXT("[CustomTextArgument is INVALID. Missing Custom Text Argument. Check log]")));
+			}
+
+			return FFormatArgumentValue(CustomTextArgument->GetText(&Context, Participant, DisplayString));
 
 		default:
 			checkNoEntry();
@@ -78,4 +90,11 @@ void FDlgTextArgument::UpdateTextArgumentArray(const FText& Text, TArray<FDlgTex
 
 		InOutArgumentArray.Add(Argument);
 	}
+}
+
+FString FDlgTextArgument::ArgumentTypeToString(EDlgTextArgumentType Type)
+{
+	FString EnumValue;
+	FDlgHelper::ConvertEnumToString<EDlgTextArgumentType>(TEXT("EDlgTextArgumentType"), Type, false, EnumValue);
+	return EnumValue;
 }
