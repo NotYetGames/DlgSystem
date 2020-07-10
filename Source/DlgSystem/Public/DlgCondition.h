@@ -27,34 +27,45 @@ enum class EDlgConditionStrength : uint8
 UENUM(BlueprintType)
 enum class EDlgConditionType : uint8
 {
-	// A logical operation on a requested int variable acquired via the IDlgParticipant getter function
-	IntCall = 0		UMETA(DisplayName = "Check int call"),
+	// Calls GetIntValue on the Participant
+	IntCall = 0		UMETA(DisplayName = "Check Dialogue Int Value"),
 
-	// A logical operation on a requested float variable acquired via the IDlgParticipant getter function
-	FloatCall		UMETA(DisplayName = "Check float call"),
+	// Calls GetFloatValue on the Participant
+	FloatCall		UMETA(DisplayName = "Check Dialogue Float Value"),
 
-	// A logical operation on a requested bool variable acquired via the IDlgParticipant getter function
-	BoolCall		UMETA(DisplayName = "Check bool call"),
+	// Calls GetBoolValue on the Participant
+	BoolCall		UMETA(DisplayName = "Check Dialogue Bool Value"),
 
-	// A logical operation on a requested name variable acquired via the IDlgParticipant getter function
-	NameCall		UMETA(DisplayName = "Check name call"),
+	// Calls GetNameValue on the Participant
+	NameCall		UMETA(DisplayName = "Check Dialogue Name Value"),
 
-	// A named condition call on the selected Participant
-	EventCall		UMETA(DisplayName = "Check named condition"),
+	// A named condition call.
+	// Calls CheckCondition on the Participant
+	EventCall		UMETA(DisplayName = "Check Dialogue Named Condition"),
 
-	// A logical operation on an variables acquired from the object using the UClass
-	ClassIntVariable	UMETA(DisplayName = "Check class int variable"),
-	ClassFloatVariable	UMETA(DisplayName = "Check class float variable"),
-	ClassBoolVariable	UMETA(DisplayName = "Check class bool variable"),
-	ClassNameVariable	UMETA(DisplayName = "Check class name variable"),
+	// Gets the value from the Participant Int Variable
+	ClassIntVariable	UMETA(DisplayName = "Check Class Int Variable"),
 
-	// Status check of the selected node index
-	WasNodeVisited		UMETA(DisplayName = "Was node already visited"),
+	// Gets the value from the Participant Float Variable
+	ClassFloatVariable	UMETA(DisplayName = "Check Class Float Variable"),
 
-	// Checks if target node has any satisfied child
-	HasSatisfiedChild	UMETA(DisplayName = "Has satisfied child"),
+	// Gets the value from the Participant Bool Variable
+	ClassBoolVariable	UMETA(DisplayName = "Check Class Bool Variable"),
 
-	// Custom User defined
+	// Gets the value from the Participant Name Variable
+	ClassNameVariable	UMETA(DisplayName = "Check Class Name Variable"),
+
+	// Checks if the target node was already visited
+	WasNodeVisited		UMETA(DisplayName = "Was node already visited?"),
+
+	// Checks if the target node has any satisfied child
+	HasSatisfiedChild	UMETA(DisplayName = "Has satisfied child?"),
+
+	// User Defined Condition, calls IsConditionMet on the custom condition object.
+	//
+	// 1. Create a new Blueprint derived from DlgConditionCustom (or DlgConditionCustomHideCategories)
+	// 2. Override IsConditionMet
+	// 3. Return true if you want the condition to succeed or false otherwise
 	Custom				UMETA(DisplayName = "Custom Condition")
 };
 
@@ -74,8 +85,13 @@ enum class EDlgOperation : uint8
 UENUM(BlueprintType)
 enum class EDlgCompare : uint8
 {
+	// Compares against a constat value
 	ToConst = 0			UMETA(DisplayName = "Compare to Constant"),
-	ToVariable			UMETA(DisplayName = "Compare to Variable"),
+
+	// Compares against a Dialogue Value
+	ToVariable			UMETA(DisplayName = "Compare to Dialogue Value"),
+
+	// Compares against a Participant Class Variable
 	ToClassVariable		UMETA(DisplayName = "Compare to Class Variable")
 };
 
@@ -190,7 +206,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	bool bLongTermMemory = true;
 
-	// The custom Condition you must extend via blueprint
+	// User Defined Condition, calls IsConditionMet on the custom condition object.
+	//
+	// 1. Create a new Blueprint derived from DlgConditionCustom (or DlgConditionCustomHideCategories)
+	// 2. Override IsConditionMet
+	// 3. Return true if you want the condition to succeed or false otherwise
 	UPROPERTY(Instanced, EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	UDlgConditionCustom* CustomCondition = nullptr;
 };

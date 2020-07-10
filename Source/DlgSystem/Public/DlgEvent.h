@@ -11,22 +11,37 @@ class UDlgContext;
 UENUM(BlueprintType)
 enum class EDlgEventType : uint8
 {
-	// Just a notification with an FName parameter on the Participant
+	// Calls OnDialogueEvent on the Participant
 	Event						UMETA(DisplayName = "Event"),
 
-	// Events to modify basic variable types. Calls the interface methods on the Participant
-	ModifyInt					UMETA(DisplayName = "Modify Int"),
-	ModifyFloat					UMETA(DisplayName = "Modify Float"),
-	ModifyBool					UMETA(DisplayName = "Modify Bool"),
-	ModifyName					UMETA(DisplayName = "Modify Name"),
+	// Calls ModifyIntValue on the Participant
+	ModifyInt					UMETA(DisplayName = "Modify Dialogue Int Value"),
 
-	// Events to modify the variable of the participant UObject by using its UClass
-	ModifyClassIntVariable		UMETA(DisplayName = "Modify class Int variable"),
-	ModifyClassFloatVariable	UMETA(DisplayName = "Modify class Float variable"),
-	ModifyClassBoolVariable		UMETA(DisplayName = "Modify class Bool variable"),
-	ModifyClassNameVariable		UMETA(DisplayName = "Modify class Name variable"),
+	// Calls ModifyFloatValue on the Participant
+	ModifyFloat					UMETA(DisplayName = "Modify Dialogue Float Value"),
 
-	// User Defined
+	// Calls ModifyBoolValue on the Participant
+	ModifyBool					UMETA(DisplayName = "Modify Dialogue Bool Value"),
+
+	// Calls ModifyNameValue on the Participant
+	ModifyName					UMETA(DisplayName = "Modify Dialogue Name Value"),
+
+	// Modifies the value from the Participant Int Variable
+	ModifyClassIntVariable		UMETA(DisplayName = "Modify Class Int Variable"),
+
+	// Modifies the value from the Participant Float Variable
+	ModifyClassFloatVariable	UMETA(DisplayName = "Modify Class Float Variable"),
+
+	// Modifies the value from the Participant Bool Variable
+	ModifyClassBoolVariable		UMETA(DisplayName = "Modify Class Bool Variable"),
+
+	// Modifies the value from the Participant Name Variable
+	ModifyClassNameVariable		UMETA(DisplayName = "Modify Class Name Variable"),
+
+	// User Defined Event, calls EnterEvent on the custom event object.
+	//
+	// 1. Create a new Blueprint derived from DlgEventCustom (or DlgEventCustomHideCategories)
+	// 2. Override EnterEvent
 	Custom						UMETA(DisplayName = "Custom Event")
 };
 
@@ -60,8 +75,8 @@ public:
 	//
 
 	// Executes the event
-	// TargetParticipant is expected to implement IDlgDialogueParticipant interface
-	void Call(UDlgContext& Context, UObject* TargetParticipant) const;
+	// Participant is expected to implement IDlgDialogueParticipant interface
+	void Call(UDlgContext& Context, UObject* Participant) const;
 
 	static FString EventTypeToString(EDlgEventType Type);
 
@@ -101,7 +116,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Event")
 	bool bValue = false;
 
-	// The custom Event you must extend via blueprint
+	// User Defined Event, calls EnterEvent on the custom event object.
+	//
+	// 1. Create a new Blueprint derived from DlgEventCustom (or DlgEventCustomHideCategories)
+	// 2. Override EnterEvent
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Dialogue|Event")
 	UDlgEventCustom* CustomEvent = nullptr;
 };

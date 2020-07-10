@@ -6,9 +6,8 @@
 
 class UDlgContext;
 
-// Abstract base class for node data
-// Defining class via inheriting from UNYTaskBase outside of the plugin is possible both in Blueprint and C++
-// Extend this class to define additional data you want to store on your nodes
+// Abstract base class for a custom event
+// Extend this class to define additional data you want to store
 UCLASS(Blueprintable, BlueprintType, Abstract, EditInlineNew)
 class DLGSYSTEM_API UDlgEventCustom : public UDlgObject
 {

@@ -85,9 +85,19 @@ public:
 
 	void PostInitProperties() override { Super::PostInitProperties(); }
 
+	UDlgContext(const FObjectInitializer& ObjectInitializer);
+
+	// Network support
+	bool IsSupportedForNetworking() const override { return true; };
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	//
 	// Own methods
 	//
+
+	UFUNCTION()
+    void OnRep_SerializedParticipants();
+	void SerializeParticipants();
 
 	/**
 	 * Chooses the option with index OptionIndex of the active node index and it enters that node.
@@ -341,7 +351,7 @@ public:
 	);
 
 	// Checks if the context could be started, used to check if there is any reachable node from the start node
-	bool CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants) const;
+	static bool CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Context")
 	FString GetContextString() const;
@@ -381,10 +391,20 @@ protected:
 	void LogErrorWithContext(const FString& ErrorMessage) const;
 	FString GetErrorMessageWithContext(const FString& ErrorMessage) const;
 
+	void SetParticipants(const TMap<FName, UObject*>& InParticipants)
+	{
+		Participants = InParticipants;
+		SerializeParticipants();
+	}
+
 protected:
 	// Current Dialogue used in this context at runtime.
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	UDlgDialogue* Dialogue = nullptr;
+
+	//helper array to serialize to Participants map for clients as well
+	UPROPERTY(Replicated, ReplicatedUsing = OnRep_SerializedParticipants)
+    TArray<UObject*> SerializedParticipants;
 
 	// All object is expected to implement the IDlgDialogueParticipant interface
 	// the key is the return value of IDlgDialogueParticipant::GetParticipantName()

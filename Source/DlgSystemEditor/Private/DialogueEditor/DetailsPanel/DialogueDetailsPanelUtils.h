@@ -57,6 +57,11 @@ public:
 		return GetDefault<UDlgSystemSettings>()->bShowGenericData ? EVisibility::Visible : EVisibility::Hidden;
 	}
 
+	static EVisibility GetChildrenVisibility()
+	{
+		return GetDefault<UDlgSystemSettings>()->bShowAdvancedChildren ? EVisibility::Visible : EVisibility::Hidden;
+	}
+
 	/** Gets the appropriate modifier key for an input field depending on the Dialogue System Settings */
 	static EModifierKey::Type GetModifierKeyFromDialogueSettings()
 	{
