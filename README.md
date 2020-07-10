@@ -18,7 +18,7 @@ Branch Unreal version: `4.23`
     - Option to import from and export to plain text formats (e.g. json)
     - Real time display/edit functionality of the Dialogue runtime data.
 
-Not yet convinced? Have you seen our [`showcase page`](https://gitlab.com/NotYetGames/DlgSystem/wikis/Feature-Showcase)?
+Not yet convinced? Have you seen our [`showcase page`][(https://gitlab.com/NotYetGames/DlgSystem/wikis/Feature-Showcase](https://bit.ly/DlgFeatureShowcase))?
 
 ## General Information
 
@@ -34,11 +34,11 @@ See the [Wiki](https://gitlab.com/NotYetGames/DlgSystem/wikis/home) for the manu
 [DlgSystemExample project](https://gitlab.com/NotYetGames/DlgSystemExample/tree/4.23) is also provided.
 
 Brought to you by Not Yet:
-* Discord: https://discord.gg/NotYet
+* Discord: [HERE](https://bit.ly/NYDiscord)
 * Website: [warriorb.com](http://www.warriorb.com)
 * Twitter: https://twitter.com/NotYetDevs
-* [Plugin Forum post](https://forums.unrealengine.com/community/community-content-tools-and-tutorials/1424923-open-source-dialogue-system-plugin)
-* [Plugin Marketplace](https://www.unrealengine.com/marketplace/not-yet-dialogue-system)
+* [Plugin Forum post](https://bit.ly/DlgForum)
+* [Plugin Marketplace](https://bit.ly/DlgMarketplace)
 
 ## Support
 
@@ -46,7 +46,7 @@ NOTE: that initially the plugin was free on the marketplace but later we switche
 
 ### Buy us some tea/coffee
 
-You can buy [this plugin](https://www.unrealengine.com/marketplace/not-yet-dialogue-system) or our other plugins on the [unreal engine marketplace](https://www.unrealengine.com/marketplace/en-US/profile/Not+Yet) and always get binary support for the latest 3 engine versions.
+You can buy [this plugin](https://bit.ly/DlgMarketplace) or our other plugins on the [unreal engine marketplace](https://www.unrealengine.com/marketplace/en-US/profile/Not+Yet) and always get binary support for the latest 3 engine versions.
 
 Or you can just donate for that cup of tea/coffee :):
 

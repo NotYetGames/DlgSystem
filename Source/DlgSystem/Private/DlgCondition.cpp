@@ -55,7 +55,7 @@ bool FDlgCondition::IsConditionMet(const UDlgContext& Context, const UObject* Pa
 			return false;
 		}
 
-		return CustomCondition->IsConditionMet(Participant);
+		return CustomCondition->IsConditionMet(&Context, Participant);
 	}
 
 	// Must have participant from this point onwards

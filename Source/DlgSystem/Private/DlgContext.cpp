@@ -8,6 +8,42 @@
 #include "DlgMemory.h"
 #include "Engine/Texture2D.h"
 #include "Logging/DlgLogger.h"
+#include "Net/UnrealNetwork.h"
+
+
+UDlgContext::UDlgContext(const FObjectInitializer& ObjectInitializer)
+	: UDlgObject(ObjectInitializer)
+{
+	//UObject.bReplicates = true;
+}
+
+void UDlgContext::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ThisClass, Dialogue);
+	DOREPLIFETIME(ThisClass, SerializedParticipants);
+}
+
+void UDlgContext::SerializeParticipants()
+{
+	SerializedParticipants.Empty(Participants.Num());
+	for (const auto& KeyValue : Participants)
+	{
+		SerializedParticipants.Add(KeyValue.Value);
+	}
+}
+
+void UDlgContext::OnRep_SerializedParticipants()
+{
+	Participants.Empty(SerializedParticipants.Num());
+	for (UObject* Participant : SerializedParticipants)
+	{
+		if (IsValid(Participant))
+		{
+			Participants.Add(IDlgDialogueParticipant::Execute_GetParticipantName(Participant), Participant);
+		}
+	}
+}
 
 bool UDlgContext::ChooseChild(int32 OptionIndex)
 {
@@ -455,18 +491,35 @@ bool UDlgContext::IsNodeEnterable(int32 NodeIndex, TSet<const UDlgNode*> Already
 	return false;
 }
 
-bool UDlgContext::CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants) const
+bool UDlgContext::CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants)
 {
-	if (!ValidateParticipantsMapForDialogue(TEXT("CanBeStarted"), Dialogue, Participants, false))
+	if (!ValidateParticipantsMapForDialogue(TEXT("CanBeStarted"), InDialogue, InParticipants, false))
 	{
 		return false;
 	}
+
+	// Get first participant
+	UObject* FirstParticipant = nullptr;
+	for (const auto& KeyValue : InParticipants)
+	{
+		if (KeyValue.Value)
+		{
+			FirstParticipant = KeyValue.Value;
+			break;
+		}
+	}
+	check(FirstParticipant != nullptr);
+
+	// Create temporary context that is Garbage Collected after this function returns (hopefully)
+	auto* Context = NewObject<UDlgContext>(FirstParticipant, StaticClass());
+	Context->Dialogue = InDialogue;
+	Context->SetParticipants(InParticipants);
 
 	// Evaluate edges/children of the start node
 	const UDlgNode& StartNode = InDialogue->GetStartNode();
 	for (const FDlgEdge& ChildLink : StartNode.GetNodeChildren())
 	{
-		if (ChildLink.IsValid() && ChildLink.Evaluate(*this, {}))
+		if (ChildLink.IsValid() && ChildLink.Evaluate(*Context, {}))
 		{
 			return true;
 		}
@@ -482,7 +535,7 @@ bool UDlgContext::StartFromContext(const FString& ContextString, UDlgDialogue* I
 		: FString::Printf(TEXT("%s - Start"), *ContextString);
 
 	Dialogue = InDialogue;
-	Participants = InParticipants;
+	SetParticipants(InParticipants);
 	if (!ValidateParticipantsMapForDialogue(ContextMessage, Dialogue, Participants))
 	{
 		return false;
@@ -522,7 +575,7 @@ bool UDlgContext::StartFromContextFromIndex(
         : FString::Printf(TEXT("%s - StartFromIndex"), *ContextString);
 
 	Dialogue = InDialogue;
-	Participants = InParticipants;
+	SetParticipants(InParticipants);
 	VisitedNodeIndices = VisitedNodes;
 	if (!ValidateParticipantsMapForDialogue(ContextMessage, Dialogue, Participants))
 	{

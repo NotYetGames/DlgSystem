@@ -1,16 +1,16 @@
 {
 	"FileVersion": 3,
-	"Version": 9,
-	"VersionName": "9.1",
+	"Version": 10,
+	"VersionName": "10",
 	"EngineVersion" : "4.23.0",
-	"FriendlyName": "DlgSystem",
+	"FriendlyName": "Not Yet: Dialogue System",
 	"Description": "Dialogue system (with text based dialogues) and nice Editor for editing dialogues",
-	"Category": "Editor",
+	"Category": "Misc",
 	"CreatedBy": "Not Yet",
-	"CreatedByURL": "https://www.notyet.eu/",
-	"DocsURL": "https://gitlab.com/NotYetGames/DlgSystem/wikis/home",
+	"CreatedByURL": "https://bit.ly/NYMarketplaceEditor",
+	"DocsURL": "https://bit.ly/DlgWikiEditor",
 	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/6d0255a60be340dfa1c556503cc57eb3",
-	"SupportURL": "https://gitlab.com/NotYetGames/DlgSystem",
+	"SupportURL": "https://bit.ly/DlgSourceEditor",
 	"CanContainContent": true,
 	"IsBetaVersion": false,
 	"Installed": false,
@@ -20,13 +20,29 @@
 			"Name": "DlgSystem",
 			"Type": "Runtime",
 			"LoadingPhase": "PreDefault",
-			"WhitelistPlatforms": ["Win64", "Win32", "Linux", "XboxOne", "Switch"]
+			"WhitelistPlatforms":
+			[
+				"Win64",
+				"Win32",
+				"Linux",
+				"LinuxAArch64",
+				"Mac",
+				"Android",
+				"IOS",
+				"TVOS",
+				"HTML5",
+				"XboxOne",
+				"Switch",
+				"PS4",
+				"HoloLens",
+				"Lumin"
+			]
 		},
 		{
 			"Name": "DlgSystemEditor",
 			"Type": "Developer",
 			"LoadingPhase": "PreDefault",
-			"WhitelistPlatforms": ["Win64", "Win32", "Linux"]
+			"WhitelistPlatforms": ["Win64", "Win32", "Linux", "Mac"]
 		}
 	]
 }

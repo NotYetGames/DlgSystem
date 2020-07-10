@@ -330,16 +330,16 @@ public:
 	void CheckDialogueNodeSyncWithGraphNode(bool bStrictCheck = false) const;
 
 	/** Gets the parent nodes that are connected to the input pin. This handles the proxy connection to the UDialogueGraphNode_Edge.  */
-	const TArray<UDialogueGraphNode*> GetParentNodes() const;
+	TArray<UDialogueGraphNode*> GetParentNodes() const;
 
 	/** Gets the child nodes that are connected from the output pin. This handles the proxy connection to the UDialogueGraphNode_Edge.  */
-	const TArray<UDialogueGraphNode*> GetChildNodes() const;
+	TArray<UDialogueGraphNode*> GetChildNodes() const;
 
 	/** Gets the parent node edges that are connected from the input pin. This returns the proxy edge nodes. To surpass the proxy connection use GetParentNodes. */
-	const TArray<UDialogueGraphNode_Edge*> GetParentEdgeNodes(bool bCheckChild = true) const;
+	TArray<UDialogueGraphNode_Edge*> GetParentEdgeNodes(bool bCheckChild = true) const;
 
 	/** Gets the child node edges that are connected from the output pin. This returns the proxy edge nodes. To surpass the proxy connection use GetChildNodes. */
-	const TArray<UDialogueGraphNode_Edge*> GetChildEdgeNodes(bool bCheckParent = true) const;
+	TArray<UDialogueGraphNode_Edge*> GetChildEdgeNodes(bool bCheckParent = true) const;
 
 	/** Does this node have the child edge ChildEdgeToFind? */
 	bool HasChildEdgeNode(const UDialogueGraphNode_Edge* ChildEdgeToFind) const;

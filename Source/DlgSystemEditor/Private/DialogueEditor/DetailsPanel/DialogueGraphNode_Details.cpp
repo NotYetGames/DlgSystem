@@ -88,8 +88,11 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 	}
 	if (!bIsEndNode)
 	{
-		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameChildren()))
-			.ShouldAutoExpand(true);
+		ChildrenPropertyRow = &BaseDataCategory.AddProperty(
+			PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameChildren())
+		);
+		ChildrenPropertyRow->ShouldAutoExpand(true);
+		ChildrenPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetChildrenVisibility));
 	}
 
 	// Do nothing

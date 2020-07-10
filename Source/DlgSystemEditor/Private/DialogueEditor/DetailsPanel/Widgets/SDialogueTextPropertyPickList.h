@@ -18,6 +18,7 @@ class SDialogueTextPropertyPickList : public SCompoundWidget
 {
 	typedef TSharedPtr<FName> TextListItem;
 	typedef SDialogueTextPropertyPickList Self;
+	typedef SCompoundWidget Super;
 
 public:
 	SLATE_BEGIN_ARGS(Self)
@@ -122,7 +123,12 @@ public:
 	FReply OnFocusReceived(const FGeometry& MyGeometry, const FFocusEvent& InFocusEvent) override
 	{
 		// Forward keyboard focus to our editable text widget
-		return FReply::Handled().SetUserFocus(InputTextWidget.ToSharedRef(), InFocusEvent.GetCause());
+		if (IsEnabled() && ComboButtonWidget.IsValid() && ComboButtonWidget->IsEnabled())
+		{
+			return FReply::Handled().SetUserFocus(InputTextWidget.ToSharedRef(), InFocusEvent.GetCause());
+		}
+
+		return Super::OnFocusReceived(MyGeometry, InFocusEvent);
 	}
 
 	// Own functions
