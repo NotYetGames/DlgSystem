@@ -25,7 +25,6 @@
 				"Win64",
 				"Win32",
 				"Linux",
-				"LinuxAArch64",
 				"Mac",
 				"Android",
 				"IOS",
@@ -35,7 +34,8 @@
 				"Switch",
 				"PS4",
 				"HoloLens",
-				"Lumin"
+				"Lumin",
+				"Quail"
 			]
 		},
 		{
