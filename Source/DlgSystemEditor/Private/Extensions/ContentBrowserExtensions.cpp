@@ -2,6 +2,7 @@
 #include "ContentBrowserExtensions.h"
 
 #include "ContentBrowserModule.h"
+#include "DlgEventCustom.h"
 #include "Engine/Blueprint.h"
 
 #include "DlgManager.h"
@@ -10,24 +11,52 @@
 #define LOCTEXT_NAMESPACE "DialogueSystemContentBrowserExtensions"
 
 
-FContentBrowserMenuExtender_SelectedAssets ContentBrowserExtenderDelegate;
-FDelegateHandle ContentBrowserExtenderDelegateHandle;
-
 //////////////////////////////////////////////////////////////////////////
-// FContentBrowserSelectedAssetExtensionBase
-struct FContentBrowserSelectedAssetExtensionBase
+// A filter that searches for Dialogues
+// We use this because it allows us more flexibility FAssetTypeActions_Dialogue
+class FFrontendFilter_Dialogue : public FFrontendFilter
 {
 public:
-	TArray<FAssetData> SelectedAssets;
+    FFrontendFilter_Dialogue(const TSharedPtr<FFrontendFilterCategory>& InCategory)
+        : FFrontendFilter(InCategory)
+    {
+    }
 
-public:
-	virtual void Execute() {}
-	virtual ~FContentBrowserSelectedAssetExtensionBase() {}
+	//
+	// FFrontendFilter implementation
+	//
+
+	FString GetName() const override
+    {
+    	return TEXT("Dialogue");
+    }
+	FText GetDisplayName() const override
+    {
+    	return LOCTEXT("FilterDialogue_Name", "Dialogue");
+    }
+	FText GetToolTipText() const override
+    {
+    	return LOCTEXT("FilterDialogue_ToolTip", "Filter By Dialogue");
+    }
+
+	FLinearColor GetColor() const override  { return FLinearColor::Yellow; }
+	FName GetIconName() const override { return NAME_None; }
+
+	void SetCurrentFilter(const FARFilter& InBaseFilter) override { }
+
+	//
+	// IFilter implementation
+	//
+
+	/** Returns whether the specified Item passes the Filter's restrictions */
+	bool PassesFilter(FAssetFilterType InItem) const override
+    {
+    	return InItem.GetClass() == UDlgDialogue::StaticClass();
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////
-// FFrontendFilter_DialogueParticipants
-/** A filter that search for blueprints that have implemented the Dialogue Participant */
+// A filter that search for blueprints that have implemented the Dialogue Participant
 class FFrontendFilter_DialogueParticipants : public FFrontendFilter
 {
 public:
@@ -36,36 +65,32 @@ public:
 	{
 	}
 
+	//
 	// FFrontendFilter implementation
-	/** Returns the system name for this filter */
+	//
+
 	FString GetName() const override
 	{
 		return TEXT("Dialogue Participant Filter");
 	}
-
-	/** Returns the human readable name for this filter */
 	FText GetDisplayName() const override
 	{
-		return LOCTEXT("FilterDialogueParticipants_Name", "Dialogue Participants");
+		return LOCTEXT("FilterDialogueParticipants_Name", "Dialogue Participant");
 	}
-
-	/** Returns the tooltip for this filter, shown in the filters menu */
 	FText GetToolTipText() const override
 	{
-		return LOCTEXT("FilterDialogueParticipants_ToolTip", "Search for any Blueprints that implement the Dialogue Participant Interface.");
+		return LOCTEXT("FilterDialogueParticipants_ToolTip", "Search for any Blueprints that implement the Dialogue Participant Interface");
 	}
 
-	/** Returns the color this filter button will be when displayed as a button */
-	FLinearColor GetColor() const override  { return FLinearColor::Yellow; }
-
-	/** Returns the name of the icon to use in menu entries */
+	FLinearColor GetColor() const override  { return FLinearColor(0.91f, 0.91f, 0.f); }
 	FName GetIconName() const override { return NAME_None; }
 
-	/** Invoke to set the ARFilter that is currently used to filter assets in the asset view */
 	void SetCurrentFilter(const FARFilter& InBaseFilter) override { }
-	// End of FFrontendFilter implementation
 
+	//
 	// IFilter implementation
+	//
+
 	/** Returns whether the specified Item passes the Filter's restrictions */
 	bool PassesFilter(FAssetFilterType InItem) const override
 	{
@@ -81,19 +106,191 @@ public:
 
 		return false;
 	}
-	// End of IFilter implementation
+};
+
+//////////////////////////////////////////////////////////////////////////
+// A filter that search for Custom Events
+class FFrontendFilter_DialogueCustomEvent : public FFrontendFilter
+{
+public:
+    FFrontendFilter_DialogueCustomEvent(const TSharedPtr<FFrontendFilterCategory>& InCategory)
+        : FFrontendFilter(InCategory)
+    {
+    }
+
+	//
+	// FFrontendFilter implementation
+	//
+
+	FString GetName() const override
+    {
+    	return TEXT("Dialogue Custom Event");
+    }
+	FText GetDisplayName() const override
+    {
+    	return LOCTEXT("FilterDialogueCustomEvent_Name", "Dialogue Custom Event");
+    }
+	FText GetToolTipText() const override
+    {
+    	return LOCTEXT("FilterDialogueCustomEvent__ToolTip", "Search for any Blueprints that is a Dialogue Custom Event");
+    }
+
+	// Orange
+	FLinearColor GetColor() const override  { return FLinearColor(1.f, 0.46f, 0.f); }
+	FName GetIconName() const override { return NAME_None; }
+
+	void SetCurrentFilter(const FARFilter& InBaseFilter) override { }
+
+	//
+	// IFilter implementation
+	//
+
+	/** Returns whether the specified Item passes the Filter's restrictions */
+	bool PassesFilter(FAssetFilterType InItem) const override
+    {
+    	if (!InItem.IsAssetLoaded())
+    	{
+    		return false;
+    	}
+
+    	if (const UObject* Object = InItem.GetAsset())
+    	{
+    		return UDlgManager::IsObjectACustomEvent(Object);
+    	}
+
+    	return false;
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////
+// A filter that search for Custom Events
+class FFrontendFilter_DialogueCustomCondition : public FFrontendFilter
+{
+public:
+    FFrontendFilter_DialogueCustomCondition(const TSharedPtr<FFrontendFilterCategory>& InCategory)
+        : FFrontendFilter(InCategory)
+    {
+    }
+
+	//
+	// FFrontendFilter implementation
+	//
+
+	FString GetName() const override
+    {
+    	return TEXT("Dialogue Custom Condtition");
+    }
+	FText GetDisplayName() const override
+    {
+    	return LOCTEXT("FilterDialogueCustomCondition_Name", "Dialogue Custom Condition");
+    }
+	FText GetToolTipText() const override
+    {
+    	return LOCTEXT("FilterDialogueCustomCondition_ToolTip", "Search for any Blueprints that is a Dialogue Custom Condition");
+    }
+
+	// Orange
+	FLinearColor GetColor() const override  { return FLinearColor(1.f, 0.46f, 0.f); }
+	FName GetIconName() const override { return NAME_None; }
+
+	void SetCurrentFilter(const FARFilter& InBaseFilter) override { }
+
+	//
+	// IFilter implementation
+	//
+
+	/** Returns whether the specified Item passes the Filter's restrictions */
+	bool PassesFilter(FAssetFilterType InItem) const override
+    {
+    	if (!InItem.IsAssetLoaded())
+    	{
+    		return false;
+    	}
+
+    	if (const UObject* Object = InItem.GetAsset())
+    	{
+    		return UDlgManager::IsObjectACustomCondition(Object);
+    	}
+
+    	return false;
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////
+// A filter that search for Custom Text Argument
+class FFrontendFilter_DialogueCustomTextArgument : public FFrontendFilter
+{
+public:
+    FFrontendFilter_DialogueCustomTextArgument(const TSharedPtr<FFrontendFilterCategory>& InCategory)
+        : FFrontendFilter(InCategory)
+    {
+    }
+
+	//
+	// FFrontendFilter implementation
+	//
+
+	FString GetName() const override
+    {
+    	return TEXT("Dialogue Custom Text Argument");
+    }
+	FText GetDisplayName() const override
+    {
+    	return LOCTEXT("FilterDialogueCustomTextArgument_Name", "Dialogue Custom Text Argument");
+    }
+	FText GetToolTipText() const override
+    {
+    	return LOCTEXT("FilterDialogueCustomTextArgument_ToolTip", "Search for any Blueprints that is a Dialogue Custom Text Argument");
+    }
+
+	// Orange
+	FLinearColor GetColor() const override  { return FLinearColor(1.f, 0.46f, 0.f); }
+	FName GetIconName() const override { return NAME_None; }
+
+	void SetCurrentFilter(const FARFilter& InBaseFilter) override { }
+
+	//
+	// IFilter implementation
+	//
+
+	/** Returns whether the specified Item passes the Filter's restrictions */
+	bool PassesFilter(FAssetFilterType InItem) const override
+    {
+    	if (!InItem.IsAssetLoaded())
+    	{
+    		return false;
+    	}
+
+    	if (const UObject* Object = InItem.GetAsset())
+    	{
+    		return UDlgManager::IsObjectACustomTextArgument(Object);
+    	}
+
+    	return false;
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////
 // UDialogueSearchFilter
-void UDialogueSearchFilter::AddFrontEndFilterExtensions(TSharedPtr<FFrontendFilterCategory> DefaultCategory,
-	TArray<TSharedRef<FFrontendFilter>>& InOutFilterList) const
+void UDialogueSearchFilter::AddFrontEndFilterExtensions(
+	TSharedPtr<FFrontendFilterCategory> DefaultCategory,
+	TArray<TSharedRef<FFrontendFilter>>& InOutFilterList
+) const
 {
-	TSharedPtr<FFrontendFilterCategory> DialogueCategory =
-		MakeShared<FFrontendFilterCategory>(LOCTEXT("DlgSystemCategoryName", "Dialogue System Filters"),
-											LOCTEXT("DlgSystemCategoryTooltip", "Filter Dialogue System assets"));
+	// TSharedPtr<FFrontendFilterCategory> DialogueCategory = MakeShared<FFrontendFilterCategory>(
+	// 	LOCTEXT("DlgSystemCategoryName", "Dialogue System Filters"),
+	// 	LOCTEXT("DlgSystemCategoryTooltip", "Filter Dialogue System assets")
+	// );
+	TSharedPtr<FFrontendFilterCategory> DialogueCategory = MakeShared<FFrontendFilterCategory>(
+	     FText::FromName(DIALOGUE_SYSTEM_MENU_CATEGORY_KEY),
+	     DIALOGUE_SYSTEM_MENU_CATEGORY_KEY_TEXT
+	);
 
+	InOutFilterList.Add(MakeShared<FFrontendFilter_Dialogue>(DialogueCategory));
 	InOutFilterList.Add(MakeShared<FFrontendFilter_DialogueParticipants>(DialogueCategory));
+	InOutFilterList.Add(MakeShared<FFrontendFilter_DialogueCustomEvent>(DialogueCategory));
+	InOutFilterList.Add(MakeShared<FFrontendFilter_DialogueCustomCondition>(DialogueCategory));
+	InOutFilterList.Add(MakeShared<FFrontendFilter_DialogueCustomTextArgument>(DialogueCategory));
 }
 
 

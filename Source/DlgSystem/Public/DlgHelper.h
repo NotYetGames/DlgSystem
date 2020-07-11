@@ -209,6 +209,9 @@ public:
 		return Object->GetClass()->GetName();
 	}
 
+	// This also works with Blueprints
+	static bool IsObjectAChildOf(const UObject* Object, const UClass* Class);
+
 	// FileSystem
 	static bool DeleteFile(const FString& PathName, bool bVerbose = true);
 	static bool RenameFile(const FString& OldPathName, const FString& NewPathName, bool bOverWrite = false, bool bVerbose = true);
@@ -339,17 +342,17 @@ public:
 	/** Default sorting function used by all the Dialogue related methods. Sorts alphabetically ascending. */
 	static void SortDefault(TArray<FName>& OutArray)
     {
-		OutArray.Sort(Self::PredicateSortFNameAlphabeticallyAscending);
+		OutArray.Sort(PredicateSortFNameAlphabeticallyAscending);
     }
 	static void SortDefault(TSet<FName>& OutSet)
 	{
-		OutSet.Sort(Self::PredicateSortFNameAlphabeticallyAscending);
+		OutSet.Sort(PredicateSortFNameAlphabeticallyAscending);
 	}
 
 	template<typename ValueType>
 	static void SortDefault(TMap<FName, ValueType>& Map)
 	{
-		Map.KeySort(Self::PredicateSortFNameAlphabeticallyAscending);
+		Map.KeySort(PredicateSortFNameAlphabeticallyAscending);
 	}
 
 	/** Helper method, used to append a set to an array. Also sort. */

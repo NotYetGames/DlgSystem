@@ -145,6 +145,28 @@ public:
 	// Does the Object implement the Dialogue Participant Interface?
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
 	static bool DoesObjectImplementDialogueParticipantInterface(const UObject* Object);
+	static bool DoesClassImplementParticipantInterface(const UClass* Class)
+	{
+		static const UClass* DialogueParticipantClass = UDlgDialogueParticipant::StaticClass();
+		if (!Class)
+		{
+			return false;
+		}
+
+		return Class->ImplementsInterface(DialogueParticipantClass);
+	}
+
+	// Is Object a UDlgEventCustom or a child from that
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
+	static bool IsObjectACustomEvent(const UObject* Object);
+
+	// Is Object a UDlgConditionCustom or a child from that
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
+	static bool IsObjectACustomCondition(const UObject* Object);
+
+	// Is Object a UDlgTextArgumentCustom or a child from that
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
+	static bool IsObjectACustomTextArgument(const UObject* Object);
 
 	// Gets all the unique participant names sorted alphabetically from all the Dialogues loaded into memory.
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
