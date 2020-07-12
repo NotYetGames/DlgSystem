@@ -117,7 +117,7 @@ private:
 	// Cache the rows of the properties, created in CustomizeChildren
 	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
 	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> VariableNamePropertyRow;
-	IDetailPropertyRow* CustomTextArgumentPropertyRow = nullptr;
+	class IDetailPropertyRow* CustomTextArgumentPropertyRow = nullptr;
 
 
 	/** Hold a reference to dialogue we are displaying. */
