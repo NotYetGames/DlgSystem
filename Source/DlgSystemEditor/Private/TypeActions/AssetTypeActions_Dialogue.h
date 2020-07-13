@@ -42,7 +42,7 @@ public:
 	/** Returns the categories that this asset type. The return value is one or more flags from EAssetTypeCategories.  */
 	uint32 GetCategories() override { return AssetCategory; }
 
-	// Hide from filtered, we use our custom FFrontendFilter_Dialogue because it allows us to more flexibility
+	// Hide from filtered, we use our custom FFrontendFilter_Dialogue because it allows us more flexibility
 	bool CanFilter() override { return false; }
 
 private:

@@ -9,6 +9,7 @@
 #include "DlgManager.h"
 
 class FDialogueTextPropertyPickList_CustomRowHelper;
+class IDetailPropertyRow;
 
 /**
  * How the details panel renders the FDlgTextArgument

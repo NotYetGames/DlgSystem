@@ -14,6 +14,8 @@
 //////////////////////////////////////////////////////////////////////////
 // A filter that searches for Dialogues
 // We use this because it allows us more flexibility FAssetTypeActions_Dialogue
+// NOTE: Because this is a frontend filter we can't combine it with the other backend filters (blueprint, texture, particles, etc)
+// Unreal does not allow you to have custom backend filters, which is kinda retarded
 class FFrontendFilter_Dialogue : public FFrontendFilter
 {
 public:
@@ -42,7 +44,10 @@ public:
 	FLinearColor GetColor() const override  { return FLinearColor::Yellow; }
 	FName GetIconName() const override { return NAME_None; }
 
-	void SetCurrentFilter(const FARFilter& InBaseFilter) override { }
+	void SetCurrentFilter(const FARFilter& InBaseFilter) override
+    {
+
+    }
 
 	//
 	// IFilter implementation
@@ -85,7 +90,10 @@ public:
 	FLinearColor GetColor() const override  { return FLinearColor(0.91f, 0.91f, 0.f); }
 	FName GetIconName() const override { return NAME_None; }
 
-	void SetCurrentFilter(const FARFilter& InBaseFilter) override { }
+	void SetCurrentFilter(const FARFilter& InBaseFilter) override
+	{
+
+	}
 
 	//
 	// IFilter implementation
@@ -139,7 +147,10 @@ public:
 	FLinearColor GetColor() const override  { return FLinearColor(1.f, 0.46f, 0.f); }
 	FName GetIconName() const override { return NAME_None; }
 
-	void SetCurrentFilter(const FARFilter& InBaseFilter) override { }
+	void SetCurrentFilter(const FARFilter& InBaseFilter) override
+    {
+
+    }
 
 	//
 	// IFilter implementation
@@ -193,7 +204,10 @@ public:
 	FLinearColor GetColor() const override  { return FLinearColor(1.f, 0.46f, 0.f); }
 	FName GetIconName() const override { return NAME_None; }
 
-	void SetCurrentFilter(const FARFilter& InBaseFilter) override { }
+	void SetCurrentFilter(const FARFilter& InBaseFilter) override
+    {
+
+    }
 
 	//
 	// IFilter implementation
@@ -247,7 +261,10 @@ public:
 	FLinearColor GetColor() const override  { return FLinearColor(1.f, 0.46f, 0.f); }
 	FName GetIconName() const override { return NAME_None; }
 
-	void SetCurrentFilter(const FARFilter& InBaseFilter) override { }
+	void SetCurrentFilter(const FARFilter& InBaseFilter) override
+    {
+
+    }
 
 	//
 	// IFilter implementation
