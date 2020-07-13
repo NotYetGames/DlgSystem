@@ -6,7 +6,7 @@
 #include "Widgets/Views/STreeView.h"
 #include "Framework/Commands/UICommandList.h"
 
-#include "FindInDialoguesResult.h"
+#include "DialogueSearchResult.h"
 
 class FDialogueEditor;
 class SSearchBox;
@@ -75,13 +75,13 @@ private:
 	}
 
 	/* Get the children of a row */
-	void HandleGetChildren(TSharedPtr<FFindInDialoguesResult> InItem, TArray<TSharedPtr<FFindInDialoguesResult>>& OutChildren);
+	void HandleGetChildren(TSharedPtr<FDialogueSearchResult> InItem, TArray<TSharedPtr<FDialogueSearchResult>>& OutChildren);
 
 	/* Called when user double clicks on a new result */
-	void HandleTreeSelectionDoubleClicked(TSharedPtr<FFindInDialoguesResult> Item);
+	void HandleTreeSelectionDoubleClicked(TSharedPtr<FDialogueSearchResult> Item);
 
 	/* Called when a new row is being generated */
-	TSharedRef<ITableRow> HandleGenerateRow(TSharedPtr<FFindInDialoguesResult> InItem, const TSharedRef<STableViewBase>& OwnerTable);
+	TSharedRef<ITableRow> HandleGenerateRow(TSharedPtr<FDialogueSearchResult> InItem, const TSharedRef<STableViewBase>& OwnerTable);
 
 	/** Callback to build the context menu when right clicking in the tree */
 	TSharedPtr<SWidget> HandleContextMenuOpening();
@@ -94,7 +94,7 @@ private:
 	TWeakPtr<FDialogueEditor> DialogueEditorPtr;
 
 	/* The tree view displays the results */
-	TSharedPtr<STreeView<TSharedPtr<FFindInDialoguesResult>>> TreeView;
+	TSharedPtr<STreeView<TSharedPtr<FDialogueSearchResult>>> TreeView;
 
 	/** The search text box */
 	TSharedPtr<SSearchBox> SearchTextBoxWidget;
@@ -103,10 +103,10 @@ private:
 	TWeakPtr<SVerticalBox> MainVerticalBoxWidget;
 
 	/** In Find Within Dialogue mode, we need to keep a handle on the root result, because it won't show up in the tree. */
-	TSharedPtr<FFindInDialoguesResult> RootSearchResult;
+	TSharedPtr<FDialogueSearchResult> RootSearchResult;
 
 	/* This buffer stores the currently displayed results */
-	TArray<TSharedPtr<FFindInDialoguesResult>> ItemsFound;
+	TArray<TSharedPtr<FDialogueSearchResult>> ItemsFound;
 
 	/* The string to highlight in the results */
 	FText HighlightText;

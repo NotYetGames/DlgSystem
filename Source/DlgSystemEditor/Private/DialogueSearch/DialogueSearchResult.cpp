@@ -1,5 +1,5 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
-#include "FindInDialoguesResult.h"
+#include "DialogueSearchResult.h"
 
 #include "Widgets/Images/SImage.h"
 #include "Toolkits/AssetEditorManager.h"
@@ -9,16 +9,16 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueStyle.h"
 
-#define LOCTEXT_NAMESPACE "FFindInDialoguesResult"
+#define LOCTEXT_NAMESPACE "DialogueSearchResult"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FFindInDialoguesResult
-FFindInDialoguesResult::FFindInDialoguesResult(const FText& InDisplayText, const TSharedPtr<Self>& InParent)
+// FDialogueSearchResult
+FDialogueSearchResult::FDialogueSearchResult(const FText& InDisplayText, const TSharedPtr<Self>& InParent)
 	: Super(InDisplayText, InParent)
 {
 }
 
-TSharedRef<SWidget>	FFindInDialoguesResult::CreateIcon() const
+TSharedRef<SWidget>	FDialogueSearchResult::CreateIcon() const
 {
 	const FLinearColor IconColor = FLinearColor::White;
 	const FSlateBrush* Brush = nullptr;
@@ -29,7 +29,7 @@ TSharedRef<SWidget>	FFindInDialoguesResult::CreateIcon() const
 			.ToolTipText(GetCategory());
 }
 
-TWeakObjectPtr<const UDlgDialogue> FFindInDialoguesResult::GetParentDialogue() const
+TWeakObjectPtr<const UDlgDialogue> FDialogueSearchResult::GetParentDialogue() const
 {
 	if (Parent.IsValid())
 	{
@@ -40,23 +40,23 @@ TWeakObjectPtr<const UDlgDialogue> FFindInDialoguesResult::GetParentDialogue() c
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FFindInDialoguesRootNode
-FFindInDialoguesRootNode::FFindInDialoguesRootNode() :
+// FDialogueSearchResult_RootNode
+FDialogueSearchResult_RootNode::FDialogueSearchResult_RootNode() :
 	Super(FText::FromString(TEXT("Display Text should not be visible")), nullptr)
 {
-	Category = LOCTEXT("FFindInDialoguesRootNodeCategory", "ROOT NODE SHOULD NOT BE VISIBLE");
+	Category = FText::FromString(TEXT("ROOT NODE SHOULD NOT BE VISIBLE"));
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FFindInDialoguesDialogueNode
-FFindInDialoguesDialogueNode::FFindInDialoguesDialogueNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent) :
+// FDialogueSearchResult_DialogueNode
+FDialogueSearchResult_DialogueNode::FDialogueSearchResult_DialogueNode(const FText& InDisplayText, const TSharedPtr<FDialogueSearchResult>& InParent) :
 	Super(InDisplayText, InParent)
 {
-	Category = LOCTEXT("FFindInDialoguesDialogueNodeCategory", "Dialogue");
+	Category = LOCTEXT("FDialogueSearchResult_DialogueNodeCategory", "Dialogue");
 }
 
-FReply FFindInDialoguesDialogueNode::OnClick()
+FReply FDialogueSearchResult_DialogueNode::OnClick()
 {
 	if (Dialogue.IsValid())
 	{
@@ -66,7 +66,7 @@ FReply FFindInDialoguesDialogueNode::OnClick()
 	return FReply::Unhandled();
 }
 
-TWeakObjectPtr<const UDlgDialogue> FFindInDialoguesDialogueNode::GetParentDialogue() const
+TWeakObjectPtr<const UDlgDialogue> FDialogueSearchResult_DialogueNode::GetParentDialogue() const
 {
 	// Get the Dialogue from this.
 	if (Dialogue.IsValid())
@@ -77,7 +77,7 @@ TWeakObjectPtr<const UDlgDialogue> FFindInDialoguesDialogueNode::GetParentDialog
 	return Super::GetParentDialogue();
 }
 
-TSharedRef<SWidget>	FFindInDialoguesDialogueNode::CreateIcon() const
+TSharedRef<SWidget>	FDialogueSearchResult_DialogueNode::CreateIcon() const
 {
 	const FSlateBrush* Brush = FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_DialogueClassIcon);
 
@@ -89,13 +89,13 @@ TSharedRef<SWidget>	FFindInDialoguesDialogueNode::CreateIcon() const
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FFindInDialoguesGraphNode
-FFindInDialoguesGraphNode::FFindInDialoguesGraphNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent) :
+// FDialogueSearchResult_GraphNode
+FDialogueSearchResult_GraphNode::FDialogueSearchResult_GraphNode(const FText& InDisplayText, const TSharedPtr<FDialogueSearchResult>& InParent) :
 	Super(InDisplayText, InParent)
 {
 }
 
-FReply FFindInDialoguesGraphNode::OnClick()
+FReply FDialogueSearchResult_GraphNode::OnClick()
 {
 	if (GraphNode.IsValid())
 	{
@@ -105,7 +105,7 @@ FReply FFindInDialoguesGraphNode::OnClick()
 	return FReply::Unhandled();
 }
 
-TSharedRef<SWidget> FFindInDialoguesGraphNode::CreateIcon() const
+TSharedRef<SWidget> FDialogueSearchResult_GraphNode::CreateIcon() const
 {
 	if (GraphNode.IsValid())
 	{
@@ -122,13 +122,13 @@ TSharedRef<SWidget> FFindInDialoguesGraphNode::CreateIcon() const
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FFindInDialoguesEdgeNode
-FFindInDialoguesEdgeNode::FFindInDialoguesEdgeNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent) :
-	FFindInDialoguesResult(InDisplayText, InParent)
+// FDialogueSearchResult_EdgeNode
+FDialogueSearchResult_EdgeNode::FDialogueSearchResult_EdgeNode(const FText& InDisplayText, const TSharedPtr<FDialogueSearchResult>& InParent) :
+	Super(InDisplayText, InParent)
 {
 }
 
-FReply FFindInDialoguesEdgeNode::OnClick()
+FReply FDialogueSearchResult_EdgeNode::OnClick()
 {
 	if (EdgeNode.IsValid())
 	{
@@ -138,7 +138,7 @@ FReply FFindInDialoguesEdgeNode::OnClick()
 	return FReply::Unhandled();
 }
 
-TSharedRef<SWidget>	FFindInDialoguesEdgeNode::CreateIcon() const
+TSharedRef<SWidget>	FDialogueSearchResult_EdgeNode::CreateIcon() const
 {
 	if (EdgeNode.IsValid())
 	{
@@ -154,13 +154,13 @@ TSharedRef<SWidget>	FFindInDialoguesEdgeNode::CreateIcon() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FFindInDialoguesCommentNode
-FFindInDialoguesCommentNode::FFindInDialoguesCommentNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent) :
-	FFindInDialoguesResult(InDisplayText, InParent)
+// FDialogueSearchResult_CommentNode
+FDialogueSearchResult_CommentNode::FDialogueSearchResult_CommentNode(const FText& InDisplayText, const TSharedPtr<FDialogueSearchResult>& InParent) :
+	Super(InDisplayText, InParent)
 {
 }
 
-FReply FFindInDialoguesCommentNode::OnClick()
+FReply FDialogueSearchResult_CommentNode::OnClick()
 {
 	if (CommentNode.IsValid())
 	{
@@ -170,7 +170,7 @@ FReply FFindInDialoguesCommentNode::OnClick()
 	return FReply::Unhandled();
 }
 
-TSharedRef<SWidget>	FFindInDialoguesCommentNode::CreateIcon() const
+TSharedRef<SWidget>	FDialogueSearchResult_CommentNode::CreateIcon() const
 {
 	if (CommentNode.IsValid())
 	{

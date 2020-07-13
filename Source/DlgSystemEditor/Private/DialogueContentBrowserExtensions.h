@@ -4,7 +4,7 @@
 #include "CoreMinimal.h"
 #include "ContentBrowserFrontEndFilterExtension.h"
 
-#include "ContentBrowserExtensions.generated.h"
+#include "DialogueContentBrowserExtensions.generated.h"
 
 /**
  * Register custom  filters with the content browser
@@ -27,7 +27,7 @@ public:
  * When you right click on a specific asset for example.
  * See Paper2D class for proper example FPaperContentBrowserExtensions
  */
-class FDlgContentBrowserExtensions
+class FDialogueContentBrowserExtensions
 {
 public:
 	static void InstallHooks();

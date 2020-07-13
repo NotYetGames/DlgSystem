@@ -60,8 +60,12 @@ template <typename KeyType, typename ValueType>
 class FDlgHelper_MapEqualImpl
 {
 public:
-	static bool IsEqual(const TMap<KeyType, ValueType>& FirstMap, const TMap<KeyType, ValueType>& SecondMap,
-		std::function<bool(const ValueType& FirstMapValue, const ValueType& SecondMapValue)> AreValuesEqual)
+	static bool IsEqual(
+		const TMap<KeyType, ValueType>& FirstMap,
+		const TMap<KeyType, ValueType>& SecondMap,
+		std::function<bool(const ValueType& FirstMapValue,
+		const ValueType& SecondMapValue)> AreValuesEqual
+	)
 	{
 		if (FirstMap.Num() == SecondMap.Num())
 		{
@@ -127,8 +131,12 @@ template <typename ArrayType>
 class FDlgHelper_ArrayEqualImpl
 {
 public:
-	static bool IsEqual(const TArray<ArrayType>& FirstArray, const TArray<ArrayType>& SecondArray,
-		std::function<bool(const ArrayType& FirstValue, const ArrayType& SecondValue)> AreValuesEqual)
+	static bool IsEqual(
+		const TArray<ArrayType>& FirstArray,
+		const TArray<ArrayType>& SecondArray,
+		std::function<bool(const ArrayType& FirstValue,
+		const ArrayType& SecondValue)> AreValuesEqual
+	)
 	{
 		if (FirstArray.Num() == SecondArray.Num())
 		{

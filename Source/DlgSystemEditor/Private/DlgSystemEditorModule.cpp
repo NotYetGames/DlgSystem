@@ -1,7 +1,7 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DlgSystemEditorModule.h"
 
-#include "Extensions/ContentBrowserExtensions.h"
+#include "DialogueContentBrowserExtensions.h"
 #include "Engine/BlueprintCore.h"
 #include "Templates/SharedPointer.h"
 #include "AssetRegistryModule.h"
@@ -18,11 +18,11 @@
 
 #include "DialogueGraphFactories.h"
 #include "DlgSystemEditorPrivatePCH.h"
-#include "TypeActions/AssetTypeActions_Dialogue.h"
+#include "DialogueAssetTypeActions.h"
 #include "DialogueEditor/DialogueEditorCommands.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueBrowser/SDialogueBrowser.h"
-#include "DialogueSearch/FindInDialogueSearchManager.h"
+#include "DialogueSearch/DialogueSearchManager.h"
 #include "DialogueEditor/DetailsPanel/Dialogue_Details.h"
 #include "DialogueEditor/DetailsPanel/DialogueGraphNode_Details.h"
 #include "DialogueEditor/DetailsPanel/DialogueNode_Details.h"
@@ -80,7 +80,7 @@ void FDlgSystemEditorModule::StartupModule()
 	// make the DlgSystem be displayed in the filters menu and in the create new menu
 	DlgSystemAssetCategoryBit = AssetTools.RegisterAdvancedAssetCategory(DIALOGUE_SYSTEM_MENU_CATEGORY_KEY, DIALOGUE_SYSTEM_MENU_CATEGORY_KEY_TEXT);
 	{
-		auto Action = MakeShared<FAssetTypeActions_Dialogue>(DlgSystemAssetCategoryBit);
+		auto Action = MakeShared<FDialogueAssetTypeActions>(DlgSystemAssetCategoryBit);
 		AssetTools.RegisterAssetTypeActions(Action);
 		RegisteredAssetTypeActions.Add(Action);
 	}
@@ -152,7 +152,7 @@ void FDlgSystemEditorModule::StartupModule()
 	);
 
 	// Content Browser extension
-	FDlgContentBrowserExtensions::InstallHooks();
+	FDialogueContentBrowserExtensions::InstallHooks();
 
 	// Extend menu/toolbar
 	ExtendMenu();
@@ -175,7 +175,7 @@ void FDlgSystemEditorModule::ShutdownModule()
 	{
 		// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 		// we call this function before unloading the module.
-		FDlgContentBrowserExtensions::RemoveHooks();
+		FDialogueContentBrowserExtensions::RemoveHooks();
 	}
 
 	// Unregister the custom details panel stuff
@@ -216,7 +216,7 @@ void FDlgSystemEditorModule::ShutdownModule()
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(DIALOGUE_BROWSER_TAB_ID);
 
 	// Unregister the Dialogue Search
-	FFindInDialogueSearchManager::Get()->DisableGlobalFindResults();
+	FDialogueSearchManager::Get()->DisableGlobalFindResults();
 
 	if (OnBeginPIEHandle.IsValid())
 	{
@@ -478,7 +478,7 @@ void FDlgSystemEditorModule::ExtendMenu()
 			.SetGroup(ToolsDialogueCategory.ToSharedRef());
 
 		// Register the Dialogue Search
-		FFindInDialogueSearchManager::Get()->Initialize(ToolsDialogueCategory);
+		FDialogueSearchManager::Get()->Initialize(ToolsDialogueCategory);
 	}
 }
 

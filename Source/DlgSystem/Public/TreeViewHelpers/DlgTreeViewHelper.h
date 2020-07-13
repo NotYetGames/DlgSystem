@@ -9,8 +9,10 @@
 class DLGSYSTEM_API FDlgTreeViewHelper
 {
 public:
-	static bool PredicateSortDialogueWeakPtrAlphabeticallyAscending(const TWeakObjectPtr<const UDlgDialogue>& First,
-		const TWeakObjectPtr<const UDlgDialogue>& Second)
+	static bool PredicateSortDialogueWeakPtrAlphabeticallyAscending(
+		const TWeakObjectPtr<const UDlgDialogue>& First,
+		const TWeakObjectPtr<const UDlgDialogue>& Second
+	)
 	{
 		if (!First.IsValid())
 		{
@@ -26,8 +28,11 @@ public:
 
 	/** Restore the expansion state of the InTree with the ItemSource provided (usually the flattened tree) */
 	template<typename ItemType, typename ComparisonType>
-	static void RestoreTreeExpansionState(const TSharedPtr<STreeView<ItemType>>& InTree, const TArray<ItemType>& ItemSource,
-		const TSet<ItemType>& OldExpansionState, ComparisonType ComparisonFunction)
+	static void RestoreTreeExpansionState(
+		const TSharedPtr<STreeView<ItemType>>& InTree,
+		const TArray<ItemType>& ItemSource,
+		const TSet<ItemType>& OldExpansionState, ComparisonType ComparisonFunction
+	)
 	{
 		check(InTree.IsValid());
 

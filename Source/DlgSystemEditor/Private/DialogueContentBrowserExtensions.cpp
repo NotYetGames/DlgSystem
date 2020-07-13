@@ -1,5 +1,5 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
-#include "ContentBrowserExtensions.h"
+#include "DialogueContentBrowserExtensions.h"
 
 #include "ContentBrowserModule.h"
 #include "DlgEventCustom.h"
@@ -13,7 +13,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 // A filter that searches for Dialogues
-// We use this because it allows us more flexibility FAssetTypeActions_Dialogue
+// We use this because it allows us more flexibility FDialogueAssetTypeActions
 // NOTE: Because this is a frontend filter we can't combine it with the other backend filters (blueprint, texture, particles, etc)
 // Unreal does not allow you to have custom backend filters, which is kinda retarded
 class FFrontendFilter_Dialogue : public FFrontendFilter
@@ -312,13 +312,13 @@ void UDialogueSearchFilter::AddFrontEndFilterExtensions(
 
 
 //////////////////////////////////////////////////////////////////////////
-// FDlgContentBrowserExtensions
-void FDlgContentBrowserExtensions::InstallHooks()
+// FDialogueContentBrowserExtensions
+void FDialogueContentBrowserExtensions::InstallHooks()
 {
 
 }
 
-void FDlgContentBrowserExtensions::RemoveHooks()
+void FDialogueContentBrowserExtensions::RemoveHooks()
 {
 
 }

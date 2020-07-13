@@ -28,7 +28,7 @@
 #include "DialogueEditor/Graph/DialogueGraphSchema.h"
 #include "DialogueEditor/DialogueEditorCommands.h"
 #include "Graph/SchemaActions/ConvertSpeechSequenceNodeToSpeechNodes_DialogueGraphSchemaAction.h"
-#include "DialogueSearch/FindInDialogueSearchManager.h"
+#include "DialogueSearch/DialogueSearchManager.h"
 #include "DialogueSearch/SFindInDialogues.h"
 
 #define LOCTEXT_NAMESPACE "DialogueEditor"
@@ -266,7 +266,7 @@ void FDialogueEditor::SummonSearchUI(bool bSetFindWithinDialogue, FString NewSea
 	else
 	{
 		// Open global tab
-		FindResultsToUse = FFindInDialogueSearchManager::Get()->GetGlobalFindResults();
+		FindResultsToUse = FDialogueSearchManager::Get()->GetGlobalFindResults();
 	}
 
 	if (FindResultsToUse.IsValid())
