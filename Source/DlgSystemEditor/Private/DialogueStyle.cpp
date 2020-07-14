@@ -61,6 +61,21 @@ const FName FDialogueStyle::PROPERTY_FindInDialogueEditorIcon(TEXT("DlgSystemEdi
 // Tied with FDialogueCommands::FindInAllDialogues
 const FName FDialogueStyle::PROPERTY_FindInAllDialogueEditorIcon(TEXT("DlgSystemEditor.FindInAllDialogues"));
 
+// Tied with FDialogueCommands::OpenDiscord
+const FName FDialogueStyle::PROPERTY_OpenDiscord(TEXT("DlgSystemEditor.OpenDiscord"));
+
+// Tied with FDialogueCommands::OpenForum
+const FName FDialogueStyle::PROPERTY_OpenForum(TEXT("DlgSystemEditor.OpenForum"));
+
+// Tied with FDialogueCommands::OpenNotYetPlugins
+const FName FDialogueStyle::PROPERTY_OpenNotYetPlugins(TEXT("DlgSystemEditor.OpenNotYetPlugins"));
+
+// Tied with FDialogueCommands::OpenMarketplace
+const FName FDialogueStyle::PROPERTY_OpenMarketplace(TEXT("DlgSystemEditor.OpenMarketplace"));
+
+// Tied with FDialogueCommands::OpenWiki
+const FName FDialogueStyle::PROPERTY_OpenWiki(TEXT("DlgSystemEditor.OpenWiki"));
+
 // For FDialogueSearchResult_CommentNode
 const FName FDialogueStyle::PROPERTY_CommentBubbleOn(TEXT("DlgSystemEditor.CommentBubbleOn"));
 
@@ -136,8 +151,30 @@ void FDialogueStyle::Initialize()
 		new FSlateImageBrush(GetEngineContentPath("Icons/Edit/icon_Edit_Delete_40x.png"), Icon40x40)
 	);
 	StyleSet->Set(
-	    PROPERTY_DeleteCurrentDialogueTextFilesIcon,
-	    new FSlateImageBrush(GetEngineContentPath("Icons/Edit/icon_Edit_Delete_40x.png"), Icon40x40)
+		PROPERTY_DeleteCurrentDialogueTextFilesIcon,
+		new FSlateImageBrush(GetEngineContentPath("Icons/Edit/icon_Edit_Delete_40x.png"), Icon40x40)
+	);
+
+	// Level Editor Help
+	StyleSet->Set(
+		PROPERTY_OpenDiscord,
+		new FSlateImageBrush(GetPluginContentPath("Icons/Discord_96x.png"), Icon96x96)
+	);
+	StyleSet->Set(
+		PROPERTY_OpenNotYetPlugins,
+		new FSlateImageBrush(GetPluginContentPath("Icons/NotYet_96x.png"), Icon96x96)
+	);
+	StyleSet->Set(
+		PROPERTY_OpenForum,
+		new FSlateImageBrush(GetPluginContentPath("Icons/Forum_96x.png"), Icon96x96)
+	);
+	StyleSet->Set(
+		PROPERTY_OpenWiki,
+		new FSlateImageBrush(GetPluginContentPath("Icons/Wiki_96x.png"), Icon96x96)
+	);
+	StyleSet->Set(
+		PROPERTY_OpenMarketplace,
+		new FSlateImageBrush(GetPluginContentPath("Icons/Marketplace_96x.png"), Icon96x96)
 	);
 
 	// Dialogue Browser

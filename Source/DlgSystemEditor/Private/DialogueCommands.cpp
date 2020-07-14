@@ -57,46 +57,46 @@ void FDialogueCommands::RegisterCommands()
 	);
 
 	UI_COMMAND(
-	    DeleteCurrentDialogueTextFiles,
-	    "Delete Current Dialogue Text Files...",
-	    "Delete all text files of the CURRENT Dialogue on the disk from all existing known text formats and from the Settings AdditionalTextFormatFileExtensionsToLookFor",
-	    EUserInterfaceActionType::Button, FInputChord()
+		DeleteCurrentDialogueTextFiles,
+		"Delete Current Dialogue Text Files...",
+		"Delete all text files of the CURRENT Dialogue on the disk from all existing known text formats and from the Settings AdditionalTextFormatFileExtensionsToLookFor",
+		EUserInterfaceActionType::Button, FInputChord()
 	);
 
 	UI_COMMAND(
-        OpenNotYetPlugins,
-        "Not Yet: Plugins...",
-        "Navigates to the Not Yet Plugins page",
-        EUserInterfaceActionType::Button, FInputChord()
-    );
-
-	UI_COMMAND(
-	    OpenMarketplace,
-	    "Dialogue Marketplace...",
-	    "Navigates to the Dialogue Unreal Marketplace page",
-	    EUserInterfaceActionType::Button, FInputChord()
+		OpenNotYetPlugins,
+		"Not Yet: Plugins...",
+		"Navigates to the Not Yet Plugins page",
+		EUserInterfaceActionType::Button, FInputChord()
 	);
 
 	UI_COMMAND(
-	    OpenWiki,
-	    "Dialogue Wiki/Documentation...",
-	    "Navigates to the Dialogue System Wiki/Documentation page",
-	    EUserInterfaceActionType::Button, FInputChord()
+		OpenMarketplace,
+		"Marketplace...",
+		"Navigates to the Dialogue Unreal Marketplace page",
+		EUserInterfaceActionType::Button, FInputChord()
 	);
 
 	UI_COMMAND(
-	    OpenDiscord,
-	    "Dialogue Discord...",
-	    "Navigates to the Dialogue System Discord server",
-	    EUserInterfaceActionType::Button, FInputChord()
+		OpenWiki,
+		"Wiki/Documentation...",
+		"Navigates to the Dialogue System Wiki/Documentation page",
+		EUserInterfaceActionType::Button, FInputChord()
 	);
 
 	UI_COMMAND(
-        OpenForum,
-        "Dialogue Forum...",
-        "Navigates to the Dialogue System Forum",
-        EUserInterfaceActionType::Button, FInputChord()
-    );
+		OpenDiscord,
+		"Discord...",
+		"Navigates to the Dialogue System Discord server",
+		EUserInterfaceActionType::Button, FInputChord()
+	);
+
+	UI_COMMAND(
+		OpenForum,
+		"Forum...",
+		"Navigates to the Dialogue System Forum",
+		EUserInterfaceActionType::Button, FInputChord()
+	);
 
 	UI_COMMAND(
 		FindInAllDialogues,
