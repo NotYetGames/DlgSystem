@@ -494,7 +494,8 @@ void FDialogueEditor::BindEditorCommands()
 
 	// Graph Editor Commands
 	// Create comment node on graph. Default when you press the "C" key on the keyboard to create a comment.
-	GraphEditorCommands->MapAction(FGraphEditorCommands::Get().CreateComment,
+	GraphEditorCommands->MapAction(
+		FGraphEditorCommands::Get().CreateComment,
 		FExecuteAction::CreateLambda([this]
 		{
 			FNewComment_DialogueGraphSchemaAction CommentAction;
@@ -502,14 +503,16 @@ void FDialogueEditor::BindEditorCommands()
 		})
 	);
 
-	GraphEditorCommands->MapAction(FGenericCommands::Get().SelectAll,
+	GraphEditorCommands->MapAction(
+		FGenericCommands::Get().SelectAll,
 		FExecuteAction::CreateLambda([this] { GraphEditorView->SelectAllNodes(); } ),
 		FCanExecuteAction::CreateLambda([] { return true; })
 	);
 
 	// Edit Node commands
 	const auto DialogueCommands = FDialogueEditorCommands::Get();
-	GraphEditorCommands->MapAction(DialogueCommands.ConvertSpeechSequenceNodeToSpeechNodes,
+	GraphEditorCommands->MapAction(
+		DialogueCommands.ConvertSpeechSequenceNodeToSpeechNodes,
 		FExecuteAction::CreateSP(this, &Self::OnCommandConvertSpeechSequenceNodeToSpeechNodes),
 		FCanExecuteAction::CreateLambda([this]
 		{
@@ -517,35 +520,50 @@ void FDialogueEditor::BindEditorCommands()
 		})
 	);
 
-	GraphEditorCommands->MapAction(FGenericCommands::Get().Delete,
+	GraphEditorCommands->MapAction(
+		FGenericCommands::Get().Delete,
 		FExecuteAction::CreateSP(this, &Self::OnCommandDeleteSelectedNodes),
-		FCanExecuteAction::CreateSP(this, &Self::CanDeleteNodes));
+		FCanExecuteAction::CreateSP(this, &Self::CanDeleteNodes)
+	);
 
-	GraphEditorCommands->MapAction(FGenericCommands::Get().Copy,
+	GraphEditorCommands->MapAction(
+		FGenericCommands::Get().Copy,
 		FExecuteAction::CreateRaw(this, &Self::OnCommandCopySelectedNodes),
-		FCanExecuteAction::CreateRaw(this, &Self::CanCopyNodes));
+		FCanExecuteAction::CreateRaw(this, &Self::CanCopyNodes)
+	);
 
-	GraphEditorCommands->MapAction(FGenericCommands::Get().Paste,
+	GraphEditorCommands->MapAction(
+		FGenericCommands::Get().Paste,
 		FExecuteAction::CreateRaw(this, &Self::OnCommandPasteNodes),
-		FCanExecuteAction::CreateRaw(this, &Self::CanPasteNodes));
+		FCanExecuteAction::CreateRaw(this, &Self::CanPasteNodes)
+	);
 
 	// Hide/Unhide nodes
-	GraphEditorCommands->MapAction(DialogueCommands.HideNodes,
-		FExecuteAction::CreateRaw(this, &Self::OnCommandHideSelectedNodes));
+	GraphEditorCommands->MapAction(
+		DialogueCommands.HideNodes,
+		FExecuteAction::CreateRaw(this, &Self::OnCommandHideSelectedNodes)
+	);
 
-	GraphEditorCommands->MapAction(DialogueCommands.UnHideAllNodes,
-		FExecuteAction::CreateRaw(this, &Self::OnCommandUnHideAllNodes));
+	GraphEditorCommands->MapAction(
+		DialogueCommands.UnHideAllNodes,
+		FExecuteAction::CreateRaw(this, &Self::OnCommandUnHideAllNodes)
+	);
 
 	// Toolikit/Toolbar commands/Menu Commands
 	// Undo Redo menu options
-	ToolkitCommands->MapAction(FGenericCommands::Get().Undo,
-		FExecuteAction::CreateSP(this, &Self::OnCommandUndoGraphAction));
+	ToolkitCommands->MapAction(
+		FGenericCommands::Get().Undo,
+		FExecuteAction::CreateSP(this, &Self::OnCommandUndoGraphAction)
+	);
 
-	ToolkitCommands->MapAction(FGenericCommands::Get().Redo,
-		FExecuteAction::CreateSP(this, &Self::OnCommandRedoGraphAction));
+	ToolkitCommands->MapAction(
+		FGenericCommands::Get().Redo,
+		FExecuteAction::CreateSP(this, &Self::OnCommandRedoGraphAction)
+	);
 
 	// The toolbar reload button
-	ToolkitCommands->MapAction(DialogueCommands.DialogueReloadData,
+	ToolkitCommands->MapAction(
+		DialogueCommands.DialogueReloadData,
 		FExecuteAction::CreateSP(this, &Self::OnCommandDialogueReload),
 		FCanExecuteAction::CreateLambda([this]
 		{
@@ -554,7 +572,8 @@ void FDialogueEditor::BindEditorCommands()
 	);
 
 	// The Show primary/secondary edge buttons
-	ToolkitCommands->MapAction(DialogueCommands.ToggleShowPrimarySecondaryEdges,
+	ToolkitCommands->MapAction(
+		DialogueCommands.ToggleShowPrimarySecondaryEdges,
 		FExecuteAction::CreateLambda([this]
 		{
 			Settings->SetShowPrimarySecondaryEdges(!GetSettings().bShowPrimarySecondaryEdges);
@@ -567,25 +586,29 @@ void FDialogueEditor::BindEditorCommands()
 		FIsActionChecked::CreateLambda([this] { return GetSettings().bShowPrimarySecondaryEdges; })
 	);
 
-	ToolkitCommands->MapAction(DialogueCommands.ToggleDrawPrimaryEdges,
+	ToolkitCommands->MapAction(
+		DialogueCommands.ToggleDrawPrimaryEdges,
 		FExecuteAction::CreateLambda([this] { Settings->SetDrawPrimaryEdges(!GetSettings().bDrawPrimaryEdges); }),
 		FCanExecuteAction::CreateLambda([this] { return GetSettings().bShowPrimarySecondaryEdges; }),
 		FIsActionChecked::CreateLambda([this] { return GetSettings().bDrawPrimaryEdges; })
 	);
 
-	ToolkitCommands->MapAction(DialogueCommands.ToggleDrawSecondaryEdges,
+	ToolkitCommands->MapAction(
+		DialogueCommands.ToggleDrawSecondaryEdges,
 		FExecuteAction::CreateLambda([this] { Settings->SetDrawSecondaryEdges(!GetSettings().bDrawSecondaryEdges); }),
 		FCanExecuteAction::CreateLambda([this] { return GetSettings().bShowPrimarySecondaryEdges; }),
 		FIsActionChecked::CreateLambda([this] { return GetSettings().bDrawSecondaryEdges; })
 	);
 
 	// Find in All Dialogues
-	ToolkitCommands->MapAction(FDialogueEditorCommands::Get().FindInAllDialogues,
+	ToolkitCommands->MapAction(
+		FDialogueEditorCommands::Get().FindInAllDialogues,
 		FExecuteAction::CreateLambda([this] { SummonSearchUI(false); })
 	);
 
 	// Find in current Dialogue
-	ToolkitCommands->MapAction(FDialogueEditorCommands::Get().FindInDialogue,
+	ToolkitCommands->MapAction(
+		FDialogueEditorCommands::Get().FindInDialogue,
 		FExecuteAction::CreateLambda([this] { SummonSearchUI(true); })
 	);
 }

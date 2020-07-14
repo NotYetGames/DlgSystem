@@ -13,6 +13,7 @@ class SDlgDataDisplay;
 class SDockTab;
 struct IConsoleCommand;
 class AActor;
+struct FTabSpawnerEntry;
 
 // Implementation of the DlgSystem Module
 class DLGSYSTEM_API FDlgSystemModule : public IDlgSystemModule
@@ -27,6 +28,7 @@ public:
 	void RegisterConsoleCommands(const TWeakObjectPtr<const UObject>& InWorldContextObjectPtr) override;
 	void UnregisterConsoleCommands() override;
 	TSharedRef<SWidget> GetDialogueDataDisplayWindow() override;
+	FTabSpawnerEntry* GetDialogueDataDisplaySpawnEntry() override;
 	void DisplayDialogueDataWindow() override;
 
 private:
@@ -60,6 +62,7 @@ private:
 
 	// Holds the widget reflector singleton.
 	TWeakPtr<SDlgDataDisplay> DialogueDataDisplayWidget;
+	FTabSpawnerEntry* DialogueDataDisplayTabSpawnEntry = nullptr;
 
 	// Holds the console commands for this Module
 	TArray<IConsoleCommand*> ConsoleCommands;

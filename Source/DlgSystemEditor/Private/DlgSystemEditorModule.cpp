@@ -32,6 +32,7 @@
 #include "DialogueEditor/DetailsPanel/DialogueTextArgument_Details.h"
 #include "DialogueEditor/DetailsPanel/DialogueSpeechSequenceEntry_Details.h"
 #include "DlgManager.h"
+#include "IDlgSystemModule.h"
 
 #include "IO/DlgConfigWriter.h"
 #include "IO/DlgConfigParser.h"
@@ -514,7 +515,7 @@ void FDlgSystemEditorModule::ExtendMenu()
 		LevelEditorModule.GetMenuExtensibilityManager()->AddExtender(HelpMenuExtender);
 	}
 
-	// Window -> Dialogue search and browse
+	// Window -> Dialogue search, Dialogue Browse, Dialogue Data Display
 	{
 		ToolsDialogueCategory = WorkspaceMenu::GetMenuStructure().GetStructureRoot()
 			->AddGroup(
@@ -539,11 +540,16 @@ void FDlgSystemEditorModule::ExtendMenu()
 			}))
 			.SetDisplayName(LOCTEXT("DialogueBrowserTabTitle", "Dialogue Browser"))
 			.SetTooltipText(LOCTEXT("DialogueBrowserTooltipText", "Open the Dialogue Overview Browser tab."))
-			.SetIcon(FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_BrowseDialogueIcon))
+			.SetIcon(FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_DialogueBrowser_TabIcon))
 			.SetGroup(ToolsDialogueCategory.ToSharedRef());
 
 		// Register the Dialogue Search
 		FDialogueSearchManager::Get()->Initialize(ToolsDialogueCategory);
+
+		// Register the Dialogue Data Display
+		FTabSpawnerEntry* TabDialogueDataDisplay = IDlgSystemModule::Get().GetDialogueDataDisplaySpawnEntry();
+		TabDialogueDataDisplay->SetGroup(ToolsDialogueCategory.ToSharedRef());
+		TabDialogueDataDisplay->SetIcon(FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_DialogueDataDisplay_TabIcon));
 	}
 }
 

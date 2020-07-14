@@ -797,7 +797,7 @@ void FDialogueSearchManager::EnableGlobalFindResults(TSharedPtr<FWorkspaceItem> 
 	const TSharedRef<FGlobalTabmanager>& GlobalTabManager = FGlobalTabmanager::Get();
 
 	// Register the spawners for all global Find Results tabs
-	const FSlateIcon GlobalFindResultsIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_FindDialogueIcon);
+	const FSlateIcon GlobalFindResultsIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_DialogueSearch_TabIcon);
 
 	// Add the menu item
 	if (!ParentTabCategory.IsValid())
@@ -809,7 +809,8 @@ void FDialogueSearchManager::EnableGlobalFindResults(TSharedPtr<FWorkspaceItem> 
 		LOCTEXT("WorkspaceMenu_GlobalFindResultsCategory", "Find in Dialogues"),
 		LOCTEXT("GlobalFindResultsMenuTooltipText", "Find references to conditions, events, text and variables in all Dialogues."),
 		GlobalFindResultsIcon,
-		true);
+		true
+	);
 
 	// Register tab spawners
 	for (int32 TabIdx = 0; TabIdx < NY_ARRAY_COUNT(GlobalFindResultsTabIDs); TabIdx++)
@@ -825,10 +826,13 @@ void FDialogueSearchManager::EnableGlobalFindResults(TSharedPtr<FWorkspaceItem> 
 		{
 			const FText DisplayName = FText::Format(LOCTEXT("GlobalFindResultsDisplayName", "Find in Dialogues {0}"),
 													FText::AsNumber(TabIdx + 1));
-			GlobalTabManager->RegisterNomadTabSpawner(TabID, FOnSpawnTab::CreateRaw(this, &Self::SpawnGlobalFindResultsTab, TabIdx))
+			GlobalTabManager->RegisterNomadTabSpawner(
+				TabID,
+				FOnSpawnTab::CreateRaw(this, &Self::SpawnGlobalFindResultsTab, TabIdx))
 				.SetDisplayName(DisplayName)
 				.SetIcon(GlobalFindResultsIcon)
-				.SetGroup(GlobalFindResultsMenuItem.ToSharedRef());
+				.SetGroup(GlobalFindResultsMenuItem.ToSharedRef()
+			);
 		}
 	}
 }

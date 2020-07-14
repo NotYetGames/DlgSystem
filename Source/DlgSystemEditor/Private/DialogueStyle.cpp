@@ -17,29 +17,40 @@ static const FVector2D Icon64x64(64.0f, 64.0f);
 static const FVector2D Icon96x96(96.0f, 96.0f);
 
 
-// Initialize static variables
+// What is displayed in the Content Browser
 const FName FDialogueStyle::PROPERTY_DialogueClassIcon(TEXT("ClassIcon.DlgDialogue"));
 const FName FDialogueStyle::PROPERTY_DialogueClassThumbnail(TEXT("ClassThumbnail.DlgDialogue"));
+
+// Inside the Dialogue Editor Window
 const FName FDialogueStyle::PROPERTY_GraphNodeCircleBox(TEXT("DlgSystemEditor.Graph.Node.Circle"));
-const FName FDialogueStyle::PROPERTY_ConditionIcon(TEXT("DlgSystemEditor.Condition.Icon"));
-const FName FDialogueStyle::PROPERTY_EventIcon(TEXT("DlgSystemEditor.Event.Icon"));
-const FName FDialogueStyle::PROPERTY_VoiceIcon(TEXT("DlgSystemEditor.Voice.Icon"));
-const FName FDialogueStyle::PROPERTY_GenericIcon(TEXT("DlgSystemEditor.Generic.Icon"));
-const FName FDialogueStyle::PROPERTY_QuestionMarkIcon(TEXT("DlgSystemEditor.QuestionMark.Icon"));
+const FName FDialogueStyle::PROPERTY_ConditionIcon(TEXT("DlgSystemEditor.Condition"));
+const FName FDialogueStyle::PROPERTY_EventIcon(TEXT("DlgSystemEditor.Event"));
+const FName FDialogueStyle::PROPERTY_VoiceIcon(TEXT("DlgSystemEditor.Voice"));
+const FName FDialogueStyle::PROPERTY_GenericIcon(TEXT("DlgSystemEditor.Generic"));
+const FName FDialogueStyle::PROPERTY_QuestionMarkIcon(TEXT("DlgSystemEditor.QuestionMark"));
 
 // Tied with FDialogueEditorCommands::DialogueReloadData
 const FName FDialogueStyle::PROPERTY_ReloadAssetIcon(TEXT("DlgSystemEditor.DialogueReloadData"));
 
 // Tied with FDialogueEditorCommands::ToggleShowPrimarySecondaryEdges
 const FName FDialogueStyle::PROPERTY_ShowPrimarySecondaryEdgesIcon(TEXT("DlgSystemEditor.ToggleShowPrimarySecondaryEdges"));
-const FName FDialogueStyle::PROPERTY_OpenAssetIcon(TEXT("DlgSystemEditor.OpenAsset.Icon"));
-const FName FDialogueStyle::PROPERTY_FindAssetIcon(TEXT("DlgSystemEditor.FindAsset.Icon"));
+
+// For the Dialogue Browser
+const FName FDialogueStyle::PROPERTY_OpenAssetIcon(TEXT("DlgSystemEditor.OpenAsset"));
+const FName FDialogueStyle::PROPERTY_FindAssetIcon(TEXT("DlgSystemEditor.FindAsset"));
+const FName FDialogueStyle::PROPERTY_DialogueBrowser_TabIcon(TEXT("DlgSystemEditor.DialogueBrowser.TabIcon"));
 
 // Tied with FDialogueEditorCommands::SaveAllDialogues
 const FName FDialogueStyle::PROPERTY_SaveAllDialoguesIcon(TEXT("DlgSystemEditor.SaveAllDialogues"));
+
+// Tied with FDialogueEditorCommands::DeleteAllDialoguesTextFiles
 const FName FDialogueStyle::PROPERTY_DeleteAllDialoguesTextFilesIcon(TEXT("DlgSystemEditor.DeleteAllDialoguesTextFiles"));
-const FName FDialogueStyle::PROPERTY_FindDialogueIcon(TEXT("DlgSystemEditor.FindDialogue.Icon"));
-const FName FDialogueStyle::PROPERTY_BrowseDialogueIcon(TEXT("DlgSystemEditor.BrowseDialogue.Icon"));
+
+// For the Dialogue Search Browser
+const FName FDialogueStyle::PROPERTY_DialogueSearch_TabIcon(TEXT("DlgSystemEditor.DialogueSearch.TabIcon"));
+
+// For the Dialogue Data Display Window
+const FName FDialogueStyle::PROPERTY_DialogueDataDisplay_TabIcon(TEXT("DlgSystemEditor.DialogueDataDisplay.TabIcon"));
 
 // Tied with FDialogueEditorCommands::FindInDialogue
 const FName FDialogueStyle::PROPERTY_FindInDialogueEditorIcon(TEXT("DlgSystemEditor.FindInDialogue"));
@@ -47,6 +58,7 @@ const FName FDialogueStyle::PROPERTY_FindInDialogueEditorIcon(TEXT("DlgSystemEdi
 // Tied with FDialogueEditorCommands::FindInAllDialogues
 const FName FDialogueStyle::PROPERTY_FindInAllDialogueEditorIcon(TEXT("DlgSystemEditor.FindInAllDialogues"));
 
+// For FDialogueSearchResult_CommentNode
 const FName FDialogueStyle::PROPERTY_CommentBubbleOn(TEXT("DlgSystemEditor.CommentBubbleOn"));
 
 // The private ones
@@ -77,6 +89,7 @@ void FDialogueStyle::Initialize()
 		return;
 	}
 
+	// Content Browser icons for the Dialogue Asset
 	StyleSet->Set(
 		PROPERTY_DialogueClassIcon,
 		new FSlateImageBrush(GetPluginContentPath("Icons/Dialogue_16x.png"), Icon16x16)
@@ -86,24 +99,7 @@ void FDialogueStyle::Initialize()
 		new FSlateImageBrush(GetPluginContentPath("Icons/Dialogue_64x.png"), Icon64x64)
 	);
 
-	StyleSet->Set(
-		PROPERTY_ReloadAssetIcon,
-		new FSlateImageBrush(GetEngineContentPath("Icons/icon_Cascade_RestartInLevel_40x.png"), Icon40x40)
-	);
-	StyleSet->Set(
-		GetSmallProperty(PROPERTY_ReloadAssetIcon),
-		new FSlateImageBrush(GetEngineContentPath("Icons/icon_Refresh_16x.png"), Icon16x16)
-	);
-
-	StyleSet->Set(
-		PROPERTY_ShowPrimarySecondaryEdgesIcon,
-		new FSlateImageBrush(GetPluginContentPath("Icons/Dialogue_ShowPrimarySecondaryEdges_40x.png"), Icon40x40)
-	);
-	StyleSet->Set(
-		GetSmallProperty(PROPERTY_ShowPrimarySecondaryEdgesIcon),
-		new FSlateImageBrush(GetPluginContentPath("Icons/Dialogue_ShowPrimarySecondaryEdges_40x.png"), Icon16x16)
-	);
-
+	// Dialogue Search
 	StyleSet->Set(
 		PROPERTY_FindInDialogueEditorIcon,
 		new FSlateImageBrush(GetEngineContentPath("Icons/icon_Blueprint_Find_40px.png"), Icon40x40)
@@ -122,7 +118,12 @@ void FDialogueStyle::Initialize()
 		new FSlateImageBrush(GetEngineContentPath("Icons/icon_FindInAnyBlueprint_40px.png"), Icon20x20)
 	);
 
-	// Level Editor Save All Dialogues
+	StyleSet->Set(
+		PROPERTY_DialogueSearch_TabIcon,
+		new FSlateImageBrush(GetEngineContentPath("Icons/icon_Genericfinder_16x.png"), Icon16x16)
+	);
+
+	// Level Editor File
 	StyleSet->Set(
 		PROPERTY_SaveAllDialoguesIcon,
 		new FSlateImageBrush(GetEngineContentPath("Icons/icon_file_saveall_40x.png"), Icon40x40)
@@ -132,16 +133,37 @@ void FDialogueStyle::Initialize()
 		new FSlateImageBrush(GetEngineContentPath("Icons/Edit/icon_Edit_Delete_40x.png"), Icon40x40)
 	);
 
+	// Dialogue Browser
 	StyleSet->Set(
-		PROPERTY_FindDialogueIcon,
-		new FSlateImageBrush(GetEngineContentPath("Icons/icon_Genericfinder_16x.png"), Icon16x16)
-	);
-	StyleSet->Set(
-		PROPERTY_BrowseDialogueIcon,
+		PROPERTY_DialogueBrowser_TabIcon,
 		new FSlateImageBrush(GetEngineContentPath("Icons/icon_tab_ContentBrowser_16x.png"), Icon16x16)
 	);
 
-	// Set common used properties
+	// Dialogue Data Display
+	StyleSet->Set(
+		PROPERTY_DialogueDataDisplay_TabIcon,
+		new FSlateImageBrush(GetEngineContentPath("Icons/icon_tab_DebugTools_40x.png"), Icon16x16)
+	);
+
+	// Dialogue Editor Window
+	StyleSet->Set(
+		PROPERTY_ReloadAssetIcon,
+		new FSlateImageBrush(GetEngineContentPath("Icons/icon_Cascade_RestartInLevel_40x.png"), Icon40x40)
+	);
+	StyleSet->Set(
+		GetSmallProperty(PROPERTY_ReloadAssetIcon),
+		new FSlateImageBrush(GetEngineContentPath("Icons/icon_Refresh_16x.png"), Icon16x16)
+	);
+
+	StyleSet->Set(
+		PROPERTY_ShowPrimarySecondaryEdgesIcon,
+		new FSlateImageBrush(GetPluginContentPath("Icons/Dialogue_ShowPrimarySecondaryEdges_40x.png"), Icon40x40)
+	);
+	StyleSet->Set(
+		GetSmallProperty(PROPERTY_ShowPrimarySecondaryEdgesIcon),
+		new FSlateImageBrush(GetPluginContentPath("Icons/Dialogue_ShowPrimarySecondaryEdges_40x.png"), Icon16x16)
+	);
+
 	StyleSet->Set(
 		PROPERTY_ConditionIcon,
 		new FSlateImageBrush(GetPluginContentPath("Icons/Condition_96x.png"), Icon96x96)
