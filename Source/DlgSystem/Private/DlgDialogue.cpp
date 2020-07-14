@@ -178,7 +178,7 @@ void UDlgDialogue::PostInitProperties()
 
 	// Used when creating new Dialogues
 	// Initialize with a valid GUID
-	if (DialogueVersion >= FDlgDialogueObjectVersion::AddGuid && !GUID.IsValid())
+	if (DialogueVersion >= FDlgDialogueObjectVersion::AddGUID && !GUID.IsValid())
 	{
 		RegenerateGUID();
 		FDlgLogger::Get().Debugf(
@@ -433,7 +433,7 @@ void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
 
 	// TODO(vampy): validate if data is legit, indicies exist and that sort.
 	// Check if Guid is not a duplicate
-	const TArray<UDlgDialogue*> DuplicateDialogues = UDlgManager::GetDialoguesWithDuplicateGuid();
+	const TArray<UDlgDialogue*> DuplicateDialogues = UDlgManager::GetDialoguesWithDuplicateGUIDs();
 	if (DuplicateDialogues.Num() > 0)
 	{
 		if (DuplicateDialogues.Contains(this))

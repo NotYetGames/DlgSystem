@@ -271,19 +271,19 @@ TArray<UObject*> UDlgManager::GetAllObjectsWithDialogueParticipantInterface(UObj
 	return Array;
 }
 
-TArray<UDlgDialogue*> UDlgManager::GetDialoguesWithDuplicateGuid()
+TArray<UDlgDialogue*> UDlgManager::GetDialoguesWithDuplicateGUIDs()
 {
 	TArray<UDlgDialogue*> Dialogues = GetAllDialoguesFromMemory();
 	TArray<UDlgDialogue*> DuplicateDialogues;
 
-	TSet<FGuid> DialogueGuids;
+	TSet<FGuid> DialogueGUIDs;
 	for (UDlgDialogue* Dialogue : Dialogues)
 	{
 		const FGuid ID = Dialogue->GetDialogueGUID();
-		if (DialogueGuids.Find(ID) == nullptr)
+		if (DialogueGUIDs.Find(ID) == nullptr)
 		{
 			// does not exist, good
-			DialogueGuids.Add(ID);
+			DialogueGUIDs.Add(ID);
 		}
 		else
 		{
@@ -295,7 +295,7 @@ TArray<UDlgDialogue*> UDlgManager::GetDialoguesWithDuplicateGuid()
 	return DuplicateDialogues;
 }
 
-TMap<FGuid, UDlgDialogue*> UDlgManager::GetAllDialoguesGuidMap()
+TMap<FGuid, UDlgDialogue*> UDlgManager::GetAllDialoguesGUIDsMap()
 {
 	TArray<UDlgDialogue*> Dialogues = GetAllDialoguesFromMemory();
 	TMap<FGuid, UDlgDialogue*> DialoguesMap;
@@ -306,7 +306,7 @@ TMap<FGuid, UDlgDialogue*> UDlgManager::GetAllDialoguesGuidMap()
 		if (DialoguesMap.Contains(ID))
 		{
 			FDlgLogger::Get().Errorf(
-				TEXT("GetAllDialoguesGuidMap - ID = `%s` for Dialogue = `%s` already exists"),
+				TEXT("GetAllDialoguesGUIDsMap - ID = `%s` for Dialogue = `%s` already exists"),
 				*ID.ToString(), *Dialogue->GetPathName()
 			);
 		}

@@ -22,7 +22,7 @@ struct DLGSYSTEM_API FDlgDialogueObjectVersion
 		UseOnlyOneOutputAndInputPin,
 		MergeVirtualParentAndSelectorTypes,
 		ConvertDialogueDataArraysToSets,
-		AddGuid,
+		AddGUID,
 		AddComparisonWithOtherParticipant,
 		AddTextFormatArguments,
 		AddLocalizationOverwrittenNamespacesAndKeys,

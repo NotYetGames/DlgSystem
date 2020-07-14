@@ -2,7 +2,6 @@
 #include "DlgMemory.h"
 #include "DlgHelper.h"
 
-
 bool FDlgHistory::operator==(const FDlgHistory& Other) const
 {
 	return FDlgHelper::IsSetEqual(VisitedNodeIndices, Other.VisitedNodeIndices);
@@ -44,9 +43,4 @@ bool FDlgMemory::IsNodeVisited(const FGuid& DialogueGUID, int32 NodeIndex) const
 
 	const int32* FoundIndex = History->VisitedNodeIndices.Find(NodeIndex);
 	return FoundIndex != nullptr;
-}
-
-void FDlgMemory::Serialize(FArchive& Ar)
-{
-	Ar << HistoryMap;
 }

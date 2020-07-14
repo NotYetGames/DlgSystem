@@ -21,8 +21,10 @@ public:
 
 // Singleton to store Dialogue history
 // TODO: investigate if this is multiplayer friendly, it does not seem so as there exists only a single global dialogue memory
-class DLGSYSTEM_API FDlgMemory
+USTRUCT()
+struct DLGSYSTEM_API FDlgMemory
 {
+	GENERATED_USTRUCT_BODY()
 public:
 	static FDlgMemory* GetInstance()
 	{
@@ -56,12 +58,15 @@ public:
 private:
 	 // Key: Dialogue unique identifier Guid
 	 // Value: set of already visited nodes
+	UPROPERTY()
 	TMap<FGuid, FDlgHistory> HistoryMap;
 };
 
-// operator overloads for serialization
-FORCEINLINE FArchive& operator<<(FArchive &Ar, FDlgHistory& History)
+template<>
+struct TStructOpsTypeTraits<FDlgHistory> : public TStructOpsTypeTraitsBase2<FDlgHistory>
 {
-	Ar << History.VisitedNodeIndices;
-	return Ar;
-}
+	enum
+	{
+		WithIdenticalViaEquality = true
+    };
+};

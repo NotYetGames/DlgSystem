@@ -621,16 +621,16 @@ bool FDialogueSearchManager::QuerySingleDialogue(
 	if (SearchFilter.bIncludeDialogueGUID)
 	{
 		const FString GUIDToSearchFor = SearchFilter.SearchString.TrimStartAndEnd();
-		const FGuid DialogueGuid = InDialogue->GetDialogueGUID();
+		const FGuid DialogueGUID = InDialogue->GetDialogueGUID();
 
 		// Test every possible format
 		const TArray<FString> DialoguGUIDStrings = {
-			DialogueGuid.ToString(EGuidFormats::Digits),
-			DialogueGuid.ToString(EGuidFormats::DigitsWithHyphens),
-			DialogueGuid.ToString(EGuidFormats::DigitsWithHyphensInBraces),
-			DialogueGuid.ToString(EGuidFormats::DigitsWithHyphensInParentheses),
-			DialogueGuid.ToString(EGuidFormats::HexValuesInBraces),
-			DialogueGuid.ToString(EGuidFormats::UniqueObjectGuid)
+			DialogueGUID.ToString(EGuidFormats::Digits),
+			DialogueGUID.ToString(EGuidFormats::DigitsWithHyphens),
+			DialogueGUID.ToString(EGuidFormats::DigitsWithHyphensInBraces),
+			DialogueGUID.ToString(EGuidFormats::DigitsWithHyphensInParentheses),
+			DialogueGUID.ToString(EGuidFormats::HexValuesInBraces),
+			DialogueGUID.ToString(EGuidFormats::UniqueObjectGuid)
 		};
 		for (const FString& GUID : DialoguGUIDStrings)
 		{

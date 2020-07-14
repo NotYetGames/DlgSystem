@@ -330,7 +330,7 @@ void FDlgSystemEditorModule::HandleOnPostEngineInit()
 	// - duplicated files outside of UE
 	// - somehow loaded from text files?
 	// - the universe hates us? +_+
-	for (UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGuid())
+	for (UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGUIDs())
 	{
 		UE_LOG(
 			LogDlgSystemEditor,
@@ -344,7 +344,7 @@ void FDlgSystemEditorModule::HandleOnPostEngineInit()
 
 	// Give it another try, Give up :((
 	// May the math Gods have mercy on us!
-	for (const UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGuid())
+	for (const UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGUIDs())
 	{
 		// GUID already exists (╯°□°）╯︵ ┻━┻
 		// Does this break the universe?
