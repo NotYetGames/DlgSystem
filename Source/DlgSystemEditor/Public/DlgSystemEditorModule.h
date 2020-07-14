@@ -79,8 +79,8 @@ private:
 	// The factory of how the pins look.
 	TSharedPtr<FGraphPanelPinFactory> DialogueGraphPinFactory;
 
-	// File menu Editor commands bound from this plugin.
-	TSharedPtr<FUICommandList> FileMenuEditorCommands;
+	// Level Editor commands bound from this plugin.
+	TSharedPtr<FUICommandList> LevelMenuEditorCommands;
 
 	// The Tools Dialogue category.
 	TSharedPtr<FWorkspaceItem> ToolsDialogueCategory;
@@ -90,5 +90,5 @@ private:
 	FDelegateHandle OnBeginPIEHandle;
 	FDelegateHandle OnPostPIEStartedHandle; // after BeginPlay() has been called
 	FDelegateHandle OnEndPIEHandle;
-	
+
 };

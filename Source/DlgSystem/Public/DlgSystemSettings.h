@@ -326,6 +326,20 @@ public:
 	bool bHideEmptyDialogueBrowserCategories = true;
 
 
+	//
+	// External URLs
+	//
+
+	FString URLNotYetPlugins = "https://bit.ly/NotYetPluginsEditor";
+	FString URLMarketplace = "https://bit.ly/DlgMarketplaceEditor";
+	FString URLWiki = "https://bit.ly/DlgWikiEditor";
+	FString URLForum = "https://bit.ly/DlgForumEditor";
+	FString URLDiscord = "https://bit.ly/NYDiscordEditor";
+
+	//
+	// Graph NOde
+	//
+
 	// Whether the description text wraps onto a new line when it's length exceeds this width;
 	// Tf this value is zero or negative, no wrapping occurs.
 	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
@@ -451,7 +465,6 @@ public:
 	// The Color of the wire when the edge is secondary.
 	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
 	FLinearColor WireSecondaryEdgeColor = FLinearColor{0.101961f, 0.137255f, 0.494118f, 1.f}; // blueish
-
 
 	//
 	// Advanced Section

@@ -11,6 +11,7 @@ struct DLGSYSTEM_API FDlgHistory
 	GENERATED_USTRUCT_BODY()
 public:
 	// List of already visited node indices
+	// NOTE: if you serialize this but then later change the dialogue node positions this will have the wrong indices
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|History")
 	TSet<int32> VisitedNodeIndices;
 
@@ -51,8 +52,8 @@ public:
 	void SetHistoryMap(const TMap<FGuid, FDlgHistory>& Map) { HistoryMap = Map; }
 
 	void Serialize(FArchive& Ar);
-private:
 
+private:
 	 // Key: Dialogue unique identifier Guid
 	 // Value: set of already visited nodes
 	TMap<FGuid, FDlgHistory> HistoryMap;

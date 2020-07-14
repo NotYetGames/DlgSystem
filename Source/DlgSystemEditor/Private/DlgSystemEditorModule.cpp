@@ -141,14 +141,51 @@ void FDlgSystemEditorModule::StartupModule()
 	FEdGraphUtilities::RegisterVisualPinFactory(DialogueGraphPinFactory);
 
 	// Bind Editor commands
-	FileMenuEditorCommands = MakeShared<FUICommandList>();
-	FileMenuEditorCommands->MapAction(
+	LevelMenuEditorCommands = MakeShared<FUICommandList>();
+	LevelMenuEditorCommands->MapAction(
 		FDialogueEditorCommands::Get().SaveAllDialogues,
 		FExecuteAction::CreateStatic(&Self::HandleOnSaveAllDialogues)
 	);
-	FileMenuEditorCommands->MapAction(
+	LevelMenuEditorCommands->MapAction(
 		FDialogueEditorCommands::Get().DeleteAllDialoguesTextFiles,
 		FExecuteAction::CreateStatic(&Self::HandleOnDeleteAllDialoguesTextFiles)
+	);
+
+	const UDlgSystemSettings& Settings = *GetDefault<UDlgSystemSettings>();
+	LevelMenuEditorCommands->MapAction(
+	    FDialogueEditorCommands::Get().OpenNotYetPlugins,
+	    FExecuteAction::CreateLambda([&Settings]()
+	    {
+	    	FPlatformProcess::LaunchURL(*Settings.URLNotYetPlugins, nullptr, nullptr );
+	    })
+	);
+	LevelMenuEditorCommands->MapAction(
+	    FDialogueEditorCommands::Get().OpenMarketplace,
+	    FExecuteAction::CreateLambda([&Settings]()
+	    {
+	        FPlatformProcess::LaunchURL(*Settings.URLMarketplace, nullptr, nullptr );
+	    })
+	);
+	LevelMenuEditorCommands->MapAction(
+	    FDialogueEditorCommands::Get().OpenDiscord,
+	    FExecuteAction::CreateLambda([&Settings]()
+	    {
+	        FPlatformProcess::LaunchURL(*Settings.URLDiscord, nullptr, nullptr );
+	    })
+	);
+	LevelMenuEditorCommands->MapAction(
+	    FDialogueEditorCommands::Get().OpenForum,
+	    FExecuteAction::CreateLambda([&Settings]()
+	    {
+	        FPlatformProcess::LaunchURL(*Settings.URLForum, nullptr, nullptr );
+	    })
+	);
+	LevelMenuEditorCommands->MapAction(
+	    FDialogueEditorCommands::Get().OpenWiki,
+	    FExecuteAction::CreateLambda([&Settings]()
+	    {
+	        FPlatformProcess::LaunchURL(*Settings.URLWiki, nullptr, nullptr );
+	    })
 	);
 
 	// Content Browser extension
@@ -430,36 +467,64 @@ void FDlgSystemEditorModule::ExtendMenu()
 		return;
 	}
 
-	// File -> Save all Dialogues
+	// File and Help Menu Extenders
 	{
-		TSharedRef<FExtender> FileMenuExtender(new FExtender);
-
 		// Fill after the File->FileLoadAndSave
+		TSharedRef<FExtender> FileMenuExtender(new FExtender);
 		FileMenuExtender->AddMenuExtension(
 			"FileLoadAndSave",
 			EExtensionHook::After,
-			FileMenuEditorCommands.ToSharedRef(),
+			LevelMenuEditorCommands.ToSharedRef(),
 			FMenuExtensionDelegate::CreateLambda([this](FMenuBuilder& MenuBuilder)
 			{
 				// Save Dialogues
-				MenuBuilder.BeginSection("DialogueFileLoadAndSave", LOCTEXT("DialogueKeyFileAndSearch", "Dialogue"));
+				MenuBuilder.BeginSection("Dialogue", LOCTEXT("DialogueMenuKeyCategory", "Dialogue"));
 				{
 					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().SaveAllDialogues);
 					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().DeleteAllDialoguesTextFiles);
 				}
 				MenuBuilder.EndSection();
-			}));
+			})
+		);
+
+		// Fill after the Help->HelpBrowse
+		TSharedRef<FExtender> HelpMenuExtender(new FExtender);
+		HelpMenuExtender->AddMenuExtension(
+			"HelpBrowse",
+			EExtensionHook::After,
+			LevelMenuEditorCommands.ToSharedRef(),
+			FMenuExtensionDelegate::CreateLambda([this](FMenuBuilder& MenuBuilder)
+			{
+				// Save Dialogues
+				MenuBuilder.BeginSection("Dialogue", LOCTEXT("DialogueMenuKeyCategory", "Dialogue"));
+				{
+					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().OpenNotYetPlugins);
+					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().OpenMarketplace);
+					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().OpenWiki);
+					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().OpenDiscord);
+					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().OpenForum);
+				}
+				MenuBuilder.EndSection();
+			})
+		);
 
 		// Add to the level editor
 		FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>(NAME_MODULE_LevelEditor);
 		LevelEditorModule.GetMenuExtensibilityManager()->AddExtender(FileMenuExtender);
+		LevelEditorModule.GetMenuExtensibilityManager()->AddExtender(HelpMenuExtender);
 	}
 
 	// Window -> Dialogue search and browse
 	{
 		ToolsDialogueCategory = WorkspaceMenu::GetMenuStructure().GetStructureRoot()
-			->AddGroup(LOCTEXT("WorkspaceMenu_DialogueCategory", "Dialogue" ),
-					FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_DialogueClassIcon), false);
+			->AddGroup(
+				LOCTEXT("WorkspaceMenu_DialogueCategory", "Dialogue" ),
+				FSlateIcon(
+					FDialogueStyle::GetStyleSetName(),
+					FDialogueStyle::PROPERTY_DialogueClassIcon
+				),
+				false
+			);
 
 		// Register the Dialogue Overview Browser
 		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(DIALOGUE_BROWSER_TAB_ID,
