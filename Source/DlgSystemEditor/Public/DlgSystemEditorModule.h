@@ -35,7 +35,10 @@ public:
 	//
 
 	// Create the menu extenders
-	static TSharedRef<FExtender> CreateFileMenuExtender(TSharedRef<FUICommandList> Commands);
+	static TSharedRef<FExtender> CreateFileMenuExtender(
+		TSharedRef<FUICommandList> Commands,
+		const TArray<TSharedPtr<FUICommandInfo>>& AdditionalMenuEntries = {}
+	);
 	static TSharedRef<FExtender> CreateHelpMenuExtender(TSharedRef<FUICommandList> Commands);
 	static void MapActionsForFileMenuExtender(TSharedRef<FUICommandList> Commands);
 	static void MapActionsForHelpMenuExtender(TSharedRef<FUICommandList> Commands);
@@ -46,7 +49,7 @@ public:
 
 	// Deletes all teh dialogues text files
 	// @return True on success or false on failure.
-	static bool DeleteAllDialoguesTextFiles(const TSet<FString>& TextFileExtensions);
+	static bool DeleteAllDialoguesTextFiles();
 
 private:
 	// Handle clicking on save all dialogues.

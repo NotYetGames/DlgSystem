@@ -52,6 +52,7 @@ public:
 
 	static const FName PROPERTY_SaveAllDialoguesIcon;
 	static const FName PROPERTY_DeleteAllDialoguesTextFilesIcon;
+	static const FName PROPERTY_DeleteCurrentDialogueTextFilesIcon;
 	static const FName PROPERTY_DialogueSearch_TabIcon;
 	static const FName PROPERTY_DialogueBrowser_TabIcon;
 	static const FName PROPERTY_DialogueDataDisplay_TabIcon;

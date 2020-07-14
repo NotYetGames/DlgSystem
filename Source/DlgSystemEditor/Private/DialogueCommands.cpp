@@ -57,6 +57,13 @@ void FDialogueCommands::RegisterCommands()
 	);
 
 	UI_COMMAND(
+	    DeleteCurrentDialogueTextFiles,
+	    "Delete Current Dialogue Text Files...",
+	    "Delete all text files of the CURRENT Dialogue on the disk from all existing known text formats and from the Settings AdditionalTextFormatFileExtensionsToLookFor",
+	    EUserInterfaceActionType::Button, FInputChord()
+	);
+
+	UI_COMMAND(
         OpenNotYetPlugins,
         "Not Yet: Plugins...",
         "Navigates to the Not Yet Plugins page",

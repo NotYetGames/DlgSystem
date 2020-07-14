@@ -43,8 +43,11 @@ public:
 	// Saves all the dialogues
 	TSharedPtr<FUICommandInfo> SaveAllDialogues;
 
-	// Removes all the dialogue text files
+	// Delete all the dialogues text files
 	TSharedPtr<FUICommandInfo> DeleteAllDialoguesTextFiles;
+
+	// Delete all the text files for the CURRENT Dialogue
+	TSharedPtr<FUICommandInfo> DeleteCurrentDialogueTextFiles;
 
 	// External links
 	TSharedPtr<FUICommandInfo> OpenNotYetPlugins;

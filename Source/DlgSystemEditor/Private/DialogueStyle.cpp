@@ -46,6 +46,9 @@ const FName FDialogueStyle::PROPERTY_SaveAllDialoguesIcon(TEXT("DlgSystemEditor.
 // Tied with FDialogueCommands::DeleteAllDialoguesTextFiles
 const FName FDialogueStyle::PROPERTY_DeleteAllDialoguesTextFilesIcon(TEXT("DlgSystemEditor.DeleteAllDialoguesTextFiles"));
 
+// Tied with FDialogueCommands::DeleteCurrentDialogueTextFiles
+const FName FDialogueStyle::PROPERTY_DeleteCurrentDialogueTextFilesIcon(TEXT("DlgSystemEditor.DeleteCurrentDialogueTextFiles"));
+
 // For the Dialogue Search Browser
 const FName FDialogueStyle::PROPERTY_DialogueSearch_TabIcon(TEXT("DlgSystemEditor.DialogueSearch.TabIcon"));
 
@@ -131,6 +134,10 @@ void FDialogueStyle::Initialize()
 	StyleSet->Set(
 		PROPERTY_DeleteAllDialoguesTextFilesIcon,
 		new FSlateImageBrush(GetEngineContentPath("Icons/Edit/icon_Edit_Delete_40x.png"), Icon40x40)
+	);
+	StyleSet->Set(
+	    PROPERTY_DeleteCurrentDialogueTextFilesIcon,
+	    new FSlateImageBrush(GetEngineContentPath("Icons/Edit/icon_Edit_Delete_40x.png"), Icon40x40)
 	);
 
 	// Dialogue Browser

@@ -284,13 +284,13 @@ void FDlgSystemEditorModule::HandleOnDeleteAllDialoguesTextFiles()
 		return;
 	}
 
-	if (!DeleteAllDialoguesTextFiles(AllFileExtensions))
+	if (!DeleteAllDialoguesTextFiles())
 	{
 		UE_LOG(LogDlgSystemEditor, Error, TEXT("Failed To delete all Dialogues text files. An error occurred."));
 	}
 }
 
-bool FDlgSystemEditorModule::DeleteAllDialoguesTextFiles(const TSet<FString>& TextFileExtensions)
+bool FDlgSystemEditorModule::DeleteAllDialoguesTextFiles()
 {
 	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
 	const bool bBatchOnlyInGameDialogues = GetDefault<UDlgSystemSettings>()->bBatchOnlyInGameDialogues;
@@ -474,7 +474,10 @@ void FDlgSystemEditorModule::ExtendMenu()
 	}
 }
 
-TSharedRef<FExtender> FDlgSystemEditorModule::CreateFileMenuExtender(TSharedRef<FUICommandList> Commands)
+TSharedRef<FExtender> FDlgSystemEditorModule::CreateFileMenuExtender(
+	TSharedRef<FUICommandList> Commands,
+	const TArray<TSharedPtr<FUICommandInfo>>& AdditionalMenuEntries
+)
 {
 	// Fill after the File->FileLoadAndSave
 	TSharedRef<FExtender> FileMenuExtender(new FExtender);
@@ -482,13 +485,18 @@ TSharedRef<FExtender> FDlgSystemEditorModule::CreateFileMenuExtender(TSharedRef<
 		"FileLoadAndSave",
 		EExtensionHook::After,
 		Commands,
-		FMenuExtensionDelegate::CreateLambda([](FMenuBuilder& MenuBuilder)
+		FMenuExtensionDelegate::CreateLambda([AdditionalMenuEntries](FMenuBuilder& MenuBuilder)
 		{
 			// Save Dialogues
 			MenuBuilder.BeginSection("Dialogue", LOCTEXT("DialogueMenuKeyCategory", "Dialogue"));
 			{
 				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().SaveAllDialogues);
 				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().DeleteAllDialoguesTextFiles);
+				MenuBuilder.AddMenuSeparator();
+				for (auto& MenuEntry : AdditionalMenuEntries)
+				{
+					MenuBuilder.AddMenuEntry(MenuEntry);
+				}
 			}
 			MenuBuilder.EndSection();
 		})

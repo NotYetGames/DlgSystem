@@ -615,6 +615,20 @@ void FDialogueEditor::BindEditorCommands()
 	// Map the global actions
 	FDlgSystemEditorModule::MapActionsForFileMenuExtender(ToolkitCommands);
 	FDlgSystemEditorModule::MapActionsForHelpMenuExtender(ToolkitCommands);
+
+	ToolkitCommands->MapAction(
+	    FDialogueCommands::Get().DeleteCurrentDialogueTextFiles,
+	    FExecuteAction::CreateLambda([this]
+	    {
+	    	check(DialogueBeingEdited);
+	    	const FString Text = TEXT("Delete All text files for this Dialogue?");
+	    	const EAppReturnType::Type Response = FPlatformMisc::MessageBoxExt(EAppMsgType::YesNo, *Text, *Text);
+            if (Response == EAppReturnType::Yes)
+            {
+            	DialogueBeingEdited->DeleteAllTextFiles();
+            }
+	    })
+	);
 }
 
 void FDialogueEditor::ExtendMenu()
@@ -639,7 +653,12 @@ void FDialogueEditor::ExtendMenu()
 
 	AddMenuExtender(MenuExtender);
 
-	AddMenuExtender(FDlgSystemEditorModule::CreateFileMenuExtender(ToolkitCommands));
+	AddMenuExtender(
+		FDlgSystemEditorModule::CreateFileMenuExtender(
+			ToolkitCommands,
+			{FDialogueCommands::Get().DeleteCurrentDialogueTextFiles}
+		)
+	);
 	AddMenuExtender(FDlgSystemEditorModule::CreateHelpMenuExtender(ToolkitCommands));
 }
 
