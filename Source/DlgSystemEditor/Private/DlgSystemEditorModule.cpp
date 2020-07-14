@@ -19,7 +19,7 @@
 #include "DialogueGraphFactories.h"
 #include "DlgSystemEditorPrivatePCH.h"
 #include "DialogueAssetTypeActions.h"
-#include "DialogueEditor/DialogueEditorCommands.h"
+#include "DialogueCommands.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueBrowser/SDialogueBrowser.h"
 #include "DialogueSearch/DialogueSearchManager.h"
@@ -73,7 +73,7 @@ void FDlgSystemEditorModule::StartupModule()
 	FDialogueStyle::Initialize();
 
 	// Register commands
-	FDialogueEditorCommands::Register();
+	FDialogueCommands::Register();
 
 	// Register asset types, add the right click submenu
 	IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>(NAME_MODULE_AssetTools).Get();
@@ -143,51 +143,8 @@ void FDlgSystemEditorModule::StartupModule()
 
 	// Bind Editor commands
 	LevelMenuEditorCommands = MakeShared<FUICommandList>();
-	LevelMenuEditorCommands->MapAction(
-		FDialogueEditorCommands::Get().SaveAllDialogues,
-		FExecuteAction::CreateStatic(&Self::HandleOnSaveAllDialogues)
-	);
-	LevelMenuEditorCommands->MapAction(
-		FDialogueEditorCommands::Get().DeleteAllDialoguesTextFiles,
-		FExecuteAction::CreateStatic(&Self::HandleOnDeleteAllDialoguesTextFiles)
-	);
-
-	const UDlgSystemSettings& Settings = *GetDefault<UDlgSystemSettings>();
-	LevelMenuEditorCommands->MapAction(
-	    FDialogueEditorCommands::Get().OpenNotYetPlugins,
-	    FExecuteAction::CreateLambda([&Settings]()
-	    {
-	    	FPlatformProcess::LaunchURL(*Settings.URLNotYetPlugins, nullptr, nullptr );
-	    })
-	);
-	LevelMenuEditorCommands->MapAction(
-	    FDialogueEditorCommands::Get().OpenMarketplace,
-	    FExecuteAction::CreateLambda([&Settings]()
-	    {
-	        FPlatformProcess::LaunchURL(*Settings.URLMarketplace, nullptr, nullptr );
-	    })
-	);
-	LevelMenuEditorCommands->MapAction(
-	    FDialogueEditorCommands::Get().OpenDiscord,
-	    FExecuteAction::CreateLambda([&Settings]()
-	    {
-	        FPlatformProcess::LaunchURL(*Settings.URLDiscord, nullptr, nullptr );
-	    })
-	);
-	LevelMenuEditorCommands->MapAction(
-	    FDialogueEditorCommands::Get().OpenForum,
-	    FExecuteAction::CreateLambda([&Settings]()
-	    {
-	        FPlatformProcess::LaunchURL(*Settings.URLForum, nullptr, nullptr );
-	    })
-	);
-	LevelMenuEditorCommands->MapAction(
-	    FDialogueEditorCommands::Get().OpenWiki,
-	    FExecuteAction::CreateLambda([&Settings]()
-	    {
-	        FPlatformProcess::LaunchURL(*Settings.URLWiki, nullptr, nullptr );
-	    })
-	);
+	MapActionsForFileMenuExtender(LevelMenuEditorCommands.ToSharedRef());
+	MapActionsForHelpMenuExtender(LevelMenuEditorCommands.ToSharedRef());
 
 	// Content Browser extension
 	FDialogueContentBrowserExtensions::InstallHooks();
@@ -245,7 +202,7 @@ void FDlgSystemEditorModule::ShutdownModule()
 	RegisteredAssetTypeActions.Empty();
 
 	// unregister commands
-	FDialogueEditorCommands::Unregister();
+	FDialogueCommands::Unregister();
 
 	// Unregister slate style overrides
 	FDialogueStyle::Shutdown();
@@ -470,44 +427,8 @@ void FDlgSystemEditorModule::ExtendMenu()
 
 	// File and Help Menu Extenders
 	{
-		// Fill after the File->FileLoadAndSave
-		TSharedRef<FExtender> FileMenuExtender(new FExtender);
-		FileMenuExtender->AddMenuExtension(
-			"FileLoadAndSave",
-			EExtensionHook::After,
-			LevelMenuEditorCommands.ToSharedRef(),
-			FMenuExtensionDelegate::CreateLambda([this](FMenuBuilder& MenuBuilder)
-			{
-				// Save Dialogues
-				MenuBuilder.BeginSection("Dialogue", LOCTEXT("DialogueMenuKeyCategory", "Dialogue"));
-				{
-					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().SaveAllDialogues);
-					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().DeleteAllDialoguesTextFiles);
-				}
-				MenuBuilder.EndSection();
-			})
-		);
-
-		// Fill after the Help->HelpBrowse
-		TSharedRef<FExtender> HelpMenuExtender(new FExtender);
-		HelpMenuExtender->AddMenuExtension(
-			"HelpBrowse",
-			EExtensionHook::After,
-			LevelMenuEditorCommands.ToSharedRef(),
-			FMenuExtensionDelegate::CreateLambda([this](FMenuBuilder& MenuBuilder)
-			{
-				// Save Dialogues
-				MenuBuilder.BeginSection("Dialogue", LOCTEXT("DialogueMenuKeyCategory", "Dialogue"));
-				{
-					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().OpenNotYetPlugins);
-					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().OpenMarketplace);
-					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().OpenWiki);
-					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().OpenDiscord);
-					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().OpenForum);
-				}
-				MenuBuilder.EndSection();
-			})
-		);
+		const TSharedRef<FExtender> FileMenuExtender = CreateFileMenuExtender(LevelMenuEditorCommands.ToSharedRef());
+		const TSharedRef<FExtender> HelpMenuExtender = CreateHelpMenuExtender(LevelMenuEditorCommands.ToSharedRef());
 
 		// Add to the level editor
 		FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>(NAME_MODULE_LevelEditor);
@@ -551,6 +472,107 @@ void FDlgSystemEditorModule::ExtendMenu()
 		TabDialogueDataDisplay->SetGroup(ToolsDialogueCategory.ToSharedRef());
 		TabDialogueDataDisplay->SetIcon(FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_DialogueDataDisplay_TabIcon));
 	}
+}
+
+TSharedRef<FExtender> FDlgSystemEditorModule::CreateFileMenuExtender(TSharedRef<FUICommandList> Commands)
+{
+	// Fill after the File->FileLoadAndSave
+	TSharedRef<FExtender> FileMenuExtender(new FExtender);
+	FileMenuExtender->AddMenuExtension(
+		"FileLoadAndSave",
+		EExtensionHook::After,
+		Commands,
+		FMenuExtensionDelegate::CreateLambda([](FMenuBuilder& MenuBuilder)
+		{
+			// Save Dialogues
+			MenuBuilder.BeginSection("Dialogue", LOCTEXT("DialogueMenuKeyCategory", "Dialogue"));
+			{
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().SaveAllDialogues);
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().DeleteAllDialoguesTextFiles);
+			}
+			MenuBuilder.EndSection();
+		})
+	);
+
+	return FileMenuExtender;
+}
+
+TSharedRef<FExtender> FDlgSystemEditorModule::CreateHelpMenuExtender(TSharedRef<FUICommandList> Commands)
+{
+	// Fill after the Help->HelpBrowse
+	TSharedRef<FExtender> HelpMenuExtender(new FExtender);
+	HelpMenuExtender->AddMenuExtension(
+		"HelpBrowse",
+		EExtensionHook::After,
+		Commands,
+		FMenuExtensionDelegate::CreateLambda([](FMenuBuilder& MenuBuilder)
+		{
+			// Save Dialogues
+			MenuBuilder.BeginSection("Dialogue", LOCTEXT("DialogueMenuKeyCategory", "Dialogue"));
+			{
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenNotYetPlugins);
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenMarketplace);
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenWiki);
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenDiscord);
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenForum);
+			}
+			MenuBuilder.EndSection();
+		})
+	);
+
+	return HelpMenuExtender;
+}
+
+void FDlgSystemEditorModule::MapActionsForFileMenuExtender(TSharedRef<FUICommandList> Commands)
+{
+	Commands->MapAction(
+		FDialogueCommands::Get().SaveAllDialogues,
+		FExecuteAction::CreateStatic(&Self::HandleOnSaveAllDialogues)
+	);
+	Commands->MapAction(
+		FDialogueCommands::Get().DeleteAllDialoguesTextFiles,
+		FExecuteAction::CreateStatic(&Self::HandleOnDeleteAllDialoguesTextFiles)
+	);
+}
+
+void FDlgSystemEditorModule::MapActionsForHelpMenuExtender(TSharedRef<FUICommandList> Commands)
+{
+	const UDlgSystemSettings& Settings = *GetDefault<UDlgSystemSettings>();
+	Commands->MapAction(
+		FDialogueCommands::Get().OpenNotYetPlugins,
+		FExecuteAction::CreateLambda([&Settings]()
+		{
+			FPlatformProcess::LaunchURL(*Settings.URLNotYetPlugins, nullptr, nullptr );
+		})
+	);
+	Commands->MapAction(
+		FDialogueCommands::Get().OpenMarketplace,
+		FExecuteAction::CreateLambda([&Settings]()
+		{
+			FPlatformProcess::LaunchURL(*Settings.URLMarketplace, nullptr, nullptr );
+		})
+	);
+	Commands->MapAction(
+		FDialogueCommands::Get().OpenDiscord,
+		FExecuteAction::CreateLambda([&Settings]()
+		{
+			FPlatformProcess::LaunchURL(*Settings.URLDiscord, nullptr, nullptr );
+		})
+	);
+	Commands->MapAction(
+		FDialogueCommands::Get().OpenForum,
+		FExecuteAction::CreateLambda([&Settings]()
+		{
+			FPlatformProcess::LaunchURL(*Settings.URLForum, nullptr, nullptr );
+		})
+	);
+	Commands->MapAction(
+		FDialogueCommands::Get().OpenWiki,
+		FExecuteAction::CreateLambda([&Settings]()
+		{
+			FPlatformProcess::LaunchURL(*Settings.URLWiki, nullptr, nullptr );
+		})
+	);
 }
 
 #undef LOCTEXT_NAMESPACE

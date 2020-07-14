@@ -1,11 +1,11 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
-#include "DialogueEditorCommands.h"
+#include "DialogueCommands.h"
 
 //////////////////////////////////////////////////////////////////////////
 // DlgEditorCommands
-#define LOCTEXT_NAMESPACE "DialogueEditorCommands"
+#define LOCTEXT_NAMESPACE "DialogueCommands"
 
-void FDialogueEditorCommands::RegisterCommands()
+void FDialogueCommands::RegisterCommands()
 {
 	UI_COMMAND(
 		DialogueReloadData,

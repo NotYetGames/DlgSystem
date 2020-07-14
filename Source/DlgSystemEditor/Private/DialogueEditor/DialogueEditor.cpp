@@ -26,7 +26,7 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueEditor/Graph/DialogueGraphSchema.h"
-#include "DialogueEditor/DialogueEditorCommands.h"
+#include "DialogueCommands.h"
 #include "Graph/SchemaActions/ConvertSpeechSequenceNodeToSpeechNodes_DialogueGraphSchemaAction.h"
 #include "DialogueSearch/DialogueSearchManager.h"
 #include "DialogueSearch/SFindInDialogues.h"
@@ -301,7 +301,7 @@ void FDialogueEditor::InitDialogueEditor(
 
 	// Bind commands
 	FGraphEditorCommands::Register();
-	FDialogueEditorCommands::Register();
+	FDialogueCommands::Register();
 	BindEditorCommands();
 	CreateInternalWidgets();
 
@@ -510,7 +510,7 @@ void FDialogueEditor::BindEditorCommands()
 	);
 
 	// Edit Node commands
-	const auto DialogueCommands = FDialogueEditorCommands::Get();
+	const auto DialogueCommands = FDialogueCommands::Get();
 	GraphEditorCommands->MapAction(
 		DialogueCommands.ConvertSpeechSequenceNodeToSpeechNodes,
 		FExecuteAction::CreateSP(this, &Self::OnCommandConvertSpeechSequenceNodeToSpeechNodes),
@@ -602,15 +602,19 @@ void FDialogueEditor::BindEditorCommands()
 
 	// Find in All Dialogues
 	ToolkitCommands->MapAction(
-		FDialogueEditorCommands::Get().FindInAllDialogues,
+		FDialogueCommands::Get().FindInAllDialogues,
 		FExecuteAction::CreateLambda([this] { SummonSearchUI(false); })
 	);
 
 	// Find in current Dialogue
 	ToolkitCommands->MapAction(
-		FDialogueEditorCommands::Get().FindInDialogue,
+		FDialogueCommands::Get().FindInDialogue,
 		FExecuteAction::CreateLambda([this] { SummonSearchUI(true); })
 	);
+
+	// Map the global actions
+	FDlgSystemEditorModule::MapActionsForFileMenuExtender(ToolkitCommands);
+	FDlgSystemEditorModule::MapActionsForHelpMenuExtender(ToolkitCommands);
 }
 
 void FDialogueEditor::ExtendMenu()
@@ -626,14 +630,17 @@ void FDialogueEditor::ExtendMenu()
 		{
 			MenuBuilder.BeginSection("EditSearch", LOCTEXT("EditMenu_SearchHeading", "Search") );
 			{
-				MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().FindInDialogue);
-				MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().FindInAllDialogues);
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().FindInDialogue);
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().FindInAllDialogues);
 			}
 			MenuBuilder.EndSection();
 		})
 	);
 
-	AddMenuExtender(MenuExtender);;
+	AddMenuExtender(MenuExtender);
+
+	AddMenuExtender(FDlgSystemEditorModule::CreateFileMenuExtender(ToolkitCommands));
+	AddMenuExtender(FDlgSystemEditorModule::CreateHelpMenuExtender(ToolkitCommands));
 }
 
 TSharedRef<SWidget> FDialogueEditor::GeneratePrimarySecondaryEdgesMenu() const
@@ -642,8 +649,8 @@ TSharedRef<SWidget> FDialogueEditor::GeneratePrimarySecondaryEdgesMenu() const
 	FMenuBuilder MenuBuilder(bShouldCloseWindowAfterMenuSelection, ToolkitCommands, {});
 	MenuBuilder.BeginSection("ViewingOptions", LOCTEXT("PrimarySecondaryEdgesMenu", "Viewing Options"));
 	{
-		MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().ToggleDrawPrimaryEdges);
-		MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().ToggleDrawSecondaryEdges);
+		MenuBuilder.AddMenuEntry(FDialogueCommands::Get().ToggleDrawPrimaryEdges);
+		MenuBuilder.AddMenuEntry(FDialogueCommands::Get().ToggleDrawSecondaryEdges);
 	}
 	MenuBuilder.EndSection();
 
@@ -662,10 +669,10 @@ void FDialogueEditor::ExtendToolbar()
 		{
 			ToolbarBuilder.BeginSection("DialogueToolbar");
 			{
-				ToolbarBuilder.AddToolBarButton(FDialogueEditorCommands::Get().DialogueReloadData);
-				ToolbarBuilder.AddToolBarButton(FDialogueEditorCommands::Get().FindInDialogue);
+				ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().DialogueReloadData);
+				ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().FindInDialogue);
 
-				ToolbarBuilder.AddToolBarButton(FDialogueEditorCommands::Get().ToggleShowPrimarySecondaryEdges);
+				ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().ToggleShowPrimarySecondaryEdges);
 				ToolbarBuilder.AddComboButton(
 					FUIAction(
 						FExecuteAction(),

@@ -14,7 +14,7 @@
 #include "DlgSystemEditorPrivatePCH.h"
 #include "DlgDialogue.h"
 #include "DialogueGraphNode_Edge.h"
-#include "DialogueEditor/DialogueEditorCommands.h"
+#include "DialogueCommands.h"
 #include "DlgSystemSettings.h"
 
 #define LOCTEXT_NAMESPACE "DialogueGraphNode"
@@ -206,7 +206,7 @@ void UDialogueGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeCo
 		// Menu for right clicking on node
 		FToolMenuSection& Section = Menu->AddSection("DialogueGraphNode_BaseNodeEditCRUD");
 		if (IsSpeechSequenceNode())
-			Section.AddMenuEntry(FDialogueEditorCommands::Get().ConvertSpeechSequenceNodeToSpeechNodes);
+			Section.AddMenuEntry(FDialogueCommands::Get().ConvertSpeechSequenceNodeToSpeechNodes);
 
 		Section.AddMenuEntry(FGenericCommands::Get().Delete);
 //		Section.AddMenuEntry(FGenericCommands::Get().Cut);
@@ -227,7 +227,7 @@ void UDialogueGraphNode::GetContextMenuActions(const FGraphNodeContextMenuBuilde
 		Context.MenuBuilder->BeginSection("DialogueGraphNode_BaseNodeEditCRUD");
 		{
 			if (IsSpeechSequenceNode())
-				Context.MenuBuilder->AddMenuEntry(FDialogueEditorCommands::Get().ConvertSpeechSequenceNodeToSpeechNodes);
+				Context.MenuBuilder->AddMenuEntry(FDialogueCommands::Get().ConvertSpeechSequenceNodeToSpeechNodes);
 
 			Context.MenuBuilder->AddMenuEntry(FGenericCommands::Get().Delete);
 //			Context.MenuBuilder->AddMenuEntry(FGenericCommands::Get().Cut);

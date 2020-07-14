@@ -29,10 +29,10 @@ const FName FDialogueStyle::PROPERTY_VoiceIcon(TEXT("DlgSystemEditor.Voice"));
 const FName FDialogueStyle::PROPERTY_GenericIcon(TEXT("DlgSystemEditor.Generic"));
 const FName FDialogueStyle::PROPERTY_QuestionMarkIcon(TEXT("DlgSystemEditor.QuestionMark"));
 
-// Tied with FDialogueEditorCommands::DialogueReloadData
+// Tied with FDialogueCommands::DialogueReloadData
 const FName FDialogueStyle::PROPERTY_ReloadAssetIcon(TEXT("DlgSystemEditor.DialogueReloadData"));
 
-// Tied with FDialogueEditorCommands::ToggleShowPrimarySecondaryEdges
+// Tied with FDialogueCommands::ToggleShowPrimarySecondaryEdges
 const FName FDialogueStyle::PROPERTY_ShowPrimarySecondaryEdgesIcon(TEXT("DlgSystemEditor.ToggleShowPrimarySecondaryEdges"));
 
 // For the Dialogue Browser
@@ -40,10 +40,10 @@ const FName FDialogueStyle::PROPERTY_OpenAssetIcon(TEXT("DlgSystemEditor.OpenAss
 const FName FDialogueStyle::PROPERTY_FindAssetIcon(TEXT("DlgSystemEditor.FindAsset"));
 const FName FDialogueStyle::PROPERTY_DialogueBrowser_TabIcon(TEXT("DlgSystemEditor.DialogueBrowser.TabIcon"));
 
-// Tied with FDialogueEditorCommands::SaveAllDialogues
+// Tied with FDialogueCommands::SaveAllDialogues
 const FName FDialogueStyle::PROPERTY_SaveAllDialoguesIcon(TEXT("DlgSystemEditor.SaveAllDialogues"));
 
-// Tied with FDialogueEditorCommands::DeleteAllDialoguesTextFiles
+// Tied with FDialogueCommands::DeleteAllDialoguesTextFiles
 const FName FDialogueStyle::PROPERTY_DeleteAllDialoguesTextFilesIcon(TEXT("DlgSystemEditor.DeleteAllDialoguesTextFiles"));
 
 // For the Dialogue Search Browser
@@ -52,10 +52,10 @@ const FName FDialogueStyle::PROPERTY_DialogueSearch_TabIcon(TEXT("DlgSystemEdito
 // For the Dialogue Data Display Window
 const FName FDialogueStyle::PROPERTY_DialogueDataDisplay_TabIcon(TEXT("DlgSystemEditor.DialogueDataDisplay.TabIcon"));
 
-// Tied with FDialogueEditorCommands::FindInDialogue
+// Tied with FDialogueCommands::FindInDialogue
 const FName FDialogueStyle::PROPERTY_FindInDialogueEditorIcon(TEXT("DlgSystemEditor.FindInDialogue"));
 
-// Tied with FDialogueEditorCommands::FindInAllDialogues
+// Tied with FDialogueCommands::FindInAllDialogues
 const FName FDialogueStyle::PROPERTY_FindInAllDialogueEditorIcon(TEXT("DlgSystemEditor.FindInAllDialogues"));
 
 // For FDialogueSearchResult_CommentNode

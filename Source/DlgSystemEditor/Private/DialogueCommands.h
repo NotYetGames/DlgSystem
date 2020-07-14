@@ -6,11 +6,11 @@
 #include "DialogueStyle.h"
 
 // Add menu commands and stuff, if you want to that is
-class FDialogueEditorCommands : public TCommands<FDialogueEditorCommands>
+class FDialogueCommands : public TCommands<FDialogueCommands>
 {
 public:
-	FDialogueEditorCommands()
-		: TCommands<FDialogueEditorCommands>(
+	FDialogueCommands()
+		: TCommands<FDialogueCommands>(
 			TEXT("DlgSystemEditor"), // Context name for fast lookup
 			NSLOCTEXT("Contexts", "DlgSystemEditor", "DlgSystem Editor"), // Localized context name for displaying
 			NAME_None, // Parent

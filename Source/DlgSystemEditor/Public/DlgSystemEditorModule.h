@@ -14,6 +14,7 @@ class UK2Node;
 class UDlgDialogue;
 struct FGraphPanelNodeFactory;
 struct FGraphPanelPinFactory;
+class FExtender;
 
 // Implementation of the DlgSystemEditor Module
 class DLGSYSTEMEDITOR_API FDlgSystemEditorModule : public IDlgSystemEditorModule
@@ -33,10 +34,15 @@ public:
 	// Own functions
 	//
 
+	// Create the menu extenders
+	static TSharedRef<FExtender> CreateFileMenuExtender(TSharedRef<FUICommandList> Commands);
+	static TSharedRef<FExtender> CreateHelpMenuExtender(TSharedRef<FUICommandList> Commands);
+	static void MapActionsForFileMenuExtender(TSharedRef<FUICommandList> Commands);
+	static void MapActionsForHelpMenuExtender(TSharedRef<FUICommandList> Commands);
+
 	// Save all the dialogues.
 	// @return True on success or false on failure.
 	static bool SaveAllDialogues();
-
 
 	// Deletes all teh dialogues text files
 	// @return True on success or false on failure.
