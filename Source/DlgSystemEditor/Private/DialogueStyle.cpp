@@ -62,22 +62,24 @@ const FName FDialogueStyle::PROPERTY_FindInDialogueEditorIcon(TEXT("DlgSystemEdi
 const FName FDialogueStyle::PROPERTY_FindInAllDialogueEditorIcon(TEXT("DlgSystemEditor.FindInAllDialogues"));
 
 // Tied with FDialogueCommands::OpenDiscord
-const FName FDialogueStyle::PROPERTY_OpenDiscord(TEXT("DlgSystemEditor.OpenDiscord"));
+const FName FDialogueStyle::PROPERTY_OpenDiscordIcon(TEXT("DlgSystemEditor.OpenDiscord"));
 
 // Tied with FDialogueCommands::OpenForum
-const FName FDialogueStyle::PROPERTY_OpenForum(TEXT("DlgSystemEditor.OpenForum"));
+const FName FDialogueStyle::PROPERTY_OpenForumIcon(TEXT("DlgSystemEditor.OpenForum"));
 
 // Tied with FDialogueCommands::OpenNotYetPlugins
-const FName FDialogueStyle::PROPERTY_OpenNotYetPlugins(TEXT("DlgSystemEditor.OpenNotYetPlugins"));
+const FName FDialogueStyle::PROPERTY_OpenNotYetPluginsIcon(TEXT("DlgSystemEditor.OpenNotYetPlugins"));
 
 // Tied with FDialogueCommands::OpenMarketplace
-const FName FDialogueStyle::PROPERTY_OpenMarketplace(TEXT("DlgSystemEditor.OpenMarketplace"));
+const FName FDialogueStyle::PROPERTY_OpenMarketplaceIcon(TEXT("DlgSystemEditor.OpenMarketplace"));
 
 // Tied with FDialogueCommands::OpenWiki
-const FName FDialogueStyle::PROPERTY_OpenWiki(TEXT("DlgSystemEditor.OpenWiki"));
+const FName FDialogueStyle::PROPERTY_OpenWikiIcon(TEXT("DlgSystemEditor.OpenWiki"));
 
 // For FDialogueSearchResult_CommentNode
 const FName FDialogueStyle::PROPERTY_CommentBubbleOn(TEXT("DlgSystemEditor.CommentBubbleOn"));
+
+const FName FDialogueStyle::PROPERTY_NotYetLogoIcon(TEXT("DlgSystemEditor.NotYetLogo.Icon"));
 
 // The private ones
 TSharedPtr<FSlateStyleSet> FDialogueStyle::StyleSet = nullptr;
@@ -157,23 +159,23 @@ void FDialogueStyle::Initialize()
 
 	// Level Editor Help
 	StyleSet->Set(
-		PROPERTY_OpenDiscord,
+		PROPERTY_OpenDiscordIcon,
 		new FSlateImageBrush(GetPluginContentPath("Icons/Discord_96x.png"), Icon96x96)
 	);
 	StyleSet->Set(
-		PROPERTY_OpenNotYetPlugins,
+		PROPERTY_OpenNotYetPluginsIcon,
 		new FSlateImageBrush(GetPluginContentPath("Icons/NotYet_96x.png"), Icon96x96)
 	);
 	StyleSet->Set(
-		PROPERTY_OpenForum,
+		PROPERTY_OpenForumIcon,
 		new FSlateImageBrush(GetPluginContentPath("Icons/Forum_96x.png"), Icon96x96)
 	);
 	StyleSet->Set(
-		PROPERTY_OpenWiki,
+		PROPERTY_OpenWikiIcon,
 		new FSlateImageBrush(GetPluginContentPath("Icons/Wiki_96x.png"), Icon96x96)
 	);
 	StyleSet->Set(
-		PROPERTY_OpenMarketplace,
+		PROPERTY_OpenMarketplaceIcon,
 		new FSlateImageBrush(GetPluginContentPath("Icons/Marketplace_96x.png"), Icon96x96)
 	);
 
@@ -206,6 +208,16 @@ void FDialogueStyle::Initialize()
 	StyleSet->Set(
 		GetSmallProperty(PROPERTY_ShowPrimarySecondaryEdgesIcon),
 		new FSlateImageBrush(GetPluginContentPath("Icons/Dialogue_ShowPrimarySecondaryEdges_40x.png"), Icon16x16)
+	);
+
+	// Custom Icon sizes, original image is 128x64, we divide by 1.4
+	StyleSet->Set(
+		PROPERTY_NotYetLogoIcon,
+		new FSlateImageBrush(GetPluginContentPath("Icons/NotYet_128x_64x.png"), FVector2D{91.42f, 45.8f})
+	);
+	StyleSet->Set(
+		GetSmallProperty(PROPERTY_NotYetLogoIcon),
+		new FSlateImageBrush(GetPluginContentPath("Icons/NotYet_96x.png"), Icon16x16)
 	);
 
 	StyleSet->Set(

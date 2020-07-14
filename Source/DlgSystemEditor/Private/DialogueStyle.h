@@ -57,11 +57,12 @@ public:
 	static const FName PROPERTY_DialogueBrowser_TabIcon;
 	static const FName PROPERTY_DialogueDataDisplay_TabIcon;
 
-	static const FName PROPERTY_OpenDiscord;
-	static const FName PROPERTY_OpenNotYetPlugins;
-	static const FName PROPERTY_OpenForum;
-	static const FName PROPERTY_OpenMarketplace;
-	static const FName PROPERTY_OpenWiki;
+	static const FName PROPERTY_NotYetLogoIcon;
+	static const FName PROPERTY_OpenDiscordIcon;
+	static const FName PROPERTY_OpenNotYetPluginsIcon;
+	static const FName PROPERTY_OpenForumIcon;
+	static const FName PROPERTY_OpenMarketplaceIcon;
+	static const FName PROPERTY_OpenWikiIcon;
 
 	static const FName PROPERTY_FindInDialogueEditorIcon;
 	static const FName PROPERTY_FindInAllDialogueEditorIcon;

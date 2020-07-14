@@ -20,6 +20,7 @@ Icons from https://discord.com/new/branding
 
 Icons from NotYet https://www.warriorb.com/presskit/warriorb/
 - NotYet_96x.png
+- NotYet_128x_64x.png
 
 Icons from https://thenounproject.com/search/?q=forum&i=1871927
 - Forum_96x.png

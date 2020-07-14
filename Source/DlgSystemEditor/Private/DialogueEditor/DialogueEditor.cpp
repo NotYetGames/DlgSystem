@@ -62,25 +62,37 @@ void FDialogueEditor::RegisterTabSpawners(const TSharedRef<class FTabManager>& I
 	FAssetEditorToolkit::RegisterTabSpawners(InTabManager);
 
 	// spawn tabs
-	InTabManager->RegisterTabSpawner(GraphCanvasTabID, FOnSpawnTab::CreateSP(this, &Self::SpawnTab_GraphCanvas))
-		.SetDisplayName(LOCTEXT("GraphCanvasTab", "Viewport"))
-		.SetGroup(WorkspaceMenuCategoryRef)
-		.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "GraphEditor.EventGraph_16x"));
+	InTabManager->RegisterTabSpawner(
+		GraphCanvasTabID,
+		FOnSpawnTab::CreateSP(this, &Self::SpawnTab_GraphCanvas)
+	)
+	.SetDisplayName(LOCTEXT("GraphCanvasTab", "Viewport"))
+	.SetGroup(WorkspaceMenuCategoryRef)
+	.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "GraphEditor.EventGraph_16x"));
 
-	InTabManager->RegisterTabSpawner(DetailsTabID, FOnSpawnTab::CreateSP(this, &Self::SpawnTab_Details))
-		.SetDisplayName(LOCTEXT("DetailsTabLabel", "Details"))
-		.SetGroup(WorkspaceMenuCategoryRef)
-		.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "LevelEditor.Tabs.Details"));
+	InTabManager->RegisterTabSpawner(
+		DetailsTabID,
+		FOnSpawnTab::CreateSP(this, &Self::SpawnTab_Details)
+	)
+	.SetDisplayName(LOCTEXT("DetailsTabLabel", "Details"))
+	.SetGroup(WorkspaceMenuCategoryRef)
+	.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "LevelEditor.Tabs.Details"));
 
-	InTabManager->RegisterTabSpawner(PaletteTabId, FOnSpawnTab::CreateSP(this, &Self::SpawnTab_Palette))
-		.SetDisplayName(LOCTEXT("PaletteTab", "Palette"))
-		.SetGroup(WorkspaceMenuCategoryRef)
-		.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "Kismet.Tabs.Palette"));
+	InTabManager->RegisterTabSpawner(
+		PaletteTabId,
+		FOnSpawnTab::CreateSP(this, &Self::SpawnTab_Palette)
+	)
+	.SetDisplayName(LOCTEXT("PaletteTab", "Palette"))
+	.SetGroup(WorkspaceMenuCategoryRef)
+	.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "Kismet.Tabs.Palette"));
 
-	InTabManager->RegisterTabSpawner(FindInDialogueTabId, FOnSpawnTab::CreateSP(this, &Self::SpawnTab_FindInDialogue))
-		.SetDisplayName(LOCTEXT("FindInDialogueTab", "Find Results"))
-		.SetGroup(WorkspaceMenuCategoryRef)
-		.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "Kismet.Tabs.FindResults"));
+	InTabManager->RegisterTabSpawner(
+		FindInDialogueTabId,
+		FOnSpawnTab::CreateSP(this, &Self::SpawnTab_FindInDialogue)
+	)
+	.SetDisplayName(LOCTEXT("FindInDialogueTab", "Find Results"))
+	.SetGroup(WorkspaceMenuCategoryRef)
+	.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "Kismet.Tabs.FindResults"));
 }
 
 void FDialogueEditor::UnregisterTabSpawners(const TSharedRef<class FTabManager>& InTabManager)
@@ -676,42 +688,93 @@ TSharedRef<SWidget> FDialogueEditor::GeneratePrimarySecondaryEdgesMenu() const
 	return MenuBuilder.MakeWidget();
 }
 
+TSharedRef<SWidget> FDialogueEditor::GenerateExternalURLsMenu() const
+{
+	constexpr bool bShouldCloseWindowAfterMenuSelection = true;
+	FMenuBuilder MenuBuilder(bShouldCloseWindowAfterMenuSelection, ToolkitCommands, {});
+	MenuBuilder.BeginSection("OtherURls", LOCTEXT("OtherURLsMenu", "Other URLs"));
+	{
+		MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenMarketplace);
+		MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenWiki);
+		MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenDiscord);
+		MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenForum);
+	}
+	MenuBuilder.EndSection();
+
+	return MenuBuilder.MakeWidget();
+}
+
 void FDialogueEditor::ExtendToolbar()
 {
 	// Make toolbar to the right of the Asset Toolbar (Save and Find in content browser buttons).
-	TSharedPtr<FExtender> ToolbarExtender = MakeShared<FExtender>();
-	ToolbarExtender->AddToolBarExtension(
-		"Asset",
-		EExtensionHook::After,
-		ToolkitCommands,
-		FToolBarExtensionDelegate::CreateLambda([this](FToolBarBuilder& ToolbarBuilder)
-		{
-			ToolbarBuilder.BeginSection("DialogueToolbar");
-			{
-				ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().DialogueReloadData);
-				ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().FindInDialogue);
+	{
+		TSharedPtr<FExtender> ToolbarExtender = MakeShared<FExtender>();
+		ToolbarExtender->AddToolBarExtension(
+            "Asset",
+            EExtensionHook::After,
+            ToolkitCommands,
+            FToolBarExtensionDelegate::CreateLambda([this](FToolBarBuilder& ToolbarBuilder)
+            {
+                ToolbarBuilder.BeginSection("Dialogue");
+                {
+                    ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().DialogueReloadData);
+                    ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().FindInDialogue);
 
-				ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().ToggleShowPrimarySecondaryEdges);
-				ToolbarBuilder.AddComboButton(
-					FUIAction(
-						FExecuteAction(),
-						FCanExecuteAction::CreateLambda([this] {
-							// only when the show/primary secondary edges is true
-							return GetSettings().bShowPrimarySecondaryEdges;
-						})
-					),
-					FOnGetContent::CreateSP(this, &Self::GeneratePrimarySecondaryEdgesMenu),
-					LOCTEXT("PrimarySecondaryEdges", "Viewing Options"),
-					LOCTEXT("PrimarySecondaryEdges_ToolTip", "Viewing settings"),
-					FSlateIcon(),
-					true
-				);
-			}
-			ToolbarBuilder.EndSection();
-		})
-	);
+                    ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().ToggleShowPrimarySecondaryEdges);
+                    ToolbarBuilder.AddComboButton(
+                        FUIAction(
+                            FExecuteAction(),
+                            FCanExecuteAction::CreateLambda([this] {
+                                // only when the show/primary secondary edges is true
+                                return GetSettings().bShowPrimarySecondaryEdges;
+                            })
+                        ),
+                        FOnGetContent::CreateSP(this, &Self::GeneratePrimarySecondaryEdgesMenu),
+                        LOCTEXT("PrimarySecondaryEdges", "Viewing Options"),
+                        LOCTEXT("PrimarySecondaryEdges_ToolTip", "Viewing settings"),
+                        FSlateIcon(),
+                        true
+                    );
+                }
+            	ToolbarBuilder.EndSection();
+            })
+        );
+		AddToolbarExtender(ToolbarExtender);
+	}
 
-	AddToolbarExtender(ToolbarExtender);
+	// Add External URLs
+	if (GetSettings().bShowExternalURLsToolbar)
+	{
+		TSharedPtr<FExtender> ExternalToolbarExtender = MakeShared<FExtender>();
+		ExternalToolbarExtender->AddToolBarExtension(
+            "Asset",
+            EExtensionHook::After,
+            ToolkitCommands,
+            FToolBarExtensionDelegate::CreateLambda([this](FToolBarBuilder& ToolbarBuilder)
+            {
+                ToolbarBuilder.BeginSection("DialogueExternal");
+                {
+                    ToolbarBuilder.AddToolBarButton(
+                    	FDialogueCommands::Get().OpenNotYetPlugins,
+                    	NAME_None,
+                    	LOCTEXT("NotYetPlugins", "Not Yet: Plugins"),
+                    	{},
+                    	FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_NotYetLogoIcon)
+                    );
+                    ToolbarBuilder.AddComboButton(
+                        FUIAction(),
+                        FOnGetContent::CreateSP(this, &Self::GenerateExternalURLsMenu),
+                        LOCTEXT("OtherURLs", "Other URLs"),
+                        LOCTEXT("OtherURLs_ToolTip", "Other URLs"),
+                        FSlateIcon(),
+                        true
+                    );
+                }
+            	ToolbarBuilder.EndSection();
+            })
+        );
+		AddToolbarExtender(ExternalToolbarExtender);
+	}
 }
 
 TSharedRef<SDockTab> FDialogueEditor::SpawnTab_Details(const FSpawnTabArgs& Args) const

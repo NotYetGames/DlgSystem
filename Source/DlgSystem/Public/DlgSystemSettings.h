@@ -330,6 +330,10 @@ public:
 	// External URLs
 	//
 
+	// Should the external URLs toolbar be displayed
+	UPROPERTY(Category = "External URLs", Config, EditAnywhere)
+	bool bShowExternalURLsToolbar = true;
+
 	FString URLNotYetPlugins = "https://bit.ly/NotYetPluginsEditor";
 	FString URLMarketplace = "https://bit.ly/DlgMarketplaceEditor";
 	FString URLWiki = "https://bit.ly/DlgWikiEditor";

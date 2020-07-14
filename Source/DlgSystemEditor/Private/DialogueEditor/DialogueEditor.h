@@ -173,6 +173,7 @@ private:
 
 	/** Generates the submenu fo the primary/secondary button */
 	TSharedRef<SWidget> GeneratePrimarySecondaryEdgesMenu() const;
+	TSharedRef<SWidget> GenerateExternalURLsMenu() const;
 
 	/** Extend the Menus of the editor */
 	void ExtendMenu();
