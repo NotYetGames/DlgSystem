@@ -620,11 +620,11 @@ bool FDialogueSearchManager::QuerySingleDialogue(
 	// Search for GUID
 	if (SearchFilter.bIncludeDialogueGUID)
 	{
-		const FString GuidToSearchFor = SearchFilter.SearchString.TrimStartAndEnd();
+		const FString GUIDToSearchFor = SearchFilter.SearchString.TrimStartAndEnd();
 		const FGuid DialogueGuid = InDialogue->GetDialogueGUID();
 
 		// Test every possible format
-		const TArray<FString> DialoguGuidStrings = {
+		const TArray<FString> DialoguGUIDStrings = {
 			DialogueGuid.ToString(EGuidFormats::Digits),
 			DialogueGuid.ToString(EGuidFormats::DigitsWithHyphens),
 			DialogueGuid.ToString(EGuidFormats::DigitsWithHyphensInBraces),
@@ -632,15 +632,15 @@ bool FDialogueSearchManager::QuerySingleDialogue(
 			DialogueGuid.ToString(EGuidFormats::HexValuesInBraces),
 			DialogueGuid.ToString(EGuidFormats::UniqueObjectGuid)
 		};
-		for (const FString& Guid : DialoguGuidStrings)
+		for (const FString& GUID : DialoguGUIDStrings)
 		{
-			if (Guid.Contains(GuidToSearchFor))
+			if (GUID.Contains(GUIDToSearchFor))
 			{
 				bFoundInDialogue = true;
 				MakeChildTextNode(TreeDialogueNode,
-					FText::FromString(Guid),
-					LOCTEXT("DlgGuid", "Dlg GUID"),
-					TEXT("Dlg.Guid"));
+					FText::FromString(GUID),
+					LOCTEXT("DialogueGUID", "Dialogue GUID"),
+					TEXT("Dialogue.GUID"));
 
 				// Only one format is enough
 				break;

@@ -746,7 +746,7 @@ bool UDlgContext::ValidateParticipantsMapForDialogue(
 		}
 		return false;
 	}
-	if (Dialogue->GetParticipantData().Num() == 0)
+	if (Dialogue->GetParticipantsData().Num() == 0)
 	{
 		if (bLog)
 		{
@@ -756,7 +756,7 @@ bool UDlgContext::ValidateParticipantsMapForDialogue(
 	}
 
 	// Check if at least these participants are required
-	const TMap<FName, FDlgParticipantData>& DialogueParticipants = Dialogue->GetParticipantData();
+	const TMap<FName, FDlgParticipantData>& DialogueParticipants = Dialogue->GetParticipantsData();
 	TArray<FName> ParticipantsRequiredArray;
 	const int32 ParticipantsNum = DialogueParticipants.GetKeys(ParticipantsRequiredArray);
 	TSet<FName> ParticipantsRequiredSet{ParticipantsRequiredArray};

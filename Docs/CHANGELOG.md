@@ -20,6 +20,17 @@ as an export method in the next version
 - **Add** External Links to Not Yet (discord, plugins, forums, marketplace) inside the Help Menu and inside the Toolbar in the Dialogue Editor (can be hidden from the Dialogue Settings)
 - **Move** The Dialogue Data Display to the proper Category under the Tools Menu
 
+- **Removed** deprecated functions, if you used them in your C++ code you need to use the new versions, otherwise the redirect is done for you in Blueprints automatically. The following functions/properties were renamed in favour of other name:
+	- `DlgSpeakerStates` -> `AllSpeakerStates`
+	- `DlgData` -> `ParticipantsData`
+	- `DlgParticipantClasses` -> `ParticipantsClasses`
+	- `DlgVersion` -> `Version`
+	- `DlgName` -> `Name`
+	- `DlgGuid` -> `GUID`
+	- `GetSpeakerStates` -> `GetAllSpeakerStates`
+	- `GetParticipantData` -> `GetParticipantsData`
+
+
 # v9.1
 
 ## Important Bug Fixes

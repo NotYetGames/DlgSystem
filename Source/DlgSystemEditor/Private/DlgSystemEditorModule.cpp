@@ -338,7 +338,7 @@ void FDlgSystemEditorModule::HandleOnPostEngineInit()
 			TEXT("Dialogue = `%s`, GUID = `%s` has a Duplicate GUID. Regenerating."),
 			*Dialogue->GetPathName(), *Dialogue->GetDialogueGUID().ToString()
 		)
-		Dialogue->RegenerateGuid();
+		Dialogue->RegenerateGUID();
 		Dialogue->MarkPackageDirty();
 	}
 

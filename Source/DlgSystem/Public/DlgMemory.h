@@ -40,13 +40,13 @@ public:
 	void Empty() { HistoryMap.Empty(); }
 
 	// Adds an entry to the map or overrides an existing one
-	void SetEntry(const FGuid& DlgGuid, const FDlgHistory& History);
+	void SetEntry(const FGuid& DialogueGUID, const FDlgHistory& History);
 
 	// Returns the entry for the given name, or nullptr if it does not exist */
-	FDlgHistory* GetEntry(const FGuid& DlgGuid) { return HistoryMap.Find(DlgGuid); }
+	FDlgHistory* GetEntry(const FGuid& DialogueGUID) { return HistoryMap.Find(DialogueGUID); }
 
-	void SetNodeVisited(const FGuid& DlgGuid, int32 NodeIndex);
-	bool IsNodeVisited(const FGuid& DlgGuid, int32 NodeIndex) const;
+	void SetNodeVisited(const FGuid& DialogueGUID, int32 NodeIndex);
+	bool IsNodeVisited(const FGuid& DialogueGUID, int32 NodeIndex) const;
 
 	const TMap<FGuid, FDlgHistory>& GetHistoryMaps() const { return HistoryMap; }
 	void SetHistoryMap(const TMap<FGuid, FDlgHistory>& Map) { HistoryMap = Map; }
