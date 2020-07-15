@@ -143,7 +143,7 @@ public:
 	FName DialogueName;
 
 	UPROPERTY()
-	FGuid DialogueGuid;
+	FGuid DialogueGUID;
 
 	UPROPERTY()
 	TArray<FDlgNodeSpeech_FormatHumanReadable> SpeechNodes;
@@ -187,7 +187,7 @@ protected:
 
 	TArray<UPackage*> PackagesToSave;
 	const UDlgSystemSettings* Settings = nullptr;
-	
+
 	bool bSaveAllDialogues = false;
 	bool bExport = false;
 	bool bImport = false;

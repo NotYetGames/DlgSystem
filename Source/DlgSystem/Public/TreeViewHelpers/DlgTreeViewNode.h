@@ -165,8 +165,11 @@ protected:
 		return Child->DoesDisplayTextContains(InSearch);
 	}
 
-	virtual void GetPathToChildThatContainsText(const TSharedPtr<SelfType>& Child, const FString& InSearch,
-		TArray<TArray<TSharedPtr<SelfType>>>& OutNodes)
+	virtual void GetPathToChildThatContainsText(
+		const TSharedPtr<SelfType>& Child,
+		const FString& InSearch,
+		TArray<TArray<TSharedPtr<SelfType>>>& OutNodes
+	)
 	{
 		// Child has text, build path to it
 		bool bChildIsVisible;

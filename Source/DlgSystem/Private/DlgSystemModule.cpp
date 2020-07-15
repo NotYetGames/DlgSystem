@@ -63,24 +63,20 @@ void FDlgSystemModule::StartupModule()
 	// Register tab spawners
 	bHasRegisteredTabSpawners = true;
 
-	FTabSpawnerEntry& DialogueDataSpawnEntry =
-		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(DIALOGUE_DATA_DISPLAY_TAB_ID,
-			FOnSpawnTab::CreateLambda([this](const FSpawnTabArgs& Args) -> TSharedRef<SDockTab>
-			{
-				TSharedRef<SDockTab> DialogueDataDisplayTab = SNew(SDockTab)
-					.TabRole(ETabRole::NomadTab)
-					[
-						GetDialogueDataDisplayWindow()
-					];
-				return DialogueDataDisplayTab;
-			}))
-			.SetDisplayName(LOCTEXT("DialogueDataDisplayTitle", "Dialogue Data Display"))
-			.SetTooltipText(LOCTEXT("DialogueDataDisplayTooltipText", "Open the Dialogue Data Display tab."));
-
-#if WITH_EDITOR
-	// TODO move DlgStyle to Runtime + Move DialogueToolsCategory to Runtime module
-	DialogueDataSpawnEntry.SetGroup(WorkspaceMenu::GetMenuStructure().GetToolsCategory());
-#endif
+	DialogueDataDisplayTabSpawnEntry = &FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
+		DIALOGUE_DATA_DISPLAY_TAB_ID,
+		FOnSpawnTab::CreateLambda([this](const FSpawnTabArgs& Args) -> TSharedRef<SDockTab>
+		{
+			TSharedRef<SDockTab> DialogueDataDisplayTab = SNew(SDockTab)
+				.TabRole(ETabRole::NomadTab)
+				[
+					GetDialogueDataDisplayWindow()
+				];
+			return DialogueDataDisplayTab;
+		}))
+		.SetDisplayName(LOCTEXT("DialogueDataDisplayTitle", "Dialogue Data Display"))
+		.SetTooltipText(LOCTEXT("DialogueDataDisplayTooltipText", "Open the Dialogue Data Display tab.")
+	);
 }
 
 void FDlgSystemModule::ShutdownModule()
@@ -140,6 +136,11 @@ TSharedRef<SWidget> FDlgSystemModule::GetDialogueDataDisplayWindow()
 	return DialogueData.ToSharedRef();
 }
 
+FTabSpawnerEntry* FDlgSystemModule::GetDialogueDataDisplaySpawnEntry()
+{
+	return DialogueDataDisplayTabSpawnEntry;
+}
+
 void FDlgSystemModule::RegisterConsoleCommands(const TWeakObjectPtr<const UObject>& InWorldContextObjectPtr)
 {
 	// Unregister first to prevent double register of commands
@@ -151,16 +152,26 @@ void FDlgSystemModule::RegisterConsoleCommands(const TWeakObjectPtr<const UObjec
 	}
 
 	IConsoleManager& ConsoleManager = IConsoleManager::Get();
-	ConsoleCommands.Add(ConsoleManager.RegisterConsoleCommand(TEXT("Dlg.DataDisplay"),
-		TEXT("Displays the Dialogue Data Window"),
-		FConsoleCommandDelegate::CreateRaw(this, &Self::DisplayDialogueDataWindow), ECVF_Default));
+	ConsoleCommands.Add(
+		ConsoleManager.RegisterConsoleCommand(
+			TEXT("Dlg.DataDisplay"),
+			TEXT("Displays the Dialogue Data Window"),
+			FConsoleCommandDelegate::CreateRaw(this, &Self::DisplayDialogueDataWindow),
+			ECVF_Default
+		)
+	);
 
-	ConsoleCommands.Add(ConsoleManager.RegisterConsoleCommand(TEXT("Dlg.LoadAllDialogues"),
-		TEXT("Load All Dialogues into memory"),
-		FConsoleCommandDelegate::CreateLambda([]()
-		{
-			UDlgManager::LoadAllDialoguesIntoMemory();
-		}), ECVF_Default));
+	ConsoleCommands.Add(
+		ConsoleManager.RegisterConsoleCommand(
+			TEXT("Dlg.LoadAllDialogues"),
+			TEXT("Load All Dialogues into memory"),
+			FConsoleCommandDelegate::CreateLambda([]()
+			{
+				UDlgManager::LoadAllDialoguesIntoMemory();
+			}),
+			ECVF_Default
+		)
+	);
 
 	// In case the DlgDataDisplay is already opened, simply refresh the actor reference
 	RefreshDisplayDialogueDataWindow(false);

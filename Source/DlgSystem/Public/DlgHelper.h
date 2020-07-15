@@ -60,8 +60,12 @@ template <typename KeyType, typename ValueType>
 class FDlgHelper_MapEqualImpl
 {
 public:
-	static bool IsEqual(const TMap<KeyType, ValueType>& FirstMap, const TMap<KeyType, ValueType>& SecondMap,
-		std::function<bool(const ValueType& FirstMapValue, const ValueType& SecondMapValue)> AreValuesEqual)
+	static bool IsEqual(
+		const TMap<KeyType, ValueType>& FirstMap,
+		const TMap<KeyType, ValueType>& SecondMap,
+		std::function<bool(const ValueType& FirstMapValue,
+		const ValueType& SecondMapValue)> AreValuesEqual
+	)
 	{
 		if (FirstMap.Num() == SecondMap.Num())
 		{
@@ -127,8 +131,12 @@ template <typename ArrayType>
 class FDlgHelper_ArrayEqualImpl
 {
 public:
-	static bool IsEqual(const TArray<ArrayType>& FirstArray, const TArray<ArrayType>& SecondArray,
-		std::function<bool(const ArrayType& FirstValue, const ArrayType& SecondValue)> AreValuesEqual)
+	static bool IsEqual(
+		const TArray<ArrayType>& FirstArray,
+		const TArray<ArrayType>& SecondArray,
+		std::function<bool(const ArrayType& FirstValue,
+		const ArrayType& SecondValue)> AreValuesEqual
+	)
 	{
 		if (FirstArray.Num() == SecondArray.Num())
 		{
@@ -208,6 +216,9 @@ public:
 		}
 		return Object->GetClass()->GetName();
 	}
+
+	// This also works with Blueprints
+	static bool IsObjectAChildOf(const UObject* Object, const UClass* Class);
 
 	// FileSystem
 	static bool DeleteFile(const FString& PathName, bool bVerbose = true);
@@ -339,17 +350,17 @@ public:
 	/** Default sorting function used by all the Dialogue related methods. Sorts alphabetically ascending. */
 	static void SortDefault(TArray<FName>& OutArray)
     {
-		OutArray.Sort(Self::PredicateSortFNameAlphabeticallyAscending);
+		OutArray.Sort(PredicateSortFNameAlphabeticallyAscending);
     }
 	static void SortDefault(TSet<FName>& OutSet)
 	{
-		OutSet.Sort(Self::PredicateSortFNameAlphabeticallyAscending);
+		OutSet.Sort(PredicateSortFNameAlphabeticallyAscending);
 	}
 
 	template<typename ValueType>
 	static void SortDefault(TMap<FName, ValueType>& Map)
 	{
-		Map.KeySort(Self::PredicateSortFNameAlphabeticallyAscending);
+		Map.KeySort(PredicateSortFNameAlphabeticallyAscending);
 	}
 
 	/** Helper method, used to append a set to an array. Also sort. */

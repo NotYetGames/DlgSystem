@@ -11,12 +11,15 @@ class IToolkitHost;
  * Defines the look and actions the editor takes when clicking/viewing a Dialogue asset.
  * See FDlgSystemEditorModule::StartupModule for usage.
  */
-class FAssetTypeActions_Dialogue : public FAssetTypeActions_Base
+class FDialogueAssetTypeActions : public FAssetTypeActions_Base
 {
 public:
-	FAssetTypeActions_Dialogue(EAssetTypeCategories::Type InAssetCategory) : AssetCategory(InAssetCategory) {}
+	FDialogueAssetTypeActions(EAssetTypeCategories::Type InAssetCategory) : AssetCategory(InAssetCategory) {}
 
+	//
 	// IAssetTypeActions interface
+	//
+
 	/** Returns the name of this type */
 	FText GetName() const override { return NSLOCTEXT("AssetTypeActions", "DialogueAssetTypeActions", "Dialogue"); }
 
@@ -38,7 +41,9 @@ public:
 
 	/** Returns the categories that this asset type. The return value is one or more flags from EAssetTypeCategories.  */
 	uint32 GetCategories() override { return AssetCategory; }
-	// End of IAssetTypeActions interface
+
+	// Hide from filtered, we use our custom FFrontendFilter_Dialogue because it allows us more flexibility
+	bool CanFilter() override { return false; }
 
 private:
 	/** Indicates the category used for Dialogues */

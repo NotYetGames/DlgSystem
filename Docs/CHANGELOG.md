@@ -1,9 +1,9 @@
-# 10.0
+# v10
 
 - **Network replicate** the Dialogue Context (specifically the Dialogue and Participants)
 - **Remove** `DlgText` format (the files with the `.dlg` file extension) from being selectable in the UI Dialogue Settings.
 You can still set it manually in the config but this is not recommended as this format is DEPRECATED and is going to be removed
-as an export method in the next version.
+as an export method in the next version
 - **Fixed** `UDlgContext::CanBeStarted` and `UDlgManager::CanStartDialogue` so that it does not always return false
   - `UDlgContext::CanBeStarted` is now a static function
 - **Make** the Node **Children** Array to be view only (read only) and set it as settable option inside the settings (show by default)
@@ -15,8 +15,24 @@ as an export method in the next version.
   - User Defined Text Argument, calls GetText on the custom text argument object.
     1. Create a new Blueprint derived from `DlgTextArgumentCustom` (or `DlgTextArgumentCustomHideCategories`)
     2. Override GetText
+- **Move** All the Dialogue Filters into the same category in the Content Browser
+- **Add** New Content Browse Filters for Custom Events, Conditions and Text Argument
+- **Add** External Links to Not Yet (discord, plugins, forums, marketplace) inside the Help Menu and inside the Toolbar in the Dialogue Editor (can be hidden from the Dialogue Settings)
+- **Move** The Dialogue Data Display to the proper Category under the Tools Menu
 
-# 9.1
+- **Removed** deprecated functions, if you used them in your C++ code you need to use the new versions, otherwise the redirect is done for you in Blueprints automatically. The following functions/properties were renamed in favour of other name:
+	- `DlgSpeakerStates` -> `AllSpeakerStates`
+	- `DlgData` -> `ParticipantsData`
+	- `DlgParticipantClasses` -> `ParticipantsClasses`
+	- `DlgVersion` -> `Version`
+	- `DlgName` -> `Name`
+	- `DlgGuid` -> `GUID`
+	- `GetSpeakerStates` -> `GetAllSpeakerStates`
+	- `GetParticipantData` -> `GetParticipantsData`
+	- `IsParticipant` -> `HasParticipant`
+
+
+# v9.1
 
 ## Important Bug Fixes
 
@@ -49,7 +65,7 @@ as an export method in the next version.
 	- `CouldStartDialogue` -> `CanStartDialogue`
 	- `GetParticipantMap` -> `GetParticipantsMap`
 
-# 9.0
+# v9
 
 ## Important breaking change
 
@@ -83,7 +99,7 @@ as an export method in the next version.
 - **Fix** Null pointer check for LoadedWorld
 - **Fix** Blueprint Nativization for 4.24
 
-# 8.0.2
+# v8.0.2
 
 - **Fix** Linux Editor Compile
 
@@ -105,11 +121,11 @@ as an export method in the next version.
 	static UDlgContext* StartDialogueWithDefaultParticipants(UObject* WorldContextObject, UDlgDialogue* Dialogue);
 ```
 
-# 8.0.1
+# v8.0.1
 
 Fixed marketplace version of the plugin not handling renamed redirects properly.
 
-# 8.0
+# v8
 
 ## Important breaking change
 

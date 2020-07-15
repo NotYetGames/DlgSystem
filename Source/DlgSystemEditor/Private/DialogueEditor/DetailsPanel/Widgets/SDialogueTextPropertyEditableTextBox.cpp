@@ -644,8 +644,8 @@ void SDialogueTextPropertyEditableTextBox::OnTextCommitted(const FText& NewText,
 				if (!EditableTextProperty->IsDefaultValue())
 				{
 					// Some properties report that they're not the default, but still haven't been set from a property, so we also check the property key to see if it's a valid GUID before allowing the namespace to persist
-					FGuid TmpGuid;
-					if (FGuid::Parse(FTextInspector::GetKey(PropertyValue).Get(FString()), TmpGuid))
+					FGuid TmpGUID;
+					if (FGuid::Parse(FTextInspector::GetKey(PropertyValue).Get(FString()), TmpGUID))
 					{
 						NewNamespace = FTextInspector::GetNamespace(PropertyValue).Get(FString());
 					}

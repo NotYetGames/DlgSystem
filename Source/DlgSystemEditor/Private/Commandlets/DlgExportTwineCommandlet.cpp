@@ -203,7 +203,7 @@ int32 UDlgExportTwineCommandlet::Main(const FString& Params)
 }
 
 
-FString UDlgExportTwineCommandlet::CreateTwineStoryData(const FString& Name, const FGuid& DialogueGuid, int32 StartNodeIndex, const FString& PassagesData)
+FString UDlgExportTwineCommandlet::CreateTwineStoryData(const FString& Name, const FGuid& DialogueGUID, int32 StartNodeIndex, const FString& PassagesData)
 {
 	static const FString Creator = TEXT("UE-NotYetDlgSystem");
 	static const FString CreatorVersion = TEXT("5.0"); // TODO
@@ -222,13 +222,13 @@ FString UDlgExportTwineCommandlet::CreateTwineStoryData(const FString& Name, con
 		// tags colors data
 		TEXT("\n%s\n")
 		// Special tag to identify the dialogue id
-		//TEXT("<tw-passagedata pid=\"-1\" tags=\"\" name=\"DialogueGuid\" position=\"0,0\" size=\"10,10\">%s</tw-passagedata>\n")
+		//TEXT("<tw-passagedata pid=\"-1\" tags=\"\" name=\"DialogueGUID\" position=\"0,0\" size=\"10,10\">%s</tw-passagedata>\n")
 
 		TEXT("%s\n")
 
 		TEXT("</tw-storydata>"),
 		*Name, StartNodeIndex + 2, *Creator, *CreatorVersion,
-		*DialogueGuid.ToString(EGuidFormats::DigitsWithHyphens), Zoom, *Format, *FormatVersion,
+		*DialogueGUID.ToString(EGuidFormats::DigitsWithHyphens), Zoom, *Format, *FormatVersion,
 		*CreateTwineCustomCss(),
 		*CreateTwineTagColorsData(),
 		*PassagesData
