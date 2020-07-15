@@ -232,7 +232,7 @@ public:
 
 	// Checks if the provided ParticipantName (SpeakerName) is a key in the Dialogue Data Map
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	bool IsParticipant(FName ParticipantName) const { return ParticipantsData.Contains(ParticipantName); }
+	bool HasParticipant(FName ParticipantName) const { return ParticipantsData.Contains(ParticipantName); }
 
 	// Gets the number of participants in the Dialogue Data Map.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")

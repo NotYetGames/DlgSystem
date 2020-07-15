@@ -29,6 +29,7 @@ as an export method in the next version
 	- `DlgGuid` -> `GUID`
 	- `GetSpeakerStates` -> `GetAllSpeakerStates`
 	- `GetParticipantData` -> `GetParticipantsData`
+	- `IsParticipant` -> `HasParticipant`
 
 
 # v9.1

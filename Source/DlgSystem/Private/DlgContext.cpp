@@ -658,7 +658,7 @@ EDlgValidateStatus UDlgContext::IsValidParticipantForDialogue(const UDlgDialogue
 
 	// Does the participant name exist in the Dialogue?
 	// const FName ParticipantName = IDlgDialogueParticipant::Execute_GetParticipantName(Participant);
-	// if (!Dialogue->IsParticipant(ParticipantName))
+	// if (!Dialogue->HasParticipant(ParticipantName))
 	// {
 	// 	return EDlgValidateStatus::DialogueDoesNotContainParticipant;
 	// }

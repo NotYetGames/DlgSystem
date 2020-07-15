@@ -379,7 +379,7 @@ TArray<UDlgDialogue*> UDlgManager::GetAllDialoguesForParticipantName(FName Parti
 	TArray<UDlgDialogue*> DialoguesArray;
 	for (UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
 	{
-		if (Dialogue->IsParticipant(ParticipantName))
+		if (Dialogue->HasParticipant(ParticipantName))
 		{
 			DialoguesArray.Add(Dialogue);
 		}
