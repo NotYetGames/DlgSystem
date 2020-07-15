@@ -18,6 +18,6 @@ public:
 	TSharedPtr<class SGraphPin> CreatePin(class UEdGraphPin* Pin) const override;
 };
 
-// Factory for creating the drawinng policy between nodes.
+// Factory for creating the drawing policy between nodes.
 // Defined in UDialogueGraphSchema::CreateConnectionDrawingPolicy which has priority over FGraphPanelPinConnectionFactory,
 // see FNodeFactory::CreateConnectionPolicy

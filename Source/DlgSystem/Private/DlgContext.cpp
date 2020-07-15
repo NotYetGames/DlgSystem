@@ -658,7 +658,7 @@ EDlgValidateStatus UDlgContext::IsValidParticipantForDialogue(const UDlgDialogue
 
 	// Does the participant name exist in the Dialogue?
 	// const FName ParticipantName = IDlgDialogueParticipant::Execute_GetParticipantName(Participant);
-	// if (!Dialogue->IsParticipant(ParticipantName))
+	// if (!Dialogue->HasParticipant(ParticipantName))
 	// {
 	// 	return EDlgValidateStatus::DialogueDoesNotContainParticipant;
 	// }
@@ -746,7 +746,7 @@ bool UDlgContext::ValidateParticipantsMapForDialogue(
 		}
 		return false;
 	}
-	if (Dialogue->GetParticipantData().Num() == 0)
+	if (Dialogue->GetParticipantsData().Num() == 0)
 	{
 		if (bLog)
 		{
@@ -756,7 +756,7 @@ bool UDlgContext::ValidateParticipantsMapForDialogue(
 	}
 
 	// Check if at least these participants are required
-	const TMap<FName, FDlgParticipantData>& DialogueParticipants = Dialogue->GetParticipantData();
+	const TMap<FName, FDlgParticipantData>& DialogueParticipants = Dialogue->GetParticipantsData();
 	TArray<FName> ParticipantsRequiredArray;
 	const int32 ParticipantsNum = DialogueParticipants.GetKeys(ParticipantsRequiredArray);
 	TSet<FName> ParticipantsRequiredSet{ParticipantsRequiredArray};

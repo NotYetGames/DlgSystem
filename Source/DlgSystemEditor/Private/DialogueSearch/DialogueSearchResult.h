@@ -7,7 +7,7 @@
 #include "DlgDialogue.h"
 #include "TreeViewHelpers/DlgTreeViewNode.h"
 
-class FFindInDialoguesResult;
+class FDialogueSearchResult;
 class UDialogueGraphNode;
 class UDialogueGraphNode_Edge;
 class UEdGraphNode_Comment;
@@ -45,20 +45,19 @@ public:
 	bool bIncludeTextLocalizationData = false;
 };
 
-/* Base class that matched the search results. When used by itself it is a simple text node. */
-class FFindInDialoguesResult : public FDlgTreeViewNode<FFindInDialoguesResult>
+// Base class that matched the search results. When used by itself it is a simple text node.
+class FDialogueSearchResult : public FDlgTreeViewNode<FDialogueSearchResult>
 {
-	typedef FFindInDialoguesResult Self;
+	typedef FDialogueSearchResult Self;
 	typedef FDlgTreeViewNode Super;
 
 public:
-	/* Create a listing for a search result*/
-	FFindInDialoguesResult(const FText& InDisplayText, const TSharedPtr<Self>& InParent);
+	FDialogueSearchResult(const FText& InDisplayText, const TSharedPtr<Self>& InParent);
 
-	/* Create an icon to represent the result */
+	// Create an icon to represent the result
 	virtual TSharedRef<SWidget>	CreateIcon() const;
 
-	/** Gets the Dialogue housing all these search results. Aka the Dialogue this search result belongs to. */
+	// Gets the Dialogue housing all these search results. Aka the Dialogue this search result belongs to.
 	virtual TWeakObjectPtr<const UDlgDialogue> GetParentDialogue() const;
 
 	// Category:
@@ -70,29 +69,29 @@ public:
 	void SetCommentString(const FString& InCommentString) { CommentString = InCommentString; }
 
 protected:
-	/** The category of this node. */
+	// The category of this node.
 	FText Category;
 
-	/** Display text for comment information */
+	// Display text for comment information
 	FString CommentString;
 };
 
 
-/** Root Node, should not be displayed. */
-class FFindInDialoguesRootNode : public FFindInDialoguesResult
+// Root Node, should not be displayed.
+class FDialogueSearchResult_RootNode : public FDialogueSearchResult
 {
-	typedef FFindInDialoguesResult Super;
+	typedef FDialogueSearchResult Super;
 public:
-	FFindInDialoguesRootNode();
+	FDialogueSearchResult_RootNode();
 };
 
 
-/** Tree Node search results that represents the Dialogue. */
-class FFindInDialoguesDialogueNode : public FFindInDialoguesResult
+// Tree Node search results that represents the Dialogue.
+class FDialogueSearchResult_DialogueNode : public FDialogueSearchResult
 {
-	typedef FFindInDialoguesResult Super;
+	typedef FDialogueSearchResult Super;
 public:
-	FFindInDialoguesDialogueNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent);
+	FDialogueSearchResult_DialogueNode(const FText& InDisplayText, const TSharedPtr<FDialogueSearchResult>& InParent);
 
 	FReply OnClick() override;
 	TWeakObjectPtr<const UDlgDialogue> GetParentDialogue() const override;
@@ -102,17 +101,17 @@ public:
 	void SetDialogue(TWeakObjectPtr<const UDlgDialogue> InDialogue) { Dialogue = InDialogue; }
 
 protected:
-	/** The Dialogue this represents. */
+	// The Dialogue this represents.
 	TWeakObjectPtr<const UDlgDialogue> Dialogue;
 };
 
 
-/** Tree Node result that represents the GraphNode */
-class FFindInDialoguesGraphNode : public FFindInDialoguesResult
+// Tree Node result that represents the GraphNode
+class FDialogueSearchResult_GraphNode : public FDialogueSearchResult
 {
-	typedef FFindInDialoguesResult Super;
+	typedef FDialogueSearchResult Super;
 public:
-	FFindInDialoguesGraphNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent);
+	FDialogueSearchResult_GraphNode(const FText& InDisplayText, const TSharedPtr<FDialogueSearchResult>& InParent);
 
 	FReply OnClick() override;
 	TSharedRef<SWidget> CreateIcon() const override;
@@ -121,17 +120,17 @@ public:
 	void SetGraphNode(TWeakObjectPtr<const UDialogueGraphNode> InGraphNode) { GraphNode = InGraphNode; }
 
 protected:
-	/** The GraphNode this represents. */
+	// The GraphNode this represents.
 	TWeakObjectPtr<const UDialogueGraphNode> GraphNode;
 };
 
 
-/** Tree Node result that represents the EdgeNode */
-class FFindInDialoguesEdgeNode : public FFindInDialoguesResult
+// Tree Node result that represents the EdgeNode
+class FDialogueSearchResult_EdgeNode : public FDialogueSearchResult
 {
-	typedef FFindInDialoguesResult Super;
+	typedef FDialogueSearchResult Super;
 public:
-	FFindInDialoguesEdgeNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent);
+	FDialogueSearchResult_EdgeNode(const FText& InDisplayText, const TSharedPtr<FDialogueSearchResult>& InParent);
 
 	FReply OnClick() override;
 	TSharedRef<SWidget> CreateIcon() const override;
@@ -140,16 +139,16 @@ public:
 	void SetEdgeNode(TWeakObjectPtr<const UDialogueGraphNode_Edge> InEdgeNode) { EdgeNode = InEdgeNode; }
 
 protected:
-	/** The EdgeNode this represents. */
+	// The EdgeNode this represents.
 	TWeakObjectPtr<const UDialogueGraphNode_Edge> EdgeNode;
 };
 
-/** Tree Node result that represents the CommentNode */
-class FFindInDialoguesCommentNode : public FFindInDialoguesResult
+// Tree Node result that represents the CommentNode
+class FDialogueSearchResult_CommentNode : public FDialogueSearchResult
 {
-	typedef FFindInDialoguesResult Super;
+	typedef FDialogueSearchResult Super;
 public:
-	FFindInDialoguesCommentNode(const FText& InDisplayText, const TSharedPtr<FFindInDialoguesResult>& InParent);
+	FDialogueSearchResult_CommentNode(const FText& InDisplayText, const TSharedPtr<FDialogueSearchResult>& InParent);
 
 	FReply OnClick() override;
 	TSharedRef<SWidget> CreateIcon() const override;
@@ -158,6 +157,6 @@ public:
 	void SetCommentNode(TWeakObjectPtr<const UEdGraphNode_Comment> InCommentNode) { CommentNode = InCommentNode; }
 
 protected:
-	/** The EdgeNode this represents. */
+	// The EdgeNode this represents.
 	TWeakObjectPtr<const UEdGraphNode_Comment> CommentNode;
 };

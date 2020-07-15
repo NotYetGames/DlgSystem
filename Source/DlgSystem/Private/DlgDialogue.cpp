@@ -55,7 +55,7 @@ void UpdateDialogueToVersion_UseOnlyOneOutputAndInputPin(UDlgDialogue* Dialogue)
 void UDlgDialogue::PreSave(const class ITargetPlatform* TargetPlatform)
 {
 	Super::PreSave(TargetPlatform);
-	DlgName = GetDialogueFName();
+	Name = GetDialogueFName();
 	OnPreAssetSaved();
 }
 
@@ -103,12 +103,12 @@ void UDlgDialogue::PostLoad()
 	}
 
 	// Create thew new Guid
-	if (!DlgGuid.IsValid())
+	if (!GUID.IsValid())
 	{
-		RegenerateGuid();
+		RegenerateGUID();
 		FDlgLogger::Get().Debugf(
-			TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because of of invalid DlgGuid."),
-			*DlgGuid.ToString(), *GetPathName()
+			TEXT("Creating new GUID = `%s` for Dialogue = `%s` because of of invalid GUID."),
+			*GUID.ToString(), *GetPathName()
 		);
 	}
 
@@ -174,16 +174,16 @@ void UDlgDialogue::PostInitProperties()
 #endif // #if WITH_EDITOR
 
 	// Keep Name in sync with the file name
-	DlgName = GetDialogueFName();
+	Name = GetDialogueFName();
 
 	// Used when creating new Dialogues
 	// Initialize with a valid GUID
-	if (DialogueVersion >= FDlgDialogueObjectVersion::AddGuid && !DlgGuid.IsValid())
+	if (DialogueVersion >= FDlgDialogueObjectVersion::AddGUID && !GUID.IsValid())
 	{
-		RegenerateGuid();
+		RegenerateGUID();
 		FDlgLogger::Get().Debugf(
-			TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because of new created Dialogue."),
-			*DlgGuid.ToString(), *GetPathName()
+			TEXT("Creating new GUID = `%s` for Dialogue = `%s` because of new created Dialogue."),
+			*GUID.ToString(), *GetPathName()
 		);
 	}
 }
@@ -191,7 +191,7 @@ void UDlgDialogue::PostInitProperties()
 void UDlgDialogue::PostRename(UObject* OldOuter, const FName OldName)
 {
 	Super::PostRename(OldOuter, OldName);
-	DlgName = GetDialogueFName();
+	Name = GetDialogueFName();
 }
 
 void UDlgDialogue::PostDuplicate(bool bDuplicateForPIE)
@@ -200,10 +200,10 @@ void UDlgDialogue::PostDuplicate(bool bDuplicateForPIE)
 
 	// Used when duplicating dialogues.
 	// Make new guid for this copied Dialogue.
-	RegenerateGuid();
+	RegenerateGUID();
 	FDlgLogger::Get().Debugf(
-		TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because Dialogue was copied."),
-		*DlgGuid.ToString(), *GetPathName()
+		TEXT("Creating new GUID = `%s` for Dialogue = `%s` because Dialogue was copied."),
+		*GUID.ToString(), *GetPathName()
 	);
 }
 
@@ -213,10 +213,10 @@ void UDlgDialogue::PostEditImport()
 
 	// Used when duplicating dialogues.
 	// Make new guid for this copied Dialogue
-	RegenerateGuid();
+	RegenerateGUID();
 	FDlgLogger::Get().Debugf(
-		TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because Dialogue was copied."),
-		*DlgGuid.ToString(), *GetPathName()
+		TEXT("Creating new GUID = `%s` for Dialogue = `%s` because Dialogue was copied."),
+		*GUID.ToString(), *GetPathName()
 	);
 }
 
@@ -263,12 +263,12 @@ void UDlgDialogue::PostEditChangeChainProperty(struct FPropertyChangedChainEvent
 	const FName PropertyName = ActivePropertyNode && ActivePropertyNode->GetValue() ? ActivePropertyNode->GetValue()->GetFName() : NAME_None;
 
 	// Check if the participant UClass implements our interface
-	if (MemberPropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, DlgParticipantClasses))
+	if (MemberPropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, ParticipantsClasses))
 	{
 		if (PropertyName == GET_MEMBER_NAME_CHECKED(FDlgParticipantClass, ParticipantClass))
 		{
 			//const int32 ArrayIndex = PropertyChangedEvent.GetArrayIndex(MemberPropertyName.ToString());
-			for (FDlgParticipantClass& Participant : DlgParticipantClasses)
+			for (FDlgParticipantClass& Participant : ParticipantsClasses)
 			{
 				if (!IsValid(Participant.ParticipantClass))
 				{
@@ -399,7 +399,7 @@ void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
 	StartNode = nullptr;
 	Nodes.Empty();
 
-	// TODO handle DlgName == NAME_None or invalid filename
+	// TODO handle Name == NAME_None or invalid filename
 	FDlgLogger::Get().Infof(TEXT("Reloading data for Dialogue = `%s` FROM file = `%s`"), *GetPathName(), *TextFileName);
 
 	// TODO(vampy): Check for errors
@@ -433,16 +433,16 @@ void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
 
 	// TODO(vampy): validate if data is legit, indicies exist and that sort.
 	// Check if Guid is not a duplicate
-	const TArray<UDlgDialogue*> DuplicateDialogues = UDlgManager::GetDialoguesWithDuplicateGuid();
+	const TArray<UDlgDialogue*> DuplicateDialogues = UDlgManager::GetDialoguesWithDuplicateGUIDs();
 	if (DuplicateDialogues.Num() > 0)
 	{
 		if (DuplicateDialogues.Contains(this))
 		{
 			// found duplicate of this Dialogue
-			RegenerateGuid();
+			RegenerateGUID();
 			FDlgLogger::Get().Warningf(
-				TEXT("Creating new DlgGuid = `%s` for Dialogue = `%s` because the input file contained a duplicate GUID."),
-				*DlgGuid.ToString(), *GetPathName()
+				TEXT("Creating new GUID = `%s` for Dialogue = `%s` because the input file contained a duplicate GUID."),
+				*GUID.ToString(), *GetPathName()
 			);
 		}
 		else
@@ -455,7 +455,7 @@ void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
 		}
 	}
 
-	DlgName = GetDialogueFName();
+	Name = GetDialogueFName();
 	AutoFixGraph();
 	UpdateAndRefreshData(true);
 }
@@ -548,7 +548,7 @@ FDlgParticipantData& UDlgDialogue::GetParticipantDataEntry(FName ParticipantName
 		return BlackHoleParticipant;
 	}
 
-	return DlgData.FindOrAdd(ValidParticipantName);
+	return ParticipantsData.FindOrAdd(ValidParticipantName);
 }
 
 void UDlgDialogue::AddConditionsDataFromNodeEdges(const UDlgNode* Node, int32 NodeIndex)
@@ -601,8 +601,8 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 	FDlgLogger::Get().Infof(TEXT("Refreshing data for Dialogue = `%s`"), *GetPathName());
 
 	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-	DlgData.Empty();
-	DlgSpeakerStates.Empty();
+	ParticipantsData.Empty();
+	AllSpeakerStates.Empty();
 
 	// do not forget about the edges of the Root/Start Node
 	if (IsValid(StartNode))
@@ -627,14 +627,14 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 		Node->GetAssociatedParticipants(Participants);
 		for (const FName& Participant : Participants)
 		{
-			if (!DlgData.Contains(Participant))
+			if (!ParticipantsData.Contains(Participant))
 			{
-				DlgData.Add(Participant);
+				ParticipantsData.Add(Participant);
 			}
 		}
 
 		// gather SpeakerStates
-		Node->AddAllSpeakerStatesIntoSet(DlgSpeakerStates);
+		Node->AddAllSpeakerStatesIntoSet(AllSpeakerStates);
 
 		// Conditions from nodes
 		for (const FDlgCondition& Condition : Node->GetNodeEnterConditions())
@@ -666,7 +666,7 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 			const int32 TargetIndex = Edge.TargetIndex;
 
 			// Speaker states
-			DlgSpeakerStates.Add(Edge.SpeakerState);
+			AllSpeakerStates.Add(Edge.SpeakerState);
 
 			// Text arguments are rebuild from the Node
 			for (const FDlgTextArgument& TextArgument : Edge.GetTextArguments())
@@ -695,7 +695,7 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 	}
 
 	// Remove default values
-	DlgSpeakerStates.Remove(FName(NAME_None));
+	AllSpeakerStates.Remove(FName(NAME_None));
 
 	//
 	// Fill ParticipantClasses
@@ -704,12 +704,12 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 	GetAllParticipantNames(Participants);
 
 	// 1. remove outdated entries
-	for (int32 Index = DlgParticipantClasses.Num() - 1; Index >= 0; --Index)
+	for (int32 Index = ParticipantsClasses.Num() - 1; Index >= 0; --Index)
 	{
-		const FName ExaminedName = DlgParticipantClasses[Index].ParticipantName;
+		const FName ExaminedName = ParticipantsClasses[Index].ParticipantName;
 		if (!Participants.Contains(ExaminedName) || ExaminedName.IsNone())
 		{
-			DlgParticipantClasses.RemoveAtSwap(Index);
+			ParticipantsClasses.RemoveAtSwap(Index);
 		}
 
 		Participants.Remove(ExaminedName);
@@ -720,11 +720,11 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 	{
 		if (Participant != NAME_None)
 		{
-			DlgParticipantClasses.Add({ Participant, nullptr });
+			ParticipantsClasses.Add({ Participant, nullptr });
 		}
 		else
 		{
-			FDlgLogger::Get().Warning(TEXT("Trying to fill DlgParticipantClasses, got a Participant name = None. Ignoring!"));
+			FDlgLogger::Get().Warning(TEXT("Trying to fill ParticipantsClasses, got a Participant name = None. Ignoring!"));
 		}
 	}
 }

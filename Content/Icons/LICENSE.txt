@@ -14,3 +14,19 @@ Icons from https://material.io/icons
 Icons from https://thenounproject.com/ArtZ91/collection/strategy/
 - Condition_96x.png
 - Dialogue_ShowPrimarySecondaryEdges_40x.png
+
+Icons from https://discord.com/new/branding
+- Discord_96x.png
+
+Icons from NotYet https://www.warriorb.com/presskit/warriorb/
+- NotYet_96x.png
+- NotYet_128x_64x.png
+
+Icons from https://thenounproject.com/search/?q=forum&i=1871927
+- Forum_96x.png
+
+Icons from https://thenounproject.com/search/?q=marketplace&i=1257504
+- Marketplace_96x.png
+
+Icons from https://thenounproject.com/search/?q=book&i=2044267
+- Wiki_96x.png

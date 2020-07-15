@@ -122,10 +122,10 @@ public:
 	static TArray<UObject*> GetAllObjectsWithDialogueParticipantInterface(UObject* WorldContextObject);
 
 	// Gets all the dialogues that have a duplicate GUID, should not happen, like ever.
-	static TArray<UDlgDialogue*> GetDialoguesWithDuplicateGuid();
+	static TArray<UDlgDialogue*> GetDialoguesWithDuplicateGUIDs();
 
 	// Helper methods that gets all the dialogues in a map by guid.
-	static TMap<FGuid, UDlgDialogue*> GetAllDialoguesGuidMap();
+	static TMap<FGuid, UDlgDialogue*> GetAllDialoguesGUIDsMap();
 
 	// Gets all the loaded dialogues from memory that have the ParticipantName included inside them.
 	static TArray<UDlgDialogue*> GetAllDialoguesForParticipantName(FName ParticipantName);
@@ -145,6 +145,28 @@ public:
 	// Does the Object implement the Dialogue Participant Interface?
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
 	static bool DoesObjectImplementDialogueParticipantInterface(const UObject* Object);
+	static bool DoesClassImplementParticipantInterface(const UClass* Class)
+	{
+		static const UClass* DialogueParticipantClass = UDlgDialogueParticipant::StaticClass();
+		if (!Class)
+		{
+			return false;
+		}
+
+		return Class->ImplementsInterface(DialogueParticipantClass);
+	}
+
+	// Is Object a UDlgEventCustom or a child from that
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
+	static bool IsObjectACustomEvent(const UObject* Object);
+
+	// Is Object a UDlgConditionCustom or a child from that
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
+	static bool IsObjectACustomCondition(const UObject* Object);
+
+	// Is Object a UDlgTextArgumentCustom or a child from that
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
+	static bool IsObjectACustomTextArgument(const UObject* Object);
 
 	// Gets all the unique participant names sorted alphabetically from all the Dialogues loaded into memory.
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")

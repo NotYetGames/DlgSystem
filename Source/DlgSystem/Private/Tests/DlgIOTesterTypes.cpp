@@ -182,7 +182,7 @@ void FDlgTestStructPrimitives::GenerateRandomData(const FDlgIOTesterOptions& InO
 	Rotator = FRotator(FMath::SRand(), FMath::SRand(), FMath::SRand());
 	Matrix = FMatrix(Vector3, FVector(IntPoint), FVector(Vector4), Vector3);
 	Transform = FTransform(Vector3);
-	Guid = FGuid::NewGuid();
+	GUID = FGuid::NewGuid();
 
 	const TArray<UClass*> ClassesPool = {
 		UField::StaticClass(), UStruct::StaticClass(), nullptr, UObject::StaticClass(),
@@ -355,10 +355,10 @@ bool FDlgTestStructPrimitives::IsEqual(const Self& Other, FString& OutError) con
 		OutError += FString::Printf(TEXT("\tThis.Transform (%s) != Other.Transform (%s)\n"), *Transform.ToString(), *Other.Transform.ToString());
 	}
 
-	if (Guid != Other.Guid)
+	if (GUID != Other.GUID)
 	{
 		bIsEqual = false;
-		OutError += FString::Printf(TEXT("\tThis.Guid (%s) != Other.Guid (%s)\n"), *Guid.ToString(), *Other.Guid.ToString());
+		OutError += FString::Printf(TEXT("\tThis.Guid (%s) != Other.Guid (%s)\n"), *GUID.ToString(), *Other.GUID.ToString());
 	}
 
 	if (Class != Other.Class)
@@ -456,7 +456,7 @@ void FDlgTestStructPrimitives::SetToDefaults()
 	Rotator = FRotator(ForceInitToZero);
 	Matrix = FMatrix(ForceInitToZero);
 	Transform = FTransform();
-	Guid = FGuid();
+	GUID = FGuid();
 	Class = nullptr;
 	EmptyObjectInitialized = nullptr;
 	EmptyObjectInitializedReference = nullptr;

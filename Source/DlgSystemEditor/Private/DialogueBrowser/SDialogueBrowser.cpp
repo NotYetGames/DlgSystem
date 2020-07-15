@@ -250,16 +250,16 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 
 	auto PopulateVariablePropertiesFromSearchResult = [](
 		const TSharedPtr<FDialogueBrowserTreeVariableProperties> VariableProperties,
-		const TSharedPtr<FDialogueSearchFoundResult> SearchResult, const FGuid& DialogueGuid)
+		const TSharedPtr<FDialogueSearchFoundResult> SearchResult, const FGuid& DialogueGUID)
 	{
-		if (VariableProperties->HasGraphNodeSet(DialogueGuid))
+		if (VariableProperties->HasGraphNodeSet(DialogueGUID))
 		{
-			VariableProperties->GetMutableGraphNodeSet(DialogueGuid)
+			VariableProperties->GetMutableGraphNodeSet(DialogueGUID)
 							  ->Append(SearchResult->GraphNodes);
 		}
-		if (VariableProperties->HasEdgeNodeSet(DialogueGuid))
+		if (VariableProperties->HasEdgeNodeSet(DialogueGUID))
 		{
-			VariableProperties->GetMutableEdgeNodeSet(DialogueGuid)
+			VariableProperties->GetMutableEdgeNodeSet(DialogueGUID)
 							  ->Append(SearchResult->EdgeNodes);
 		}
 	};
@@ -268,7 +268,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 	TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
 	for (const UDlgDialogue* Dialogue : Dialogues)
 	{
-		const FGuid DialogueGuid = Dialogue->GetDialogueGUID();
+		const FGuid DialogueGUID = Dialogue->GetDialogueGUID();
 
 		// Populate Participants
 		TSet<FName> ParticipantsNames;
@@ -299,7 +299,8 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 				PopulateVariablePropertiesFromSearchResult(
 					ParticipantProps->AddDialogueToEvent(EventName, Dialogue),
 					FDialogueSearchUtilities::GetGraphNodesForEventEventName(EventName, Dialogue),
-					DialogueGuid);
+					DialogueGUID
+				);
 			}
 
 			// Populate conditions
@@ -310,7 +311,8 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 				PopulateVariablePropertiesFromSearchResult(
 					ParticipantProps->AddDialogueToCondition(ConditionName, Dialogue),
 					FDialogueSearchUtilities::GetGraphNodesForConditionEventCallName(ConditionName, Dialogue),
-					DialogueGuid);
+					DialogueGUID
+				);
 			}
 
 			// Populate int variable names
@@ -321,7 +323,8 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 				PopulateVariablePropertiesFromSearchResult(
 					ParticipantProps->AddDialogueToIntVariable(IntVariableName, Dialogue),
 					FDialogueSearchUtilities::GetGraphNodesForIntVariableName(IntVariableName, Dialogue),
-					DialogueGuid);
+					DialogueGUID
+				);
 			}
 
 			// Populate float variable names
@@ -332,7 +335,8 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 				PopulateVariablePropertiesFromSearchResult(
 					ParticipantProps->AddDialogueToFloatVariable(FloatVariableName, Dialogue),
 					FDialogueSearchUtilities::GetGraphNodesForFloatVariableName(FloatVariableName, Dialogue),
-					DialogueGuid);
+					DialogueGUID
+				);
 			}
 
 			// Populate bool variable names
@@ -343,7 +347,8 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 				PopulateVariablePropertiesFromSearchResult(
 					ParticipantProps->AddDialogueToBoolVariable(BoolVariableName, Dialogue),
 					FDialogueSearchUtilities::GetGraphNodesForBoolVariableName(BoolVariableName, Dialogue),
-					DialogueGuid);
+					DialogueGUID
+				);
 			}
 
 			// Populate FName variable names
@@ -354,7 +359,8 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 				PopulateVariablePropertiesFromSearchResult(
 					ParticipantProps->AddDialogueToFNameVariable(NameVariableName, Dialogue),
 					FDialogueSearchUtilities::GetGraphNodesForFNameVariableName(NameVariableName, Dialogue),
-					DialogueGuid);
+					DialogueGUID
+				);
 			}
 
 			// Populate UClass int variable names
@@ -365,7 +371,8 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 				PopulateVariablePropertiesFromSearchResult(
 					ParticipantProps->AddDialogueToClassIntVariable(IntVariableName, Dialogue),
 					FDialogueSearchUtilities::GetGraphNodesForClassIntVariableName(IntVariableName, Dialogue),
-					DialogueGuid);
+					DialogueGUID
+				);
 			}
 
 			// Populate UClass float variable names
@@ -376,7 +383,8 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 				PopulateVariablePropertiesFromSearchResult(
 					ParticipantProps->AddDialogueToClassFloatVariable(FloatVariableName, Dialogue),
 					FDialogueSearchUtilities::GetGraphNodesForClassFloatVariableName(FloatVariableName, Dialogue),
-					DialogueGuid);
+					DialogueGUID
+				);
 			}
 
 			// Populate UClass bool variable names
@@ -387,7 +395,8 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 				PopulateVariablePropertiesFromSearchResult(
 					ParticipantProps->AddDialogueToClassBoolVariable(BoolVariableName, Dialogue),
 					FDialogueSearchUtilities::GetGraphNodesForClassBoolVariableName(BoolVariableName, Dialogue),
-					DialogueGuid);
+					DialogueGUID
+				);
 			}
 
 			// Populate UClass FName variable names
@@ -398,7 +407,8 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 				PopulateVariablePropertiesFromSearchResult(
 					ParticipantProps->AddDialogueToClassFNameVariable(NameVariableName, Dialogue),
 					FDialogueSearchUtilities::GetGraphNodesForClassFNameVariableName(NameVariableName, Dialogue),
-					DialogueGuid);
+					DialogueGUID
+				);
 			}
 
 			// Populate UClass FText variable names
@@ -409,7 +419,8 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 				PopulateVariablePropertiesFromSearchResult(
 					ParticipantProps->AddDialogueToClassFTextVariable(TextVariableName, Dialogue),
 					FDialogueSearchUtilities::GetGraphNodesForClassFTextVariableName(TextVariableName, Dialogue),
-					DialogueGuid);
+					DialogueGUID
+				);
 			}
 		}
 	}
@@ -621,16 +632,16 @@ void SDialogueBrowser::AddGraphNodeBaseChildrenToItemFromProperty(
 
 	const TSharedPtr<FDialogueBrowserTreeVariableProperties> Property = *PropertyPtr;
 	const UDlgDialogue* Dialogue = DialogueItem->GetDialogue().Get();
-	const FGuid DialogueGuid = Dialogue->GetDialogueGUID();
+	const FGuid DialogueGUID = Dialogue->GetDialogueGUID();
 
 	// Display the GraphNode
-	if (Property->HasGraphNodeSet(DialogueGuid))
+	if (Property->HasGraphNodeSet(DialogueGUID))
 	{
-		AddGraphNodeChildrenToItem(DialogueItem, Property->GetGraphNodeSet(DialogueGuid), GraphNodeTextType);
+		AddGraphNodeChildrenToItem(DialogueItem, Property->GetGraphNodeSet(DialogueGUID), GraphNodeTextType);
 	}
-	if (Property->HasEdgeNodeSet(DialogueGuid))
+	if (Property->HasEdgeNodeSet(DialogueGUID))
 	{
-		AddEdgeNodeChildrenToItem(DialogueItem, Property->GetEdgeNodeSet(DialogueGuid), EdgeNodeTextType);
+		AddEdgeNodeChildrenToItem(DialogueItem, Property->GetEdgeNodeSet(DialogueGUID), EdgeNodeTextType);
 	}
 }
 

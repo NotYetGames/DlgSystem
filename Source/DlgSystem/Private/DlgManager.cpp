@@ -271,19 +271,19 @@ TArray<UObject*> UDlgManager::GetAllObjectsWithDialogueParticipantInterface(UObj
 	return Array;
 }
 
-TArray<UDlgDialogue*> UDlgManager::GetDialoguesWithDuplicateGuid()
+TArray<UDlgDialogue*> UDlgManager::GetDialoguesWithDuplicateGUIDs()
 {
 	TArray<UDlgDialogue*> Dialogues = GetAllDialoguesFromMemory();
 	TArray<UDlgDialogue*> DuplicateDialogues;
 
-	TSet<FGuid> DialogueGuids;
+	TSet<FGuid> DialogueGUIDs;
 	for (UDlgDialogue* Dialogue : Dialogues)
 	{
 		const FGuid ID = Dialogue->GetDialogueGUID();
-		if (DialogueGuids.Find(ID) == nullptr)
+		if (DialogueGUIDs.Find(ID) == nullptr)
 		{
 			// does not exist, good
-			DialogueGuids.Add(ID);
+			DialogueGUIDs.Add(ID);
 		}
 		else
 		{
@@ -295,7 +295,7 @@ TArray<UDlgDialogue*> UDlgManager::GetDialoguesWithDuplicateGuid()
 	return DuplicateDialogues;
 }
 
-TMap<FGuid, UDlgDialogue*> UDlgManager::GetAllDialoguesGuidMap()
+TMap<FGuid, UDlgDialogue*> UDlgManager::GetAllDialoguesGUIDsMap()
 {
 	TArray<UDlgDialogue*> Dialogues = GetAllDialoguesFromMemory();
 	TMap<FGuid, UDlgDialogue*> DialoguesMap;
@@ -306,7 +306,7 @@ TMap<FGuid, UDlgDialogue*> UDlgManager::GetAllDialoguesGuidMap()
 		if (DialoguesMap.Contains(ID))
 		{
 			FDlgLogger::Get().Errorf(
-				TEXT("GetAllDialoguesGuidMap - ID = `%s` for Dialogue = `%s` already exists"),
+				TEXT("GetAllDialoguesGUIDsMap - ID = `%s` for Dialogue = `%s` already exists"),
 				*ID.ToString(), *Dialogue->GetPathName()
 			);
 		}
@@ -334,7 +334,10 @@ void UDlgManager::ClearDialogueHistory()
 
 bool UDlgManager::DoesObjectImplementDialogueParticipantInterface(const UObject* Object)
 {
-	static const UClass* DialogueParticipantClass = UDlgDialogueParticipant::StaticClass();
+	if (!Object)
+	{
+		return false;
+	}
 
 	// Apparently blueprints only work this way
 	// NOTE this is the blueprint assets, not an instance, used only by the custom graph nodes
@@ -342,18 +345,33 @@ bool UDlgManager::DoesObjectImplementDialogueParticipantInterface(const UObject*
 	{
 		if (const UClass* GeneratedClass = Cast<UClass>(Blueprint->GeneratedClass))
 		{
-			return GeneratedClass->ImplementsInterface(DialogueParticipantClass);
+			return DoesClassImplementParticipantInterface(GeneratedClass);
 		}
 	}
 
 	// A class object, does this ever happen?
 	if (const UClass* Class = Cast<UClass>(Object))
 	{
-		return Class->ImplementsInterface(DialogueParticipantClass);
+		return DoesClassImplementParticipantInterface(Class);
 	}
 
 	// All other object types
-	return Object->GetClass()->ImplementsInterface(DialogueParticipantClass);
+	return DoesClassImplementParticipantInterface(Object->GetClass());
+}
+
+bool UDlgManager::IsObjectACustomEvent(const UObject* Object)
+{
+	return FDlgHelper::IsObjectAChildOf(Object, UDlgEventCustom::StaticClass());
+}
+
+bool UDlgManager::IsObjectACustomCondition(const UObject* Object)
+{
+	return FDlgHelper::IsObjectAChildOf(Object, UDlgConditionCustom::StaticClass());
+}
+
+bool UDlgManager::IsObjectACustomTextArgument(const UObject* Object)
+{
+	return FDlgHelper::IsObjectAChildOf(Object, UDlgTextArgumentCustom::StaticClass());
 }
 
 TArray<UDlgDialogue*> UDlgManager::GetAllDialoguesForParticipantName(FName ParticipantName)
@@ -361,7 +379,7 @@ TArray<UDlgDialogue*> UDlgManager::GetAllDialoguesForParticipantName(FName Parti
 	TArray<UDlgDialogue*> DialoguesArray;
 	for (UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
 	{
-		if (Dialogue->IsParticipant(ParticipantName))
+		if (Dialogue->HasParticipant(ParticipantName))
 		{
 			DialoguesArray.Add(Dialogue);
 		}

@@ -12,7 +12,7 @@ bool UDlgNode_Selector::HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNod
 	if (NodesEnteredWithThisStep.Contains(this))
 	{
 		FDlgLogger::Get().Errorf(
-			TEXT("HandleNodeEnter - Failed to enter selector node, it was entered multiple times in a single step."
+			TEXT("SelectorNode::HandleNodeEnter - Failed to enter selector node, it was entered multiple times in a single step."
 					"Theoretically with some condition magic it could make sense, but chances are that it is an endless loop,"
 					"thus entering the same selector twice with a single step is not supported. Dialogue is terminated.\nContext:\n\t%s"),
 			*Context.GetContextString()

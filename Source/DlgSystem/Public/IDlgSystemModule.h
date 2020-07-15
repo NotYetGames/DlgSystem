@@ -10,6 +10,7 @@ const FName DIALOGUE_SYSTEM_PLUGIN_NAME(TEXT("DlgSystem"));
 class AActor;
 class SWidget;
 class SDockTab;
+struct FTabSpawnerEntry;
 
 /**
  * Interface for the DlgSystem module.
@@ -48,12 +49,15 @@ public:
 	 */
 	virtual void RegisterConsoleCommands(const TWeakObjectPtr<const UObject>& WorldContextObjectPtr) = 0;
 
-	/** Unregister all the console commands. */
+	// Unregister all the console commands
 	virtual void UnregisterConsoleCommands() = 0;
 
-	/** Gets the debug Dialogue Data Display Window. */
+	// Gets the debug Dialogue Data Display Window.
 	virtual TSharedRef<SWidget> GetDialogueDataDisplayWindow() = 0;
 
-	/** Display the debug Dialogue Data Window on the screen */
+	// Gets the tab entry for the Window
+	virtual FTabSpawnerEntry* GetDialogueDataDisplaySpawnEntry() = 0;
+
+	// Display the debug Dialogue Data Window on the screen
 	virtual void DisplayDialogueDataWindow() = 0;
 };
