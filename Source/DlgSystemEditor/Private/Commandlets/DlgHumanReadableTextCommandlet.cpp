@@ -167,7 +167,7 @@ int32 UDlgHumanReadableTextCommandlet::Import()
 	UE_LOG(LogDlgHumanReadableTextCommandlet, Display, TEXT("Importing from = `%s`"), *OutputInputDirectory);
 
 	PackagesToSave.Empty();
-	TMap<FGuid, UDlgDialogue*> DialoguesMap = UDlgManager::GetAllDialoguesGuidMap();
+	TMap<FGuid, UDlgDialogue*> DialoguesMap = UDlgManager::GetAllDialoguesGUIDsMap();
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
 	// Find all files
@@ -201,13 +201,13 @@ int32 UDlgHumanReadableTextCommandlet::Import()
 
 
 		// Find Dialogue
-		UDlgDialogue** DialoguePtr = DialoguesMap.Find(HumanFormat.DialogueGuid);
+		UDlgDialogue** DialoguePtr = DialoguesMap.Find(HumanFormat.DialogueGUID);
 		if (DialoguePtr == nullptr)
 		{
 			UE_LOG(LogDlgHumanReadableTextCommandlet,
 				Error,
 				TEXT("Can't find Dialogue for GUID = `%s`, DialogueName = `%s` from File = `%s`"),
-				*HumanFormat.DialogueGuid.ToString(), *HumanFormat.DialogueName.ToString(), *File);
+				*HumanFormat.DialogueGUID.ToString(), *HumanFormat.DialogueName.ToString(), *File);
 			continue;
 		}
 
@@ -225,7 +225,7 @@ int32 UDlgHumanReadableTextCommandlet::Import()
 bool UDlgHumanReadableTextCommandlet::ExportDialogueToHumanReadableFormat(const UDlgDialogue& Dialogue, FDlgDialogue_FormatHumanReadable& OutFormat)
 {
 	OutFormat.DialogueName = Dialogue.GetDialogueFName();
-	OutFormat.DialogueGuid = Dialogue.GetDialogueGUID();
+	OutFormat.DialogueGUID = Dialogue.GetDialogueGUID();
 
 	// Root Node
 	{

@@ -1,7 +1,7 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DlgSystemEditorModule.h"
 
-#include "Extensions/ContentBrowserExtensions.h"
+#include "DialogueContentBrowserExtensions.h"
 #include "Engine/BlueprintCore.h"
 #include "Templates/SharedPointer.h"
 #include "AssetRegistryModule.h"
@@ -18,11 +18,11 @@
 
 #include "DialogueGraphFactories.h"
 #include "DlgSystemEditorPrivatePCH.h"
-#include "TypeActions/AssetTypeActions_Dialogue.h"
-#include "DialogueEditor/DialogueEditorCommands.h"
+#include "DialogueAssetTypeActions.h"
+#include "DialogueCommands.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueBrowser/SDialogueBrowser.h"
-#include "DialogueSearch/FindInDialogueSearchManager.h"
+#include "DialogueSearch/DialogueSearchManager.h"
 #include "DialogueEditor/DetailsPanel/Dialogue_Details.h"
 #include "DialogueEditor/DetailsPanel/DialogueGraphNode_Details.h"
 #include "DialogueEditor/DetailsPanel/DialogueNode_Details.h"
@@ -32,6 +32,7 @@
 #include "DialogueEditor/DetailsPanel/DialogueTextArgument_Details.h"
 #include "DialogueEditor/DetailsPanel/DialogueSpeechSequenceEntry_Details.h"
 #include "DlgManager.h"
+#include "IDlgSystemModule.h"
 
 #include "IO/DlgConfigWriter.h"
 #include "IO/DlgConfigParser.h"
@@ -72,7 +73,7 @@ void FDlgSystemEditorModule::StartupModule()
 	FDialogueStyle::Initialize();
 
 	// Register commands
-	FDialogueEditorCommands::Register();
+	FDialogueCommands::Register();
 
 	// Register asset types, add the right click submenu
 	IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>(NAME_MODULE_AssetTools).Get();
@@ -80,7 +81,7 @@ void FDlgSystemEditorModule::StartupModule()
 	// make the DlgSystem be displayed in the filters menu and in the create new menu
 	DlgSystemAssetCategoryBit = AssetTools.RegisterAdvancedAssetCategory(DIALOGUE_SYSTEM_MENU_CATEGORY_KEY, DIALOGUE_SYSTEM_MENU_CATEGORY_KEY_TEXT);
 	{
-		auto Action = MakeShared<FAssetTypeActions_Dialogue>(DlgSystemAssetCategoryBit);
+		auto Action = MakeShared<FDialogueAssetTypeActions>(DlgSystemAssetCategoryBit);
 		AssetTools.RegisterAssetTypeActions(Action);
 		RegisteredAssetTypeActions.Add(Action);
 	}
@@ -141,18 +142,12 @@ void FDlgSystemEditorModule::StartupModule()
 	FEdGraphUtilities::RegisterVisualPinFactory(DialogueGraphPinFactory);
 
 	// Bind Editor commands
-	FileMenuEditorCommands = MakeShared<FUICommandList>();
-	FileMenuEditorCommands->MapAction(
-		FDialogueEditorCommands::Get().SaveAllDialogues,
-		FExecuteAction::CreateStatic(&Self::HandleOnSaveAllDialogues)
-	);
-	FileMenuEditorCommands->MapAction(
-		FDialogueEditorCommands::Get().DeleteAllDialoguesTextFiles,
-		FExecuteAction::CreateStatic(&Self::HandleOnDeleteAllDialoguesTextFiles)
-	);
+	LevelMenuEditorCommands = MakeShared<FUICommandList>();
+	MapActionsForFileMenuExtender(LevelMenuEditorCommands.ToSharedRef());
+	MapActionsForHelpMenuExtender(LevelMenuEditorCommands.ToSharedRef());
 
 	// Content Browser extension
-	FDlgContentBrowserExtensions::InstallHooks();
+	FDialogueContentBrowserExtensions::InstallHooks();
 
 	// Extend menu/toolbar
 	ExtendMenu();
@@ -175,7 +170,7 @@ void FDlgSystemEditorModule::ShutdownModule()
 	{
 		// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 		// we call this function before unloading the module.
-		FDlgContentBrowserExtensions::RemoveHooks();
+		FDialogueContentBrowserExtensions::RemoveHooks();
 	}
 
 	// Unregister the custom details panel stuff
@@ -207,7 +202,7 @@ void FDlgSystemEditorModule::ShutdownModule()
 	RegisteredAssetTypeActions.Empty();
 
 	// unregister commands
-	FDialogueEditorCommands::Unregister();
+	FDialogueCommands::Unregister();
 
 	// Unregister slate style overrides
 	FDialogueStyle::Shutdown();
@@ -216,7 +211,7 @@ void FDlgSystemEditorModule::ShutdownModule()
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(DIALOGUE_BROWSER_TAB_ID);
 
 	// Unregister the Dialogue Search
-	FFindInDialogueSearchManager::Get()->DisableGlobalFindResults();
+	FDialogueSearchManager::Get()->DisableGlobalFindResults();
 
 	if (OnBeginPIEHandle.IsValid())
 	{
@@ -289,13 +284,13 @@ void FDlgSystemEditorModule::HandleOnDeleteAllDialoguesTextFiles()
 		return;
 	}
 
-	if (!DeleteAllDialoguesTextFiles(AllFileExtensions))
+	if (!DeleteAllDialoguesTextFiles())
 	{
 		UE_LOG(LogDlgSystemEditor, Error, TEXT("Failed To delete all Dialogues text files. An error occurred."));
 	}
 }
 
-bool FDlgSystemEditorModule::DeleteAllDialoguesTextFiles(const TSet<FString>& TextFileExtensions)
+bool FDlgSystemEditorModule::DeleteAllDialoguesTextFiles()
 {
 	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
 	const bool bBatchOnlyInGameDialogues = GetDefault<UDlgSystemSettings>()->bBatchOnlyInGameDialogues;
@@ -335,7 +330,7 @@ void FDlgSystemEditorModule::HandleOnPostEngineInit()
 	// - duplicated files outside of UE
 	// - somehow loaded from text files?
 	// - the universe hates us? +_+
-	for (UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGuid())
+	for (UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGUIDs())
 	{
 		UE_LOG(
 			LogDlgSystemEditor,
@@ -343,13 +338,13 @@ void FDlgSystemEditorModule::HandleOnPostEngineInit()
 			TEXT("Dialogue = `%s`, GUID = `%s` has a Duplicate GUID. Regenerating."),
 			*Dialogue->GetPathName(), *Dialogue->GetDialogueGUID().ToString()
 		)
-		Dialogue->RegenerateGuid();
+		Dialogue->RegenerateGUID();
 		Dialogue->MarkPackageDirty();
 	}
 
 	// Give it another try, Give up :((
 	// May the math Gods have mercy on us!
-	for (const UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGuid())
+	for (const UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGUIDs())
 	{
 		// GUID already exists (╯°□°）╯︵ ┻━┻
 		// Does this break the universe?
@@ -430,36 +425,28 @@ void FDlgSystemEditorModule::ExtendMenu()
 		return;
 	}
 
-	// File -> Save all Dialogues
+	// File and Help Menu Extenders
 	{
-		TSharedRef<FExtender> FileMenuExtender(new FExtender);
-
-		// Fill after the File->FileLoadAndSave
-		FileMenuExtender->AddMenuExtension(
-			"FileLoadAndSave",
-			EExtensionHook::After,
-			FileMenuEditorCommands.ToSharedRef(),
-			FMenuExtensionDelegate::CreateLambda([this](FMenuBuilder& MenuBuilder)
-			{
-				// Save Dialogues
-				MenuBuilder.BeginSection("DialogueFileLoadAndSave", LOCTEXT("DialogueKeyFileAndSearch", "Dialogue"));
-				{
-					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().SaveAllDialogues);
-					MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().DeleteAllDialoguesTextFiles);
-				}
-				MenuBuilder.EndSection();
-			}));
+		const TSharedRef<FExtender> FileMenuExtender = CreateFileMenuExtender(LevelMenuEditorCommands.ToSharedRef());
+		const TSharedRef<FExtender> HelpMenuExtender = CreateHelpMenuExtender(LevelMenuEditorCommands.ToSharedRef());
 
 		// Add to the level editor
 		FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>(NAME_MODULE_LevelEditor);
 		LevelEditorModule.GetMenuExtensibilityManager()->AddExtender(FileMenuExtender);
+		LevelEditorModule.GetMenuExtensibilityManager()->AddExtender(HelpMenuExtender);
 	}
 
-	// Window -> Dialogue search and browse
+	// Window -> Dialogue search, Dialogue Browse, Dialogue Data Display
 	{
 		ToolsDialogueCategory = WorkspaceMenu::GetMenuStructure().GetStructureRoot()
-			->AddGroup(LOCTEXT("WorkspaceMenu_DialogueCategory", "Dialogue" ),
-					FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_DialogueClassIcon), false);
+			->AddGroup(
+				LOCTEXT("WorkspaceMenu_DialogueCategory", "Dialogue" ),
+				FSlateIcon(
+					FDialogueStyle::GetStyleSetName(),
+					FDialogueStyle::PROPERTY_DialogueClassIcon
+				),
+				false
+			);
 
 		// Register the Dialogue Overview Browser
 		FGlobalTabmanager::Get()->RegisterNomadTabSpawner(DIALOGUE_BROWSER_TAB_ID,
@@ -474,12 +461,126 @@ void FDlgSystemEditorModule::ExtendMenu()
 			}))
 			.SetDisplayName(LOCTEXT("DialogueBrowserTabTitle", "Dialogue Browser"))
 			.SetTooltipText(LOCTEXT("DialogueBrowserTooltipText", "Open the Dialogue Overview Browser tab."))
-			.SetIcon(FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_BrowseDialogueIcon))
+			.SetIcon(FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_DialogueBrowser_TabIcon))
 			.SetGroup(ToolsDialogueCategory.ToSharedRef());
 
 		// Register the Dialogue Search
-		FFindInDialogueSearchManager::Get()->Initialize(ToolsDialogueCategory);
+		FDialogueSearchManager::Get()->Initialize(ToolsDialogueCategory);
+
+		// Register the Dialogue Data Display
+		FTabSpawnerEntry* TabDialogueDataDisplay = IDlgSystemModule::Get().GetDialogueDataDisplaySpawnEntry();
+		TabDialogueDataDisplay->SetGroup(ToolsDialogueCategory.ToSharedRef());
+		TabDialogueDataDisplay->SetIcon(FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_DialogueDataDisplay_TabIcon));
 	}
+}
+
+TSharedRef<FExtender> FDlgSystemEditorModule::CreateFileMenuExtender(
+	TSharedRef<FUICommandList> Commands,
+	const TArray<TSharedPtr<FUICommandInfo>>& AdditionalMenuEntries
+)
+{
+	// Fill after the File->FileLoadAndSave
+	TSharedRef<FExtender> FileMenuExtender(new FExtender);
+	FileMenuExtender->AddMenuExtension(
+		"FileLoadAndSave",
+		EExtensionHook::After,
+		Commands,
+		FMenuExtensionDelegate::CreateLambda([AdditionalMenuEntries](FMenuBuilder& MenuBuilder)
+		{
+			// Save Dialogues
+			MenuBuilder.BeginSection("Dialogue", LOCTEXT("DialogueMenuKeyCategory", "Dialogue"));
+			{
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().SaveAllDialogues);
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().DeleteAllDialoguesTextFiles);
+				MenuBuilder.AddMenuSeparator();
+				for (auto& MenuEntry : AdditionalMenuEntries)
+				{
+					MenuBuilder.AddMenuEntry(MenuEntry);
+				}
+			}
+			MenuBuilder.EndSection();
+		})
+	);
+
+	return FileMenuExtender;
+}
+
+TSharedRef<FExtender> FDlgSystemEditorModule::CreateHelpMenuExtender(TSharedRef<FUICommandList> Commands)
+{
+	// Fill after the Help->HelpBrowse
+	TSharedRef<FExtender> HelpMenuExtender(new FExtender);
+	HelpMenuExtender->AddMenuExtension(
+		"HelpBrowse",
+		EExtensionHook::After,
+		Commands,
+		FMenuExtensionDelegate::CreateLambda([](FMenuBuilder& MenuBuilder)
+		{
+			// Save Dialogues
+			MenuBuilder.BeginSection("Dialogue", LOCTEXT("DialogueMenuKeyCategory", "Dialogue"));
+			{
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenNotYetPlugins);
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenMarketplace);
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenWiki);
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenDiscord);
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenForum);
+			}
+			MenuBuilder.EndSection();
+		})
+	);
+
+	return HelpMenuExtender;
+}
+
+void FDlgSystemEditorModule::MapActionsForFileMenuExtender(TSharedRef<FUICommandList> Commands)
+{
+	Commands->MapAction(
+		FDialogueCommands::Get().SaveAllDialogues,
+		FExecuteAction::CreateStatic(&Self::HandleOnSaveAllDialogues)
+	);
+	Commands->MapAction(
+		FDialogueCommands::Get().DeleteAllDialoguesTextFiles,
+		FExecuteAction::CreateStatic(&Self::HandleOnDeleteAllDialoguesTextFiles)
+	);
+}
+
+void FDlgSystemEditorModule::MapActionsForHelpMenuExtender(TSharedRef<FUICommandList> Commands)
+{
+	const UDlgSystemSettings& Settings = *GetDefault<UDlgSystemSettings>();
+	Commands->MapAction(
+		FDialogueCommands::Get().OpenNotYetPlugins,
+		FExecuteAction::CreateLambda([&Settings]()
+		{
+			FPlatformProcess::LaunchURL(*Settings.URLNotYetPlugins, nullptr, nullptr );
+		})
+	);
+	Commands->MapAction(
+		FDialogueCommands::Get().OpenMarketplace,
+		FExecuteAction::CreateLambda([&Settings]()
+		{
+			FPlatformProcess::LaunchURL(*Settings.URLMarketplace, nullptr, nullptr );
+		})
+	);
+	Commands->MapAction(
+		FDialogueCommands::Get().OpenDiscord,
+		FExecuteAction::CreateLambda([&Settings]()
+		{
+			FPlatformProcess::LaunchURL(*Settings.URLDiscord, nullptr, nullptr );
+		})
+	);
+	Commands->MapAction(
+		FDialogueCommands::Get().OpenForum,
+		FExecuteAction::CreateLambda([&Settings]()
+		{
+			FPlatformProcess::LaunchURL(*Settings.URLForum, nullptr, nullptr );
+		})
+	);
+	Commands->MapAction(
+		FDialogueCommands::Get().OpenWiki,
+		FExecuteAction::CreateLambda([&Settings]()
+		{
+			FPlatformProcess::LaunchURL(*Settings.URLWiki, nullptr, nullptr );
+		})
+	);
 }
 
 #undef LOCTEXT_NAMESPACE

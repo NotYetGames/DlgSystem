@@ -14,6 +14,7 @@ class UK2Node;
 class UDlgDialogue;
 struct FGraphPanelNodeFactory;
 struct FGraphPanelPinFactory;
+class FExtender;
 
 // Implementation of the DlgSystemEditor Module
 class DLGSYSTEMEDITOR_API FDlgSystemEditorModule : public IDlgSystemEditorModule
@@ -33,14 +34,22 @@ public:
 	// Own functions
 	//
 
+	// Create the menu extenders
+	static TSharedRef<FExtender> CreateFileMenuExtender(
+		TSharedRef<FUICommandList> Commands,
+		const TArray<TSharedPtr<FUICommandInfo>>& AdditionalMenuEntries = {}
+	);
+	static TSharedRef<FExtender> CreateHelpMenuExtender(TSharedRef<FUICommandList> Commands);
+	static void MapActionsForFileMenuExtender(TSharedRef<FUICommandList> Commands);
+	static void MapActionsForHelpMenuExtender(TSharedRef<FUICommandList> Commands);
+
 	// Save all the dialogues.
 	// @return True on success or false on failure.
 	static bool SaveAllDialogues();
 
-
 	// Deletes all teh dialogues text files
 	// @return True on success or false on failure.
-	static bool DeleteAllDialoguesTextFiles(const TSet<FString>& TextFileExtensions);
+	static bool DeleteAllDialoguesTextFiles();
 
 private:
 	// Handle clicking on save all dialogues.
@@ -79,8 +88,8 @@ private:
 	// The factory of how the pins look.
 	TSharedPtr<FGraphPanelPinFactory> DialogueGraphPinFactory;
 
-	// File menu Editor commands bound from this plugin.
-	TSharedPtr<FUICommandList> FileMenuEditorCommands;
+	// Level Editor commands bound from this plugin.
+	TSharedPtr<FUICommandList> LevelMenuEditorCommands;
 
 	// The Tools Dialogue category.
 	TSharedPtr<FWorkspaceItem> ToolsDialogueCategory;
@@ -90,5 +99,5 @@ private:
 	FDelegateHandle OnBeginPIEHandle;
 	FDelegateHandle OnPostPIEStartedHandle; // after BeginPlay() has been called
 	FDelegateHandle OnEndPIEHandle;
-	
+
 };

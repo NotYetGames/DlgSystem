@@ -52,8 +52,17 @@ public:
 
 	static const FName PROPERTY_SaveAllDialoguesIcon;
 	static const FName PROPERTY_DeleteAllDialoguesTextFilesIcon;
-	static const FName PROPERTY_FindDialogueIcon;
-	static const FName PROPERTY_BrowseDialogueIcon;
+	static const FName PROPERTY_DeleteCurrentDialogueTextFilesIcon;
+	static const FName PROPERTY_DialogueSearch_TabIcon;
+	static const FName PROPERTY_DialogueBrowser_TabIcon;
+	static const FName PROPERTY_DialogueDataDisplay_TabIcon;
+
+	static const FName PROPERTY_NotYetLogoIcon;
+	static const FName PROPERTY_OpenDiscordIcon;
+	static const FName PROPERTY_OpenNotYetPluginsIcon;
+	static const FName PROPERTY_OpenForumIcon;
+	static const FName PROPERTY_OpenMarketplaceIcon;
+	static const FName PROPERTY_OpenWikiIcon;
 
 	static const FName PROPERTY_FindInDialogueEditorIcon;
 	static const FName PROPERTY_FindInAllDialogueEditorIcon;

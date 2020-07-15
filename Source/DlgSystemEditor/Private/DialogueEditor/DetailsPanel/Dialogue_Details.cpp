@@ -21,9 +21,9 @@ void FDialogue_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 	UClass* DialogueClass = UDlgDialogue::StaticClass();
 	// IDetailCategoryBuilder& GeneratedCategory = DetailBuilder.EditCategory(TEXT("Generated"));
 	// GeneratedCategory.InitiallyCollapsed(false);
-	// GeneratedCategory.AddProperty(UDlgDialogue::GetMemberNameDlgName(), DialogueClass);
-	// GeneratedCategory.AddProperty(UDlgDialogue::GetMemberNameDlgGuid(), DialogueClass);
-	// GeneratedCategory.AddProperty(UDlgDialogue::GetMemberNameDlgData(), DialogueClass);
+	// GeneratedCategory.AddProperty(UDlgDialogue::GetMemberNameName(), DialogueClass);
+	// GeneratedCategory.AddProperty(UDlgDialogue::GetMemberNameGUID(), DialogueClass);
+	// GeneratedCategory.AddProperty(UDlgDialogue::GetMemberNameParticipantsData(), DialogueClass);
 
 	IDetailCategoryBuilder& DataCategory = DetailBuilder.EditCategory(TEXT("DialogueData"));
 	DataCategory.InitiallyCollapsed(false);

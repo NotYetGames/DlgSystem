@@ -2,19 +2,18 @@
 #include "DlgMemory.h"
 #include "DlgHelper.h"
 
-
 bool FDlgHistory::operator==(const FDlgHistory& Other) const
 {
 	return FDlgHelper::IsSetEqual(VisitedNodeIndices, Other.VisitedNodeIndices);
 }
 
-void FDlgMemory::SetEntry(const FGuid& DlgGuid, const FDlgHistory& History)
+void FDlgMemory::SetEntry(const FGuid& DialogueGUID, const FDlgHistory& History)
 {
-	FDlgHistory* OldEntry = HistoryMap.Find(DlgGuid);
+	FDlgHistory* OldEntry = HistoryMap.Find(DialogueGUID);
 
 	if (OldEntry == nullptr)
 	{
-		HistoryMap.Add(DlgGuid, History);
+		HistoryMap.Add(DialogueGUID, History);
 	}
 	else
 	{
@@ -22,21 +21,21 @@ void FDlgMemory::SetEntry(const FGuid& DlgGuid, const FDlgHistory& History)
 	}
 }
 
-void FDlgMemory::SetNodeVisited(const FGuid& DlgGuid, int32 NodeIndex)
+void FDlgMemory::SetNodeVisited(const FGuid& DialogueGUID, int32 NodeIndex)
 {
-	FDlgHistory* History = HistoryMap.Find(DlgGuid);
+	FDlgHistory* History = HistoryMap.Find(DialogueGUID);
 	// Add it if it does not exist already
 	if (History == nullptr)
 	{
-		History = &HistoryMap.Add(DlgGuid);
+		History = &HistoryMap.Add(DialogueGUID);
 	}
 
 	History->VisitedNodeIndices.Add(NodeIndex);
 }
 
-bool FDlgMemory::IsNodeVisited(const FGuid& DlgGuid, int32 NodeIndex) const
+bool FDlgMemory::IsNodeVisited(const FGuid& DialogueGUID, int32 NodeIndex) const
 {
-	const FDlgHistory* History = HistoryMap.Find(DlgGuid);
+	const FDlgHistory* History = HistoryMap.Find(DialogueGUID);
 	if (History == nullptr)
 	{
 		return false;
@@ -45,9 +44,3 @@ bool FDlgMemory::IsNodeVisited(const FGuid& DlgGuid, int32 NodeIndex) const
 	const int32* FoundIndex = History->VisitedNodeIndices.Find(NodeIndex);
 	return FoundIndex != nullptr;
 }
-
-void FDlgMemory::Serialize(FArchive& Ar)
-{
-	Ar << HistoryMap;
-}
-

@@ -22,7 +22,7 @@ struct DLGSYSTEM_API FDlgDialogueObjectVersion
 		UseOnlyOneOutputAndInputPin,
 		MergeVirtualParentAndSelectorTypes,
 		ConvertDialogueDataArraysToSets,
-		AddGuid,
+		AddGUID,
 		AddComparisonWithOtherParticipant,
 		AddTextFormatArguments,
 		AddLocalizationOverwrittenNamespacesAndKeys,
@@ -160,9 +160,9 @@ public:
 	FDialoguePropertyChanged OnDialoguePropertyChanged;
 
 	// Helper functions to get the names of some properties. Used by the DlgSystemEditor module.
-	static FName GetMemberNameDlgName() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, DlgName); }
-	static FName GetMemberNameDlgGuid() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, DlgGuid); }
-	static FName GetMemberNameDlgData() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, DlgData); }
+	static FName GetMemberNameName() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, Name); }
+	static FName GetMemberNameGUID() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, GUID); }
+	static FName GetMemberNameParticipantsData() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, ParticipantsData); }
 	static FName GetMemberNameStartNode() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, StartNode); }
 	static FName GetMemberNameNodes() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, Nodes); }
 
@@ -228,21 +228,21 @@ public:
 
 	// Gets the Dialogue Data Map. It maps Participant Name => Participant Data
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	const TMap<FName, FDlgParticipantData>& GetParticipantData() const { return DlgData; }
+	const TMap<FName, FDlgParticipantData>& GetParticipantsData() const { return ParticipantsData; }
 
 	// Checks if the provided ParticipantName (SpeakerName) is a key in the Dialogue Data Map
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	bool IsParticipant(FName ParticipantName) const { return DlgData.Contains(ParticipantName); }
+	bool HasParticipant(FName ParticipantName) const { return ParticipantsData.Contains(ParticipantName); }
 
 	// Gets the number of participants in the Dialogue Data Map.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	int32 GetParticipantNum() const { return DlgData.Num(); }
+	int32 GetParticipantNum() const { return ParticipantsData.Num(); }
 
 	// Gets all the keys (participant names) of the DlgData Map
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetAllParticipantNames(TSet<FName>& OutSet) const
 	{
-		for (const auto& Element : DlgData)
+		for (const auto& Element : ParticipantsData)
 		{
 			// Key is the ParticipantName
 			OutSet.Add(Element.Key);
@@ -250,13 +250,13 @@ public:
 	}
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	const TArray<FDlgParticipantClass>& GetAllParticipantClasses() const { return DlgParticipantClasses; }
+	const TArray<FDlgParticipantClass>& GetAllParticipantClasses() const { return ParticipantsClasses; }
 
-	/// EDITOR function, it only works if the participant class is setup in the DlgParticipantClasses array
+	/// EDITOR function, it only works if the participant class is setup in the ParticipantsClasses array
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	UClass* GetParticipantClass(FName ParticipantName) const
 	{
-		for (const FDlgParticipantClass& Pair : DlgParticipantClasses)
+		for (const FDlgParticipantClass& Pair : ParticipantsClasses)
 		{
 			if (Pair.ParticipantName == ParticipantName)
 			{
@@ -271,9 +271,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetConditions(FName ParticipantName, TSet<FName>& OutSet) const
 	{
-		if (DlgData.Contains(ParticipantName))
+		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(DlgData[ParticipantName].Conditions);
+			OutSet.Append(ParticipantsData[ParticipantName].Conditions);
 		}
 	}
 
@@ -281,9 +281,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetEvents(FName ParticipantName, TSet<FName>& OutSet) const
 	{
-		if (DlgData.Contains(ParticipantName))
+		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(DlgData[ParticipantName].Events);
+			OutSet.Append(ParticipantsData[ParticipantName].Events);
 		}
 	}
 
@@ -291,9 +291,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetIntNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
-		if (DlgData.Contains(ParticipantName))
+		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(DlgData[ParticipantName].IntVariableNames);
+			OutSet.Append(ParticipantsData[ParticipantName].IntVariableNames);
 		}
 	}
 
@@ -301,9 +301,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetFloatNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
-		if (DlgData.Contains(ParticipantName))
+		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(DlgData[ParticipantName].FloatVariableNames);
+			OutSet.Append(ParticipantsData[ParticipantName].FloatVariableNames);
 		}
 	}
 
@@ -311,9 +311,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetBoolNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
-		if (DlgData.Contains(ParticipantName))
+		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(DlgData[ParticipantName].BoolVariableNames);
+			OutSet.Append(ParticipantsData[ParticipantName].BoolVariableNames);
 		}
 	}
 
@@ -321,9 +321,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetNameNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
-		if (DlgData.Contains(ParticipantName))
+		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(DlgData[ParticipantName].NameVariableNames);
+			OutSet.Append(ParticipantsData[ParticipantName].NameVariableNames);
 		}
 	}
 
@@ -332,9 +332,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetClassIntNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
-		if (DlgData.Contains(ParticipantName))
+		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(DlgData[ParticipantName].ClassIntVariableNames);
+			OutSet.Append(ParticipantsData[ParticipantName].ClassIntVariableNames);
 		}
 	}
 
@@ -342,9 +342,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetClassFloatNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
-		if (DlgData.Contains(ParticipantName))
+		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(DlgData[ParticipantName].ClassFloatVariableNames);
+			OutSet.Append(ParticipantsData[ParticipantName].ClassFloatVariableNames);
 		}
 	}
 
@@ -352,9 +352,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetClassBoolNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
-		if (DlgData.Contains(ParticipantName))
+		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(DlgData[ParticipantName].ClassBoolVariableNames);
+			OutSet.Append(ParticipantsData[ParticipantName].ClassBoolVariableNames);
 		}
 	}
 
@@ -362,9 +362,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetClassNameNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
-		if (DlgData.Contains(ParticipantName))
+		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(DlgData[ParticipantName].ClassNameVariableNames);
+			OutSet.Append(ParticipantsData[ParticipantName].ClassNameVariableNames);
 		}
 	}
 
@@ -372,9 +372,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetClassTextNames(FName ParticipantName, TSet<FName>& OutSet) const
 	{
-		if (DlgData.Contains(ParticipantName))
+		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(DlgData[ParticipantName].ClassTextVariableNames);
+			OutSet.Append(ParticipantsData[ParticipantName].ClassTextVariableNames);
 		}
 	}
 
@@ -382,14 +382,14 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetAllSpeakerState(TSet<FName>& OutSet) const
 	{
-		OutSet.Append(DlgSpeakerStates);
+		OutSet.Append(AllSpeakerStates);
 	}
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	const TSet<FName>& GetSpeakerStates() const { return DlgSpeakerStates; }
+	const TSet<FName>& GetAllSpeakerStates() const { return AllSpeakerStates; }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	int32 GetDialogueVersion() const { return DlgVersion; }
+	int32 GetDialogueVersion() const { return Version; }
 
 	// Gets/extracts the name (without extension) of the dialog from the uasset filename
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
@@ -407,10 +407,10 @@ public:
 
 	// Gets the unique identifier for this dialogue.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	FGuid GetDialogueGUID() const { check(DlgGuid.IsValid()); return DlgGuid; }
+	FGuid GetDialogueGUID() const { check(GUID.IsValid()); return GUID; }
 
-	// Regenerate the DlgGuid of this Dialogue
-	void RegenerateGuid() { DlgGuid = FGuid::NewGuid(); }
+	// Regenerate the GUID of this Dialogue
+	void RegenerateGUID() { GUID = FGuid::NewGuid(); }
 
 	// Gets all the nodes
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
@@ -436,7 +436,7 @@ public:
 	// Is the Node at NodeIndex (if it exists) an end node?
 	bool IsEndNode(int32 NodeIndex) const;
 
-	// Check if a text file in the same folder with the same name (DlgName) exists and loads the data from that file.
+	// Check if a text file in the same folder with the same name (Name) exists and loads the data from that file.
 	void ImportFromFile();
 
 	// Method to handle when this asset is going to be saved. Compiles the dialogue and saves to the text file.
@@ -454,7 +454,7 @@ public:
 		bIsSyncedWithTextFile = true;
 	}
 
-	// Exports this dialogue data into it's corresponding ".dlg" text file with the same name as this (DlgName).
+	// Exports this dialogue data into it's corresponding ".dlg" text file with the same name as this (Name).
 	void ExportToFile() const;
 
 	// Updates the data of some nodes
@@ -510,27 +510,27 @@ private:
 protected:
 	// Used to keep track of the version in text  file too, besides being written in the .uasset file.
 	UPROPERTY()
-	int32 DlgVersion = FDlgDialogueObjectVersion::LatestVersion;
+	int32 Version = FDlgDialogueObjectVersion::LatestVersion;
 
 	// The name of the dialog, only used for reference in the text file, as this must always match the .uasset file name and .dlg file name
 	UPROPERTY(VisibleAnywhere, Category = "Dialogue")
-	FName DlgName;
+	FName Name;
 
 	// The Unique identifier for each dialogue. This is used to uniquely identify a Dialogue, instead of it's name or path. Much more safer.
 	UPROPERTY(VisibleAnywhere, Category = "Dialogue")
-	FGuid DlgGuid;
+	FGuid GUID;
 
 	// All the Participants that require for you to define its UClass otherwise the auto completion/suggestion won't work in case you want to modify/check Class variables.
 	UPROPERTY(EditAnywhere, EditFixedSize, Category = "Dialogue")
-	TArray<FDlgParticipantClass> DlgParticipantClasses;
+	TArray<FDlgParticipantClass> ParticipantsClasses;
 
 	// Gathered data about events/conditions for each participant (for bp nodes, suggestions, etc.)
 	UPROPERTY(VisibleAnywhere, AdvancedDisplay, Category = "Dialogue", Meta = (DlgNoExport))
-	TMap<FName, FDlgParticipantData> DlgData;
+	TMap<FName, FDlgParticipantData> ParticipantsData;
 
 	// All the speaker states used inside this Dialogue.
 	UPROPERTY(VisibleAnywhere, AdvancedDisplay, Category = "Dialogue", Meta = (DlgNoExport))
-	TSet<FName> DlgSpeakerStates;
+	TSet<FName> AllSpeakerStates;
 
 	// Root node, Dialogue is started from the first child with satisfied condition (like the SelectorFirst node)
 	// NOTE: Add VisibleAnywhere to make it easier to debug

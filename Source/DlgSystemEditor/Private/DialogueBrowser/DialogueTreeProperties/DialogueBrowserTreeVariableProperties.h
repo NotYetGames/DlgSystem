@@ -23,27 +23,27 @@ public:
 	void AddDialogue(TWeakObjectPtr<const UDlgDialogue> Dialogue) override;
 
 	// GraphNodes:
-	bool HasGraphNodeSet(const FGuid& DialogueGuid) { return GraphNodes.Find(DialogueGuid) != nullptr; }
-	TSet<TWeakObjectPtr<const UDialogueGraphNode>>* GetMutableGraphNodeSet(const FGuid& DialogueGuid)
+	bool HasGraphNodeSet(const FGuid& DialogueGUID) { return GraphNodes.Find(DialogueGUID) != nullptr; }
+	TSet<TWeakObjectPtr<const UDialogueGraphNode>>* GetMutableGraphNodeSet(const FGuid& DialogueGUID)
 	{
-		return GraphNodes.Find(DialogueGuid);
+		return GraphNodes.Find(DialogueGUID);
 	}
-	const TSet<TWeakObjectPtr<const UDialogueGraphNode>>& GetGraphNodeSet(const FGuid& DialogueGuid) const
+	const TSet<TWeakObjectPtr<const UDialogueGraphNode>>& GetGraphNodeSet(const FGuid& DialogueGUID) const
 	{
-		auto* SetPtr = GraphNodes.Find(DialogueGuid);
+		auto* SetPtr = GraphNodes.Find(DialogueGUID);
 		check(SetPtr);
 		return *SetPtr;
 	}
 
 	// EdgeNodes:
-	bool HasEdgeNodeSet(const FGuid& DialogueGuid) { return EdgeNodes.Find(DialogueGuid) != nullptr; }
-	TSet<TWeakObjectPtr<const UDialogueGraphNode_Edge>>* GetMutableEdgeNodeSet(const FGuid& DialogueGuid)
+	bool HasEdgeNodeSet(const FGuid& DialogueGUID) { return EdgeNodes.Find(DialogueGUID) != nullptr; }
+	TSet<TWeakObjectPtr<const UDialogueGraphNode_Edge>>* GetMutableEdgeNodeSet(const FGuid& DialogueGUID)
 	{
-		return EdgeNodes.Find(DialogueGuid);
+		return EdgeNodes.Find(DialogueGUID);
 	}
-	const TSet<TWeakObjectPtr<const UDialogueGraphNode_Edge>>& GetEdgeNodeSet(const FGuid& DialogueGuid) const
+	const TSet<TWeakObjectPtr<const UDialogueGraphNode_Edge>>& GetEdgeNodeSet(const FGuid& DialogueGUID) const
 	{
-		auto* SetPtr = EdgeNodes.Find(DialogueGuid);
+		auto* SetPtr = EdgeNodes.Find(DialogueGUID);
 		check(SetPtr);
 		return *SetPtr;
 	}

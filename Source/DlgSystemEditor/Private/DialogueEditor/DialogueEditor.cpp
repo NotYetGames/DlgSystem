@@ -26,9 +26,9 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueEditor/Graph/DialogueGraphSchema.h"
-#include "DialogueEditor/DialogueEditorCommands.h"
+#include "DialogueCommands.h"
 #include "Graph/SchemaActions/ConvertSpeechSequenceNodeToSpeechNodes_DialogueGraphSchemaAction.h"
-#include "DialogueSearch/FindInDialogueSearchManager.h"
+#include "DialogueSearch/DialogueSearchManager.h"
 #include "DialogueSearch/SFindInDialogues.h"
 
 #define LOCTEXT_NAMESPACE "DialogueEditor"
@@ -62,25 +62,37 @@ void FDialogueEditor::RegisterTabSpawners(const TSharedRef<class FTabManager>& I
 	FAssetEditorToolkit::RegisterTabSpawners(InTabManager);
 
 	// spawn tabs
-	InTabManager->RegisterTabSpawner(GraphCanvasTabID, FOnSpawnTab::CreateSP(this, &Self::SpawnTab_GraphCanvas))
-		.SetDisplayName(LOCTEXT("GraphCanvasTab", "Viewport"))
-		.SetGroup(WorkspaceMenuCategoryRef)
-		.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "GraphEditor.EventGraph_16x"));
+	InTabManager->RegisterTabSpawner(
+		GraphCanvasTabID,
+		FOnSpawnTab::CreateSP(this, &Self::SpawnTab_GraphCanvas)
+	)
+	.SetDisplayName(LOCTEXT("GraphCanvasTab", "Viewport"))
+	.SetGroup(WorkspaceMenuCategoryRef)
+	.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "GraphEditor.EventGraph_16x"));
 
-	InTabManager->RegisterTabSpawner(DetailsTabID, FOnSpawnTab::CreateSP(this, &Self::SpawnTab_Details))
-		.SetDisplayName(LOCTEXT("DetailsTabLabel", "Details"))
-		.SetGroup(WorkspaceMenuCategoryRef)
-		.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "LevelEditor.Tabs.Details"));
+	InTabManager->RegisterTabSpawner(
+		DetailsTabID,
+		FOnSpawnTab::CreateSP(this, &Self::SpawnTab_Details)
+	)
+	.SetDisplayName(LOCTEXT("DetailsTabLabel", "Details"))
+	.SetGroup(WorkspaceMenuCategoryRef)
+	.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "LevelEditor.Tabs.Details"));
 
-	InTabManager->RegisterTabSpawner(PaletteTabId, FOnSpawnTab::CreateSP(this, &Self::SpawnTab_Palette))
-		.SetDisplayName(LOCTEXT("PaletteTab", "Palette"))
-		.SetGroup(WorkspaceMenuCategoryRef)
-		.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "Kismet.Tabs.Palette"));
+	InTabManager->RegisterTabSpawner(
+		PaletteTabId,
+		FOnSpawnTab::CreateSP(this, &Self::SpawnTab_Palette)
+	)
+	.SetDisplayName(LOCTEXT("PaletteTab", "Palette"))
+	.SetGroup(WorkspaceMenuCategoryRef)
+	.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "Kismet.Tabs.Palette"));
 
-	InTabManager->RegisterTabSpawner(FindInDialogueTabId, FOnSpawnTab::CreateSP(this, &Self::SpawnTab_FindInDialogue))
-		.SetDisplayName(LOCTEXT("FindInDialogueTab", "Find Results"))
-		.SetGroup(WorkspaceMenuCategoryRef)
-		.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "Kismet.Tabs.FindResults"));
+	InTabManager->RegisterTabSpawner(
+		FindInDialogueTabId,
+		FOnSpawnTab::CreateSP(this, &Self::SpawnTab_FindInDialogue)
+	)
+	.SetDisplayName(LOCTEXT("FindInDialogueTab", "Find Results"))
+	.SetGroup(WorkspaceMenuCategoryRef)
+	.SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), "Kismet.Tabs.FindResults"));
 }
 
 void FDialogueEditor::UnregisterTabSpawners(const TSharedRef<class FTabManager>& InTabManager)
@@ -266,7 +278,7 @@ void FDialogueEditor::SummonSearchUI(bool bSetFindWithinDialogue, FString NewSea
 	else
 	{
 		// Open global tab
-		FindResultsToUse = FFindInDialogueSearchManager::Get()->GetGlobalFindResults();
+		FindResultsToUse = FDialogueSearchManager::Get()->GetGlobalFindResults();
 	}
 
 	if (FindResultsToUse.IsValid())
@@ -301,7 +313,7 @@ void FDialogueEditor::InitDialogueEditor(
 
 	// Bind commands
 	FGraphEditorCommands::Register();
-	FDialogueEditorCommands::Register();
+	FDialogueCommands::Register();
 	BindEditorCommands();
 	CreateInternalWidgets();
 
@@ -494,7 +506,8 @@ void FDialogueEditor::BindEditorCommands()
 
 	// Graph Editor Commands
 	// Create comment node on graph. Default when you press the "C" key on the keyboard to create a comment.
-	GraphEditorCommands->MapAction(FGraphEditorCommands::Get().CreateComment,
+	GraphEditorCommands->MapAction(
+		FGraphEditorCommands::Get().CreateComment,
 		FExecuteAction::CreateLambda([this]
 		{
 			FNewComment_DialogueGraphSchemaAction CommentAction;
@@ -502,14 +515,16 @@ void FDialogueEditor::BindEditorCommands()
 		})
 	);
 
-	GraphEditorCommands->MapAction(FGenericCommands::Get().SelectAll,
+	GraphEditorCommands->MapAction(
+		FGenericCommands::Get().SelectAll,
 		FExecuteAction::CreateLambda([this] { GraphEditorView->SelectAllNodes(); } ),
 		FCanExecuteAction::CreateLambda([] { return true; })
 	);
 
 	// Edit Node commands
-	const auto DialogueCommands = FDialogueEditorCommands::Get();
-	GraphEditorCommands->MapAction(DialogueCommands.ConvertSpeechSequenceNodeToSpeechNodes,
+	const auto DialogueCommands = FDialogueCommands::Get();
+	GraphEditorCommands->MapAction(
+		DialogueCommands.ConvertSpeechSequenceNodeToSpeechNodes,
 		FExecuteAction::CreateSP(this, &Self::OnCommandConvertSpeechSequenceNodeToSpeechNodes),
 		FCanExecuteAction::CreateLambda([this]
 		{
@@ -517,35 +532,50 @@ void FDialogueEditor::BindEditorCommands()
 		})
 	);
 
-	GraphEditorCommands->MapAction(FGenericCommands::Get().Delete,
+	GraphEditorCommands->MapAction(
+		FGenericCommands::Get().Delete,
 		FExecuteAction::CreateSP(this, &Self::OnCommandDeleteSelectedNodes),
-		FCanExecuteAction::CreateSP(this, &Self::CanDeleteNodes));
+		FCanExecuteAction::CreateSP(this, &Self::CanDeleteNodes)
+	);
 
-	GraphEditorCommands->MapAction(FGenericCommands::Get().Copy,
+	GraphEditorCommands->MapAction(
+		FGenericCommands::Get().Copy,
 		FExecuteAction::CreateRaw(this, &Self::OnCommandCopySelectedNodes),
-		FCanExecuteAction::CreateRaw(this, &Self::CanCopyNodes));
+		FCanExecuteAction::CreateRaw(this, &Self::CanCopyNodes)
+	);
 
-	GraphEditorCommands->MapAction(FGenericCommands::Get().Paste,
+	GraphEditorCommands->MapAction(
+		FGenericCommands::Get().Paste,
 		FExecuteAction::CreateRaw(this, &Self::OnCommandPasteNodes),
-		FCanExecuteAction::CreateRaw(this, &Self::CanPasteNodes));
+		FCanExecuteAction::CreateRaw(this, &Self::CanPasteNodes)
+	);
 
 	// Hide/Unhide nodes
-	GraphEditorCommands->MapAction(DialogueCommands.HideNodes,
-		FExecuteAction::CreateRaw(this, &Self::OnCommandHideSelectedNodes));
+	GraphEditorCommands->MapAction(
+		DialogueCommands.HideNodes,
+		FExecuteAction::CreateRaw(this, &Self::OnCommandHideSelectedNodes)
+	);
 
-	GraphEditorCommands->MapAction(DialogueCommands.UnHideAllNodes,
-		FExecuteAction::CreateRaw(this, &Self::OnCommandUnHideAllNodes));
+	GraphEditorCommands->MapAction(
+		DialogueCommands.UnHideAllNodes,
+		FExecuteAction::CreateRaw(this, &Self::OnCommandUnHideAllNodes)
+	);
 
 	// Toolikit/Toolbar commands/Menu Commands
 	// Undo Redo menu options
-	ToolkitCommands->MapAction(FGenericCommands::Get().Undo,
-		FExecuteAction::CreateSP(this, &Self::OnCommandUndoGraphAction));
+	ToolkitCommands->MapAction(
+		FGenericCommands::Get().Undo,
+		FExecuteAction::CreateSP(this, &Self::OnCommandUndoGraphAction)
+	);
 
-	ToolkitCommands->MapAction(FGenericCommands::Get().Redo,
-		FExecuteAction::CreateSP(this, &Self::OnCommandRedoGraphAction));
+	ToolkitCommands->MapAction(
+		FGenericCommands::Get().Redo,
+		FExecuteAction::CreateSP(this, &Self::OnCommandRedoGraphAction)
+	);
 
 	// The toolbar reload button
-	ToolkitCommands->MapAction(DialogueCommands.DialogueReloadData,
+	ToolkitCommands->MapAction(
+		DialogueCommands.DialogueReloadData,
 		FExecuteAction::CreateSP(this, &Self::OnCommandDialogueReload),
 		FCanExecuteAction::CreateLambda([this]
 		{
@@ -554,7 +584,8 @@ void FDialogueEditor::BindEditorCommands()
 	);
 
 	// The Show primary/secondary edge buttons
-	ToolkitCommands->MapAction(DialogueCommands.ToggleShowPrimarySecondaryEdges,
+	ToolkitCommands->MapAction(
+		DialogueCommands.ToggleShowPrimarySecondaryEdges,
 		FExecuteAction::CreateLambda([this]
 		{
 			Settings->SetShowPrimarySecondaryEdges(!GetSettings().bShowPrimarySecondaryEdges);
@@ -567,26 +598,48 @@ void FDialogueEditor::BindEditorCommands()
 		FIsActionChecked::CreateLambda([this] { return GetSettings().bShowPrimarySecondaryEdges; })
 	);
 
-	ToolkitCommands->MapAction(DialogueCommands.ToggleDrawPrimaryEdges,
+	ToolkitCommands->MapAction(
+		DialogueCommands.ToggleDrawPrimaryEdges,
 		FExecuteAction::CreateLambda([this] { Settings->SetDrawPrimaryEdges(!GetSettings().bDrawPrimaryEdges); }),
 		FCanExecuteAction::CreateLambda([this] { return GetSettings().bShowPrimarySecondaryEdges; }),
 		FIsActionChecked::CreateLambda([this] { return GetSettings().bDrawPrimaryEdges; })
 	);
 
-	ToolkitCommands->MapAction(DialogueCommands.ToggleDrawSecondaryEdges,
+	ToolkitCommands->MapAction(
+		DialogueCommands.ToggleDrawSecondaryEdges,
 		FExecuteAction::CreateLambda([this] { Settings->SetDrawSecondaryEdges(!GetSettings().bDrawSecondaryEdges); }),
 		FCanExecuteAction::CreateLambda([this] { return GetSettings().bShowPrimarySecondaryEdges; }),
 		FIsActionChecked::CreateLambda([this] { return GetSettings().bDrawSecondaryEdges; })
 	);
 
 	// Find in All Dialogues
-	ToolkitCommands->MapAction(FDialogueEditorCommands::Get().FindInAllDialogues,
+	ToolkitCommands->MapAction(
+		FDialogueCommands::Get().FindInAllDialogues,
 		FExecuteAction::CreateLambda([this] { SummonSearchUI(false); })
 	);
 
 	// Find in current Dialogue
-	ToolkitCommands->MapAction(FDialogueEditorCommands::Get().FindInDialogue,
+	ToolkitCommands->MapAction(
+		FDialogueCommands::Get().FindInDialogue,
 		FExecuteAction::CreateLambda([this] { SummonSearchUI(true); })
+	);
+
+	// Map the global actions
+	FDlgSystemEditorModule::MapActionsForFileMenuExtender(ToolkitCommands);
+	FDlgSystemEditorModule::MapActionsForHelpMenuExtender(ToolkitCommands);
+
+	ToolkitCommands->MapAction(
+	    FDialogueCommands::Get().DeleteCurrentDialogueTextFiles,
+	    FExecuteAction::CreateLambda([this]
+	    {
+	    	check(DialogueBeingEdited);
+	    	const FString Text = TEXT("Delete All text files for this Dialogue?");
+	    	const EAppReturnType::Type Response = FPlatformMisc::MessageBoxExt(EAppMsgType::YesNo, *Text, *Text);
+            if (Response == EAppReturnType::Yes)
+            {
+            	DialogueBeingEdited->DeleteAllTextFiles();
+            }
+	    })
 	);
 }
 
@@ -603,14 +656,22 @@ void FDialogueEditor::ExtendMenu()
 		{
 			MenuBuilder.BeginSection("EditSearch", LOCTEXT("EditMenu_SearchHeading", "Search") );
 			{
-				MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().FindInDialogue);
-				MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().FindInAllDialogues);
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().FindInDialogue);
+				MenuBuilder.AddMenuEntry(FDialogueCommands::Get().FindInAllDialogues);
 			}
 			MenuBuilder.EndSection();
 		})
 	);
 
-	AddMenuExtender(MenuExtender);;
+	AddMenuExtender(MenuExtender);
+
+	AddMenuExtender(
+		FDlgSystemEditorModule::CreateFileMenuExtender(
+			ToolkitCommands,
+			{FDialogueCommands::Get().DeleteCurrentDialogueTextFiles}
+		)
+	);
+	AddMenuExtender(FDlgSystemEditorModule::CreateHelpMenuExtender(ToolkitCommands));
 }
 
 TSharedRef<SWidget> FDialogueEditor::GeneratePrimarySecondaryEdgesMenu() const
@@ -619,8 +680,24 @@ TSharedRef<SWidget> FDialogueEditor::GeneratePrimarySecondaryEdgesMenu() const
 	FMenuBuilder MenuBuilder(bShouldCloseWindowAfterMenuSelection, ToolkitCommands, {});
 	MenuBuilder.BeginSection("ViewingOptions", LOCTEXT("PrimarySecondaryEdgesMenu", "Viewing Options"));
 	{
-		MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().ToggleDrawPrimaryEdges);
-		MenuBuilder.AddMenuEntry(FDialogueEditorCommands::Get().ToggleDrawSecondaryEdges);
+		MenuBuilder.AddMenuEntry(FDialogueCommands::Get().ToggleDrawPrimaryEdges);
+		MenuBuilder.AddMenuEntry(FDialogueCommands::Get().ToggleDrawSecondaryEdges);
+	}
+	MenuBuilder.EndSection();
+
+	return MenuBuilder.MakeWidget();
+}
+
+TSharedRef<SWidget> FDialogueEditor::GenerateExternalURLsMenu() const
+{
+	constexpr bool bShouldCloseWindowAfterMenuSelection = true;
+	FMenuBuilder MenuBuilder(bShouldCloseWindowAfterMenuSelection, ToolkitCommands, {});
+	MenuBuilder.BeginSection("OtherURls", LOCTEXT("OtherURLsMenu", "Other URLs"));
+	{
+		MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenMarketplace);
+		MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenWiki);
+		MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenDiscord);
+		MenuBuilder.AddMenuEntry(FDialogueCommands::Get().OpenForum);
 	}
 	MenuBuilder.EndSection();
 
@@ -630,39 +707,74 @@ TSharedRef<SWidget> FDialogueEditor::GeneratePrimarySecondaryEdgesMenu() const
 void FDialogueEditor::ExtendToolbar()
 {
 	// Make toolbar to the right of the Asset Toolbar (Save and Find in content browser buttons).
-	TSharedPtr<FExtender> ToolbarExtender = MakeShared<FExtender>();
-	ToolbarExtender->AddToolBarExtension(
-		"Asset",
-		EExtensionHook::After,
-		ToolkitCommands,
-		FToolBarExtensionDelegate::CreateLambda([this](FToolBarBuilder& ToolbarBuilder)
-		{
-			ToolbarBuilder.BeginSection("DialogueToolbar");
-			{
-				ToolbarBuilder.AddToolBarButton(FDialogueEditorCommands::Get().DialogueReloadData);
-				ToolbarBuilder.AddToolBarButton(FDialogueEditorCommands::Get().FindInDialogue);
+	{
+		TSharedPtr<FExtender> ToolbarExtender = MakeShared<FExtender>();
+		ToolbarExtender->AddToolBarExtension(
+            "Asset",
+            EExtensionHook::After,
+            ToolkitCommands,
+            FToolBarExtensionDelegate::CreateLambda([this](FToolBarBuilder& ToolbarBuilder)
+            {
+                ToolbarBuilder.BeginSection("Dialogue");
+                {
+                    ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().DialogueReloadData);
+                    ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().FindInDialogue);
 
-				ToolbarBuilder.AddToolBarButton(FDialogueEditorCommands::Get().ToggleShowPrimarySecondaryEdges);
-				ToolbarBuilder.AddComboButton(
-					FUIAction(
-						FExecuteAction(),
-						FCanExecuteAction::CreateLambda([this] {
-							// only when the show/primary secondary edges is true
-							return GetSettings().bShowPrimarySecondaryEdges;
-						})
-					),
-					FOnGetContent::CreateSP(this, &Self::GeneratePrimarySecondaryEdgesMenu),
-					LOCTEXT("PrimarySecondaryEdges", "Viewing Options"),
-					LOCTEXT("PrimarySecondaryEdges_ToolTip", "Viewing settings"),
-					FSlateIcon(),
-					true
-				);
-			}
-			ToolbarBuilder.EndSection();
-		})
-	);
+                    ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().ToggleShowPrimarySecondaryEdges);
+                    ToolbarBuilder.AddComboButton(
+                        FUIAction(
+                            FExecuteAction(),
+                            FCanExecuteAction::CreateLambda([this] {
+                                // only when the show/primary secondary edges is true
+                                return GetSettings().bShowPrimarySecondaryEdges;
+                            })
+                        ),
+                        FOnGetContent::CreateSP(this, &Self::GeneratePrimarySecondaryEdgesMenu),
+                        LOCTEXT("PrimarySecondaryEdges", "Viewing Options"),
+                        LOCTEXT("PrimarySecondaryEdges_ToolTip", "Viewing settings"),
+                        FSlateIcon(),
+                        true
+                    );
+                }
+            	ToolbarBuilder.EndSection();
+            })
+        );
+		AddToolbarExtender(ToolbarExtender);
+	}
 
-	AddToolbarExtender(ToolbarExtender);
+	// Add External URLs
+	if (GetSettings().bShowExternalURLsToolbar)
+	{
+		TSharedPtr<FExtender> ExternalToolbarExtender = MakeShared<FExtender>();
+		ExternalToolbarExtender->AddToolBarExtension(
+            "Asset",
+            EExtensionHook::After,
+            ToolkitCommands,
+            FToolBarExtensionDelegate::CreateLambda([this](FToolBarBuilder& ToolbarBuilder)
+            {
+                ToolbarBuilder.BeginSection("DialogueExternal");
+                {
+                    ToolbarBuilder.AddToolBarButton(
+                    	FDialogueCommands::Get().OpenNotYetPlugins,
+                    	NAME_None,
+                    	LOCTEXT("NotYetPlugins", "Not Yet: Plugins"),
+                    	{},
+                    	FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_NotYetLogoIcon)
+                    );
+                    ToolbarBuilder.AddComboButton(
+                        FUIAction(),
+                        FOnGetContent::CreateSP(this, &Self::GenerateExternalURLsMenu),
+                        LOCTEXT("OtherURLs", "Other URLs"),
+                        LOCTEXT("OtherURLs_ToolTip", "Other URLs"),
+                        FSlateIcon(),
+                        true
+                    );
+                }
+            	ToolbarBuilder.EndSection();
+            })
+        );
+		AddToolbarExtender(ExternalToolbarExtender);
+	}
 }
 
 TSharedRef<SDockTab> FDialogueEditor::SpawnTab_Details(const FSpawnTabArgs& Args) const

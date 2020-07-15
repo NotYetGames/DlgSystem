@@ -1,6 +1,7 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DlgHelper.h"
 #include "HAL/FileManager.h"
+#include "Engine/Blueprint.h"
 #include "Logging/DlgLogger.h"
 #include "DlgSystemSettings.h"
 
@@ -77,4 +78,30 @@ bool FDlgHelper::RenameFile(const FString& OldPathName, const FString& NewPathNa
 		FDlgLogger::Get().Infof(TEXT("Text file moved/renamed from `%s` to `%s`"), *OldPathName, *NewPathName);
 	}
 	return true;
+}
+
+bool FDlgHelper::IsObjectAChildOf(const UObject* Object, const UClass* Class)
+{
+	check(Class);
+	if (!Object)
+	{
+		return false;
+	}
+
+	if (const UBlueprint* Blueprint = Cast<UBlueprint>(Object))
+	{
+		if (const UClass* GeneratedClass = Cast<UClass>(Blueprint->GeneratedClass))
+		{
+			return GeneratedClass->IsChildOf(Class);
+		}
+	}
+
+	// A class object, does this ever happen?
+	if (const UClass* ClassObject = Cast<UClass>(Object))
+	{
+		return ClassObject->IsChildOf(Class);
+	}
+
+	// All other object types
+	return Object->GetClass()->IsChildOf(Class);
 }

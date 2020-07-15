@@ -466,7 +466,7 @@ class TwineDocumentData:
 
         return {
             "DialogueName": self.dialogue_name,
-            "DialogueGuid": self.dialogue_guid,
+            "DialogueGUID": self.dialogue_guid,
             "SpeechNodes": speech_nodes,
             "SpeechSequenceNodes": speech_sequence_nodes
         }

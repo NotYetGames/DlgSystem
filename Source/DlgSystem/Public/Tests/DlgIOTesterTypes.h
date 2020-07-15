@@ -197,7 +197,7 @@ public:
 		KeyHash = HashCombine(KeyHash, GetTypeHash(This.Color));
 		KeyHash = HashCombine(KeyHash, GetTypeHash(This.DateTime));
 		KeyHash = HashCombine(KeyHash, GetTypeHash(This.IntPoint));
-		KeyHash = HashCombine(KeyHash, GetTypeHash(This.Guid));
+		KeyHash = HashCombine(KeyHash, GetTypeHash(This.GUID));
 		KeyHash = HashCombine(KeyHash, GetTypeHash(This.Texture2DReference));
 		return KeyHash;
 	}
@@ -272,7 +272,7 @@ public:
 	FTransform Transform;
 
 	UPROPERTY()
-	FGuid Guid;
+	FGuid GUID;
 
 	UPROPERTY()
 	UClass* Class;

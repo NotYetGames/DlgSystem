@@ -4,7 +4,7 @@
 #include "CoreMinimal.h"
 #include "Widgets/Docking/SDockTab.h"
 
-#include "FindInDialoguesResult.h"
+#include "DialogueSearchResult.h"
 
 // The maximum amount of global Dialogue Search windows opened.
 static constexpr int32 MAX_GLOBAL_DIALOGUE_SEARCH_RESULTS = 4;
@@ -29,77 +29,102 @@ struct FDialogueSearchData
 };
 
 /** Singleton manager for handling all Dialogue searches */
-class FFindInDialogueSearchManager
+class FDialogueSearchManager
 {
 private:
-	typedef FFindInDialogueSearchManager Self;
+	typedef FDialogueSearchManager Self;
 
 public:
 	static Self* Get();
 
-	FFindInDialogueSearchManager();
-	~FFindInDialogueSearchManager();
+	FDialogueSearchManager();
+	~FDialogueSearchManager();
 
 	/**
 	 * Searches for InSearchString in the InDlgTextArgument. Adds the result as a child in OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QueryDlgTextArgument(const FDialogueSearchFilter& SearchFilter, const FDlgTextArgument& InDlgTextArgument,
-		const TSharedPtr<FFindInDialoguesResult>& OutParentNode, int32 ArgumentIndex = INDEX_NONE);
+	bool QueryDlgTextArgument(
+		const FDialogueSearchFilter& SearchFilter,
+		const FDlgTextArgument& InDlgTextArgument,
+		const TSharedPtr<FDialogueSearchResult>& OutParentNode,
+		int32 ArgumentIndex = INDEX_NONE
+	);
 
 	/**
 	 * Searches for InSearchString in the InDlgCondition. Adds the result as a child in OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QueryDlgCondition(const FDialogueSearchFilter& SearchFilter, const FDlgCondition& InDlgCondition,
-		const TSharedPtr<FFindInDialoguesResult>& OutParentNode);
+	bool QueryDlgCondition(
+		const FDialogueSearchFilter& SearchFilter,
+		const FDlgCondition& InDlgCondition,
+		const TSharedPtr<FDialogueSearchResult>& OutParentNode
+	);
 
 	/**
 	 * Searches for InSearchString in the InDlgEvent. Adds the result as a child in OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QueryDlgEvent(const FDialogueSearchFilter& SearchFilter, const FDlgEvent& InDlgEvent,
-		const TSharedPtr<FFindInDialoguesResult>& OutParentNode);
+	bool QueryDlgEvent(
+		const FDialogueSearchFilter& SearchFilter,
+		const FDlgEvent& InDlgEvent,
+		const TSharedPtr<FDialogueSearchResult>& OutParentNode
+	);
 
 	/**
 	 * Searches for InSearchString in the InDlgEdge. Adds the result as a child in OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QueryDlgEdge(const FDialogueSearchFilter& SearchFilter, const FDlgEdge& InDlgEdge,
-		const TSharedPtr<FFindInDialoguesResult>& OutParentNode);
+	bool QueryDlgEdge(
+		const FDialogueSearchFilter& SearchFilter,
+		const FDlgEdge& InDlgEdge,
+		const TSharedPtr<FDialogueSearchResult>& OutParentNode
+	);
 
 	/**
 	 * Searches for InSearchString in the InGraphNode. Adds the result as a child in OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QueryGraphNode(const FDialogueSearchFilter& SearchFilter, const UDialogueGraphNode* InGraphNode,
-		const TSharedPtr<FFindInDialoguesResult>& OutParentNode);
+	bool QueryGraphNode(
+		const FDialogueSearchFilter& SearchFilter,
+		const UDialogueGraphNode* InGraphNode,
+		const TSharedPtr<FDialogueSearchResult>& OutParentNode
+	);
 
 	/**
 	 * Searches for InSearchString in the InEdgeNode. Adds the result as a child in OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QueryEdgeNode(const FDialogueSearchFilter& SearchFilter, const UDialogueGraphNode_Edge* InEdgeNode,
-		const TSharedPtr<FFindInDialoguesResult>& OutParentNode);
+	bool QueryEdgeNode(
+		const FDialogueSearchFilter& SearchFilter,
+		const UDialogueGraphNode_Edge* InEdgeNode,
+		const TSharedPtr<FDialogueSearchResult>& OutParentNode
+	);
 
 	/**
 	 * Searches for InSearchString in the Comment Node. Adds the result as a child in OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QueryCommentNode(const FDialogueSearchFilter& SearchFilter, const UEdGraphNode_Comment* InCommentNode,
-		const TSharedPtr<FFindInDialoguesResult>& OutParentNode);
+	bool QueryCommentNode(
+		const FDialogueSearchFilter& SearchFilter,
+		const UEdGraphNode_Comment* InCommentNode,
+		const TSharedPtr<FDialogueSearchResult>& OutParentNode
+	);
 
 	/**
 	 * Searches for InSearchString in the InDialogue. Adds the result as a child of OutParentNode.
 	 * @return True if found anything matching the InSearchString
 	 */
-	bool QuerySingleDialogue(const FDialogueSearchFilter& SearchFilter,
-		const UDlgDialogue* InDialogue, TSharedPtr<FFindInDialoguesResult>& OutParentNode);
+	bool QuerySingleDialogue(
+		const FDialogueSearchFilter& SearchFilter,
+		const UDlgDialogue* InDialogue,
+		TSharedPtr<FDialogueSearchResult>& OutParentNode
+	);
 
 	/**
 	 * Searches for InSearchString in all Dialogues. Adds the result as children of OutParentNode.
 	 */
-	void QueryAllDialogues(const FDialogueSearchFilter& SearchFilter, TSharedPtr<FFindInDialoguesResult>& OutParentNode);
+	void QueryAllDialogues(const FDialogueSearchFilter& SearchFilter, TSharedPtr<FDialogueSearchResult>& OutParentNode);
 
 	/** Determines the global find results tab label */
 	FText GetGlobalFindResultsTabLabel(int32 TabIdx);
@@ -124,13 +149,13 @@ public:
 
 private:
 	/** Helper method to make a Text Node and add it as a child to ParentNode */
-	TSharedPtr<FFindInDialoguesResult> MakeChildTextNode(
-		const TSharedPtr<FFindInDialoguesResult>& ParentNode,
+	TSharedPtr<FDialogueSearchResult> MakeChildTextNode(
+		const TSharedPtr<FDialogueSearchResult>& ParentNode,
 		const FText& DisplayName, const FText& Category,
 		const FString& CommentString
 	)
 	{
-		TSharedPtr<FFindInDialoguesResult> TextNode = MakeShared<FFindInDialoguesResult>(DisplayName, ParentNode);
+		TSharedPtr<FDialogueSearchResult> TextNode = MakeShared<FDialogueSearchResult>(DisplayName, ParentNode);
 		TextNode->SetCategory(Category);
 		if (!CommentString.IsEmpty())
 		{
@@ -140,15 +165,19 @@ private:
 		return TextNode;
 	}
 
-	bool SearchForTextLocalizationData(const TSharedPtr<FFindInDialoguesResult>& ParentNode,
-		const FString& SearchString, const FText& Text,
-		const FText& NamespaceCategory, const FString& NamespaceCommentString,
-		const FText& KeyCategory, const FString& KeyCommentString
+	bool SearchForTextLocalizationData(
+		const TSharedPtr<FDialogueSearchResult>& ParentNode,
+		const FString& SearchString,
+		const FText& Text,
+		const FText& NamespaceCategory,
+		const FString& NamespaceCommentString,
+		const FText& KeyCategory,
+		const FString& KeyCommentString
 	)
 	{
 		static const FString DefaultValue = TEXT("");
 		bool bContainsSearchString = false;
-		
+
 		const FString CurrentFullNamespace = FTextInspector::GetNamespace(Text).Get(DefaultValue);
 		const FString CurrentKey = FTextInspector::GetKey(Text).Get(DefaultValue);
 		if (CurrentFullNamespace.Contains(SearchString))

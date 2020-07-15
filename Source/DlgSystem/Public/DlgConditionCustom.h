@@ -4,6 +4,8 @@
 
 #include "DlgConditionCustom.generated.h"
 
+class UDlgContext;
+
 // Abstract base class for a custom condition
 // Extend this class to define additional data you want to store
 UCLASS(Blueprintable, BlueprintType, Abstract, EditInlineNew)

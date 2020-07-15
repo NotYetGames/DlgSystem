@@ -1,5 +1,5 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
-#include "FindInDialogueSearchManager.h"
+#include "DialogueSearchManager.h"
 
 #include "Widgets/Docking/SDockTab.h"
 #include "AssetRegistryModule.h"
@@ -24,11 +24,11 @@
 	#define NY_ARRAY_COUNT ARRAY_COUNT
 #endif
 
-FFindInDialogueSearchManager* FFindInDialogueSearchManager::Instance = nullptr;
+FDialogueSearchManager* FDialogueSearchManager::Instance = nullptr;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FFindInDialogueSearchManager
-FFindInDialogueSearchManager* FFindInDialogueSearchManager::Get()
+// FDialogueSearchManager
+FDialogueSearchManager* FDialogueSearchManager::Get()
 {
 	if (Instance == nullptr)
 	{
@@ -38,7 +38,7 @@ FFindInDialogueSearchManager* FFindInDialogueSearchManager::Get()
 	return Instance;
 }
 
-FFindInDialogueSearchManager::FFindInDialogueSearchManager()
+FDialogueSearchManager::FDialogueSearchManager()
 {
 	// Create the Tab Ids
 	for (int32 TabIdx = 0; TabIdx < NY_ARRAY_COUNT(GlobalFindResultsTabIDs); TabIdx++)
@@ -48,13 +48,17 @@ FFindInDialogueSearchManager::FFindInDialogueSearchManager()
 	}
 }
 
-FFindInDialogueSearchManager::~FFindInDialogueSearchManager()
+FDialogueSearchManager::~FDialogueSearchManager()
 {
 	UnInitialize();
 }
 
-bool FFindInDialogueSearchManager::QueryDlgTextArgument(const FDialogueSearchFilter& SearchFilter, const FDlgTextArgument& InDlgTextArgument,
-	const TSharedPtr<FFindInDialoguesResult>& OutParentNode, int32 ArgumentIndex)
+bool FDialogueSearchManager::QueryDlgTextArgument(
+	const FDialogueSearchFilter& SearchFilter,
+	const FDlgTextArgument& InDlgTextArgument,
+	const TSharedPtr<FDialogueSearchResult>& OutParentNode,
+	int32 ArgumentIndex
+)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid())
 	{
@@ -94,8 +98,11 @@ bool FFindInDialogueSearchManager::QueryDlgTextArgument(const FDialogueSearchFil
 	return bContainsSearchString;
 }
 
-bool FFindInDialogueSearchManager::QueryDlgCondition(const FDialogueSearchFilter& SearchFilter, const FDlgCondition& InDlgCondition,
-													const TSharedPtr<FFindInDialoguesResult>& OutParentNode)
+bool FDialogueSearchManager::QueryDlgCondition(
+	const FDialogueSearchFilter& SearchFilter,
+	const FDlgCondition& InDlgCondition,
+	const TSharedPtr<FDialogueSearchResult>& OutParentNode
+)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid())
 	{
@@ -186,8 +193,11 @@ bool FFindInDialogueSearchManager::QueryDlgCondition(const FDialogueSearchFilter
 	return bContainsSearchString;
 }
 
-bool FFindInDialogueSearchManager::QueryDlgEvent(const FDialogueSearchFilter& SearchFilter, const FDlgEvent& InDlgEvent,
-												const TSharedPtr<FFindInDialoguesResult>& OutParentNode)
+bool FDialogueSearchManager::QueryDlgEvent(
+	const FDialogueSearchFilter& SearchFilter,
+	const FDlgEvent& InDlgEvent,
+	const TSharedPtr<FDialogueSearchResult>& OutParentNode
+)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid())
 	{
@@ -256,8 +266,11 @@ bool FFindInDialogueSearchManager::QueryDlgEvent(const FDialogueSearchFilter& Se
 	return bContainsSearchString;
 }
 
-bool FFindInDialogueSearchManager::QueryDlgEdge(const FDialogueSearchFilter& SearchFilter, const FDlgEdge& InDlgEdge,
-												const TSharedPtr<FFindInDialoguesResult>& OutParentNode)
+bool FDialogueSearchManager::QueryDlgEdge(
+	const FDialogueSearchFilter& SearchFilter,
+	const FDlgEdge& InDlgEdge,
+	const TSharedPtr<FDialogueSearchResult>& OutParentNode
+)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid())
 	{
@@ -312,8 +325,11 @@ bool FFindInDialogueSearchManager::QueryDlgEdge(const FDialogueSearchFilter& Sea
 	return bContainsSearchString;
 }
 
-bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& SearchFilter, const UDialogueGraphNode* InGraphNode,
-												const TSharedPtr<FFindInDialoguesResult>& OutParentNode)
+bool FDialogueSearchManager::QueryGraphNode(
+	const FDialogueSearchFilter& SearchFilter,
+	const UDialogueGraphNode* InGraphNode,
+	const TSharedPtr<FDialogueSearchResult>& OutParentNode
+)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || !IsValid(InGraphNode))
 	{
@@ -328,7 +344,7 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& S
 	// Create the GraphNode Node
 	const FText DisplayText = FText::Format(LOCTEXT("TreeGraphNodeCategory", "{0} Node at index {1}"),
 										 FText::FromString(NodeType), FText::AsNumber(NodeIndex));
-	TSharedPtr<FFindInDialoguesGraphNode> TreeGraphNode = MakeShared<FFindInDialoguesGraphNode>(DisplayText, OutParentNode);
+	TSharedPtr<FDialogueSearchResult_GraphNode> TreeGraphNode = MakeShared<FDialogueSearchResult_GraphNode>(DisplayText, OutParentNode);
 	TreeGraphNode->SetCategory(FText::FromString(NodeType));
 	TreeGraphNode->SetGraphNode(InGraphNode);
 
@@ -485,8 +501,11 @@ bool FFindInDialogueSearchManager::QueryGraphNode(const FDialogueSearchFilter& S
 	return bContainsSearchString;
 }
 
-bool FFindInDialogueSearchManager::QueryEdgeNode(const FDialogueSearchFilter& SearchFilter, const UDialogueGraphNode_Edge* InEdgeNode,
-	const TSharedPtr<FFindInDialoguesResult>& OutParentNode)
+bool FDialogueSearchManager::QueryEdgeNode(
+	const FDialogueSearchFilter& SearchFilter,
+	const UDialogueGraphNode_Edge* InEdgeNode,
+	const TSharedPtr<FDialogueSearchResult>& OutParentNode
+)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || !IsValid(InEdgeNode))
 	{
@@ -507,7 +526,7 @@ bool FFindInDialogueSearchManager::QueryEdgeNode(const FDialogueSearchFilter& Se
 	}
 	const FText DisplayText = FText::Format(LOCTEXT("EdgeNodeDisplaytext", "Edge between {0} -> {1}"),
 		FText::AsNumber(FromParent), FText::AsNumber(ToChild));
-	TSharedPtr<FFindInDialoguesEdgeNode> TreeEdgeNode = MakeShared<FFindInDialoguesEdgeNode>(DisplayText, OutParentNode);
+	TSharedPtr<FDialogueSearchResult_EdgeNode> TreeEdgeNode = MakeShared<FDialogueSearchResult_EdgeNode>(DisplayText, OutParentNode);
 	TreeEdgeNode->SetCategory(DisplayText);
 	TreeEdgeNode->SetEdgeNode(InEdgeNode);
 
@@ -523,8 +542,11 @@ bool FFindInDialogueSearchManager::QueryEdgeNode(const FDialogueSearchFilter& Se
 	return bContainsSearchString;
 }
 
-bool FFindInDialogueSearchManager::QueryCommentNode(const FDialogueSearchFilter& SearchFilter, const UEdGraphNode_Comment* InCommentNode,
-	const TSharedPtr<FFindInDialoguesResult>& OutParentNode)
+bool FDialogueSearchManager::QueryCommentNode(
+	const FDialogueSearchFilter& SearchFilter,
+	const UEdGraphNode_Comment* InCommentNode,
+	const TSharedPtr<FDialogueSearchResult>& OutParentNode
+)
 {
 	if (!SearchFilter.bIncludeComments || SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || !IsValid(InCommentNode))
 	{
@@ -534,7 +556,7 @@ bool FFindInDialogueSearchManager::QueryCommentNode(const FDialogueSearchFilter&
 	if (InCommentNode->NodeComment.Contains(SearchFilter.SearchString))
 	{
 		const FText Category = LOCTEXT("TreeNodeCommentCategory", "Comment Node");
-		TSharedPtr<FFindInDialoguesCommentNode> TreeCommentNode = MakeShared<FFindInDialoguesCommentNode>(Category, OutParentNode);
+		TSharedPtr<FDialogueSearchResult_CommentNode> TreeCommentNode = MakeShared<FDialogueSearchResult_CommentNode>(Category, OutParentNode);
 		TreeCommentNode->SetCategory(Category);
 		TreeCommentNode->SetCommentNode(InCommentNode);
 
@@ -549,8 +571,11 @@ bool FFindInDialogueSearchManager::QueryCommentNode(const FDialogueSearchFilter&
 	return false;
 }
 
-bool FFindInDialogueSearchManager::QuerySingleDialogue(const FDialogueSearchFilter& SearchFilter,
-							const UDlgDialogue* InDialogue, TSharedPtr<FFindInDialoguesResult>& OutParentNode)
+bool FDialogueSearchManager::QuerySingleDialogue(
+	const FDialogueSearchFilter& SearchFilter,
+	const UDlgDialogue* InDialogue,
+	TSharedPtr<FDialogueSearchResult>& OutParentNode
+)
 {
 	if (SearchFilter.SearchString.IsEmpty() || !OutParentNode.IsValid() || !IsValid(InDialogue))
 	{
@@ -558,7 +583,7 @@ bool FFindInDialogueSearchManager::QuerySingleDialogue(const FDialogueSearchFilt
 	}
 
 	const UDialogueGraph* Graph = CastChecked<UDialogueGraph>(InDialogue->GetGraph());
-	TSharedPtr<FFindInDialoguesDialogueNode> TreeDialogueNode = MakeShared<FFindInDialoguesDialogueNode>(
+	TSharedPtr<FDialogueSearchResult_DialogueNode> TreeDialogueNode = MakeShared<FDialogueSearchResult_DialogueNode>(
 			FText::FromString(InDialogue->GetPathName()), OutParentNode
 	);
 	TreeDialogueNode->SetDialogue(InDialogue);
@@ -595,27 +620,27 @@ bool FFindInDialogueSearchManager::QuerySingleDialogue(const FDialogueSearchFilt
 	// Search for GUID
 	if (SearchFilter.bIncludeDialogueGUID)
 	{
-		const FString GuidToSearchFor = SearchFilter.SearchString.TrimStartAndEnd();
-		const FGuid DialogueGuid = InDialogue->GetDialogueGUID();
+		const FString GUIDToSearchFor = SearchFilter.SearchString.TrimStartAndEnd();
+		const FGuid DialogueGUID = InDialogue->GetDialogueGUID();
 
 		// Test every possible format
-		const TArray<FString> DialoguGuidStrings = {
-			DialogueGuid.ToString(EGuidFormats::Digits),
-			DialogueGuid.ToString(EGuidFormats::DigitsWithHyphens),
-			DialogueGuid.ToString(EGuidFormats::DigitsWithHyphensInBraces),
-			DialogueGuid.ToString(EGuidFormats::DigitsWithHyphensInParentheses),
-			DialogueGuid.ToString(EGuidFormats::HexValuesInBraces),
-			DialogueGuid.ToString(EGuidFormats::UniqueObjectGuid)
+		const TArray<FString> DialoguGUIDStrings = {
+			DialogueGUID.ToString(EGuidFormats::Digits),
+			DialogueGUID.ToString(EGuidFormats::DigitsWithHyphens),
+			DialogueGUID.ToString(EGuidFormats::DigitsWithHyphensInBraces),
+			DialogueGUID.ToString(EGuidFormats::DigitsWithHyphensInParentheses),
+			DialogueGUID.ToString(EGuidFormats::HexValuesInBraces),
+			DialogueGUID.ToString(EGuidFormats::UniqueObjectGuid)
 		};
-		for (const FString& Guid : DialoguGuidStrings)
+		for (const FString& GUID : DialoguGUIDStrings)
 		{
-			if (Guid.Contains(GuidToSearchFor))
+			if (GUID.Contains(GUIDToSearchFor))
 			{
 				bFoundInDialogue = true;
 				MakeChildTextNode(TreeDialogueNode,
-					FText::FromString(Guid),
-					LOCTEXT("DlgGuid", "Dlg GUID"),
-					TEXT("Dlg.Guid"));
+					FText::FromString(GUID),
+					LOCTEXT("DialogueGUID", "Dialogue GUID"),
+					TEXT("Dialogue.GUID"));
 
 				// Only one format is enough
 				break;
@@ -631,8 +656,10 @@ bool FFindInDialogueSearchManager::QuerySingleDialogue(const FDialogueSearchFilt
 	return bFoundInDialogue;
 }
 
-void FFindInDialogueSearchManager::QueryAllDialogues(const FDialogueSearchFilter& SearchFilter,
-	TSharedPtr<FFindInDialoguesResult>& OutParentNode)
+void FDialogueSearchManager::QueryAllDialogues(
+	const FDialogueSearchFilter& SearchFilter,
+	TSharedPtr<FDialogueSearchResult>& OutParentNode
+)
 {
 	// Iterate over all cached dialogues
 	for (auto& Elem : SearchMap)
@@ -645,7 +672,7 @@ void FFindInDialogueSearchManager::QueryAllDialogues(const FDialogueSearchFilter
 	}
 }
 
-FText FFindInDialogueSearchManager::GetGlobalFindResultsTabLabel(int32 TabIdx)
+FText FDialogueSearchManager::GetGlobalFindResultsTabLabel(int32 TabIdx)
 {
 	// Count the number of opened global Dialogues
 	int32 NumOpenGlobalFindResultsTabs = 0;
@@ -673,7 +700,7 @@ FText FFindInDialogueSearchManager::GetGlobalFindResultsTabLabel(int32 TabIdx)
 	return LOCTEXT("GlobalFindResultsTabName", "Find in Dialogues");
 }
 
-void FFindInDialogueSearchManager::CloseGlobalFindResults(const TSharedRef<SFindInDialogues>& FindResults)
+void FDialogueSearchManager::CloseGlobalFindResults(const TSharedRef<SFindInDialogues>& FindResults)
 {
 	for (TWeakPtr<SFindInDialogues> FindResultsPtr : GlobalFindResultsWidgets)
 	{
@@ -686,11 +713,12 @@ void FFindInDialogueSearchManager::CloseGlobalFindResults(const TSharedRef<SFind
 	}
 }
 
-TSharedRef<SDockTab> FFindInDialogueSearchManager::SpawnGlobalFindResultsTab(const FSpawnTabArgs& SpawnTabArgs, int32 TabIdx)
+TSharedRef<SDockTab> FDialogueSearchManager::SpawnGlobalFindResultsTab(const FSpawnTabArgs& SpawnTabArgs, int32 TabIdx)
 {
 	// Label is Dynamic depending on the number of global tabs
 	TAttribute<FText> Label = TAttribute<FText>::Create(
-		TAttribute<FText>::FGetter::CreateRaw(this, &Self::GetGlobalFindResultsTabLabel, TabIdx));
+		TAttribute<FText>::FGetter::CreateRaw(this, &Self::GetGlobalFindResultsTabLabel, TabIdx)
+	);
 
 	TSharedRef<SDockTab> NewTab = SNew(SDockTab)
 		.TabRole(ETabRole::NomadTab) // can be docked anywhere
@@ -707,7 +735,7 @@ TSharedRef<SDockTab> FFindInDialogueSearchManager::SpawnGlobalFindResultsTab(con
 	return NewTab;
 }
 
-TSharedPtr<SFindInDialogues> FFindInDialogueSearchManager::OpenGlobalFindResultsTab()
+TSharedPtr<SFindInDialogues> FDialogueSearchManager::OpenGlobalFindResultsTab()
 {
 	TSet<FName> OpenGlobalTabIDs;
 
@@ -736,7 +764,7 @@ TSharedPtr<SFindInDialogues> FFindInDialogueSearchManager::OpenGlobalFindResults
 	return TSharedPtr<SFindInDialogues>();
 }
 
-TSharedPtr<SFindInDialogues> FFindInDialogueSearchManager::GetGlobalFindResults()
+TSharedPtr<SFindInDialogues> FDialogueSearchManager::GetGlobalFindResults()
 {
 	// Find opened find tab
 	TSharedPtr<SFindInDialogues> FindResultsToUse;
@@ -764,12 +792,12 @@ TSharedPtr<SFindInDialogues> FFindInDialogueSearchManager::GetGlobalFindResults(
 	return FindResultsToUse;
 }
 
-void FFindInDialogueSearchManager::EnableGlobalFindResults(TSharedPtr<FWorkspaceItem> ParentTabCategory)
+void FDialogueSearchManager::EnableGlobalFindResults(TSharedPtr<FWorkspaceItem> ParentTabCategory)
 {
 	const TSharedRef<FGlobalTabmanager>& GlobalTabManager = FGlobalTabmanager::Get();
 
 	// Register the spawners for all global Find Results tabs
-	const FSlateIcon GlobalFindResultsIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_FindDialogueIcon);
+	const FSlateIcon GlobalFindResultsIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_DialogueSearch_TabIcon);
 
 	// Add the menu item
 	if (!ParentTabCategory.IsValid())
@@ -781,7 +809,8 @@ void FFindInDialogueSearchManager::EnableGlobalFindResults(TSharedPtr<FWorkspace
 		LOCTEXT("WorkspaceMenu_GlobalFindResultsCategory", "Find in Dialogues"),
 		LOCTEXT("GlobalFindResultsMenuTooltipText", "Find references to conditions, events, text and variables in all Dialogues."),
 		GlobalFindResultsIcon,
-		true);
+		true
+	);
 
 	// Register tab spawners
 	for (int32 TabIdx = 0; TabIdx < NY_ARRAY_COUNT(GlobalFindResultsTabIDs); TabIdx++)
@@ -797,15 +826,18 @@ void FFindInDialogueSearchManager::EnableGlobalFindResults(TSharedPtr<FWorkspace
 		{
 			const FText DisplayName = FText::Format(LOCTEXT("GlobalFindResultsDisplayName", "Find in Dialogues {0}"),
 													FText::AsNumber(TabIdx + 1));
-			GlobalTabManager->RegisterNomadTabSpawner(TabID, FOnSpawnTab::CreateRaw(this, &Self::SpawnGlobalFindResultsTab, TabIdx))
+			GlobalTabManager->RegisterNomadTabSpawner(
+				TabID,
+				FOnSpawnTab::CreateRaw(this, &Self::SpawnGlobalFindResultsTab, TabIdx))
 				.SetDisplayName(DisplayName)
 				.SetIcon(GlobalFindResultsIcon)
-				.SetGroup(GlobalFindResultsMenuItem.ToSharedRef());
+				.SetGroup(GlobalFindResultsMenuItem.ToSharedRef()
+			);
 		}
 	}
 }
 
-void FFindInDialogueSearchManager::DisableGlobalFindResults()
+void FDialogueSearchManager::DisableGlobalFindResults()
 {
 	const TSharedRef<FGlobalTabmanager>& GlobalTabManager = FGlobalTabmanager::Get();
 
@@ -843,7 +875,7 @@ void FFindInDialogueSearchManager::DisableGlobalFindResults()
 	}
 }
 
-void FFindInDialogueSearchManager::Initialize(TSharedPtr<FWorkspaceItem> ParentTabCategory)
+void FDialogueSearchManager::Initialize(TSharedPtr<FWorkspaceItem> ParentTabCategory)
 {
 	// Must ensure we do not attempt to load the AssetRegistry Module while saving a package, however, if it is loaded already we can safely obtain it
 	if (!GIsSavingPackage || (GIsSavingPackage && FModuleManager::Get().IsModuleLoaded(NAME_MODULE_AssetRegistry)))
@@ -878,7 +910,7 @@ void FFindInDialogueSearchManager::Initialize(TSharedPtr<FWorkspaceItem> ParentT
 	EnableGlobalFindResults(ParentTabCategory);
 }
 
-void FFindInDialogueSearchManager::UnInitialize()
+void FDialogueSearchManager::UnInitialize()
 {
 	if (AssetRegistryModule)
 	{
@@ -892,7 +924,7 @@ void FFindInDialogueSearchManager::UnInitialize()
 	DisableGlobalFindResults();
 }
 
-void FFindInDialogueSearchManager::BuildCache()
+void FDialogueSearchManager::BuildCache()
 {
 	// Difference between this and the UDlgManager::GetAllDialoguesFromMemory is that this loads all Dialogues
 	// even those that are not loaded into memory.
@@ -916,7 +948,7 @@ void FFindInDialogueSearchManager::BuildCache()
 	}
 }
 
-void FFindInDialogueSearchManager::HandleAssetAdded(const FAssetData& InAssetData)
+void FDialogueSearchManager::HandleAssetAdded(const FAssetData& InAssetData)
 {
 	// Confirm that the Dialogue has not been added already, this can occur during duplication of Dialogues.
 	FDialogueSearchData* SearchDataPtr = SearchMap.Find(InAssetData.ObjectPath);
@@ -945,17 +977,17 @@ void FFindInDialogueSearchManager::HandleAssetAdded(const FAssetData& InAssetDat
 	SearchMap.Add(InAssetData.ObjectPath, MoveTemp(SearchData));
 }
 
-void FFindInDialogueSearchManager::HandleAssetRemoved(const FAssetData& InAssetData)
+void FDialogueSearchManager::HandleAssetRemoved(const FAssetData& InAssetData)
 {
 	// TODO
 }
 
-void FFindInDialogueSearchManager::HandleAssetRenamed(const FAssetData& InAssetData, const FString& InOldName)
+void FDialogueSearchManager::HandleAssetRenamed(const FAssetData& InAssetData, const FString& InOldName)
 {
 	// TODO
 }
 
-void FFindInDialogueSearchManager::HandleAssetLoaded(UObject* InAsset)
+void FDialogueSearchManager::HandleAssetLoaded(UObject* InAsset)
 {
 
 }
