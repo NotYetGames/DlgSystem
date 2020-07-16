@@ -733,7 +733,7 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 		case EDialogueTreeNodeCategoryType::Variable:
 		{
 			// Only display the categories if the Participant has at least one variable.
-			if (ParticipantProperties->HasVariables())
+			if (ParticipantProperties->HasDialogueValues())
 			{
 				const bool bHideEmptyCategories = GetDefault<UDlgSystemSettings>()->bHideEmptyDialogueBrowserCategories;
 				Item->SetChildren(MakeVariableCategoriesChildren(Item, ParticipantProperties, bHideEmptyCategories));
@@ -1381,10 +1381,10 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeParticipantCa
 		Categories.Add(Category);
 	}
 
-	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasVariables()))
+	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasDialogueValues()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Variables")), Parent, EDialogueTreeNodeCategoryType::Variable
+			FText::FromString(TEXT("Dialogue Values")), Parent, EDialogueTreeNodeCategoryType::Variable
 		);
 		Categories.Add(Category);
 	}
