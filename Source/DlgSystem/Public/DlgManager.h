@@ -157,16 +157,20 @@ public:
 	}
 
 	// Is Object a UDlgEventCustom or a child from that
-	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper", DisplayName = "Is Object A Custom Event")
 	static bool IsObjectACustomEvent(const UObject* Object);
 
 	// Is Object a UDlgConditionCustom or a child from that
-	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper", DisplayName = "Is Object A Custom Condition")
 	static bool IsObjectACustomCondition(const UObject* Object);
 
 	// Is Object a UDlgTextArgumentCustom or a child from that
-	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper", DisplayName = "Is Object A Custom Text Argument")
 	static bool IsObjectACustomTextArgument(const UObject* Object);
+
+	// Is Object a UDlgNodeData or a child from that
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper", DisplayName = "Is Object A Node Data")
+    static bool IsObjectANodeData(const UObject* Object);
 
 	// Gets all the unique participant names sorted alphabetically from all the Dialogues loaded into memory.
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")

@@ -374,6 +374,11 @@ bool UDlgManager::IsObjectACustomTextArgument(const UObject* Object)
 	return FDlgHelper::IsObjectAChildOf(Object, UDlgTextArgumentCustom::StaticClass());
 }
 
+bool UDlgManager::IsObjectANodeData(const UObject* Object)
+{
+	return FDlgHelper::IsObjectAChildOf(Object, UDlgNodeData::StaticClass());
+}
+
 TArray<UDlgDialogue*> UDlgManager::GetAllDialoguesForParticipantName(FName ParticipantName)
 {
 	TArray<UDlgDialogue*> DialoguesArray;
