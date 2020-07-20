@@ -1,3 +1,8 @@
+# v10.1
+
+- **Renamed** Dialogue Browser "Variables" to "Dialogue Values" so that is consistent with the rest of the plugin
+- **Add** better tooltips documentation
+
 # v10
 
 - **Network replicate** the Dialogue Context (specifically the Dialogue and Participants)

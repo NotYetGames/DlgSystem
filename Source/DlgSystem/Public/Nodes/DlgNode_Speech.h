@@ -125,6 +125,7 @@ protected:
 	bool bIsVirtualParent = false;
 
 	// Text that will appear when this node participant name speaks to someone else.
+	// If you want replaceable portions inside your Text nodes just add {identifier} inside it and set the value it should have at runtime.
 	UPROPERTY(EditAnywhere, Category = "Dialogue|Node", Meta = (MultiLine = true))
 	FText Text;
 
@@ -136,7 +137,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Dialogue|Node")
 	FName SpeakerState;
 
-	// Node data that you can customize yourself with your own data types
+	// User Defined Custom Node data you can customize yourself with your own data types
+	//
+	// Create a new Blueprint derived from DlgNodeData (or DlgNodeDataHideCategories)
 	UPROPERTY(EditAnywhere, Instanced, Category = "Dialogue|Node")
 	UDlgNodeData* NodeData = nullptr;
 
