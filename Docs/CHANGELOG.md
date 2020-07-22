@@ -1,7 +1,12 @@
-# v10.1
+# v11
 
 - **Renamed** Dialogue Browser "Variables" to "Dialogue Values" so that is consistent with the rest of the plugin
 - **Add** better tooltips documentation
+- **Fix** Names for `IsObjectA<CustomStuff>` methods in the Blueprint Editor and **Add**  `IsObjectANodeData`
+- **Fix** the **Virtual Parent Node** first satisfied child to fire its Enter Events if `bVirtualParentFireDirectChildEnterEvents = true` (by default)
+- **Fix** the **Virtual Parent Node** to work with all other nodes types as a direct child (even tho this does not make sense in most cases the virtual parent nodes are usually just meant to be used for loops).
+- **Improvement** - The direct child of the **Virtual Parent Node** is always marked as visited on the parent node OnEnter
+- **Hide** the `bCheckChildrenOnEvaluation ` on the **End Node** because it can't have any children
 
 # v10
 
