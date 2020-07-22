@@ -276,6 +276,9 @@ public:
 	// Data
 	//
 
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
+    bool IsValidNodeIndex(int32 NodeIndex) const;
+
 	// Returns the indices which were visited inside this single context. For global data check DlgMemory
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	const TSet<int32>& GetVisitedNodeIndices() const { return VisitedNodeIndices; }

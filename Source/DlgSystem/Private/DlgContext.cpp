@@ -363,6 +363,11 @@ const UObject* UDlgContext::GetParticipant(FName ParticipantName) const
 	return nullptr;
 }
 
+bool UDlgContext::IsValidNodeIndex(int32 NodeIndex) const
+{
+	return Dialogue ? Dialogue->IsValidNodeIndex(NodeIndex) : false;
+}
+
 bool UDlgContext::IsOptionConnectedToVisitedNode(int32 Index, bool bLocalHistory, bool bIndexSkipsUnsatisfiedEdges) const
 {
 	int32 TargetIndex = INDEX_NONE;

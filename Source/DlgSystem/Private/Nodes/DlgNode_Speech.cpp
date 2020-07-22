@@ -53,13 +53,32 @@ void UDlgNode_Speech::RebuildConstructedText(const UDlgContext& Context)
 bool UDlgNode_Speech::HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
 	RebuildConstructedText(Context);
-	return Super::HandleNodeEnter(Context, NodesEnteredWithThisStep);
+	const bool bResult = Super::HandleNodeEnter(Context, NodesEnteredWithThisStep);
+
+	// Handle virtual parent enter events for direct children
+	if (bResult && bIsVirtualParent && Context.IsValidNodeIndex(VirtualParentFirstSatisfiedDirectChildIndex))
+	{
+		// Add to history
+		Context.SetNodeVisited(VirtualParentFirstSatisfiedDirectChildIndex);
+
+		// Fire all the direct child enter events
+		if (bVirtualParentFireDirectChildEnterEvents)
+		{
+			if (UDlgNode* Node = Context.GetMutableNode(VirtualParentFirstSatisfiedDirectChildIndex))
+        	{
+        		Node->FireNodeEnterEvents(Context);
+        	}
+		}
+	}
+
+	return bResult;
 }
 
 bool UDlgNode_Speech::ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> AlreadyEvaluated)
 {
 	if (bIsVirtualParent)
 	{
+		VirtualParentFirstSatisfiedDirectChildIndex = INDEX_NONE;
 		Context.GetMutableOptionsArray().Empty();
 		Context.GetAllMutableOptionsArray().Empty();
 
@@ -83,18 +102,13 @@ bool UDlgNode_Speech::ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNo
 			{
 				if (UDlgNode* Node = Context.GetMutableNode(Edge.TargetIndex))
 				{
-					// Add to history
-					Context.SetNodeVisited(Edge.TargetIndex);
-
-					//
 					// Get Grandchildren
-					//
-
-					// NOTE: Don't call directly HandleNodeEnter as some nodes like the selector node will node like that
-					// Fire all the node enter events
-					Node->FireNodeEnterEvents(Context);
-
-					return Node->ReevaluateChildren(Context, AlreadyEvaluated);
+					const bool bResult = Node->ReevaluateChildren(Context, AlreadyEvaluated);
+					if (bResult)
+					{
+						VirtualParentFirstSatisfiedDirectChildIndex = Edge.TargetIndex;
+					}
+					return bResult;
 				}
 			}
 		}

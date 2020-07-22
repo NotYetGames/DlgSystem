@@ -26,7 +26,7 @@ struct DLGSYSTEM_API FDlgDialogueObjectVersion
 		AddComparisonWithOtherParticipant,
 		AddTextFormatArguments,
 		AddLocalizationOverwrittenNamespacesAndKeys,
-
+		AddVirtualParentFireDirectChildEnterEvents,
 
 		// -----<new versions can be added above this line>-------------------------------------------------
 		VersionPlusOne,
@@ -420,6 +420,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "GetStartNode")
 	UDlgNode* GetMutableStartNode() const { return StartNode; }
 	const UDlgNode& GetStartNode() const { return *StartNode; }
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	bool IsValidNodeIndex(int32 NodeIndex) const { return Nodes.IsValidIndex(NodeIndex); }
 
 	// Gets the Node as a mutable pointer.
 	UDlgNode* GetMutableNode(int32 NodeIndex) const { return Nodes.IsValidIndex(NodeIndex) ? Nodes[NodeIndex] : nullptr; }
