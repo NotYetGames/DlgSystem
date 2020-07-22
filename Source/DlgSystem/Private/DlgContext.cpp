@@ -450,10 +450,15 @@ bool UDlgContext::EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredW
 	}
 
 	ActiveNodeIndex = NodeIndex;
-	FDlgMemory::Get().SetNodeVisited(Dialogue->GetDialogueGUID(), ActiveNodeIndex);
-	VisitedNodeIndices.Add(ActiveNodeIndex);
+	SetNodeVisited(NodeIndex);
 
 	return Node->HandleNodeEnter(*this, NodesEnteredWithThisStep);
+}
+
+void UDlgContext::SetNodeVisited(int32 NodeIndex)
+{
+	FDlgMemory::Get().SetNodeVisited(Dialogue->GetDialogueGUID(), NodeIndex);
+	VisitedNodeIndices.Add(NodeIndex);
 }
 
 UDlgNode* UDlgContext::GetMutableNode(int32 NodeIndex) const
@@ -598,8 +603,7 @@ bool UDlgContext::StartFromContextFromIndex(
 	}
 
 	ActiveNodeIndex = StartIndex;
-	FDlgMemory::Get().SetNodeVisited(Dialogue->GetDialogueGUID(), ActiveNodeIndex);
-	VisitedNodeIndices.Add(ActiveNodeIndex);
+	SetNodeVisited(StartIndex);
 
 	return Node->ReevaluateChildren(*this, {});
 }

@@ -304,6 +304,9 @@ public:
 	// Conditions are not checked here - they are expected to be satisfied
 	bool EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep);
 
+	// Adds the node as visited in the current dialogue memory
+	void SetNodeVisited(int32 NodeIndex);
+
 	// Gets the Node at the NodeIndex index
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "GetNode")
 	UDlgNode* GetMutableNode(int32 NodeIndex) const;

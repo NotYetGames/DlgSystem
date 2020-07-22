@@ -566,7 +566,7 @@ void UDlgDialogue::AddConditionsDataFromNodeEdges(const UDlgNode* Node, int32 No
 			{
 				const FString ContextMessage = FString::Printf(TEXT("Adding Edge primary condition data from %s to Node %d"), *NodeContext, TargetIndex);
 				GetParticipantDataEntry(Condition.ParticipantName, FallbackParticipantName, true, ContextMessage)
-                    .AddConditionPrimaryData(Condition);
+					.AddConditionPrimaryData(Condition);
 			}
 			if (Condition.IsSecondParticipantInvolved())
 			{
@@ -643,13 +643,13 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 			{
 				const FString ContextMessage = FString::Printf(TEXT("Adding primary condition data for %s"), *NodeContext);
 				GetParticipantDataEntry(Condition.ParticipantName, NodeParticipantName, true, ContextMessage)
-                    .AddConditionPrimaryData(Condition);
+					.AddConditionPrimaryData(Condition);
 			}
 			if (Condition.IsSecondParticipantInvolved())
 			{
 				const FString ContextMessage = FString::Printf(TEXT("Adding secondary condition data for %s"), *NodeContext);
 				GetParticipantDataEntry(Condition.OtherParticipantName, NodeParticipantName, true, ContextMessage)
-                    .AddConditionSecondaryData(Condition);
+					.AddConditionSecondaryData(Condition);
 			}
 		}
 

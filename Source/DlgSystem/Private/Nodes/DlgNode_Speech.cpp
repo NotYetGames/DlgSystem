@@ -83,8 +83,11 @@ bool UDlgNode_Speech::ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNo
 			{
 				if (UDlgNode* Node = Context.GetMutableNode(Edge.TargetIndex))
 				{
+					// Add to history
+					Context.SetNodeVisited(Edge.TargetIndex);
+
 					// Get Grandchildren
-					return Node->ReevaluateChildren(Context, AlreadyEvaluated);
+					return Node->HandleNodeEnter(Context, AlreadyEvaluated);
 				}
 			}
 		}

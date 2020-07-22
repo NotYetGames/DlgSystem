@@ -101,15 +101,7 @@ void UDlgNode::FireNodeEnterEvents(UDlgContext& Context)
 			Participant = Context.GetMutableParticipant(OwnerName);
 		}
 
-		if (Participant == nullptr)
-		{
-			FDlgLogger::Get().Warningf(
-				TEXT("FireNodeEnterEvents - Got non existent Participant Name (INVALID Participant) event call will FAIL.\nContext:\n\t%s"),
-				*GetDialogue()->GetPathName(), Context.GetActiveNodeIndex(), *Context.GetContextString()
-			);
-		}
-
-		Event.Call(Context, Participant);
+		Event.Call(Context, TEXT("FireNodeEnterEvents"), Participant);
 	}
 }
 
