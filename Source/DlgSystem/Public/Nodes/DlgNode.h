@@ -250,7 +250,7 @@ public:
 	// Syncs the GraphNode Edges with our edges
 	void UpdateGraphNode();
 
-protected:
+	// Fires this Node enter Events
 	void FireNodeEnterEvents(UDlgContext& Context);
 
 protected:

@@ -86,8 +86,15 @@ bool UDlgNode_Speech::ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNo
 					// Add to history
 					Context.SetNodeVisited(Edge.TargetIndex);
 
+					//
 					// Get Grandchildren
-					return Node->HandleNodeEnter(Context, AlreadyEvaluated);
+					//
+
+					// NOTE: Don't call directly HandleNodeEnter as some nodes like the selector node will node like that
+					// Fire all the node enter events
+					Node->FireNodeEnterEvents(Context);
+
+					return Node->ReevaluateChildren(Context, AlreadyEvaluated);
 				}
 			}
 		}
