@@ -48,7 +48,6 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 	const bool bIsSpeechSequenceNode = GraphNode->IsSpeechSequenceNode();
 	const bool bIsVirtualParentNode = GraphNode->IsVirtualParentNode();
 
-
 	// Hide the existing category
 	DetailLayoutBuilder->HideCategory(UDialogueGraphNode::StaticClass()->GetFName());
 
