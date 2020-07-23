@@ -10,13 +10,13 @@ FDialogueBrowserTreeVariableProperties::FDialogueBrowserTreeVariableProperties(c
 	// Empty initialize the graph nodes
 	for (TWeakObjectPtr<const UDlgDialogue> Dialogue: InDialogues)
 	{
-		GraphNodes.Add(Dialogue->GetDialogueGUID(), {});
+		GraphNodes.Add(Dialogue->GetGUID(), {});
 	}
 
 	// Empty initialize the edge nodes
 	for (TWeakObjectPtr<const UDlgDialogue> Dialogue : InDialogues)
 	{
-		EdgeNodes.Add(Dialogue->GetDialogueGUID(), {});
+		EdgeNodes.Add(Dialogue->GetGUID(), {});
 	}
 }
 
@@ -26,7 +26,7 @@ void FDialogueBrowserTreeVariableProperties::AddDialogue(TWeakObjectPtr<const UD
 
 	// Initialize the graph nodes
 	{
-		const FGuid Id = Dialogue->GetDialogueGUID();
+		const FGuid Id = Dialogue->GetGUID();
 		auto* SetPtr = GraphNodes.Find(Id);
 		if (SetPtr == nullptr)
 		{
@@ -38,7 +38,7 @@ void FDialogueBrowserTreeVariableProperties::AddDialogue(TWeakObjectPtr<const UD
 	// Initialize the edge nodes
 	{
 
-		const FGuid ID = Dialogue->GetDialogueGUID();
+		const FGuid ID = Dialogue->GetGUID();
 		auto* SetPtr = EdgeNodes.Find(ID);
 		if (SetPtr == nullptr)
 		{

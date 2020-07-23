@@ -225,7 +225,7 @@ int32 UDlgHumanReadableTextCommandlet::Import()
 bool UDlgHumanReadableTextCommandlet::ExportDialogueToHumanReadableFormat(const UDlgDialogue& Dialogue, FDlgDialogue_FormatHumanReadable& OutFormat)
 {
 	OutFormat.DialogueName = Dialogue.GetDialogueFName();
-	OutFormat.DialogueGUID = Dialogue.GetDialogueGUID();
+	OutFormat.DialogueGUID = Dialogue.GetGUID();
 
 	// Root Node
 	{

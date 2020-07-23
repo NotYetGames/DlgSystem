@@ -39,7 +39,6 @@ void FDialogueCondition_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InS
 
 	// Register handler properties changes
 	ConditionTypePropertyHandle->SetOnPropertyValueChanged(FSimpleDelegate::CreateSP(this, &Self::OnConditionTypeChanged, true));
-
 	CompareTypePropertyHandle->SetOnPropertyValueChanged(FSimpleDelegate::CreateSP(this, &Self::OnCompareTypeChanged, true));
 
 	const bool bShowOnlyInnerProperties = StructPropertyHandle->GetProperty()->HasMetaData(META_ShowOnlyInnerProperties);
@@ -193,6 +192,14 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 		LongTermMemoryPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetLongTermMemoryVisibility));
 	}
 
+	// GUID
+	{
+		GUIDPropertyRow = &StructBuilder.AddProperty(
+            StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, GUID)).ToSharedRef()
+        );
+		GUIDPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetGUIDVisibility));
+	}
+
 	// CustomCondition
 	{
 		CustomConditionPropertyRow = &StructBuilder.AddProperty(
@@ -222,11 +229,22 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 	FText BoolValueDisplayName = LOCTEXT("BoolValueDisplayName", "Return Value");
 	FText BoolValueToolTip = LOCTEXT("BoolValueToolTip", "SHOULD NOT BE VISIBLE");
 	// TODO remove the "equal" operations for float values as they are imprecise
-	FText FloatValueToolTip = LOCTEXT("FloatValueToolTip", "The float value the VariableName is checked against (depending on the operation).\n"
-		"VariableName <Operation> FloatValue");
+	FText FloatValueToolTip = LOCTEXT(
+		"FloatValueToolTip",
+		"The float value the VariableName is checked against (depending on the operation).\n"
+		"VariableName <Operation> FloatValue"
+	);
 	FText IntValueDisplayName = LOCTEXT("IntValueDisplayName", "Int Value");
-	FText IntValueToolTip = LOCTEXT("IntValueToolTip", "The int value the VariableName is checked against (depending on the operation).\n"
-		"VariableName <Operation> IntValue");
+	FText IntValueToolTip = LOCTEXT(
+		"IntValueToolTip",
+		"The int value the VariableName is checked against (depending on the operation).\n"
+		"VariableName <Operation> IntValue"
+	);
+	FText GUIDDisplayName = LOCTEXT("GUIDDisplayName", "Node GUID");
+	FText GUIDToolTip = LOCTEXT(
+		"GUIDToolTip",
+		"The Corresponding GUID of the Node Index. (Set On Compile)"
+	);
 
 	FDialogueDetailsPanelUtils::ResetNumericPropertyLimits(IntValuePropertyHandle);
 	switch (ConditionType)
@@ -297,6 +315,9 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 	IntValuePropertyRow->DisplayName(IntValueDisplayName);
 	IntValuePropertyRow->ToolTip(IntValueToolTip);
 	FloatValuePropertyRow->ToolTip(FloatValueToolTip);
+
+	GUIDPropertyRow->DisplayName(GUIDDisplayName);
+	GUIDPropertyRow->ToolTip(GUIDToolTip);
 
 	// Refresh the view, without this some names/tooltips won't get refreshed
 	if (bForceRefresh && PropertyUtils.IsValid())

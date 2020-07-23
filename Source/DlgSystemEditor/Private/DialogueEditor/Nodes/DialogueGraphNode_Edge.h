@@ -205,5 +205,6 @@ private:
 	 * Is this a primary edge? Aka does this edge lead to a unique path to the ChildNode.
 	 * This is only set after the graph is compiled.
 	 */
+	UPROPERTY()
 	bool bIsPrimaryEdge = true;
 };

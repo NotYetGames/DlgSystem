@@ -50,6 +50,55 @@ void UDlgNode::AddReferencedObjects(UObject* InThis, FReferenceCollector& Collec
 	Super::AddReferencedObjects(InThis, Collector);
 }
 
+void UDlgNode::PostLoad()
+{
+	Super::PostLoad();
+
+	// NOTE: We don't this here but instead we do it in the compile phase
+	// Create thew new GUID
+	// if (!HasGUID())
+	// {
+	// 	RegenerateGUID();
+	// }
+}
+
+void UDlgNode::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+	// Ignore these cases
+	if (HasAnyFlags(RF_ClassDefaultObject | RF_NeedLoad))
+	{
+		return;
+	}
+
+	// GUID is set in the dialogue compile phase
+}
+
+void UDlgNode::PostDuplicate(bool bDuplicateForPIE)
+{
+	Super::PostDuplicate(bDuplicateForPIE);
+
+	// Used when duplicating Nodes.
+	// We only generate a new GUID is the existing one is valid, otherwise it will be set in the compile phase
+	if (HasGUID())
+	{
+		RegenerateGUID();
+	}
+}
+
+void UDlgNode::PostEditImport()
+{
+	Super::PostEditImport();
+
+	// Used when duplicating Nodes.
+	// We only generate a new GUID is the existing one is valid, otherwise it will be set in the compile phase
+	if (HasGUID())
+	{
+		RegenerateGUID();
+	}
+}
+
 #if WITH_EDITOR
 void UDlgNode::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {

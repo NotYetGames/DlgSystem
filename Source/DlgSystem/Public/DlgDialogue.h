@@ -27,6 +27,7 @@ struct DLGSYSTEM_API FDlgDialogueObjectVersion
 		AddTextFormatArguments,
 		AddLocalizationOverwrittenNamespacesAndKeys,
 		AddVirtualParentFireDirectChildEnterEvents,
+		AddGUIDToNodes,
 
 		// -----<new versions can be added above this line>-------------------------------------------------
 		VersionPlusOne,
@@ -406,11 +407,14 @@ public:
 	FName GetDialogueFName() const { return GetFName(); }
 
 	// Gets the unique identifier for this dialogue.
-	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	FGuid GetDialogueGUID() const { check(GUID.IsValid()); return GUID; }
+	UFUNCTION(BlueprintPure, Category = "Dialogue|GUID")
+	FGuid GetGUID() const { check(GUID.IsValid()); return GUID; }
 
 	// Regenerate the GUID of this Dialogue
 	void RegenerateGUID() { GUID = FGuid::NewGuid(); }
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|GUID")
+	bool HasGUID() const { return GUID.IsValid(); }
 
 	// Gets all the nodes
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
@@ -428,13 +432,19 @@ public:
 	UDlgNode* GetMutableNode(int32 NodeIndex) const { return Nodes.IsValidIndex(NodeIndex) ? Nodes[NodeIndex] : nullptr; }
 
 	// Sets a new Start Node. Use with care.
-	void SetStartNode(UDlgNode* InStartNode) { StartNode = InStartNode; }
+	void SetStartNode(UDlgNode* InStartNode);
+
+	// NOTE: don't call this if you don't know what you are doing, you most likely need to call
+	// SetStartNode
+	// SetNodes
+	// After this
+	void EmptyNodesGUIDToIndexMap() { NodesGUIDToIndexMap.Empty(); }
 
 	// Sets the Dialogue Nodes. Use with care.
-	void SetNodes(const TArray<UDlgNode*>& InNodes) { Nodes = InNodes; }
+	void SetNodes(const TArray<UDlgNode*>& InNodes);
 
 	// Sets the Node at index NodeIndex. Use with care.
-	void SetNode(int32 NodeIndex, UDlgNode* InNode) { Nodes[NodeIndex] = InNode; }
+	void SetNode(int32 NodeIndex, UDlgNode* InNode);
 
 	// Is the Node at NodeIndex (if it exists) an end node?
 	bool IsEndNode(int32 NodeIndex) const;
@@ -510,6 +520,9 @@ private:
 	 */
 	void AutoFixGraph();
 
+	// Updates NodesGUIDToIndexMap with Node
+	void UpdateGUIDToIndexMap(const UDlgNode* Node, int32 NodeIndex);
+
 protected:
 	// Used to keep track of the version in text  file too, besides being written in the .uasset file.
 	UPROPERTY()
@@ -545,6 +558,10 @@ protected:
 	// NOTE: Add VisibleAnywhere to make it easier to debug
 	UPROPERTY(AdvancedDisplay, EditFixedSize, Instanced, Meta = (DlgWriteIndex))
 	TArray<UDlgNode*> Nodes;
+
+	// Maps Node GUID => Node Index
+	UPROPERTY(VisibleAnywhere, AdvancedDisplay, Category = "Dialogue", DisplayName = "Nodes GUID To Index Map")
+	TMap<FGuid, int32> NodesGUIDToIndexMap;
 
 	// Useful for syncing on the first run with the text file.
 	bool bIsSyncedWithTextFile = false;

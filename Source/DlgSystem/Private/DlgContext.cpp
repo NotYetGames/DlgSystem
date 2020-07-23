@@ -402,7 +402,7 @@ bool UDlgContext::IsOptionConnectedToVisitedNode(int32 Index, bool bLocalHistory
 		return false;
 	}
 
-	return FDlgMemory::Get().IsNodeVisited(Dialogue->GetDialogueGUID(), TargetIndex);
+	return FDlgMemory::Get().IsNodeVisited(Dialogue->GetGUID(), TargetIndex);
 }
 
 bool UDlgContext::IsOptionConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisfiedEdges) const
@@ -462,7 +462,7 @@ bool UDlgContext::EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredW
 
 void UDlgContext::SetNodeVisited(int32 NodeIndex)
 {
-	FDlgMemory::Get().SetNodeVisited(Dialogue->GetDialogueGUID(), NodeIndex);
+	FDlgMemory::Get().SetNodeVisited(Dialogue->GetGUID(), NodeIndex);
 	VisitedNodeIndices.Add(NodeIndex);
 }
 

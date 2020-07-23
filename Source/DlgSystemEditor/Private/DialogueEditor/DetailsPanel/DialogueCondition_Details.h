@@ -111,13 +111,19 @@ private:
 			|| ConditionType == EDlgConditionType::HasSatisfiedChild
 			|| ConditionType == EDlgConditionType::BoolCall
 			|| ConditionType == EDlgConditionType::ClassBoolVariable
-
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetLongTermMemoryVisibility() const
 	{
 		return ConditionType == EDlgConditionType::WasNodeVisited ? EVisibility::Visible : EVisibility::Hidden;
+	}
+
+	EVisibility GetGUIDVisibility() const
+	{
+		return ConditionType == EDlgConditionType::WasNodeVisited
+			|| ConditionType == EDlgConditionType::HasSatisfiedChild
+			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetOperationVisibility() const
@@ -222,6 +228,7 @@ private:
 	IDetailPropertyRow* LongTermMemoryPropertyRow = nullptr;
 	IDetailPropertyRow* OperationPropertyRow = nullptr;
 	IDetailPropertyRow* CompareTypePropertyRow = nullptr;
+	IDetailPropertyRow* GUIDPropertyRow = nullptr;
 	IDetailPropertyRow* CustomConditionPropertyRow = nullptr;
 
 	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> OtherParticipantNamePropertyRow;

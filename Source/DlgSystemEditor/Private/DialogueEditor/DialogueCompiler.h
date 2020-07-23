@@ -13,6 +13,8 @@ class UDlgSystemSettings;
 
 class FDialogueCompilerContext
 {
+	friend UDlgDialogue;
+
 public:
 	FDialogueCompilerContext(UDlgDialogue* InDialogue, const UDlgSystemSettings* InSettings, FCompilerResultsLog& InMessageLog)
 	: Dialogue(InDialogue), Settings(InSettings), MessageLog(InMessageLog)
@@ -58,7 +60,7 @@ private:
 
 	// Settings we will use
 	const UDlgSystemSettings* Settings = nullptr;
-	
+
 	// TODO Use this
 	/** Compiler message log (errors, warnings, notes) */
 	FCompilerResultsLog& MessageLog;

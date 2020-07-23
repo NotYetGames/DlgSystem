@@ -91,6 +91,11 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameEnterEvents()))
 			.ShouldAutoExpand(true);
 	}
+
+	// GUID
+	BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameGUID()))
+		.ShouldAutoExpand(true);
+
 	if (!bIsEndNode)
 	{
 		ChildrenPropertyRow = &BaseDataCategory.AddProperty(
@@ -99,6 +104,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 		ChildrenPropertyRow->ShouldAutoExpand(true);
 		ChildrenPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetChildrenVisibility));
 	}
+
 
 	// Do nothing
 	if (bIsRootNode)

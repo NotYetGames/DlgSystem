@@ -268,7 +268,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 	TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
 	for (const UDlgDialogue* Dialogue : Dialogues)
 	{
-		const FGuid DialogueGUID = Dialogue->GetDialogueGUID();
+		const FGuid DialogueGUID = Dialogue->GetGUID();
 
 		// Populate Participants
 		TSet<FName> ParticipantsNames;
@@ -632,7 +632,7 @@ void SDialogueBrowser::AddGraphNodeBaseChildrenToItemFromProperty(
 
 	const TSharedPtr<FDialogueBrowserTreeVariableProperties> Property = *PropertyPtr;
 	const UDlgDialogue* Dialogue = DialogueItem->GetDialogue().Get();
-	const FGuid DialogueGUID = Dialogue->GetDialogueGUID();
+	const FGuid DialogueGUID = Dialogue->GetGUID();
 
 	// Display the GraphNode
 	if (Property->HasGraphNodeSet(DialogueGUID))

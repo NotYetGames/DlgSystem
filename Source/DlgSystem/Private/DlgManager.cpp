@@ -279,7 +279,7 @@ TArray<UDlgDialogue*> UDlgManager::GetDialoguesWithDuplicateGUIDs()
 	TSet<FGuid> DialogueGUIDs;
 	for (UDlgDialogue* Dialogue : Dialogues)
 	{
-		const FGuid ID = Dialogue->GetDialogueGUID();
+		const FGuid ID = Dialogue->GetGUID();
 		if (DialogueGUIDs.Find(ID) == nullptr)
 		{
 			// does not exist, good
@@ -302,7 +302,7 @@ TMap<FGuid, UDlgDialogue*> UDlgManager::GetAllDialoguesGUIDsMap()
 
 	for (UDlgDialogue* Dialogue : Dialogues)
 	{
-		const FGuid ID = Dialogue->GetDialogueGUID();
+		const FGuid ID = Dialogue->GetGUID();
 		if (DialoguesMap.Contains(ID))
 		{
 			FDlgLogger::Get().Errorf(

@@ -291,7 +291,7 @@ public:
 	FName GetDialogueName() const { check(Dialogue); return Dialogue->GetDialogueFName(); }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
-	FGuid GetDialogueGUID() const { check(Dialogue); return Dialogue->GetDialogueGUID(); }
+	FGuid GetDialogueGUID() const { check(Dialogue); return Dialogue->GetGUID(); }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	FString GetDialoguePathName() const { check(Dialogue); return Dialogue->GetPathName(); }

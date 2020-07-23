@@ -102,8 +102,8 @@ void UDlgDialogue::PostLoad()
 		UpdateAndRefreshData();
 	}
 
-	// Create thew new Guid
-	if (!GUID.IsValid())
+	// Create thew new GUID
+	if (!HasGUID())
 	{
 		RegenerateGUID();
 		FDlgLogger::Get().Debugf(
@@ -178,7 +178,7 @@ void UDlgDialogue::PostInitProperties()
 
 	// Used when creating new Dialogues
 	// Initialize with a valid GUID
-	if (DialogueVersion >= FDlgDialogueObjectVersion::AddGUID && !GUID.IsValid())
+	if (DialogueVersion >= FDlgDialogueObjectVersion::AddGUID && !HasGUID())
 	{
 		RegenerateGUID();
 		FDlgLogger::Get().Debugf(
@@ -727,6 +727,47 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 			FDlgLogger::Get().Warning(TEXT("Trying to fill ParticipantsClasses, got a Participant name = None. Ignoring!"));
 		}
 	}
+}
+
+void UDlgDialogue::SetStartNode(UDlgNode* InStartNode)
+{
+	if (!InStartNode)
+	{
+		return;
+	}
+
+	StartNode = InStartNode;
+	// UpdateGUIDToIndexMap(StartNode, INDEX_NONE);
+}
+
+void UDlgDialogue::SetNodes(const TArray<UDlgNode*>& InNodes)
+{
+	Nodes = InNodes;
+	for (int32 NodeIndex = 0; NodeIndex < Nodes.Num(); NodeIndex++)
+	{
+		UpdateGUIDToIndexMap(Nodes[NodeIndex], NodeIndex);
+	}
+}
+
+void UDlgDialogue::SetNode(int32 NodeIndex, UDlgNode* InNode)
+{
+	if (!IsValidNodeIndex(NodeIndex) || !InNode)
+	{
+		return;
+	}
+
+	Nodes[NodeIndex] = InNode;
+	UpdateGUIDToIndexMap(InNode, NodeIndex);
+}
+
+void UDlgDialogue::UpdateGUIDToIndexMap(const UDlgNode* Node, int32 NodeIndex)
+{
+	if (!Node || !IsValidNodeIndex(NodeIndex) || !Node->HasGUID())
+	{
+		return;
+	}
+
+	NodesGUIDToIndexMap.Add(Node->GetGUID(), NodeIndex);
 }
 
 bool UDlgDialogue::IsEndNode(int32 NodeIndex) const

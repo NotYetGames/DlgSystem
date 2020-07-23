@@ -58,9 +58,11 @@ void FDialogueCompilerContext::Compile()
 	FixBrokenOldIndices();
 
 	// Update the dialogue data.
+	Dialogue->EmptyNodesGUIDToIndexMap();
 	Dialogue->SetStartNode(GraphNodeRoot->GetMutableDialogueNode());
 	Dialogue->SetNodes(ResultDialogueNodes);
 	Dialogue->PostEditChange();
+	FDialogueEditorUtilities::RefreshDetailsView(Dialogue->GetGraph(), true);
 }
 
 void FDialogueCompilerContext::PreCompileGraphNode(UDialogueGraphNode* GraphNode)
@@ -78,6 +80,13 @@ void FDialogueCompilerContext::PostCompileGraphNode(UDialogueGraphNode* GraphNod
 
 	// Check symmetry, dialogue node <-> graph node
 	GraphNode->CheckDialogueNodeSyncWithGraphNode(true);
+
+	// Ensure the Node has a valid GUID
+	UDlgNode* DialogueNode = GraphNode->GetMutableDialogueNode();
+	if (!DialogueNode->HasGUID())
+	{
+		DialogueNode->RegenerateGUID();
+	}
 
 	// Update depth
 	// BFS has the property that unvisited nodes in the queue all have depths that never decrease,
@@ -151,7 +160,7 @@ void FDialogueCompilerContext::CompileGraphNode(UDialogueGraphNode* GraphNode)
 void FDialogueCompilerContext::CompileGraph()
 {
 	// Complexity O(|V| + |E|)
-	// Reassing all the indices in the queue
+	// Reassign all the indices in the queue
 	while (!Queue.IsEmpty())
 	{
 		UDialogueGraphNode* GraphNode;
