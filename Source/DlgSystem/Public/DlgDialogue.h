@@ -421,15 +421,31 @@ public:
 	const TArray<UDlgNode*>& GetNodes() const { return Nodes; }
 
 	// Gets the Start Node as a mutable pointer.
-	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "GetStartNode")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "Get Start Node")
 	UDlgNode* GetMutableStartNode() const { return StartNode; }
 	const UDlgNode& GetStartNode() const { return *StartNode; }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	bool IsValidNodeIndex(int32 NodeIndex) const { return Nodes.IsValidIndex(NodeIndex); }
 
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	bool IsValidNodeGUID(const FGuid& NodeGUID) const { return IsValidNodeIndex(GetNodeIndexForGUID(NodeGUID)); }
+
+	// Gets the GUID for the Node at NodeIndex
+	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "Get Node GUID For Index")
+	FGuid GetNodeGUIDForIndex(int32 NodeIndex) const;
+
+	// Gets the corresponding Node Index for the supplied NodeGUID
+	// Returns -1 (INDEX_NONE) if the Node GUID does not exist.
+	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "Get Node Index For GUID")
+	int32 GetNodeIndexForGUID(const FGuid& NodeGUID) const;
+
 	// Gets the Node as a mutable pointer.
-	UDlgNode* GetMutableNode(int32 NodeIndex) const { return Nodes.IsValidIndex(NodeIndex) ? Nodes[NodeIndex] : nullptr; }
+	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "Get Node From Index")
+	UDlgNode* GetMutableNodeFromIndex(int32 NodeIndex) const { return Nodes.IsValidIndex(NodeIndex) ? Nodes[NodeIndex] : nullptr; }
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "Get Node From GUID")
+    UDlgNode* GetMutableNodeFromGUID(const FGuid& NodeGUID) const { return GetMutableNodeFromIndex(GetNodeIndexForGUID(NodeGUID));   }
 
 	// Sets a new Start Node. Use with care.
 	void SetStartNode(UDlgNode* InStartNode);

@@ -258,7 +258,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual UDlgNodeData* GetNodeData() const { return nullptr; }
 
-	// Helper method to get directly the Dialogue
+	// Helper method to get directly the Dialogue (which is our parent)
 	UDlgDialogue* GetDialogue() const;
 
 	// Helper functions to get the names of some properties. Used by the DlgSystemEditor module.

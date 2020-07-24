@@ -1,9 +1,9 @@
 {
 	"__type__": "DlgDialogue",
-	"DlgVersion": 8,
-	"DlgName": "TestDialogue",
-	"DlgGuid": "D3B6003044F0EC3A430C03B963F09C88",
-	"DlgParticipantClasses": [
+	"Version": 10,
+	"Name": "ExampleDialogue",
+	"GUID": "D3B6003044F0EC3A430C03B963F09C88",
+	"ParticipantsClasses": [
 		{
 			"ParticipantName": "TestOwner",
 			"ParticipantClass": ""
@@ -11,12 +11,17 @@
 		{
 			"ParticipantName": "Cat",
 			"ParticipantClass": ""
+		},
+		{
+			"ParticipantName": "ExampleParticipant",
+			"ParticipantClass": ""
 		}
 	],
 	"StartNode":
 	{
 		"__type__": "DlgNode_Speech",
 		"bIsVirtualParent": false,
+		"bVirtualParentFireDirectChildEnterEvents": true,
 		"Text": "",
 		"TextArguments": [],
 		"SpeakerState": "None",
@@ -28,6 +33,7 @@
 		"bCheckChildrenOnEvaluation": false,
 		"EnterConditions": [],
 		"EnterEvents": [],
+		"NodeGUID": "F9534C8F41D82127D65ECABE21B77414",
 		"Children": [
 			{
 				"TargetIndex": 0,
@@ -52,6 +58,7 @@
 			"__index__": 0,
 			"__type__": "DlgNode_Speech",
 			"bIsVirtualParent": false,
+			"bVirtualParentFireDirectChildEnterEvents": true,
 			"Text": "I can talk!",
 			"TextArguments": [],
 			"SpeakerState": "None",
@@ -59,7 +66,7 @@
 			"VoiceSoundWave": "",
 			"VoiceDialogueWave": "",
 			"GenericData": "",
-			"OwnerName": "TestOwner",
+			"OwnerName": "ExampleParticipant",
 			"bCheckChildrenOnEvaluation": false,
 			"EnterConditions": [
 				{
@@ -76,6 +83,7 @@
 					"NameValue": "None",
 					"bBoolValue": true,
 					"bLongTermMemory": true,
+					"GUID": "00000000000000000000000000000000",
 					"CustomCondition": null
 				}
 			],
@@ -92,6 +100,7 @@
 					"CustomEvent": null
 				}
 			],
+			"NodeGUID": "FF509205422E4AC87851D5BEEE176241",
 			"Children": [
 				{
 					"TargetIndex": 2,
@@ -110,6 +119,7 @@
 							"NameValue": "None",
 							"bBoolValue": true,
 							"bLongTermMemory": true,
+							"GUID": "00000000000000000000000000000000",
 							"CustomCondition": null
 						}
 					],
@@ -124,7 +134,8 @@
 			"__index__": 1,
 			"__type__": "DlgNode_Speech",
 			"bIsVirtualParent": false,
-			"Text": "Meow. Yeah I can speak too",
+			"bVirtualParentFireDirectChildEnterEvents": true,
+			"Text": "I am a cat",
 			"TextArguments": [],
 			"SpeakerState": "None",
 			"NodeData": null,
@@ -135,6 +146,7 @@
 			"bCheckChildrenOnEvaluation": false,
 			"EnterConditions": [],
 			"EnterEvents": [],
+			"NodeGUID": "0387067D4D74370ABAA41CB9194B65E9",
 			"Children": [
 				{
 					"TargetIndex": 2,
@@ -150,6 +162,7 @@
 			"__index__": 2,
 			"__type__": "DlgNode_Speech",
 			"bIsVirtualParent": false,
+			"bVirtualParentFireDirectChildEnterEvents": true,
 			"Text": "You don't say?",
 			"TextArguments": [],
 			"SpeakerState": "None",
@@ -157,7 +170,7 @@
 			"VoiceSoundWave": "",
 			"VoiceDialogueWave": "",
 			"GenericData": "",
-			"OwnerName": "TestOwner",
+			"OwnerName": "ExampleParticipant",
 			"bCheckChildrenOnEvaluation": false,
 			"EnterConditions": [],
 			"EnterEvents": [
@@ -184,6 +197,7 @@
 					"CustomEvent": null
 				}
 			],
+			"NodeGUID": "7510303F44F9A6AF8369ADBEBB4DB66A",
 			"Children": [
 				{
 					"TargetIndex": 3,
@@ -202,7 +216,15 @@
 			"bCheckChildrenOnEvaluation": false,
 			"EnterConditions": [],
 			"EnterEvents": [],
+			"NodeGUID": "7047D5CC4FA53BCFD555B4A1FA79BA39",
 			"Children": []
 		}
-	]
+	],
+	"NodesGUIDToIndexMap":
+	{
+		"FF509205422E4AC87851D5BEEE176241": 0,
+		"0387067D4D74370ABAA41CB9194B65E9": 1,
+		"7510303F44F9A6AF8369ADBEBB4DB66A": 2,
+		"7047D5CC4FA53BCFD555B4A1FA79BA39": 3
+	}
 }

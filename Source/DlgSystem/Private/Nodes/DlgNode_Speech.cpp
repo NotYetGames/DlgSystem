@@ -59,15 +59,18 @@ bool UDlgNode_Speech::HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNode*
 	if (bResult && bIsVirtualParent && Context.IsValidNodeIndex(VirtualParentFirstSatisfiedDirectChildIndex))
 	{
 		// Add to history
-		Context.SetNodeVisited(VirtualParentFirstSatisfiedDirectChildIndex);
+		Context.SetNodeVisited(
+			VirtualParentFirstSatisfiedDirectChildIndex,
+			Context.GetNodeGUIDForIndex(VirtualParentFirstSatisfiedDirectChildIndex)
+		);
 
 		// Fire all the direct child enter events
 		if (bVirtualParentFireDirectChildEnterEvents)
 		{
-			if (UDlgNode* Node = Context.GetMutableNode(VirtualParentFirstSatisfiedDirectChildIndex))
-        	{
-        		Node->FireNodeEnterEvents(Context);
-        	}
+			if (UDlgNode* Node = Context.GetMutableNodeFromIndex(VirtualParentFirstSatisfiedDirectChildIndex))
+			{
+				Node->FireNodeEnterEvents(Context);
+			}
 		}
 	}
 
@@ -100,7 +103,7 @@ bool UDlgNode_Speech::ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNo
 			// Find first satisfied child
 			if (Edge.Evaluate(Context, { this }))
 			{
-				if (UDlgNode* Node = Context.GetMutableNode(Edge.TargetIndex))
+				if (UDlgNode* Node = Context.GetMutableNodeFromIndex(Edge.TargetIndex))
 				{
 					// Get Grandchildren
 					const bool bResult = Node->ReevaluateChildren(Context, AlreadyEvaluated);

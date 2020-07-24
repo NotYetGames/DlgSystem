@@ -49,7 +49,7 @@ private:
 	void PruneIsolatedNodes();
 
 	/** Fixes all references to the old indices that this compile most likely broke. */
-	void FixBrokenOldIndices();
+	void FixBrokenOldIndicesAndUpdateGUID();
 
 	/** Sets NextAvailableIndex on the provided nodes, also keeps track of history in IndicesHistory. */
 	void SetNextAvailableIndexToNode(UDialogueGraphNode* GraphNode);

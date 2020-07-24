@@ -130,15 +130,15 @@ bool UDlgManager::CanStartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArr
 	return UDlgContext::CanBeStarted(Dialogue, ParticipantBinding);
 }
 
-UDlgContext* UDlgManager::ResumeDialogue(
+UDlgContext* UDlgManager::ResumeDialogueFromNodeIndex(
 	UDlgDialogue* Dialogue,
 	UPARAM(ref)const TArray<UObject*>& Participants,
-	int32 StartIndex,
+	int32 StartNodeIndex,
 	const TSet<int32>& AlreadyVisitedNodes,
 	bool bFireEnterEvents
 )
 {
-	const FString ContextMessage = TEXT("ResumeDialogue");
+	const FString ContextMessage = TEXT("ResumeDialogueFromNodeIndex");
 	TMap<FName, UObject*> ParticipantBinding;
 	if (!UDlgContext::ConvertArrayOfParticipantsToMap(ContextMessage, Dialogue, Participants, ParticipantBinding))
 	{
@@ -146,7 +146,35 @@ UDlgContext* UDlgManager::ResumeDialogue(
 	}
 
 	auto* Context = NewObject<UDlgContext>(Participants[0], UDlgContext::StaticClass());
-	if (Context->StartFromContextFromIndex(ContextMessage, Dialogue, ParticipantBinding, StartIndex, AlreadyVisitedNodes, bFireEnterEvents))
+	FDlgHistory History;
+	History.VisitedNodeIndices = AlreadyVisitedNodes;
+	if (Context->StartWithContextFromNodeIndex(ContextMessage, Dialogue, ParticipantBinding, StartNodeIndex, History, bFireEnterEvents))
+	{
+		return Context;
+	}
+
+	return nullptr;
+}
+
+UDlgContext* UDlgManager::ResumeDialogueFromNodeGUID(
+    UDlgDialogue* Dialogue,
+    UPARAM(ref)const TArray<UObject*>& Participants,
+    const FGuid& StartNodeGUID,
+    const TSet<FGuid>& AlreadyVisitedNodes,
+    bool bFireEnterEvents
+)
+{
+	const FString ContextMessage = TEXT("ResumeDialogueFromNodeGUID");
+	TMap<FName, UObject*> ParticipantBinding;
+	if (!UDlgContext::ConvertArrayOfParticipantsToMap(ContextMessage, Dialogue, Participants, ParticipantBinding))
+	{
+		return nullptr;
+	}
+
+	auto* Context = NewObject<UDlgContext>(Participants[0], UDlgContext::StaticClass());
+	FDlgHistory History;
+	History.VisitedNodeGUIDs = AlreadyVisitedNodes;
+	if (Context->StartWithContextFromNodeGUID(ContextMessage, Dialogue, ParticipantBinding, StartNodeGUID, History, bFireEnterEvents))
 	{
 		return Context;
 	}

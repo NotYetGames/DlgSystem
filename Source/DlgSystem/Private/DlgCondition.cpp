@@ -97,14 +97,15 @@ bool FDlgCondition::IsConditionMet(const UDlgContext& Context, const UObject* Pa
 		case EDlgConditionType::WasNodeVisited:
 			if (bLongTermMemory)
 			{
-				return FDlgMemory::Get().IsNodeVisited(Context.GetDialogueGUID(), IntValue) == bBoolValue;
+				return FDlgMemory::Get().IsNodeVisited(Context.GetDialogueGUID(), IntValue, GUID) == bBoolValue;
 			}
 
-			return Context.WasNodeVisitedInThisContext(IntValue) == bBoolValue;
+			return Context.GetHistoryOfThisContext().Contains(IntValue, GUID) == bBoolValue;
 
 		case EDlgConditionType::HasSatisfiedChild:
 			{
-				const UDlgNode* Node = Context.GetNode(IntValue);
+				// Use the GUID if it is valid as it is more reliable
+				const UDlgNode* Node = GUID.IsValid() ? Context.GetNodeFromGUID(GUID) : Context.GetNodeFromIndex(IntValue);
 				return Node != nullptr ? Node->HasAnySatisfiedChild(Context, {}) == bBoolValue : false;
 			}
 

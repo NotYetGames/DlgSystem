@@ -138,6 +138,13 @@ public:
 	bool IsParticipantInvolved() const;
 	bool IsSecondParticipantInvolved() const;
 
+	// Does this Condition have a IntValue which is in fact a NodeIndex
+	bool HasNodeIndex() const
+	{
+		return ConditionType == EDlgConditionType::WasNodeVisited
+			|| ConditionType == EDlgConditionType::HasSatisfiedChild;
+	}
+
 	static FString ConditionTypeToString(EDlgConditionType Type);
 
 protected:

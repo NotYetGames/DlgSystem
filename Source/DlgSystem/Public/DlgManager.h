@@ -64,6 +64,9 @@ public:
 
 	/**
 	 * Starts a Dialogue with the provided Dialogue and Participants array, at the given entry point
+	 *
+	 * NOTE: You should most likely use ResumeDialogueFromNodeGUID
+	 *
 	 * This method can fail in the following situations:
 	 *  - The Participants number does not match the number of participants from the Dialogue.
 	 *  - Any UObject in the Participant array does not implement the Participant Interface
@@ -73,20 +76,47 @@ public:
 	 *
 	 * @param Dialogue				- The dialogue asset to start
 	 * @param Participants			- Array of participants, has to match with the expected input for the Dialogue
-	 * @param StartIndex			- Index of the node the dialogue is resumed at
+	 * @param StartIndex		    - Index of the node the dialogue is resumed at
 	 * @param AlreadyVisitedNodes	- Set of nodes already visited in the context the last time this Dialogue was going on.
-	 *								  Can be aquired via GetVisitedNodeIndices() on the context
+	 *								  Can be acquired via GetVisitedNodeIndices() on the context
 	 * @param bFireEnterEvents		- decides if the enter events should be fired on the resumed node or not
 	 * @returns The dialogue context object or nullptr if something wrong happened
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
-	static UDlgContext* ResumeDialogue(
+	static UDlgContext* ResumeDialogueFromNodeIndex(
 		UDlgDialogue* Dialogue,
 		UPARAM(ref)const TArray<UObject*>& Participants,
-		int32 StartIndex,
+		UPARAM(DisplayName="Start Node Index") int32 StartIndex,
 		const TSet<int32>& AlreadyVisitedNodes,
 		bool bFireEnterEvents
 	);
+
+	/**
+	* Starts a Dialogue with the provided Dialogue and Participants array, at the given entry point
+	*
+	* This method can fail in the following situations:
+	*  - The Participants number does not match the number of participants from the Dialogue.
+	*  - Any UObject in the Participant array does not implement the Participant Interface
+	*  - Participant->GetParticipantName() does not exist in the Dialogue
+	*  - The given node GUID is invalid
+	*  - The starter node does not have any valid child
+	*
+	* @param Dialogue				- The dialogue asset to start
+	* @param Participants			- Array of participants, has to match with the expected input for the Dialogue
+	* @param StartNodeGUID			- GUID of the node the dialogue is resumed at
+	* @param AlreadyVisitedNodes	- Set of nodes already visited in the context the last time this Dialogue was going on.
+	*								  Can be acquired via GetVisitedNodeGUIDs() on the context
+	* @param bFireEnterEvents		- decides if the enter events should be fired on the resumed node or not
+	* @returns The dialogue context object or nullptr if something wrong happened
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
+    static UDlgContext* ResumeDialogueFromNodeGUID(
+        UDlgDialogue* Dialogue,
+        UPARAM(ref)const TArray<UObject*>& Participants,
+        const FGuid& StartNodeGUID,
+        const TSet<FGuid>& AlreadyVisitedNodes,
+        bool bFireEnterEvents
+    );
 
 
 	//

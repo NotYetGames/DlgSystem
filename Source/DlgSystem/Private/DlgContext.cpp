@@ -320,9 +320,9 @@ UObject* UDlgContext::GetActiveNodeParticipant() const
 	if (ObjectPtr == nullptr || !IsValid(*ObjectPtr))
 	{
 		LogErrorWithContext(FString::Printf(
-            TEXT("GetActiveNodeParticipant - The ParticipantName = `%s` from the Active Node does NOT exist in the current Participants"),
-            *SpeakerName.ToString()
-        ));
+			TEXT("GetActiveNodeParticipant - The ParticipantName = `%s` from the Active Node does NOT exist in the current Participants"),
+			*SpeakerName.ToString()
+		));
 		return nullptr;
 	}
 
@@ -368,6 +368,21 @@ bool UDlgContext::IsValidNodeIndex(int32 NodeIndex) const
 	return Dialogue ? Dialogue->IsValidNodeIndex(NodeIndex) : false;
 }
 
+bool UDlgContext::IsValidNodeGUID(const FGuid& NodeGUID) const
+{
+	return Dialogue ? Dialogue->IsValidNodeGUID(NodeGUID) : false;
+}
+
+FGuid UDlgContext::GetNodeGUIDForIndex(int32 NodeIndex) const
+{
+	return Dialogue ? Dialogue->GetNodeGUIDForIndex(NodeIndex) : FGuid{};
+}
+
+int32 UDlgContext::GetNodeIndexForGUID(const FGuid& NodeGUID) const
+{
+	return Dialogue ? Dialogue->GetNodeIndexForGUID(NodeGUID) : INDEX_NONE;
+}
+
 bool UDlgContext::IsOptionConnectedToVisitedNode(int32 Index, bool bLocalHistory, bool bIndexSkipsUnsatisfiedEdges) const
 {
 	int32 TargetIndex = INDEX_NONE;
@@ -391,9 +406,10 @@ bool UDlgContext::IsOptionConnectedToVisitedNode(int32 Index, bool bLocalHistory
 		TargetIndex = AllChildren[Index].GetEdge().TargetIndex;
 	}
 
+	const FGuid TargetGUID = GetNodeGUIDForIndex(TargetIndex);
 	if (bLocalHistory)
 	{
-		return VisitedNodeIndices.Contains(TargetIndex);
+		return History.Contains(TargetIndex, TargetGUID);
 	}
 
 	if (Dialogue == nullptr)
@@ -402,7 +418,7 @@ bool UDlgContext::IsOptionConnectedToVisitedNode(int32 Index, bool bLocalHistory
 		return false;
 	}
 
-	return FDlgMemory::Get().IsNodeVisited(Dialogue->GetGUID(), TargetIndex);
+	return FDlgMemory::Get().IsNodeVisited(Dialogue->GetGUID(), TargetIndex, TargetGUID);
 }
 
 bool UDlgContext::IsOptionConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisfiedEdges) const
@@ -447,7 +463,7 @@ bool UDlgContext::IsOptionConnectedToEndNode(int32 Index, bool bIndexSkipsUnsati
 bool UDlgContext::EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
 	check(Dialogue);
-	UDlgNode* Node = GetMutableNode(NodeIndex);
+	UDlgNode* Node = GetMutableNodeFromIndex(NodeIndex);
 	if (!IsValid(Node))
 	{
 		LogErrorWithContext(FString::Printf(TEXT("EnterNode - FAILED because of INVALID NodeIndex = %d"), NodeIndex));
@@ -455,45 +471,65 @@ bool UDlgContext::EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredW
 	}
 
 	ActiveNodeIndex = NodeIndex;
-	SetNodeVisited(NodeIndex);
+	SetNodeVisited(NodeIndex, Node->GetGUID());
 
 	return Node->HandleNodeEnter(*this, NodesEnteredWithThisStep);
 }
 
-void UDlgContext::SetNodeVisited(int32 NodeIndex)
+void UDlgContext::SetNodeVisited(int32 NodeIndex, const FGuid& NodeGUID)
 {
-	FDlgMemory::Get().SetNodeVisited(Dialogue->GetGUID(), NodeIndex);
-	VisitedNodeIndices.Add(NodeIndex);
+	FDlgMemory::Get().SetNodeVisited(Dialogue->GetGUID(), NodeIndex, NodeGUID);
+	History.Add(NodeIndex, NodeGUID);
 }
 
-UDlgNode* UDlgContext::GetMutableNode(int32 NodeIndex) const
+UDlgNode* UDlgContext::GetMutableNodeFromIndex(int32 NodeIndex) const
 {
 	check(Dialogue);
-	const TArray<UDlgNode*>& Nodes = Dialogue->GetNodes();
-	if (!Nodes.IsValidIndex(NodeIndex))
+	if (!Dialogue->IsValidNodeIndex(NodeIndex))
 	{
 		return nullptr;
 	}
 
-	return Nodes[NodeIndex];
+	return Dialogue->GetMutableNodeFromIndex(NodeIndex);
 }
 
-const UDlgNode* UDlgContext::GetNode(int32 NodeIndex) const
+const UDlgNode* UDlgContext::GetNodeFromIndex(int32 NodeIndex) const
 {
 	check(Dialogue);
-	const TArray<UDlgNode*>& Nodes = Dialogue->GetNodes();
-	if (!Nodes.IsValidIndex(NodeIndex))
+	if (!Dialogue->IsValidNodeIndex(NodeIndex))
 	{
 		return nullptr;
 	}
 
-	return Nodes[NodeIndex];
+	return Dialogue->GetMutableNodeFromIndex(NodeIndex);
+}
+
+UDlgNode* UDlgContext::GetMutableNodeFromGUID(const FGuid& NodeGUID) const
+{
+	check(Dialogue);
+	if (!Dialogue->IsValidNodeGUID(NodeGUID))
+	{
+		return nullptr;
+	}
+
+	return Dialogue->GetMutableNodeFromGUID(NodeGUID);
+}
+
+const UDlgNode* UDlgContext::GetNodeFromGUID(const FGuid& NodeGUID) const
+{
+	check(Dialogue);
+	if (!Dialogue->IsValidNodeGUID(NodeGUID))
+	{
+		return nullptr;
+	}
+
+	return Dialogue->GetMutableNodeFromGUID(NodeGUID);
 }
 
 bool UDlgContext::IsNodeEnterable(int32 NodeIndex, TSet<const UDlgNode*> AlreadyVisitedNodes) const
 {
 	check(Dialogue);
-	if (const UDlgNode* Node = GetNode(NodeIndex))
+	if (const UDlgNode* Node = GetNodeFromIndex(NodeIndex))
 	{
 		return Node->CheckNodeEnterConditions(*this, AlreadyVisitedNodes);
 	}
@@ -565,50 +601,57 @@ bool UDlgContext::StartFromContext(const FString& ContextString, UDlgDialogue* I
 	}
 
 	LogErrorWithContext(FString::Printf(
-        TEXT("%s - FAILED because all possible start node condition failed. Edge conditions and children enter conditions from the start node are not satisfied"),
-        *ContextMessage
-    ));
+		TEXT("%s - FAILED because all possible start node condition failed. Edge conditions and children enter conditions from the start node are not satisfied"),
+		*ContextMessage
+	));
 	return false;
 }
 
-bool UDlgContext::StartFromContextFromIndex(
+bool UDlgContext::StartWithContextFromNode(
 	const FString& ContextString,
 	UDlgDialogue* InDialogue,
 	const TMap<FName, UObject*>& InParticipants,
-	int32 StartIndex,
-	const TSet<int32>& VisitedNodes,
+	int32 StartNodeIndex,
+	const FGuid& StartNodeGUID,
+	const FDlgHistory& StartHistory,
 	bool bFireEnterEvents
 )
 {
 	const FString ContextMessage = ContextString.IsEmpty()
-        ? TEXT("StartFromIndex")
-        : FString::Printf(TEXT("%s - StartFromIndex"), *ContextString);
+		? TEXT("StartFromNode")
+		: FString::Printf(TEXT("%s - StartFromNode"), *ContextString);
 
 	Dialogue = InDialogue;
 	SetParticipants(InParticipants);
-	VisitedNodeIndices = VisitedNodes;
+	History = StartHistory;
 	if (!ValidateParticipantsMapForDialogue(ContextMessage, Dialogue, Participants))
 	{
 		return false;
 	}
 
-	UDlgNode* Node = GetMutableNode(StartIndex);
+	// Get the StartNodeIndex from the GUID
+	if (StartNodeGUID.IsValid())
+	{
+		StartNodeIndex = GetNodeIndexForGUID(StartNodeGUID);
+	}
+
+	UDlgNode* Node = GetMutableNodeFromIndex(StartNodeIndex);
 	if (!IsValid(Node))
 	{
 		LogErrorWithContext(FString::Printf(
-			TEXT("%s - FAILED because StartIndex = %d is an INVALID index"),
-			*ContextMessage, StartIndex
+			TEXT("%s - FAILED because StartNodeIndex = %d  is INVALID. For StartNodeGUID = %s"),
+			*ContextMessage, StartNodeIndex, *StartNodeGUID.ToString()
 		));
 		return false;
 	}
 
 	if (bFireEnterEvents)
 	{
-		return EnterNode(StartIndex, {});
+		return EnterNode(StartNodeIndex, {});
 	}
 
-	ActiveNodeIndex = StartIndex;
-	SetNodeVisited(StartIndex);
+	ActiveNodeIndex = StartNodeIndex;
+	SetNodeVisited(StartNodeIndex, Node->GetGUID());
 
 	return Node->ReevaluateChildren(*this, {});
 }
@@ -623,11 +666,11 @@ FString UDlgContext::GetContextString() const
 	}
 
 	return FString::Printf(
-        TEXT("Dialogue = `%s`, ActiveNodeIndex = %d, Participants Names = `%s`"),
-        Dialogue ? *Dialogue->GetPathName() : TEXT("INVALID"),
-        ActiveNodeIndex,
-        *FString::Join(ParticipantsNames, TEXT(", "))
-    );
+		TEXT("Dialogue = `%s`, ActiveNodeIndex = %d, Participants Names = `%s`"),
+		Dialogue ? *Dialogue->GetPathName() : TEXT("INVALID"),
+		ActiveNodeIndex,
+		*FString::Join(ParticipantsNames, TEXT(", "))
+	);
 }
 
 void UDlgContext::LogErrorWithContext(const FString& ErrorMessage) const
@@ -697,30 +740,30 @@ bool UDlgContext::ValidateParticipantForDialogue(
 
 		case EDlgValidateStatus::DialogueIsNull:
 			FDlgLogger::Get().Errorf(
-			    TEXT("%s - Dialogue is INVALID (not set or null).\nContext:\n\tParticipant = `%s`"),
-			    *ContextString, Participant ? *Participant->GetPathName() : TEXT("INVALID")
+				TEXT("%s - Dialogue is INVALID (not set or null).\nContext:\n\tParticipant = `%s`"),
+				*ContextString, Participant ? *Participant->GetPathName() : TEXT("INVALID")
 			);
 			return false;
 
 		case EDlgValidateStatus::ParticipantIsNull:
 			FDlgLogger::Get().Errorf(
-	            TEXT("%s - Participant is INVALID (not set or null).\nContext:\n\tDialogue = `%s`"),
-	            *ContextString, Dialogue ? *Dialogue->GetPathName() : TEXT("INVALID")
-	        );
+				TEXT("%s - Participant is INVALID (not set or null).\nContext:\n\tDialogue = `%s`"),
+				*ContextString, Dialogue ? *Dialogue->GetPathName() : TEXT("INVALID")
+			);
 			return false;
 
 		case EDlgValidateStatus::ParticipantDoesNotImplementInterface:
 			FDlgLogger::Get().Errorf(
-	            TEXT("%s - Participant Path = `%s` does not implement the IDlgDialogueParticipant/UDlgDialogueParticipant interface.\nContext:\n\tDialogue = `%s`"),
-	            *ContextString, *Participant->GetPathName(), *Dialogue->GetPathName()
-	        );
+				TEXT("%s - Participant Path = `%s` does not implement the IDlgDialogueParticipant/UDlgDialogueParticipant interface.\nContext:\n\tDialogue = `%s`"),
+				*ContextString, *Participant->GetPathName(), *Dialogue->GetPathName()
+			);
 			return false;
 
 		case EDlgValidateStatus::ParticipantIsABlueprintClassAndDoesNotImplementInterface:
-	        FDlgLogger::Get().Errorf(
-	            TEXT("%s - Participant Path = `%s` is a Blueprint Class (from the content browser) and NOT a Blueprint Instance (from the level world).\nContext:\n\tDialogue = `%s`"),
-	            *ContextString, *Participant->GetPathName(), *Dialogue->GetPathName()
-	        );
+			FDlgLogger::Get().Errorf(
+				TEXT("%s - Participant Path = `%s` is a Blueprint Class (from the content browser) and NOT a Blueprint Instance (from the level world).\nContext:\n\tDialogue = `%s`"),
+				*ContextString, *Participant->GetPathName(), *Dialogue->GetPathName()
+			);
 			return false;
 
 		// case EDlgValidateStatus::DialogueDoesNotContainParticipant:
@@ -744,8 +787,8 @@ bool UDlgContext::ValidateParticipantsMapForDialogue(
 )
 {
 	const FString ContextMessage = ContextString.IsEmpty()
-        ? FString::Printf(TEXT("ValidateParticipantsMapForDialogue"))
-        : FString::Printf(TEXT("%s - ValidateParticipantsMapForDialogue"), *ContextString);
+		? FString::Printf(TEXT("ValidateParticipantsMapForDialogue"))
+		: FString::Printf(TEXT("%s - ValidateParticipantsMapForDialogue"), *ContextString);
 
 	if (!IsValid(Dialogue))
 	{
@@ -792,8 +835,8 @@ bool UDlgContext::ValidateParticipantsMapForDialogue(
 				if (bLog)
 				{
 					FDlgLogger::Get().Errorf(
-					    TEXT("%s - The Map has a KEY Participant Name = `%s` DIFFERENT to the VALUE of the Participant Path = `%s` with the Name = `%s` (KEY Participant Name != VALUE Participant Name)"),
-					    *ContextMessage, *ParticipantName.ToString(), *Participant->GetPathName(), *ObjectParticipantName.ToString()
+						TEXT("%s - The Map has a KEY Participant Name = `%s` DIFFERENT to the VALUE of the Participant Path = `%s` with the Name = `%s` (KEY Participant Name != VALUE Participant Name)"),
+						*ContextMessage, *ParticipantName.ToString(), *Participant->GetPathName(), *ObjectParticipantName.ToString()
 					);
 				}
 				return false;
@@ -811,9 +854,9 @@ bool UDlgContext::ValidateParticipantsMapForDialogue(
 			if (bLog)
 			{
 				FDlgLogger::Get().Warningf(
-                    TEXT("%s - Participant Path = `%s` with Participant Name = `%s` is NOT referenced (DOES) not exist inside the Dialogue. It is going to be IGNORED.\nContext:\n\tDialogue = `%s`"),
-                    *ContextMessage, *Participant->GetPathName(), *ParticipantName.ToString(), *Dialogue->GetPathName()
-                );
+					TEXT("%s - Participant Path = `%s` with Participant Name = `%s` is NOT referenced (DOES) not exist inside the Dialogue. It is going to be IGNORED.\nContext:\n\tDialogue = `%s`"),
+					*ContextMessage, *Participant->GetPathName(), *ParticipantName.ToString(), *Dialogue->GetPathName()
+				);
 			}
 		}
 	}
@@ -831,9 +874,9 @@ bool UDlgContext::ValidateParticipantsMapForDialogue(
 
 			const FString NameList = FString::Join(ParticipantsMissing, TEXT(", "));
 			FDlgLogger::Get().Errorf(
-                TEXT("%s - FAILED for Dialogue = `%s` because the following Participant Names are MISSING: `%s"),
-                *ContextMessage,  *Dialogue->GetPathName(), *NameList
-            );
+				TEXT("%s - FAILED for Dialogue = `%s` because the following Participant Names are MISSING: `%s"),
+				*ContextMessage,  *Dialogue->GetPathName(), *NameList
+			);
 		}
 		return false;
 	}
@@ -842,16 +885,16 @@ bool UDlgContext::ValidateParticipantsMapForDialogue(
 }
 
 bool UDlgContext::ConvertArrayOfParticipantsToMap(
-    const FString& ContextString,
-    const UDlgDialogue* Dialogue,
-    const TArray<UObject*>& ParticipantsArray,
-    TMap<FName, UObject*>& OutParticipantsMap,
-    bool bLog
+	const FString& ContextString,
+	const UDlgDialogue* Dialogue,
+	const TArray<UObject*>& ParticipantsArray,
+	TMap<FName, UObject*>& OutParticipantsMap,
+	bool bLog
 )
 {
 	const FString ContextMessage = ContextString.IsEmpty()
-        ? FString::Printf(TEXT("ConvertArrayOfParticipantsToMap"))
-        : FString::Printf(TEXT("%s - ConvertArrayOfParticipantsToMap"), *ContextString);
+		? FString::Printf(TEXT("ConvertArrayOfParticipantsToMap"))
+		: FString::Printf(TEXT("%s - ConvertArrayOfParticipantsToMap"), *ContextString);
 
 	// We don't allow to convert empty arrays
 	OutParticipantsMap.Empty();
@@ -860,8 +903,8 @@ bool UDlgContext::ConvertArrayOfParticipantsToMap(
 		if (bLog)
 		{
 			FDlgLogger::Get().Errorf(
-			    TEXT("%s - Participants Array is EMPTY, can't convert anything. Dialogue = `%s`"),
-			    *ContextMessage, Dialogue ? *Dialogue->GetPathName() : TEXT("INVALID")
+				TEXT("%s - Participants Array is EMPTY, can't convert anything. Dialogue = `%s`"),
+				*ContextMessage, Dialogue ? *Dialogue->GetPathName() : TEXT("INVALID")
 			);
 		}
 		return false;
@@ -886,8 +929,8 @@ bool UDlgContext::ConvertArrayOfParticipantsToMap(
 			if (bLog)
 			{
 				FDlgLogger::Get().Warningf(
-				    TEXT("%s - Participant Path = `%s`, Participant Name = `%s` already exists in the Array. Ignoring it!"),
-				    *ContextMessageWithIndex, *Participant->GetPathName(), *ParticipantName.ToString()
+					TEXT("%s - Participant Path = `%s`, Participant Name = `%s` already exists in the Array. Ignoring it!"),
+					*ContextMessageWithIndex, *Participant->GetPathName(), *ParticipantName.ToString()
 				);
 			}
 			continue;

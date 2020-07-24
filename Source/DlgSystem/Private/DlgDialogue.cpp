@@ -729,6 +729,27 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 	}
 }
 
+FGuid UDlgDialogue::GetNodeGUIDForIndex(int32 NodeIndex) const
+{
+	if (IsValidNodeIndex(NodeIndex))
+	{
+		return Nodes[NodeIndex]->GetGUID();
+	}
+
+	// Invalid GUID
+	return FGuid{};
+}
+
+int32 UDlgDialogue::GetNodeIndexForGUID(const FGuid& NodeGUID) const
+{
+	if (const int32* NodeIndexPtr = NodesGUIDToIndexMap.Find(NodeGUID))
+	{
+		return *NodeIndexPtr;
+	}
+
+	return INDEX_NONE;
+}
+
 void UDlgDialogue::SetStartNode(UDlgNode* InStartNode)
 {
 	if (!InStartNode)

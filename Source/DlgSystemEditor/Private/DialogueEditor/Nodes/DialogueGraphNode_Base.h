@@ -168,10 +168,10 @@ public:
 		return Pins[INDEX_PIN_Output];
 	}
 
-	/** Helper method to get directly the Dialogue Graph */
+	// Helper method to get directly the Dialogue Graph (which is our parent)
 	UDialogueGraph* GetDialogueGraph() const { return CastChecked<UDialogueGraph>(GetGraph()); }
 
-	/** Helper method to get directly the Dialogue */
+	// Helper method to get directly the Dialogue
 	UDlgDialogue* GetDialogue() const { return GetDialogueGraph()->GetDialogue(); }
 
 	// TODO fix UEdGraphSchema::BreakSinglePinLink, make it to const
