@@ -437,7 +437,7 @@ void UDlgManager::GetAllDialoguesSpeakerStates(TArray<FName>& OutArray)
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
 	{
-		Dialogue->GetAllSpeakerState(UniqueNames);
+		Dialogue->GetAllSpeakerStates(UniqueNames);
 	}
 
 	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
@@ -600,6 +600,6 @@ UWorld* UDlgManager::GetDialogueWorld()
 		}
 	}
 
-	FDlgLogger::Get().Error(TEXT("GetDialogueWorld - Could NOT find any valid world. Call SetPersistentWorldContextObject in the Being Play of your GameMode"));
+	FDlgLogger::Get().Error(TEXT("GetDialogueWorld - Could NOT find any valid world. Call SetDialoguePersistentWorldContextObject in the Being Play of your GameMode"));
 	return nullptr;
 }

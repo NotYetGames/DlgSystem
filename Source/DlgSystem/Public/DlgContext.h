@@ -70,7 +70,7 @@ enum class EDlgValidateStatus : uint8
  *  Should be controlled from Player Character/Player controller
  *  For starting a dialogue check UDlgManager - the proper function creates an UDlgContext for you
  *
- *  Call ChooseChild() if an option is selected
+ *  Call ChooseOption() if an option is selected
  *  If the return value is false the dialogue is over and the context should be dropped
  *  This abstract class contains the outer functionality only
  */
@@ -100,29 +100,42 @@ public:
 	void OnRep_SerializedParticipants();
 	void SerializeParticipants();
 
+	UE_DEPRECATED(4.22, "ChooseChild has been deprecated in Favour of ChooseOption")
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control", meta = (DeprecatedFunction, DeprecationMessage = "ChooseChild has been deprecated in favour of ChooseOption"))
+	bool ChooseChild(int32 OptionIndex) { return ChooseOption(OptionIndex); }
+
 	/**
-	 * Chooses the option with index OptionIndex of the active node index and it enters that node.
-	 * Typically called based on user input.
-	 * NOTICE: If the return value is false the dialogue is over and the context should be dropped
-	 *
-	 * @return true if the dialogue did not end, false otherwise
-	 */
+	* Chooses the option with index OptionIndex of the active node index and it enters that node.
+	* Typically called based on user input.
+	* NOTICE: If the return value is false the dialogue is over and the context should be dropped
+	*
+	* @return true if the dialogue did not end, false otherwise
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
-	bool ChooseChild(int32 OptionIndex);
+	bool ChooseOption(int32 OptionIndex);
+
+
+	UE_DEPRECATED(4.22, "ChooseChildBasedOnAllOptionIndex has been deprecated in Favour of ChooseOptionBasedOnAllOptionIndex")
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control|All", meta = (DeprecatedFunction, DeprecationMessage = "ChooseChildBasedOnAllOptionIndex has been deprecated in Favour of ChooseOptionBasedOnAllOptionIndex"))
+	bool ChooseChildBasedOnAllOptionIndex(int32 Index) { return ChooseOptionBasedOnAllOptionIndex(Index); }
 
 	/**
 	 *  Exactly as ChooseChild but expects an index from the AllOptions array
 	 *  If the index is invalid or the selected edge is not satisfied the call fails
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control|All")
-	bool ChooseChildBasedOnAllOptionIndex(int32 Index);
+	bool ChooseOptionBasedOnAllOptionIndex(int32 Index);
+
+	UE_DEPRECATED(4.22, "ReevaluateChildren has been deprecated in Favour of ReevaluateOptions")
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control", meta = (DeprecatedFunction, DeprecationMessage = "ReevaluateChildren has been deprecated in Favour of ReevaluateOptions"))
+	bool ReevaluateChildren() { return ReevaluateOptions(); }
 
 	/**
-	 * Normally the children of the active node are checked only once, when the conversation enters the node.
+	 * Normally the options of the active node are checked only once, when the conversation enters the node.
 	 * If an option can appear/disappear real time in the middle of the conversation this function should be called manually each frame
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
-	void ReevaluateChildren();
+	bool ReevaluateOptions();
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Control")
 	bool HasDialogueEnded() const { return bDialogueEnded; }
@@ -131,9 +144,9 @@ public:
 	// Use these functions if you don't care about unsatisfied player options:
 	//
 
-	// Gets the number of children with satisfied conditions (number of options)
+	// Gets the number of options with satisfied conditions (number of options)
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|Satisfied")
-	int32 GetOptionNum() const { return AvailableChildren.Num(); }
+	int32 GetOptionsNum() const { return AvailableChildren.Num(); }
 
 	// Gets the Text of the (satisfied) option with index OptionIndex
 	// NOTE: This is just a helper method, you could have called GetOption
@@ -161,12 +174,12 @@ public:
 
 	//
 	//  Use these functions bellow if you don't care about unsatisfied player options:
-	//  DO NOT missuse the indices above and bellow! The functions above expect < GetOptionNum(), bellow < GetAllOptionNum()
+	//  DO NOT missuse the indices above and bellow! The functions above expect < GetOptionsNum(), bellow < GetAllOptionsNum()
 	//
 
-	// Gets the number of children (both satisfied and unsatisfied ones are counted)
+	// Gets the number of options (both satisfied and unsatisfied ones are counted)
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|All")
-	int32 GetAllOptionNum() const { return AllChildren.Num(); }
+	int32 GetAllOptionsNum() const { return AllChildren.Num(); }
 
 	// Gets the Text of an option from the all list, which includes the unsatisfied ones as well
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|All")
@@ -192,11 +205,11 @@ public:
 	/**
 	*  Checks if the node connected directly to one of the active player choices was already visited or not
 	*  Does not handle complicated logic - if the said node is a logical one it will still check that node, and not one
-	*  of its children
+	*  of its options
 	*
 	* @param Index  Index of the edge/player option to test
 	* @param bLocalHistory If true, only the history of this dialogue context is checked. If false, it is a global check
-	* @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionNum()[ interval (if true), or in the [0, GetAllOptionNum()[ (if false)
+	* @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionsNum()[ interval (if true), or in the [0, GetAllOptionsNum()[ (if false)
 	* @return true if the node was already IsOptionConnectedToVisitedNode
 	*/
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
@@ -205,10 +218,10 @@ public:
 	/**
 	*  Checks if the node is connected directly to an end node or not
 	*  Does not handle complicated logic - if the said node is a logical one it will still check that node, and not one
-	*  of its children
+	*  of its option
 	*
 	* @param Index  Index of the edge/player option to test
-	* @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionNum()[ interval (if true), or in the [0, GetAllOptionNum()[ (if false)
+	* @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionsNum()[ interval (if true), or in the [0, GetAllOptionsNum()[ (if false)
 	* @return true if the node is an end node
 	*/
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
@@ -553,7 +566,7 @@ protected:
 	// The index of the active node in the dialogues Nodes array
 	int32 ActiveNodeIndex = INDEX_NONE;
 
-	// Children of the active node with satisfied conditions - the options the player can choose from
+	// Options of the active node with satisfied conditions - the options the player can choose from
 	TArray<FDlgEdge> AvailableChildren;
 
 	/**

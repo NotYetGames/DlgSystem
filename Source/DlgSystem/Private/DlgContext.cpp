@@ -45,7 +45,7 @@ void UDlgContext::OnRep_SerializedParticipants()
 	}
 }
 
-bool UDlgContext::ChooseChild(int32 OptionIndex)
+bool UDlgContext::ChooseOption(int32 OptionIndex)
 {
 	check(Dialogue);
 	if (UDlgNode* Node = GetMutableActiveNode())
@@ -60,18 +60,18 @@ bool UDlgContext::ChooseChild(int32 OptionIndex)
 	return false;
 }
 
-bool UDlgContext::ChooseChildBasedOnAllOptionIndex(int32 Index)
+bool UDlgContext::ChooseOptionBasedOnAllOptionIndex(int32 Index)
 {
 	if (!AllChildren.IsValidIndex(Index))
 	{
-		LogErrorWithContext(FString::Printf(TEXT("ChooseChildBasedOnAllOptionIndex - INVALID given Index = %d"), Index));
+		LogErrorWithContext(FString::Printf(TEXT("ChooseOptionBasedOnAllOptionIndex - INVALID given Index = %d"), Index));
 		bDialogueEnded = true;
 		return false;
 	}
 
 	if (!AllChildren[Index].IsSatisfied())
 	{
-		LogErrorWithContext(FString::Printf(TEXT("ChooseChildBasedOnAllOptionIndex - given Index = %d is an unsatisfied edge"), Index));
+		LogErrorWithContext(FString::Printf(TEXT("ChooseOptionBasedOnAllOptionIndex - given Index = %d is an unsatisfied edge"), Index));
 		bDialogueEnded = true;
 		return false;
 	}
@@ -80,7 +80,7 @@ bool UDlgContext::ChooseChildBasedOnAllOptionIndex(int32 Index)
 	{
 		if (AvailableChildren[i] == AllChildren[Index].GetEdge())
 		{
-			return ChooseChild(i);
+			return ChooseOption(i);
 		}
 	}
 
@@ -89,17 +89,17 @@ bool UDlgContext::ChooseChildBasedOnAllOptionIndex(int32 Index)
 	return false;
 }
 
-void UDlgContext::ReevaluateChildren()
+bool UDlgContext::ReevaluateOptions()
 {
 	check(Dialogue);
 	UDlgNode* Node = GetMutableActiveNode();
 	if (!IsValid(Node))
 	{
-		LogErrorWithContext(TEXT("ReevaluateChildren - Failed to update dialogue options"));
-		return;
+		LogErrorWithContext(TEXT("ReevaluateOptions - Failed to update dialogue options"));
+		return false;
 	}
 
-	Node->ReevaluateChildren(*this, {});
+	return Node->ReevaluateChildren(*this, {});
 }
 
 const FText& UDlgContext::GetOptionText(int32 OptionIndex) const

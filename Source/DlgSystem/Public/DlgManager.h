@@ -235,7 +235,7 @@ public:
 	static void GetAllDialoguesEventNames(FName ParticipantName, TArray<FName>& OutArray);
 
 	// Registers all the DlgSystem Module console commands.
-	// To set the custom reference WorldContextObjectPtr, set it with SetPersistentWorldContextObject
+	// To set the custom reference WorldContextObjectPtr, set it with SetDialoguePersistentWorldContextObject
 	// @return true on success, false otherwise
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Console")
 	static bool RegisterDialogueConsoleCommands();
@@ -249,8 +249,8 @@ public:
 	// This tries to get the source world for the dialogues
 	// In the following order (the first one that is valid, returns that):
 	// 1. The user set one UserWorldContextObjectPtr (if it is set):
-	//    - Set - SetPersistentWorldContextObject
-	//    - Clear - ClearPersistentWorldContextObject
+	//    - Set - SetDialoguePersistentWorldContextObject
+	//    - Clear - ClearDialoguePersistentWorldContextObject
 	// 2. The first PIE world
 	// 3. The first Game World
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Persistence")
@@ -259,13 +259,13 @@ public:
 	// If the user wants to set the world context object manually
 	// Otherwise just use GetDialogueWorld()
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Persistence")
-	static void SetPersistentWorldContextObject(const UObject* WorldContextObject)
+	static void SetDialoguePersistentWorldContextObject(const UObject* WorldContextObject)
 	{
 		UserWorldContextObjectPtr = WorldContextObject;
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Persistence")
-	static void ClearPersistentWorldContextObject()
+	static void ClearDialoguePersistentWorldContextObject()
 	{
 		UserWorldContextObjectPtr.Reset();
 	}

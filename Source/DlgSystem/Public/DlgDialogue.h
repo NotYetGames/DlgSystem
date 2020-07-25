@@ -237,7 +237,7 @@ public:
 
 	// Gets the number of participants in the Dialogue Data Map.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	int32 GetParticipantNum() const { return ParticipantsData.Num(); }
+	int32 GetParticipantsNum() const { return ParticipantsData.Num(); }
 
 	// Gets all the keys (participant names) of the DlgData Map
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
@@ -381,13 +381,10 @@ public:
 
 	// Gets all the SpeakerStates used inside this dialogue
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	void GetAllSpeakerState(TSet<FName>& OutSet) const
+	void GetAllSpeakerStates(TSet<FName>& OutSet) const
 	{
 		OutSet.Append(AllSpeakerStates);
 	}
-
-	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	const TSet<FName>& GetAllSpeakerStates() const { return AllSpeakerStates; }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	int32 GetDialogueVersion() const { return Version; }

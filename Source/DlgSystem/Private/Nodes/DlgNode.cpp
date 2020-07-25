@@ -156,10 +156,10 @@ void UDlgNode::FireNodeEnterEvents(UDlgContext& Context)
 
 bool UDlgNode::ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> AlreadyEvaluated)
 {
-	TArray<FDlgEdge>& AvailableChildren = Context.GetMutableOptionsArray();
-	TArray<FDlgEdgeData>& AllChildren = Context.GetAllMutableOptionsArray();
-	AvailableChildren.Empty();
-	AllChildren.Empty();
+	TArray<FDlgEdge>& AvailableOptions = Context.GetMutableOptionsArray();
+	TArray<FDlgEdgeData>& AllOptions = Context.GetAllMutableOptionsArray();
+	AvailableOptions.Empty();
+	AllOptions.Empty();
 
 	for (const FDlgEdge& Edge : Children)
 	{
@@ -167,19 +167,19 @@ bool UDlgNode::ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> Al
 
 		if (bSatisfied || Edge.bIncludeInAllOptionListIfUnsatisfied)
 		{
-			AllChildren.Add(FDlgEdgeData{ bSatisfied, Edge });
+			AllOptions.Add(FDlgEdgeData{ bSatisfied, Edge });
 		}
 		if (bSatisfied)
 		{
-			AvailableChildren.Add(Edge);
+			AvailableOptions.Add(Edge);
 		}
 	}
 
 	// no child, but no end node?
-	if (AvailableChildren.Num() == 0)
+	if (AvailableOptions.Num() == 0)
 	{
 		FDlgLogger::Get().Errorf(
-			TEXT("ReevaluateChildren - no valid child for a NODE.\nContext:\n\t%s"),
+			TEXT("ReevaluateChildren (ReevaluateOptions) - no valid child option for a NODE.\nContext:\n\t%s"),
 			*Context.GetContextString()
 		);
 		return false;
@@ -224,16 +224,16 @@ bool UDlgNode::HasAnySatisfiedChild(const UDlgContext& Context, TSet<const UDlgN
 
 bool UDlgNode::OptionSelected(int32 OptionIndex, UDlgContext& Context)
 {
-	const TArray<FDlgEdge>& AvailableChildren = Context.GetOptionsArray();
-	if (AvailableChildren.IsValidIndex(OptionIndex))
+	const TArray<FDlgEdge>& AvailableOptions = Context.GetOptionsArray();
+	if (AvailableOptions.IsValidIndex(OptionIndex))
 	{
-		check(AvailableChildren[OptionIndex].IsValid());
-		return Context.EnterNode(AvailableChildren[OptionIndex].TargetIndex, {});
+		check(AvailableOptions[OptionIndex].IsValid());
+		return Context.EnterNode(AvailableOptions[OptionIndex].TargetIndex, {});
 	}
 
 	FDlgLogger::Get().Errorf(
 		TEXT("OptionSelected - Failed to choose OptionIndex = %d - it only has %d valid options.\nContext:\n\t%s"),
-		OptionIndex, AvailableChildren.Num(), *Context.GetContextString()
+		OptionIndex, AvailableOptions.Num(), *Context.GetContextString()
 	);
 	return false;
 }
