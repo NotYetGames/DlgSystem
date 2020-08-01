@@ -49,11 +49,12 @@ struct DLGSYSTEM_API FDlgParticipantClass
 	GENERATED_USTRUCT_BODY()
 
 public:
-	// FName based conditions (aka conditions of type EventCall).
+	// The Name of the Participant Used inside this Dialogue
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Dialogue|Participant")
 	FName ParticipantName = NAME_None;
 
-	// FName based events (aka events of type EDlgEventType)
+	// The Participant Class corresponding for the ParticipantName
+	// This is used to autocomplete and retrieve the Variables from that Class automatically when Using Class based Conditions/Events
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Participant", meta = (MustImplement = "DlgDialogueParticipant"))
 	UClass* ParticipantClass = nullptr;
 };

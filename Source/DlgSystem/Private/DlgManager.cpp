@@ -95,14 +95,14 @@ UDlgContext* UDlgManager::StartDialogueWithDefaultParticipants(UObject* WorldCon
 		return nullptr;
 	}
 
-	return StartDialogueFromContext(TEXT("StartDialogueWithDefaultParticipants"), Dialogue, Participants);
+	return StartDialogueWithContext(TEXT("StartDialogueWithDefaultParticipants"), Dialogue, Participants);
 }
 
-UDlgContext* UDlgManager::StartDialogueFromContext(const FString& ContextString, UDlgDialogue* Dialogue, const TArray<UObject*>& Participants)
+UDlgContext* UDlgManager::StartDialogueWithContext(const FString& ContextString, UDlgDialogue* Dialogue, const TArray<UObject*>& Participants)
 {
 	const FString ContextMessage = ContextString.IsEmpty()
-        ? FString::Printf(TEXT("StartDialogue"))
-        : FString::Printf(TEXT("%s - StartDialogue"), *ContextString);
+		? FString::Printf(TEXT("StartDialogue"))
+		: FString::Printf(TEXT("%s - StartDialogue"), *ContextString);
 
 	TMap<FName, UObject*> ParticipantBinding;
 	if (!UDlgContext::ConvertArrayOfParticipantsToMap(ContextMessage, Dialogue, Participants, ParticipantBinding))
@@ -111,7 +111,7 @@ UDlgContext* UDlgManager::StartDialogueFromContext(const FString& ContextString,
 	}
 
 	auto* Context = NewObject<UDlgContext>(Participants[0], UDlgContext::StaticClass());
-	if (Context->StartFromContext(ContextMessage, Dialogue, ParticipantBinding))
+	if (Context->StartWithContext(ContextMessage, Dialogue, ParticipantBinding))
 	{
 		return Context;
 	}
@@ -157,11 +157,11 @@ UDlgContext* UDlgManager::ResumeDialogueFromNodeIndex(
 }
 
 UDlgContext* UDlgManager::ResumeDialogueFromNodeGUID(
-    UDlgDialogue* Dialogue,
-    UPARAM(ref)const TArray<UObject*>& Participants,
-    const FGuid& StartNodeGUID,
-    const TSet<FGuid>& AlreadyVisitedNodes,
-    bool bFireEnterEvents
+	UDlgDialogue* Dialogue,
+	UPARAM(ref)const TArray<UObject*>& Participants,
+	const FGuid& StartNodeGUID,
+	const TSet<FGuid>& AlreadyVisitedNodes,
+	bool bFireEnterEvents
 )
 {
 	const FString ContextMessage = TEXT("ResumeDialogueFromNodeGUID");
@@ -186,7 +186,7 @@ UDlgContext* UDlgManager::StartMonologue(UDlgDialogue* Dialogue, UObject* Partic
 {
 	TArray<UObject*> Participants;
 	Participants.Add(Participant);
-	return StartDialogueFromContext(TEXT("StartMonologue"), Dialogue, Participants);
+	return StartDialogueWithContext(TEXT("StartMonologue"), Dialogue, Participants);
 }
 
 UDlgContext* UDlgManager::StartDialogue2(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1)
@@ -194,7 +194,7 @@ UDlgContext* UDlgManager::StartDialogue2(UDlgDialogue* Dialogue, UObject* Partic
 	TArray<UObject*> Participants;
 	Participants.Add(Participant0);
 	Participants.Add(Participant1);
-	return StartDialogueFromContext(TEXT("StartDialogue2"), Dialogue, Participants);
+	return StartDialogueWithContext(TEXT("StartDialogue2"), Dialogue, Participants);
 }
 
 UDlgContext* UDlgManager::StartDialogue3(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1, UObject* Participant2)
@@ -203,7 +203,7 @@ UDlgContext* UDlgManager::StartDialogue3(UDlgDialogue* Dialogue, UObject* Partic
 	Participants.Add(Participant0);
 	Participants.Add(Participant1);
 	Participants.Add(Participant2);
-	return StartDialogueFromContext(TEXT("StartDialogue3"), Dialogue, Participants);
+	return StartDialogueWithContext(TEXT("StartDialogue3"), Dialogue, Participants);
 }
 
 UDlgContext* UDlgManager::StartDialogue4(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1, UObject* Participant2, UObject* Participant3)
@@ -214,7 +214,7 @@ UDlgContext* UDlgManager::StartDialogue4(UDlgDialogue* Dialogue, UObject* Partic
 	Participants.Add(Participant2);
 	Participants.Add(Participant3);
 
-	return StartDialogueFromContext(TEXT("StartDialogue4"), Dialogue, Participants);
+	return StartDialogueWithContext(TEXT("StartDialogue4"), Dialogue, Participants);
 }
 
 int32 UDlgManager::LoadAllDialoguesIntoMemory()

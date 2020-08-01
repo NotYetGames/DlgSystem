@@ -574,7 +574,7 @@ bool UDlgContext::CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObje
 	return false;
 }
 
-bool UDlgContext::StartFromContext(const FString& ContextString, UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants)
+bool UDlgContext::StartWithContext(const FString& ContextString, UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants)
 {
 	const FString ContextMessage = ContextString.IsEmpty()
 		? TEXT("Start")

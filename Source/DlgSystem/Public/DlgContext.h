@@ -377,8 +377,8 @@ public:
 
 	// Initializes/Starts the context, the first (start) node is selected and the first valid child node is entered.
 	// Called by the UDlgManager which creates the context
-	bool Start(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants) { return StartFromContext(TEXT(""), InDialogue, InParticipants); }
-	bool StartFromContext(const FString& ContextString, UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
+	bool Start(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants) { return StartWithContext(TEXT(""), InDialogue, InParticipants); }
+	bool StartWithContext(const FString& ContextString, UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
 
 	//
 	// Initializes/Start the context using the given node as entry point

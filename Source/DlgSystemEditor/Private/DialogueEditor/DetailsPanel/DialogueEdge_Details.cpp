@@ -34,7 +34,7 @@ void FDialogueEdge_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InStruct
 		// Selector node but one of its parent is a virtual parent, allow text then
 		if (!bShowTextProperty && GraphNode->IsSelectorNode())
 		{
-			for (const UDialogueGraphNode* ParentNode :  GraphNode->GetParentNodes())
+			for (const UDialogueGraphNode* ParentNode : GraphNode->GetParentNodes())
 			{
 				if (ParentNode->IsVirtualParentNode())
 				{

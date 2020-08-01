@@ -30,14 +30,15 @@ public:
 	 *  - The Dialogue has a Participant which does not exist in the World
 	 *	- Multiple Objects are using the same Participant Name in the World
 	 *
+	 *	NOTE: If this fails because it can't find the unique participants you should use the StartDialogue* functions
+	 *
 	 * @returns The dialogue context object or nullptr if something went wrong
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch", meta = (WorldContext = "WorldContextObject"))
 	static UDlgContext* StartDialogueWithDefaultParticipants(UObject* WorldContextObject, UDlgDialogue* Dialogue);
 
-
 	// Supplies where we called this from
-	static UDlgContext* StartDialogueFromContext(const FString& ContextString, UDlgDialogue* Dialogue, const TArray<UObject*>& Participants);
+	static UDlgContext* StartDialogueWithContext(const FString& ContextString, UDlgDialogue* Dialogue, const TArray<UObject*>& Participants);
 
 	/**
 	 * Starts a Dialogue with the provided Dialogue and Participants array
@@ -51,7 +52,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
 	static UDlgContext* StartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants)
 	{
-		return StartDialogueFromContext(TEXT("StartDialogue"), Dialogue, Participants);
+		return StartDialogueWithContext(TEXT("StartDialogue"), Dialogue, Participants);
 	}
 
 	/**
