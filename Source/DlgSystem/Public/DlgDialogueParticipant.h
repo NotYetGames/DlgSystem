@@ -28,14 +28,14 @@ class DLGSYSTEM_API IDlgDialogueParticipant
 	// Participant information
 	//
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant")
 	FName GetParticipantName() const;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant")
 	FText GetParticipantDisplayName(FName ActiveSpeaker) const;
 
 	/** May be used for formatted node texts, check https://docs.unrealengine.com/en-us/Gameplay/Localization/Formatting for more information */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant")
 	ETextGender GetParticipantGender() const;
 
 	/**
@@ -44,26 +44,26 @@ class DLGSYSTEM_API IDlgDialogueParticipant
 	*			If it is not displayed in editor it has to be turned on in the dialogue settings
 	* @return	Participant icon to display
 	*/
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant")
 	UTexture2D* GetParticipantIcon(FName ActiveSpeaker, FName ActiveSpeakerState) const;
 
 	//
 	// Conditions
 	//
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback|Condition")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Condition")
 	bool CheckCondition(const UDlgContext* Context, FName ConditionName) const;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback|Condition")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Condition")
 	float GetFloatValue(FName ValueName) const;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback|Condition")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Condition")
 	int32 GetIntValue(FName ValueName) const;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback|Condition")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Condition")
 	bool GetBoolValue(FName ValueName) const;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback|Condition")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Condition")
 	FName GetNameValue(FName ValueName) const;
 
 	//
@@ -71,28 +71,28 @@ class DLGSYSTEM_API IDlgDialogueParticipant
 	//
 
 	 /** @return value: irrelevant */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback|Event")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Event")
 	bool OnDialogueEvent(UDlgContext* Context, FName EventName);
 
 	/**
 	 * @param	bDelta Whether we expect the value to be set or modified
 	 * @return	Irrelevant, ignored
 	 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback|Event")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Event")
 	bool ModifyFloatValue(FName ValueName, bool bDelta, float Value);
 
 	/**
 	 * @param	bDelta Whether we expect the value to be set or modified
 	 * @return	Irrelevant, ignored
 	 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback|Event")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Event")
 	bool ModifyIntValue(FName ValueName, bool bDelta, int32 Value);
 
 	/** @return value: irrelevant */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback|Event")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Event")
 	bool ModifyBoolValue(FName ValueName, bool bNewValue);
 
 	/** @return value: irrelevant */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|ParticipantCallback|Event")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Event")
 	bool ModifyNameValue(FName ValueName, FName NameValue);
 };

@@ -55,6 +55,8 @@ Add the follow  new methods to the Dialogue Context:
   - `ReevaluateChildren` in favour of `ReevaluateOptions`
 
 - **Add** example blueprint and struct data for dialogue variable nodes inside the Plugin
+- **Allow** convert speech nodes to speech sequence from right click on a speech node
+- **Change** Participant Interface methods Category to be `Dialogue|Participant`
 
 # v10
 

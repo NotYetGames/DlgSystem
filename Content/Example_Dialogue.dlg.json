@@ -1,7 +1,7 @@
 {
 	"__type__": "DlgDialogue",
 	"Version": 10,
-	"Name": "Dialogue_Example",
+	"Name": "Example_Dialogue",
 	"GUID": "D3B6003044F0EC3A430C03B963F09C88",
 	"ParticipantsClasses": [
 		{
@@ -361,6 +361,34 @@
 			"EnterConditions": [],
 			"EnterEvents": [],
 			"NodeGUID": "3DC0739649254ED123299CBA274100CB",
+			"Children": [
+				{
+					"TargetIndex": 10,
+					"Conditions": [],
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true,
+					"Text": "Next",
+					"TextArguments": []
+				}
+			]
+		},
+		{
+			"__index__": 10,
+			"__type__": "DlgNode_Speech",
+			"bIsVirtualParent": false,
+			"bVirtualParentFireDirectChildEnterEvents": true,
+			"Text": "",
+			"TextArguments": [],
+			"SpeakerState": "None",
+			"NodeData": null,
+			"VoiceSoundWave": "",
+			"VoiceDialogueWave": "",
+			"GenericData": "",
+			"OwnerName": "ExampleParticipant",
+			"bCheckChildrenOnEvaluation": false,
+			"EnterConditions": [],
+			"EnterEvents": [],
+			"NodeGUID": "A4A46B494ADFB5474CD6E5ACD27D3984",
 			"Children": []
 		}
 	],
@@ -375,6 +403,7 @@
 		"13C165004DA48BC55F64C99F21F9FAEB": 6,
 		"FA44B4C2420839AC487675BB2ACCF3AA": 7,
 		"A072EA1A40B79F4990FA0CA6769D27AA": 8,
-		"3DC0739649254ED123299CBA274100CB": 9
+		"3DC0739649254ED123299CBA274100CB": 9,
+		"A4A46B494ADFB5474CD6E5ACD27D3984": 10
 	}
 }

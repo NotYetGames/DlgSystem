@@ -131,6 +131,12 @@ public:
 		TArray<UDialogueGraphNode*>& OutSelectedGraphNodes
 	);
 
+	static bool CanConvertSpeechNodesToSpeechSequence(const TSet<UObject*>& SelectedNodes)
+	{
+		TArray<UDialogueGraphNode*> OutSelectedGraphNodes;
+		return CanConvertSpeechNodesToSpeechSequence(SelectedNodes, OutSelectedGraphNodes);
+	}
+
 	/**
 	 * Tells us if the selected nodes (should be only one) can be converted from a speech sequence to speech nodes
 	 *

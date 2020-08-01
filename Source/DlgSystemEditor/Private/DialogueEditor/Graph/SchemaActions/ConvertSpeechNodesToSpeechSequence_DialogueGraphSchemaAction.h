@@ -19,9 +19,16 @@ struct FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction : public FE
 	GENERATED_USTRUCT_BODY();
 
 	FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction() : FEdGraphSchemaAction() {}
-	FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction(const FText& InNodeCategory, const FText& InMenuDesc,
-			const FText& InToolTip, int32 InGrouping, TArray<UDialogueGraphNode*> InSelectedGraphNodes)
-		: FEdGraphSchemaAction(InNodeCategory, InMenuDesc, InToolTip, InGrouping), SelectedGraphNodes(InSelectedGraphNodes) {}
+	FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction(const TArray<UDialogueGraphNode*>& InSelectedGraphNodes)
+        : FEdGraphSchemaAction(), SelectedGraphNodes(InSelectedGraphNodes) {}
+
+	FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction(
+		const FText& InNodeCategory,
+		const FText& InMenuDesc,
+		const FText& InToolTip,
+		int32 InGrouping,
+		TArray<UDialogueGraphNode*> InSelectedGraphNodes
+	) : FEdGraphSchemaAction(InNodeCategory, InMenuDesc, InToolTip, InGrouping), SelectedGraphNodes(InSelectedGraphNodes) {}
 
 	//~ Begin FEdGraphSchemaAction Interface
 	UEdGraphNode* PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode = true) override;
