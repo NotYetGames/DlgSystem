@@ -168,6 +168,7 @@ public:
 	// Just jumps to that graph node without trying to open any Dialogue Editor
 	// If you want that just call OpenEditorAndJumpToGraphNode
 	static bool JumpToGraphNode(const UEdGraphNode* GraphNode);
+	static bool JumpToGraphNodeIndex(const UDlgDialogue* Dialogue, int32 NodeIndex);
 
 	/**
 	 * Copy all children of the FromNode to be also the children of ToNode.

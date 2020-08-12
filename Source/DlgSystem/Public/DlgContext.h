@@ -117,6 +117,7 @@ public:
 
 	/**
 	 * Chooses the option with OptionIndex that is replicated
+	 * NOTE: the ActiveNodeIndex must be a speech sequence node, otherwise the dialogue will end
 	 *
 	 * @return true if the dialogue did not end, false otherwise
 	 */

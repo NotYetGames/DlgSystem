@@ -704,6 +704,22 @@ bool FDialogueEditorUtilities::JumpToGraphNode(const UEdGraphNode* GraphNode)
 	return false;
 }
 
+bool FDialogueEditorUtilities::JumpToGraphNodeIndex(const UDlgDialogue* Dialogue, int32 NodeIndex)
+{
+	if (!Dialogue)
+	{
+		return false;
+	}
+
+	if (UDlgNode* Node = Dialogue->GetMutableNodeFromIndex(NodeIndex))
+	{
+		return JumpToGraphNode(Node->GetGraphNode());
+	}
+
+	return false;
+}
+
+
 void FDialogueEditorUtilities::CopyNodeChildren(const UDialogueGraphNode* FromNode, UDialogueGraphNode* ToNode)
 {
 	check(FromNode != ToNode);

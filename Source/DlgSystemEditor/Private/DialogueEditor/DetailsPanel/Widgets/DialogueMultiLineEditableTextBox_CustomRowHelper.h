@@ -12,11 +12,11 @@ class FDetailWidgetRow;
 struct FDialogueMultiLineEditableTextBoxOptions
 {
 	typedef FDialogueMultiLineEditableTextBoxOptions Self;
-public: 
+public:
 	FDialogueMultiLineEditableTextBoxOptions() {}
 
 	void SetDefaults();
-	
+
 public:
 	bool bSelectAllTextWhenFocused = false;
 	bool bClearKeyboardFocusOnCommit = false;
@@ -36,8 +36,9 @@ public:
 /**
  * Helper for a custom row when using SMultiLineEditableTextBox.
  */
-class FDialogueMultiLineEditableTextBox_CustomRowHelper : public FDialogueBase_CustomRowHelper,
-		public TSharedFromThis<FDialogueMultiLineEditableTextBox_CustomRowHelper>
+class FDialogueMultiLineEditableTextBox_CustomRowHelper :
+	public FDialogueBase_CustomRowHelper,
+	public TSharedFromThis<FDialogueMultiLineEditableTextBox_CustomRowHelper>
 {
 	typedef FDialogueMultiLineEditableTextBox_CustomRowHelper Self;
 	typedef FDialogueBase_CustomRowHelper Super;
@@ -65,9 +66,9 @@ public:
 	CREATE_OPTIONS_SETTER(AutoWrapText, bool, bAutoWrapText)
 	CREATE_OPTIONS_SETTER(WrapTextAt, float, WrapTextAt)
 	CREATE_OPTIONS_SETTER(ModiferKeyForNewLine, EModifierKey::Type, ModiferKeyForNewLine)
-	
+
 #undef CREATE_OPTIONS_SETTER
-	
+
 	/** Gets the value of the text property. */
 	FText GetTextValue() const;
 
@@ -75,14 +76,14 @@ public:
 	FDialogueTextCommitedDelegate& OnTextCommittedEvent();
 	FDialogueTextChangedDelegate& OnTextChangedEvent();
 
-	
+
 protected:
 	void UpdateInternal() override;
 
 private:
 	// Events
 	FDialogueTextCommitedDelegate TextCommittedEvent;
-	
+
 	// The text box Widget.
 	TSharedPtr<SDialogueTextPropertyEditableTextBox> TextBoxWidget;
 

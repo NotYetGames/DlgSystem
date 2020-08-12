@@ -8,9 +8,7 @@
 class SDialogueTextPropertyPickList;
 class FDetailWidgetRow;
 
-/**
- * Helper for details panel, when we want to use SDialogueTextPropertyPickList in a custom row in the details panel
- */
+// Helper for details panel, when we want to use SDialogueTextPropertyPickList in a custom row in the details panel
 class FDialogueTextPropertyPickList_CustomRowHelper : public FDialogueBase_CustomRowHelper
 {
 	typedef FDialogueTextPropertyPickList_CustomRowHelper Self;
@@ -19,7 +17,7 @@ public:
 	FDialogueTextPropertyPickList_CustomRowHelper(FDetailWidgetRow* InDetailWidgetRow, const TSharedPtr<IPropertyHandle>& InPropertyHandle)
 		: FDialogueBase_CustomRowHelper(InDetailWidgetRow, InPropertyHandle) {}
 
-	/** Set the SPropertyPickList */
+	// Set the SPropertyPickList
 	Self& SetTextPropertyPickListWidget(const TSharedRef<SDialogueTextPropertyPickList>& InWidget)
 	{
 		TextPropertyPickListWidget = InWidget;
@@ -30,6 +28,6 @@ private:
 	void UpdateInternal() override;
 
 private:
-	/** The TextPropertyPickList Widget. */
+	// The TextPropertyPickList Widget.
 	TSharedPtr<SDialogueTextPropertyPickList> TextPropertyPickListWidget;
 };

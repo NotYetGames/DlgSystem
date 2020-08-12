@@ -211,8 +211,10 @@ void SDialogueBrowser::Construct(const FArguments& InArgs)
 					.ToolTipText(LOCTEXT("RefreshToolTip", "Refreshes/Reloads the Dialogue Browser view."))
 					.OnClicked(this, &Self::HandleOnRefresh)
 					[
-						MakeIconAndTextWidget(LOCTEXT("RefreshDialogues", "Refresh"),
-							FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_ReloadAssetIcon))
+						MakeIconAndTextWidget(
+							LOCTEXT("RefreshDialogues", "Refresh"),
+							FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_ReloadAssetIcon)
+						)
 					]
 				]
 			]

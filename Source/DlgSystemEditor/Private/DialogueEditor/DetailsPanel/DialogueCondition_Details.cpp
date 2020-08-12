@@ -12,6 +12,7 @@
 #include "IPropertyUtilities.h"
 #include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
 #include "DlgHelper.h"
+#include "Widgets/DialogueIntTextBox_CustomRowHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueCondition_Details"
 
@@ -156,8 +157,11 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 
 	// IntValue
 	{
-		IntValuePropertyRow = &StructBuilder.AddProperty(IntValuePropertyHandle.ToSharedRef());
-		IntValuePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetIntValueVisibility));
+		FDetailWidgetRow* DetailWidgetRow = &StructBuilder.AddCustomRow(LOCTEXT("IntValueSearchKey", "Int Value"));
+		IntValuePropertyRow = MakeShared<FDialogueIntTextBox_CustomRowHelper>(DetailWidgetRow, IntValuePropertyHandle, Dialogue);
+		IntValuePropertyRow->SetVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetIntValueVisibility));
+		IntValuePropertyRow->SetJumpToNodeVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetGUIDVisibility));
+		IntValuePropertyRow->Update();
 	}
 
 	// FloatValue
@@ -312,8 +316,9 @@ void FDialogueCondition_Details::OnConditionTypeChanged(bool bForceRefresh)
 	BoolValuePropertyRow->DisplayName(BoolValueDisplayName);
 	BoolValuePropertyRow->ToolTip(BoolValueToolTip);
 
-	IntValuePropertyRow->DisplayName(IntValueDisplayName);
-	IntValuePropertyRow->ToolTip(IntValueToolTip);
+	IntValuePropertyRow->SetDisplayName(IntValueDisplayName);
+	IntValuePropertyRow->SetToolTip(IntValueToolTip);
+	IntValuePropertyRow->Update();
 	FloatValuePropertyRow->ToolTip(FloatValueToolTip);
 
 	GUIDPropertyRow->DisplayName(GUIDDisplayName);
