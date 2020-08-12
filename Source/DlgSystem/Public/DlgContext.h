@@ -14,6 +14,7 @@ class UDialogueWave;
 class UTexture2D;
 class UDlgNodeData;
 class UDlgNode;
+class UDlgNode_SpeechSequence;
 
 // Used to store temporary state of edges
 // This represents a const version of an Edge
@@ -114,6 +115,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
 	bool ChooseOption(int32 OptionIndex);
 
+	/**
+	 * Chooses the option with OptionIndex that is replicated
+	 *
+	 * @return true if the dialogue did not end, false otherwise
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
+	bool ChooseSpeechSequenceOptionFromReplicated(int32 OptionIndex);
 
 	UE_DEPRECATED(4.22, "ChooseChildBasedOnAllOptionIndex has been deprecated in Favour of ChooseOptionBasedOnAllOptionIndex")
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control|All", meta = (DeprecatedFunction, DeprecationMessage = "ChooseChildBasedOnAllOptionIndex has been deprecated in Favour of ChooseOptionBasedOnAllOptionIndex"))
@@ -288,6 +296,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode", DisplayName = "Get Active Node")
 	UDlgNode* GetMutableActiveNode() const { return GetMutableNodeFromIndex(ActiveNodeIndex); }
 	const UDlgNode* GetActiveNode() const { return GetNodeFromIndex(ActiveNodeIndex); }
+
+	// Just a helper method for GetActiveNode that casts to UDlgNode_SpeechSequence
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode", DisplayName = "Get Active Node As Speech Sequence")
+	UDlgNode_SpeechSequence* GetMutableActiveNodeAsSpeechSequence() const;
+	const UDlgNode_SpeechSequence* GetActiveNodeAsSpeechSequence() const;
 
 	//
 	// Data
@@ -580,6 +593,6 @@ protected:
 	// History for this Context only
 	FDlgHistory History;
 
-	// cache the result of the last ChooseChild call
+	// cache the result of the last ChooseOption call
 	bool bDialogueEnded = false;
 };

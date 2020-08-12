@@ -4,6 +4,7 @@
 #include "DlgSystemPrivatePCH.h"
 #include "Nodes/DlgNode.h"
 #include "Nodes/DlgNode_End.h"
+#include "Nodes/DlgNode_SpeechSequence.h"
 #include "DlgDialogueParticipant.h"
 #include "DlgMemory.h"
 #include "Engine/Texture2D.h"
@@ -51,6 +52,21 @@ bool UDlgContext::ChooseOption(int32 OptionIndex)
 	if (UDlgNode* Node = GetMutableActiveNode())
 	{
 		if (Node->OptionSelected(OptionIndex, *this))
+		{
+			return true;
+		}
+	}
+
+	bDialogueEnded = true;
+	return false;
+}
+
+bool UDlgContext::ChooseSpeechSequenceOptionFromReplicated(int32 OptionIndex)
+{
+	check(Dialogue);
+	if (UDlgNode_SpeechSequence* Node = GetMutableActiveNodeAsSpeechSequence())
+	{
+		if (Node->OptionSelectedFromReplicated(OptionIndex, *this))
 		{
 			return true;
 		}
@@ -480,6 +496,16 @@ void UDlgContext::SetNodeVisited(int32 NodeIndex, const FGuid& NodeGUID)
 {
 	FDlgMemory::Get().SetNodeVisited(Dialogue->GetGUID(), NodeIndex, NodeGUID);
 	History.Add(NodeIndex, NodeGUID);
+}
+
+UDlgNode_SpeechSequence* UDlgContext::GetMutableActiveNodeAsSpeechSequence() const
+{
+	return Cast<UDlgNode_SpeechSequence>(GetMutableNodeFromIndex(ActiveNodeIndex));
+}
+
+const UDlgNode_SpeechSequence* UDlgContext::GetActiveNodeAsSpeechSequence() const
+{
+	return Cast<UDlgNode_SpeechSequence>(GetNodeFromIndex(ActiveNodeIndex));
 }
 
 UDlgNode* UDlgContext::GetMutableNodeFromIndex(int32 NodeIndex) const

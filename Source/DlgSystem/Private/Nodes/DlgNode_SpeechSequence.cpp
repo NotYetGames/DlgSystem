@@ -88,8 +88,23 @@ bool UDlgNode_SpeechSequence::OptionSelected(int32 OptionIndex, UDlgContext& Con
 		return ReevaluateChildren(Context, {this});
 	}
 
-	ActualIndex = 0;
 	// node finished -> generate true children
+	ActualIndex = 0;
+	Super::ReevaluateChildren(Context, { this });
+	return Super::OptionSelected(OptionIndex, Context);
+}
+
+bool UDlgNode_SpeechSequence::OptionSelectedFromReplicated(int32 OptionIndex, UDlgContext& Context)
+{
+	// Is the new option index valid? set that for the actual index
+	if (SpeechSequence.IsValidIndex(OptionIndex))
+	{
+		ActualIndex = OptionIndex;
+		return ReevaluateChildren(Context, { this });
+	}
+
+	// node finished -> generate true children
+	ActualIndex = 0;
 	Super::ReevaluateChildren(Context, { this });
 	return Super::OptionSelected(OptionIndex, Context);
 }

@@ -57,6 +57,9 @@ Add the follow  new methods to the Dialogue Context:
 - **Add** example blueprint and struct data for dialogue variable nodes inside the Plugin
 - **Allow** convert speech nodes to speech sequence from right click on a speech node
 - **Change** Participant Interface methods Category to be `Dialogue|Participant`
+- **Multiplayer** changes:
+  - Added the following methods to the `UDlgContext`: `ChooseSpeechSequenceOptionFromReplicated`, `GetActiveNodeAsSpeechSequence`
+  - Added following methods to the `UDlgNode_SpeechSequence`: `OptionSelectedFromReplicated`, `GetSpeechSequenceIndex`
 
 # v10
 
