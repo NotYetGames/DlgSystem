@@ -1,3 +1,69 @@
+# v11
+
+## Important Changes
+
+**Added GUIDs to Nodes**, this fixes [issue #30](https://gitlab.com/NotYetGames/DlgSystem/-/issues/30)
+
+This is useful because node indices changes if you move nodes around, GUIDs are immutable, so it is
+safer to use for game saves
+
+Add the following new methods to the Dialogue:
+- `IsValidNodeGUID`
+- `GetGUIDForNodeIndex`
+- `GetNodeIndexForGUID`
+- `GetNode`
+- `GetNodeFromGUID`
+
+Add the follow  new methods to the Dialogue Context:
+- `GetActiveNodeGUID`
+- `IsValidNodeGUID`
+- `GetGUIDForNodeIndex`
+- `GetNodeIndexForGUID`
+- `GetVisitedNodeGUIDs`
+- `GetNodeFromGUID`
+- `WasNodeIndexVisitedInThisContext` (Renamed from `WasNodeVisitedInThisContext`)
+- `WasNodeGUIDVisitedInThisContext`
+- `StartFromNodeIndex`
+- `StartFromNodeGUID`
+- `StartFromNode`
+- `ResumeDialogueFromNodeIndex` (Renamed from `ResumeDialogue`)
+- `ResumeDialogueFromNodeGUID`
+
+
+## Other Changes
+
+- **Renamed** Dialogue Browser "Variables" to "Dialogue Values" so that is consistent with the rest of the plugin
+- **Add** better tooltips documentation
+- **Fix** Names for `IsObjectA<CustomStuff>` functions in the Blueprint Editor and **Add**  `IsObjectANodeData`
+- **Fix** the **Virtual Parent Node** first satisfied child to fire its Enter Events if `bVirtualParentFireDirectChildEnterEvents = true` (by default)
+- **Fix** the **Virtual Parent Node** to work with all other nodes types as a direct child (even tho this does not make sense in most cases the virtual parent nodes are usually just meant to be used for loops).
+- **Improvement** - The direct child of the **Virtual Parent Node** is always marked as visited on the parent node OnEnter
+- **Hide** the `bCheckChildrenOnEvaluation` on the **End Node** because it can't have any children
+
+- **Removed** deprecated functions, if you used them in your C++ code you need to use the new versions, otherwise the redirect is done for you in Blueprints automatically. The following functions/properties were renamed in favour of other name:
+	- `GetAllSpeakerState ` -> `GetAllSpeakerStates `
+	- `SetPersistentWorldContextObject ` -> `SetDialoguePersistentWorldContextObject`
+	- `ClearPersistentWorldContextObject ` -> `ClearDialoguePersistentWorldContextObject`
+	- `GetParticipantNum ` -> `GetParticipantsNum`
+	- `GetOptionNum ` -> `GetOptionsNum`
+	- `GetAllOptionNum ` -> `GetAllOptionsNum`
+
+- **Deprecated** some functions inside the **Dialogue Context** so that the names correspond to the rest
+  of the functions:
+  - `ChooseChild` in favour of `ChooseOption`
+  - `ChooseChildBasedOnAllOptionIndex` in favour of `ChooseOptionBasedOnAllOptionIndex`
+  - `ReevaluateChildren` in favour of `ReevaluateOptions`
+
+- **Add** example blueprint and struct data for dialogue variable nodes inside the Plugin
+- **Allow** convert speech nodes to speech sequence from right click on a speech node
+- **Change** Participant Interface methods Category to be `Dialogue|Participant`
+- **Multiplayer** changes:
+  - Added the following methods to the `UDlgContext`: `ChooseSpeechSequenceOptionFromReplicated`, `GetActiveNodeAsSpeechSequence`
+  - Added following methods to the `UDlgNode_SpeechSequence`: `OptionSelectedFromReplicated`, `GetSpeechSequenceIndex`
+
+- **Add** `Jump to Node` button for Node Indices inside Conditions.
+- **Renamed** Dialogue Browser Class Integers/Floats/etc to be just Integers/Floats/etc without the class prefix.
+
 # v10
 
 - **Network replicate** the Dialogue Context (specifically the Dialogue and Participants)

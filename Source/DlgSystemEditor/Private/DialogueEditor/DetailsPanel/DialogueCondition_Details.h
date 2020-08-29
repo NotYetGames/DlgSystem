@@ -12,6 +12,7 @@
 #include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
 
 class FDialogueTextPropertyPickList_CustomRowHelper;
+class FDialogueIntTextBox_CustomRowHelper;
 
 /**
 * How the details panel renders the FDlgCondition
@@ -111,13 +112,19 @@ private:
 			|| ConditionType == EDlgConditionType::HasSatisfiedChild
 			|| ConditionType == EDlgConditionType::BoolCall
 			|| ConditionType == EDlgConditionType::ClassBoolVariable
-
 			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetLongTermMemoryVisibility() const
 	{
 		return ConditionType == EDlgConditionType::WasNodeVisited ? EVisibility::Visible : EVisibility::Hidden;
+	}
+
+	EVisibility GetGUIDVisibility() const
+	{
+		return ConditionType == EDlgConditionType::WasNodeVisited
+			|| ConditionType == EDlgConditionType::HasSatisfiedChild
+			? EVisibility::Visible : EVisibility::Hidden;
 	}
 
 	EVisibility GetOperationVisibility() const
@@ -215,13 +222,15 @@ private:
 	// Cache the rows of the properties, created in CustomizeChildren
 	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
 	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> CallbackNamePropertyRow;
-	IDetailPropertyRow* IntValuePropertyRow = nullptr;
+	TSharedPtr<FDialogueIntTextBox_CustomRowHelper> IntValuePropertyRow;
+
 	IDetailPropertyRow* FloatValuePropertyRow = nullptr;
 	IDetailPropertyRow* NameValuePropertyRow = nullptr;
 	IDetailPropertyRow* BoolValuePropertyRow = nullptr;
 	IDetailPropertyRow* LongTermMemoryPropertyRow = nullptr;
 	IDetailPropertyRow* OperationPropertyRow = nullptr;
 	IDetailPropertyRow* CompareTypePropertyRow = nullptr;
+	IDetailPropertyRow* GUIDPropertyRow = nullptr;
 	IDetailPropertyRow* CustomConditionPropertyRow = nullptr;
 
 	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> OtherParticipantNamePropertyRow;

@@ -460,8 +460,15 @@ void UDialogueGraphSchema::GetConvertActions(FGraphActionMenuBuilder& ActionMenu
 			const FText ToolTip =
 				LOCTEXT("ConvertSpeechNodesToSequenceNodeToolTip", "Converts selected (compresses) linear Speech node(s) to a Speech Sequence Node");
 
-			TSharedPtr<FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction> NewAction(new FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction(
-				NODE_CATEGORY_Convert, MenuDescription, ToolTip, Grouping++, SelectedGraphNodes));
+			TSharedPtr<FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction> NewAction(
+				new FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction(
+					NODE_CATEGORY_Convert,
+					MenuDescription,
+					ToolTip,
+					Grouping++,
+					SelectedGraphNodes
+				)
+			);
 			ActionMenuBuilder.AddAction(NewAction);
 		}
 	}

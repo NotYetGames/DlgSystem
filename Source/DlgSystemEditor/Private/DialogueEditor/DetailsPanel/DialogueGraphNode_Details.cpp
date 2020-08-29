@@ -46,6 +46,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 	const bool bIsSpeechNode = GraphNode->IsSpeechNode();
 	const bool bIsSelectorNode = GraphNode->IsSelectorNode();;
 	const bool bIsSpeechSequenceNode = GraphNode->IsSpeechSequenceNode();
+	const bool bIsVirtualParentNode = GraphNode->IsVirtualParentNode();
 
 	// Hide the existing category
 	DetailLayoutBuilder->HideCategory(UDialogueGraphNode::StaticClass()->GetFName());
@@ -79,13 +80,22 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 			.Update();
 		}
 
-		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameCheckChildrenOnEvaluation()));
+		// End Nodes can't have children
+		if (!bIsEndNode)
+		{
+			BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameCheckChildrenOnEvaluation()));
+		}
 
 		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameEnterConditions()))
 			.ShouldAutoExpand(true);
 		BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameEnterEvents()))
 			.ShouldAutoExpand(true);
 	}
+
+	// GUID
+	BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameGUID()))
+		.ShouldAutoExpand(true);
+
 	if (!bIsEndNode)
 	{
 		ChildrenPropertyRow = &BaseDataCategory.AddProperty(
@@ -94,6 +104,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 		ChildrenPropertyRow->ShouldAutoExpand(true);
 		ChildrenPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetChildrenVisibility));
 	}
+
 
 	// Do nothing
 	if (bIsRootNode)
@@ -108,9 +119,17 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 		IDetailCategoryBuilder& SpeechCategory = DetailLayoutBuilder->EditCategory(TEXT("Speech Node"));
 		SpeechCategory.InitiallyCollapsed(false);
 
+		// bIsVirtualParent
 		IsVirtualParentPropertyHandle = PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameIsVirtualParent());
 		IsVirtualParentPropertyHandle->SetOnPropertyValueChanged(FSimpleDelegate::CreateSP(this, &Self::OnIsVirtualParentChanged));
 		SpeechCategory.AddProperty(IsVirtualParentPropertyHandle);
+
+		// bVirtualParentFireDirectChildEnterEvents
+		if (bIsVirtualParentNode)
+		{
+			SpeechCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode_Speech::GetMemberNameVirtualParentFireDirectChildEnterEvents()))
+				.ShouldAutoExpand(true);
+		}
 
 		// Text
 		{

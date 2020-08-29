@@ -99,6 +99,13 @@ public:
 	// Begin own functions
 	//
 
+	// Useful for multiplayer when you replicate the GetSpeechSequenceIndex
+	// This is different from OptionSelected  because this just sets the ActualIndex = OptionIndex instead of incremeting
+	// the Actual Index
+	// TODO: Proper replicate ActualIndex instead of this hack and all the subnodes
+	bool OptionSelectedFromReplicated(int32 OptionIndex, UDlgContext& Context);
+	int32 GetSpeechSequenceIndex() const { return ActualIndex; }
+
 	// Fills the inner edges from the corresponding  input data (SpeechSequence)
 	void AutoGenerateInnerEdges();
 
@@ -121,7 +128,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Dialogue|Node")
 	TArray<FDlgSpeechSequenceEntry> SpeechSequence;
 
-	// Inner edge, filled automatically based on SpeechSequence */
+	// Inner edge, filled automatically based on SpeechSequence
 	UPROPERTY()
 	TArray<FDlgEdge> InnerEdges;
 

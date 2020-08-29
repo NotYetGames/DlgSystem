@@ -40,6 +40,9 @@ public:
 	// Converts a speech sequence node to a list of speech node
 	TSharedPtr<FUICommandInfo> ConvertSpeechSequenceNodeToSpeechNodes;
 
+	// Converts  a list of speech nodes a speech sequence node
+	TSharedPtr<FUICommandInfo> ConvertSpeechNodesToSpeechSequence;
+
 	// Saves all the dialogues
 	TSharedPtr<FUICommandInfo> SaveAllDialogues;
 

@@ -43,6 +43,13 @@ void FDialogueCommands::RegisterCommands()
 	);
 
 	UI_COMMAND(
+		ConvertSpeechNodesToSpeechSequence,
+	    "Converts selected Speech node(s) to a Speech Sequence Node",
+	    "Converts selected (compresses) linear Speech node(s) to a Speech Sequence Node",
+	    EUserInterfaceActionType::Button, FInputChord()
+	);
+
+	UI_COMMAND(
 		SaveAllDialogues,
 		"Save All Dialogues...",
 		"Saves all dialogues to the disk",

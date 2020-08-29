@@ -111,19 +111,20 @@ public:
 	bool operator==(const FDlgCondition& Other) const
 	{
 		return Strength == Other.Strength &&
-	        ConditionType == Other.ConditionType &&
-	        ParticipantName == Other.ParticipantName &&
-	        CallbackName == Other.CallbackName &&
-	        IntValue == Other.IntValue &&
-	        FMath::IsNearlyEqual(FloatValue, Other.FloatValue) &&
-	        NameValue == Other.NameValue &&
-	        bBoolValue == Other.bBoolValue &&
-	        bLongTermMemory == Other.bLongTermMemory &&
-	        Operation == Other.Operation &&
-	        CompareType == Other.CompareType &&
-	        OtherParticipantName == Other.OtherParticipantName &&
-	        OtherVariableName == Other.OtherVariableName &&
-	        CustomCondition == Other.CustomCondition;
+			ConditionType == Other.ConditionType &&
+			ParticipantName == Other.ParticipantName &&
+			CallbackName == Other.CallbackName &&
+			IntValue == Other.IntValue &&
+			FMath::IsNearlyEqual(FloatValue, Other.FloatValue) &&
+			NameValue == Other.NameValue &&
+			bBoolValue == Other.bBoolValue &&
+			bLongTermMemory == Other.bLongTermMemory &&
+			Operation == Other.Operation &&
+			CompareType == Other.CompareType &&
+			OtherParticipantName == Other.OtherParticipantName &&
+			OtherVariableName == Other.OtherVariableName &&
+			GUID == Other.GUID &&
+			CustomCondition == Other.CustomCondition;
 	}
 
 	//
@@ -136,6 +137,13 @@ public:
 	// returns true if ParticipantName has to belong to match with a valid Participant in order for the condition type to work */
 	bool IsParticipantInvolved() const;
 	bool IsSecondParticipantInvolved() const;
+
+	// Does this Condition have a IntValue which is in fact a NodeIndex
+	bool HasNodeIndex() const
+	{
+		return ConditionType == EDlgConditionType::WasNodeVisited
+			|| ConditionType == EDlgConditionType::HasSatisfiedChild;
+	}
 
 	static FString ConditionTypeToString(EDlgConditionType Type);
 
@@ -206,6 +214,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
 	bool bLongTermMemory = true;
 
+	// GUID for the Node, used for "node already visited"
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
+	FGuid GUID;
+
 	// User Defined Condition, calls IsConditionMet on the custom condition object.
 	//
 	// 1. Create a new Blueprint derived from DlgConditionCustom (or DlgConditionCustomHideCategories)
@@ -221,5 +233,5 @@ struct TStructOpsTypeTraits<FDlgCondition> : public TStructOpsTypeTraitsBase2<FD
 	enum
 	{
 		WithIdenticalViaEquality = true
-    };
+	};
 };

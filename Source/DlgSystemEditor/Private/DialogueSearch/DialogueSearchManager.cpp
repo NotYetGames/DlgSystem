@@ -621,7 +621,7 @@ bool FDialogueSearchManager::QuerySingleDialogue(
 	if (SearchFilter.bIncludeDialogueGUID)
 	{
 		const FString GUIDToSearchFor = SearchFilter.SearchString.TrimStartAndEnd();
-		const FGuid DialogueGUID = InDialogue->GetDialogueGUID();
+		const FGuid DialogueGUID = InDialogue->GetGUID();
 
 		// Test every possible format
 		const TArray<FString> DialoguGUIDStrings = {

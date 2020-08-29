@@ -336,7 +336,7 @@ void FDlgSystemEditorModule::HandleOnPostEngineInit()
 			LogDlgSystemEditor,
 			Warning,
 			TEXT("Dialogue = `%s`, GUID = `%s` has a Duplicate GUID. Regenerating."),
-			*Dialogue->GetPathName(), *Dialogue->GetDialogueGUID().ToString()
+			*Dialogue->GetPathName(), *Dialogue->GetGUID().ToString()
 		)
 		Dialogue->RegenerateGUID();
 		Dialogue->MarkPackageDirty();
@@ -352,7 +352,7 @@ void FDlgSystemEditorModule::HandleOnPostEngineInit()
 			LogDlgSystemEditor,
 			Error,
 			TEXT("Dialogue = `%s`, GUID = `%s`"),
-			*Dialogue->GetPathName(), *Dialogue->GetDialogueGUID().ToString()
+			*Dialogue->GetPathName(), *Dialogue->GetGUID().ToString()
 		)
 
 		UE_LOG(

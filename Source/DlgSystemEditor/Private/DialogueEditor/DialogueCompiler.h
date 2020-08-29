@@ -13,6 +13,8 @@ class UDlgSystemSettings;
 
 class FDialogueCompilerContext
 {
+	friend UDlgDialogue;
+
 public:
 	FDialogueCompilerContext(UDlgDialogue* InDialogue, const UDlgSystemSettings* InSettings, FCompilerResultsLog& InMessageLog)
 	: Dialogue(InDialogue), Settings(InSettings), MessageLog(InMessageLog)
@@ -47,7 +49,7 @@ private:
 	void PruneIsolatedNodes();
 
 	/** Fixes all references to the old indices that this compile most likely broke. */
-	void FixBrokenOldIndices();
+	void FixBrokenOldIndicesAndUpdateGUID();
 
 	/** Sets NextAvailableIndex on the provided nodes, also keeps track of history in IndicesHistory. */
 	void SetNextAvailableIndexToNode(UDialogueGraphNode* GraphNode);
@@ -58,7 +60,7 @@ private:
 
 	// Settings we will use
 	const UDlgSystemSettings* Settings = nullptr;
-	
+
 	// TODO Use this
 	/** Compiler message log (errors, warnings, notes) */
 	FCompilerResultsLog& MessageLog;
