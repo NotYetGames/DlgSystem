@@ -8,9 +8,13 @@
 #include "DlgHelper.h"
 #include "Logging/DlgLogger.h"
 
-void FDlgEvent::Call(UDlgContext& Context, UObject* Participant) const
+void FDlgEvent::Call(UDlgContext& Context, const FString& ContextString, UObject* Participant) const
 {
-	const bool bHasParticipant = ValidateIsParticipantValid(Context, TEXT("Call"), Participant);
+	const bool bHasParticipant = ValidateIsParticipantValid(
+		Context,
+		FString::Printf(TEXT("%s::Call"), *ContextString),
+		Participant
+	);
 
 	// We don't care if it has a participant, but warn nonetheless by calling validate it before this
 	if (EventType == EDlgEventType::Custom)
@@ -29,7 +33,7 @@ void FDlgEvent::Call(UDlgContext& Context, UObject* Participant) const
 	}
 
 	// Must have participant from this point onwards
-	if (!bHasParticipant)
+	if (MustHaveParticipant() && !bHasParticipant)
 	{
 		return;
 	}
@@ -77,10 +81,21 @@ bool FDlgEvent::ValidateIsParticipantValid(const UDlgContext& Context, const FSt
 		return true;
 	}
 
-	FDlgLogger::Get().Errorf(
-		TEXT("%s Event FAILED because the PARTICIPANT is INVALID. \nContext:\n\t%s, ParticipantName = %s, EventType = %s, EventName = %s"),
-		*ContextString, *Context.GetContextString(), *ParticipantName.ToString(), *EventTypeToString(EventType), *EventName.ToString()
-	);
+	if (MustHaveParticipant())
+	{
+		FDlgLogger::Get().Errorf(
+			TEXT("%s - Event FAILED because the PARTICIPANT is INVALID. \nContext:\n\t%s, \n\tParticipantName = %s, EventType = %s, EventName = %s, CustomEvent = %s"),
+			*ContextString, *Context.GetContextString(), *ParticipantName.ToString(), *EventTypeToString(EventType), *EventName.ToString(), *GetCustomEventName()
+		);
+	}
+	else
+	{
+		FDlgLogger::Get().Warningf(
+			TEXT("%s - Event WARNING because the PARTICIPANT is INVALID. The call will NOT FAIL, but the participant is not present. \nContext:\n\t%s, \n\tParticipantName = %s, EventType = %s, EventName = %s, CustomEvent = %s"),
+			*ContextString, *Context.GetContextString(), *ParticipantName.ToString(), *EventTypeToString(EventType), *EventName.ToString(), *GetCustomEventName()
+		);
+	}
+
 	return false;
 }
 

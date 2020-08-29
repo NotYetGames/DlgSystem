@@ -8,6 +8,9 @@ class UDlgContext;
 
 // Abstract base class for a custom condition
 // Extend this class to define additional data you want to store
+//
+// 1. Override IsConditionMet
+// 2. Return true if you want the condition to succeed or false otherwise
 UCLASS(Blueprintable, BlueprintType, Abstract, EditInlineNew)
 class DLGSYSTEM_API UDlgConditionCustom : public UDlgObject
 {

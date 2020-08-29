@@ -206,7 +206,14 @@ void UDialogueGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeCo
 		// Menu for right clicking on node
 		FToolMenuSection& Section = Menu->AddSection("DialogueGraphNode_BaseNodeEditCRUD");
 		if (IsSpeechSequenceNode())
+		{
 			Section.AddMenuEntry(FDialogueCommands::Get().ConvertSpeechSequenceNodeToSpeechNodes);
+		}
+		if (IsSpeechNode()
+			&& FDialogueEditorUtilities::CanConvertSpeechNodesToSpeechSequence(FDialogueEditorUtilities::GetSelectedNodes(Context->Graph)))
+		{
+			Section.AddMenuEntry(FDialogueCommands::Get().ConvertSpeechNodesToSpeechSequence);
+		}
 
 		Section.AddMenuEntry(FGenericCommands::Get().Delete);
 //		Section.AddMenuEntry(FGenericCommands::Get().Cut);
@@ -227,7 +234,14 @@ void UDialogueGraphNode::GetContextMenuActions(const FGraphNodeContextMenuBuilde
 		Context.MenuBuilder->BeginSection("DialogueGraphNode_BaseNodeEditCRUD");
 		{
 			if (IsSpeechSequenceNode())
+			{
 				Context.MenuBuilder->AddMenuEntry(FDialogueCommands::Get().ConvertSpeechSequenceNodeToSpeechNodes);
+			}
+			if (IsSpeechNode()
+				&& FDialogueEditorUtilities::CanConvertSpeechNodesToSpeechSequence(FDialogueEditorUtilities::GetSelectedNodes(Context.Graph)))
+			{
+				Context.MenuBuilder->AddMenuEntry(FDialogueCommands::Get().ConvertSpeechNodesToSpeechSequence);
+			}
 
 			Context.MenuBuilder->AddMenuEntry(FGenericCommands::Get().Delete);
 //			Context.MenuBuilder->AddMenuEntry(FGenericCommands::Get().Cut);

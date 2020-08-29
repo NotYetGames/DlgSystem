@@ -30,14 +30,15 @@ public:
 	 *  - The Dialogue has a Participant which does not exist in the World
 	 *	- Multiple Objects are using the same Participant Name in the World
 	 *
+	 *	NOTE: If this fails because it can't find the unique participants you should use the StartDialogue* functions
+	 *
 	 * @returns The dialogue context object or nullptr if something went wrong
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch", meta = (WorldContext = "WorldContextObject"))
 	static UDlgContext* StartDialogueWithDefaultParticipants(UObject* WorldContextObject, UDlgDialogue* Dialogue);
 
-
 	// Supplies where we called this from
-	static UDlgContext* StartDialogueFromContext(const FString& ContextString, UDlgDialogue* Dialogue, const TArray<UObject*>& Participants);
+	static UDlgContext* StartDialogueWithContext(const FString& ContextString, UDlgDialogue* Dialogue, const TArray<UObject*>& Participants);
 
 	/**
 	 * Starts a Dialogue with the provided Dialogue and Participants array
@@ -51,7 +52,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
 	static UDlgContext* StartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArray<UObject*>& Participants)
 	{
-		return StartDialogueFromContext(TEXT("StartDialogue"), Dialogue, Participants);
+		return StartDialogueWithContext(TEXT("StartDialogue"), Dialogue, Participants);
 	}
 
 	/**
@@ -64,6 +65,9 @@ public:
 
 	/**
 	 * Starts a Dialogue with the provided Dialogue and Participants array, at the given entry point
+	 *
+	 * NOTE: You should most likely use ResumeDialogueFromNodeGUID
+	 *
 	 * This method can fail in the following situations:
 	 *  - The Participants number does not match the number of participants from the Dialogue.
 	 *  - Any UObject in the Participant array does not implement the Participant Interface
@@ -73,20 +77,47 @@ public:
 	 *
 	 * @param Dialogue				- The dialogue asset to start
 	 * @param Participants			- Array of participants, has to match with the expected input for the Dialogue
-	 * @param StartIndex			- Index of the node the dialogue is resumed at
+	 * @param StartIndex		    - Index of the node the dialogue is resumed at
 	 * @param AlreadyVisitedNodes	- Set of nodes already visited in the context the last time this Dialogue was going on.
-	 *								  Can be aquired via GetVisitedNodeIndices() on the context
+	 *								  Can be acquired via GetVisitedNodeIndices() on the context
 	 * @param bFireEnterEvents		- decides if the enter events should be fired on the resumed node or not
 	 * @returns The dialogue context object or nullptr if something wrong happened
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
-	static UDlgContext* ResumeDialogue(
+	static UDlgContext* ResumeDialogueFromNodeIndex(
 		UDlgDialogue* Dialogue,
 		UPARAM(ref)const TArray<UObject*>& Participants,
-		int32 StartIndex,
+		UPARAM(DisplayName="Start Node Index") int32 StartIndex,
 		const TSet<int32>& AlreadyVisitedNodes,
 		bool bFireEnterEvents
 	);
+
+	/**
+	* Starts a Dialogue with the provided Dialogue and Participants array, at the given entry point
+	*
+	* This method can fail in the following situations:
+	*  - The Participants number does not match the number of participants from the Dialogue.
+	*  - Any UObject in the Participant array does not implement the Participant Interface
+	*  - Participant->GetParticipantName() does not exist in the Dialogue
+	*  - The given node GUID is invalid
+	*  - The starter node does not have any valid child
+	*
+	* @param Dialogue				- The dialogue asset to start
+	* @param Participants			- Array of participants, has to match with the expected input for the Dialogue
+	* @param StartNodeGUID			- GUID of the node the dialogue is resumed at
+	* @param AlreadyVisitedNodes	- Set of nodes already visited in the context the last time this Dialogue was going on.
+	*								  Can be acquired via GetVisitedNodeGUIDs() on the context
+	* @param bFireEnterEvents		- decides if the enter events should be fired on the resumed node or not
+	* @returns The dialogue context object or nullptr if something wrong happened
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
+    static UDlgContext* ResumeDialogueFromNodeGUID(
+        UDlgDialogue* Dialogue,
+        UPARAM(ref)const TArray<UObject*>& Participants,
+        const FGuid& StartNodeGUID,
+        const TSet<FGuid>& AlreadyVisitedNodes,
+        bool bFireEnterEvents
+    );
 
 
 	//
@@ -157,16 +188,20 @@ public:
 	}
 
 	// Is Object a UDlgEventCustom or a child from that
-	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper", DisplayName = "Is Object A Custom Event")
 	static bool IsObjectACustomEvent(const UObject* Object);
 
 	// Is Object a UDlgConditionCustom or a child from that
-	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper", DisplayName = "Is Object A Custom Condition")
 	static bool IsObjectACustomCondition(const UObject* Object);
 
 	// Is Object a UDlgTextArgumentCustom or a child from that
-	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper", DisplayName = "Is Object A Custom Text Argument")
 	static bool IsObjectACustomTextArgument(const UObject* Object);
+
+	// Is Object a UDlgNodeData or a child from that
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper", DisplayName = "Is Object A Node Data")
+    static bool IsObjectANodeData(const UObject* Object);
 
 	// Gets all the unique participant names sorted alphabetically from all the Dialogues loaded into memory.
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
@@ -201,7 +236,7 @@ public:
 	static void GetAllDialoguesEventNames(FName ParticipantName, TArray<FName>& OutArray);
 
 	// Registers all the DlgSystem Module console commands.
-	// To set the custom reference WorldContextObjectPtr, set it with SetPersistentWorldContextObject
+	// To set the custom reference WorldContextObjectPtr, set it with SetDialoguePersistentWorldContextObject
 	// @return true on success, false otherwise
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Console")
 	static bool RegisterDialogueConsoleCommands();
@@ -215,8 +250,8 @@ public:
 	// This tries to get the source world for the dialogues
 	// In the following order (the first one that is valid, returns that):
 	// 1. The user set one UserWorldContextObjectPtr (if it is set):
-	//    - Set - SetPersistentWorldContextObject
-	//    - Clear - ClearPersistentWorldContextObject
+	//    - Set - SetDialoguePersistentWorldContextObject
+	//    - Clear - ClearDialoguePersistentWorldContextObject
 	// 2. The first PIE world
 	// 3. The first Game World
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Persistence")
@@ -225,13 +260,13 @@ public:
 	// If the user wants to set the world context object manually
 	// Otherwise just use GetDialogueWorld()
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Persistence")
-	static void SetPersistentWorldContextObject(const UObject* WorldContextObject)
+	static void SetDialoguePersistentWorldContextObject(const UObject* WorldContextObject)
 	{
 		UserWorldContextObjectPtr = WorldContextObject;
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Persistence")
-	static void ClearPersistentWorldContextObject()
+	static void ClearDialoguePersistentWorldContextObject()
 	{
 		UserWorldContextObjectPtr.Reset();
 	}

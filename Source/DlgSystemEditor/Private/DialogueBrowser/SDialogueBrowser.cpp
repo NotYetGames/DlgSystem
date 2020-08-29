@@ -211,8 +211,10 @@ void SDialogueBrowser::Construct(const FArguments& InArgs)
 					.ToolTipText(LOCTEXT("RefreshToolTip", "Refreshes/Reloads the Dialogue Browser view."))
 					.OnClicked(this, &Self::HandleOnRefresh)
 					[
-						MakeIconAndTextWidget(LOCTEXT("RefreshDialogues", "Refresh"),
-							FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_ReloadAssetIcon))
+						MakeIconAndTextWidget(
+							LOCTEXT("RefreshDialogues", "Refresh"),
+							FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_ReloadAssetIcon)
+						)
 					]
 				]
 			]
@@ -268,7 +270,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 	TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
 	for (const UDlgDialogue* Dialogue : Dialogues)
 	{
-		const FGuid DialogueGUID = Dialogue->GetDialogueGUID();
+		const FGuid DialogueGUID = Dialogue->GetGUID();
 
 		// Populate Participants
 		TSet<FName> ParticipantsNames;
@@ -632,7 +634,7 @@ void SDialogueBrowser::AddGraphNodeBaseChildrenToItemFromProperty(
 
 	const TSharedPtr<FDialogueBrowserTreeVariableProperties> Property = *PropertyPtr;
 	const UDlgDialogue* Dialogue = DialogueItem->GetDialogue().Get();
-	const FGuid DialogueGUID = Dialogue->GetDialogueGUID();
+	const FGuid DialogueGUID = Dialogue->GetGUID();
 
 	// Display the GraphNode
 	if (Property->HasGraphNodeSet(DialogueGUID))
@@ -733,7 +735,7 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 		case EDialogueTreeNodeCategoryType::Variable:
 		{
 			// Only display the categories if the Participant has at least one variable.
-			if (ParticipantProperties->HasVariables())
+			if (ParticipantProperties->HasDialogueValues())
 			{
 				const bool bHideEmptyCategories = GetDefault<UDlgSystemSettings>()->bHideEmptyDialogueBrowserCategories;
 				Item->SetChildren(MakeVariableCategoriesChildren(Item, ParticipantProperties, bHideEmptyCategories));
@@ -1381,10 +1383,10 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeParticipantCa
 		Categories.Add(Category);
 	}
 
-	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasVariables()))
+	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasDialogueValues()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Variables")), Parent, EDialogueTreeNodeCategoryType::Variable
+			FText::FromString(TEXT("Dialogue Values")), Parent, EDialogueTreeNodeCategoryType::Variable
 		);
 		Categories.Add(Category);
 	}
@@ -1452,7 +1454,7 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeClassVariable
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassIntegers()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Class Integers")), Parent, EDialogueTreeNodeCategoryType::ClassVariableInt
+			FText::FromString(TEXT("Integers")), Parent, EDialogueTreeNodeCategoryType::ClassVariableInt
 		);
 		Categories.Add(Category);
 	}
@@ -1460,7 +1462,7 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeClassVariable
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassFloats()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Class Floats")), Parent, EDialogueTreeNodeCategoryType::ClassVariableFloat
+			FText::FromString(TEXT("Floats")), Parent, EDialogueTreeNodeCategoryType::ClassVariableFloat
 		);
 		Categories.Add(Category);
 	}
@@ -1468,7 +1470,7 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeClassVariable
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassBools()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Class Bools")), Parent, EDialogueTreeNodeCategoryType::ClassVariableBool
+			FText::FromString(TEXT("Bools")), Parent, EDialogueTreeNodeCategoryType::ClassVariableBool
 		);
 		Categories.Add(Category);
 	}
@@ -1476,7 +1478,7 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeClassVariable
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassFNames()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Class FNames")), Parent, EDialogueTreeNodeCategoryType::ClassVariableFName
+			FText::FromString(TEXT("FNames")), Parent, EDialogueTreeNodeCategoryType::ClassVariableFName
 		);
 		Categories.Add(Category);
 	}
@@ -1484,7 +1486,7 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeClassVariable
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassFTexts()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Class FTexts")), Parent, EDialogueTreeNodeCategoryType::ClassVariableFText
+			FText::FromString(TEXT("FTexts")), Parent, EDialogueTreeNodeCategoryType::ClassVariableFText
 		);
 		Categories.Add(Category);
 	}

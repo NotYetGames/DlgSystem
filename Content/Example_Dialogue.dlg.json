@@ -1,0 +1,409 @@
+{
+	"__type__": "DlgDialogue",
+	"Version": 10,
+	"Name": "Example_Dialogue",
+	"GUID": "D3B6003044F0EC3A430C03B963F09C88",
+	"ParticipantsClasses": [
+		{
+			"ParticipantName": "ExampleParticipant",
+			"ParticipantClass": ""
+		}
+	],
+	"StartNode":
+	{
+		"__type__": "DlgNode_Speech",
+		"bIsVirtualParent": false,
+		"bVirtualParentFireDirectChildEnterEvents": true,
+		"Text": "",
+		"TextArguments": [],
+		"SpeakerState": "None",
+		"NodeData": null,
+		"VoiceSoundWave": "",
+		"VoiceDialogueWave": "",
+		"GenericData": "",
+		"OwnerName": "None",
+		"bCheckChildrenOnEvaluation": false,
+		"EnterConditions": [],
+		"EnterEvents": [],
+		"NodeGUID": "F9534C8F41D82127D65ECABE21B77414",
+		"Children": [
+			{
+				"TargetIndex": 0,
+				"Conditions": [],
+				"SpeakerState": "None",
+				"bIncludeInAllOptionListIfUnsatisfied": true,
+				"Text": "Next",
+				"TextArguments": []
+			},
+			{
+				"TargetIndex": 1,
+				"Conditions": [],
+				"SpeakerState": "None",
+				"bIncludeInAllOptionListIfUnsatisfied": true,
+				"Text": "",
+				"TextArguments": []
+			}
+		]
+	},
+	"Nodes": [
+		{
+			"__index__": 0,
+			"__type__": "DlgNode_Speech",
+			"bIsVirtualParent": false,
+			"bVirtualParentFireDirectChildEnterEvents": true,
+			"Text": "I can talk!",
+			"TextArguments": [],
+			"SpeakerState": "None",
+			"NodeData": null,
+			"VoiceSoundWave": "",
+			"VoiceDialogueWave": "",
+			"GenericData": "",
+			"OwnerName": "ExampleParticipant",
+			"bCheckChildrenOnEvaluation": false,
+			"EnterConditions": [
+				{
+					"Strength": "EDlgConditionStrength::Strong",
+					"ConditionType": "EDlgConditionType::IntCall",
+					"ParticipantName": "None",
+					"CallbackName": "NodeVariable",
+					"Operation": "EDlgOperation::Equal",
+					"CompareType": "EDlgCompare::ToConst",
+					"OtherParticipantName": "None",
+					"OtherVariableName": "None",
+					"IntValue": 0,
+					"FloatValue": 0,
+					"NameValue": "None",
+					"bBoolValue": true,
+					"bLongTermMemory": true,
+					"GUID": "00000000000000000000000000000000",
+					"CustomCondition": null
+				}
+			],
+			"EnterEvents": [
+				{
+					"ParticipantName": "None",
+					"EventType": "EDlgEventType::Event",
+					"EventName": "LeftBranchEnter",
+					"IntValue": 0,
+					"FloatValue": 0,
+					"NameValue": "None",
+					"bDelta": false,
+					"bValue": false,
+					"CustomEvent": null
+				}
+			],
+			"NodeGUID": "FF509205422E4AC87851D5BEEE176241",
+			"Children": [
+				{
+					"TargetIndex": 2,
+					"Conditions": [
+						{
+							"Strength": "EDlgConditionStrength::Strong",
+							"ConditionType": "EDlgConditionType::IntCall",
+							"ParticipantName": "None",
+							"CallbackName": "EdgeVariable",
+							"Operation": "EDlgOperation::Equal",
+							"CompareType": "EDlgCompare::ToConst",
+							"OtherParticipantName": "None",
+							"OtherVariableName": "None",
+							"IntValue": 100,
+							"FloatValue": 0,
+							"NameValue": "None",
+							"bBoolValue": true,
+							"bLongTermMemory": true,
+							"GUID": "00000000000000000000000000000000",
+							"CustomCondition": null
+						}
+					],
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true,
+					"Text": "Next",
+					"TextArguments": []
+				}
+			]
+		},
+		{
+			"__index__": 1,
+			"__type__": "DlgNode_Speech",
+			"bIsVirtualParent": false,
+			"bVirtualParentFireDirectChildEnterEvents": true,
+			"Text": "Hi Again?",
+			"TextArguments": [],
+			"SpeakerState": "None",
+			"NodeData": null,
+			"VoiceSoundWave": "",
+			"VoiceDialogueWave": "",
+			"GenericData": "",
+			"OwnerName": "ExampleParticipant",
+			"bCheckChildrenOnEvaluation": false,
+			"EnterConditions": [],
+			"EnterEvents": [
+				{
+					"ParticipantName": "ExampleParticipant",
+					"EventType": "EDlgEventType::Event",
+					"EventName": "RightBranchEnter",
+					"IntValue": 0,
+					"FloatValue": 0,
+					"NameValue": "None",
+					"bDelta": false,
+					"bValue": false,
+					"CustomEvent": null
+				}
+			],
+			"NodeGUID": "0387067D4D74370ABAA41CB9194B65E9",
+			"Children": [
+				{
+					"TargetIndex": 2,
+					"Conditions": [],
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true,
+					"Text": "Next",
+					"TextArguments": []
+				}
+			]
+		},
+		{
+			"__index__": 2,
+			"__type__": "DlgNode_Speech",
+			"bIsVirtualParent": false,
+			"bVirtualParentFireDirectChildEnterEvents": true,
+			"Text": "You don't say?",
+			"TextArguments": [],
+			"SpeakerState": "None",
+			"NodeData": null,
+			"VoiceSoundWave": "",
+			"VoiceDialogueWave": "",
+			"GenericData": "",
+			"OwnerName": "ExampleParticipant",
+			"bCheckChildrenOnEvaluation": false,
+			"EnterConditions": [],
+			"EnterEvents": [
+				{
+					"ParticipantName": "None",
+					"EventType": "EDlgEventType::ModifyInt",
+					"EventName": "DefaultValue",
+					"IntValue": 0,
+					"FloatValue": 0,
+					"NameValue": "None",
+					"bDelta": false,
+					"bValue": false,
+					"CustomEvent": null
+				},
+				{
+					"ParticipantName": "None",
+					"EventType": "EDlgEventType::ModifyInt",
+					"EventName": "Default",
+					"IntValue": 0,
+					"FloatValue": 0,
+					"NameValue": "None",
+					"bDelta": false,
+					"bValue": false,
+					"CustomEvent": null
+				}
+			],
+			"NodeGUID": "7510303F44F9A6AF8369ADBEBB4DB66A",
+			"Children": [
+				{
+					"TargetIndex": 3,
+					"Conditions": [],
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true,
+					"Text": "Finish",
+					"TextArguments": []
+				}
+			]
+		},
+		{
+			"__index__": 3,
+			"__type__": "DlgNode_End",
+			"OwnerName": "ExampleParticipant",
+			"bCheckChildrenOnEvaluation": false,
+			"EnterConditions": [],
+			"EnterEvents": [],
+			"NodeGUID": "7047D5CC4FA53BCFD555B4A1FA79BA39",
+			"Children": []
+		},
+		{
+			"__index__": 4,
+			"__type__": "DlgNode_Speech",
+			"bIsVirtualParent": true,
+			"bVirtualParentFireDirectChildEnterEvents": true,
+			"Text": "",
+			"TextArguments": [],
+			"SpeakerState": "None",
+			"NodeData": null,
+			"VoiceSoundWave": "",
+			"VoiceDialogueWave": "",
+			"GenericData": "",
+			"OwnerName": "ExampleParticipant",
+			"bCheckChildrenOnEvaluation": false,
+			"EnterConditions": [],
+			"EnterEvents": [],
+			"NodeGUID": "D9E444B440594EC3DDEEC88017E4963D",
+			"Children": [
+				{
+					"TargetIndex": 5,
+					"Conditions": [],
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true,
+					"Text": "",
+					"TextArguments": []
+				},
+				{
+					"TargetIndex": 6,
+					"Conditions": [],
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true,
+					"Text": "",
+					"TextArguments": []
+				},
+				{
+					"TargetIndex": 7,
+					"Conditions": [],
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true,
+					"Text": "",
+					"TextArguments": []
+				}
+			]
+		},
+		{
+			"__index__": 5,
+			"__type__": "DlgNode_Selector",
+			"SelectorType": "EDlgNodeSelectorType::First",
+			"OwnerName": "ExampleParticipant",
+			"bCheckChildrenOnEvaluation": true,
+			"EnterConditions": [],
+			"EnterEvents": [],
+			"NodeGUID": "0057704D493BDA07616A19B282AD8564",
+			"Children": [
+				{
+					"TargetIndex": 8,
+					"Conditions": [],
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true,
+					"Text": "",
+					"TextArguments": []
+				}
+			]
+		},
+		{
+			"__index__": 6,
+			"__type__": "DlgNode_Speech",
+			"bIsVirtualParent": false,
+			"bVirtualParentFireDirectChildEnterEvents": true,
+			"Text": "",
+			"TextArguments": [],
+			"SpeakerState": "None",
+			"NodeData": null,
+			"VoiceSoundWave": "",
+			"VoiceDialogueWave": "",
+			"GenericData": "",
+			"OwnerName": "ExampleParticipant",
+			"bCheckChildrenOnEvaluation": false,
+			"EnterConditions": [],
+			"EnterEvents": [],
+			"NodeGUID": "13C165004DA48BC55F64C99F21F9FAEB",
+			"Children": [
+				{
+					"TargetIndex": 9,
+					"Conditions": [],
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true,
+					"Text": "Next",
+					"TextArguments": []
+				}
+			]
+		},
+		{
+			"__index__": 7,
+			"__type__": "DlgNode_End",
+			"OwnerName": "ExampleParticipant",
+			"bCheckChildrenOnEvaluation": false,
+			"EnterConditions": [],
+			"EnterEvents": [],
+			"NodeGUID": "FA44B4C2420839AC487675BB2ACCF3AA",
+			"Children": []
+		},
+		{
+			"__index__": 8,
+			"__type__": "DlgNode_Speech",
+			"bIsVirtualParent": false,
+			"bVirtualParentFireDirectChildEnterEvents": true,
+			"Text": "",
+			"TextArguments": [],
+			"SpeakerState": "None",
+			"NodeData": null,
+			"VoiceSoundWave": "",
+			"VoiceDialogueWave": "",
+			"GenericData": "",
+			"OwnerName": "ExampleParticipant",
+			"bCheckChildrenOnEvaluation": false,
+			"EnterConditions": [],
+			"EnterEvents": [],
+			"NodeGUID": "A072EA1A40B79F4990FA0CA6769D27AA",
+			"Children": []
+		},
+		{
+			"__index__": 9,
+			"__type__": "DlgNode_Speech",
+			"bIsVirtualParent": false,
+			"bVirtualParentFireDirectChildEnterEvents": true,
+			"Text": "",
+			"TextArguments": [],
+			"SpeakerState": "None",
+			"NodeData": null,
+			"VoiceSoundWave": "",
+			"VoiceDialogueWave": "",
+			"GenericData": "",
+			"OwnerName": "ExampleParticipant",
+			"bCheckChildrenOnEvaluation": false,
+			"EnterConditions": [],
+			"EnterEvents": [],
+			"NodeGUID": "3DC0739649254ED123299CBA274100CB",
+			"Children": [
+				{
+					"TargetIndex": 10,
+					"Conditions": [],
+					"SpeakerState": "None",
+					"bIncludeInAllOptionListIfUnsatisfied": true,
+					"Text": "Next",
+					"TextArguments": []
+				}
+			]
+		},
+		{
+			"__index__": 10,
+			"__type__": "DlgNode_Speech",
+			"bIsVirtualParent": false,
+			"bVirtualParentFireDirectChildEnterEvents": true,
+			"Text": "",
+			"TextArguments": [],
+			"SpeakerState": "None",
+			"NodeData": null,
+			"VoiceSoundWave": "",
+			"VoiceDialogueWave": "",
+			"GenericData": "",
+			"OwnerName": "ExampleParticipant",
+			"bCheckChildrenOnEvaluation": false,
+			"EnterConditions": [],
+			"EnterEvents": [],
+			"NodeGUID": "A4A46B494ADFB5474CD6E5ACD27D3984",
+			"Children": []
+		}
+	],
+	"NodesGUIDToIndexMap":
+	{
+		"FF509205422E4AC87851D5BEEE176241": 0,
+		"0387067D4D74370ABAA41CB9194B65E9": 1,
+		"7510303F44F9A6AF8369ADBEBB4DB66A": 2,
+		"7047D5CC4FA53BCFD555B4A1FA79BA39": 3,
+		"D9E444B440594EC3DDEEC88017E4963D": 4,
+		"0057704D493BDA07616A19B282AD8564": 5,
+		"13C165004DA48BC55F64C99F21F9FAEB": 6,
+		"FA44B4C2420839AC487675BB2ACCF3AA": 7,
+		"A072EA1A40B79F4990FA0CA6769D27AA": 8,
+		"3DC0739649254ED123299CBA274100CB": 9,
+		"A4A46B494ADFB5474CD6E5ACD27D3984": 10
+	}
+}

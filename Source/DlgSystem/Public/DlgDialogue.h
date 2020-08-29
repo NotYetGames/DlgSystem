@@ -26,7 +26,8 @@ struct DLGSYSTEM_API FDlgDialogueObjectVersion
 		AddComparisonWithOtherParticipant,
 		AddTextFormatArguments,
 		AddLocalizationOverwrittenNamespacesAndKeys,
-
+		AddVirtualParentFireDirectChildEnterEvents,
+		AddGUIDToNodes,
 
 		// -----<new versions can be added above this line>-------------------------------------------------
 		VersionPlusOne,
@@ -48,11 +49,12 @@ struct DLGSYSTEM_API FDlgParticipantClass
 	GENERATED_USTRUCT_BODY()
 
 public:
-	// FName based conditions (aka conditions of type EventCall).
+	// The Name of the Participant Used inside this Dialogue
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Dialogue|Participant")
 	FName ParticipantName = NAME_None;
 
-	// FName based events (aka events of type EDlgEventType)
+	// The Participant Class corresponding for the ParticipantName
+	// This is used to autocomplete and retrieve the Variables from that Class automatically when Using Class based Conditions/Events
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Participant", meta = (MustImplement = "DlgDialogueParticipant"))
 	UClass* ParticipantClass = nullptr;
 };
@@ -236,7 +238,7 @@ public:
 
 	// Gets the number of participants in the Dialogue Data Map.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	int32 GetParticipantNum() const { return ParticipantsData.Num(); }
+	int32 GetParticipantsNum() const { return ParticipantsData.Num(); }
 
 	// Gets all the keys (participant names) of the DlgData Map
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
@@ -380,13 +382,10 @@ public:
 
 	// Gets all the SpeakerStates used inside this dialogue
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	void GetAllSpeakerState(TSet<FName>& OutSet) const
+	void GetAllSpeakerStates(TSet<FName>& OutSet) const
 	{
 		OutSet.Append(AllSpeakerStates);
 	}
-
-	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	const TSet<FName>& GetAllSpeakerStates() const { return AllSpeakerStates; }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	int32 GetDialogueVersion() const { return Version; }
@@ -406,32 +405,60 @@ public:
 	FName GetDialogueFName() const { return GetFName(); }
 
 	// Gets the unique identifier for this dialogue.
-	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	FGuid GetDialogueGUID() const { check(GUID.IsValid()); return GUID; }
+	UFUNCTION(BlueprintPure, Category = "Dialogue|GUID")
+	FGuid GetGUID() const { check(GUID.IsValid()); return GUID; }
 
 	// Regenerate the GUID of this Dialogue
 	void RegenerateGUID() { GUID = FGuid::NewGuid(); }
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|GUID")
+	bool HasGUID() const { return GUID.IsValid(); }
 
 	// Gets all the nodes
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	const TArray<UDlgNode*>& GetNodes() const { return Nodes; }
 
 	// Gets the Start Node as a mutable pointer.
-	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "GetStartNode")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "Get Start Node")
 	UDlgNode* GetMutableStartNode() const { return StartNode; }
 	const UDlgNode& GetStartNode() const { return *StartNode; }
 
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	bool IsValidNodeIndex(int32 NodeIndex) const { return Nodes.IsValidIndex(NodeIndex); }
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	bool IsValidNodeGUID(const FGuid& NodeGUID) const { return IsValidNodeIndex(GetNodeIndexForGUID(NodeGUID)); }
+
+	// Gets the GUID for the Node at NodeIndex
+	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "Get Node GUID For Index")
+	FGuid GetNodeGUIDForIndex(int32 NodeIndex) const;
+
+	// Gets the corresponding Node Index for the supplied NodeGUID
+	// Returns -1 (INDEX_NONE) if the Node GUID does not exist.
+	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "Get Node Index For GUID")
+	int32 GetNodeIndexForGUID(const FGuid& NodeGUID) const;
+
 	// Gets the Node as a mutable pointer.
-	UDlgNode* GetMutableNode(int32 NodeIndex) const { return Nodes.IsValidIndex(NodeIndex) ? Nodes[NodeIndex] : nullptr; }
+	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "Get Node From Index")
+	UDlgNode* GetMutableNodeFromIndex(int32 NodeIndex) const { return Nodes.IsValidIndex(NodeIndex) ? Nodes[NodeIndex] : nullptr; }
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "Get Node From GUID")
+    UDlgNode* GetMutableNodeFromGUID(const FGuid& NodeGUID) const { return GetMutableNodeFromIndex(GetNodeIndexForGUID(NodeGUID));   }
 
 	// Sets a new Start Node. Use with care.
-	void SetStartNode(UDlgNode* InStartNode) { StartNode = InStartNode; }
+	void SetStartNode(UDlgNode* InStartNode);
+
+	// NOTE: don't call this if you don't know what you are doing, you most likely need to call
+	// SetStartNode
+	// SetNodes
+	// After this
+	void EmptyNodesGUIDToIndexMap() { NodesGUIDToIndexMap.Empty(); }
 
 	// Sets the Dialogue Nodes. Use with care.
-	void SetNodes(const TArray<UDlgNode*>& InNodes) { Nodes = InNodes; }
+	void SetNodes(const TArray<UDlgNode*>& InNodes);
 
 	// Sets the Node at index NodeIndex. Use with care.
-	void SetNode(int32 NodeIndex, UDlgNode* InNode) { Nodes[NodeIndex] = InNode; }
+	void SetNode(int32 NodeIndex, UDlgNode* InNode);
 
 	// Is the Node at NodeIndex (if it exists) an end node?
 	bool IsEndNode(int32 NodeIndex) const;
@@ -507,6 +534,9 @@ private:
 	 */
 	void AutoFixGraph();
 
+	// Updates NodesGUIDToIndexMap with Node
+	void UpdateGUIDToIndexMap(const UDlgNode* Node, int32 NodeIndex);
+
 protected:
 	// Used to keep track of the version in text  file too, besides being written in the .uasset file.
 	UPROPERTY()
@@ -542,6 +572,10 @@ protected:
 	// NOTE: Add VisibleAnywhere to make it easier to debug
 	UPROPERTY(AdvancedDisplay, EditFixedSize, Instanced, Meta = (DlgWriteIndex))
 	TArray<UDlgNode*> Nodes;
+
+	// Maps Node GUID => Node Index
+	UPROPERTY(VisibleAnywhere, AdvancedDisplay, Category = "Dialogue", DisplayName = "Nodes GUID To Index Map")
+	TMap<FGuid, int32> NodesGUIDToIndexMap;
 
 	// Useful for syncing on the first run with the text file.
 	bool bIsSyncedWithTextFile = false;

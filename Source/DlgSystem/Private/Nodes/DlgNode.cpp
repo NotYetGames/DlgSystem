@@ -50,6 +50,55 @@ void UDlgNode::AddReferencedObjects(UObject* InThis, FReferenceCollector& Collec
 	Super::AddReferencedObjects(InThis, Collector);
 }
 
+void UDlgNode::PostLoad()
+{
+	Super::PostLoad();
+
+	// NOTE: We don't this here but instead we do it in the compile phase
+	// Create thew new GUID
+	// if (!HasGUID())
+	// {
+	// 	RegenerateGUID();
+	// }
+}
+
+void UDlgNode::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+	// Ignore these cases
+	if (HasAnyFlags(RF_ClassDefaultObject | RF_NeedLoad))
+	{
+		return;
+	}
+
+	// GUID is set in the dialogue compile phase
+}
+
+void UDlgNode::PostDuplicate(bool bDuplicateForPIE)
+{
+	Super::PostDuplicate(bDuplicateForPIE);
+
+	// Used when duplicating Nodes.
+	// We only generate a new GUID is the existing one is valid, otherwise it will be set in the compile phase
+	if (HasGUID())
+	{
+		RegenerateGUID();
+	}
+}
+
+void UDlgNode::PostEditImport()
+{
+	Super::PostEditImport();
+
+	// Used when duplicating Nodes.
+	// We only generate a new GUID is the existing one is valid, otherwise it will be set in the compile phase
+	if (HasGUID())
+	{
+		RegenerateGUID();
+	}
+}
+
 #if WITH_EDITOR
 void UDlgNode::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
@@ -101,24 +150,16 @@ void UDlgNode::FireNodeEnterEvents(UDlgContext& Context)
 			Participant = Context.GetMutableParticipant(OwnerName);
 		}
 
-		if (Participant == nullptr)
-		{
-			FDlgLogger::Get().Warningf(
-				TEXT("FireNodeEnterEvents - Got non existent Participant Name (INVALID Participant) event call will FAIL.\nContext:\n\t%s"),
-				*GetDialogue()->GetPathName(), Context.GetActiveNodeIndex(), *Context.GetContextString()
-			);
-		}
-
-		Event.Call(Context, Participant);
+		Event.Call(Context, TEXT("FireNodeEnterEvents"), Participant);
 	}
 }
 
 bool UDlgNode::ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> AlreadyEvaluated)
 {
-	TArray<FDlgEdge>& AvailableChildren = Context.GetMutableOptionsArray();
-	TArray<FDlgEdgeData>& AllChildren = Context.GetAllMutableOptionsArray();
-	AvailableChildren.Empty();
-	AllChildren.Empty();
+	TArray<FDlgEdge>& AvailableOptions = Context.GetMutableOptionsArray();
+	TArray<FDlgEdgeData>& AllOptions = Context.GetAllMutableOptionsArray();
+	AvailableOptions.Empty();
+	AllOptions.Empty();
 
 	for (const FDlgEdge& Edge : Children)
 	{
@@ -126,19 +167,19 @@ bool UDlgNode::ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> Al
 
 		if (bSatisfied || Edge.bIncludeInAllOptionListIfUnsatisfied)
 		{
-			AllChildren.Add(FDlgEdgeData{ bSatisfied, Edge });
+			AllOptions.Add(FDlgEdgeData{ bSatisfied, Edge });
 		}
 		if (bSatisfied)
 		{
-			AvailableChildren.Add(Edge);
+			AvailableOptions.Add(Edge);
 		}
 	}
 
 	// no child, but no end node?
-	if (AvailableChildren.Num() == 0)
+	if (AvailableOptions.Num() == 0)
 	{
 		FDlgLogger::Get().Errorf(
-			TEXT("ReevaluateChildren - no valid child for a NODE.\nContext:\n\t%s"),
+			TEXT("ReevaluateChildren (ReevaluateOptions) - no valid child option for a NODE.\nContext:\n\t%s"),
 			*Context.GetContextString()
 		);
 		return false;
@@ -183,16 +224,16 @@ bool UDlgNode::HasAnySatisfiedChild(const UDlgContext& Context, TSet<const UDlgN
 
 bool UDlgNode::OptionSelected(int32 OptionIndex, UDlgContext& Context)
 {
-	const TArray<FDlgEdge>& AvailableChildren = Context.GetOptionsArray();
-	if (AvailableChildren.IsValidIndex(OptionIndex))
+	const TArray<FDlgEdge>& AvailableOptions = Context.GetOptionsArray();
+	if (AvailableOptions.IsValidIndex(OptionIndex))
 	{
-		check(AvailableChildren[OptionIndex].IsValid());
-		return Context.EnterNode(AvailableChildren[OptionIndex].TargetIndex, {});
+		check(AvailableOptions[OptionIndex].IsValid());
+		return Context.EnterNode(AvailableOptions[OptionIndex].TargetIndex, {});
 	}
 
 	FDlgLogger::Get().Errorf(
 		TEXT("OptionSelected - Failed to choose OptionIndex = %d - it only has %d valid options.\nContext:\n\t%s"),
-		OptionIndex, AvailableChildren.Num(), *Context.GetContextString()
+		OptionIndex, AvailableOptions.Num(), *Context.GetContextString()
 	);
 	return false;
 }

@@ -33,7 +33,10 @@ public:
 	FDialogueEditor();
 	virtual ~FDialogueEditor();
 
-	//~ Begin IToolkit interface
+	//
+	// IToolkit interface
+	//
+
 	void RegisterTabSpawners(const TSharedRef<FTabManager>& TabManager) override;
 	void UnregisterTabSpawners(const TSharedRef<FTabManager>& TabManager) override;
 	FText GetBaseToolkitName() const override;
@@ -42,9 +45,10 @@ public:
 	FText GetToolkitToolTipText() const override { return GetToolTipTextForObject(Cast<UObject>(DialogueBeingEdited)); }
 	FLinearColor GetWorldCentricTabColorScale() const override { return FLinearColor::White; }
 	FString GetWorldCentricTabPrefix() const override { return FString(TEXT("DialogueEditor")); }
-	//~ End IToolkit Interface
 
-	//~ Begin FAssetEditorToolkit
+	//
+	// FAssetEditorToolkit interface
+	//
 
 	/** @return the documentation location for this editor */
 	FString GetDocumentationLink() const override { return FString(TEXT("Plugins/DlgSystem/DialogueEditor")); }
@@ -53,37 +57,40 @@ public:
 	bool CanSaveAssetAs() const override { return true; }
 	void SaveAsset_Execute() override;
 	void SaveAssetAs_Execute() override;
-	//~ End of FAssetEditorToolkit
 
-	//~ Begin IAssetEditorInstance
+	//
+	// IAssetEditorInstance interface
+	//
+
 	void FocusWindow(UObject* ObjectToFocusOn = nullptr) override;
-	//~ End of IAssetEditorInstance
 
-	//~ Begin FEditorUndoClient
+	//
+	// FEditorUndoClient interface
+	//
 
-	/**
-	 * Signal that client should run any PostUndo code
-	 * @param bSuccess	If true than undo succeeded, false if undo failed
-	 */
+	// Signal that client should run any PostUndo code
+	// @param bSuccess	If true than undo succeeded, false if undo failed
 	void PostUndo(bool bSuccess) override;
 
-	/**
-	 * Signal that client should run any PostRedo code
-	 * @param bSuccess	If true than redo succeeded, false if redo failed
-	 */
+	// Signal that client should run any PostRedo code
+	// @param bSuccess	If true than redo succeeded, false if redo failed
 	void PostRedo(bool bSuccess) override;
 
-	// Begin FSerializableObject interface, FGCObject
+	//
+	// FSerializableObject interface, FGCObject
+	//
+
 	void AddReferencedObjects(FReferenceCollector& Collector) override
 	{
 		Collector.AddReferencedObject(DialogueBeingEdited);
 	}
-	//~ End of FEditorUndoClient
 
-	// Begin IDialogueEditor interface
+	//
+	// IDialogueEditor interface
+	//
 
-	/** Get the currently selected set of nodes */
-	const TSet<UObject*> GetSelectedNodes() const override
+	// Get the currently selected set of nodes
+	TSet<UObject*> GetSelectedNodes() const override
 	{
 		check(GraphEditorView.IsValid());
 		return GraphEditorView->GetSelectedNodes();
@@ -102,7 +109,7 @@ public:
 		return GraphEditorView->GetBoundsForSelectedNodes(Rect, Padding);
 	}
 
-	/** Clears the viewport selection set */
+	// Clears the viewport selection set
 	void ClearViewportSelection() const
 	{
 		if (GraphEditorView.IsValid())
@@ -111,7 +118,7 @@ public:
 		}
 	}
 
-	/** Refreshes the graph viewport. */
+	// Refreshes the graph viewport.
 	void RefreshViewport() const
 	{
 		if (GraphEditorView.IsValid())
@@ -120,30 +127,29 @@ public:
 		}
 	}
 
-	/** Refreshes the details panel with the Dialogue */
+	// Refreshes the details panel with the Dialogue
 	void RefreshDetailsView(bool bRestorePreviousSelection) override;
 	void Refresh(bool bRestorePreviousSelection) override;
 	void JumpToObject(const UObject* Object) override;
-	//~ End IDialogueEditor Interface
 
-	// Begin own functions
+	//
+	// Own methods
+	//
 
-	/** Summons The Search UI */
+	// Summons The Search UI
 	void SummonSearchUI(bool bSetFindWithinDialogue, FString NewSearchTerms = FString(), bool bSelectFirstResult = false);
 
-	/**
-	 * Edits the specified Dialogue. This is called from the TypeActions object.
-	 */
+	// Edits the specified Dialogue. This is called from the TypeActions object.
 	void InitDialogueEditor(
 		EToolkitMode::Type Mode,
 		const TSharedPtr<IToolkitHost>& InitToolkitHost,
 		UDlgDialogue* InitDialogue
 	);
 
-	/** Helper method to get directly the Dialogue Graph */
+	// Helper method to get directly the Dialogue Graph
 	UDialogueGraph* GetDialogueGraph() const { return CastChecked<UDialogueGraph>(DialogueBeingEdited->GetGraph()); }
 
-	/** Performs checks on all the nodes in the Dialogue */
+	// Performs checks on all the nodes in the Dialogue
 	void CheckAll() const;
 
 	// Gets/Sets the dialogue being edited
@@ -154,100 +160,124 @@ public:
 	}
 	void SetDialogueBeingEdited(UDlgDialogue* NewDialogue);
 
-	/** Used only on drag/drop operations of edges. */
+	// Used only on drag/drop operations of edges.
 	UDialogueGraphNode_Edge* GetLastTargetGraphEdgeBeforeDrag() const override { return LastTargetGraphEdgeBeforeDrag; }
 	void SetLastTargetGraphEdgeBeforeDrag(UDialogueGraphNode_Edge* InEdge) override { LastTargetGraphEdgeBeforeDrag = InEdge; }
 
 private:
-	/** FNotifyHook interface */
+	//
+	// FNotifyHook interface
+	//
 	void NotifyPostChange(const FPropertyChangedEvent& PropertyChangedEvent, FNYProperty* PropertyThatChanged) override;
 
-	/** Creates all internal widgets for the tabs to point at */
+	//
+	// Own methods
+	//
+
+	// Creates all internal widgets for the tabs to point at
 	void CreateInternalWidgets();
 
-	/** Create new graph editor widget */
+	// Create new graph editor widget
 	TSharedRef<SGraphEditor> CreateGraphEditorWidget();
 
-	/** Bind the commands from the editor. See GraphEditorCommands for more details. */
+	// Bind the commands from the editor. See GraphEditorCommands for more details.
 	void BindEditorCommands();
 
-	/** Generates the submenu fo the primary/secondary button */
+	// Generates the submenu fo the primary/secondary button
 	TSharedRef<SWidget> GeneratePrimarySecondaryEdgesMenu() const;
 	TSharedRef<SWidget> GenerateExternalURLsMenu() const;
 
-	/** Extend the Menus of the editor */
+	// Extend the Menus of the editor
 	void ExtendMenu();
 
-	/** Extends the Top Toolbar */
+	// Extends the Top Toolbar
 	void ExtendToolbar();
 
+	//
 	// Functions to spawn each tab type.
-	/** Spawn the details tab where we can see the internal structure of the dialogue. */
+	//
+
+	// Spawn the details tab where we can see the internal structure of the dialogue.
 	TSharedRef<SDockTab> SpawnTab_Details(const FSpawnTabArgs& Args) const;
 
-	/** Spawn the main graph canvas where all the nodes live. */
+	// Spawn the main graph canvas where all the nodes live. */
 	TSharedRef<SDockTab> SpawnTab_GraphCanvas(const FSpawnTabArgs& Args) const;
 
-	/** Spawn the pallete tab view where you can see all the nodes available for the graph. */
+	// Spawn the pallete tab view where you can see all the nodes available for the graph.
 	TSharedRef<SDockTab> SpawnTab_Palette(const FSpawnTabArgs& Args) const;
 
-	/** Spawn the find in Dialogue tab view. */
+	// Spawn the find in Dialogue tab view.
 	TSharedRef<SDockTab> SpawnTab_FindInDialogue(const FSpawnTabArgs& Args) const;
 
+	//
 	// Graph editor commands
-	/** Called to undo the last action */
+	//
+
+	// Called to undo the last action
 	void OnCommandUndoGraphAction() const;
 
-	/** Called to redo the last undone action */
+	// Called to redo the last undone action
 	void OnCommandRedoGraphAction() const;
 
+	//
 	// Edit Node commands
-	/**  Converts a speech sequence node to a list of speech node. */
+	//
+
+	// Converts a speech sequence node to a list of speech node.
 	void OnCommandConvertSpeechSequenceNodeToSpeechNodes() const;
 
-	/** Remove the currently selected nodes from editor view*/
+	// Converts a list of speech nodes to a speech sequence node
+	void OnCommandConvertSpeechNodesToSpeechSequence() const;
+
+	// Remove the currently selected nodes from editor view
 	void OnCommandDeleteSelectedNodes() const;
 
-	/** Whether we are able to remove the currently selected nodes */
+	// Whether we are able to remove the currently selected nodes
 	bool CanDeleteNodes() const;
 
-	/** Copy the currently selected nodes to the text buffer. */
+	// Copy the currently selected nodes to the text buffer.
 	void OnCommandCopySelectedNodes() const;
 
-	/** Whether we are able to copy the currently selected nodes. */
+	// Whether we are able to copy the currently selected nodes.
 	bool CanCopyNodes() const;
 
-	/** Paste the nodes at the current location */
+	// Paste the nodes at the current location
 	void OnCommandPasteNodes();
 
-	/** Paste the nodes at the specified Location. */
+	// Paste the nodes at the specified Location.
 	void PasteNodesHere(const FVector2D& Location);
 
-	/** Whether we are able to paste from the clipboard */
+	// Whether we are able to paste from the clipboard
 	bool CanPasteNodes() const;
 
-	/** Hide the selected nodes. */
+	// Hide the selected nodes.
 	void OnCommandHideSelectedNodes();
 
-	/** Unhide all nodes. */
+	// Unhide all nodes.
 	void OnCommandUnHideAllNodes();
 
+	//
 	// Toolbar commands
-	/** Reloads the Dialogue from the file */
+	//
+
+	// Reloads the Dialogue from the file
 	void OnCommandDialogueReload() const;
 
+	//
 	// Graph events
-	/** Called when the selection changes in the GraphEditor */
+	//
+
+	// Called when the selection changes in the GraphEditor
 	void OnSelectedNodesChanged(const TSet<UObject*>& NewSelection);
 
-	/** Called to create context menu when right-clicking on graph */
+	// Called to create context menu when right-clicking on graph
 	FActionMenuContent OnCreateGraphActionMenu(UEdGraph* InGraph,
 		const FVector2D& InNodePosition,
 		const TArray<UEdGraphPin*>& InDraggedPins,
 		bool bAutoExpand,
 		SGraphEditor::FActionMenuClosed InOnMenuClosed);
 
-	/** Called from graph context menus when they close to tell the editor why they closed */
+	// Called from graph context menus when they close to tell the editor why they closed
 	void OnGraphActionMenuClosed(bool bActionExecuted, bool bGraphPinContext);
 
 	/**

@@ -8,6 +8,8 @@ class UDlgContext;
 
 // Abstract base class for a custom event
 // Extend this class to define additional data you want to store
+//
+// 1. Override EnterEvent
 UCLASS(Blueprintable, BlueprintType, Abstract, EditInlineNew)
 class DLGSYSTEM_API UDlgEventCustom : public UDlgObject
 {

@@ -131,6 +131,12 @@ public:
 		TArray<UDialogueGraphNode*>& OutSelectedGraphNodes
 	);
 
+	static bool CanConvertSpeechNodesToSpeechSequence(const TSet<UObject*>& SelectedNodes)
+	{
+		TArray<UDialogueGraphNode*> OutSelectedGraphNodes;
+		return CanConvertSpeechNodesToSpeechSequence(SelectedNodes, OutSelectedGraphNodes);
+	}
+
 	/**
 	 * Tells us if the selected nodes (should be only one) can be converted from a speech sequence to speech nodes
 	 *
@@ -162,6 +168,7 @@ public:
 	// Just jumps to that graph node without trying to open any Dialogue Editor
 	// If you want that just call OpenEditorAndJumpToGraphNode
 	static bool JumpToGraphNode(const UEdGraphNode* GraphNode);
+	static bool JumpToGraphNodeIndex(const UDlgDialogue* Dialogue, int32 NodeIndex);
 
 	/**
 	 * Copy all children of the FromNode to be also the children of ToNode.
@@ -196,11 +203,12 @@ public:
 	/**
 	 * Replaces all references to old Node indices from the provided GraphNodes with new indices.
 	 * This can happen inside Conditions of type WasNodeVisited and HasSatisfiedChild because the NodeIndex is a weak reference.
+	 * Also sets the correct GUID to nodes that reference the GUID
 	 *
 	 * @param	GraphNodes			The nodes we are replacing the old references
 	 * @param	OldToNewIndexMap	Map that tells us the mapping from old index to new index. Maps from old index -> new index
 	 */
-	static void ReplaceReferencesToOldIndicesWithNew(
+	static void RemapOldIndicesWithNewAndUpdateGUID(
 		const TArray<UDialogueGraphNode*>& GraphNodes,
 		const TMap<int32, int32>& OldToNewIndexMap
 	);

@@ -415,7 +415,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = DialogueGraphNode)
 	int32 NodeIndex = INDEX_NONE;
 
-	/** Indicates the distance from the start node. This is only set after the graph is compiled. */
+	// Indicates the distance from the start node. This is only set after the graph is compiled.
+	UPROPERTY()
 	int32 NodeDepth = INDEX_NONE;
 
 	/**
