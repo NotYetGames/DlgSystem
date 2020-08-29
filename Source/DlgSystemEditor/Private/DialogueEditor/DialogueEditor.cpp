@@ -30,6 +30,7 @@
 #include "Graph/SchemaActions/ConvertSpeechSequenceNodeToSpeechNodes_DialogueGraphSchemaAction.h"
 #include "DialogueSearch/DialogueSearchManager.h"
 #include "DialogueSearch/SFindInDialogues.h"
+#include "Graph/SchemaActions/ConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction.h"
 
 #define LOCTEXT_NAMESPACE "DialogueEditor"
 
@@ -533,6 +534,15 @@ void FDialogueEditor::BindEditorCommands()
 	);
 
 	GraphEditorCommands->MapAction(
+		DialogueCommands.ConvertSpeechNodesToSpeechSequence,
+		FExecuteAction::CreateSP(this, &Self::OnCommandConvertSpeechNodesToSpeechSequence),
+		FCanExecuteAction::CreateLambda([this]
+		{
+			return FDialogueEditorUtilities::CanConvertSpeechNodesToSpeechSequence(GetSelectedNodes());
+		})
+	);
+
+	GraphEditorCommands->MapAction(
 		FGenericCommands::Get().Delete,
 		FExecuteAction::CreateSP(this, &Self::OnCommandDeleteSelectedNodes),
 		FCanExecuteAction::CreateSP(this, &Self::CanDeleteNodes)
@@ -854,6 +864,22 @@ void FDialogueEditor::OnCommandConvertSpeechSequenceNodeToSpeechNodes() const
 	ConvertAction.PerformAction(DialogueBeingEdited->GetGraph(), nullptr, SpeechSequence_GraphNode->GetPosition(), false);
 }
 
+void FDialogueEditor::OnCommandConvertSpeechNodesToSpeechSequence() const
+{
+	const TSet<UObject*> SelectedNodes = GetSelectedNodes();
+	TArray<UDialogueGraphNode*> OutSelectedGraphNodes;
+	if (!FDialogueEditorUtilities::CanConvertSpeechNodesToSpeechSequence(SelectedNodes, OutSelectedGraphNodes))
+	{
+		return;
+	}
+
+	UDialogueGraphNode* Speech_GraphNode = CastChecked<UDialogueGraphNode>(OutSelectedGraphNodes[0]);
+	check(Speech_GraphNode->IsSpeechNode());
+
+	FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction ConvertAction(OutSelectedGraphNodes);
+	ConvertAction.PerformAction(DialogueBeingEdited->GetGraph(), nullptr, Speech_GraphNode->GetPosition(), false);
+}
+
 void FDialogueEditor::OnCommandDeleteSelectedNodes() const
 {
 	const FScopedTransaction Transaction(LOCTEXT("DialogueEditRemoveSelectedNode", "Dialogue Editor: Remove Node"));
@@ -1166,7 +1192,7 @@ void FDialogueEditor::PasteNodesHere(const FVector2D& Location)
 	}
 
 	// First fix weak references
-	FDialogueEditorUtilities::ReplaceReferencesToOldIndicesWithNew(GraphNodes, OldToNewIndexMap);
+	FDialogueEditorUtilities::RemapOldIndicesWithNewAndUpdateGUID(GraphNodes, OldToNewIndexMap);
 
 	// Compile
 	CheckAll();

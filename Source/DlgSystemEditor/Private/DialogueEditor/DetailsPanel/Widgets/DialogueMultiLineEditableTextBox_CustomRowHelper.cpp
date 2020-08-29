@@ -31,7 +31,7 @@ void FDialogueMultiLineEditableTextBoxOptions::SetDefaults()
 	// Set values that can't be set in the class definition
 	Style = FCoreStyle::Get().GetWidgetStyle<FEditableTextBoxStyle>("NormalEditableTextBox");
 	Font = FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont"));
-	// ForegroundColor = 
+	// ForegroundColor =
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,9 +80,6 @@ void FDialogueMultiLineEditableTextBox_CustomRowHelper::UpdateInternal()
 			.AddResetToDefaultWidget(true)
 		]
 	];
-
-	// Add Reset to default
-
 }
 
 FDialogueTextCommitedDelegate& FDialogueMultiLineEditableTextBox_CustomRowHelper::OnTextCommittedEvent()
@@ -103,7 +100,7 @@ FText FDialogueMultiLineEditableTextBox_CustomRowHelper::GetTextValue() const
 	{
 		return TextBoxWidget->GetTextValue();
 	}
-	
+
 	return FText::GetEmpty();
 }
 

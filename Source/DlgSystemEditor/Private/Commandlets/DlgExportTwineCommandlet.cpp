@@ -188,7 +188,7 @@ int32 UDlgExportTwineCommandlet::Main(const FString& Params)
 		}
 
 		// Export file
-		const FString TwineFileContent = CreateTwineStoryData(Dialogue->GetDialogueName(), Dialogue->GetDialogueGUID(), INDEX_NONE, PassagesData);
+		const FString TwineFileContent = CreateTwineStoryData(Dialogue->GetDialogueName(), Dialogue->GetGUID(), INDEX_NONE, PassagesData);
 		if (FFileHelper::SaveStringToFile(TwineFileContent, *FileSystemFilePath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM))
 		{
 			UE_LOG(LogDlgExportTwineCommandlet, Display, TEXT("Writing file = `%s` for Dialogue = `%s` "), *FileSystemFilePath, *OriginalDialoguePath);

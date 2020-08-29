@@ -95,14 +95,14 @@ UDlgContext* UDlgManager::StartDialogueWithDefaultParticipants(UObject* WorldCon
 		return nullptr;
 	}
 
-	return StartDialogueFromContext(TEXT("StartDialogueWithDefaultParticipants"), Dialogue, Participants);
+	return StartDialogueWithContext(TEXT("StartDialogueWithDefaultParticipants"), Dialogue, Participants);
 }
 
-UDlgContext* UDlgManager::StartDialogueFromContext(const FString& ContextString, UDlgDialogue* Dialogue, const TArray<UObject*>& Participants)
+UDlgContext* UDlgManager::StartDialogueWithContext(const FString& ContextString, UDlgDialogue* Dialogue, const TArray<UObject*>& Participants)
 {
 	const FString ContextMessage = ContextString.IsEmpty()
-        ? FString::Printf(TEXT("StartDialogue"))
-        : FString::Printf(TEXT("%s - StartDialogue"), *ContextString);
+		? FString::Printf(TEXT("StartDialogue"))
+		: FString::Printf(TEXT("%s - StartDialogue"), *ContextString);
 
 	TMap<FName, UObject*> ParticipantBinding;
 	if (!UDlgContext::ConvertArrayOfParticipantsToMap(ContextMessage, Dialogue, Participants, ParticipantBinding))
@@ -111,7 +111,7 @@ UDlgContext* UDlgManager::StartDialogueFromContext(const FString& ContextString,
 	}
 
 	auto* Context = NewObject<UDlgContext>(Participants[0], UDlgContext::StaticClass());
-	if (Context->StartFromContext(ContextMessage, Dialogue, ParticipantBinding))
+	if (Context->StartWithContext(ContextMessage, Dialogue, ParticipantBinding))
 	{
 		return Context;
 	}
@@ -130,15 +130,15 @@ bool UDlgManager::CanStartDialogue(UDlgDialogue* Dialogue, UPARAM(ref)const TArr
 	return UDlgContext::CanBeStarted(Dialogue, ParticipantBinding);
 }
 
-UDlgContext* UDlgManager::ResumeDialogue(
+UDlgContext* UDlgManager::ResumeDialogueFromNodeIndex(
 	UDlgDialogue* Dialogue,
 	UPARAM(ref)const TArray<UObject*>& Participants,
-	int32 StartIndex,
+	int32 StartNodeIndex,
 	const TSet<int32>& AlreadyVisitedNodes,
 	bool bFireEnterEvents
 )
 {
-	const FString ContextMessage = TEXT("ResumeDialogue");
+	const FString ContextMessage = TEXT("ResumeDialogueFromNodeIndex");
 	TMap<FName, UObject*> ParticipantBinding;
 	if (!UDlgContext::ConvertArrayOfParticipantsToMap(ContextMessage, Dialogue, Participants, ParticipantBinding))
 	{
@@ -146,7 +146,35 @@ UDlgContext* UDlgManager::ResumeDialogue(
 	}
 
 	auto* Context = NewObject<UDlgContext>(Participants[0], UDlgContext::StaticClass());
-	if (Context->StartFromContextFromIndex(ContextMessage, Dialogue, ParticipantBinding, StartIndex, AlreadyVisitedNodes, bFireEnterEvents))
+	FDlgHistory History;
+	History.VisitedNodeIndices = AlreadyVisitedNodes;
+	if (Context->StartWithContextFromNodeIndex(ContextMessage, Dialogue, ParticipantBinding, StartNodeIndex, History, bFireEnterEvents))
+	{
+		return Context;
+	}
+
+	return nullptr;
+}
+
+UDlgContext* UDlgManager::ResumeDialogueFromNodeGUID(
+	UDlgDialogue* Dialogue,
+	UPARAM(ref)const TArray<UObject*>& Participants,
+	const FGuid& StartNodeGUID,
+	const TSet<FGuid>& AlreadyVisitedNodes,
+	bool bFireEnterEvents
+)
+{
+	const FString ContextMessage = TEXT("ResumeDialogueFromNodeGUID");
+	TMap<FName, UObject*> ParticipantBinding;
+	if (!UDlgContext::ConvertArrayOfParticipantsToMap(ContextMessage, Dialogue, Participants, ParticipantBinding))
+	{
+		return nullptr;
+	}
+
+	auto* Context = NewObject<UDlgContext>(Participants[0], UDlgContext::StaticClass());
+	FDlgHistory History;
+	History.VisitedNodeGUIDs = AlreadyVisitedNodes;
+	if (Context->StartWithContextFromNodeGUID(ContextMessage, Dialogue, ParticipantBinding, StartNodeGUID, History, bFireEnterEvents))
 	{
 		return Context;
 	}
@@ -158,7 +186,7 @@ UDlgContext* UDlgManager::StartMonologue(UDlgDialogue* Dialogue, UObject* Partic
 {
 	TArray<UObject*> Participants;
 	Participants.Add(Participant);
-	return StartDialogueFromContext(TEXT("StartMonologue"), Dialogue, Participants);
+	return StartDialogueWithContext(TEXT("StartMonologue"), Dialogue, Participants);
 }
 
 UDlgContext* UDlgManager::StartDialogue2(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1)
@@ -166,7 +194,7 @@ UDlgContext* UDlgManager::StartDialogue2(UDlgDialogue* Dialogue, UObject* Partic
 	TArray<UObject*> Participants;
 	Participants.Add(Participant0);
 	Participants.Add(Participant1);
-	return StartDialogueFromContext(TEXT("StartDialogue2"), Dialogue, Participants);
+	return StartDialogueWithContext(TEXT("StartDialogue2"), Dialogue, Participants);
 }
 
 UDlgContext* UDlgManager::StartDialogue3(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1, UObject* Participant2)
@@ -175,7 +203,7 @@ UDlgContext* UDlgManager::StartDialogue3(UDlgDialogue* Dialogue, UObject* Partic
 	Participants.Add(Participant0);
 	Participants.Add(Participant1);
 	Participants.Add(Participant2);
-	return StartDialogueFromContext(TEXT("StartDialogue3"), Dialogue, Participants);
+	return StartDialogueWithContext(TEXT("StartDialogue3"), Dialogue, Participants);
 }
 
 UDlgContext* UDlgManager::StartDialogue4(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1, UObject* Participant2, UObject* Participant3)
@@ -186,7 +214,7 @@ UDlgContext* UDlgManager::StartDialogue4(UDlgDialogue* Dialogue, UObject* Partic
 	Participants.Add(Participant2);
 	Participants.Add(Participant3);
 
-	return StartDialogueFromContext(TEXT("StartDialogue4"), Dialogue, Participants);
+	return StartDialogueWithContext(TEXT("StartDialogue4"), Dialogue, Participants);
 }
 
 int32 UDlgManager::LoadAllDialoguesIntoMemory()
@@ -279,7 +307,7 @@ TArray<UDlgDialogue*> UDlgManager::GetDialoguesWithDuplicateGUIDs()
 	TSet<FGuid> DialogueGUIDs;
 	for (UDlgDialogue* Dialogue : Dialogues)
 	{
-		const FGuid ID = Dialogue->GetDialogueGUID();
+		const FGuid ID = Dialogue->GetGUID();
 		if (DialogueGUIDs.Find(ID) == nullptr)
 		{
 			// does not exist, good
@@ -302,7 +330,7 @@ TMap<FGuid, UDlgDialogue*> UDlgManager::GetAllDialoguesGUIDsMap()
 
 	for (UDlgDialogue* Dialogue : Dialogues)
 	{
-		const FGuid ID = Dialogue->GetDialogueGUID();
+		const FGuid ID = Dialogue->GetGUID();
 		if (DialoguesMap.Contains(ID))
 		{
 			FDlgLogger::Get().Errorf(
@@ -374,6 +402,11 @@ bool UDlgManager::IsObjectACustomTextArgument(const UObject* Object)
 	return FDlgHelper::IsObjectAChildOf(Object, UDlgTextArgumentCustom::StaticClass());
 }
 
+bool UDlgManager::IsObjectANodeData(const UObject* Object)
+{
+	return FDlgHelper::IsObjectAChildOf(Object, UDlgNodeData::StaticClass());
+}
+
 TArray<UDlgDialogue*> UDlgManager::GetAllDialoguesForParticipantName(FName ParticipantName)
 {
 	TArray<UDlgDialogue*> DialoguesArray;
@@ -404,7 +437,7 @@ void UDlgManager::GetAllDialoguesSpeakerStates(TArray<FName>& OutArray)
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
 	{
-		Dialogue->GetAllSpeakerState(UniqueNames);
+		Dialogue->GetAllSpeakerStates(UniqueNames);
 	}
 
 	FDlgHelper::AppendSortedSetToArray(UniqueNames, OutArray);
@@ -567,6 +600,6 @@ UWorld* UDlgManager::GetDialogueWorld()
 		}
 	}
 
-	FDlgLogger::Get().Error(TEXT("GetDialogueWorld - Could NOT find any valid world. Call SetPersistentWorldContextObject in the Being Play of your GameMode"));
+	FDlgLogger::Get().Error(TEXT("GetDialogueWorld - Could NOT find any valid world. Call SetDialoguePersistentWorldContextObject in the Being Play of your GameMode"));
 	return nullptr;
 }

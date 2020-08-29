@@ -126,8 +126,8 @@ public:
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetClassFNames() const { return ClassFNames; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetClassFTexts() const { return ClassFTexts; }
 
-	/** Does this participant has any variables of the basic type */
-	bool HasVariables() const
+	/** Does this participant has any dialogue values of the basic type */
+	bool HasDialogueValues() const
 	{
 		return Integers.Num() > 0 || Floats.Num() > 0 || Bools.Num() > 0 || FNames.Num() > 0;
 	}

@@ -25,7 +25,7 @@ void UDialogueGraphNode_Root::OnDialoguePropertyChanged(const FPropertyChangedEv
 		return;
 	}
 
-	// Only intrested in the Dialogue.StartNode
+	// Only interested in the Dialogue.StartNode
 	if (PropertyChangedEvent.MemberProperty->GetFName() != UDlgDialogue::GetMemberNameStartNode())
 	{
 		return;

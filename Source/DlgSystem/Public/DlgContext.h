@@ -4,6 +4,7 @@
 #include "DlgObject.h"
 #include "DlgDialogue.h"
 #include "Nodes/DlgNode.h"
+#include "DlgMemory.h"
 
 #include "DlgContext.generated.h"
 
@@ -13,6 +14,7 @@ class UDialogueWave;
 class UTexture2D;
 class UDlgNodeData;
 class UDlgNode;
+class UDlgNode_SpeechSequence;
 
 // Used to store temporary state of edges
 // This represents a const version of an Edge
@@ -69,7 +71,7 @@ enum class EDlgValidateStatus : uint8
  *  Should be controlled from Player Character/Player controller
  *  For starting a dialogue check UDlgManager - the proper function creates an UDlgContext for you
  *
- *  Call ChooseChild() if an option is selected
+ *  Call ChooseOption() if an option is selected
  *  If the return value is false the dialogue is over and the context should be dropped
  *  This abstract class contains the outer functionality only
  */
@@ -96,32 +98,53 @@ public:
 	//
 
 	UFUNCTION()
-    void OnRep_SerializedParticipants();
+	void OnRep_SerializedParticipants();
 	void SerializeParticipants();
 
+	UE_DEPRECATED(4.22, "ChooseChild has been deprecated in Favour of ChooseOption")
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control", meta = (DeprecatedFunction, DeprecationMessage = "ChooseChild has been deprecated in favour of ChooseOption"))
+	bool ChooseChild(int32 OptionIndex) { return ChooseOption(OptionIndex); }
+
 	/**
-	 * Chooses the option with index OptionIndex of the active node index and it enters that node.
-	 * Typically called based on user input.
-	 * NOTICE: If the return value is false the dialogue is over and the context should be dropped
+	* Chooses the option with index OptionIndex of the active node index and it enters that node.
+	* Typically called based on user input.
+	* NOTICE: If the return value is false the dialogue is over and the context should be dropped
+	*
+	* @return true if the dialogue did not end, false otherwise
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
+	bool ChooseOption(int32 OptionIndex);
+
+	/**
+	 * Chooses the option with OptionIndex that is replicated
+	 * NOTE: the ActiveNodeIndex must be a speech sequence node, otherwise the dialogue will end
 	 *
 	 * @return true if the dialogue did not end, false otherwise
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
-	bool ChooseChild(int32 OptionIndex);
+	bool ChooseSpeechSequenceOptionFromReplicated(int32 OptionIndex);
+
+	UE_DEPRECATED(4.22, "ChooseChildBasedOnAllOptionIndex has been deprecated in Favour of ChooseOptionBasedOnAllOptionIndex")
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control|All", meta = (DeprecatedFunction, DeprecationMessage = "ChooseChildBasedOnAllOptionIndex has been deprecated in Favour of ChooseOptionBasedOnAllOptionIndex"))
+	bool ChooseChildBasedOnAllOptionIndex(int32 Index) { return ChooseOptionBasedOnAllOptionIndex(Index); }
 
 	/**
 	 *  Exactly as ChooseChild but expects an index from the AllOptions array
 	 *  If the index is invalid or the selected edge is not satisfied the call fails
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control|All")
-	bool ChooseChildBasedOnAllOptionIndex(int32 Index);
+	bool ChooseOptionBasedOnAllOptionIndex(int32 Index);
+
+	UE_DEPRECATED(4.22, "ReevaluateChildren has been deprecated in Favour of ReevaluateOptions")
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control", meta = (DeprecatedFunction, DeprecationMessage = "ReevaluateChildren has been deprecated in Favour of ReevaluateOptions"))
+	bool ReevaluateChildren() { return ReevaluateOptions(); }
 
 	/**
-	 * Normally the children of the active node are checked only once, when the conversation enters the node.
+	 * Normally the options of the active node are checked only once, when the conversation enters the node.
 	 * If an option can appear/disappear real time in the middle of the conversation this function should be called manually each frame
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
-	void ReevaluateChildren();
+	bool ReevaluateOptions();
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Control")
 	bool HasDialogueEnded() const { return bDialogueEnded; }
@@ -130,9 +153,9 @@ public:
 	// Use these functions if you don't care about unsatisfied player options:
 	//
 
-	// Gets the number of children with satisfied conditions (number of options)
+	// Gets the number of options with satisfied conditions (number of options)
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|Satisfied")
-	int32 GetOptionNum() const { return AvailableChildren.Num(); }
+	int32 GetOptionsNum() const { return AvailableChildren.Num(); }
 
 	// Gets the Text of the (satisfied) option with index OptionIndex
 	// NOTE: This is just a helper method, you could have called GetOption
@@ -147,7 +170,7 @@ public:
 	// Gets the Enter Conditions of the (satisfied) edge with index OptionIndex
 	// NOTE: This is just a helper method, you could have called GetOption
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|Satisfied")
-    const TArray<FDlgCondition>& GetOptionEnterConditions(int32 OptionIndex) const;
+	const TArray<FDlgCondition>& GetOptionEnterConditions(int32 OptionIndex) const;
 
 	// Gets the edge representing a player option from the satisfied options
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|Satisfied")
@@ -160,12 +183,12 @@ public:
 
 	//
 	//  Use these functions bellow if you don't care about unsatisfied player options:
-	//  DO NOT missuse the indices above and bellow! The functions above expect < GetOptionNum(), bellow < GetAllOptionNum()
+	//  DO NOT missuse the indices above and bellow! The functions above expect < GetOptionsNum(), bellow < GetAllOptionsNum()
 	//
 
-	// Gets the number of children (both satisfied and unsatisfied ones are counted)
+	// Gets the number of options (both satisfied and unsatisfied ones are counted)
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|All")
-	int32 GetAllOptionNum() const { return AllChildren.Num(); }
+	int32 GetAllOptionsNum() const { return AllChildren.Num(); }
 
 	// Gets the Text of an option from the all list, which includes the unsatisfied ones as well
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|All")
@@ -191,27 +214,27 @@ public:
 	/**
 	*  Checks if the node connected directly to one of the active player choices was already visited or not
 	*  Does not handle complicated logic - if the said node is a logical one it will still check that node, and not one
-	*  of its children
+	*  of its options
 	*
 	* @param Index  Index of the edge/player option to test
 	* @param bLocalHistory If true, only the history of this dialogue context is checked. If false, it is a global check
-	* @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionNum()[ interval (if true), or in the [0, GetAllOptionNum()[ (if false)
+	* @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionsNum()[ interval (if true), or in the [0, GetAllOptionsNum()[ (if false)
 	* @return true if the node was already IsOptionConnectedToVisitedNode
 	*/
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
-    bool IsOptionConnectedToVisitedNode(int32 Index, bool bLocalHistory = false, bool bIndexSkipsUnsatisfiedEdges = true) const;
+	bool IsOptionConnectedToVisitedNode(int32 Index, bool bLocalHistory = false, bool bIndexSkipsUnsatisfiedEdges = true) const;
 
 	/**
 	*  Checks if the node is connected directly to an end node or not
 	*  Does not handle complicated logic - if the said node is a logical one it will still check that node, and not one
-	*  of its children
+	*  of its option
 	*
 	* @param Index  Index of the edge/player option to test
-	* @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionNum()[ interval (if true), or in the [0, GetAllOptionNum()[ (if false)
+	* @param bIndexSkipsUnsatisfiedEdges  Decides if the index is in the [0, GetOptionsNum()[ interval (if true), or in the [0, GetAllOptionsNum()[ (if false)
 	* @return true if the node is an end node
 	*/
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
-    bool IsOptionConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisfiedEdges = true) const;
+	bool IsOptionConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisfiedEdges = true) const;
 
 
 	//
@@ -220,7 +243,7 @@ public:
 
 	// Gets the Text of the active node index
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
-    const FText& GetActiveNodeText() const;
+	const FText& GetActiveNodeText() const;
 
 	// Gets the SpeakerState of the active node index
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
@@ -258,7 +281,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	FName GetActiveNodeParticipantName() const;
 
-	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "GetParticipant")
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "Get Participant")
 	UObject* GetMutableParticipant(FName ParticipantName) const;
 	const UObject* GetParticipant(FName ParticipantName) const;
 
@@ -268,27 +291,55 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	int32 GetActiveNodeIndex() const { return ActiveNodeIndex; }
 
-	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode", DisplayName = "GetActiveNode")
-	UDlgNode* GetMutableActiveNode() const { return GetMutableNode(ActiveNodeIndex); }
-	const UDlgNode* GetActiveNode() const { return GetNode(ActiveNodeIndex); }
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
+	FGuid GetActiveNodeGUID() const { return GetNodeGUIDForIndex(ActiveNodeIndex); }
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode", DisplayName = "Get Active Node")
+	UDlgNode* GetMutableActiveNode() const { return GetMutableNodeFromIndex(ActiveNodeIndex); }
+	const UDlgNode* GetActiveNode() const { return GetNodeFromIndex(ActiveNodeIndex); }
+
+	// Just a helper method for GetActiveNode that casts to UDlgNode_SpeechSequence
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode", DisplayName = "Get Active Node As Speech Sequence")
+	UDlgNode_SpeechSequence* GetMutableActiveNodeAsSpeechSequence() const;
+	const UDlgNode_SpeechSequence* GetActiveNodeAsSpeechSequence() const;
 
 	//
 	// Data
 	//
 
-	// Returns the indices which were visited inside this single context. For global data check DlgMemory
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
-	const TSet<int32>& GetVisitedNodeIndices() const { return VisitedNodeIndices; }
+	bool IsValidNodeIndex(int32 NodeIndex) const;
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
+	bool IsValidNodeGUID(const FGuid& NodeGUID) const;
+
+	// Gets the GUID for the Node at NodeIndex
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "Get Node GUID For Index")
+	FGuid GetNodeGUIDForIndex(int32 NodeIndex) const;
+
+	// Gets the corresponding Node Index for the supplied NodeGUID
+	// Returns -1 (INDEX_NONE) if the Node GUID does not exist.
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "Get Node Index For GUID")
+	int32 GetNodeIndexForGUID(const FGuid& NodeGUID) const;
+
+	// Returns the indices which were visited inside this single context. For global data check DlgMemory
+	// NOTE: You should use GetVisitedNodeGUIDs
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Context|History")
+	const TSet<int32>& GetVisitedNodeIndices() const { return History.VisitedNodeIndices; }
+
+	// Returns the GUIDs which were visited inside this single context. For global data check DlgMemory
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Context|History")
+	const TSet<FGuid>& GetVisitedNodeGUIDs() const { return History.VisitedNodeGUIDs; }
 
 	// Helper methods to get some Dialogue properties
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
-    UDlgDialogue* GetDialogue() const { return Dialogue; }
+	UDlgDialogue* GetDialogue() const { return Dialogue; }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	FName GetDialogueName() const { check(Dialogue); return Dialogue->GetDialogueFName(); }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
-	FGuid GetDialogueGUID() const { check(Dialogue); return Dialogue->GetDialogueGUID(); }
+	FGuid GetDialogueGUID() const { check(Dialogue); return Dialogue->GetGUID(); }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	FString GetDialoguePathName() const { check(Dialogue); return Dialogue->GetPathName(); }
@@ -304,14 +355,35 @@ public:
 	// Conditions are not checked here - they are expected to be satisfied
 	bool EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep);
 
-	// Gets the Node at the NodeIndex index
-	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "GetNode")
-	UDlgNode* GetMutableNode(int32 NodeIndex) const;
-	const UDlgNode* GetNode(int32 NodeIndex) const;
+	// Adds the node as visited in the current dialogue memory
+	void SetNodeVisited(int32 NodeIndex, const FGuid& NodeGUID);
 
-	// Was node with NodeIndex visited?
-	UFUNCTION(BlueprintPure, Category = "Dialogue|Context")
-	bool WasNodeVisitedInThisContext(int32 NodeIndex) const { return VisitedNodeIndices.Contains(NodeIndex); }
+	// Gets the Node at the NodeIndex index
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "Get Node From Index")
+	UDlgNode* GetMutableNodeFromIndex(int32 NodeIndex) const;
+	const UDlgNode* GetNodeFromIndex(int32 NodeIndex) const;
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "Get Node From GUID")
+	UDlgNode* GetMutableNodeFromGUID(const FGuid& NodeGUID) const;
+	const UDlgNode* GetNodeFromGUID(const FGuid& NodeGUID) const;
+
+	// Was the node Index visited in the lifetime of this context?
+	// NOTE: you should  most likely use WasNodeGUIDVisitedInThisContext
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Context|History", DisplayName = "Was Node Index Visited In This Context")
+	bool WasNodeIndexVisitedInThisContext(int32 NodeIndex) const
+	{
+		return History.VisitedNodeIndices.Contains(NodeIndex);
+	}
+
+	// Was the node GUID visited in the lifetime of this context?
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Context|History", DisplayName = "Was Node GUID Visited In This Context")
+	bool WasNodeGUIDVisitedInThisContext(const FGuid& NodeGUID) const
+	{
+		return History.VisitedNodeGUIDs.Contains(NodeGUID);
+	}
+
+	// Gets the History of this context
+	const FDlgHistory& GetHistoryOfThisContext() const { return History; }
 
 	// Checks the enter conditions of the node.
 	// return false if they are not satisfied or if the index is invalid
@@ -319,35 +391,129 @@ public:
 
 	// Initializes/Starts the context, the first (start) node is selected and the first valid child node is entered.
 	// Called by the UDlgManager which creates the context
-	bool Start(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants) { return StartFromContext(TEXT(""), InDialogue, InParticipants); }
-	bool StartFromContext(const FString& ContextString, UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
+	bool Start(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants) { return StartWithContext(TEXT(""), InDialogue, InParticipants); }
+	bool StartWithContext(const FString& ContextString, UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
 
+	//
 	// Initializes/Start the context using the given node as entry point
 	// This is useful to resume a dialogue
-	bool StartFromIndex(
+	//
+
+	// Variant that works with only the NodeIndex
+	// NOTE: This is not safe, please use StartFromNodeGUID
+	bool StartFromNodeIndex(
 		UDlgDialogue* InDialogue,
 		const TMap<FName, UObject*>& InParticipants,
-		int32 StartIndex,
-		const TSet<int32>& VisitedNodes,
+		int32 StartNodeIndex,
+		const FDlgHistory& StartHistory,
 		bool bFireEnterEvents
 	)
 	{
-		return StartFromContextFromIndex(
+		return StartWithContextFromNodeIndex(
 			TEXT(""),
 			InDialogue,
 			InParticipants,
-			StartIndex,
-			VisitedNodes,
+			StartNodeIndex,
+			StartHistory,
 			bFireEnterEvents
 		);
 	}
-	bool StartFromContextFromIndex(
+	bool StartWithContextFromNodeIndex(
 		const FString& ContextString,
-	    UDlgDialogue* InDialogue,
-	    const TMap<FName, UObject*>& InParticipants,
-	    int32 StartIndex,
-	    const TSet<int32>& VisitedNodes,
-	    bool bFireEnterEvents
+		UDlgDialogue* InDialogue,
+		const TMap<FName, UObject*>& InParticipants,
+		int32 StartNodeIndex,
+		const FDlgHistory& StartHistory,
+		bool bFireEnterEvents
+	)
+	{
+		const FString ContextMessage = ContextString.IsEmpty()
+			? TEXT("StartFromNodeIndex")
+			: FString::Printf(TEXT("%s - StartFromNodeIndex"), *ContextString);
+
+		return StartWithContextFromNode(
+			ContextMessage,
+			InDialogue,
+			InParticipants,
+			StartNodeIndex,
+			FGuid{},
+			StartHistory,
+			bFireEnterEvents
+		);
+	}
+
+	// Variant that works with only the NodeGUID
+	bool StartFromNodeGUID(
+		UDlgDialogue* InDialogue,
+		const TMap<FName, UObject*>& InParticipants,
+		const FGuid& StartNodeGUID,
+		const FDlgHistory& StartHistory,
+		bool bFireEnterEvents
+	)
+	{
+		return StartWithContextFromNodeGUID(
+			TEXT(""),
+			InDialogue,
+			InParticipants,
+			StartNodeGUID,
+			StartHistory,
+			bFireEnterEvents
+		);
+	}
+	bool StartWithContextFromNodeGUID(
+		const FString& ContextString,
+		UDlgDialogue* InDialogue,
+		const TMap<FName, UObject*>& InParticipants,
+		const FGuid& StartNodeGUID,
+		const FDlgHistory& StartHistory,
+		bool bFireEnterEvents
+	)
+	{
+		const FString ContextMessage = ContextString.IsEmpty()
+			? TEXT("StartFromNodeGUID")
+			: FString::Printf(TEXT("%s - StartFromNodeGUID"), *ContextString);
+
+		return StartWithContextFromNode(
+			ContextMessage,
+			InDialogue,
+			InParticipants,
+			INDEX_NONE,
+			StartNodeGUID,
+			StartHistory,
+			bFireEnterEvents
+		);
+	}
+
+	// Generic variant that accepts both NodeIndex and NodeGUID
+	// If NodeGUID is valid this will be used to get the correct Node
+	// Otherwise fallback to the NodeIndex
+	bool StartFromNode(
+		UDlgDialogue* InDialogue,
+		const TMap<FName, UObject*>& InParticipants,
+		int32 StartNodeIndex,
+		const FGuid& StartNodeGUID,
+		const FDlgHistory& StartHistory,
+		bool bFireEnterEvents
+	)
+	{
+		return StartWithContextFromNode(
+			TEXT(""),
+			InDialogue,
+			InParticipants,
+			StartNodeIndex,
+			StartNodeGUID,
+			StartHistory,
+			bFireEnterEvents
+		);
+	}
+	bool StartWithContextFromNode(
+		const FString& ContextString,
+		UDlgDialogue* InDialogue,
+		const TMap<FName, UObject*>& InParticipants,
+		int32 StartNodeIndex,
+		const FGuid& StartNodeGUID,
+		const FDlgHistory& StartHistory,
+		bool bFireEnterEvents
 	);
 
 	// Checks if the context could be started, used to check if there is any reachable node from the start node
@@ -404,7 +570,7 @@ protected:
 
 	//helper array to serialize to Participants map for clients as well
 	UPROPERTY(Replicated, ReplicatedUsing = OnRep_SerializedParticipants)
-    TArray<UObject*> SerializedParticipants;
+	TArray<UObject*> SerializedParticipants;
 
 	// All object is expected to implement the IDlgDialogueParticipant interface
 	// the key is the return value of IDlgDialogueParticipant::GetParticipantName()
@@ -414,7 +580,7 @@ protected:
 	// The index of the active node in the dialogues Nodes array
 	int32 ActiveNodeIndex = INDEX_NONE;
 
-	// Children of the active node with satisfied conditions - the options the player can choose from
+	// Options of the active node with satisfied conditions - the options the player can choose from
 	TArray<FDlgEdge> AvailableChildren;
 
 	/**
@@ -425,8 +591,9 @@ protected:
 	TArray<FDlgEdgeData> AllChildren;
 
 	// Node indices visited in this specific Dialogue instance (isn't serialized)
-	TSet<int32> VisitedNodeIndices;
+	// History for this Context only
+	FDlgHistory History;
 
-	// cache the result of the last ChooseChild call
+	// cache the result of the last ChooseOption call
 	bool bDialogueEnded = false;
 };

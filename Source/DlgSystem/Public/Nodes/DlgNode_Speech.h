@@ -114,17 +114,24 @@ public:
 	static FName GetMemberNameGenericData() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, GenericData); }
 	static FName GetMemberNameSpeakerState() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, SpeakerState); }
 	static FName GetMemberNameIsVirtualParent() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, bIsVirtualParent); }
+	static FName GetMemberNameVirtualParentFireDirectChildEnterEvents() { return GET_MEMBER_NAME_CHECKED(UDlgNode_Speech, bVirtualParentFireDirectChildEnterEvents); }
 
 protected:
-	/**
-	 * Make this Node act like a fake parent (proxy) to other child nodes. (aka makes it get the grandchildren)
-	 * On reevaluate children, it does not get the direct children but the children of the first satisfied direct child node (grandchildren).
-	 * It should have at least one satisfied child otherwise the Dialogue is terminated.
-	 */
+	// Make this Node act like a fake parent (proxy) to other child nodes (makes it get the granchildren).
+	// On reevaluate children, it does not get the direct children but the children of the first satisfied direct child node (grandchildren).
+	//
+	// NOTE: It should have at least one satisfied child otherwise the Dialogue is terminated.
+	// NOTE: The first satisfied direct child will be added to the visited history when this node is entered.
+	// NOTE: Most Common usage for this is to make loops.
 	UPROPERTY(EditAnywhere, Category = "Dialogue|Node")
 	bool bIsVirtualParent = false;
 
+	// If true the first satisfied Direct Child of this Virtual Parent Node will fire its Enter Events after this node is entered (and fires its enter events).
+	UPROPERTY(EditAnywhere, Category = "Dialogue|Node")
+	bool bVirtualParentFireDirectChildEnterEvents = true;
+
 	// Text that will appear when this node participant name speaks to someone else.
+	// If you want replaceable portions inside your Text nodes just add {identifier} inside it and set the value it should have at runtime.
 	UPROPERTY(EditAnywhere, Category = "Dialogue|Node", Meta = (MultiLine = true))
 	FText Text;
 
@@ -136,7 +143,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Dialogue|Node")
 	FName SpeakerState;
 
-	// Node data that you can customize yourself with your own data types
+	// User Defined Custom Node data you can customize yourself with your own data types
+	//
+	// Create a new Blueprint derived from DlgNodeData (or DlgNodeDataHideCategories)
 	UPROPERTY(EditAnywhere, Instanced, Category = "Dialogue|Node")
 	UDlgNodeData* NodeData = nullptr;
 
@@ -157,4 +166,6 @@ protected:
 
 	// Constructed at runtime from the original text and the arguments if there is any.
 	FText ConstructedText;
+
+	int32 VirtualParentFirstSatisfiedDirectChildIndex = INDEX_NONE;
 };

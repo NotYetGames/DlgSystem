@@ -22,9 +22,13 @@ struct FConvertSpeechSequenceNodeToSpeechNodes_DialogueGraphSchemaAction : publi
 	FConvertSpeechSequenceNodeToSpeechNodes_DialogueGraphSchemaAction(UDialogueGraphNode* InSelectedSpeechSequenceGraphNode)
 		: FEdGraphSchemaAction(), SelectedSpeechSequenceGraphNode(InSelectedSpeechSequenceGraphNode) {}
 
-	FConvertSpeechSequenceNodeToSpeechNodes_DialogueGraphSchemaAction(const FText& InNodeCategory, const FText& InMenuDesc,
-			const FText& InToolTip, int32 InGrouping, UDialogueGraphNode* InSelectedSpeechSequenceGraphNode)
-		: FEdGraphSchemaAction(InNodeCategory, InMenuDesc, InToolTip, InGrouping), SelectedSpeechSequenceGraphNode(InSelectedSpeechSequenceGraphNode) {}
+	FConvertSpeechSequenceNodeToSpeechNodes_DialogueGraphSchemaAction(
+		const FText& InNodeCategory,
+		const FText& InMenuDesc,
+		const FText& InToolTip,
+		int32 InGrouping,
+		UDialogueGraphNode* InSelectedSpeechSequenceGraphNode
+	) : FEdGraphSchemaAction(InNodeCategory, InMenuDesc, InToolTip, InGrouping), SelectedSpeechSequenceGraphNode(InSelectedSpeechSequenceGraphNode) {}
 
 	//~ Begin FEdGraphSchemaAction Interface
 	UEdGraphNode* PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode = false) override;

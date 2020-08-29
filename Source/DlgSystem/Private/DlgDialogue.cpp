@@ -102,8 +102,8 @@ void UDlgDialogue::PostLoad()
 		UpdateAndRefreshData();
 	}
 
-	// Create thew new Guid
-	if (!GUID.IsValid())
+	// Create thew new GUID
+	if (!HasGUID())
 	{
 		RegenerateGUID();
 		FDlgLogger::Get().Debugf(
@@ -178,7 +178,7 @@ void UDlgDialogue::PostInitProperties()
 
 	// Used when creating new Dialogues
 	// Initialize with a valid GUID
-	if (DialogueVersion >= FDlgDialogueObjectVersion::AddGUID && !GUID.IsValid())
+	if (DialogueVersion >= FDlgDialogueObjectVersion::AddGUID && !HasGUID())
 	{
 		RegenerateGUID();
 		FDlgLogger::Get().Debugf(
@@ -566,7 +566,7 @@ void UDlgDialogue::AddConditionsDataFromNodeEdges(const UDlgNode* Node, int32 No
 			{
 				const FString ContextMessage = FString::Printf(TEXT("Adding Edge primary condition data from %s to Node %d"), *NodeContext, TargetIndex);
 				GetParticipantDataEntry(Condition.ParticipantName, FallbackParticipantName, true, ContextMessage)
-                    .AddConditionPrimaryData(Condition);
+					.AddConditionPrimaryData(Condition);
 			}
 			if (Condition.IsSecondParticipantInvolved())
 			{
@@ -643,13 +643,13 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 			{
 				const FString ContextMessage = FString::Printf(TEXT("Adding primary condition data for %s"), *NodeContext);
 				GetParticipantDataEntry(Condition.ParticipantName, NodeParticipantName, true, ContextMessage)
-                    .AddConditionPrimaryData(Condition);
+					.AddConditionPrimaryData(Condition);
 			}
 			if (Condition.IsSecondParticipantInvolved())
 			{
 				const FString ContextMessage = FString::Printf(TEXT("Adding secondary condition data for %s"), *NodeContext);
 				GetParticipantDataEntry(Condition.OtherParticipantName, NodeParticipantName, true, ContextMessage)
-                    .AddConditionSecondaryData(Condition);
+					.AddConditionSecondaryData(Condition);
 			}
 		}
 
@@ -727,6 +727,68 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 			FDlgLogger::Get().Warning(TEXT("Trying to fill ParticipantsClasses, got a Participant name = None. Ignoring!"));
 		}
 	}
+}
+
+FGuid UDlgDialogue::GetNodeGUIDForIndex(int32 NodeIndex) const
+{
+	if (IsValidNodeIndex(NodeIndex))
+	{
+		return Nodes[NodeIndex]->GetGUID();
+	}
+
+	// Invalid GUID
+	return FGuid{};
+}
+
+int32 UDlgDialogue::GetNodeIndexForGUID(const FGuid& NodeGUID) const
+{
+	if (const int32* NodeIndexPtr = NodesGUIDToIndexMap.Find(NodeGUID))
+	{
+		return *NodeIndexPtr;
+	}
+
+	return INDEX_NONE;
+}
+
+void UDlgDialogue::SetStartNode(UDlgNode* InStartNode)
+{
+	if (!InStartNode)
+	{
+		return;
+	}
+
+	StartNode = InStartNode;
+	// UpdateGUIDToIndexMap(StartNode, INDEX_NONE);
+}
+
+void UDlgDialogue::SetNodes(const TArray<UDlgNode*>& InNodes)
+{
+	Nodes = InNodes;
+	for (int32 NodeIndex = 0; NodeIndex < Nodes.Num(); NodeIndex++)
+	{
+		UpdateGUIDToIndexMap(Nodes[NodeIndex], NodeIndex);
+	}
+}
+
+void UDlgDialogue::SetNode(int32 NodeIndex, UDlgNode* InNode)
+{
+	if (!IsValidNodeIndex(NodeIndex) || !InNode)
+	{
+		return;
+	}
+
+	Nodes[NodeIndex] = InNode;
+	UpdateGUIDToIndexMap(InNode, NodeIndex);
+}
+
+void UDlgDialogue::UpdateGUIDToIndexMap(const UDlgNode* Node, int32 NodeIndex)
+{
+	if (!Node || !IsValidNodeIndex(NodeIndex) || !Node->HasGUID())
+	{
+		return;
+	}
+
+	NodesGUIDToIndexMap.Add(Node->GetGUID(), NodeIndex);
 }
 
 bool UDlgDialogue::IsEndNode(int32 NodeIndex) const

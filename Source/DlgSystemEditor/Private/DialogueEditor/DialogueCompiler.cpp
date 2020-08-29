@@ -54,12 +54,14 @@ void FDialogueCompilerContext::Compile()
 	// Step 4. Add orphan nodes (nodes / node group with no parents), not connected to the start node
 	PruneIsolatedNodes();
 
-	// Step 5. Fix old indices
-	FixBrokenOldIndices();
-
-	// Update the dialogue data.
+	// Step 5. Update the dialogue data.
+	Dialogue->EmptyNodesGUIDToIndexMap();
 	Dialogue->SetStartNode(GraphNodeRoot->GetMutableDialogueNode());
 	Dialogue->SetNodes(ResultDialogueNodes);
+
+	// Step 6. Fix old indices and update GUID for the Conditions
+	FixBrokenOldIndicesAndUpdateGUID();
+
 	Dialogue->PostEditChange();
 }
 
@@ -78,6 +80,13 @@ void FDialogueCompilerContext::PostCompileGraphNode(UDialogueGraphNode* GraphNod
 
 	// Check symmetry, dialogue node <-> graph node
 	GraphNode->CheckDialogueNodeSyncWithGraphNode(true);
+
+	// Ensure the Node has a valid GUID
+	UDlgNode* DialogueNode = GraphNode->GetMutableDialogueNode();
+	if (!DialogueNode->HasGUID())
+	{
+		DialogueNode->RegenerateGUID();
+	}
 
 	// Update depth
 	// BFS has the property that unvisited nodes in the queue all have depths that never decrease,
@@ -151,7 +160,7 @@ void FDialogueCompilerContext::CompileGraphNode(UDialogueGraphNode* GraphNode)
 void FDialogueCompilerContext::CompileGraph()
 {
 	// Complexity O(|V| + |E|)
-	// Reassing all the indices in the queue
+	// Reassign all the indices in the queue
 	while (!Queue.IsEmpty())
 	{
 		UDialogueGraphNode* GraphNode;
@@ -296,24 +305,24 @@ void FDialogueCompilerContext::PruneIsolatedNodes()
 	}
 }
 
-void FDialogueCompilerContext::FixBrokenOldIndices()
+void FDialogueCompilerContext::FixBrokenOldIndicesAndUpdateGUID()
 {
-	// Check if we have any modified indicies
-	bool bHistoryModified = false;
-	for (auto& Elem : IndicesHistory)
-	{
-		if (Elem.Key != Elem.Value)
-		{
-			bHistoryModified = true;
-			break;
-		}
-	}
-	if (!bHistoryModified)
-	{
-		return;
-	}
+	// Check if we have any modified indices
+	// bool bHistoryModified = false;
+	// for (auto& Elem : IndicesHistory)
+	// {
+	// 	if (Elem.Key != Elem.Value)
+	// 	{
+	// 		bHistoryModified = true;
+	// 		break;
+	// 	}
+	// }
+	// if (!bHistoryModified)
+	// {
+	// 	return;
+	// }
 
-	FDialogueEditorUtilities::ReplaceReferencesToOldIndicesWithNew(DialogueGraphNodes, IndicesHistory);
+	FDialogueEditorUtilities::RemapOldIndicesWithNewAndUpdateGUID(DialogueGraphNodes, IndicesHistory);
 }
 
 void FDialogueCompilerContext::SetNextAvailableIndexToNode(UDialogueGraphNode* GraphNode)

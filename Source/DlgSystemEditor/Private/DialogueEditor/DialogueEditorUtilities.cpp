@@ -704,6 +704,22 @@ bool FDialogueEditorUtilities::JumpToGraphNode(const UEdGraphNode* GraphNode)
 	return false;
 }
 
+bool FDialogueEditorUtilities::JumpToGraphNodeIndex(const UDlgDialogue* Dialogue, int32 NodeIndex)
+{
+	if (!Dialogue)
+	{
+		return false;
+	}
+
+	if (UDlgNode* Node = Dialogue->GetMutableNodeFromIndex(NodeIndex))
+	{
+		return JumpToGraphNode(Node->GetGraphNode());
+	}
+
+	return false;
+}
+
+
 void FDialogueEditorUtilities::CopyNodeChildren(const UDialogueGraphNode* FromNode, UDialogueGraphNode* ToNode)
 {
 	check(FromNode != ToNode);
@@ -744,11 +760,19 @@ EAppReturnType::Type FDialogueEditorUtilities::ShowMessageBox(EAppMsgType::Type 
 	return FPlatformMisc::MessageBoxExt(MsgType, *Text, *Caption);
 }
 
-void FDialogueEditorUtilities::ReplaceReferencesToOldIndicesWithNew(
+void FDialogueEditorUtilities::RemapOldIndicesWithNewAndUpdateGUID(
 	const TArray<UDialogueGraphNode*>& GraphNodes,
 	const TMap<int32, int32>& OldToNewIndexMap
 )
 {
+	if (GraphNodes.Num() == 0)
+	{
+		return;
+	}
+
+	const UDlgDialogue* Dialogue = GraphNodes[0]->GetDialogue();
+	const TArray<UDlgNode*>& Nodes = Dialogue->GetNodes();
+
 	// helper function to set the new IntValue on the condition if it exists in the history and it is different
 	auto UpdateConditionIndex = [&OldToNewIndexMap](FDlgCondition* ModifiedCondition) -> bool
 	{
@@ -778,10 +802,10 @@ void FDialogueEditorUtilities::ReplaceReferencesToOldIndicesWithNew(
 		for (int32 ConditionIndex = 0, ConditionNum = DialogueNode->GetNodeEnterConditions().Num(); ConditionIndex < ConditionNum; ConditionIndex++)
 		{
 			FDlgCondition* EnterCondition = DialogueNode->GetMutableEnterConditionAt(ConditionIndex);
-			if (EnterCondition->ConditionType == EDlgConditionType::WasNodeVisited ||
-				EnterCondition->ConditionType == EDlgConditionType::HasSatisfiedChild)
+			if (EnterCondition->HasNodeIndex())
 			{
 				UpdateConditionIndex(EnterCondition);
+				EnterCondition->GUID = Nodes[EnterCondition->IntValue]->GetGUID();
 			}
 		}
 
@@ -793,13 +817,12 @@ void FDialogueEditorUtilities::ReplaceReferencesToOldIndicesWithNew(
 
 			for (FDlgCondition& Condition : DialogueEdge->Conditions)
 			{
-				if (Condition.ConditionType == EDlgConditionType::WasNodeVisited ||
-					Condition.ConditionType == EDlgConditionType::HasSatisfiedChild)
+				if (Condition.HasNodeIndex())
 				{
-					bModifiedConditions = bModifiedConditions || UpdateConditionIndex(&Condition);
+					bModifiedConditions = UpdateConditionIndex(&Condition) || bModifiedConditions;
+					Condition.GUID = Nodes[Condition.IntValue]->GetGUID();
 				}
 			}
-
 
 			// Update graph node edge
 			if (bModifiedConditions)

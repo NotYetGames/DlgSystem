@@ -76,12 +76,20 @@ public:
 
 	// Executes the event
 	// Participant is expected to implement IDlgDialogueParticipant interface
-	void Call(UDlgContext& Context, UObject* Participant) const;
+	void Call(UDlgContext& Context, const FString& ContextString, UObject* Participant) const;
 
 	static FString EventTypeToString(EDlgEventType Type);
 
+	FString GetCustomEventName() const
+	{
+		return CustomEvent ? CustomEvent->GetName() : TEXT("INVALID");
+	}
+
 protected:
 	bool ValidateIsParticipantValid(const UDlgContext& Context, const FString& ContextString, const UObject* Participant) const;
+
+	// Is the participant required?
+	bool MustHaveParticipant() const { return EventType != EDlgEventType::Custom; }
 
 public:
 	// Name of the participant (speaker) the event is called on.

@@ -36,9 +36,16 @@ class DLGSYSTEM_API UDlgNode : public UObject
 	GENERATED_BODY()
 
 public:
+	//
 	// Begin UObject Interface.
+	//
+
 	void Serialize(FArchive& Ar) override;
 	FString GetDesc() override { return TEXT("INVALID DESCRIPTION"); }
+	void PostLoad() override;
+	void PostInitProperties() override;
+	void PostDuplicate(bool bDuplicateForPIE) override;
+	void PostEditImport() override;
 
 	static void AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector);
 
@@ -55,9 +62,11 @@ public:
 	 * is located at the tail of the list.  The head of the list of the FNYStructProperty member variable that contains the property that was modified.
 	 */
 	void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent) override;
-	// End UObject Interface.
 
+	//
 	// Begin own function
+	//
+
 	// Used internally by the Dialogue editor:
 	virtual FString GetNodeTypeString() const { return TEXT("INVALID"); }
 #endif //WITH_EDITOR
@@ -84,6 +93,18 @@ public:
 	//
 	// Getters/Setters:
 	//
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
+	FGuid GetGUID() const { return NodeGUID; }
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
+	bool HasGUID() const { return NodeGUID.IsValid(); }
+
+	void RegenerateGUID()
+	{
+		NodeGUID = FGuid::NewGuid();
+		Modify();
+	}
 
 	//
 	// For the ParticipantName
@@ -237,7 +258,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual UDlgNodeData* GetNodeData() const { return nullptr; }
 
-	// Helper method to get directly the Dialogue
+	// Helper method to get directly the Dialogue (which is our parent)
 	UDlgDialogue* GetDialogue() const;
 
 	// Helper functions to get the names of some properties. Used by the DlgSystemEditor module.
@@ -246,11 +267,12 @@ public:
 	static FName GetMemberNameEnterConditions() { return GET_MEMBER_NAME_CHECKED(UDlgNode, EnterConditions); }
 	static FName GetMemberNameEnterEvents() { return GET_MEMBER_NAME_CHECKED(UDlgNode, EnterEvents); }
 	static FName GetMemberNameChildren() { return GET_MEMBER_NAME_CHECKED(UDlgNode, Children); }
+	static FName GetMemberNameGUID() { return GET_MEMBER_NAME_CHECKED(UDlgNode, NodeGUID); }
 
 	// Syncs the GraphNode Edges with our edges
 	void UpdateGraphNode();
 
-protected:
+	// Fires this Node enter Events
 	void FireNodeEnterEvents(UDlgContext& Context);
 
 protected:
@@ -281,6 +303,12 @@ protected:
 	// Events fired when the node is reached in the dialogue
 	UPROPERTY(EditAnywhere, Category = "Dialogue|Node")
 	TArray<FDlgEvent> EnterEvents;
+
+	// The Unique identifier for each Node. This is much safer than a Node Index.
+	// Compile/Save Asset to generate this
+	UPROPERTY(VisibleAnywhere, Category = "Dialogue|Node", AdvancedDisplay)
+	FGuid NodeGUID;
+	// NOTE: For some reason if this is named GUID the details panel does not work all the time for this, wtf unreal?
 
 	// Edges that point to Children of this Node
 	UPROPERTY(VisibleAnywhere, EditFixedSize, AdvancedDisplay, Category = "Dialogue|Node")

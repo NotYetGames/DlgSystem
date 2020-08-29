@@ -225,7 +225,7 @@ int32 UDlgHumanReadableTextCommandlet::Import()
 bool UDlgHumanReadableTextCommandlet::ExportDialogueToHumanReadableFormat(const UDlgDialogue& Dialogue, FDlgDialogue_FormatHumanReadable& OutFormat)
 {
 	OutFormat.DialogueName = Dialogue.GetDialogueFName();
-	OutFormat.DialogueGUID = Dialogue.GetDialogueGUID();
+	OutFormat.DialogueGUID = Dialogue.GetGUID();
 
 	// Root Node
 	{
@@ -359,7 +359,7 @@ bool UDlgHumanReadableTextCommandlet::ImportHumanReadableFormatIntoDialogue(cons
 		const bool bIsRootNode = HumanNode.NodeIndex == RootNodeIndex;
 
 		// Node
-		UDlgNode* Node = bIsRootNode ? Dialogue->GetMutableStartNode() : Dialogue->GetMutableNode(HumanNode.NodeIndex);
+		UDlgNode* Node = bIsRootNode ? Dialogue->GetMutableStartNode() : Dialogue->GetMutableNodeFromIndex(HumanNode.NodeIndex);
 		if (Node == nullptr)
 		{
 			UE_LOG(LogDlgHumanReadableTextCommandlet, Warning, TEXT("Invalid node index = %d, in Dialogue = `%s`. Ignoring."), HumanNode.NodeIndex, *Dialogue->GetPathName());
@@ -414,7 +414,7 @@ bool UDlgHumanReadableTextCommandlet::ImportHumanReadableFormatIntoDialogue(cons
 		}
 
 		// Node
-		UDlgNode* Node = Dialogue->GetMutableNode(HumanSpeechSequence.NodeIndex);
+		UDlgNode* Node = Dialogue->GetMutableNodeFromIndex(HumanSpeechSequence.NodeIndex);
 		if (Node == nullptr)
 		{
 			UE_LOG(LogDlgHumanReadableTextCommandlet,
