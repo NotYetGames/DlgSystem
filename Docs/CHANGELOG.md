@@ -61,6 +61,9 @@ Add the follow  new methods to the Dialogue Context:
   - Added the following methods to the `UDlgContext`: `ChooseSpeechSequenceOptionFromReplicated`, `GetActiveNodeAsSpeechSequence`
   - Added following methods to the `UDlgNode_SpeechSequence`: `OptionSelectedFromReplicated`, `GetSpeechSequenceIndex`
 
+- **Add** `Jump to Node` button for Node Indices inside Conditions.
+- **Renamed** Dialogue Browser Class Integers/Floats/etc to be just Integers/Floats/etc without the class prefix.
+
 # v10
 
 - **Network replicate** the Dialogue Context (specifically the Dialogue and Participants)
