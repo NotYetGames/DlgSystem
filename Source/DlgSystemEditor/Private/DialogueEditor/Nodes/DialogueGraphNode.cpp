@@ -207,12 +207,12 @@ void UDialogueGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeCo
 		FToolMenuSection& Section = Menu->AddSection("DialogueGraphNode_BaseNodeEditCRUD");
 		if (IsSpeechSequenceNode())
 		{
-			Context.MenuBuilder->AddMenuEntry(FDialogueCommands::Get().ConvertSpeechSequenceNodeToSpeechNodes);
+			Section.AddMenuEntry(FDialogueCommands::Get().ConvertSpeechSequenceNodeToSpeechNodes);
 		}
 		if (IsSpeechNode()
-            && FDialogueEditorUtilities::CanConvertSpeechNodesToSpeechSequence(FDialogueEditorUtilities::GetSelectedNodes(Context.Graph)))
+			&& FDialogueEditorUtilities::CanConvertSpeechNodesToSpeechSequence(FDialogueEditorUtilities::GetSelectedNodes(Context->Graph)))
 		{
-			Context.MenuBuilder->AddMenuEntry(FDialogueCommands::Get().ConvertSpeechNodesToSpeechSequence);
+			Section.AddMenuEntry(FDialogueCommands::Get().ConvertSpeechNodesToSpeechSequence);
 		}
 
 		Section.AddMenuEntry(FGenericCommands::Get().Delete);
