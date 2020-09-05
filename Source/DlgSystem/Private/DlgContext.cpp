@@ -357,6 +357,29 @@ FName UDlgContext::GetActiveNodeParticipantName() const
 	return Node->GetNodeParticipantName();
 }
 
+FText UDlgContext::GetActiveNodeParticipantDisplayName() const
+{
+	const UDlgNode* Node = GetActiveNode();
+	if (!IsValid(Node))
+	{
+		LogErrorWithContext(TEXT("GetActiveNodeParticipantDisplayName - INVALID Active Node"));
+		return FText::GetEmpty();
+	}
+
+	const FName SpeakerName = Node->GetNodeParticipantName();
+	auto* ObjectPtr = Participants.Find(SpeakerName);
+	if (ObjectPtr == nullptr || !IsValid(*ObjectPtr))
+	{
+		LogErrorWithContext(FString::Printf(
+			TEXT("GetActiveNodeParticipantDisplayName - The ParticipantName = `%s` from the Active Node does NOT exist in the current Participants"),
+			*SpeakerName.ToString()
+		));
+		return FText::GetEmpty();
+	}
+
+	return IDlgDialogueParticipant::Execute_GetParticipantDisplayName(*ObjectPtr, SpeakerName);
+}
+
 UObject* UDlgContext::GetMutableParticipant(FName ParticipantName) const
 {
 	auto* ParticipantPtr = Participants.Find(ParticipantName);

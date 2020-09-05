@@ -289,6 +289,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	FName GetActiveNodeParticipantName() const;
 
+	// Gets the active participant display name
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
+	FText GetActiveNodeParticipantDisplayName() const;
+
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "Get Participant")
 	UObject* GetMutableParticipant(FName ParticipantName) const;
 	const UObject* GetParticipant(FName ParticipantName) const;
