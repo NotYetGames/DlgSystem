@@ -873,8 +873,10 @@ bool UDialogueGraphNode::DoesEdgeMatchEdgeIndex(const FDlgEdge& Edge, int32 Edge
 	// Target node Index differs :(
 	if (Edge.TargetIndex != ChildNode->GetDialogueNodeIndex())
 	{
-		OutMessage = FString::Printf(TEXT("The provided Edge.TargetIndex = %d is DIFFERENT from the ChildNode.NodeIndex = %d"),
-				Edge.TargetIndex, ChildNode->GetDialogueNodeIndex());
+		OutMessage = FString::Printf(
+			TEXT("The provided Edge.TargetIndex = %d is DIFFERENT from the ChildNode.NodeIndex = %d"),
+				Edge.TargetIndex, ChildNode->GetDialogueNodeIndex()
+			);
 		return false;
 	}
 
