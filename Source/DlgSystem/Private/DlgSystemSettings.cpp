@@ -6,6 +6,7 @@
 #include "DlgManager.h"
 #include "Logging/DlgLogger.h"
 
+#define LOCTEXT_NAMESPACE "DlgSystem"
 
 //////////////////////////////////////////////////////////////////////////
 // UDlgSystemSettings
@@ -14,12 +15,11 @@ UDlgSystemSettings::UDlgSystemSettings()
 	BlacklistedReflectionClasses = {AActor::StaticClass(), APawn::StaticClass(),  ACharacter::StaticClass()};
 	// AdditionalTextFormatFileExtensionsToLookFor = {""};
 
-	DefaultTextEdgeToEndNode = FText::AsCultureInvariant(TEXT("Finish"));
-	DefaultTextEdgeToNormalNode = FText::AsCultureInvariant(TEXT("Next"));
+	DefaultTextEdgeToEndNode = LOCTEXT("edge_finish", "Finish");
+	DefaultTextEdgeToNormalNode = LOCTEXT("edge_next", "Next");
 }
 
 #if WITH_EDITOR
-#define LOCTEXT_NAMESPACE "DlgSystemSettings"
 FText UDlgSystemSettings::GetSectionText() const
 {
 	return LOCTEXT("SectionText", "Dialogue");
@@ -106,7 +106,6 @@ void UDlgSystemSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 		}
 	}
 }
-#undef LOCTEXT_NAMESPACE
 #endif // WITH_EDITOR
 
 bool UDlgSystemSettings::IsIgnoredTextForLocalization(const FText& Text) const
@@ -189,3 +188,5 @@ TSet<FString> UDlgSystemSettings::GetAllTextFileExtensions() const
 
 	return CurrentFileExtensions;
 }
+
+#undef LOCTEXT_NAMESPACE
