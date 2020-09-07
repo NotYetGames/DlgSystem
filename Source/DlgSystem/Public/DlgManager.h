@@ -124,15 +124,23 @@ public:
 	// Helper methods, same as StartDialogue but with fixed amount of participant(s)
 	//
 
+	// Helper methods that allows you to start a Dialogue with only a participant
+	// For N Participants just use StartDialogue
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
 	static UDlgContext* StartMonologue(UDlgDialogue* Dialogue, UObject* Participant);
 
+	// Helper methods that allows you to start a Dialogue with 2 participants
+	// For N Participants just use StartDialogue
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
 	static UDlgContext* StartDialogue2(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1);
 
+	// Helper methods that allows you to start a Dialogue with 3 participants
+	// For N Participants just use StartDialogue
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
 	static UDlgContext* StartDialogue3(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1, UObject* Participant2);
 
+	// Helper methods that allows you to start a Dialogue with 4 participants
+	// For N Participants just use StartDialogue
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Launch")
 	static UDlgContext* StartDialogue4(UDlgDialogue* Dialogue, UObject* Participant0, UObject* Participant1, UObject* Participant2, UObject* Participant3);
 
@@ -250,15 +258,15 @@ public:
 	// This tries to get the source world for the dialogues
 	// In the following order (the first one that is valid, returns that):
 	// 1. The user set one UserWorldContextObjectPtr (if it is set):
-	//    - Set - SetDialoguePersistentWorldContextObject
-	//    - Clear - ClearDialoguePersistentWorldContextObject
+	//    - Set  with SetDialoguePersistentWorldContextObject
+	//    - Clear with ClearDialoguePersistentWorldContextObject
 	// 2. The first PIE world
 	// 3. The first Game World
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Persistence")
 	static UWorld* GetDialogueWorld();
 
 	// If the user wants to set the world context object manually
-	// Otherwise just use GetDialogueWorld()
+	// Otherwise just use GetDialogueWorld
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Persistence")
 	static void SetDialoguePersistentWorldContextObject(const UObject* WorldContextObject)
 	{

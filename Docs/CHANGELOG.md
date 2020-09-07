@@ -1,4 +1,16 @@
+# v11.1
+**Date:** September 7, 2020
+
+- **Important Bug Fixed** - Fix crash on compile (opened the dialogue asset or packaged the project) for some dialogues that have edges with the `WasNodeVisited` or `HasSatisfiedChild` Condition.
+
+- **Set** namespace and key for default edge texts for "Finish" and "Next"
+- **Add** the follow new methods to the **Dialogue Context**:
+  - `IsValidOptionIndex`
+  - `IsValidAllOptionIndex`
+  - `GetActiveNodeParticipantDisplayName`
+
 # v11
+**Date:** August 29, 2020
 
 ## Important Changes
 
@@ -14,7 +26,7 @@ Add the following new methods to the Dialogue:
 - `GetNode`
 - `GetNodeFromGUID`
 
-Add the follow  new methods to the Dialogue Context:
+Add the follow new methods to the Dialogue Context:
 - `GetActiveNodeGUID`
 - `IsValidNodeGUID`
 - `GetGUIDForNodeIndex`
@@ -65,6 +77,7 @@ Add the follow  new methods to the Dialogue Context:
 - **Renamed** Dialogue Browser Class Integers/Floats/etc to be just Integers/Floats/etc without the class prefix.
 
 # v10
+**Date:** July 15, 2020
 
 - **Network replicate** the Dialogue Context (specifically the Dialogue and Participants)
 - **Remove** `DlgText` format (the files with the `.dlg` file extension) from being selectable in the UI Dialogue Settings.
@@ -99,6 +112,7 @@ as an export method in the next version
 
 
 # v9.1
+**Date:** June 23, 2020
 
 ## Important Bug Fixes
 
@@ -132,6 +146,7 @@ as an export method in the next version
 	- `GetParticipantMap` -> `GetParticipantsMap`
 
 # v9
+**Date:** May 3, 2020
 
 ## Important breaking change
 
@@ -166,6 +181,7 @@ as an export method in the next version
 - **Fix** Blueprint Nativization for 4.24
 
 # v8.0.2
+**Date:** February 1, 2020
 
 - **Fix** Linux Editor Compile
 
@@ -192,6 +208,7 @@ as an export method in the next version
 Fixed marketplace version of the plugin not handling renamed redirects properly.
 
 # v8
+**Date:** December 15, 2019
 
 ## Important breaking change
 
