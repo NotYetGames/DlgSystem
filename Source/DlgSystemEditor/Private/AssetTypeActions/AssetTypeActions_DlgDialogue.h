@@ -11,17 +11,17 @@ class IToolkitHost;
  * Defines the look and actions the editor takes when clicking/viewing a Dialogue asset.
  * See FDlgSystemEditorModule::StartupModule for usage.
  */
-class FDialogueAssetTypeActions : public FAssetTypeActions_Base
+class FAssetTypeActions_DlgDialogue : public FAssetTypeActions_Base
 {
 public:
-	FDialogueAssetTypeActions(EAssetTypeCategories::Type InAssetCategory) : AssetCategory(InAssetCategory) {}
+	FAssetTypeActions_DlgDialogue(EAssetTypeCategories::Type InAssetCategory) : AssetCategory(InAssetCategory) {}
 
 	//
 	// IAssetTypeActions interface
 	//
 
 	/** Returns the name of this type */
-	FText GetName() const override { return NSLOCTEXT("AssetTypeActions", "DialogueAssetTypeActions", "Dialogue"); }
+	FText GetName() const override { return NSLOCTEXT("AssetTypeActions", "DlgDialogueAssetTypeActions", "Dialogue"); }
 
 	/** Returns the color associated with this type */
 	FColor GetTypeColor() const override { return FColor::Yellow; }

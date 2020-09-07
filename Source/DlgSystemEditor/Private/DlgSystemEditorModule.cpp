@@ -16,9 +16,11 @@
 #include "Editor.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 
-#include "DialogueGraphFactories.h"
+#include "Factories/DialogueGraphFactories.h"
+#include "Factories/DialogueClassViewerFilters.h"
 #include "DlgSystemEditorPrivatePCH.h"
-#include "DialogueAssetTypeActions.h"
+#include "AssetTypeActions/AssetTypeActions_DlgDialogue.h"
+#include "AssetTypeActions/AssetTypeActions_DlgEventCustom.h"
 #include "DialogueCommands.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueBrowser/SDialogueBrowser.h"
@@ -36,6 +38,7 @@
 
 #include "IO/DlgConfigWriter.h"
 #include "IO/DlgConfigParser.h"
+#include "Kismet2/SClassPickerDialog.h"
 #include "Logging/DlgLogger.h"
 
 #define LOCTEXT_NAMESPACE "DlgSystemEditor"
@@ -81,7 +84,12 @@ void FDlgSystemEditorModule::StartupModule()
 	// make the DlgSystem be displayed in the filters menu and in the create new menu
 	DlgSystemAssetCategoryBit = AssetTools.RegisterAdvancedAssetCategory(DIALOGUE_SYSTEM_MENU_CATEGORY_KEY, DIALOGUE_SYSTEM_MENU_CATEGORY_KEY_TEXT);
 	{
-		auto Action = MakeShared<FDialogueAssetTypeActions>(DlgSystemAssetCategoryBit);
+		auto Action = MakeShared<FAssetTypeActions_DlgDialogue>(DlgSystemAssetCategoryBit);
+		AssetTools.RegisterAssetTypeActions(Action);
+		RegisteredAssetTypeActions.Add(Action);
+	}
+	{
+		auto Action = MakeShared<FAssetTypeActions_DlgEventCustom>(DlgSystemAssetCategoryBit);
 		AssetTools.RegisterAssetTypeActions(Action);
 		RegisteredAssetTypeActions.Add(Action);
 	}
@@ -227,6 +235,24 @@ void FDlgSystemEditorModule::ShutdownModule()
 	}
 
 	UE_LOG(LogDlgSystemEditor, Log, TEXT("DlgSystemEditorModule: ShutdownModule"));
+}
+
+bool FDlgSystemEditorModule::PickChildrenOfClass(const FText& TitleText, UClass*& OutChosenClass, UClass* Class)
+{
+	// Create filter
+	TSharedPtr<FDialogueChildrenOfClassFilterViewer> Filter = MakeShareable(new FDialogueChildrenOfClassFilterViewer);
+	Filter->AllowedChildrenOfClasses.Add(Class);
+
+	// Fill in options
+	FClassViewerInitializationOptions Options;
+	Options.Mode = EClassViewerMode::ClassPicker;
+	Options.DisplayMode = EClassViewerDisplayMode::TreeView;
+	Options.ClassFilter = Filter;
+	Options.bShowUnloadedBlueprints = true;
+	Options.bExpandRootNodes = true;
+	Options.NameTypeToDisplay = EClassViewerNameTypeToDisplay::Dynamic;
+
+	return SClassPickerDialog::PickClass(TitleText, Options, OutChosenClass, Class);
 }
 
 bool FDlgSystemEditorModule::SaveAllDialogues()

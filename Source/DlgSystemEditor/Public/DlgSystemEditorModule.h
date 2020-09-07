@@ -30,6 +30,9 @@ public:
 	void StartupModule() override;
 	void ShutdownModule() override;
 
+	EAssetTypeCategories::Type GetAssetCategory() const override { return DlgSystemAssetCategoryBit; }
+
+
 	//
 	// Own functions
 	//
@@ -42,6 +45,17 @@ public:
 	static TSharedRef<FExtender> CreateHelpMenuExtender(TSharedRef<FUICommandList> Commands);
 	static void MapActionsForFileMenuExtender(TSharedRef<FUICommandList> Commands);
 	static void MapActionsForHelpMenuExtender(TSharedRef<FUICommandList> Commands);
+
+	/***
+	* Pops up a class picker dialog to choose the class that is a child of the Classprovided.
+	*
+	* @param	TitleText		The title of the class picker dialog
+	* @param	OutChosenClass  The class chosen (if this function returns false, this will be null) by the the user
+	* @param	Class		    The children of this class we are displaying and prompting the user to choose from.
+	*
+	* @return true if OK was pressed, false otherwise
+	*/
+	static bool PickChildrenOfClass(const FText& TitleText, UClass*& OutChosenClass, UClass* Class);
 
 	// Save all the dialogues.
 	// @return True on success or false on failure.

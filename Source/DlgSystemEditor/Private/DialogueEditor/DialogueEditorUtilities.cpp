@@ -813,18 +813,22 @@ void FDialogueEditorUtilities::RemapOldIndicesWithNewAndUpdateGUID(
 		for (int32 EdgeIndex = 0, EdgesNum = DialogueNode->GetNodeChildren().Num(); EdgeIndex < EdgesNum; EdgeIndex++)
 		{
 			FDlgEdge* DialogueEdge = DialogueNode->GetSafeMutableNodeChildAt(EdgeIndex);
+			bool bModifiedConditions = false;
 
 			for (FDlgCondition& Condition : DialogueEdge->Conditions)
 			{
 				if (Condition.HasNodeIndex())
 				{
-					UpdateConditionIndex(&Condition);
+					bModifiedConditions = UpdateConditionIndex(&Condition) || bModifiedConditions;
 					Condition.GUID = Nodes[Condition.IntValue]->GetGUID();
 				}
 			}
 
 			// Update graph node edge
-			ChildEdgeNodes[EdgeIndex]->SetDialogueEdge(*DialogueEdge);
+			if (bModifiedConditions)
+			{
+				ChildEdgeNodes[EdgeIndex]->SetDialogueEdge(*DialogueEdge);
+			}
 		}
 
 		GraphNode->CheckDialogueNodeSyncWithGraphNode(true);

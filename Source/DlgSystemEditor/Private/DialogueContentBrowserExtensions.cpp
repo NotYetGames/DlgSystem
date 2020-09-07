@@ -13,7 +13,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 // A filter that searches for Dialogues
-// We use this because it allows us more flexibility FDialogueAssetTypeActions
+// We use this because it allows us more flexibility FAssetTypeActions_DlgDialogue
 // NOTE: Because this is a frontend filter we can't combine it with the other backend filters (blueprint, texture, particles, etc)
 // Unreal does not allow you to have custom backend filters, which is kinda retarded
 class FFrontendFilter_Dialogue : public FFrontendFilter
