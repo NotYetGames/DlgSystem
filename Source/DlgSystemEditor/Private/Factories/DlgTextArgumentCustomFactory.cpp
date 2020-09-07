@@ -1,7 +1,7 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
-#include "DlgEventCustomFactory.h"
+#include "DlgTextArgumentCustomFactory.h"
 
-#include "DlgEventCustom.h"
+#include "DlgTextArgumentCustom.h"
 #include "DlgSystemEditorModule.h"
 #include "IDlgSystemEditorModule.h"
 #include "Kismet2/KismetEditorUtilities.h"
@@ -10,23 +10,23 @@
 #define LOCTEXT_NAMESPACE "DlgSystem"
 
 /////////////////////////////////////////////////////
-// UDlgEventCustomFactory
-UDlgEventCustomFactory::UDlgEventCustomFactory(const FObjectInitializer& ObjectInitializer)
+// UDlgConditionCustomFactory
+UDlgTextArgumentCustomFactory::UDlgTextArgumentCustomFactory(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	bCreateNew = true;
 
 	// true if the associated editor should be opened after creating a new object.
 	bEditAfterNew = false;
-	SupportedClass = UDlgEventCustom::StaticClass();
+	SupportedClass = UDlgTextArgumentCustom::StaticClass();
 
 	// Default class
 	ParentClass = SupportedClass;
 }
 
-bool UDlgEventCustomFactory::ConfigureProperties()
+bool UDlgTextArgumentCustomFactory::ConfigureProperties()
 {
-	static const FText TitleText = FText::FromString(TEXT("Pick Parent Class for Custom Event"));
+	static const FText TitleText = FText::FromString(TEXT("Pick Parent Class for Custom Text Argument"));
 	ParentClass = nullptr;
 
 	UClass* ChosenClass = nullptr;
@@ -39,7 +39,7 @@ bool UDlgEventCustomFactory::ConfigureProperties()
 	return bPressedOk;
 }
 
-UObject* UDlgEventCustomFactory::FactoryCreateNew(
+UObject* UDlgTextArgumentCustomFactory::FactoryCreateNew(
 	UClass* Class,
 	UObject* InParent,
 	FName Name,

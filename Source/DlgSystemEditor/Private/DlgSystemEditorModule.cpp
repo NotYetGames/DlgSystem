@@ -21,6 +21,9 @@
 #include "DlgSystemEditorPrivatePCH.h"
 #include "AssetTypeActions/AssetTypeActions_DlgDialogue.h"
 #include "AssetTypeActions/AssetTypeActions_DlgEventCustom.h"
+#include "AssetTypeActions/AssetTypeActions_DlgConditionCustom.h"
+#include "AssetTypeActions/AssetTypeActions_DlgTextArgumentCustom.h"
+#include "AssetTypeActions/AssetTypeActions_DlgNodeData.h"
 #include "DialogueCommands.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueBrowser/SDialogueBrowser.h"
@@ -90,6 +93,21 @@ void FDlgSystemEditorModule::StartupModule()
 	}
 	{
 		auto Action = MakeShared<FAssetTypeActions_DlgEventCustom>(DlgSystemAssetCategoryBit);
+		AssetTools.RegisterAssetTypeActions(Action);
+		RegisteredAssetTypeActions.Add(Action);
+	}
+	{
+		auto Action = MakeShared<FAssetTypeActions_DlgConditionCustom>(DlgSystemAssetCategoryBit);
+		AssetTools.RegisterAssetTypeActions(Action);
+		RegisteredAssetTypeActions.Add(Action);
+	}
+	{
+		auto Action = MakeShared<FAssetTypeActions_DlgTextArgumentCustom>(DlgSystemAssetCategoryBit);
+		AssetTools.RegisterAssetTypeActions(Action);
+		RegisteredAssetTypeActions.Add(Action);
+	}
+	{
+		auto Action = MakeShared<FAssetTypeActions_DlgNodeData>(DlgSystemAssetCategoryBit);
 		AssetTools.RegisterAssetTypeActions(Action);
 		RegisteredAssetTypeActions.Add(Action);
 	}

@@ -3,17 +3,17 @@
 
 #include "Factories/Factory.h"
 
-#include "DlgEventCustomFactory.generated.h"
+#include "DlgNodeDataFactory.generated.h"
 
-class UDlgEventCustom;
+class UDlgNodeData;
 
 UCLASS()
-class DLGSYSTEMEDITOR_API UDlgEventCustomFactory : public UFactory
+class DLGSYSTEMEDITOR_API UDlgNodeDataFactory : public UFactory
 {
 	GENERATED_BODY()
 
 public:
-	UDlgEventCustomFactory(const FObjectInitializer& ObjectInitializer);
+	UDlgNodeDataFactory(const FObjectInitializer& ObjectInitializer);
 
 	//
 	// UFactory interface
@@ -32,5 +32,5 @@ public:
 private:
 	// Holds the template of the class we are building
 	UPROPERTY()
-	TSubclassOf<UDlgEventCustom> ParentClass;
+	TSubclassOf<UDlgNodeData> ParentClass;
 };
