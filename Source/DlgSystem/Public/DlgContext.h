@@ -157,6 +157,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|Satisfied")
 	int32 GetOptionsNum() const { return AvailableChildren.Num(); }
 
+	// Is the OptionIndex valid index for the satisfied conditions?
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|Satisfied")
+	bool IsValidOptionIndex(int32 OptionIndex) const { return AvailableChildren.IsValidIndex(OptionIndex);  }
+
 	// Gets the Text of the (satisfied) option with index OptionIndex
 	// NOTE: This is just a helper method, you could have called GetOption
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|Satisfied")
@@ -189,6 +193,10 @@ public:
 	// Gets the number of options (both satisfied and unsatisfied ones are counted)
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|All")
 	int32 GetAllOptionsNum() const { return AllChildren.Num(); }
+
+	// Is the Index valid index for both satisfied and unsatisfied conditions
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|All")
+	bool IsValidAllOptionIndex(int32 Index) const { return AllChildren.IsValidIndex(Index);  }
 
 	// Gets the Text of an option from the all list, which includes the unsatisfied ones as well
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Options|All")
@@ -280,6 +288,10 @@ public:
 	// Gets the active node participant name (owner name).
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	FName GetActiveNodeParticipantName() const;
+
+	// Gets the active participant display name
+	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
+	FText GetActiveNodeParticipantDisplayName() const;
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "Get Participant")
 	UObject* GetMutableParticipant(FName ParticipantName) const;
