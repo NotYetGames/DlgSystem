@@ -3,7 +3,6 @@
 
 #include "DlgConditionCustom.h"
 #include "DlgSystemEditorModule.h"
-#include "IDlgSystemEditorModule.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "Misc/MessageDialog.h"
 

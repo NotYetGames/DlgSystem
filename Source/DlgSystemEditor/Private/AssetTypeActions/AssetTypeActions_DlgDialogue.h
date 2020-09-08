@@ -43,7 +43,7 @@ public:
 	uint32 GetCategories() override { return AssetCategory; }
 
 	// Hide from filtered, we use our custom FFrontendFilter_Dialogue because it allows us more flexibility
-	bool CanFilter() override { return false; }
+	bool CanFilter() override { return true; }
 
 private:
 	/** Indicates the category used for Dialogues */

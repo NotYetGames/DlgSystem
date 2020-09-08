@@ -57,6 +57,10 @@ public:
 	*/
 	static bool PickChildrenOfClass(const FText& TitleText, UClass*& OutChosenClass, UClass* Class);
 
+	// Gets all child classes of ParentClass, NOTE: this is super slow, use with care
+	// DOES NOT INCLUDE BLUEPRINT
+	static TArray<UClass*> GetAllNativeChildClasses(const UClass* ParentClass);
+
 	// Save all the dialogues.
 	// @return True on success or false on failure.
 	static bool SaveAllDialogues();

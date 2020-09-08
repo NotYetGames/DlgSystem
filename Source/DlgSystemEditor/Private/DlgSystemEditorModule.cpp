@@ -20,10 +20,8 @@
 #include "Factories/DialogueClassViewerFilters.h"
 #include "DlgSystemEditorPrivatePCH.h"
 #include "AssetTypeActions/AssetTypeActions_DlgDialogue.h"
-#include "AssetTypeActions/AssetTypeActions_DlgEventCustom.h"
-#include "AssetTypeActions/AssetTypeActions_DlgConditionCustom.h"
-#include "AssetTypeActions/AssetTypeActions_DlgTextArgumentCustom.h"
-#include "AssetTypeActions/AssetTypeActions_DlgNodeData.h"
+#include "AssetTypeActions/AssetTypeActions_DlgBlueprintDerived.h"
+#include "AssetTypeActions/AssetTypeActions_DlgParticipants.h"
 #include "DialogueCommands.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueBrowser/SDialogueBrowser.h"
@@ -111,6 +109,11 @@ void FDlgSystemEditorModule::StartupModule()
 		AssetTools.RegisterAssetTypeActions(Action);
 		RegisteredAssetTypeActions.Add(Action);
 	}
+	// {
+	// 	auto Action = MakeShared<FAssetTypeActions_DlgParticipants>(DlgSystemAssetCategoryBit);
+	// 	AssetTools.RegisterAssetTypeActions(Action);
+	// 	RegisteredAssetTypeActions.Add(Action);
+	// }
 
 	// Register the details panel customizations
 	{
@@ -271,6 +274,36 @@ bool FDlgSystemEditorModule::PickChildrenOfClass(const FText& TitleText, UClass*
 	Options.NameTypeToDisplay = EClassViewerNameTypeToDisplay::Dynamic;
 
 	return SClassPickerDialog::PickClass(TitleText, Options, OutChosenClass, Class);
+}
+
+TArray<UClass*> FDlgSystemEditorModule::GetAllNativeChildClasses(const UClass* ParentClass)
+{
+	TArray<UClass*> Children;
+
+	// Iterate over UClass, this might be heavy on performance
+	for (TObjectIterator<UClass> It; It; ++It)
+	{
+		UClass* ChildClass = *It;
+		if (ChildClass->IsChildOf(ParentClass))
+		{
+			// It is a child of the Parent Class
+			// make sure we don't include our parent class in the array
+			if (ChildClass == ParentClass)
+			{
+				continue;
+			}
+
+			// Ignore blueprint classes
+			if (Cast<UBlueprintGeneratedClass>(ChildClass) != nullptr)
+			{
+				continue;
+			}
+
+			Children.Add(*It);
+		}
+	}
+
+	return Children;
 }
 
 bool FDlgSystemEditorModule::SaveAllDialogues()
