@@ -17,7 +17,7 @@ class DLGSYSTEM_API UDlgTextArgumentCustom : public UDlgObject
 {
 	GENERATED_BODY()
 public:
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Dialogue|TextArguments")
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Dialogue")
 	FText GetText(const UDlgContext* Context, const UObject* Participant, const FString& DisplayStringParam);
 	virtual FText GetText_Implementation(const UDlgContext* Context, const UObject* Participant, const FString& DisplayStringParam)
 	{

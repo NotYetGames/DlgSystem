@@ -35,10 +35,10 @@ void FDialogueObject_CustomRowHelper::Update()
 	TSharedPtr<SWidget> DefaultNameWidget;
 	TSharedPtr<SWidget> DefaultValueWidget;
 	PropertyRow->GetDefaultWidgets(
-        DefaultNameWidget,
-        DefaultValueWidget,
-        true
-    );
+		DefaultNameWidget,
+		DefaultValueWidget,
+		true
+	);
 
 	FDetailWidgetRow& DetailWidgetRow = PropertyRow->CustomWidget(true);
 
@@ -52,16 +52,16 @@ void FDialogueObject_CustomRowHelper::Update()
 	.MinDesiredWidth(300.f)
 	[
 		SAssignNew(HorizontalBox, SHorizontalBox)
-	    +SHorizontalBox::Slot()
-	    .Padding(0.f, 0.f, 4.f, 0.f)
-        .FillWidth(1.f)
-	    [
-	        DefaultValueWidget.ToSharedRef()
-	    ]
+		+SHorizontalBox::Slot()
+		.Padding(0.f, 0.f, 4.f, 0.f)
+		.FillWidth(1.f)
+		[
+			DefaultValueWidget.ToSharedRef()
+		]
 
-	    +SHorizontalBox::Slot()
-	    .AutoWidth()
-	    .VAlign(VAlign_Center)
+		+SHorizontalBox::Slot()
+		.AutoWidth()
+		.VAlign(VAlign_Center)
 		.Padding(4.f)
 		[
 			SNew(SButton)
@@ -69,38 +69,38 @@ void FDialogueObject_CustomRowHelper::Update()
 			.ToolTipText(LOCTEXT( "BrowseButtonToolTipText", "Browse to Asset in Content Browser"))
 			.ContentPadding(4.f)
 			.ForegroundColor(FSlateColor::UseForeground())
-            .Visibility(this, &Self::GetButtonsVisibility)
-            .OnClicked(this, &Self::OnBrowseClicked)
-            [
-                SNew(SImage)
-                .Image(FEditorStyle::GetBrush("PropertyWindow.Button_Browse"))
-                .ColorAndOpacity( FSlateColor::UseForeground() )
-            ]
+			.Visibility(this, &Self::GetButtonsVisibility)
+			.OnClicked(this, &Self::OnBrowseClicked)
+			[
+				SNew(SImage)
+				.Image(FEditorStyle::GetBrush("PropertyWindow.Button_Browse"))
+				.ColorAndOpacity( FSlateColor::UseForeground() )
+			]
 		]
 
-	    // Jump to Object
-	    +SHorizontalBox::Slot()
-	    .AutoWidth()
+		// Jump to Object
+		+SHorizontalBox::Slot()
+		.AutoWidth()
 		.VAlign(VAlign_Center)
 		.Padding(4.f, 2.f)
-	    [
-		    SNew(SButton)
-		    .ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
-	        .ToolTipText(LOCTEXT("OpenObjectTooltipKey", "Open Asset in the Editor"))
-	        .ContentPadding(4.f)
+		[
+			SNew(SButton)
+			.ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
+			.ToolTipText(LOCTEXT("OpenObjectTooltipKey", "Open Asset in the Editor"))
+			.ContentPadding(4.f)
 			.ForegroundColor(FSlateColor::UseForeground())
-	        .Visibility(this, &Self::GetButtonsVisibility)
-	        .OnClicked(this, &Self::OnOpenClicked)
-	        [
-		        SNew(SImage)
-	             .Image(FEditorStyle::GetBrush("PropertyWindow.Button_Edit"))
-	             .ColorAndOpacity( FSlateColor::UseForeground() )
+			.Visibility(this, &Self::GetButtonsVisibility)
+			.OnClicked(this, &Self::OnOpenClicked)
+			[
+				SNew(SImage)
+				 .Image(FEditorStyle::GetBrush("PropertyWindow.Button_Edit"))
+				 .ColorAndOpacity( FSlateColor::UseForeground() )
 
-	            // SNew(STextBlock)
-	            // .Text(LOCTEXT("OpenObjectKey", "Open"))
-	            // .Font(DEFAULT_FONT("Regular", 10))
-	        ]
-	    ]
+				// SNew(STextBlock)
+				// .Text(LOCTEXT("OpenObjectKey", "Open"))
+				// .Font(DEFAULT_FONT("Regular", 10))
+			]
+		]
 	];
 }
 

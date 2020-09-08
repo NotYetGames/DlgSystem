@@ -13,6 +13,7 @@
 
 class FDialogueTextPropertyPickList_CustomRowHelper;
 class FDialogueIntTextBox_CustomRowHelper;
+class FDialogueObject_CustomRowHelper;
 
 /**
 * How the details panel renders the FDlgCondition
@@ -232,6 +233,7 @@ private:
 	IDetailPropertyRow* CompareTypePropertyRow = nullptr;
 	IDetailPropertyRow* GUIDPropertyRow = nullptr;
 	IDetailPropertyRow* CustomConditionPropertyRow = nullptr;
+	TSharedPtr<FDialogueObject_CustomRowHelper> CustomConditionPropertyRow_CustomDisplay;
 
 	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> OtherParticipantNamePropertyRow;
 	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> OtherVariableNamePropertyRow;

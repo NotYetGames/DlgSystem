@@ -13,6 +13,7 @@
 #include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
 #include "DlgHelper.h"
 #include "Widgets/DialogueIntTextBox_CustomRowHelper.h"
+#include "Widgets/DialogueObject_CustomRowHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueCondition_Details"
 
@@ -210,6 +211,10 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, CustomCondition)).ToSharedRef()
 		);
 		CustomConditionPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCustomConditionVisibility));
+
+		// Add Custom buttons
+		CustomConditionPropertyRow_CustomDisplay = MakeShared<FDialogueObject_CustomRowHelper>(CustomConditionPropertyRow);
+		CustomConditionPropertyRow_CustomDisplay->Update();
 	}
 
 	// Cache the initial values

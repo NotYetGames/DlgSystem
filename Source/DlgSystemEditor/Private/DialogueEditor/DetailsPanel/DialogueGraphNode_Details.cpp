@@ -183,13 +183,9 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 		NodeDataPropertyRow->ShouldAutoExpand(true);
 		NodeDataPropertyRow->ShowPropertyButtons(true);
 
-		// Add Custom stuff
+		// Add Custom buttons
 		NodeDataPropertyRow_CustomDisplay = MakeShared<FDialogueObject_CustomRowHelper>(NodeDataPropertyRow);
 		NodeDataPropertyRow_CustomDisplay->Update();
-
-		// NodeDataCustomPropertyRow->SetVisibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetNodeDataVisibility));
-		// // NodeDataPropertyRow->SetJumpToNodeVisibility(CREATE_VISIBILITY_CALLBACK(&Self::GetGUIDVisibility));
-		// NodeDataCustomPropertyRow->Update();
 
 		// SoundWave
 		VoiceSoundWavePropertyRow = &SpeechDataCategory.AddProperty(

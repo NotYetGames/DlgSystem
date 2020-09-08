@@ -10,6 +10,7 @@
 #include "DialogueDetailsPanelUtils.h"
 
 class FDialogueTextPropertyPickList_CustomRowHelper;
+class FDialogueObject_CustomRowHelper;
 
 /**
  * How the details panel renders the FDlgEvent
@@ -151,6 +152,7 @@ private:
 	IDetailPropertyRow* BoolDeltaPropertyRow = nullptr;
 	IDetailPropertyRow* BoolValuePropertyRow = nullptr;
 	IDetailPropertyRow* CustomEventPropertyRow = nullptr;
+	TSharedPtr<FDialogueObject_CustomRowHelper> CustomEventPropertyRow_CustomDisplay;
 
 	// Hold a reference to dialogue we are displaying.
 	UDlgDialogue* Dialogue = nullptr;
