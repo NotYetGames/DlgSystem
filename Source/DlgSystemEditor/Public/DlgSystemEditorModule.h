@@ -81,6 +81,7 @@ private:
 	void HandleNewCustomConditionBlueprintCreated(UBlueprint* Blueprint);
 	void HandleNewCustomTextArgumentBlueprintCreated(UBlueprint* Blueprint);
 	void HandleNewCustomEventBlueprintCreated(UBlueprint* Blueprint);
+	void HandleNewNodeDataBlueprintCreated(UBlueprint* Blueprint);
 
 	// Extend the Menus of the editor
 	void ExtendMenu();

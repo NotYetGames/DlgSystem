@@ -1007,3 +1007,28 @@ UK2Node_Event* FDialogueEditorUtilities::BlueprintGetOrAddEvent(UBlueprint* Blue
 
 	return nullptr;
 }
+
+UEdGraphNode_Comment* FDialogueEditorUtilities::BlueprintAddComment(UBlueprint* Blueprint, const FString& CommentString, FVector2D Location)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal || Blueprint->UbergraphPages.Num() == 0)
+	{
+		return nullptr;
+	}
+
+	UEdGraph* Graph = Blueprint->UbergraphPages[0];
+	TSharedPtr<FEdGraphSchemaAction> Action = Graph->GetSchema()->GetCreateCommentAction();
+	if (!Action.IsValid())
+	{
+		return nullptr;
+	}
+
+	UEdGraphNode* GraphNode = Action->PerformAction(Graph, nullptr, Location);
+	if (UEdGraphNode_Comment* CommentNode = Cast<UEdGraphNode_Comment>(GraphNode))
+	{
+		CommentNode->NodeComment = CommentString;
+		return CommentNode;
+	}
+
+	return nullptr;
+}
+

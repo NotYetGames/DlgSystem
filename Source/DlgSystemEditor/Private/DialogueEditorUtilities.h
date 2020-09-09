@@ -245,6 +245,9 @@ public:
 	// Same as BlueprintGetOrAddFunction but only for an overriden event
 	static UK2Node_Event* BlueprintGetOrAddEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature);
 
+	// Adds a comment to the Blueprint
+	static UEdGraphNode_Comment* BlueprintAddComment(UBlueprint* Blueprint, const FString& CommentString, FVector2D Location = FVector2D::ZeroVector);
+
 private:
 	// Get the DialogueEditor for given object, if it exists
 	static TSharedPtr<class IDialogueEditor> GetDialogueEditorForGraph(const UEdGraph* Graph);

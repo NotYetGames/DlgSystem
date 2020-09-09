@@ -87,6 +87,11 @@ void FDlgSystemEditorModule::StartupModule()
 		UDlgEventCustom::StaticClass(),
 		FKismetEditorUtilities::FOnBlueprintCreated::CreateRaw(this, &Self::HandleNewCustomEventBlueprintCreated)
 	);
+	FKismetEditorUtilities::RegisterOnBlueprintCreatedCallback(
+	    this,
+	    UDlgNodeData::StaticClass(),
+	    FKismetEditorUtilities::FOnBlueprintCreated::CreateRaw(this, &Self::HandleNewNodeDataBlueprintCreated)
+	);
 
 	// Register slate style overrides
 	FDialogueStyle::Initialize();
@@ -472,6 +477,16 @@ void FDlgSystemEditorModule::HandleNewCustomEventBlueprintCreated(UBlueprint* Bl
 	{
 		Blueprint->LastEditedDocuments.Add(EventNode->GetGraph());
 	}
+}
+
+void FDlgSystemEditorModule::HandleNewNodeDataBlueprintCreated(UBlueprint* Blueprint)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return;
+	}
+
+	FDialogueEditorUtilities::BlueprintAddComment(Blueprint, TEXT("Add you own variables to see them in the Dialogue Editor"));
 }
 
 void FDlgSystemEditorModule::ExtendMenu()
