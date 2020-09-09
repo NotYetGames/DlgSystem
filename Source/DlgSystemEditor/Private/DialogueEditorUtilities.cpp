@@ -17,6 +17,8 @@
 #include "DlgHelper.h"
 #include "DlgManager.h"
 #include "Factories/DialogueClassViewerFilters.h"
+#include "Kismet2/KismetEditorUtilities.h"
+#include "K2Node_Event.h"
 
 /** Useful for auto positioning */
 struct NodeWithParentPosition
@@ -968,7 +970,7 @@ UEdGraph* FDialogueEditorUtilities::BlueprintGetOrAddFunction(UBlueprint* Bluepr
 	return NewGraph;
 }
 
-UEdGraph* FDialogueEditorUtilities::BlueprintGetOrAddEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature)
+UK2Node_Event* FDialogueEditorUtilities::BlueprintGetOrAddEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature)
 {
 	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
 	{
@@ -976,15 +978,31 @@ UEdGraph* FDialogueEditorUtilities::BlueprintGetOrAddEvent(UBlueprint* Blueprint
 	}
 
 	// Find existing event
-	for (UEdGraph* UberGraph : Blueprint->UbergraphPages)
+	TArray<UK2Node_Event*> AllEvents;
+	FBlueprintEditorUtils::GetAllNodesOfClass<UK2Node_Event>(Blueprint, AllEvents);
+	for (UK2Node_Event* EventNode : AllEvents)
 	{
-		for (UEdGraphNode* GraphNode : UberGraph->Nodes)
+		if (EventNode->bOverrideFunction && EventNode->EventReference.GetMemberName() == EventName)
 		{
-			if (EventName == GraphNode->GetFName())
-			{
-				return UberGraph;
-			}
+			return EventNode;
 		}
+	}
+
+	// Create a New Event
+	if (Blueprint->UbergraphPages.Num())
+	{
+		int32 NodePositionY = 0;
+		UK2Node_Event* NodeEvent = FKismetEditorUtilities::AddDefaultEventNode(
+			Blueprint,
+			Blueprint->UbergraphPages[0],
+			EventName,
+			EventClassSignature,
+			NodePositionY
+		);
+		NodeEvent->SetEnabledState(ENodeEnabledState::Enabled);
+		NodeEvent->NodeComment = "";
+		NodeEvent->bCommentBubbleVisible = false;
+		return NodeEvent;
 	}
 
 	return nullptr;

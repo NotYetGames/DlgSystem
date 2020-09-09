@@ -17,6 +17,7 @@ class UEdGraphSchema;
 class UDlgNode;
 class UEdGraph;
 class FSlateRect;
+class UK2Node_Event;
 
 class FDialogueEditorUtilities
 {
@@ -241,8 +242,8 @@ public:
 	// Return the Function Graph of the existing function or the newly created one
 	static UEdGraph* BlueprintGetOrAddFunction(UBlueprint* Blueprint, FName FunctionName, UClass* FunctionClassSignature);
 
-	// Same as BlueprintGetOrAddFunction but only for event
-	static UEdGraph* BlueprintGetOrAddEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature);
+	// Same as BlueprintGetOrAddFunction but only for an overriden event
+	static UK2Node_Event* BlueprintGetOrAddEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature);
 
 private:
 	// Get the DialogueEditor for given object, if it exists

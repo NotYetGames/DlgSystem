@@ -7,7 +7,6 @@
 #include "Widgets/Input/SComboButton.h"
 #include "Widgets/Layout/SUniformGridPanel.h"
 #include "Internationalization/TextNamespaceUtil.h"
-#include "IPropertyUtilities.h"
 #include "DialogueEditableTextPropertyHandle.h"
 #include "Editor.h"
 #include "DialogueEditor/DetailsPanel/DialogueDetailsPanelUtils.h"
@@ -15,6 +14,8 @@
 #include "Engine/Blueprint.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Widgets/Images/SImage.h"
+#include "K2Node_Event.h"
+
 
 #define LOCTEXT_NAMESPACE "DialogueObject_CustomRowHelper"
 #define DEFAULT_FONT(...) FCoreStyle::GetDefaultFontStyle(__VA_ARGS__)
