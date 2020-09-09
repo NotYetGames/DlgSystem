@@ -140,6 +140,7 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 		// Add Custom buttons
 		CustomEventPropertyRow_CustomDisplay = MakeShared<FDialogueObject_CustomRowHelper>(CustomEventPropertyRow);
 		CustomEventPropertyRow_CustomDisplay->Update();
+		CustomEventPropertyRow_CustomDisplay->SetEventNameToOpen(GET_FUNCTION_NAME_CHECKED(UDlgEventCustom, EnterEvent));
 	}
 
 	// Cache the initial event type

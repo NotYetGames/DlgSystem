@@ -15,6 +15,7 @@ class UDlgDialogue;
 struct FGraphPanelNodeFactory;
 struct FGraphPanelPinFactory;
 class FExtender;
+class UEdGraph;
 
 // Implementation of the DlgSystemEditor Module
 class DLGSYSTEMEDITOR_API FDlgSystemEditorModule : public IDlgSystemEditorModule
@@ -45,21 +46,6 @@ public:
 	static TSharedRef<FExtender> CreateHelpMenuExtender(TSharedRef<FUICommandList> Commands);
 	static void MapActionsForFileMenuExtender(TSharedRef<FUICommandList> Commands);
 	static void MapActionsForHelpMenuExtender(TSharedRef<FUICommandList> Commands);
-
-	/***
-	* Pops up a class picker dialog to choose the class that is a child of the Classprovided.
-	*
-	* @param	TitleText		The title of the class picker dialog
-	* @param	OutChosenClass  The class chosen (if this function returns false, this will be null) by the the user
-	* @param	Class		    The children of this class we are displaying and prompting the user to choose from.
-	*
-	* @return true if OK was pressed, false otherwise
-	*/
-	static bool PickChildrenOfClass(const FText& TitleText, UClass*& OutChosenClass, UClass* Class);
-
-	// Gets all child classes of ParentClass, NOTE: this is super slow, use with care
-	// DOES NOT INCLUDE BLUEPRINT
-	static TArray<UClass*> GetAllNativeChildClasses(const UClass* ParentClass);
 
 	// Save all the dialogues.
 	// @return True on success or false on failure.

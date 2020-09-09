@@ -12,6 +12,9 @@
 #include "Nodes/DialogueGraphNode.h"
 #include "Nodes/DialogueGraphNode_Edge.h"
 #include "DlgHelper.h"
+#include "Factories/DialogueClassViewerFilters.h"
+#include "Kismet2/BlueprintEditorUtils.h"
+#include "Kismet2/SClassPickerDialog.h"
 
 /** Useful for auto positioning */
 struct NodeWithParentPosition
@@ -846,6 +849,99 @@ UDlgDialogue* FDialogueEditorUtilities::GetDialogueFromGraphNode(const UEdGraphN
 	if (const UDialogueGraph* DialogueGraph = Cast<UDialogueGraph>(GraphNode->GetGraph()))
 	{
 		return DialogueGraph->GetDialogue();
+	}
+
+	return nullptr;
+}
+
+bool FDialogueEditorUtilities::PickChildrenOfClass(const FText& TitleText, UClass*& OutChosenClass, UClass* Class)
+{
+	// Create filter
+	TSharedPtr<FDialogueChildrenOfClassFilterViewer> Filter = MakeShareable(new FDialogueChildrenOfClassFilterViewer);
+	Filter->AllowedChildrenOfClasses.Add(Class);
+
+	// Fill in options
+	FClassViewerInitializationOptions Options;
+	Options.Mode = EClassViewerMode::ClassPicker;
+	Options.DisplayMode = EClassViewerDisplayMode::TreeView;
+	Options.ClassFilter = Filter;
+	Options.bShowUnloadedBlueprints = true;
+	Options.bExpandRootNodes = true;
+	Options.NameTypeToDisplay = EClassViewerNameTypeToDisplay::Dynamic;
+
+	return SClassPickerDialog::PickClass(TitleText, Options, OutChosenClass, Class);
+}
+
+TArray<UClass*> FDialogueEditorUtilities::GetAllNativeChildClasses(const UClass* ParentClass)
+{
+	TArray<UClass*> Children;
+
+	// Iterate over UClass, this might be heavy on performance
+	for (TObjectIterator<UClass> It; It; ++It)
+	{
+		UClass* ChildClass = *It;
+		if (ChildClass->IsChildOf(ParentClass))
+		{
+			// It is a child of the Parent Class
+			// make sure we don't include our parent class in the array
+			if (ChildClass == ParentClass)
+			{
+				continue;
+			}
+
+			// Ignore blueprint classes
+			if (Cast<UBlueprintGeneratedClass>(ChildClass) != nullptr)
+			{
+				continue;
+			}
+
+			Children.Add(*It);
+		}
+	}
+
+	return Children;
+}
+
+UEdGraph* FDialogueEditorUtilities::BlueprintGetOrAddFunction(UBlueprint* Blueprint, FName FunctionName, UClass* FunctionClassSignature)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return nullptr;
+	}
+
+	// Find existing function
+	for (UEdGraph* GraphFunction : Blueprint->FunctionGraphs)
+	{
+		if (FunctionName == GraphFunction->GetFName())
+		{
+			return GraphFunction;
+		}
+	}
+
+	// Create a new function
+	UEdGraph* NewGraph = FBlueprintEditorUtils::CreateNewGraph(Blueprint, FunctionName, UEdGraph::StaticClass(), UEdGraphSchema_K2::StaticClass());
+	FBlueprintEditorUtils::AddFunctionGraph(Blueprint, NewGraph, /*bIsUserCreated=*/ false, FunctionClassSignature);
+	Blueprint->LastEditedDocuments.Add(NewGraph);
+	return NewGraph;
+}
+
+UEdGraph* FDialogueEditorUtilities::BlueprintGetOrAddEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return nullptr;
+	}
+
+	// Find existing event
+	for (UEdGraph* UberGraph : Blueprint->UbergraphPages)
+	{
+		for (UEdGraphNode* GraphNode : UberGraph->Nodes)
+		{
+			if (EventName == GraphNode->GetFName())
+			{
+				return UberGraph;
+			}
+		}
 	}
 
 	return nullptr;

@@ -22,6 +22,18 @@ public:
 	// Update the full property row.
 	void Update();
 
+	Self& SetFunctionNameToOpen(FName Name)
+	{
+		FunctionNameToOpen = Name;
+		return *this;
+	}
+
+	Self& SetEventNameToOpen(FName Name)
+	{
+		EventNameToOpen = Name;
+		return *this;
+	}
+
 protected:
 	// Reset to default
 	FReply OnBrowseClicked();
@@ -33,8 +45,11 @@ protected:
 	EVisibility GetButtonsVisibility() const;
 
 protected:
-	bool bAddResetToDefaultWidget = true;
-
 	// The Property handle of what this row represents
 	IDetailPropertyRow* PropertyRow = nullptr;
+
+	// Blueprint Editor
+	bool bForceFullEditor = true;
+	FName FunctionNameToOpen = NAME_None;
+	FName EventNameToOpen = NAME_None;
 };

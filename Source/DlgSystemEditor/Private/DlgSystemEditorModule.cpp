@@ -17,11 +17,9 @@
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 
 #include "Factories/DialogueGraphFactories.h"
-#include "Factories/DialogueClassViewerFilters.h"
 #include "DlgSystemEditorPrivatePCH.h"
 #include "AssetTypeActions/AssetTypeActions_DlgDialogue.h"
 #include "AssetTypeActions/AssetTypeActions_DlgBlueprintDerived.h"
-#include "AssetTypeActions/AssetTypeActions_DlgParticipants.h"
 #include "DialogueCommands.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueBrowser/SDialogueBrowser.h"
@@ -39,7 +37,6 @@
 
 #include "IO/DlgConfigWriter.h"
 #include "IO/DlgConfigParser.h"
-#include "Kismet2/SClassPickerDialog.h"
 #include "Logging/DlgLogger.h"
 
 #define LOCTEXT_NAMESPACE "DlgSystemEditor"
@@ -256,54 +253,6 @@ void FDlgSystemEditorModule::ShutdownModule()
 	}
 
 	UE_LOG(LogDlgSystemEditor, Log, TEXT("DlgSystemEditorModule: ShutdownModule"));
-}
-
-bool FDlgSystemEditorModule::PickChildrenOfClass(const FText& TitleText, UClass*& OutChosenClass, UClass* Class)
-{
-	// Create filter
-	TSharedPtr<FDialogueChildrenOfClassFilterViewer> Filter = MakeShareable(new FDialogueChildrenOfClassFilterViewer);
-	Filter->AllowedChildrenOfClasses.Add(Class);
-
-	// Fill in options
-	FClassViewerInitializationOptions Options;
-	Options.Mode = EClassViewerMode::ClassPicker;
-	Options.DisplayMode = EClassViewerDisplayMode::TreeView;
-	Options.ClassFilter = Filter;
-	Options.bShowUnloadedBlueprints = true;
-	Options.bExpandRootNodes = true;
-	Options.NameTypeToDisplay = EClassViewerNameTypeToDisplay::Dynamic;
-
-	return SClassPickerDialog::PickClass(TitleText, Options, OutChosenClass, Class);
-}
-
-TArray<UClass*> FDlgSystemEditorModule::GetAllNativeChildClasses(const UClass* ParentClass)
-{
-	TArray<UClass*> Children;
-
-	// Iterate over UClass, this might be heavy on performance
-	for (TObjectIterator<UClass> It; It; ++It)
-	{
-		UClass* ChildClass = *It;
-		if (ChildClass->IsChildOf(ParentClass))
-		{
-			// It is a child of the Parent Class
-			// make sure we don't include our parent class in the array
-			if (ChildClass == ParentClass)
-			{
-				continue;
-			}
-
-			// Ignore blueprint classes
-			if (Cast<UBlueprintGeneratedClass>(ChildClass) != nullptr)
-			{
-				continue;
-			}
-
-			Children.Add(*It);
-		}
-	}
-
-	return Children;
 }
 
 bool FDlgSystemEditorModule::SaveAllDialogues()

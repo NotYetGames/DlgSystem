@@ -25,7 +25,6 @@ public:
 	}
 };
 
-
 // This is the same as UDlgConditionCustom but it does NOT show the categories
 UCLASS(Blueprintable, BlueprintType, Abstract, EditInlineNew, CollapseCategories)
 class DLGSYSTEM_API UDlgConditionCustomHideCategories : public UDlgConditionCustom

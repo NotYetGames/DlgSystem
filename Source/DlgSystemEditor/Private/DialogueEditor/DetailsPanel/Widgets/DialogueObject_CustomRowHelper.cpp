@@ -13,6 +13,7 @@
 #include "DialogueEditor/DetailsPanel/DialogueDetailsPanelUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "Engine/Blueprint.h"
+#include "Kismet2/BlueprintEditorUtils.h"
 #include "Widgets/Images/SImage.h"
 
 #define LOCTEXT_NAMESPACE "DialogueObject_CustomRowHelper"
@@ -160,10 +161,27 @@ FReply FDialogueObject_CustomRowHelper::OnOpenClicked()
 {
 	if (UBlueprint* Blueprint = GetBlueprint())
 	{
-		Blueprint->bForceFullEditor = true;
-		if (Blueprint->UbergraphPages.Num() > 0)
+		Blueprint->bForceFullEditor = bForceFullEditor;
+
+		// Find Function Graph
+		UObject* ObjectToFocusOn = nullptr;
+		if (FunctionNameToOpen != NAME_None)
 		{
-			FKismetEditorUtilities::BringKismetToFocusAttentionOnObject(Blueprint->GetLastEditedUberGraph());
+			ObjectToFocusOn = FDialogueEditorUtilities::BlueprintGetOrAddFunction(Blueprint, FunctionNameToOpen, GetObject()->GetClass());
+		}
+		else if (EventNameToOpen != NAME_None)
+		{
+			ObjectToFocusOn = FDialogueEditorUtilities::BlueprintGetOrAddEvent(Blueprint, EventNameToOpen, GetObject()->GetClass());
+		}
+
+		// Default to the last uber graph
+		if (ObjectToFocusOn == nullptr)
+		{
+			ObjectToFocusOn = Blueprint->GetLastEditedUberGraph();
+		}
+		if (ObjectToFocusOn)
+		{
+			FKismetEditorUtilities::BringKismetToFocusAttentionOnObject(ObjectToFocusOn);
 		}
 		else
 		{

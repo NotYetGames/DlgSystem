@@ -102,6 +102,7 @@ void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle
 		// Add Custom buttons
 		CustomTextArgumentPropertyRow_CustomDisplay = MakeShared<FDialogueObject_CustomRowHelper>(CustomTextArgumentPropertyRow);
 		CustomTextArgumentPropertyRow_CustomDisplay->Update();
+		CustomTextArgumentPropertyRow_CustomDisplay->SetFunctionNameToOpen(GET_FUNCTION_NAME_CHECKED(UDlgTextArgumentCustom, GetText));
 	}
 
 	// Cache the initial event type

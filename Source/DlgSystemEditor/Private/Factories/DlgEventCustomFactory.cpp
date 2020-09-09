@@ -2,8 +2,6 @@
 #include "DlgEventCustomFactory.h"
 
 #include "DlgEventCustom.h"
-#include "DlgSystemEditorModule.h"
-#include "IDlgSystemEditorModule.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "Misc/MessageDialog.h"
 
@@ -30,7 +28,7 @@ bool UDlgEventCustomFactory::ConfigureProperties()
 	ParentClass = nullptr;
 
 	UClass* ChosenClass = nullptr;
-	const bool bPressedOk = FDlgSystemEditorModule::PickChildrenOfClass(TitleText, ChosenClass, SupportedClass);
+	const bool bPressedOk = FDialogueEditorUtilities::PickChildrenOfClass(TitleText, ChosenClass, SupportedClass);
 	if (bPressedOk)
 	{
 		ParentClass = ChosenClass;

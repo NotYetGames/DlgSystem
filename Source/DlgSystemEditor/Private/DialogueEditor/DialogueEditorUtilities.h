@@ -216,6 +216,28 @@ public:
 	// Gets the Dialogue for the provided UEdGraphNode
 	static UDlgDialogue* GetDialogueFromGraphNode(const UEdGraphNode* GraphNode);
 
+	/***
+	* Pops up a class picker dialog to choose the class that is a child of the Classprovided.
+	*
+	* @param	TitleText		The title of the class picker dialog
+	* @param	OutChosenClass  The class chosen (if this function returns false, this will be null) by the the user
+	* @param	Class		    The children of this class we are displaying and prompting the user to choose from.
+	*
+	* @return true if OK was pressed, false otherwise
+	*/
+	static bool PickChildrenOfClass(const FText& TitleText, UClass*& OutChosenClass, UClass* Class);
+
+	// Gets all child classes of ParentClass, NOTE: this is super slow, use with care
+	// DOES NOT INCLUDE BLUEPRINT
+	static TArray<UClass*> GetAllNativeChildClasses(const UClass* ParentClass);
+
+	// Adds the function if it does not exist
+	// Return the Function Graph of the existing function or the newly created one
+	static UEdGraph* BlueprintGetOrAddFunction(UBlueprint* Blueprint, FName FunctionName, UClass* FunctionClassSignature);
+
+	// Same as BlueprintGetOrAddFunction but only for event
+	static UEdGraph* BlueprintGetOrAddEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature);
+
 private:
 	/** Get the DialogueEditor for given object, if it exists */
 	static TSharedPtr<class IDialogueEditor> GetDialogueEditorForGraph(const UEdGraph* Graph);

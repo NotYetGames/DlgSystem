@@ -215,6 +215,7 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 		// Add Custom buttons
 		CustomConditionPropertyRow_CustomDisplay = MakeShared<FDialogueObject_CustomRowHelper>(CustomConditionPropertyRow);
 		CustomConditionPropertyRow_CustomDisplay->Update();
+		CustomConditionPropertyRow_CustomDisplay->SetFunctionNameToOpen(GET_FUNCTION_NAME_CHECKED(UDlgConditionCustom, IsConditionMet));
 	}
 
 	// Cache the initial values
