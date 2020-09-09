@@ -6,15 +6,17 @@
 #include "Templates/Casts.h"
 #include "Containers/Queue.h"
 #include "EdGraphNode_Comment.h"
-
-#include "DlgSystemEditorPrivatePCH.h"
-#include "IDialogueEditor.h"
-#include "Nodes/DialogueGraphNode.h"
-#include "Nodes/DialogueGraphNode_Edge.h"
-#include "DlgHelper.h"
-#include "Factories/DialogueClassViewerFilters.h"
+#include "FileHelpers.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/SClassPickerDialog.h"
+
+#include "DlgSystemEditorModule.h"
+#include "DialogueEditor/IDialogueEditor.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
+#include "DlgHelper.h"
+#include "DlgManager.h"
+#include "Factories/DialogueClassViewerFilters.h"
 
 /** Useful for auto positioning */
 struct NodeWithParentPosition
@@ -852,6 +854,47 @@ UDlgDialogue* FDialogueEditorUtilities::GetDialogueFromGraphNode(const UEdGraphN
 	}
 
 	return nullptr;
+}
+
+bool FDialogueEditorUtilities::SaveAllDialogues()
+{
+	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
+	TArray<UPackage*> PackagesToSave;
+	const bool bBatchOnlyInGameDialogues = GetDefault<UDlgSystemSettings>()->bBatchOnlyInGameDialogues;
+
+	for (UDlgDialogue* Dialogue : Dialogues)
+	{
+		// Ignore, not in game directory
+		if (bBatchOnlyInGameDialogues && !Dialogue->IsInProjectDirectory())
+		{
+			continue;
+		}
+
+		Dialogue->MarkPackageDirty();
+		PackagesToSave.Add(Dialogue->GetOutermost());
+	}
+
+	static constexpr bool bCheckDirty = false;
+	static constexpr bool bPromptToSave = false;
+	return FEditorFileUtils::PromptForCheckoutAndSave(PackagesToSave, bCheckDirty, bPromptToSave) == FEditorFileUtils::EPromptReturnCode::PR_Success;
+}
+
+bool FDialogueEditorUtilities::DeleteAllDialoguesTextFiles()
+{
+	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
+	const bool bBatchOnlyInGameDialogues = GetDefault<UDlgSystemSettings>()->bBatchOnlyInGameDialogues;
+	for (const UDlgDialogue* Dialogue : Dialogues)
+	{
+		// Ignore, not in game directory
+		if (bBatchOnlyInGameDialogues && !Dialogue->IsInProjectDirectory())
+		{
+			continue;
+		}
+
+		Dialogue->DeleteAllTextFiles();
+	}
+
+	return true;
 }
 
 bool FDialogueEditorUtilities::PickChildrenOfClass(const FText& TitleText, UClass*& OutChosenClass, UClass* Class)

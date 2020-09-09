@@ -187,12 +187,10 @@ public:
 	 */
 	static void ReplaceParentConnectionsToNode(const UDialogueGraphNode* OldNode, const UDialogueGraphNode* NewNode);
 
-	/**
-	 * Wrapper over standard message box that that also logs to the console
-	 */
+	// Wrapper over standard message box that that also logs to the console
 	static EAppReturnType::Type ShowMessageBox(EAppMsgType::Type MsgType, const FString& Text, const FString& Caption);
 
-	/** Returns true if the TestPoint is inside the Geometry. */
+	// Returns true if the TestPoint is inside the Geometry.
 	static bool IsPointInsideGeometry(const FVector2D& TestPoint, const FGeometry& Geometry)
 	{
 		TArray<FVector2D> GeometryPoints;
@@ -215,6 +213,14 @@ public:
 
 	// Gets the Dialogue for the provided UEdGraphNode
 	static UDlgDialogue* GetDialogueFromGraphNode(const UEdGraphNode* GraphNode);
+
+	// Save all the dialogues.
+	// @return True on success or false on failure.
+	static bool SaveAllDialogues();
+
+	// Deletes all teh dialogues text files
+	// @return True on success or false on failure.
+	static bool DeleteAllDialoguesTextFiles();
 
 	/***
 	* Pops up a class picker dialog to choose the class that is a child of the Classprovided.
@@ -239,7 +245,7 @@ public:
 	static UEdGraph* BlueprintGetOrAddEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature);
 
 private:
-	/** Get the DialogueEditor for given object, if it exists */
+	// Get the DialogueEditor for given object, if it exists
 	static TSharedPtr<class IDialogueEditor> GetDialogueEditorForGraph(const UEdGraph* Graph);
 
 	FDialogueEditorUtilities() = delete;

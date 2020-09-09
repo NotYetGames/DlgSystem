@@ -2,7 +2,7 @@
 #pragma once
 
 #include "IDlgDialogueEditorAccess.h"
-#include "DialogueEditor/DialogueEditorUtilities.h"
+#include "DialogueEditorUtilities.h"
 
 /**
  * Implementation of the interface for dialogue graph interaction between DlgSystem module <-> DlgSystemEditor module.

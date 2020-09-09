@@ -9,7 +9,6 @@
 #include "WorkspaceMenuStructureModule.h"
 #include "WorkspaceMenuStructure.h"
 #include "Widgets/Docking/SDockTab.h"
-#include "FileHelpers.h"
 #include "Framework/MultiBox/MultiBoxExtender.h"
 #include "LevelEditor.h"
 #include "GenericPlatform/GenericPlatformMisc.h"
@@ -17,7 +16,6 @@
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 
 #include "Factories/DialogueGraphFactories.h"
-#include "DlgSystemEditorPrivatePCH.h"
 #include "AssetTypeActions/AssetTypeActions_DlgDialogue.h"
 #include "AssetTypeActions/AssetTypeActions_DlgBlueprintDerived.h"
 #include "DialogueCommands.h"
@@ -255,29 +253,6 @@ void FDlgSystemEditorModule::ShutdownModule()
 	UE_LOG(LogDlgSystemEditor, Log, TEXT("DlgSystemEditorModule: ShutdownModule"));
 }
 
-bool FDlgSystemEditorModule::SaveAllDialogues()
-{
-	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
-	TArray<UPackage*> PackagesToSave;
-	const bool bBatchOnlyInGameDialogues = GetDefault<UDlgSystemSettings>()->bBatchOnlyInGameDialogues;
-
-	for (UDlgDialogue* Dialogue : Dialogues)
-	{
-		// Ignore, not in game directory
-		if (bBatchOnlyInGameDialogues && !Dialogue->IsInProjectDirectory())
-		{
-			continue;
-		}
-
-		Dialogue->MarkPackageDirty();
-		PackagesToSave.Add(Dialogue->GetOutermost());
-	}
-
-	static constexpr bool bCheckDirty = false;
-	static constexpr bool bPromptToSave = false;
-	return FEditorFileUtils::PromptForCheckoutAndSave(PackagesToSave, bCheckDirty, bPromptToSave) == FEditorFileUtils::EPromptReturnCode::PR_Success;
-}
-
 void FDlgSystemEditorModule::HandleOnSaveAllDialogues()
 {
 	const EAppReturnType::Type Response = FPlatformMisc::MessageBoxExt(EAppMsgType::YesNo,
@@ -289,7 +264,7 @@ void FDlgSystemEditorModule::HandleOnSaveAllDialogues()
 		return;
 	}
 
-	if (!SaveAllDialogues())
+	if (!FDialogueEditorUtilities::SaveAllDialogues())
 	{
 		UE_LOG(LogDlgSystemEditor, Error, TEXT("Failed To save all Dialogues. An error occurred."));
 	}
@@ -310,28 +285,10 @@ void FDlgSystemEditorModule::HandleOnDeleteAllDialoguesTextFiles()
 		return;
 	}
 
-	if (!DeleteAllDialoguesTextFiles())
+	if (!FDialogueEditorUtilities::DeleteAllDialoguesTextFiles())
 	{
 		UE_LOG(LogDlgSystemEditor, Error, TEXT("Failed To delete all Dialogues text files. An error occurred."));
 	}
-}
-
-bool FDlgSystemEditorModule::DeleteAllDialoguesTextFiles()
-{
-	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
-	const bool bBatchOnlyInGameDialogues = GetDefault<UDlgSystemSettings>()->bBatchOnlyInGameDialogues;
-	for (const UDlgDialogue* Dialogue : Dialogues)
-	{
-		// Ignore, not in game directory
-		if (bBatchOnlyInGameDialogues && !Dialogue->IsInProjectDirectory())
-		{
-			continue;
-		}
-
-		Dialogue->DeleteAllTextFiles();
-	}
-
-	return true;
 }
 
 void FDlgSystemEditorModule::HandleOnPostEngineInit()

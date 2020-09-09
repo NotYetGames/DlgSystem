@@ -6,7 +6,7 @@
 #include "Engine/Blueprint.h"
 
 #include "DlgManager.h"
-#include "DlgSystemEditorPrivatePCH.h"
+#include "DlgSystemEditorModule.h"
 
 #define LOCTEXT_NAMESPACE "DialogueSystemContentBrowserExtensions"
 

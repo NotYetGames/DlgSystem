@@ -2,7 +2,7 @@
 #include "AssetTypeActions_DlgDialogue.h"
 
 #include "DialogueEditor/DialogueEditor.h"
-#include "DlgSystemEditorPrivatePCH.h"
+#include "DlgSystemEditorModule.h"
 
 void FAssetTypeActions_DlgDialogue::GetActions(const TArray<UObject*>& InObjects, FMenuBuilder& MenuBuilder)
 {

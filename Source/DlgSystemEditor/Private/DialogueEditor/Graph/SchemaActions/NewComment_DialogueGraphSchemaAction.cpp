@@ -3,7 +3,7 @@
 
 #include "EdGraphNode_Comment.h"
 
-#include "DialogueEditor/DialogueEditorUtilities.h"
+#include "DialogueEditorUtilities.h"
 
 #define LOCTEXT_NAMESPACE "NewComment_DialogueGraphSchemaAction"
 

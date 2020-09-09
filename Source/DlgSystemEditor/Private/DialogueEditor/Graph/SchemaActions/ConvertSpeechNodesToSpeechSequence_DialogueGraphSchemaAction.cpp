@@ -5,7 +5,7 @@
 
 #include "NewNode_DialogueGraphSchemaAction.h"
 #include "DlgDialogue.h"
-#include "DialogueEditor/DialogueEditorUtilities.h"
+#include "DialogueEditorUtilities.h"
 #include "Nodes/DlgNode_SpeechSequence.h"
 #include "Nodes/DlgNode_Speech.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"

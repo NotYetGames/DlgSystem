@@ -7,7 +7,7 @@
 
 #include "DlgNodeData.h"
 #include "DlgTextArgumentCustom.h"
-#include "DialogueEditor/DialogueEditorUtilities.h"
+#include "DialogueEditorUtilities.h"
 
 class IToolkitHost;
 

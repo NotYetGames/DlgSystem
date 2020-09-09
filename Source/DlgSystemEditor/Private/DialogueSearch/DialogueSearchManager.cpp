@@ -7,7 +7,7 @@
 #include "WorkspaceMenuStructure.h"
 #include "EdGraphNode_Comment.h"
 
-#include "DlgSystemEditorPrivatePCH.h"
+#include "DlgSystemEditorModule.h"
 #include "DlgDialogue.h"
 #include "DlgManager.h"
 #include "SFindInDialogues.h"

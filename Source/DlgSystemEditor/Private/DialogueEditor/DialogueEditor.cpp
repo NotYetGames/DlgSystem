@@ -17,7 +17,7 @@
 #include "EdGraphUtilities.h"
 #include "HAL/PlatformApplicationMisc.h"
 
-#include "DlgSystemEditorPrivatePCH.h"
+#include "DlgSystemEditorModule.h"
 #include "DlgDialogue.h"
 #include "DlgHelper.h"
 #include "SDialoguePalette.h"
@@ -639,17 +639,17 @@ void FDialogueEditor::BindEditorCommands()
 	FDlgSystemEditorModule::MapActionsForHelpMenuExtender(ToolkitCommands);
 
 	ToolkitCommands->MapAction(
-	    FDialogueCommands::Get().DeleteCurrentDialogueTextFiles,
-	    FExecuteAction::CreateLambda([this]
-	    {
-	    	check(DialogueBeingEdited);
-	    	const FString Text = TEXT("Delete All text files for this Dialogue?");
-	    	const EAppReturnType::Type Response = FPlatformMisc::MessageBoxExt(EAppMsgType::YesNo, *Text, *Text);
-            if (Response == EAppReturnType::Yes)
-            {
-            	DialogueBeingEdited->DeleteAllTextFiles();
-            }
-	    })
+		FDialogueCommands::Get().DeleteCurrentDialogueTextFiles,
+		FExecuteAction::CreateLambda([this]
+		{
+			check(DialogueBeingEdited);
+			const FString Text = TEXT("Delete All text files for this Dialogue?");
+			const EAppReturnType::Type Response = FPlatformMisc::MessageBoxExt(EAppMsgType::YesNo, *Text, *Text);
+			if (Response == EAppReturnType::Yes)
+			{
+				DialogueBeingEdited->DeleteAllTextFiles();
+			}
+		})
 	);
 }
 
@@ -720,35 +720,35 @@ void FDialogueEditor::ExtendToolbar()
 	{
 		TSharedPtr<FExtender> ToolbarExtender = MakeShared<FExtender>();
 		ToolbarExtender->AddToolBarExtension(
-            "Asset",
-            EExtensionHook::After,
-            ToolkitCommands,
-            FToolBarExtensionDelegate::CreateLambda([this](FToolBarBuilder& ToolbarBuilder)
-            {
-                ToolbarBuilder.BeginSection("Dialogue");
-                {
-                    ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().DialogueReloadData);
-                    ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().FindInDialogue);
+			"Asset",
+			EExtensionHook::After,
+			ToolkitCommands,
+			FToolBarExtensionDelegate::CreateLambda([this](FToolBarBuilder& ToolbarBuilder)
+			{
+				ToolbarBuilder.BeginSection("Dialogue");
+				{
+					ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().DialogueReloadData);
+					ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().FindInDialogue);
 
-                    ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().ToggleShowPrimarySecondaryEdges);
-                    ToolbarBuilder.AddComboButton(
-                        FUIAction(
-                            FExecuteAction(),
-                            FCanExecuteAction::CreateLambda([this] {
-                                // only when the show/primary secondary edges is true
-                                return GetSettings().bShowPrimarySecondaryEdges;
-                            })
-                        ),
-                        FOnGetContent::CreateSP(this, &Self::GeneratePrimarySecondaryEdgesMenu),
-                        LOCTEXT("PrimarySecondaryEdges", "Viewing Options"),
-                        LOCTEXT("PrimarySecondaryEdges_ToolTip", "Viewing settings"),
-                        FSlateIcon(),
-                        true
-                    );
-                }
-            	ToolbarBuilder.EndSection();
-            })
-        );
+					ToolbarBuilder.AddToolBarButton(FDialogueCommands::Get().ToggleShowPrimarySecondaryEdges);
+					ToolbarBuilder.AddComboButton(
+						FUIAction(
+							FExecuteAction(),
+							FCanExecuteAction::CreateLambda([this] {
+								// only when the show/primary secondary edges is true
+								return GetSettings().bShowPrimarySecondaryEdges;
+							})
+						),
+						FOnGetContent::CreateSP(this, &Self::GeneratePrimarySecondaryEdgesMenu),
+						LOCTEXT("PrimarySecondaryEdges", "Viewing Options"),
+						LOCTEXT("PrimarySecondaryEdges_ToolTip", "Viewing settings"),
+						FSlateIcon(),
+						true
+					);
+				}
+				ToolbarBuilder.EndSection();
+			})
+		);
 		AddToolbarExtender(ToolbarExtender);
 	}
 
@@ -757,32 +757,32 @@ void FDialogueEditor::ExtendToolbar()
 	{
 		TSharedPtr<FExtender> ExternalToolbarExtender = MakeShared<FExtender>();
 		ExternalToolbarExtender->AddToolBarExtension(
-            "Asset",
-            EExtensionHook::After,
-            ToolkitCommands,
-            FToolBarExtensionDelegate::CreateLambda([this](FToolBarBuilder& ToolbarBuilder)
-            {
-                ToolbarBuilder.BeginSection("DialogueExternal");
-                {
-                    ToolbarBuilder.AddToolBarButton(
-                    	FDialogueCommands::Get().OpenNotYetPlugins,
-                    	NAME_None,
-                    	LOCTEXT("NotYetPlugins", "Not Yet: Plugins"),
-                    	{},
-                    	FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_NotYetLogoIcon)
-                    );
-                    ToolbarBuilder.AddComboButton(
-                        FUIAction(),
-                        FOnGetContent::CreateSP(this, &Self::GenerateExternalURLsMenu),
-                        LOCTEXT("OtherURLs", "Other URLs"),
-                        LOCTEXT("OtherURLs_ToolTip", "Other URLs"),
-                        FSlateIcon(),
-                        true
-                    );
-                }
-            	ToolbarBuilder.EndSection();
-            })
-        );
+			"Asset",
+			EExtensionHook::After,
+			ToolkitCommands,
+			FToolBarExtensionDelegate::CreateLambda([this](FToolBarBuilder& ToolbarBuilder)
+			{
+				ToolbarBuilder.BeginSection("DialogueExternal");
+				{
+					ToolbarBuilder.AddToolBarButton(
+						FDialogueCommands::Get().OpenNotYetPlugins,
+						NAME_None,
+						LOCTEXT("NotYetPlugins", "Not Yet: Plugins"),
+						{},
+						FSlateIcon(FDialogueStyle::GetStyleSetName(), FDialogueStyle::PROPERTY_NotYetLogoIcon)
+					);
+					ToolbarBuilder.AddComboButton(
+						FUIAction(),
+						FOnGetContent::CreateSP(this, &Self::GenerateExternalURLsMenu),
+						LOCTEXT("OtherURLs", "Other URLs"),
+						LOCTEXT("OtherURLs_ToolTip", "Other URLs"),
+						FSlateIcon(),
+						true
+					);
+				}
+				ToolbarBuilder.EndSection();
+			})
+		);
 		AddToolbarExtender(ExternalToolbarExtender);
 	}
 }

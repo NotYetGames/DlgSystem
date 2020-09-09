@@ -4,7 +4,7 @@
 #include "Widgets/Images/SImage.h"
 #include "Toolkits/AssetEditorManager.h"
 
-#include "DialogueEditor/DialogueEditorUtilities.h"
+#include "DialogueEditorUtilities.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueStyle.h"

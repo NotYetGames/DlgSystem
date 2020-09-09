@@ -11,7 +11,7 @@
 #include "ToolMenu.h"
 #endif
 
-#include "DlgSystemEditorPrivatePCH.h"
+#include "DlgSystemEditorModule.h"
 #include "DlgDialogue.h"
 #include "DialogueGraphNode_Edge.h"
 #include "DialogueCommands.h"

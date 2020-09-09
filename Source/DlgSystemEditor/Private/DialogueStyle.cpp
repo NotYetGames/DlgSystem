@@ -5,7 +5,7 @@
 #include "Interfaces/IPluginManager.h"
 #include "Styling/SlateStyleRegistry.h"
 
-#include "DlgSystemEditorPrivatePCH.h"
+#include "DlgSystemEditorModule.h"
 #include "DlgSystemModule.h"
 
 // Const icon sizes
