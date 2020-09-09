@@ -77,6 +77,11 @@ private:
 	void HandleOnPostPIEStarted(bool bIsSimulating);
 	void HandleOnEndPIEHandle(bool bIsSimulating);
 
+	// Handle Blueprint Events
+	void HandleNewCustomConditionBlueprintCreated(UBlueprint* Blueprint);
+	void HandleNewCustomTextArgumentBlueprintCreated(UBlueprint* Blueprint);
+	void HandleNewCustomEventBlueprintCreated(UBlueprint* Blueprint);
+
 	// Extend the Menus of the editor
 	void ExtendMenu();
 

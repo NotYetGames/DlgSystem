@@ -14,6 +14,9 @@
 #include "GenericPlatform/GenericPlatformMisc.h"
 #include "Editor.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
+#include "Kismet2/KismetEditorUtilities.h"
+#include "K2Node_Event.h"
+
 
 #include "Factories/DialogueGraphFactories.h"
 #include "AssetTypeActions/AssetTypeActions_DlgDialogue.h"
@@ -67,6 +70,23 @@ void FDlgSystemEditorModule::StartupModule()
 	OnBeginPIEHandle = FEditorDelegates::BeginPIE.AddRaw(this, &Self::HandleOnBeginPIE);
 	OnPostPIEStartedHandle = FEditorDelegates::PostPIEStarted.AddRaw(this, &Self::HandleOnPostPIEStarted);
 	OnEndPIEHandle = FEditorDelegates::EndPIE.AddRaw(this, &Self::HandleOnEndPIEHandle);
+
+	// Register Blueprint events
+	FKismetEditorUtilities::RegisterOnBlueprintCreatedCallback(
+		this,
+		UDlgConditionCustom::StaticClass(),
+		FKismetEditorUtilities::FOnBlueprintCreated::CreateRaw(this, &Self::HandleNewCustomConditionBlueprintCreated)
+	);
+	FKismetEditorUtilities::RegisterOnBlueprintCreatedCallback(
+		this,
+		UDlgTextArgumentCustom::StaticClass(),
+		FKismetEditorUtilities::FOnBlueprintCreated::CreateRaw(this, &Self::HandleNewCustomTextArgumentBlueprintCreated)
+	);
+	FKismetEditorUtilities::RegisterOnBlueprintCreatedCallback(
+		this,
+		UDlgEventCustom::StaticClass(),
+		FKismetEditorUtilities::FOnBlueprintCreated::CreateRaw(this, &Self::HandleNewCustomEventBlueprintCreated)
+	);
 
 	// Register slate style overrides
 	FDialogueStyle::Initialize();
@@ -397,6 +417,60 @@ void FDlgSystemEditorModule::HandleOnEndPIEHandle(bool bIsSimulating)
 	{
 		FDlgLogger::Get().Debugf(TEXT("EndPIE(bIsSimulating = %d). Unregistering Console commands"), bIsSimulating);
 		UDlgManager::UnregisterDialogueConsoleCommands();
+	}
+}
+
+void FDlgSystemEditorModule::HandleNewCustomConditionBlueprintCreated(UBlueprint* Blueprint)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return;
+	}
+
+	UEdGraph* FunctionGraph = FDialogueEditorUtilities::BlueprintGetOrAddFunction(
+		Blueprint,
+		GET_FUNCTION_NAME_CHECKED(UDlgConditionCustom, IsConditionMet),
+		UDlgConditionCustom::StaticClass()
+	);
+	if (FunctionGraph)
+	{
+		Blueprint->LastEditedDocuments.Add(FunctionGraph);
+	}
+}
+
+void FDlgSystemEditorModule::HandleNewCustomTextArgumentBlueprintCreated(UBlueprint* Blueprint)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return;
+	}
+
+	UEdGraph* FunctionGraph = FDialogueEditorUtilities::BlueprintGetOrAddFunction(
+        Blueprint,
+        GET_FUNCTION_NAME_CHECKED(UDlgTextArgumentCustom, GetText),
+        UDlgTextArgumentCustom::StaticClass()
+    );
+	if (FunctionGraph)
+	{
+		Blueprint->LastEditedDocuments.Add(FunctionGraph);
+	}
+}
+
+void FDlgSystemEditorModule::HandleNewCustomEventBlueprintCreated(UBlueprint* Blueprint)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return;
+	}
+
+	UK2Node_Event* EventNode = FDialogueEditorUtilities::BlueprintGetOrAddEvent(
+	    Blueprint,
+	    GET_FUNCTION_NAME_CHECKED(UDlgEventCustom, EnterEvent),
+	    UDlgEventCustom::StaticClass()
+	);
+	if (EventNode)
+	{
+		Blueprint->LastEditedDocuments.Add(EventNode->GetGraph());
 	}
 }
 
