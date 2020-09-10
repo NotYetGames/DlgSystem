@@ -6,6 +6,7 @@
 #include "Engine/DeveloperSettings.h"
 #include "Layout/Margin.h"
 #include "Logging/INYLogger.h"
+#include "ClassViewerModule.h"
 
 #include "DlgSystemSettings.generated.h"
 
@@ -93,6 +94,20 @@ enum class EDlgTextNamespaceLocalization : uint8
 
 	// The system sets the Namespace for Text fields for each dialogue into the same value. Unique keys are also generated.
 	Global				UMETA(DisplayName = "Global Namespace")
+};
+
+
+UENUM()
+enum class EDlgClassPickerDisplayMode : uint8
+{
+	// Default will choose what view mode based on if in Viewer or Picker mode.
+	DefaultView,
+
+	// Displays all classes as a tree.
+    TreeView,
+
+    // Displays all classes as a list.
+    ListView
 };
 
 // UDeveloperSettings classes are auto discovered https://wiki.unrealengine.com/CustomSettings
@@ -188,6 +203,20 @@ public:
 	// GetAllCurrentTextFileExtensions() + AdditionalTextFormatFileExtensionsToLookFor
 	TSet<FString> GetAllTextFileExtensions() const;
 
+	EClassViewerDisplayMode::Type GetUnrealClassPickerDisplayMode() const
+	{
+		if (ClassPickerDisplayMode == EDlgClassPickerDisplayMode::ListView)
+		{
+			return EClassViewerDisplayMode::ListView;
+		}
+		if (ClassPickerDisplayMode == EDlgClassPickerDisplayMode::TreeView)
+		{
+			return EClassViewerDisplayMode::TreeView;
+		}
+
+		return EClassViewerDisplayMode::DefaultView;
+	}
+
 public:
 	// If enabled this clears the dialogue history automatically on Editor Start PIE and On Load New Map */
 	// Calls ClearDialogueHistory
@@ -232,6 +261,9 @@ public:
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
 	TArray<UClass*> BlacklistedReflectionClasses;
 
+	// How the Blueprint class pricker looks like
+	UPROPERTY(Category = "Blueprint", Config, EditAnywhere)
+	EDlgClassPickerDisplayMode ClassPickerDisplayMode = EDlgClassPickerDisplayMode::DefaultView;
 
 	// Should we only process batch dialogues that are only in the /Game folder.
 	// This is used for saving all dialogues or deleting all text files.

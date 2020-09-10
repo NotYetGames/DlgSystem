@@ -908,7 +908,9 @@ bool FDialogueEditorUtilities::PickChildrenOfClass(const FText& TitleText, UClas
 	// Fill in options
 	FClassViewerInitializationOptions Options;
 	Options.Mode = EClassViewerMode::ClassPicker;
-	Options.DisplayMode = EClassViewerDisplayMode::TreeView;
+
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+	Options.DisplayMode = Settings->GetUnrealClassPickerDisplayMode();
 	Options.ClassFilter = Filter;
 	Options.bShowUnloadedBlueprints = true;
 	Options.bExpandRootNodes = true;
