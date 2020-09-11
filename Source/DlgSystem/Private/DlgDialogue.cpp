@@ -740,7 +740,7 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 
 		for (FDlgParticipantClass& Struct : ParticipantsClasses)
 		{
-			// Participant is set or Class is set, ignore
+			// Participant Name is not set or Class is set, ignore
 			if (Struct.ParticipantName == NAME_None || Struct.ParticipantClass != nullptr)
 			{
 				continue;
@@ -749,20 +749,20 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 			// Blueprint
 			if (BlueprintClassesMap.Contains(Struct.ParticipantName))
 			{
-				const TArray<FDlgClassAndObject>& ArrayParticipants = BlueprintClassesMap.FindChecked(Struct.ParticipantName);
-				if (ArrayParticipants.Num() == 1)
+				const TArray<FDlgClassAndObject>& Participants = BlueprintClassesMap.FindChecked(Struct.ParticipantName);
+				if (Participants.Num() == 1)
 				{
-					Struct.ParticipantClass = ArrayParticipants[0].Class;
+					Struct.ParticipantClass = Participants[0].Class;
 				}
 			}
 
 			// Native last resort
 			if (Struct.ParticipantClass == nullptr && NativeClassesMap.Contains(Struct.ParticipantName))
 			{
-				const TArray<FDlgClassAndObject>& ArrayParticipants = NativeClassesMap.FindChecked(Struct.ParticipantName);
-				if (ArrayParticipants.Num() == 1)
+				const TArray<FDlgClassAndObject>& Participants = NativeClassesMap.FindChecked(Struct.ParticipantName);
+				if (Participants.Num() == 1)
 				{
-					Struct.ParticipantClass = ArrayParticipants[0].Class;
+					Struct.ParticipantClass = Participants[0].Class;
 				}
 			}
 		}

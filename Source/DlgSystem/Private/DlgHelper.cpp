@@ -217,17 +217,8 @@ TMap<FName, TArray<FDlgClassAndObject>> FDlgHelper::ConvertDialogueParticipantsC
 			continue;
 		}
 
-		UObject* Object = nullptr;
-		if (Cast<UBlueprintGeneratedClass>(Class))
-		{
-			// Blueprint
-			Object = Class->GetDefaultObject();
-		}
-		else
-		{
-			// Native
-			Object = Class->GetDefaultObject();
-		}
+		// Should be the same for native and blueprint classes
+		UObject* Object = Class->GetDefaultObject();
 
 		// Something is wrong
 		if (!Object)
