@@ -727,6 +727,46 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 			FDlgLogger::Get().Warning(TEXT("Trying to fill ParticipantsClasses, got a Participant name = None. Ignoring!"));
 		}
 	}
+
+	// 3. Set auto default participant classes
+	if (Settings->bAutoSetDefaultParticipantClasses)
+	{
+		TArray<UClass*> NativeClasses;
+		TArray<UClass*> BlueprintClasses;
+		FDlgHelper::GetAllClassesImplementingInterface(UDlgDialogueParticipant::StaticClass(), NativeClasses, BlueprintClasses);
+
+		const TMap<FName, TArray<FDlgClassAndObject>> NativeClassesMap = FDlgHelper::ConvertDialogueParticipantsClassesIntoMap(NativeClasses);
+		const TMap<FName, TArray<FDlgClassAndObject>> BlueprintClassesMap = FDlgHelper::ConvertDialogueParticipantsClassesIntoMap(BlueprintClasses);
+
+		for (FDlgParticipantClass& Struct : ParticipantsClasses)
+		{
+			// Participant is set or Class is set, ignore
+			if (Struct.ParticipantName == NAME_None || Struct.ParticipantClass != nullptr)
+			{
+				continue;
+			}
+
+			// Blueprint
+			if (BlueprintClassesMap.Contains(Struct.ParticipantName))
+			{
+				const TArray<FDlgClassAndObject>& ArrayParticipants = BlueprintClassesMap.FindChecked(Struct.ParticipantName);
+				if (ArrayParticipants.Num() == 1)
+				{
+					Struct.ParticipantClass = ArrayParticipants[0].Class;
+				}
+			}
+
+			// Native last resort
+			if (Struct.ParticipantClass == nullptr && NativeClassesMap.Contains(Struct.ParticipantName))
+			{
+				const TArray<FDlgClassAndObject>& ArrayParticipants = NativeClassesMap.FindChecked(Struct.ParticipantName);
+				if (ArrayParticipants.Num() == 1)
+				{
+					Struct.ParticipantClass = ArrayParticipants[0].Class;
+				}
+			}
+		}
+	}
 }
 
 FGuid UDlgDialogue::GetNodeGUIDForIndex(int32 NodeIndex) const

@@ -8,6 +8,7 @@
 #include "DlgNodeData.h"
 #include "DlgTextArgumentCustom.h"
 #include "DialogueEditorUtilities.h"
+#include "DlgHelper.h"
 
 class IToolkitHost;
 
@@ -33,7 +34,9 @@ public:
 		FilterAddNativeParentClassPath(InFilter, GetSupportedClass());
 
 		// Add to filter all native children classes of our supported class
-		const TArray<UClass*> NativeChildClasses = FDialogueEditorUtilities::GetAllNativeChildClasses(GetSupportedClass());
+		TArray<UClass*> NativeChildClasses;
+		TArray<UClass*> BlueprintChildClasses;
+		FDlgHelper::GetAllChildClassesOf(GetSupportedClass(), NativeChildClasses, BlueprintChildClasses);
 		for (const UClass* ChildNativeClass : NativeChildClasses)
 		{
 			FilterAddNativeParentClassPath(InFilter, ChildNativeClass);

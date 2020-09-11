@@ -919,36 +919,6 @@ bool FDialogueEditorUtilities::PickChildrenOfClass(const FText& TitleText, UClas
 	return SClassPickerDialog::PickClass(TitleText, Options, OutChosenClass, Class);
 }
 
-TArray<UClass*> FDialogueEditorUtilities::GetAllNativeChildClasses(const UClass* ParentClass)
-{
-	TArray<UClass*> Children;
-
-	// Iterate over UClass, this might be heavy on performance
-	for (TObjectIterator<UClass> It; It; ++It)
-	{
-		UClass* ChildClass = *It;
-		if (ChildClass->IsChildOf(ParentClass))
-		{
-			// It is a child of the Parent Class
-			// make sure we don't include our parent class in the array
-			if (ChildClass == ParentClass)
-			{
-				continue;
-			}
-
-			// Ignore blueprint classes
-			if (Cast<UBlueprintGeneratedClass>(ChildClass) != nullptr)
-			{
-				continue;
-			}
-
-			Children.Add(*It);
-		}
-	}
-
-	return Children;
-}
-
 UEdGraph* FDialogueEditorUtilities::BlueprintGetOrAddFunction(UBlueprint* Blueprint, FName FunctionName, UClass* FunctionClassSignature)
 {
 	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)

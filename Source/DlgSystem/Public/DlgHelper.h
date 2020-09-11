@@ -10,6 +10,19 @@
 
 #include "NYReflectionTypes.h"
 
+#include "DlgHelper.generated.h"
+
+USTRUCT()
+struct FDlgClassAndObject
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY()
+	UClass* Class = nullptr;
+
+	UPROPERTY()
+	UObject* Object = nullptr;
+};
 
 class UDlgSystemSettings;
 
@@ -218,7 +231,23 @@ public:
 	}
 
 	// This also works with Blueprints
-	static bool IsObjectAChildOf(const UObject* Object, const UClass* Class);
+	static bool IsObjectAChildOf(const UObject* Object, const UClass* ParentClass);
+
+	// This also works with Blueprints
+	static bool IsObjectImplementingInterface(const UObject* Object, const UClass* InterfaceClass);
+
+	// Gets all child classes of ParentClass
+	// NOTE: this is super slow, use with care
+	static bool GetAllChildClassesOf(const UClass* ParentClass, TArray<UClass*>& OutNativeClasses, TArray<UClass*>& OutBlueprintClasses);
+
+	// Gets all classes that implement InterfaceClass
+	// NOTE: this is super slow, use with care
+	static bool GetAllClassesImplementingInterface(const UClass* InterfaceClass, TArray<UClass*>& OutNativeClasses, TArray<UClass*>& OutBlueprintClasses);
+
+	// Converts the Classes Array that represent the Dialogue Participants into a map where
+	// Key: The participant Name
+	// Value: An array of structs that contain the class and the object for that participant name
+	static TMap<FName, TArray<FDlgClassAndObject>> ConvertDialogueParticipantsClassesIntoMap(const TArray<UClass*>& Classes);
 
 	// FileSystem
 	static bool DeleteFile(const FString& PathName, bool bVerbose = true);

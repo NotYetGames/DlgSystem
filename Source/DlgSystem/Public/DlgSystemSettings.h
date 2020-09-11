@@ -237,6 +237,11 @@ public:
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Input Key for NewLine")
 	EDlgTextInputKeyForNewLine DialogueTextInputKeyForNewLine = EDlgTextInputKeyForNewLine::Enter;
 
+	// If true, ParticipantsClasses from each Dialogue will be set to the first Class that matches the ParticipantName
+	// NOTE: This only sets the default for participant names that have only ONE participant class
+	// NOTE: This does not work for the None Participant Name
+	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
+	bool bAutoSetDefaultParticipantClasses = true;
 
 	// Shows the NodeData that you can customize yourself
 	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere)

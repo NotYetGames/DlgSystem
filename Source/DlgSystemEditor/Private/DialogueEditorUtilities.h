@@ -234,10 +234,6 @@ public:
 	*/
 	static bool PickChildrenOfClass(const FText& TitleText, UClass*& OutChosenClass, UClass* Class);
 
-	// Gets all child classes of ParentClass, NOTE: this is super slow, use with care
-	// DOES NOT INCLUDE BLUEPRINT
-	static TArray<UClass*> GetAllNativeChildClasses(const UClass* ParentClass);
-
 	// Adds the function if it does not exist
 	// Return the Function Graph of the existing function or the newly created one
 	static UEdGraph* BlueprintGetOrAddFunction(UBlueprint* Blueprint, FName FunctionName, UClass* FunctionClassSignature);
