@@ -120,8 +120,8 @@ bool FDialogueSearchManager::QueryDlgTextArgument(
 	if (SearchFilter.bIncludeCustomObjectNames)
 	{
 		// Test CustomTextArgument
-		if (InDlgTextArgument.CustomTextArgument != nullptr &&
-			InDlgTextArgument.CustomTextArgument->GetClass()->GetName().Contains(SearchFilter.SearchString))
+		FString FoundName;
+		if (FDialogueSearchUtilities::DoesObjectClassNameContainString(InDlgTextArgument.CustomTextArgument, SearchFilter.SearchString, FoundName))
 		{
 			bContainsSearchString = true;
 			const FText Category = FText::Format(
@@ -130,7 +130,7 @@ bool FDialogueSearchManager::QueryDlgTextArgument(
 			);
 			MakeChildTextNode(
 				OutParentNode,
-				FText::FromName(InDlgTextArgument.CustomTextArgument->GetClass()->GetFName()),
+				FText::FromString(FoundName),
 				Category,
 				Category.ToString()
 			);
@@ -241,8 +241,8 @@ bool FDialogueSearchManager::QueryDlgCondition(
 
 	if (SearchFilter.bIncludeCustomObjectNames)
 	{
-		if (InDlgCondition.CustomCondition != nullptr &&
-			InDlgCondition.CustomCondition->GetClass()->GetName().Contains(SearchFilter.SearchString))
+		FString FoundName;
+		if (FDialogueSearchUtilities::DoesObjectClassNameContainString(InDlgCondition.CustomCondition, SearchFilter.SearchString, FoundName))
 		{
 			bContainsSearchString = true;
 			const FText Category = FText::Format(
@@ -251,7 +251,7 @@ bool FDialogueSearchManager::QueryDlgCondition(
 			);
 			MakeChildTextNode(
 				OutParentNode,
-				FText::FromName(InDlgCondition.CustomCondition->GetClass()->GetFName()),
+				FText::FromString(FoundName),
 				Category,
 				Category.ToString()
 			);
@@ -361,6 +361,25 @@ bool FDialogueSearchManager::QueryDlgEvent(
 			Category,
 			Category.ToString()
 		);
+	}
+
+	if (SearchFilter.bIncludeCustomObjectNames)
+	{
+		FString FoundName;
+		if (FDialogueSearchUtilities::DoesObjectClassNameContainString(InDlgEvent.CustomEvent, SearchFilter.SearchString, FoundName))
+		{
+			bContainsSearchString = true;
+			const FText Category = FText::Format(
+				LOCTEXT("DlgEventCustomEvent", "{0}.CustomEvent at index = {1}"),
+				FText::FromName(EventMemberName), FText::AsNumber(EventIndex)
+			);
+			MakeChildTextNode(
+				OutParentNode,
+				FText::FromString(FoundName),
+				Category,
+				Category.ToString()
+			);
+		}
 	}
 
 	if (SearchFilter.bIncludeNumericalTypes)
@@ -541,7 +560,12 @@ bool FDialogueSearchManager::QueryGraphNode(
 	if (Node.GetNodeUnformattedText().ToString().Contains(SearchFilter.SearchString))
 	{
 		bContainsSearchString = true;
-		MakeChildTextNode(TreeGraphNode, Node.GetNodeUnformattedText(), LOCTEXT("DescriptionKey", "Description"), TEXT("Description"));
+		MakeChildTextNode(
+			TreeGraphNode,
+			Node.GetNodeUnformattedText(),
+			LOCTEXT("DescriptionKey", "Text"),
+			TEXT("Text")
+		);
 	}
 	// Test the Node Text Data
 	if (SearchFilter.bIncludeTextLocalizationData)
@@ -598,6 +622,21 @@ bool FDialogueSearchManager::QueryGraphNode(
 	for (int32 Index = 0, Num = TextArguments.Num(); Index < Num; Index++)
 	{
 		bContainsSearchString = QueryDlgTextArgument(SearchFilter, TextArguments[Index], TreeGraphNode, Index) || bContainsSearchString;
+	}
+
+	if (SearchFilter.bIncludeCustomObjectNames)
+	{
+		FString FoundName;
+		if (FDialogueSearchUtilities::DoesObjectClassNameContainString(Node.GetNodeData(), SearchFilter.SearchString, FoundName))
+		{
+			bContainsSearchString = true;
+			MakeChildTextNode(
+                TreeGraphNode,
+                FText::FromString(FoundName),
+                LOCTEXT("NodeDataKey", "Node Data"),
+                TEXT("Node Data")
+            );
+		}
 	}
 
 	// Handle Speech sequences

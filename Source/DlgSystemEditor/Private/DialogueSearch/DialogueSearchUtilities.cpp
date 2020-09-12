@@ -175,3 +175,21 @@ bool FDialogueSearchUtilities::DoesGUIDContainString(const FGuid& GUID, const FS
 
 	return false;
 }
+
+bool FDialogueSearchUtilities::DoesObjectClassNameContainString(const UObject* Object, const FString& SearchString, FString& OutNameString)
+{
+	if (!Object)
+	{
+		return false;
+	}
+
+	FString Name = Object->GetClass()->GetName();
+	Name.RemoveFromEnd(TEXT("_C"));
+	if (Name.Contains(SearchString))
+	{
+		OutNameString = Name;
+		return true;
+	}
+
+	return false;
+}

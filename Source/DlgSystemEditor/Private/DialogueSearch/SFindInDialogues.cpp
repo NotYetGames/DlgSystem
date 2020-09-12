@@ -541,7 +541,7 @@ TSharedRef<SWidget> SFindInDialogues::FillFilterEntries()
 		EUserInterfaceActionType::ToggleButton
 	);
 	MenuBuilder.AddMenuEntry(
-		LOCTEXT("IncludeCustomObjectNames", "Include the Custom Text Argument/Condition/Event/Node Data object names in search"),
+		LOCTEXT("IncludeCustomObjectNames", "Include Custom Object Names"),
 		LOCTEXT("IncludeCustomObjectNames_ToolTip", "Include the Custom Text Argument/Condition/Event/Node Data object names"),
 		FSlateIcon(),
 		FUIAction(
