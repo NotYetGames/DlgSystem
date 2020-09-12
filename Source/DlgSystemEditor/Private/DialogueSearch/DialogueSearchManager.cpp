@@ -241,6 +241,7 @@ bool FDialogueSearchManager::QueryDlgCondition(
 
 	if (SearchFilter.bIncludeCustomObjectNames)
 	{
+		// Test Custom Condition
 		FString FoundName;
 		if (FDialogueSearchUtilities::DoesObjectClassNameContainString(InDlgCondition.CustomCondition, SearchFilter.SearchString, FoundName))
 		{
@@ -252,6 +253,26 @@ bool FDialogueSearchManager::QueryDlgCondition(
 			MakeChildTextNode(
 				OutParentNode,
 				FText::FromString(FoundName),
+				Category,
+				Category.ToString()
+			);
+		}
+	}
+
+	if (SearchFilter.bIncludeNodeGUID)
+	{
+		// Test Node GUID
+		FString FoundGUID;
+		if (FDialogueSearchUtilities::DoesGUIDContainString(InDlgCondition.GUID, SearchFilter.SearchString, FoundGUID))
+		{
+			bContainsSearchString = true;
+			const FText Category = FText::Format(
+				LOCTEXT("DlgConditioGUID", "{0}.GUID at index = {1}"),
+				FText::FromName(ConditionMemberName), FText::AsNumber(ConditionIndex)
+			);
+			MakeChildTextNode(
+				OutParentNode,
+				FText::FromString(FoundGUID),
 				Category,
 				Category.ToString()
 			);
@@ -626,16 +647,33 @@ bool FDialogueSearchManager::QueryGraphNode(
 
 	if (SearchFilter.bIncludeCustomObjectNames)
 	{
+		// Test Node Data
 		FString FoundName;
 		if (FDialogueSearchUtilities::DoesObjectClassNameContainString(Node.GetNodeData(), SearchFilter.SearchString, FoundName))
 		{
 			bContainsSearchString = true;
 			MakeChildTextNode(
-                TreeGraphNode,
-                FText::FromString(FoundName),
-                LOCTEXT("NodeDataKey", "Node Data"),
-                TEXT("Node Data")
-            );
+				TreeGraphNode,
+				FText::FromString(FoundName),
+				LOCTEXT("NodeDataKey", "Node Data"),
+				TEXT("Node Data")
+			);
+		}
+	}
+
+	if (SearchFilter.bIncludeNodeGUID)
+	{
+		// Test Node GUID
+		FString FoundGUID;
+		if (FDialogueSearchUtilities::DoesGUIDContainString(Node.GetGUID(), SearchFilter.SearchString, FoundGUID))
+		{
+			bContainsSearchString = true;
+			MakeChildTextNode(
+				TreeGraphNode,
+				FText::FromString(FoundGUID),
+				LOCTEXT("NodeGUID", "Node GUID"),
+				TEXT("Node GUID")
+			);
 		}
 	}
 
