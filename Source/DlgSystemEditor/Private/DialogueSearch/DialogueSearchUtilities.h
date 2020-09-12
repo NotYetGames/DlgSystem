@@ -229,6 +229,9 @@ public:
 		return false;
 	}
 
+	// Does the SearchString exist in the GUID? We test every possible format and in case of success we return the GUID as a string in OutStringGUID
+	static bool DoesGUIDContainString(const FGuid& GUID, const FString& SearchString, FString& OutGUIDString);
+
 private:
 	static TSharedPtr<FDialogueSearchFoundResult> GetGraphNodesForVariablesOfNameAndType(
 		FName VariableName,

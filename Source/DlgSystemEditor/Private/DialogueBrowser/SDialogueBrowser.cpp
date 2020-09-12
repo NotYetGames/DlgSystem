@@ -252,7 +252,9 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 
 	auto PopulateVariablePropertiesFromSearchResult = [](
 		const TSharedPtr<FDialogueBrowserTreeVariableProperties> VariableProperties,
-		const TSharedPtr<FDialogueSearchFoundResult> SearchResult, const FGuid& DialogueGUID)
+		const TSharedPtr<FDialogueSearchFoundResult> SearchResult,
+		const FGuid& DialogueGUID
+	)
 	{
 		if (VariableProperties->HasGraphNodeSet(DialogueGUID))
 		{

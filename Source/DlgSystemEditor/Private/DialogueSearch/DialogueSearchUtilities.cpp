@@ -135,7 +135,6 @@ void FDialogueSearchUtilities::GetGraphNodesForTextArgumentVariable(
 
 			// Node
 			const UDlgNode& Node = GraphNode->GetDialogueNode();
-
 			if (IsTextArgumentInArray(VariableName, ArgumentType, Node.GetTextArguments()))
 			{
 				FoundResult->GraphNodes.Add(GraphNode);
@@ -150,4 +149,29 @@ void FDialogueSearchUtilities::GetGraphNodesForTextArgumentVariable(
 			}
 		}
 	}
+}
+
+bool FDialogueSearchUtilities::DoesGUIDContainString(const FGuid& GUID, const FString& SearchString, FString& OutGUIDString)
+{
+	const FString GUIDToSearchFor = SearchString.TrimStartAndEnd();
+
+	// Test every possible format
+	const TArray<FString> GUIDStrings = {
+		GUID.ToString(EGuidFormats::Digits),
+        GUID.ToString(EGuidFormats::DigitsWithHyphens),
+        GUID.ToString(EGuidFormats::DigitsWithHyphensInBraces),
+        GUID.ToString(EGuidFormats::DigitsWithHyphensInParentheses),
+        GUID.ToString(EGuidFormats::HexValuesInBraces),
+        GUID.ToString(EGuidFormats::UniqueObjectGuid)
+    };
+	for (const FString& GUIDString : GUIDStrings)
+	{
+		if (GUIDString.Contains(GUIDToSearchFor))
+		{
+			OutGUIDString = GUIDString;
+			return true;
+		}
+	}
+
+	return false;
 }

@@ -446,8 +446,8 @@ TSharedRef<SWidget> SFindInDialogues::FillFilterEntries()
 		EUserInterfaceActionType::ToggleButton
 	);
 	MenuBuilder.AddMenuEntry(
-		LOCTEXT("IncludeGUID", "Include Dialogue GUIDs in search"),
-		LOCTEXT("IncludeGUID_ToolTip", "Include Dialogue GUIDs in search in the search result"),
+		LOCTEXT("IncludeDialogueGUID", "Include Dialogue GUIDs in search"),
+		LOCTEXT("IncludeDialogueGUID_ToolTip", "Include Dialogue GUIDs in search in the search result"),
 		FSlateIcon(),
 		FUIAction(
 			FExecuteAction::CreateLambda([this]()
@@ -459,6 +459,25 @@ TSharedRef<SWidget> SFindInDialogues::FillFilterEntries()
 			FIsActionChecked::CreateLambda([this]() -> bool
 			{
 				return CurrentFilter.bIncludeDialogueGUID;
+			})
+		),
+		NAME_None,
+		EUserInterfaceActionType::ToggleButton
+	);
+	MenuBuilder.AddMenuEntry(
+		LOCTEXT("IncludeNodeGUID", "Include Node GUIDs in search"),
+		LOCTEXT("IncludeNodeGUID_ToolTip", "Include Node GUIDs in search in the search result"),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]()
+			{
+				CurrentFilter.bIncludeNodeGUID = !CurrentFilter.bIncludeNodeGUID;
+				MakeSearchQuery(CurrentFilter, bIsInFindWithinDialogueMode);
+			}),
+			FCanExecuteAction(),
+			FIsActionChecked::CreateLambda([this]() -> bool
+			{
+				return CurrentFilter.bIncludeNodeGUID;
 			})
 		),
 		NAME_None,
@@ -516,6 +535,25 @@ TSharedRef<SWidget> SFindInDialogues::FillFilterEntries()
 			FIsActionChecked::CreateLambda([this]() -> bool
 			{
 				return CurrentFilter.bIncludeTextLocalizationData;
+			})
+		),
+		NAME_None,
+		EUserInterfaceActionType::ToggleButton
+	);
+	MenuBuilder.AddMenuEntry(
+		LOCTEXT("IncludeCustomObjectNames", "Include the Custom Text Argument/Condition/Event/Node Data object names in search"),
+		LOCTEXT("IncludeCustomObjectNames_ToolTip", "Include the Custom Text Argument/Condition/Event/Node Data object names"),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]()
+			{
+				CurrentFilter.bIncludeCustomObjectNames = !CurrentFilter.bIncludeCustomObjectNames;
+				MakeSearchQuery(CurrentFilter, bIsInFindWithinDialogueMode);
+			}),
+			FCanExecuteAction(),
+			FIsActionChecked::CreateLambda([this]() -> bool
+			{
+				return CurrentFilter.bIncludeCustomObjectNames;
 			})
 		),
 		NAME_None,
