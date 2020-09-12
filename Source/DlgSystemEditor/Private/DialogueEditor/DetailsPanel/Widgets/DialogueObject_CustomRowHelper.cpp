@@ -15,6 +15,7 @@
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Widgets/Images/SImage.h"
 #include "K2Node_Event.h"
+#include "SourceCodeNavigation.h"
 
 
 #define LOCTEXT_NAMESPACE "DialogueObject_CustomRowHelper"
@@ -61,6 +62,7 @@ void FDialogueObject_CustomRowHelper::Update()
 			DefaultValueWidget.ToSharedRef()
 		]
 
+		// Browse Asset
 		+SHorizontalBox::Slot()
 		.AutoWidth()
 		.VAlign(VAlign_Center)
@@ -68,15 +70,15 @@ void FDialogueObject_CustomRowHelper::Update()
 		[
 			SNew(SButton)
 			.ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
-			.ToolTipText(LOCTEXT( "BrowseButtonToolTipText", "Browse to Asset in Content Browser"))
+			.ToolTipText(LOCTEXT("BrowseButtonToolTipText", "Browse to Asset in Content Browser"))
 			.ContentPadding(4.f)
 			.ForegroundColor(FSlateColor::UseForeground())
-			.Visibility(this, &Self::GetButtonsVisibility)
+			.Visibility(this, &Self::GetBrowseButtonVisibility)
 			.OnClicked(this, &Self::OnBrowseClicked)
 			[
 				SNew(SImage)
 				.Image(FEditorStyle::GetBrush("PropertyWindow.Button_Browse"))
-				.ColorAndOpacity( FSlateColor::UseForeground() )
+				.ColorAndOpacity(FSlateColor::UseForeground())
 			]
 		]
 
@@ -88,10 +90,10 @@ void FDialogueObject_CustomRowHelper::Update()
 		[
 			SNew(SButton)
 			.ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
-			.ToolTipText(LOCTEXT("OpenObjectTooltipKey", "Open Asset in the Editor"))
+			.ToolTipText(this, &Self::GetJumpToObjectText)
 			.ContentPadding(4.f)
 			.ForegroundColor(FSlateColor::UseForeground())
-			.Visibility(this, &Self::GetButtonsVisibility)
+			.Visibility(this, &Self::GetOpenButtonVisibility)
 			.OnClicked(this, &Self::OnOpenClicked)
 			[
 				SNew(SImage)
@@ -137,7 +139,13 @@ UBlueprint* FDialogueObject_CustomRowHelper::GetBlueprint() const
 		}
 	}
 
-	return  Cast<UBlueprint>(Object);
+	return Cast<UBlueprint>(Object);
+}
+
+
+bool FDialogueObject_CustomRowHelper::IsObjectABlueprint() const
+{
+	return GetBlueprint() != nullptr;
 }
 
 FReply FDialogueObject_CustomRowHelper::OnBrowseClicked()
@@ -162,6 +170,7 @@ FReply FDialogueObject_CustomRowHelper::OnOpenClicked()
 {
 	if (UBlueprint* Blueprint = GetBlueprint())
 	{
+		// Blueprint
 		Blueprint->bForceFullEditor = bForceFullEditor;
 
 		// Find Function Graph
@@ -189,14 +198,56 @@ FReply FDialogueObject_CustomRowHelper::OnOpenClicked()
 			FDialogueEditorUtilities::OpenEditorForAsset(Blueprint);
 		}
 	}
+	else if (UObject* Object = GetObject())
+	{
+		// Native
+		FSourceCodeNavigation::NavigateToClass(Object->GetClass());
+	}
 
 	return FReply::Handled();
+}
+
+FText FDialogueObject_CustomRowHelper::GetJumpToObjectText() const
+{
+	if (IsObjectABlueprint())
+	{
+		return LOCTEXT("OpenObjectBlueprintTooltipKey", "Open Blueprint Editor");
+	}
+
+	// Native Class
+	return FText::Format(
+	LOCTEXT("OpenObjectBlueprintTooltipKey", "Open Source File in {0}"),
+		FSourceCodeNavigation::GetSelectedSourceCodeIDE()
+	);
+}
+
+EVisibility FDialogueObject_CustomRowHelper::GetOpenButtonVisibility() const
+{
+	if (UObject* Object = GetObject())
+	{
+		// Blueprint
+		if (IsObjectABlueprint())
+		{
+			return EVisibility::Visible;
+		}
+
+		// Native
+		return FSourceCodeNavigation::CanNavigateToClass(Object->GetClass()) ? EVisibility::Visible : EVisibility::Collapsed;
+	}
+
+	return EVisibility::Collapsed;
 }
 
 EVisibility FDialogueObject_CustomRowHelper::GetButtonsVisibility() const
 {
 	return GetObject() != nullptr ? EVisibility::Visible : EVisibility::Collapsed;
 }
+
+EVisibility FDialogueObject_CustomRowHelper::GetBrowseButtonVisibility() const
+{
+	return IsObjectABlueprint() ? GetButtonsVisibility() : EVisibility::Collapsed;
+}
+
 
 #undef LOCTEXT_NAMESPACE
 #undef DEFAULT_FONT

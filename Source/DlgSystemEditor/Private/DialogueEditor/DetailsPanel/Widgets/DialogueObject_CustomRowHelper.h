@@ -41,7 +41,12 @@ protected:
 
 	UObject* GetObject() const;
 	UBlueprint* GetBlueprint() const;
+	bool IsObjectABlueprint() const;
 
+	FText GetJumpToObjectText() const;
+
+	EVisibility GetOpenButtonVisibility() const;
+	EVisibility GetBrowseButtonVisibility() const;
 	EVisibility GetButtonsVisibility() const;
 
 protected:
