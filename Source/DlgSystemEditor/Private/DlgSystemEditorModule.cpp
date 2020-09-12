@@ -432,6 +432,7 @@ void FDlgSystemEditorModule::HandleNewCustomConditionBlueprintCreated(UBlueprint
 		return;
 	}
 
+	Blueprint->bForceFullEditor = true;
 	UEdGraph* FunctionGraph = FDialogueEditorUtilities::BlueprintGetOrAddFunction(
 		Blueprint,
 		GET_FUNCTION_NAME_CHECKED(UDlgConditionCustom, IsConditionMet),
@@ -450,6 +451,7 @@ void FDlgSystemEditorModule::HandleNewCustomTextArgumentBlueprintCreated(UBluepr
 		return;
 	}
 
+	Blueprint->bForceFullEditor = true;
 	UEdGraph* FunctionGraph = FDialogueEditorUtilities::BlueprintGetOrAddFunction(
         Blueprint,
         GET_FUNCTION_NAME_CHECKED(UDlgTextArgumentCustom, GetText),
@@ -468,6 +470,7 @@ void FDlgSystemEditorModule::HandleNewCustomEventBlueprintCreated(UBlueprint* Bl
 		return;
 	}
 
+	Blueprint->bForceFullEditor = true;
 	UK2Node_Event* EventNode = FDialogueEditorUtilities::BlueprintGetOrAddEvent(
 	    Blueprint,
 	    GET_FUNCTION_NAME_CHECKED(UDlgEventCustom, EnterEvent),

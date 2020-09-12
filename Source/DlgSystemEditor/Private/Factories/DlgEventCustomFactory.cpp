@@ -1,6 +1,7 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DlgEventCustomFactory.h"
 
+#include "DialogueEditorUtilities.h"
 #include "DlgEventCustom.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "Misc/MessageDialog.h"

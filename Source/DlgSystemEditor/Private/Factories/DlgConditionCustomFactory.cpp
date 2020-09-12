@@ -1,6 +1,8 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DlgConditionCustomFactory.h"
 
+
+#include "DialogueEditorUtilities.h"
 #include "DlgConditionCustom.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "Misc/MessageDialog.h"

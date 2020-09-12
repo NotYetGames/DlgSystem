@@ -749,20 +749,20 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 			// Blueprint
 			if (BlueprintClassesMap.Contains(Struct.ParticipantName))
 			{
-				const TArray<FDlgClassAndObject>& Participants = BlueprintClassesMap.FindChecked(Struct.ParticipantName);
-				if (Participants.Num() == 1)
+				const TArray<FDlgClassAndObject>& Array = BlueprintClassesMap.FindChecked(Struct.ParticipantName);
+				if (Array.Num() == 1)
 				{
-					Struct.ParticipantClass = Participants[0].Class;
+					Struct.ParticipantClass = Array[0].Class;
 				}
 			}
 
 			// Native last resort
 			if (Struct.ParticipantClass == nullptr && NativeClassesMap.Contains(Struct.ParticipantName))
 			{
-				const TArray<FDlgClassAndObject>& Participants = NativeClassesMap.FindChecked(Struct.ParticipantName);
-				if (Participants.Num() == 1)
+				const TArray<FDlgClassAndObject>& Array = NativeClassesMap.FindChecked(Struct.ParticipantName);
+				if (Array.Num() == 1)
 				{
-					Struct.ParticipantClass = Participants[0].Class;
+					Struct.ParticipantClass = Array[0].Class;
 				}
 			}
 		}

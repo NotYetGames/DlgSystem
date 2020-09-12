@@ -1,6 +1,8 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DlgNodeDataFactory.h"
 
+
+#include "DialogueEditorUtilities.h"
 #include "DlgNodeData.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "Misc/MessageDialog.h"
