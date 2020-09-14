@@ -11,6 +11,7 @@
 
 class FDialogueTextPropertyPickList_CustomRowHelper;
 class FDialogueObject_CustomRowHelper;
+class FDialogueEnumTypeWithObject_CustomRowHelper;
 
 /**
  * How the details panel renders the FDlgEvent
@@ -151,8 +152,12 @@ private:
 	IDetailPropertyRow* NameValuePropertyRow = nullptr;
 	IDetailPropertyRow* BoolDeltaPropertyRow = nullptr;
 	IDetailPropertyRow* BoolValuePropertyRow = nullptr;
+
 	IDetailPropertyRow* CustomEventPropertyRow = nullptr;
 	TSharedPtr<FDialogueObject_CustomRowHelper> CustomEventPropertyRow_CustomDisplay;
+
+	IDetailPropertyRow* EventTypePropertyRow = nullptr;
+	TSharedPtr<FDialogueEnumTypeWithObject_CustomRowHelper> EventTypePropertyRow_CustomDisplay;
 
 	// Hold a reference to dialogue we are displaying.
 	UDlgDialogue* Dialogue = nullptr;

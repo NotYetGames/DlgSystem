@@ -12,6 +12,7 @@
 #include "Widgets/SDialogueTextPropertyPickList.h"
 #include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
 #include "DlgHelper.h"
+#include "Widgets/DialogueEnumTypeWithObject_CustomRowHelper.h"
 #include "Widgets/DialogueObject_CustomRowHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueEvent_Details"
@@ -69,7 +70,18 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 	}
 
 	// EventType
-	StructBuilder.AddProperty(EventTypePropertyHandle.ToSharedRef());
+	{
+		EventTypePropertyRow = &StructBuilder.AddProperty(EventTypePropertyHandle.ToSharedRef());
+
+		// Add Custom buttons
+		EventTypePropertyRow_CustomDisplay = MakeShared<FDialogueEnumTypeWithObject_CustomRowHelper>(
+            EventTypePropertyRow,
+            Dialogue,
+            ParticipantNamePropertyHandle
+        );
+		EventTypePropertyRow_CustomDisplay->SetEnumType(EDialogueEnumWithObjectType::Event);
+		EventTypePropertyRow_CustomDisplay->Update();
+	}
 
 	// EventName
 	{

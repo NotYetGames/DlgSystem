@@ -67,9 +67,7 @@ void FDialogueCondition_Details::CustomizeChildren(
 
 	// ConditionType
 	{
-		ConditionTypePropertyRow = &StructBuilder.AddProperty(
-		   ConditionTypePropertyHandle.ToSharedRef()
-		);
+		ConditionTypePropertyRow = &StructBuilder.AddProperty(ConditionTypePropertyHandle.ToSharedRef());
 
 		// Add Custom buttons
 		ConditionTypePropertyRow_CustomDisplay = MakeShared<FDialogueEnumTypeWithObject_CustomRowHelper>(
