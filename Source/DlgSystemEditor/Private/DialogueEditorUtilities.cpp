@@ -927,6 +927,26 @@ UEdGraph* FDialogueEditorUtilities::BlueprintGetOrAddFunction(UBlueprint* Bluepr
 	}
 
 	// Find existing function
+	if (UEdGraph* GraphFunction = BlueprintGetFunction(Blueprint, FunctionName, FunctionClassSignature))
+	{
+		return GraphFunction;
+	}
+
+	// Create a new function
+	UEdGraph* NewGraph = FBlueprintEditorUtils::CreateNewGraph(Blueprint, FunctionName, UEdGraph::StaticClass(), UEdGraphSchema_K2::StaticClass());
+	FBlueprintEditorUtils::AddFunctionGraph(Blueprint, NewGraph, /*bIsUserCreated=*/ false, FunctionClassSignature);
+	Blueprint->LastEditedDocuments.Add(NewGraph);
+	return NewGraph;
+}
+
+UEdGraph* FDialogueEditorUtilities::BlueprintGetFunction(UBlueprint* Blueprint, FName FunctionName, UClass* FunctionClassSignature)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return nullptr;
+	}
+
+	// Find existing function
 	for (UEdGraph* GraphFunction : Blueprint->FunctionGraphs)
 	{
 		if (FunctionName == GraphFunction->GetFName())
@@ -935,11 +955,19 @@ UEdGraph* FDialogueEditorUtilities::BlueprintGetOrAddFunction(UBlueprint* Bluepr
 		}
 	}
 
-	// Create a new function
-	UEdGraph* NewGraph = FBlueprintEditorUtils::CreateNewGraph(Blueprint, FunctionName, UEdGraph::StaticClass(), UEdGraphSchema_K2::StaticClass());
-	FBlueprintEditorUtils::AddFunctionGraph(Blueprint, NewGraph, /*bIsUserCreated=*/ false, FunctionClassSignature);
-	Blueprint->LastEditedDocuments.Add(NewGraph);
-	return NewGraph;
+	// Find in the implemented Interfaces Graphs
+	for (const FBPInterfaceDescription& Interface : Blueprint->ImplementedInterfaces)
+	{
+		for (UEdGraph* GraphFunction : Interface.Graphs)
+		{
+			if (FunctionName == GraphFunction->GetFName())
+			{
+				return GraphFunction;
+			}
+		}
+	}
+
+	return nullptr;
 }
 
 UK2Node_Event* FDialogueEditorUtilities::BlueprintGetOrAddEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature)
@@ -950,14 +978,9 @@ UK2Node_Event* FDialogueEditorUtilities::BlueprintGetOrAddEvent(UBlueprint* Blue
 	}
 
 	// Find existing event
-	TArray<UK2Node_Event*> AllEvents;
-	FBlueprintEditorUtils::GetAllNodesOfClass<UK2Node_Event>(Blueprint, AllEvents);
-	for (UK2Node_Event* EventNode : AllEvents)
+	if (UK2Node_Event* EventNode = BlueprintGetEvent(Blueprint, EventName, EventClassSignature))
 	{
-		if (EventNode->bOverrideFunction && EventNode->EventReference.GetMemberName() == EventName)
-		{
-			return EventNode;
-		}
+		return EventNode;
 	}
 
 	// Create a New Event
@@ -975,6 +998,26 @@ UK2Node_Event* FDialogueEditorUtilities::BlueprintGetOrAddEvent(UBlueprint* Blue
 		NodeEvent->NodeComment = "";
 		NodeEvent->bCommentBubbleVisible = false;
 		return NodeEvent;
+	}
+
+	return nullptr;
+}
+
+UK2Node_Event* FDialogueEditorUtilities::BlueprintGetEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return nullptr;
+	}
+
+	TArray<UK2Node_Event*> AllEvents;
+	FBlueprintEditorUtils::GetAllNodesOfClass<UK2Node_Event>(Blueprint, AllEvents);
+	for (UK2Node_Event* EventNode : AllEvents)
+	{
+		if (EventNode->bOverrideFunction && EventNode->EventReference.GetMemberName() == EventName)
+		{
+			return EventNode;
+		}
 	}
 
 	return nullptr;

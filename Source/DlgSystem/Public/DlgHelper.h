@@ -8,6 +8,10 @@
 #include "UObject/ObjectMacros.h"
 #include <functional>
 
+
+
+#include "DlgCondition.h"
+#include "DlgEvent.h"
 #include "NYReflectionTypes.h"
 
 #include "DlgHelper.generated.h"
@@ -252,6 +256,49 @@ public:
 	// FileSystem
 	static bool DeleteFile(const FString& PathName, bool bVerbose = true);
 	static bool RenameFile(const FString& OldPathName, const FString& NewPathName, bool bOverWrite = false, bool bVerbose = true);
+
+	// Get the Interface Function Name for this Event Type
+	static FName GetFunctionNameForEventType(EDlgEventType EventType)
+	{
+		switch (EventType)
+		{
+		case EDlgEventType::Event:
+			return TEXT("OnDialogueEvent");
+		case EDlgEventType::ModifyBool:
+			return TEXT("ModifyBoolValue");
+		case EDlgEventType::ModifyFloat:
+			return TEXT("ModifyFloatValue");
+		case EDlgEventType::ModifyInt:
+			return TEXT("ModifyIntValue");
+		case EDlgEventType::ModifyName:
+			return TEXT("ModifyIntValue");
+		default:
+			break;
+		}
+
+		return NAME_None;
+	}
+
+	static FName GetFunctionNameForConditionType(EDlgConditionType ConditionType)
+	{
+		switch (ConditionType)
+		{
+		case EDlgConditionType::EventCall:
+			return TEXT("CheckCondition");
+		case EDlgConditionType::BoolCall:
+			return TEXT("GetBoolValue");
+		case EDlgConditionType::FloatCall:
+			return TEXT("GetFloatValue");
+		case EDlgConditionType::IntCall:
+			return TEXT("GetIntValue");
+		case EDlgConditionType::NameCall:
+			return TEXT("GetNameValue");
+		default:
+			break;
+		}
+
+		return NAME_None;
+	}
 
 	template<typename TEnum>
     static bool ConvertEnumToString(const FString& EnumName, TEnum EnumValue, bool bWithNameSpace, FString& OutEnumValue)

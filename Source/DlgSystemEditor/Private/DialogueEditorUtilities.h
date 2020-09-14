@@ -238,8 +238,14 @@ public:
 	// Return the Function Graph of the existing function or the newly created one
 	static UEdGraph* BlueprintGetOrAddFunction(UBlueprint* Blueprint, FName FunctionName, UClass* FunctionClassSignature);
 
+	// Same as BlueprintGetOrAddFunction but does not add it
+	static UEdGraph* BlueprintGetFunction(UBlueprint* Blueprint, FName FunctionName, UClass* FunctionClassSignature);
+
 	// Same as BlueprintGetOrAddFunction but only for an overriden event
 	static UK2Node_Event* BlueprintGetOrAddEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature);
+
+	// Same as BlueprintGetOrAddEvent but does not add it
+	static UK2Node_Event* BlueprintGetEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature);
 
 	// Adds a comment to the Blueprint
 	static UEdGraphNode_Comment* BlueprintAddComment(UBlueprint* Blueprint, const FString& CommentString, FVector2D Location = FVector2D::ZeroVector);

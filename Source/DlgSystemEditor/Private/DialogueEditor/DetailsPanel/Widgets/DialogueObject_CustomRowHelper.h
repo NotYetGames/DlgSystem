@@ -8,9 +8,18 @@ class FDetailWidgetRow;
 class UDlgDialogue;
 class UBlueprint;
 
+enum class EDialogueBlueprintOpenType : uint8
+{
+	None = 0,
+	Function,
+	Event
+};
+
 // Custom row for Objects that most likely are Blueprints?
 // This only works with the IDetailPropertyRow::CustomWidget
 // If we don't use this the children of EditInlineNew won't be displayed
+// Custom row for things that can Handle Objects that are most likely Blueprints or Native Classes
+// And this helps us to open them in the Blueprint Editor or open the Native Class inside the IDE
 class FDialogueObject_CustomRowHelper : public TSharedFromThis<FDialogueObject_CustomRowHelper>
 {
 	typedef FDialogueObject_CustomRowHelper Self;
@@ -22,32 +31,30 @@ public:
 	// Update the full property row.
 	void Update();
 
-	Self& SetFunctionNameToOpen(FName Name)
+	// Mutually exclusive with
+	Self& SetFunctionNameToOpen(EDialogueBlueprintOpenType InOpenType, FName Name)
 	{
+		OpenType = InOpenType;
 		FunctionNameToOpen = Name;
-		return *this;
-	}
-
-	Self& SetEventNameToOpen(FName Name)
-	{
-		EventNameToOpen = Name;
 		return *this;
 	}
 
 protected:
 	// Reset to default
-	FReply OnBrowseClicked();
-	FReply OnOpenClicked();
+	virtual FReply OnBrowseClicked();
+	virtual FReply OnOpenClicked();
 
-	UObject* GetObject() const;
+	virtual UObject* GetObject() const;
 	UBlueprint* GetBlueprint() const;
 	bool IsObjectABlueprint() const;
 
-	FText GetJumpToObjectText() const;
+	virtual FText GetBrowseObjectText() const;
+	virtual FText GetJumpToObjectText() const;
+	virtual float GetRowMinimumDesiredWidth() const { return 300.f; }
 
 	EVisibility GetOpenButtonVisibility() const;
 	EVisibility GetBrowseButtonVisibility() const;
-	EVisibility GetButtonsVisibility() const;
+	virtual bool CanBeVisible() const { return true; }
 
 protected:
 	// The Property handle of what this row represents
@@ -56,5 +63,6 @@ protected:
 	// Blueprint Editor
 	bool bForceFullEditor = true;
 	FName FunctionNameToOpen = NAME_None;
-	FName EventNameToOpen = NAME_None;
+	bool bAddBlueprintFunctionIfItDoesNotExist = true;
+	EDialogueBlueprintOpenType OpenType = EDialogueBlueprintOpenType::None;
 };

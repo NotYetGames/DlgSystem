@@ -17,17 +17,15 @@
 #include "K2Node_Event.h"
 #include "SourceCodeNavigation.h"
 
-
 #define LOCTEXT_NAMESPACE "DialogueObject_CustomRowHelper"
 #define DEFAULT_FONT(...) FCoreStyle::GetDefaultFontStyle(__VA_ARGS__)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FDialogueMultiLineEditableTextBox_CustomRowHelper
+// FDialogueObject_CustomRowHelper
 FDialogueObject_CustomRowHelper::FDialogueObject_CustomRowHelper(IDetailPropertyRow* InPropertyRow) :
 	PropertyRow(InPropertyRow)
 {
 }
-
 
 void FDialogueObject_CustomRowHelper::Update()
 {
@@ -40,11 +38,10 @@ void FDialogueObject_CustomRowHelper::Update()
 	PropertyRow->GetDefaultWidgets(
 		DefaultNameWidget,
 		DefaultValueWidget,
-		true
+		false
 	);
 
 	FDetailWidgetRow& DetailWidgetRow = PropertyRow->CustomWidget(true);
-
 	DetailWidgetRow.NameContent()
 	[
 		DefaultNameWidget.ToSharedRef()
@@ -52,58 +49,61 @@ void FDialogueObject_CustomRowHelper::Update()
 
 	TSharedPtr<SHorizontalBox> HorizontalBox;
 	DetailWidgetRow.ValueContent()
-	.MinDesiredWidth(300.f)
+	.MinDesiredWidth(GetRowMinimumDesiredWidth())
 	[
 		SAssignNew(HorizontalBox, SHorizontalBox)
-		+SHorizontalBox::Slot()
-		.Padding(0.f, 0.f, 4.f, 0.f)
-		.FillWidth(1.f)
+	];
+
+	// Default previous widget
+	 HorizontalBox->AddSlot()
+	.Padding(0.f, 0.f, 2.f, 0.f)
+	.FillWidth(1.f)
+	// .AutoWidth()
+	[
+		DefaultValueWidget.ToSharedRef()
+	];
+
+	// Browse Asset
+	HorizontalBox->AddSlot()
+	.AutoWidth()
+	.VAlign(VAlign_Center)
+	.Padding(4.f)
+	[
+		SNew(SButton)
+		.ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
+		.ToolTipText(this, &Self::GetBrowseObjectText)
+		.ContentPadding(4.f)
+		.ForegroundColor(FSlateColor::UseForeground())
+		.Visibility(this, &Self::GetBrowseButtonVisibility)
+		.OnClicked(this, &Self::OnBrowseClicked)
 		[
-			DefaultValueWidget.ToSharedRef()
+			SNew(SImage)
+			.Image(FEditorStyle::GetBrush("PropertyWindow.Button_Browse"))
+			.ColorAndOpacity(FSlateColor::UseForeground())
 		]
+	];
 
-		// Browse Asset
-		+SHorizontalBox::Slot()
-		.AutoWidth()
-		.VAlign(VAlign_Center)
-		.Padding(4.f)
+	// Jump to Object
+	HorizontalBox->AddSlot()
+	.AutoWidth()
+	.VAlign(VAlign_Center)
+	.Padding(4.f, 2.f)
+	[
+		SNew(SButton)
+		.ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
+		.ToolTipText(this, &Self::GetJumpToObjectText)
+		.ContentPadding(4.f)
+		.ForegroundColor(FSlateColor::UseForeground())
+		.Visibility(this, &Self::GetOpenButtonVisibility)
+		.OnClicked(this, &Self::OnOpenClicked)
 		[
-			SNew(SButton)
-			.ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
-			.ToolTipText(LOCTEXT("BrowseButtonToolTipText", "Browse to Asset in Content Browser"))
-			.ContentPadding(4.f)
-			.ForegroundColor(FSlateColor::UseForeground())
-			.Visibility(this, &Self::GetBrowseButtonVisibility)
-			.OnClicked(this, &Self::OnBrowseClicked)
-			[
-				SNew(SImage)
-				.Image(FEditorStyle::GetBrush("PropertyWindow.Button_Browse"))
-				.ColorAndOpacity(FSlateColor::UseForeground())
-			]
-		]
+			SNew(SImage)
+			 .Image(FEditorStyle::GetBrush("PropertyWindow.Button_Edit"))
+			 .ColorAndOpacity( FSlateColor::UseForeground() )
 
-		// Jump to Object
-		+SHorizontalBox::Slot()
-		.AutoWidth()
-		.VAlign(VAlign_Center)
-		.Padding(4.f, 2.f)
-		[
-			SNew(SButton)
-			.ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
-			.ToolTipText(this, &Self::GetJumpToObjectText)
-			.ContentPadding(4.f)
-			.ForegroundColor(FSlateColor::UseForeground())
-			.Visibility(this, &Self::GetOpenButtonVisibility)
-			.OnClicked(this, &Self::OnOpenClicked)
-			[
-				SNew(SImage)
-				 .Image(FEditorStyle::GetBrush("PropertyWindow.Button_Edit"))
-				 .ColorAndOpacity( FSlateColor::UseForeground() )
-
-				// SNew(STextBlock)
-				// .Text(LOCTEXT("OpenObjectKey", "Open"))
-				// .Font(DEFAULT_FONT("Regular", 10))
-			]
+			// SNew(STextBlock)
+			// .Text(LOCTEXT("OpenObjectKey", "Open"))
+			// .Font(DEFAULT_FONT("Regular", 10))
 		]
 	];
 }
@@ -116,6 +116,10 @@ UObject* FDialogueObject_CustomRowHelper::GetObject() const
 	}
 
 	TSharedPtr<IPropertyHandle> PropertyHandle = PropertyRow->GetPropertyHandle();
+	if (!PropertyHandle.IsValid())
+	{
+		return nullptr;
+	}
 	UObject* Object = nullptr;
 	PropertyHandle->GetValue(Object);
 	return Object;
@@ -172,16 +176,24 @@ FReply FDialogueObject_CustomRowHelper::OnOpenClicked()
 	{
 		// Blueprint
 		Blueprint->bForceFullEditor = bForceFullEditor;
+		UClass* Class = GetObject()->GetClass();
 
 		// Find Function Graph
 		UObject* ObjectToFocusOn = nullptr;
-		if (FunctionNameToOpen != NAME_None)
+		if (FunctionNameToOpen != NAME_None && OpenType != EDialogueBlueprintOpenType::None)
 		{
-			ObjectToFocusOn = FDialogueEditorUtilities::BlueprintGetOrAddFunction(Blueprint, FunctionNameToOpen, GetObject()->GetClass());
-		}
-		else if (EventNameToOpen != NAME_None)
-		{
-			ObjectToFocusOn = FDialogueEditorUtilities::BlueprintGetOrAddEvent(Blueprint, EventNameToOpen, GetObject()->GetClass());
+			if (OpenType == EDialogueBlueprintOpenType::Function)
+			{
+				ObjectToFocusOn = bAddBlueprintFunctionIfItDoesNotExist
+					? FDialogueEditorUtilities::BlueprintGetOrAddFunction(Blueprint, FunctionNameToOpen, Class)
+					: FDialogueEditorUtilities::BlueprintGetFunction(Blueprint, FunctionNameToOpen, Class);
+			}
+			else if (OpenType == EDialogueBlueprintOpenType::Event)
+			{
+				ObjectToFocusOn = bAddBlueprintFunctionIfItDoesNotExist
+					? FDialogueEditorUtilities::BlueprintGetOrAddEvent(Blueprint, FunctionNameToOpen, Class)
+					: FDialogueEditorUtilities::BlueprintGetEvent(Blueprint, FunctionNameToOpen, Class);
+			}
 		}
 
 		// Default to the last uber graph
@@ -207,6 +219,11 @@ FReply FDialogueObject_CustomRowHelper::OnOpenClicked()
 	return FReply::Handled();
 }
 
+FText FDialogueObject_CustomRowHelper::GetBrowseObjectText() const
+{
+	return LOCTEXT("BrowseButtonToolTipText", "Browse to Asset in Content Browser");
+}
+
 FText FDialogueObject_CustomRowHelper::GetJumpToObjectText() const
 {
 	if (IsObjectABlueprint())
@@ -216,13 +233,18 @@ FText FDialogueObject_CustomRowHelper::GetJumpToObjectText() const
 
 	// Native Class
 	return FText::Format(
-	LOCTEXT("OpenObjectBlueprintTooltipKey", "Open Source File in {0}"),
+		LOCTEXT("OpenObjectBlueprintTooltipKey", "Open Source File in {0}"),
 		FSourceCodeNavigation::GetSelectedSourceCodeIDE()
 	);
 }
 
 EVisibility FDialogueObject_CustomRowHelper::GetOpenButtonVisibility() const
 {
+	if (!CanBeVisible())
+	{
+		return EVisibility::Collapsed;
+	}
+
 	if (UObject* Object = GetObject())
 	{
 		// Blueprint
@@ -238,16 +260,15 @@ EVisibility FDialogueObject_CustomRowHelper::GetOpenButtonVisibility() const
 	return EVisibility::Collapsed;
 }
 
-EVisibility FDialogueObject_CustomRowHelper::GetButtonsVisibility() const
-{
-	return GetObject() != nullptr ? EVisibility::Visible : EVisibility::Collapsed;
-}
-
 EVisibility FDialogueObject_CustomRowHelper::GetBrowseButtonVisibility() const
 {
-	return IsObjectABlueprint() ? GetButtonsVisibility() : EVisibility::Collapsed;
-}
+	if (!CanBeVisible())
+	{
+		return EVisibility::Collapsed;
+	}
 
+	return IsObjectABlueprint() ? EVisibility::Visible : EVisibility::Collapsed;
+}
 
 #undef LOCTEXT_NAMESPACE
 #undef DEFAULT_FONT

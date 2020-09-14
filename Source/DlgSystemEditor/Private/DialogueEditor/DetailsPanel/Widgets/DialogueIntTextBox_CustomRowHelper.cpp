@@ -46,23 +46,23 @@ void FDialogueIntTextBox_CustomRowHelper::UpdateInternal()
 	{
 		PropertyHandle->MarkResetToDefaultCustomized(true);
 		HorizontalBox->AddSlot()
-        .AutoWidth()
-        .VAlign(VAlign_Center)
-        .Padding(4.f, 2.f)
-        [
-            SNew(SButton)
-            .IsFocusable(false)
-            .ToolTipText(this, &Self::GetResetToolTip)
-            .ButtonStyle(FEditorStyle::Get(), "NoBorder")
-            .ContentPadding(0)
-            .Visibility(this, &Self::GetDiffersFromDefaultAsVisibility)
-            .OnClicked(this, &Self::OnResetClicked)
-            .Content()
-            [
-                SNew(SImage)
-                .Image(FEditorStyle::GetBrush("PropertyWindow.DiffersFromDefault"))
-            ]
-        ];
+		.AutoWidth()
+		.VAlign(VAlign_Center)
+		.Padding(4.f, 2.f)
+		[
+			SNew(SButton)
+			.IsFocusable(false)
+			.ToolTipText(this, &Self::GetResetToolTip)
+			.ButtonStyle(FEditorStyle::Get(), "NoBorder")
+			.ContentPadding(0)
+			.Visibility(this, &Self::GetDiffersFromDefaultAsVisibility)
+			.OnClicked(this, &Self::OnResetClicked)
+			.Content()
+			[
+				SNew(SImage)
+				.Image(FEditorStyle::GetBrush("PropertyWindow.DiffersFromDefault"))
+			]
+		];
 	}
 
 	// Jump to Node
