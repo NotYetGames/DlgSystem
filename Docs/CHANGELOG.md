@@ -13,7 +13,7 @@
 - **Add** “Browse Participant in Content Browser” and “Open Participant Blueprint" for events and conditions when the participant is involved so that you can easier go the Participant.
   - This only works if the participant class is set in the particular Dialogue.
 
-### Dialogue Search
+### Find in Dialogue
 - **Add the following search filters**:
   - Node GUIDs
   - Custom Object Names path (NOT the contents of the fields)
