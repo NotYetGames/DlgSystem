@@ -1,3 +1,30 @@
+# V12
+
+### Blueprint
+
+- When **creating a new Blueprint** of type **Custom Events/Conditions/Text Argument** the overridden function/event is automatically created for you and the blueprint opens there.
+- When **creating a new Blueprint** of type **Node Data** add a comment to the graph saying you need to add variables to see them in the Dialogue Editor, when using the Node Data
+
+### Dialogue Editor
+- **Add option** so that the **participant classes are auto set** to default to the first participant class that matches the participant Name
+  - This only works if there is only one participant class of that Participant Name and Blueprint Classes take priority over Native Classes
+- **Add details panel buttons** for "Browse to Asset on Content Browser" and "Open Asset" for the **Custom Events/Conditions/Text Argument or Node Data**
+- **Nodes created** from another node will default to having the Participant Name the same as the Parent
+- **Add** “Browse Participant in Content Browser” and “Open Participant Blueprint" for events and conditions when the participant is involved so that you can easier go the Participant.
+  - This only works if the participant class is set in the particular Dialogue.
+
+### Dialogue Search
+- **Add the following search filters**:
+  - Node GUIDs
+  - Custom Object Names path (NOT the contents of the fields)
+- **Add** the context Index for Events and Conditions so you know which array index it is from
+
+### Content Browser
+- **Allow to create** **Custom Events/Conditions/Text Argument or Node Data** from the Dialogue Menu (the same where you create the Dialogue Asset)
+- **Move**  Dialogues filters to the content browser backend this way you can combine them with other filter
+  - Only the Dialogue Participants Filter remains in the frontend because there is not sane way to implement it in the backend
+
+
 # v11.1
 **Date:** September 7, 2020
 
