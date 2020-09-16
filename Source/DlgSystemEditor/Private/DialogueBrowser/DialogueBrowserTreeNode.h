@@ -11,7 +11,7 @@ class UDlgDialogue;
 class UDialogueGraphNode;
 class UDialogueGraphNode_Edge;
 
-/** The types of categories. */
+// The types of categories.
 enum class EDialogueTreeNodeCategoryType : uint8
 {
 	Default = 0,
@@ -107,7 +107,9 @@ public:
 	/** Gets the Variable name that this Node belongs to if any. This could be empty in most cases. */
 	virtual FName GetParentVariableName() const;
 
-	/** Getters for the properties */
+	//
+	// Getters for the properties
+	//
 
 	// TextType:
 	EDialogueTreeNodeTextType GetTextType() const { return TextType; }
@@ -146,7 +148,7 @@ public:
 		}
 	}
 
-	/** Checks type of this Node. */
+	// Checks type of this Node.
 	virtual bool IsText() const { return TextType != EDialogueTreeNodeTextType::Default; }
 	virtual bool IsCategory() const { return false; }
 	virtual bool IsSeparator() const { return false; }
@@ -196,11 +198,10 @@ public:
 			|| TextType == EDialogueTreeNodeTextType::FNameVariableEdgeNode);
 	}
 
-	/** Gets the textual representation of this item */
+	// Gets the textual representation of this item
 	FString ToString() const;
 
-
-	/** Is this equal with Other? */
+	// Is this equal with Other?
 	virtual bool IsEqual(const Self& Other)
 	{
 		return TextType == Other.GetTextType() &&
@@ -258,7 +259,7 @@ protected:
 };
 
 
-/** Root node of the Dialogue browser */
+// Root node of the Dialogue browser
 class FDialogueBrowserTreeRootNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeNode Super;
@@ -267,7 +268,7 @@ public:
 };
 
 
-/** Separator node of the Dialogue browser */
+// Separator node of the Dialogue browser
 class FDialogueBrowserTreeSeparatorNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeNode Super;
@@ -298,7 +299,7 @@ public:
 };
 
 
-/** Node results that represents the Participant Name. */
+// Node results that represents the Participant Name.
 class FDialogueBrowserTreeParticipantNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeParticipantNode Self;
@@ -319,7 +320,7 @@ protected:
 };
 
 
-/** Node results that represents a Variable Name. */
+// Node results that represents a Variable Name.
 class FDialogueBrowserTreeVariableNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeVariableNode Self;
@@ -341,7 +342,7 @@ protected:
 };
 
 
-/** Similar to the FDialogueBrowserTreeParticipantNode only this is a Category */
+// Similar to the FDialogueBrowserTreeParticipantNode only this is a Category
 class FDialogueBrowserTreeCategoryParticipantNode : public FDialogueBrowserTreeParticipantNode
 {
 	typedef FDialogueBrowserTreeParticipantNode Super;
@@ -357,7 +358,7 @@ public:
 };
 
 
-/** Node results that represents the Dialogue. */
+// Node results that represents the Dialogue.
 class FDialogueBrowserTreeDialogueNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeDialogueNode Self;
@@ -383,12 +384,12 @@ public:
 	}
 
 protected:
-	/** The Dialogue this represents. */
+	// The Dialogue this represents.
 	TWeakObjectPtr<const UDlgDialogue> Dialogue;
 };
 
 
-/** Node results that represents the GraphNode. */
+// Node results that represents the GraphNode.
 class FDialogueBrowserTreeGraphNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeGraphNode Self;
@@ -414,12 +415,12 @@ public:
 	}
 
 protected:
-	/** The GraphNode this represents. */
+	// The GraphNode this represents.
 	TWeakObjectPtr<const UDialogueGraphNode> GraphNode;
 };
 
 
-/** Node results that represents the EdgeNode. */
+// Node results that represents the EdgeNode.
 class FDialogueBrowserTreeEdgeNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeEdgeNode Self;
@@ -445,6 +446,6 @@ public:
 	}
 
 protected:
-	/** The EdgeNode this represents. */
+	// The EdgeNode this represents.
 	TWeakObjectPtr<const UDialogueGraphNode_Edge> EdgeNode;
 };

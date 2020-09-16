@@ -258,13 +258,15 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 	{
 		if (VariableProperties->HasGraphNodeSet(DialogueGUID))
 		{
-			VariableProperties->GetMutableGraphNodeSet(DialogueGUID)
-							  ->Append(SearchResult->GraphNodes);
+			VariableProperties
+				->GetMutableGraphNodeSet(DialogueGUID)
+				->Append(SearchResult->GraphNodes);
 		}
 		if (VariableProperties->HasEdgeNodeSet(DialogueGUID))
 		{
-			VariableProperties->GetMutableEdgeNodeSet(DialogueGUID)
-							  ->Append(SearchResult->EdgeNodes);
+			VariableProperties
+				->GetMutableEdgeNodeSet(DialogueGUID)
+				->Append(SearchResult->EdgeNodes);
 		}
 	};
 
@@ -480,8 +482,12 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 		RootTreeItem->GetAllNodes(AllNodes);
 
 		// Expand to match the old state
-		FDlgTreeViewHelper::RestoreTreeExpansionState<TSharedPtr<FDialogueBrowserTreeNode>>(ParticipantsTreeView,
-			AllNodes, OldExpansionState, FDialogueBrowserUtilities::PredicateCompareDialogueTreeNode);
+		FDlgTreeViewHelper::RestoreTreeExpansionState<TSharedPtr<FDialogueBrowserTreeNode>>(
+			ParticipantsTreeView,
+			AllNodes,
+			OldExpansionState,
+			FDialogueBrowserUtilities::PredicateCompareDialogueTreeNode
+		);
 	}
 }
 
@@ -557,8 +563,11 @@ void SDialogueBrowser::AddDialogueChildrenToItemFromProperty(
 			continue;
 		}
 
-		const TSharedPtr<FDialogueBrowserTreeNode> DialogueItem =
-			MakeShared<FDialogueBrowserTreeDialogueNode>(FText::FromName(Dialogue->GetDialogueFName()), InItem, Dialogue);
+		const TSharedPtr<FDialogueBrowserTreeNode> DialogueItem = MakeShared<FDialogueBrowserTreeDialogueNode>(
+			FText::FromName(Dialogue->GetDialogueFName()),
+			InItem,
+			Dialogue
+		);
 		DialogueItem->SetTextType(TextType);
 		InItem->AddChild(DialogueItem);
 	}
@@ -745,16 +754,32 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 			break;
 		}
 		case EDialogueTreeNodeCategoryType::VariableInt:
-			AddVariableChildrenToItem(Item, ParticipantProperties->GetIntegers(), EDialogueTreeNodeTextType::ParticipantVariableInt);
+			AddVariableChildrenToItem(
+				Item,
+				ParticipantProperties->GetIntegers(),
+				EDialogueTreeNodeTextType::ParticipantVariableInt
+			);
 			break;
 		case EDialogueTreeNodeCategoryType::VariableFloat:
-			AddVariableChildrenToItem(Item, ParticipantProperties->GetFloats(), EDialogueTreeNodeTextType::ParticipantVariableFloat);
+			AddVariableChildrenToItem(
+				Item,
+				ParticipantProperties->GetFloats(),
+				EDialogueTreeNodeTextType::ParticipantVariableFloat
+			);
 			break;
 		case EDialogueTreeNodeCategoryType::VariableBool:
-			AddVariableChildrenToItem(Item, ParticipantProperties->GetBools(), EDialogueTreeNodeTextType::ParticipantVariableBool);
+			AddVariableChildrenToItem(
+				Item,
+				ParticipantProperties->GetBools(),
+				EDialogueTreeNodeTextType::ParticipantVariableBool
+			);
 			break;
 		case EDialogueTreeNodeCategoryType::VariableFName:
-			AddVariableChildrenToItem(Item, ParticipantProperties->GetFNames(), EDialogueTreeNodeTextType::ParticipantVariableFName);
+			AddVariableChildrenToItem(
+				Item,
+				ParticipantProperties->GetFNames(),
+				EDialogueTreeNodeTextType::ParticipantVariableFName
+			);
 			break;
 
 		case EDialogueTreeNodeCategoryType::ClassVariable:
@@ -768,19 +793,39 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 			break;
 		}
 		case EDialogueTreeNodeCategoryType::ClassVariableInt:
-			AddVariableChildrenToItem(Item, ParticipantProperties->GetClassIntegers(), EDialogueTreeNodeTextType::ParticipantClassVariableInt);
+			AddVariableChildrenToItem(
+				Item,
+				ParticipantProperties->GetClassIntegers(),
+				EDialogueTreeNodeTextType::ParticipantClassVariableInt
+			);
 			break;
 		case EDialogueTreeNodeCategoryType::ClassVariableFloat:
-			AddVariableChildrenToItem(Item, ParticipantProperties->GetClassFloats(), EDialogueTreeNodeTextType::ParticipantClassVariableFloat);
+			AddVariableChildrenToItem(
+				Item,
+				ParticipantProperties->GetClassFloats(),
+				EDialogueTreeNodeTextType::ParticipantClassVariableFloat
+			);
 			break;
 		case EDialogueTreeNodeCategoryType::ClassVariableBool:
-			AddVariableChildrenToItem(Item, ParticipantProperties->GetClassBools(), EDialogueTreeNodeTextType::ParticipantClassVariableBool);
+			AddVariableChildrenToItem(
+				Item,
+				ParticipantProperties->GetClassBools(),
+				EDialogueTreeNodeTextType::ParticipantClassVariableBool
+			);
 			break;
 		case EDialogueTreeNodeCategoryType::ClassVariableFName:
-			AddVariableChildrenToItem(Item, ParticipantProperties->GetClassFNames(), EDialogueTreeNodeTextType::ParticipantClassVariableFName);
+			AddVariableChildrenToItem(
+				Item,
+				ParticipantProperties->GetClassFNames(),
+				EDialogueTreeNodeTextType::ParticipantClassVariableFName
+			);
 			break;
 		case EDialogueTreeNodeCategoryType::ClassVariableFText:
-			AddVariableChildrenToItem(Item, ParticipantProperties->GetClassFTexts(), EDialogueTreeNodeTextType::ParticipantClassVariableFText);
+			AddVariableChildrenToItem(
+				Item,
+				ParticipantProperties->GetClassFTexts(),
+				EDialogueTreeNodeTextType::ParticipantClassVariableFText
+			);
 			break;
 
 		default:
@@ -793,78 +838,102 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 		{
 		case EDialogueTreeNodeTextType::ParticipantEvent:
 			// List the dialogues that contain this event for this participant
-			AddDialogueChildrenToItemFromProperty(Item,
+			AddDialogueChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetEvents().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::EventDialogue);
+				EDialogueTreeNodeTextType::EventDialogue
+			);
 			break;
 		case EDialogueTreeNodeTextType::ParticipantCondition:
 			// List the dialogues that contain this condition for this participant
-			AddDialogueChildrenToItemFromProperty(Item,
+			AddDialogueChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetConditions().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::ConditionDialogue);
+				EDialogueTreeNodeTextType::ConditionDialogue
+			);
 			break;
 
 		case EDialogueTreeNodeTextType::ParticipantVariableInt:
 			// List the dialogues that contain this int variable for this participant
-			AddDialogueChildrenToItemFromProperty(Item,
+			AddDialogueChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetIntegers().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::IntVariableDialogue);
+				EDialogueTreeNodeTextType::IntVariableDialogue
+			);
 			break;
 		case EDialogueTreeNodeTextType::ParticipantVariableFloat:
 			// List the dialogues that contain this float variable for this participant
-			AddDialogueChildrenToItemFromProperty(Item,
+			AddDialogueChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetFloats().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FloatVariableDialogue);
+				EDialogueTreeNodeTextType::FloatVariableDialogue
+			);
 			break;
 		case EDialogueTreeNodeTextType::ParticipantVariableBool:
 			// List the dialogues that contain this bool variable for this participant
-			AddDialogueChildrenToItemFromProperty(Item,
+			AddDialogueChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetBools().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::BoolVariableDialogue);
+				EDialogueTreeNodeTextType::BoolVariableDialogue
+			);
 			break;
 		case EDialogueTreeNodeTextType::ParticipantVariableFName:
 			// List the dialogues that contain this Fname variable for this participant
-			AddDialogueChildrenToItemFromProperty(Item,
+			AddDialogueChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetFNames().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FNameVariableDialogue);
+				EDialogueTreeNodeTextType::FNameVariableDialogue
+			);
 			break;
 
 		case EDialogueTreeNodeTextType::ParticipantClassVariableInt:
 			// List the dialogues that contain this UClass int variable for this participant
-			AddDialogueChildrenToItemFromProperty(Item,
+			AddDialogueChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetClassIntegers().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::IntClassVariableDialogue);
+				EDialogueTreeNodeTextType::IntClassVariableDialogue
+			);
 			break;
 		case EDialogueTreeNodeTextType::ParticipantClassVariableFloat:
 			// List the dialogues that contain this UClass float variable for this participant
-			AddDialogueChildrenToItemFromProperty(Item,
+			AddDialogueChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetClassFloats().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FloatClassVariableDialogue);
+				EDialogueTreeNodeTextType::FloatClassVariableDialogue
+			);
 			break;
 		case EDialogueTreeNodeTextType::ParticipantClassVariableBool:
 			// List the dialogues that contain this UClass bool variable for this participant
-			AddDialogueChildrenToItemFromProperty(Item,
+			AddDialogueChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetClassBools().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::BoolClassVariableDialogue);
+				EDialogueTreeNodeTextType::BoolClassVariableDialogue
+			);
 			break;
 		case EDialogueTreeNodeTextType::ParticipantClassVariableFName:
 			// List the dialogues that contain this UClass Fname variable for this participant
-			AddDialogueChildrenToItemFromProperty(Item,
+			AddDialogueChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetClassFNames().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FNameClassVariableDialogue);
+				EDialogueTreeNodeTextType::FNameClassVariableDialogue
+			);
 			break;
 		case EDialogueTreeNodeTextType::ParticipantClassVariableFText:
 			// List the dialogues that contain this UClass FText variable for this participant
-			AddDialogueChildrenToItemFromProperty(Item,
+			AddDialogueChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetClassFTexts().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FTextClassVariableDialogue);
+				EDialogueTreeNodeTextType::FTextClassVariableDialogue
+			);
 			break;
 
 		case EDialogueTreeNodeTextType::EventDialogue:
 			// List the graph nodes for the dialogue that contains this event
-			AddGraphNodeBaseChildrenToItemFromProperty(Item,
+			AddGraphNodeBaseChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetEvents().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::EventGraphNode, EDialogueTreeNodeTextType::EventGraphNode);
+				EDialogueTreeNodeTextType::EventGraphNode, EDialogueTreeNodeTextType::EventGraphNode
+			);
 			break;
 		case EDialogueTreeNodeTextType::ConditionDialogue:
 			// List the graph nodes for the dialogue that contains this condition
@@ -875,59 +944,77 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 
 		case EDialogueTreeNodeTextType::IntVariableDialogue:
 			// List the graph nodes for the dialogue that contains this int variable
-			AddGraphNodeBaseChildrenToItemFromProperty(Item,
+			AddGraphNodeBaseChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetIntegers().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::IntVariableGraphNode, EDialogueTreeNodeTextType::IntVariableEdgeNode);
+				EDialogueTreeNodeTextType::IntVariableGraphNode, EDialogueTreeNodeTextType::IntVariableEdgeNode
+			);
 			break;
 		case EDialogueTreeNodeTextType::FloatVariableDialogue:
 			// List the graph nodes for the dialogue that contains this float variable
-			AddGraphNodeBaseChildrenToItemFromProperty(Item,
+			AddGraphNodeBaseChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetFloats().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FloatVariableGraphNode, EDialogueTreeNodeTextType::FloatVariableEdgeNode);
+				EDialogueTreeNodeTextType::FloatVariableGraphNode, EDialogueTreeNodeTextType::FloatVariableEdgeNode
+			);
 			break;
 		case EDialogueTreeNodeTextType::BoolVariableDialogue:
 			// List the graph nodes for the dialogue that contains this bool variable
-			AddGraphNodeBaseChildrenToItemFromProperty(Item,
+			AddGraphNodeBaseChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetBools().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::BoolVariableGraphNode, EDialogueTreeNodeTextType::BoolVariableEdgeNode);
+				EDialogueTreeNodeTextType::BoolVariableGraphNode, EDialogueTreeNodeTextType::BoolVariableEdgeNode
+			);
 			break;
 		case EDialogueTreeNodeTextType::FNameVariableDialogue:
 			// List the graph nodes for the dialogue that contains this FName variable
-			AddGraphNodeBaseChildrenToItemFromProperty(Item,
+			AddGraphNodeBaseChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetFNames().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FNameVariableGraphNode, EDialogueTreeNodeTextType::FNameVariableEdgeNode);
+				EDialogueTreeNodeTextType::FNameVariableGraphNode, EDialogueTreeNodeTextType::FNameVariableEdgeNode
+			);
 			break;
 
 		case EDialogueTreeNodeTextType::IntClassVariableDialogue:
 			// List the graph nodes for the dialogue that contains this UClass int variable
-			AddGraphNodeBaseChildrenToItemFromProperty(Item,
+			AddGraphNodeBaseChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetClassIntegers().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::IntVariableGraphNode, EDialogueTreeNodeTextType::IntVariableEdgeNode);
+				EDialogueTreeNodeTextType::IntVariableGraphNode, EDialogueTreeNodeTextType::IntVariableEdgeNode
+			);
 			break;
 		case EDialogueTreeNodeTextType::FloatClassVariableDialogue:
 			// List the graph nodes for the dialogue that contains this UClass float variable
-			AddGraphNodeBaseChildrenToItemFromProperty(Item,
+			AddGraphNodeBaseChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetClassFloats().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FloatVariableGraphNode, EDialogueTreeNodeTextType::FloatVariableEdgeNode);
+				EDialogueTreeNodeTextType::FloatVariableGraphNode, EDialogueTreeNodeTextType::FloatVariableEdgeNode
+			);
 			break;
 		case EDialogueTreeNodeTextType::BoolClassVariableDialogue:
 			// List the graph nodes for the dialogue that contains this UClass bool variable
-			AddGraphNodeBaseChildrenToItemFromProperty(Item,
+			AddGraphNodeBaseChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetClassBools().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::BoolVariableGraphNode, EDialogueTreeNodeTextType::BoolVariableEdgeNode);
+				EDialogueTreeNodeTextType::BoolVariableGraphNode, EDialogueTreeNodeTextType::BoolVariableEdgeNode
+			);
 			break;
 		case EDialogueTreeNodeTextType::FNameClassVariableDialogue:
 			// List the graph nodes for the dialogue that contains this UClass FName variable
-			AddGraphNodeBaseChildrenToItemFromProperty(Item,
+			AddGraphNodeBaseChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetClassFNames().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FNameVariableGraphNode, EDialogueTreeNodeTextType::FNameVariableEdgeNode);
+				EDialogueTreeNodeTextType::FNameVariableGraphNode, EDialogueTreeNodeTextType::FNameVariableEdgeNode
+			);
 			break;
 
 		case EDialogueTreeNodeTextType::FTextClassVariableDialogue:
 			// List the graph nodes for the dialogue that contains this UClass FText variable
-			AddGraphNodeBaseChildrenToItemFromProperty(Item,
+			AddGraphNodeBaseChildrenToItemFromProperty(
+				Item,
 				ParticipantProperties->GetClassFTexts().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FTextVariableGraphNode, EDialogueTreeNodeTextType::FTextVariableEdgeNode);
+				EDialogueTreeNodeTextType::FTextVariableGraphNode, EDialogueTreeNodeTextType::FTextVariableEdgeNode
+			);
 			break;
 
 		default:
@@ -1097,12 +1184,14 @@ TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(
 
 	if (bIsCategory)
 	{
-		TableRow = SNew(SCategoryHeaderTableRow<TSharedPtr<FDialogueBrowserTreeNode>>, OwnerTable)
-				.Visibility(InItem->IsVisible() ? EVisibility::Visible : EVisibility::Collapsed);
+		TableRow =
+			SNew(SCategoryHeaderTableRow<TSharedPtr<FDialogueBrowserTreeNode>>, OwnerTable)
+			.Visibility(InItem->IsVisible() ? EVisibility::Visible : EVisibility::Collapsed);
 	}
 	else
 	{
-		TableRow = SNew(STableRow<TSharedPtr<FDialogueBrowserTreeNode>>, OwnerTable)
+		TableRow =
+			SNew(STableRow<TSharedPtr<FDialogueBrowserTreeNode>>, OwnerTable)
 			.Padding(1.0f)
 			.Visibility(InItem->IsVisible() ? EVisibility::Visible : EVisibility::Collapsed)
 			.ShowSelection(!bIsSeparator);
@@ -1117,10 +1206,11 @@ TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(
 	}
 
 	// Default row content
-	TSharedPtr<STextBlock> DefaultTextBlock = SNew(STextBlock)
-			.Text(InItem->GetDisplayText())
-			.HighlightText(this, &Self::GetFilterText)
-			.Font(DEFAULT_FONT("Regular", 10));
+	TSharedPtr<STextBlock> DefaultTextBlock =
+		SNew(STextBlock)
+		.Text(InItem->GetDisplayText())
+		.HighlightText(this, &Self::GetFilterText)
+		.Font(DEFAULT_FONT("Regular", 10));
 
 	TSharedPtr<SWidget> RowContent = DefaultTextBlock;
 	TSharedPtr<SHorizontalBox> RowContainer;
@@ -1219,13 +1309,17 @@ TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(
 		}
 		else if (InItem->IsEventText())
 		{
-			RowContent = MakeIconAndTextWidget(InItem->GetDisplayText(),
-				FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_EventIcon));
+			RowContent = MakeIconAndTextWidget(
+				InItem->GetDisplayText(),
+				FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_EventIcon)
+			);
 		}
 		else if (InItem->IsConditionText())
 		{
-			RowContent = MakeIconAndTextWidget(InItem->GetDisplayText(),
-				FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_ConditionIcon));
+			RowContent = MakeIconAndTextWidget(
+				InItem->GetDisplayText(),
+				FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_ConditionIcon)
+			);
 		}
 		else if (InItem->IsGraphNodeText() || InItem->IsEdgeNodeText())
 		{
@@ -1364,7 +1458,9 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeParticipantCa
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasDialogues()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Dialogues")), Parent, EDialogueTreeNodeCategoryType::Dialogue
+			FText::FromString(TEXT("Dialogues")),
+			Parent,
+			EDialogueTreeNodeCategoryType::Dialogue
 		);
 		Categories.Add(Category);
 	}
@@ -1372,7 +1468,9 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeParticipantCa
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasEvents()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Events")), Parent, EDialogueTreeNodeCategoryType::Event
+			FText::FromString(TEXT("Events")),
+			Parent,
+			EDialogueTreeNodeCategoryType::Event
 		);
 		Categories.Add(Category);
 	}
@@ -1380,7 +1478,9 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeParticipantCa
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasConditions()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Conditions")), Parent, EDialogueTreeNodeCategoryType::Condition
+			FText::FromString(TEXT("Conditions")),
+			Parent,
+			EDialogueTreeNodeCategoryType::Condition
 		);
 		Categories.Add(Category);
 	}
@@ -1388,7 +1488,9 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeParticipantCa
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasDialogueValues()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Dialogue Values")), Parent, EDialogueTreeNodeCategoryType::Variable
+			FText::FromString(TEXT("Dialogue Values")),
+			Parent,
+			EDialogueTreeNodeCategoryType::Variable
 		);
 		Categories.Add(Category);
 	}
@@ -1396,7 +1498,9 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeParticipantCa
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassVariables()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Class Variables")), Parent, EDialogueTreeNodeCategoryType::ClassVariable
+			FText::FromString(TEXT("Class Variables")),
+			Parent,
+			EDialogueTreeNodeCategoryType::ClassVariable
 		);
 		Categories.Add(Category);
 	}
@@ -1413,7 +1517,9 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeVariableCateg
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasIntegers()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Integers")), Parent, EDialogueTreeNodeCategoryType::VariableInt
+			FText::FromString(TEXT("Integers")),
+			Parent,
+			EDialogueTreeNodeCategoryType::VariableInt
 		);
 		Categories.Add(Category);
 	}
@@ -1421,7 +1527,9 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeVariableCateg
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasFloats()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Floats")), Parent, EDialogueTreeNodeCategoryType::VariableFloat
+			FText::FromString(TEXT("Floats")),
+			Parent,
+			EDialogueTreeNodeCategoryType::VariableFloat
 		);
 		Categories.Add(Category);
 	}
@@ -1429,7 +1537,9 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeVariableCateg
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasBools()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Bools")), Parent, EDialogueTreeNodeCategoryType::VariableBool
+			FText::FromString(TEXT("Bools")),
+			Parent,
+			EDialogueTreeNodeCategoryType::VariableBool
 		);
 		Categories.Add(Category);
 	}
@@ -1437,7 +1547,9 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeVariableCateg
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasFNames()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("FNames")), Parent, EDialogueTreeNodeCategoryType::VariableFName
+			FText::FromString(TEXT("FNames")),
+			Parent,
+			EDialogueTreeNodeCategoryType::VariableFName
 		);
 		Categories.Add(Category);
 	}
@@ -1456,7 +1568,9 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeClassVariable
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassIntegers()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Integers")), Parent, EDialogueTreeNodeCategoryType::ClassVariableInt
+			FText::FromString(TEXT("Integers")),
+			Parent,
+			EDialogueTreeNodeCategoryType::ClassVariableInt
 		);
 		Categories.Add(Category);
 	}
@@ -1464,7 +1578,9 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeClassVariable
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassFloats()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Floats")), Parent, EDialogueTreeNodeCategoryType::ClassVariableFloat
+			FText::FromString(TEXT("Floats")),
+			Parent,
+			EDialogueTreeNodeCategoryType::ClassVariableFloat
 		);
 		Categories.Add(Category);
 	}
@@ -1472,7 +1588,9 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeClassVariable
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassBools()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("Bools")), Parent, EDialogueTreeNodeCategoryType::ClassVariableBool
+			FText::FromString(TEXT("Bools")),
+			Parent,
+			EDialogueTreeNodeCategoryType::ClassVariableBool
 		);
 		Categories.Add(Category);
 	}
@@ -1480,7 +1598,9 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeClassVariable
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassFNames()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("FNames")), Parent, EDialogueTreeNodeCategoryType::ClassVariableFName
+			FText::FromString(TEXT("FNames")),
+			Parent,
+			EDialogueTreeNodeCategoryType::ClassVariableFName
 		);
 		Categories.Add(Category);
 	}
@@ -1488,7 +1608,9 @@ TArray<TSharedPtr<FDialogueBrowserTreeNode>> SDialogueBrowser::MakeClassVariable
 	if (!bHideEmptyCategories || (bHideEmptyCategories && ParticipantProperties->HasClassFTexts()))
 	{
 		TSharedPtr<FDialogueBrowserTreeNode> Category = MakeShared<FDialogueBrowserTreeCategoryNode>(
-			FText::FromString(TEXT("FTexts")), Parent, EDialogueTreeNodeCategoryType::ClassVariableFText
+			FText::FromString(TEXT("FTexts")),
+			Parent,
+			EDialogueTreeNodeCategoryType::ClassVariableFText
 		);
 		Categories.Add(Category);
 	}
