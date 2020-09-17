@@ -139,10 +139,59 @@ public:
 	bool IsSecondParticipantInvolved() const;
 
 	// Does this Condition have a IntValue which is in fact a NodeIndex
-	bool HasNodeIndex() const
+	static bool HasNodeIndex(EDlgConditionType ConditionType)
 	{
 		return ConditionType == EDlgConditionType::WasNodeVisited
 			|| ConditionType == EDlgConditionType::HasSatisfiedChild;
+	}
+
+	// Is this a Condition which has a Dialogue Value
+	// NOTE: without EDlgConditionType::EventCall, for that call HasParticipantInterfaceValue
+	static bool HasDialogueValue(EDlgConditionType Type)
+	{
+		return Type == EDlgConditionType::BoolCall
+		    || Type == EDlgConditionType::FloatCall
+		    || Type == EDlgConditionType::IntCall
+		    || Type == EDlgConditionType::NameCall;
+	}
+
+	// Same as HasDialogueValue but also Has the Event
+	static bool HasParticipantInterfaceValue(EDlgConditionType Type)
+	{
+		return Type == EDlgConditionType::EventCall || HasDialogueValue(Type);
+	}
+
+	// Is this a Condition which has a Class Variable
+	static bool HasClassVariable(EDlgConditionType Type)
+	{
+		return Type == EDlgConditionType::ClassBoolVariable
+            || Type == EDlgConditionType::ClassFloatVariable
+            || Type == EDlgConditionType::ClassIntVariable
+            || Type == EDlgConditionType::ClassNameVariable;
+	}
+
+	// Does the type for FirstType and SecondType match?
+	// Aka are both for int, float, bool, name?
+	static bool IsSameValueType(EDlgConditionType FirstType, EDlgConditionType SecondType)
+	{
+		if (FirstType == EDlgConditionType::BoolCall || FirstType == EDlgConditionType::ClassBoolVariable)
+		{
+			return SecondType == EDlgConditionType::BoolCall || SecondType == EDlgConditionType::ClassBoolVariable;
+		}
+		if (FirstType == EDlgConditionType::IntCall || FirstType == EDlgConditionType::ClassIntVariable)
+		{
+			return SecondType == EDlgConditionType::IntCall || SecondType == EDlgConditionType::ClassIntVariable;
+		}
+		if (FirstType == EDlgConditionType::FloatCall || FirstType == EDlgConditionType::ClassFloatVariable)
+		{
+			return SecondType == EDlgConditionType::FloatCall || SecondType == EDlgConditionType::ClassFloatVariable;
+		}
+		if (FirstType == EDlgConditionType::NameCall || FirstType == EDlgConditionType::ClassNameVariable)
+		{
+			return SecondType == EDlgConditionType::NameCall || SecondType == EDlgConditionType::ClassNameVariable;
+		}
+
+		return false;
 	}
 
 	static FString ConditionTypeToString(EDlgConditionType Type);

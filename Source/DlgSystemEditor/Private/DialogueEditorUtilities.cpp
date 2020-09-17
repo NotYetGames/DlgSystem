@@ -809,7 +809,7 @@ void FDialogueEditorUtilities::RemapOldIndicesWithNewAndUpdateGUID(
 		for (int32 ConditionIndex = 0, ConditionNum = DialogueNode->GetNodeEnterConditions().Num(); ConditionIndex < ConditionNum; ConditionIndex++)
 		{
 			FDlgCondition* EnterCondition = DialogueNode->GetMutableEnterConditionAt(ConditionIndex);
-			if (EnterCondition->HasNodeIndex())
+			if (FDlgCondition::HasNodeIndex(EnterCondition->ConditionType))
 			{
 				UpdateConditionIndex(EnterCondition);
 				EnterCondition->GUID = Nodes[EnterCondition->IntValue]->GetGUID();
@@ -824,7 +824,7 @@ void FDialogueEditorUtilities::RemapOldIndicesWithNewAndUpdateGUID(
 
 			for (FDlgCondition& Condition : DialogueEdge->Conditions)
 			{
-				if (Condition.HasNodeIndex())
+				if (FDlgCondition::HasNodeIndex(Condition.ConditionType))
 				{
 					bModifiedConditions = UpdateConditionIndex(&Condition) || bModifiedConditions;
 					Condition.GUID = Nodes[Condition.IntValue]->GetGUID();
@@ -1046,4 +1046,3 @@ UEdGraphNode_Comment* FDialogueEditorUtilities::BlueprintAddComment(UBlueprint* 
 
 	return nullptr;
 }
-

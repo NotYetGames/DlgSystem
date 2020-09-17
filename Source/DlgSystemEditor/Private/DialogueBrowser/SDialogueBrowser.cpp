@@ -932,14 +932,16 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 			AddGraphNodeBaseChildrenToItemFromProperty(
 				Item,
 				ParticipantProperties->GetEvents().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::EventGraphNode, EDialogueTreeNodeTextType::EventGraphNode
+				EDialogueTreeNodeTextType::EventGraphNode,
+				EDialogueTreeNodeTextType::EventGraphNode
 			);
 			break;
 		case EDialogueTreeNodeTextType::ConditionDialogue:
 			// List the graph nodes for the dialogue that contains this condition
 			AddGraphNodeBaseChildrenToItemFromProperty(Item,
 				ParticipantProperties->GetConditions().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::ConditionGraphNode, EDialogueTreeNodeTextType::ConditionEdgeNode);
+				EDialogueTreeNodeTextType::ConditionGraphNode,
+				EDialogueTreeNodeTextType::ConditionEdgeNode);
 			break;
 
 		case EDialogueTreeNodeTextType::IntVariableDialogue:
@@ -947,7 +949,8 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 			AddGraphNodeBaseChildrenToItemFromProperty(
 				Item,
 				ParticipantProperties->GetIntegers().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::IntVariableGraphNode, EDialogueTreeNodeTextType::IntVariableEdgeNode
+				EDialogueTreeNodeTextType::IntVariableGraphNode,
+				EDialogueTreeNodeTextType::IntVariableEdgeNode
 			);
 			break;
 		case EDialogueTreeNodeTextType::FloatVariableDialogue:
@@ -955,7 +958,8 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 			AddGraphNodeBaseChildrenToItemFromProperty(
 				Item,
 				ParticipantProperties->GetFloats().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FloatVariableGraphNode, EDialogueTreeNodeTextType::FloatVariableEdgeNode
+				EDialogueTreeNodeTextType::FloatVariableGraphNode,
+				EDialogueTreeNodeTextType::FloatVariableEdgeNode
 			);
 			break;
 		case EDialogueTreeNodeTextType::BoolVariableDialogue:
@@ -963,7 +967,8 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 			AddGraphNodeBaseChildrenToItemFromProperty(
 				Item,
 				ParticipantProperties->GetBools().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::BoolVariableGraphNode, EDialogueTreeNodeTextType::BoolVariableEdgeNode
+				EDialogueTreeNodeTextType::BoolVariableGraphNode,
+				EDialogueTreeNodeTextType::BoolVariableEdgeNode
 			);
 			break;
 		case EDialogueTreeNodeTextType::FNameVariableDialogue:
@@ -971,7 +976,8 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 			AddGraphNodeBaseChildrenToItemFromProperty(
 				Item,
 				ParticipantProperties->GetFNames().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FNameVariableGraphNode, EDialogueTreeNodeTextType::FNameVariableEdgeNode
+				EDialogueTreeNodeTextType::FNameVariableGraphNode,
+				EDialogueTreeNodeTextType::FNameVariableEdgeNode
 			);
 			break;
 
@@ -980,7 +986,8 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 			AddGraphNodeBaseChildrenToItemFromProperty(
 				Item,
 				ParticipantProperties->GetClassIntegers().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::IntVariableGraphNode, EDialogueTreeNodeTextType::IntVariableEdgeNode
+				EDialogueTreeNodeTextType::IntVariableGraphNode,
+				EDialogueTreeNodeTextType::IntVariableEdgeNode
 			);
 			break;
 		case EDialogueTreeNodeTextType::FloatClassVariableDialogue:
@@ -988,7 +995,8 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 			AddGraphNodeBaseChildrenToItemFromProperty(
 				Item,
 				ParticipantProperties->GetClassFloats().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FloatVariableGraphNode, EDialogueTreeNodeTextType::FloatVariableEdgeNode
+				EDialogueTreeNodeTextType::FloatVariableGraphNode,
+				EDialogueTreeNodeTextType::FloatVariableEdgeNode
 			);
 			break;
 		case EDialogueTreeNodeTextType::BoolClassVariableDialogue:
@@ -996,7 +1004,8 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 			AddGraphNodeBaseChildrenToItemFromProperty(
 				Item,
 				ParticipantProperties->GetClassBools().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::BoolVariableGraphNode, EDialogueTreeNodeTextType::BoolVariableEdgeNode
+				EDialogueTreeNodeTextType::BoolVariableGraphNode,
+				EDialogueTreeNodeTextType::BoolVariableEdgeNode
 			);
 			break;
 		case EDialogueTreeNodeTextType::FNameClassVariableDialogue:
@@ -1004,7 +1013,8 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 			AddGraphNodeBaseChildrenToItemFromProperty(
 				Item,
 				ParticipantProperties->GetClassFNames().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FNameVariableGraphNode, EDialogueTreeNodeTextType::FNameVariableEdgeNode
+				EDialogueTreeNodeTextType::FNameVariableGraphNode,
+				EDialogueTreeNodeTextType::FNameVariableEdgeNode
 			);
 			break;
 
@@ -1013,7 +1023,8 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 			AddGraphNodeBaseChildrenToItemFromProperty(
 				Item,
 				ParticipantProperties->GetClassFTexts().Find(Item->GetParentVariableName()),
-				EDialogueTreeNodeTextType::FTextVariableGraphNode, EDialogueTreeNodeTextType::FTextVariableEdgeNode
+				EDialogueTreeNodeTextType::FTextVariableGraphNode,
+				EDialogueTreeNodeTextType::FTextVariableEdgeNode
 			);
 			break;
 

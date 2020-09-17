@@ -78,11 +78,36 @@ public:
 	// Participant is expected to implement IDlgDialogueParticipant interface
 	void Call(UDlgContext& Context, const FString& ContextString, UObject* Participant) const;
 
-	static FString EventTypeToString(EDlgEventType Type);
-
 	FString GetCustomEventName() const
 	{
 		return CustomEvent ? CustomEvent->GetName() : TEXT("INVALID");
+	}
+
+	static FString EventTypeToString(EDlgEventType Type);
+
+	// Is this a Condition which has a Dialogue Value
+	// NOTE: without EDlgConditionType::EventCall, for that call HasParticipantInterfaceValue
+	static bool HasDialogueValue(EDlgEventType Type)
+	{
+		return Type == EDlgEventType::ModifyBool
+            || Type == EDlgEventType::ModifyFloat
+            || Type == EDlgEventType::ModifyInt
+            || Type == EDlgEventType::ModifyName;
+	}
+
+	// Same as HasDialogueValue but also Has the Event
+	static bool HasParticipantInterfaceValue(EDlgEventType Type)
+	{
+		return Type == EDlgEventType::Event || HasDialogueValue(Type);
+	}
+
+	// Is this a Condition which has a Class Variable
+	static bool HasClassVariable(EDlgEventType Type)
+	{
+		return Type == EDlgEventType::ModifyClassBoolVariable
+            || Type == EDlgEventType::ModifyClassFloatVariable
+            || Type == EDlgEventType::ModifyClassIntVariable
+            || Type == EDlgEventType::ModifyClassNameVariable;
 	}
 
 protected:

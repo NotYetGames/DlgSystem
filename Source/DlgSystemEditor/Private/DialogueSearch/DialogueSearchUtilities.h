@@ -194,10 +194,19 @@ public:
 	{
 		for (const FDlgCondition& Condition : Conditions)
 		{
-			if (Condition.ConditionType == ConditionType &&
-				(Condition.CallbackName == ConditionName || Condition.OtherVariableName == ConditionName))
+			// Matches the First participant
+			if (Condition.CallbackName == ConditionName && Condition.ConditionType == ConditionType)
 			{
 				return true;
+			}
+
+			// Matches the second Participant
+			if (Condition.CompareType != EDlgCompare::ToConst && Condition.OtherVariableName == ConditionName)
+			{
+				if (FDlgCondition::IsSameValueType(ConditionType, Condition.ConditionType))
+				{
+					return true;
+				}
 			}
 		}
 		return false;

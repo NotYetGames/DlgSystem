@@ -70,39 +70,25 @@ protected:
 	bool IsEventTypeForADialogueValue() const
 	{
 		const EDlgEventType EventType = GetEventType();
-		return EventType == EDlgEventType::Event
-			|| EventType == EDlgEventType::ModifyBool
-			|| EventType == EDlgEventType::ModifyFloat
-			|| EventType == EDlgEventType::ModifyInt
-			|| EventType == EDlgEventType::ModifyName;
+		return FDlgEvent::HasParticipantInterfaceValue(EventType);
 	}
 
 	bool IsEventTypeForAClassVariable() const
 	{
 		const EDlgEventType EventType = GetEventType();
-		return EventType == EDlgEventType::ModifyClassBoolVariable
-			|| EventType == EDlgEventType::ModifyClassFloatVariable
-			|| EventType == EDlgEventType::ModifyClassIntVariable
-			|| EventType == EDlgEventType::ModifyClassNameVariable;
+		return FDlgEvent::HasClassVariable(EventType);
 	}
 
 	bool IsConditionTypeForADialogueValue() const
 	{
 		const EDlgConditionType ConditionType = GetConditionType();
-		return ConditionType == EDlgConditionType::EventCall
-			|| ConditionType == EDlgConditionType::BoolCall
-			|| ConditionType == EDlgConditionType::FloatCall
-			|| ConditionType == EDlgConditionType::IntCall
-			|| ConditionType == EDlgConditionType::NameCall;
+		return FDlgCondition::HasParticipantInterfaceValue(ConditionType);
 	}
 
 	bool IsConditionTypeForAClassVariable() const
 	{
 		const EDlgConditionType ConditionType = GetConditionType();
-		return ConditionType == EDlgConditionType::ClassBoolVariable
-			|| ConditionType == EDlgConditionType::ClassFloatVariable
-			|| ConditionType == EDlgConditionType::ClassIntVariable
-			|| ConditionType == EDlgConditionType::ClassNameVariable;
+		return FDlgCondition::HasClassVariable(ConditionType);
 	}
 
 	uint8 GetEnumValue() const;
