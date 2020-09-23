@@ -919,6 +919,56 @@ bool FDialogueEditorUtilities::PickChildrenOfClass(const FText& TitleText, UClas
 	return SClassPickerDialog::PickClass(TitleText, Options, OutChosenClass, Class);
 }
 
+bool FDialogueEditorUtilities::OpenBlueprintEditor(
+    UBlueprint* Blueprint,
+    EDialogueBlueprintOpenType OpenType,
+    FName FunctionNameToOpen,
+    bool bForceFullEditor,
+	bool bAddBlueprintFunctionIfItDoesNotExist
+)
+{
+	if (!Blueprint)
+	{
+		return false;
+	}
+
+	Blueprint->bForceFullEditor = bForceFullEditor;
+
+	// Find Function Graph
+	UObject* ObjectToFocusOn = nullptr;
+	if (OpenType != EDialogueBlueprintOpenType::None && FunctionNameToOpen != NAME_None)
+	{
+		UClass* Class = Blueprint->GeneratedClass;
+		check(Class);
+
+		if (OpenType == EDialogueBlueprintOpenType::Function)
+		{
+			ObjectToFocusOn = bAddBlueprintFunctionIfItDoesNotExist
+                ? BlueprintGetOrAddFunction(Blueprint, FunctionNameToOpen, Class)
+                : BlueprintGetFunction(Blueprint, FunctionNameToOpen, Class);
+		}
+		else if (OpenType == EDialogueBlueprintOpenType::Event)
+		{
+			ObjectToFocusOn = bAddBlueprintFunctionIfItDoesNotExist
+                ? BlueprintGetOrAddEvent(Blueprint, FunctionNameToOpen, Class)
+                : BlueprintGetEvent(Blueprint, FunctionNameToOpen, Class);
+		}
+	}
+
+	// Default to the last uber graph
+	if (ObjectToFocusOn == nullptr)
+	{
+		ObjectToFocusOn = Blueprint->GetLastEditedUberGraph();
+	}
+	if (ObjectToFocusOn)
+	{
+		FKismetEditorUtilities::BringKismetToFocusAttentionOnObject(ObjectToFocusOn);
+		return true;
+	}
+
+	return OpenEditorForAsset(Blueprint);
+}
+
 UEdGraph* FDialogueEditorUtilities::BlueprintGetOrAddFunction(UBlueprint* Blueprint, FName FunctionName, UClass* FunctionClassSignature)
 {
 	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)

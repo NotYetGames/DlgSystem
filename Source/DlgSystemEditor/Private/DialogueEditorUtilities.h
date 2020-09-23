@@ -9,6 +9,13 @@
 #include "DialogueEditor/Graph/DialogueGraph.h"
 #include "Nodes/DlgNode.h"
 
+enum class EDialogueBlueprintOpenType : uint8
+{
+	None = 0,
+    Function,
+    Event
+};
+
 //////////////////////////////////////////////////////////////////////////
 // FDialogueEditorUtilities
 
@@ -233,6 +240,16 @@ public:
 	* @return true if OK was pressed, false otherwise
 	*/
 	static bool PickChildrenOfClass(const FText& TitleText, UClass*& OutChosenClass, UClass* Class);
+
+	// Opens the specified Blueprint at the last edited graph by default
+	// or if the OpenType is set to Function or Event it opens that with the FunctionNameToOpen
+	static bool OpenBlueprintEditor(
+        UBlueprint* Blueprint,
+        EDialogueBlueprintOpenType OpenType = EDialogueBlueprintOpenType::None,
+        FName FunctionNameToOpen = NAME_None,
+        bool bForceFullEditor = true,
+        bool bAddBlueprintFunctionIfItDoesNotExist = false
+    );
 
 	// Adds the function if it does not exist
 	// Return the Function Graph of the existing function or the newly created one

@@ -52,6 +52,12 @@ public:
 		return AddDialogueToVariable(&Events, EventName, Dialogue);
 	}
 
+	// Returns the EventClass Property
+	TSharedPtr<VariablePropertyType> AddDialogueToCustomEvent(UClass* EventClass, TWeakObjectPtr<const UDlgDialogue> Dialogue)
+	{
+		return AddDialogueToVariable<UClass*>(&CustomEvents, EventClass, Dialogue);
+	}
+
 	// Returns the ConditionName Property
 	TSharedPtr<VariablePropertyType> AddDialogueToCondition(FName ConditionName, TWeakObjectPtr<const UDlgDialogue> Dialogue)
 	{
@@ -115,6 +121,7 @@ public:
 	// Getters
 	const TSet<TWeakObjectPtr<const UDlgDialogue>>& GetDialogues() const { return Dialogues; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetEvents() const { return Events; }
+	const TMap<UClass*, TSharedPtr<VariablePropertyType>>& GetCustomEvents() const { return CustomEvents; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetConditions() const { return Conditions; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetIntegers() const { return Integers; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetFloats() const { return Floats; }
@@ -140,6 +147,7 @@ public:
 
 	bool HasDialogues() const { return Dialogues.Num() > 0; }
 	bool HasEvents() const { return Events.Num() > 0; }
+	bool HasCustomEvents() const { return CustomEvents.Num() > 0; }
 	bool HasConditions() const { return Conditions.Num() > 0; }
 	bool HasIntegers() const { return Integers.Num() > 0; }
 	bool HasFloats() const { return Floats.Num() > 0; }
@@ -152,20 +160,21 @@ public:
 	bool HasClassFTexts() const { return ClassFTexts.Num() > 0; }
 
 protected:
+	template <typename KeyType>
 	TSharedPtr<VariablePropertyType> AddDialogueToVariable(
-		TMap<FName, TSharedPtr<VariablePropertyType>>* VariableMap,
-		FName VariableName,
+		TMap<KeyType, TSharedPtr<VariablePropertyType>>* VariableMap,
+		KeyType VariableKeyValue,
 		TWeakObjectPtr<const UDlgDialogue> Dialogue
 	)
 	{
-		TSharedPtr<VariablePropertyType>* VariablePropsPtr = VariableMap->Find(VariableName);
+		TSharedPtr<VariablePropertyType>* VariablePropsPtr = VariableMap->Find(VariableKeyValue);
 		TSharedPtr<VariablePropertyType> VariableProps;
 		if (VariablePropsPtr == nullptr)
 		{
 			// Variable does not exist for participant, create it
 			const TSet<TWeakObjectPtr<const UDlgDialogue>> SetArgument{Dialogue};
 			VariableProps = MakeShared<VariablePropertyType>(SetArgument);
-			VariableMap->Add(VariableName, VariableProps);
+			VariableMap->Add(VariableKeyValue, VariableProps);
 		}
 		else
 		{
@@ -190,6 +199,13 @@ protected:
 	 * Value: The properties of this event
 	 */
 	TMap<FName, TSharedPtr<VariablePropertyType>> Events;
+
+	/**
+	 * Custom Events that belong to this participant
+	 * Key: Custom Event Class
+	 * Value: The properties of this event
+	 */
+	TMap<UClass*, TSharedPtr<VariablePropertyType>> CustomEvents;
 
 	/**
 	 * Conditions that belong to this participant

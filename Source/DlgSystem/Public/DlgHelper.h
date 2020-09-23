@@ -234,6 +234,15 @@ public:
 		return Object->GetClass()->GetName();
 	}
 
+	// Removes _C from the end of the Name
+	// And removes the .extension from the path names
+	static FString CleanObjectName(FString Name);
+
+	// Blueprint Helpers
+	static bool IsClassIgnored(const UClass* Class);
+	static bool IsABlueprintClass(const UClass* Class);
+	static bool IsABlueprintObject(const UObject* Object);
+
 	// This also works with Blueprints
 	static bool IsObjectAChildOf(const UObject* Object, const UClass* ParentClass);
 

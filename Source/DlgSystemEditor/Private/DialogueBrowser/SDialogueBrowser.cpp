@@ -17,8 +17,11 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueBrowserUtilities.h"
+#include "SourceCodeNavigation.h"
+#include "Engine/BlueprintGeneratedClass.h"
 #include "TreeViewHelpers/DlgTreeViewHelper.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
+#include "Kismet2/KismetEditorUtilities.h"
 
 #define LOCTEXT_NAMESPACE "SDialogueBrowser"
 #define DEFAULT_FONT(...) FCoreStyle::GetDefaultFontStyle(__VA_ARGS__)
@@ -305,6 +308,18 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 				PopulateVariablePropertiesFromSearchResult(
 					ParticipantProps->AddDialogueToEvent(EventName, Dialogue),
 					FDialogueSearchUtilities::GetGraphNodesForEventEventName(EventName, Dialogue),
+					DialogueGUID
+				);
+			}
+
+			// Populate Custom events
+			TSet<UClass*> CustomEventsClasses;
+			Dialogue->GetCustomEvents(ParticipantName, CustomEventsClasses);
+			for (UClass* EventClass : CustomEventsClasses)
+			{
+				PopulateVariablePropertiesFromSearchResult(
+					ParticipantProps->AddDialogueToCustomEvent(EventClass, Dialogue),
+					FDialogueSearchUtilities::GetGraphNodesForCustomEvent(EventClass, Dialogue),
 					DialogueGUID
 				);
 			}
@@ -729,6 +744,19 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 				EventItem->SetTextType(EDialogueTreeNodeTextType::ParticipantEvent);
 				Item->AddChild(EventItem);
 			}
+
+			// Display the custom events for this category
+			for (const auto& Pair : ParticipantProperties->GetCustomEvents())
+			{
+				UClass* Class = Pair.Key;
+				const TSharedPtr<FDialogueBrowserTreeNode> CustomEventItem = MakeShared<FDialogueBrowserTreeCustomObjectNode>(
+					FText::FromString(FDlgHelper::CleanObjectName(Class->GetPathName())),
+					Item,
+					Class
+				);
+				CustomEventItem->SetTextType(EDialogueTreeNodeTextType::ParticipantCustomEvent);
+				Item->AddChild(CustomEventItem);
+			}
 			break;
 		}
 		case EDialogueTreeNodeCategoryType::Condition:
@@ -844,6 +872,16 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 				EDialogueTreeNodeTextType::EventDialogue
 			);
 			break;
+
+		case EDialogueTreeNodeTextType::ParticipantCustomEvent:
+			// List the dialogues that contain this event for this custom event participant
+			AddDialogueChildrenToItemFromProperty(
+				Item,
+				ParticipantProperties->GetCustomEvents().Find(Item->GetParentClass()),
+				EDialogueTreeNodeTextType::CustomEventDialogue
+			);
+			break;
+
 		case EDialogueTreeNodeTextType::ParticipantCondition:
 			// List the dialogues that contain this condition for this participant
 			AddDialogueChildrenToItemFromProperty(
@@ -936,6 +974,17 @@ void SDialogueBrowser::BuildTreeViewItem(const TSharedPtr<FDialogueBrowserTreeNo
 				EDialogueTreeNodeTextType::EventGraphNode
 			);
 			break;
+
+		case EDialogueTreeNodeTextType::CustomEventDialogue:
+			// List the graph nodes for the dialogue that contains this event
+			AddGraphNodeBaseChildrenToItemFromProperty(
+				Item,
+				ParticipantProperties->GetCustomEvents().Find(Item->GetParentClass()),
+				EDialogueTreeNodeTextType::CustomEventGraphNode,
+				EDialogueTreeNodeTextType::CustomEventGraphNode
+			);
+			break;
+
 		case EDialogueTreeNodeTextType::ConditionDialogue:
 			// List the graph nodes for the dialogue that contains this condition
 			AddGraphNodeBaseChildrenToItemFromProperty(Item,
@@ -1325,6 +1374,14 @@ TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(
 				FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_EventIcon)
 			);
 		}
+		else if (InItem->IsCustomEventText())
+		{
+			RowContent = MakeCustomObjectIconAndTextWidget(
+                InItem->GetDisplayText(),
+                FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_EventIcon),
+                InItem->GetParentClass()
+            );
+		}
 		else if (InItem->IsConditionText())
 		{
 			RowContent = MakeIconAndTextWidget(
@@ -1660,6 +1717,150 @@ TSharedRef<SHorizontalBox> SDialogueBrowser::MakeIconAndTextWidget(
 			.Text(InText)
 			.HighlightText(this, &Self::GetFilterText)
 		];
+}
+
+TSharedRef<SHorizontalBox> SDialogueBrowser::MakeCustomObjectIconAndTextWidget(
+    const FText& InText,
+    const FSlateBrush* IconBrush,
+    UClass* Class,
+    int32 IconSize
+)
+{
+	TSharedRef<SHorizontalBox> HorizontalBox = MakeIconAndTextWidget(InText, IconBrush, IconSize);
+
+	// Browse Asset
+	HorizontalBox->AddSlot()
+    .AutoWidth()
+    .VAlign(VAlign_Center)
+    .Padding(4.f)
+    [
+        SNew(SButton)
+        .ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
+        .ToolTipText_Static(&Self::GetBrowseAssetText, Class)
+        .ContentPadding(4.f)
+        .ForegroundColor(FSlateColor::UseForeground())
+        .Visibility_Static(&Self::GetBrowseAssetButtonVisibility, Class)
+        .OnClicked_Static(&Self::OnBrowseAssetClicked, Class)
+        [
+            SNew(SImage)
+            .Image(FEditorStyle::GetBrush("PropertyWindow.Button_Browse"))
+            .ColorAndOpacity(FSlateColor::UseForeground())
+        ]
+    ];
+
+	// Jump to Object
+	HorizontalBox->AddSlot()
+    .AutoWidth()
+    .VAlign(VAlign_Center)
+    .Padding(4.f, 2.f)
+    [
+        SNew(SButton)
+        .ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
+        .ToolTipText_Static(&Self::GetJumpToAssetText, Class)
+        .ContentPadding(4.f)
+        .ForegroundColor(FSlateColor::UseForeground())
+        .Visibility_Static(&Self::GetOpenAssetButtonVisibility, Class)
+        .OnClicked_Static(&Self::OnOpenAssetClicked, Class)
+        [
+            SNew(SImage)
+             .Image(FEditorStyle::GetBrush("PropertyWindow.Button_Edit"))
+             .ColorAndOpacity( FSlateColor::UseForeground() )
+        ]
+    ];
+
+	return HorizontalBox;
+}
+
+EVisibility SDialogueBrowser::GetOpenAssetButtonVisibility(UClass* Class)
+{
+	// Blueprint, always visible
+	if (FDlgHelper::IsABlueprintClass(Class))
+	{
+		return EVisibility::Visible;
+	}
+
+	// Native
+	return FSourceCodeNavigation::CanNavigateToClass(Class) ? EVisibility::Visible : EVisibility::Collapsed;
+}
+
+EVisibility SDialogueBrowser::GetBrowseAssetButtonVisibility(UClass* Class)
+{
+	// Blueprint, always Visible
+	if (FDlgHelper::IsABlueprintClass(Class))
+	{
+		return EVisibility::Visible;
+	}
+
+	// Native Hide
+	return EVisibility::Collapsed;
+}
+
+FReply SDialogueBrowser::OnBrowseAssetClicked(UClass* Class)
+{
+	UBlueprint* Blueprint = nullptr;
+	if (const UBlueprintGeneratedClass* BlueprintClass = Cast<UBlueprintGeneratedClass>(Class))
+	{
+		Blueprint = Cast<UBlueprint>(BlueprintClass->ClassGeneratedBy);
+	}
+
+	static constexpr bool bFocusContentBrowser = true;
+	TArray<UObject*> ObjectsToSyncTo;
+	if (Blueprint)
+	{
+		ObjectsToSyncTo.Add(Blueprint);
+	}
+	GEditor->SyncBrowserToObjects(ObjectsToSyncTo, bFocusContentBrowser);
+
+	return FReply::Handled();
+}
+
+FReply SDialogueBrowser::OnOpenAssetClicked(UClass* Class)
+{
+	UBlueprint* Blueprint = nullptr;
+	if (const UBlueprintGeneratedClass* BlueprintClass = Cast<UBlueprintGeneratedClass>(Class))
+	{
+		Blueprint = Cast<UBlueprint>(BlueprintClass->ClassGeneratedBy);
+	}
+
+	if (Blueprint)
+	{
+		static constexpr bool bForceFullEditor = true;
+		static constexpr bool bAddBlueprintFunctionIfItDoesNotExist = false;
+		FDialogueEditorUtilities::OpenBlueprintEditor(
+            Blueprint,
+            EDialogueBlueprintOpenType::None,
+            NAME_None,
+            bForceFullEditor,
+            bAddBlueprintFunctionIfItDoesNotExist
+        );
+	}
+	else if (UObject* Object = Class->GetDefaultObject())
+	{
+		// Native
+		FSourceCodeNavigation::NavigateToClass(Object->GetClass());
+	}
+
+	return FReply::Handled();
+}
+
+FText SDialogueBrowser::GetJumpToAssetText(UClass* Class)
+{
+	// Blueprint, always visible
+	if (FDlgHelper::IsABlueprintClass(Class))
+	{
+		return LOCTEXT("OpenObjectBlueprintTooltipKey", "Open Blueprint Editor");
+	}
+
+	// Native
+	return FText::Format(
+        LOCTEXT("OpenObjectBlueprintTooltipKey", "Open Source File in {0}"),
+        FSourceCodeNavigation::GetSelectedSourceCodeIDE()
+    );
+}
+
+FText SDialogueBrowser::GetBrowseAssetText(UClass* Class)
+{
+	return LOCTEXT("BrowseButtonToolTipText", "Browse to Asset in Content Browser");
 }
 
 TSharedRef<SWidget> SDialogueBrowser::FillViewOptionsEntries()

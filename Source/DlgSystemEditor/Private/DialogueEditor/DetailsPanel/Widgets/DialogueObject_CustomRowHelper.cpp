@@ -174,41 +174,13 @@ FReply FDialogueObject_CustomRowHelper::OnOpenClicked()
 {
 	if (UBlueprint* Blueprint = GetBlueprint())
 	{
-		// Blueprint
-		Blueprint->bForceFullEditor = bForceFullEditor;
-		UClass* Class = GetObject()->GetClass();
-
-		// Find Function Graph
-		UObject* ObjectToFocusOn = nullptr;
-		if (FunctionNameToOpen != NAME_None && OpenType != EDialogueBlueprintOpenType::None)
-		{
-			if (OpenType == EDialogueBlueprintOpenType::Function)
-			{
-				ObjectToFocusOn = bAddBlueprintFunctionIfItDoesNotExist
-					? FDialogueEditorUtilities::BlueprintGetOrAddFunction(Blueprint, FunctionNameToOpen, Class)
-					: FDialogueEditorUtilities::BlueprintGetFunction(Blueprint, FunctionNameToOpen, Class);
-			}
-			else if (OpenType == EDialogueBlueprintOpenType::Event)
-			{
-				ObjectToFocusOn = bAddBlueprintFunctionIfItDoesNotExist
-					? FDialogueEditorUtilities::BlueprintGetOrAddEvent(Blueprint, FunctionNameToOpen, Class)
-					: FDialogueEditorUtilities::BlueprintGetEvent(Blueprint, FunctionNameToOpen, Class);
-			}
-		}
-
-		// Default to the last uber graph
-		if (ObjectToFocusOn == nullptr)
-		{
-			ObjectToFocusOn = Blueprint->GetLastEditedUberGraph();
-		}
-		if (ObjectToFocusOn)
-		{
-			FKismetEditorUtilities::BringKismetToFocusAttentionOnObject(ObjectToFocusOn);
-		}
-		else
-		{
-			FDialogueEditorUtilities::OpenEditorForAsset(Blueprint);
-		}
+		FDialogueEditorUtilities::OpenBlueprintEditor(
+			Blueprint,
+			OpenType,
+			FunctionNameToOpen,
+			bForceFullEditor,
+			bAddBlueprintFunctionIfItDoesNotExist
+		);
 	}
 	else if (UObject* Object = GetObject())
 	{

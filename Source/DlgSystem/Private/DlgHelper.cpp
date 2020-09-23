@@ -7,6 +7,7 @@
 #include "Logging/DlgLogger.h"
 #include "DlgSystemSettings.h"
 #include "Engine/BlueprintGeneratedClass.h"
+#include "Misc/Paths.h"
 #include "UObject/UObjectIterator.h"
 
 bool FDlgHelper::DeleteFile(const FString& PathName, bool bVerbose)
@@ -84,6 +85,39 @@ bool FDlgHelper::RenameFile(const FString& OldPathName, const FString& NewPathNa
 	return true;
 }
 
+FString FDlgHelper::CleanObjectName(FString Name)
+{
+	Name.RemoveFromEnd(TEXT("_C"));
+
+	// Get rid of the extension from `filename.extension` from the end of the path
+	static constexpr bool bRemovePath = false;
+	Name = FPaths::GetBaseFilename(Name, bRemovePath);
+
+	return Name;
+}
+
+bool FDlgHelper::IsClassIgnored(const UClass* Class)
+{
+	if (!Class)
+	{
+		return true;
+	}
+
+	// Ignore generated types that cannot be spawned
+	const FString Name = Class->GetName();
+	return Name.StartsWith(TEXT("SKEL_")) || Name.StartsWith(TEXT("REINST_"));
+}
+
+bool FDlgHelper::IsABlueprintClass(const UClass* Class)
+{
+	return Cast<UBlueprintGeneratedClass>(Class) != nullptr;
+}
+
+bool FDlgHelper::IsABlueprintObject(const UObject* Object)
+{
+	return Cast<UBlueprint>(Object) != nullptr;
+}
+
 bool FDlgHelper::IsObjectAChildOf(const UObject* Object, const UClass* ParentClass)
 {
 	if (!Object || !ParentClass)
@@ -154,7 +188,7 @@ bool FDlgHelper::GetAllChildClassesOf(const UClass* ParentClass, TArray<UClass*>
 			continue;
 		}
 
-		if (Cast<UBlueprintGeneratedClass>(ChildClass))
+		if (IsABlueprintClass(ChildClass))
 		{
 			// Blueprint
 			OutBlueprintClasses.Add(ChildClass);
@@ -171,12 +205,6 @@ bool FDlgHelper::GetAllChildClassesOf(const UClass* ParentClass, TArray<UClass*>
 
 bool FDlgHelper::GetAllClassesImplementingInterface(const UClass* InterfaceClass, TArray<UClass*>& OutNativeClasses, TArray<UClass*>& OutBlueprintClasses)
 {
-	// Is Blueprint Skeleton Class
-	auto IsSkeleton = [](UClass* InClass)
-	{
-		return InClass->ClassGeneratedBy && InClass->GetName().StartsWith(TEXT("SKEL_"));
-	};
-
 	// Iterate over UClass, this might be heavy on performance
 	for (TObjectIterator<UClass> It; It; ++It)
 	{
@@ -185,12 +213,12 @@ bool FDlgHelper::GetAllClassesImplementingInterface(const UClass* InterfaceClass
 		{
 			continue;
 		}
-		if (IsSkeleton(Class))
+		if (IsClassIgnored(Class))
 		{
 			continue;
 		}
 
-		if (Cast<UBlueprintGeneratedClass>(Class))
+		if (IsABlueprintClass(Class))
 		{
 			// Blueprint
 			OutBlueprintClasses.Add(Class);

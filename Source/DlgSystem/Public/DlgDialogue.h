@@ -289,6 +289,16 @@ public:
 		}
 	}
 
+	// Gets the Custom Events UClasses that correspond to the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	void GetCustomEvents(FName ParticipantName, TSet<UClass*>& OutSet) const
+	{
+		if (ParticipantsData.Contains(ParticipantName))
+		{
+			OutSet.Append(ParticipantsData[ParticipantName].CustomEvents);
+		}
+	}
+
 	// Gets the int variable Names that correspond to the provided ParticipantName.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	void GetIntNames(FName ParticipantName, TSet<FName>& OutSet) const

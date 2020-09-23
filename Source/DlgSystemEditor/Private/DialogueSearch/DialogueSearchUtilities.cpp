@@ -1,6 +1,8 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DialogueSearchUtilities.h"
 
+
+#include "DlgHelper.h"
 #include "DialogueEditor/Graph/DialogueGraph.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
@@ -19,6 +21,26 @@ TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesFo
 	{
 		// Enter events
 		if (IsEventInArray(EventName, EDlgEventType::Event, GraphNode->GetDialogueNode().GetNodeEnterEvents()))
+		{
+			FoundResult->GraphNodes.Add(GraphNode);
+		}
+	}
+
+	return FoundResult;
+}
+
+TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesForCustomEvent(
+	const UClass* EventClass,
+	const UDlgDialogue* Dialogue
+)
+{
+	TSharedPtr<FDialogueSearchFoundResult> FoundResult = FDialogueSearchFoundResult::Make();
+
+	const UDialogueGraph* Graph = CastChecked<UDialogueGraph>(Dialogue->GetGraph());
+	for (const UDialogueGraphNode* GraphNode : Graph->GetAllDialogueGraphNodes())
+	{
+		// Enter events
+		if (IsCustomEventInArray(EventClass, GraphNode->GetDialogueNode().GetNodeEnterEvents()))
 		{
 			FoundResult->GraphNodes.Add(GraphNode);
 		}
@@ -183,8 +205,7 @@ bool FDialogueSearchUtilities::DoesObjectClassNameContainString(const UObject* O
 		return false;
 	}
 
-	FString Name = Object->GetClass()->GetName();
-	Name.RemoveFromEnd(TEXT("_C"));
+	const FString Name = FDlgHelper::CleanObjectName(Object->GetClass()->GetName());
 	if (Name.Contains(SearchString))
 	{
 		OutNameString = Name;

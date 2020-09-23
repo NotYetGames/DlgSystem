@@ -2,18 +2,13 @@
 #pragma once
 
 #include "DetailWidgetRow.h"
+#include "DialogueEditorUtilities.h"
 #include "IDetailPropertyRow.h"
 
 class FDetailWidgetRow;
 class UDlgDialogue;
 class UBlueprint;
 
-enum class EDialogueBlueprintOpenType : uint8
-{
-	None = 0,
-	Function,
-	Event
-};
 
 // Custom row for Objects that most likely are Blueprints?
 // This only works with the IDetailPropertyRow::CustomWidget

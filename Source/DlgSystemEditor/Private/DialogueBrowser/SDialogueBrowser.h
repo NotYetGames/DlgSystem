@@ -34,7 +34,7 @@ public:
 	// Get current filter text
 	FText GetFilterText() const { return FilterTextBoxWidget->GetText(); }
 
-private:
+protected:
 	// Handle filtering.
 	void GenerateFilteredItems();
 
@@ -147,10 +147,25 @@ private:
 		int32 IconSize = 24
 	);
 
+	// Makes a widget for a Class that has IconName. Text of item.
+	TSharedRef<SHorizontalBox> MakeCustomObjectIconAndTextWidget(
+        const FText& InText,
+        const FSlateBrush* IconBrush,
+        UClass* Class,
+        int32 IconSize = 24
+    );
+
 	// Fills the menu of the View Options
 	TSharedRef<SWidget>	FillViewOptionsEntries();
 
-private:
+	static EVisibility GetOpenAssetButtonVisibility(UClass* Class);
+	static EVisibility GetBrowseAssetButtonVisibility(UClass* Class);
+	static FReply OnBrowseAssetClicked(UClass* Class);
+	static FReply OnOpenAssetClicked(UClass* Class);
+	static FText GetJumpToAssetText(UClass* Class);
+	static FText GetBrowseAssetText(UClass* Class);
+
+protected:
 	// The search box
 	TSharedPtr<SSearchBox> FilterTextBoxWidget;
 

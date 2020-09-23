@@ -25,9 +25,21 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Dialogue|Participant")
 	TSet<FName> Conditions;
 
+	// Custom Conditions UClasses of type UDlgConditionCustom
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Dialogue|Participant")
+	TSet<UClass*> CustomConditions;
+
 	// FName based events (aka events of type EDlgEventType)
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Dialogue|Participant")
 	TSet<FName> Events;
+
+	// Custom Events UClasses of type UDlgEventCustom
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Dialogue|Participant")
+	TSet<UClass*> CustomEvents;
+
+	// Custom Events UClasses of type UDlgTextArgumentCustom
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Dialogue|Participant")
+	TSet<UClass*> CustomTextArguments;
 
 	// Integers used in a Dialogue
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Dialogue|Participant")

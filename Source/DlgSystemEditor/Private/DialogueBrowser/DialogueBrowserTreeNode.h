@@ -43,6 +43,7 @@ enum class EDialogueTreeNodeTextType : uint8
 
 	ParticipantDialogue,
 	ParticipantEvent,
+	ParticipantCustomEvent,
 	ParticipantCondition,
 	ParticipantVariableInt,
 	ParticipantVariableFloat,
@@ -55,7 +56,9 @@ enum class EDialogueTreeNodeTextType : uint8
 	ParticipantClassVariableFText,
 
 	EventDialogue,
+	CustomEventDialogue,
 	EventGraphNode,
+	CustomEventGraphNode,
 
 	ConditionDialogue,
 	ConditionGraphNode,
@@ -107,6 +110,9 @@ public:
 	/** Gets the Variable name that this Node belongs to if any. This could be empty in most cases. */
 	virtual FName GetParentVariableName() const;
 
+	/** Gets the Class that this Node belongs to if any. This could be empty in most cases. */
+	virtual UClass* GetParentClass() const;
+
 	//
 	// Getters for the properties
 	//
@@ -157,6 +163,7 @@ public:
 		return IsText() &&
 			  (TextType == EDialogueTreeNodeTextType::ParticipantDialogue
 			|| TextType == EDialogueTreeNodeTextType::EventDialogue
+			|| TextType == EDialogueTreeNodeTextType::CustomEventDialogue
 			|| TextType == EDialogueTreeNodeTextType::ConditionDialogue
 			|| TextType == EDialogueTreeNodeTextType::IntVariableDialogue
 			|| TextType == EDialogueTreeNodeTextType::FloatVariableDialogue
@@ -170,7 +177,11 @@ public:
 	}
 	bool IsEventText() const
 	{
-		return IsText() && (TextType == EDialogueTreeNodeTextType::ParticipantEvent);
+		return IsText() && TextType == EDialogueTreeNodeTextType::ParticipantEvent;
+	}
+	bool IsCustomEventText() const
+	{
+		return IsText() && TextType == EDialogueTreeNodeTextType::ParticipantCustomEvent;
 	}
 	bool IsConditionText() const
 	{
@@ -180,6 +191,7 @@ public:
 	{
 		return IsText() &&
 			  (TextType == EDialogueTreeNodeTextType::EventGraphNode
+			|| TextType == EDialogueTreeNodeTextType::CustomEventGraphNode
 			|| TextType == EDialogueTreeNodeTextType::ConditionGraphNode
 			|| TextType == EDialogueTreeNodeTextType::IntVariableGraphNode
 			|| TextType == EDialogueTreeNodeTextType::FloatVariableGraphNode
@@ -339,6 +351,28 @@ public:
 protected:
 	// Used to store Event, Condition, IntName, Dialogue name etc
 	FName VariableName = NAME_None;
+};
+
+// Node result that represents a custom object
+class FDialogueBrowserTreeCustomObjectNode : public FDialogueBrowserTreeNode
+{
+	typedef FDialogueBrowserTreeCustomObjectNode Self;
+	typedef FDialogueBrowserTreeNode Super;
+
+public:
+	FDialogueBrowserTreeCustomObjectNode(
+        const FText& InDisplayText,
+        const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
+        UClass* ObjectClass
+    );
+
+	// Class
+	UClass* GetClass() const { return Class.Get(); }
+	UClass* GetParentClass() const { return GetClass(); }
+
+protected:
+	// Class this represents
+	TWeakObjectPtr<UClass> Class = nullptr;
 };
 
 
