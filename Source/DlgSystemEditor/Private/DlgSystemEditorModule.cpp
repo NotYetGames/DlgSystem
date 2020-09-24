@@ -518,7 +518,7 @@ void FDlgSystemEditorModule::ExtendMenu()
 				LOCTEXT("WorkspaceMenu_DialogueCategory", "Dialogue" ),
 				FSlateIcon(
 					FDialogueStyle::GetStyleSetName(),
-					FDialogueStyle::PROPERTY_DialogueClassIcon
+					FDialogueStyle::PROPERTY_DlgDialogueClassIcon
 				),
 				false
 			);

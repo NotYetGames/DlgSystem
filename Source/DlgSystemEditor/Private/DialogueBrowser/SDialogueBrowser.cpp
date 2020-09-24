@@ -1152,7 +1152,7 @@ TSharedRef<SWidget> SDialogueBrowser::MakeInlineWidget(const TSharedPtr<FDialogu
 			.VAlign(VAlign_Center)
 			.Padding(0.f, 0.f, 10.f, 0.f)
 			[
-				MakeIconAndTextWidget(InItem->GetDisplayText(), FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_DialogueClassThumbnail))
+				MakeIconAndTextWidget(InItem->GetDisplayText(), FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_DlgDialogueClassThumbnail))
 			]
 
 			// Graph Nodes
@@ -1356,7 +1356,7 @@ TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(
 				.VAlign(VAlign_Center)
 				[
 					MakeIconAndTextWidget(InItem->GetDisplayText(),
-						FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_DialogueClassThumbnail))
+						FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_DlgDialogueClassThumbnail))
 				]
 
 				// Buttons on the right side

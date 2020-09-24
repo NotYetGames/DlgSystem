@@ -13,6 +13,9 @@
 - **Add** “Browse Participant in Content Browser” and “Open Participant Blueprint" for events and conditions when the participant is involved so that you can easier go the Participant.
   - This only works if the participant class is set in the particular Dialogue.
 
+### Dialogue Content Browser
+- **Add** support for Custom Events
+
 ### Find in Dialogue
 - **Add the following search filters**:
   - Node GUIDs
@@ -23,6 +26,12 @@
 - **Allow to create** **Custom Events/Conditions/Text Argument or Node Data** from the Dialogue Menu (the same where you create the Dialogue Asset)
 - **Move**  Dialogues filters to the content browser backend this way you can combine them with other filter
   - Only the Dialogue Participants Filter remains in the frontend because there is not sane way to implement it in the backend
+
+- **Add** class and thumbnail icons for all custom classes (event, condition, text argument and node data)
+
+### Dialogue
+- Dialogue Participants Data now gathers data about all custom events/conditions/text arguments
+- Increased Dialogue Version number to `AddCustomObjectsToParticipantsData`
 
 
 # v11.1

@@ -35,8 +35,20 @@ public:
 	}
 
 public:
-	static const FName PROPERTY_DialogueClassIcon;
-	static const FName PROPERTY_DialogueClassThumbnail;
+	static const FName PROPERTY_DlgDialogueClassIcon;
+	static const FName PROPERTY_DlgDialogueClassThumbnail;
+
+	static const FName PROPERTY_DlgEventCustomClassIcon;
+	static const FName PROPERTY_DlgEventCustomClassThumbnail;
+
+	static const FName PROPERTY_DlgConditionCustomClassIcon;
+	static const FName PROPERTY_DlgConditionCustomClassThumbnail;
+
+	static const FName PROPERTY_DlgTextArgumentCustomClassIcon;
+	static const FName PROPERTY_DlgTextArgumentCustomClassThumbnail;
+
+	static const FName PROPERTY_DlgNodeDataClassIcon;
+	static const FName PROPERTY_DlgNodeDataClassThumbnail;
 
 	static const FName PROPERTY_GraphNodeCircleBox;
 	static const FName PROPERTY_ConditionIcon;
