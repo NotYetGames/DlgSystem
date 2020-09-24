@@ -6,7 +6,10 @@
 #include "Engine/DeveloperSettings.h"
 #include "Layout/Margin.h"
 #include "Logging/INYLogger.h"
+
+#if WITH_EDITOR
 #include "ClassViewerModule.h"
+#endif
 
 #include "DlgSystemSettings.generated.h"
 
@@ -203,6 +206,7 @@ public:
 	// GetAllCurrentTextFileExtensions() + AdditionalTextFormatFileExtensionsToLookFor
 	TSet<FString> GetAllTextFileExtensions() const;
 
+#if WITH_EDITOR
 	EClassViewerDisplayMode::Type GetUnrealClassPickerDisplayMode() const
 	{
 		if (ClassPickerDisplayMode == EDlgClassPickerDisplayMode::ListView)
@@ -216,6 +220,7 @@ public:
 
 		return EClassViewerDisplayMode::DefaultView;
 	}
+#endif // WITH_EDITOR
 
 public:
 	// If enabled this clears the dialogue history automatically on Editor Start PIE and On Load New Map */
