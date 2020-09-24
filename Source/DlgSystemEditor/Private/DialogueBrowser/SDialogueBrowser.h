@@ -11,6 +11,7 @@
 #include "DialogueTreeProperties/DialogueBrowserTreeParticipantProperties.h"
 #include "DialogueBrowserUtilities.h"
 
+enum class EDialogueBlueprintOpenType : unsigned char;
 class UDlgDialogue;
 class SImage;
 
@@ -152,6 +153,8 @@ protected:
         const FText& InText,
         const FSlateBrush* IconBrush,
         UClass* Class,
+        EDialogueBlueprintOpenType OpenType,
+		FName FunctionNameToOpen,
         int32 IconSize = 24
     );
 
@@ -161,7 +164,11 @@ protected:
 	static EVisibility GetOpenAssetButtonVisibility(UClass* Class);
 	static EVisibility GetBrowseAssetButtonVisibility(UClass* Class);
 	static FReply OnBrowseAssetClicked(UClass* Class);
-	static FReply OnOpenAssetClicked(UClass* Class);
+	static FReply OnOpenAssetClicked(
+		UClass* Class,
+		EDialogueBlueprintOpenType OpenType,
+		FName FunctionNameToOpen
+	);
 	static FText GetJumpToAssetText(UClass* Class);
 	static FText GetBrowseAssetText(UClass* Class);
 

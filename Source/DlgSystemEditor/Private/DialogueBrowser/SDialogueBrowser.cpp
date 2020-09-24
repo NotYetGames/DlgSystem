@@ -1379,7 +1379,9 @@ TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(
 			RowContent = MakeCustomObjectIconAndTextWidget(
                 InItem->GetDisplayText(),
                 FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_EventIcon),
-                InItem->GetParentClass()
+                InItem->GetParentClass(),
+                EDialogueBlueprintOpenType::Event,
+                GET_FUNCTION_NAME_CHECKED(UDlgEventCustom, EnterEvent)
             );
 		}
 		else if (InItem->IsConditionText())
@@ -1723,6 +1725,8 @@ TSharedRef<SHorizontalBox> SDialogueBrowser::MakeCustomObjectIconAndTextWidget(
     const FText& InText,
     const FSlateBrush* IconBrush,
     UClass* Class,
+    EDialogueBlueprintOpenType OpenType,
+	FName FunctionNameToOpen,
     int32 IconSize
 )
 {
@@ -1760,7 +1764,7 @@ TSharedRef<SHorizontalBox> SDialogueBrowser::MakeCustomObjectIconAndTextWidget(
         .ContentPadding(4.f)
         .ForegroundColor(FSlateColor::UseForeground())
         .Visibility_Static(&Self::GetOpenAssetButtonVisibility, Class)
-        .OnClicked_Static(&Self::OnOpenAssetClicked, Class)
+        .OnClicked_Static(&Self::OnOpenAssetClicked, Class, OpenType, FunctionNameToOpen)
         [
             SNew(SImage)
              .Image(FEditorStyle::GetBrush("PropertyWindow.Button_Edit"))
@@ -1814,7 +1818,11 @@ FReply SDialogueBrowser::OnBrowseAssetClicked(UClass* Class)
 	return FReply::Handled();
 }
 
-FReply SDialogueBrowser::OnOpenAssetClicked(UClass* Class)
+FReply SDialogueBrowser::OnOpenAssetClicked(
+	UClass* Class,
+    EDialogueBlueprintOpenType OpenType,
+    FName FunctionNameToOpen
+)
 {
 	UBlueprint* Blueprint = nullptr;
 	if (const UBlueprintGeneratedClass* BlueprintClass = Cast<UBlueprintGeneratedClass>(Class))
@@ -1825,11 +1833,11 @@ FReply SDialogueBrowser::OnOpenAssetClicked(UClass* Class)
 	if (Blueprint)
 	{
 		static constexpr bool bForceFullEditor = true;
-		static constexpr bool bAddBlueprintFunctionIfItDoesNotExist = false;
+		static constexpr bool bAddBlueprintFunctionIfItDoesNotExist = true;
 		FDialogueEditorUtilities::OpenBlueprintEditor(
             Blueprint,
-            EDialogueBlueprintOpenType::None,
-            NAME_None,
+            OpenType,
+            FunctionNameToOpen,
             bForceFullEditor,
             bAddBlueprintFunctionIfItDoesNotExist
         );
