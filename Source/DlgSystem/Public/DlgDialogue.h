@@ -28,6 +28,7 @@ struct DLGSYSTEM_API FDlgDialogueObjectVersion
 		AddLocalizationOverwrittenNamespacesAndKeys,
 		AddVirtualParentFireDirectChildEnterEvents,
 		AddGUIDToNodes,
+		AddCustomObjectsToParticipantsData,
 
 		// -----<new versions can be added above this line>-------------------------------------------------
 		VersionPlusOne,
@@ -608,4 +609,7 @@ protected:
 	int32 BroadcastPropertyNodeIndexChanged = INDEX_NONE;
 #endif
 
+
+	// Flag that indicates that PostLoad was called
+	bool bWasPostLoaded = false;
 };

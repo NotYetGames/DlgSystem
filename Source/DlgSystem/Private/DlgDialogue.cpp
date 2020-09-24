@@ -97,7 +97,8 @@ void UDlgDialogue::PostLoad()
 	}
 
 	// Refresh the data, so that it is valid after loading.
-	if (DialogueVersion < FDlgDialogueObjectVersion::AddTextFormatArguments)
+	if (DialogueVersion < FDlgDialogueObjectVersion::AddTextFormatArguments ||
+		DialogueVersion < FDlgDialogueObjectVersion::AddCustomObjectsToParticipantsData)
 	{
 		UpdateAndRefreshData();
 	}
@@ -151,6 +152,8 @@ void UDlgDialogue::PostLoad()
 			}
 		}
 	}
+
+	bWasPostLoaded = true;
 }
 
 void UDlgDialogue::PostInitProperties()
@@ -729,7 +732,7 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 	}
 
 	// 3. Set auto default participant classes
-	if (Settings->bAutoSetDefaultParticipantClasses)
+	if (bWasPostLoaded && Settings->bAutoSetDefaultParticipantClasses)
 	{
 		TArray<UClass*> NativeClasses;
 		TArray<UClass*> BlueprintClasses;
