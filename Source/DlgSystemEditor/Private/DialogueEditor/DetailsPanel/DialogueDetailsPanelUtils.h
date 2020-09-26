@@ -12,6 +12,12 @@
 #define CREATE_VISIBILITY_CALLBACK_STATIC(_StaticMethod) \
 	TAttribute<EVisibility>::Create(TAttribute<EVisibility>::FGetter::CreateStatic(_StaticMethod))
 
+#define CREATE_BOOL_CALLBACK(_SelfMethod) \
+	TAttribute<bool>::Create(TAttribute<bool>::FGetter::CreateSP(this, _SelfMethod))
+
+#define CREATE_BOOL_CALLBACK_STATIC(_StaticMethod) \
+	TAttribute<bool>::Create(TAttribute<bool>::FGetter::CreateStatic(_StaticMethod))
+
 // Constants used in this file
 static const TCHAR* META_ShowOnlyInnerProperties = TEXT("ShowOnlyInnerProperties");
 static const TCHAR* META_UIMin = TEXT("UIMin");

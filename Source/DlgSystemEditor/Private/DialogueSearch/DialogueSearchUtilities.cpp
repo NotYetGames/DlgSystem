@@ -1,6 +1,8 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DialogueSearchUtilities.h"
 
+
+#include "DlgHelper.h"
 #include "DialogueEditor/Graph/DialogueGraph.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
@@ -19,6 +21,26 @@ TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesFo
 	{
 		// Enter events
 		if (IsEventInArray(EventName, EDlgEventType::Event, GraphNode->GetDialogueNode().GetNodeEnterEvents()))
+		{
+			FoundResult->GraphNodes.Add(GraphNode);
+		}
+	}
+
+	return FoundResult;
+}
+
+TSharedPtr<FDialogueSearchFoundResult> FDialogueSearchUtilities::GetGraphNodesForCustomEvent(
+	const UClass* EventClass,
+	const UDlgDialogue* Dialogue
+)
+{
+	TSharedPtr<FDialogueSearchFoundResult> FoundResult = FDialogueSearchFoundResult::Make();
+
+	const UDialogueGraph* Graph = CastChecked<UDialogueGraph>(Dialogue->GetGraph());
+	for (const UDialogueGraphNode* GraphNode : Graph->GetAllDialogueGraphNodes())
+	{
+		// Enter events
+		if (IsCustomEventInArray(EventClass, GraphNode->GetDialogueNode().GetNodeEnterEvents()))
 		{
 			FoundResult->GraphNodes.Add(GraphNode);
 		}
@@ -135,7 +157,6 @@ void FDialogueSearchUtilities::GetGraphNodesForTextArgumentVariable(
 
 			// Node
 			const UDlgNode& Node = GraphNode->GetDialogueNode();
-
 			if (IsTextArgumentInArray(VariableName, ArgumentType, Node.GetTextArguments()))
 			{
 				FoundResult->GraphNodes.Add(GraphNode);
@@ -150,4 +171,46 @@ void FDialogueSearchUtilities::GetGraphNodesForTextArgumentVariable(
 			}
 		}
 	}
+}
+
+bool FDialogueSearchUtilities::DoesGUIDContainString(const FGuid& GUID, const FString& SearchString, FString& OutGUIDString)
+{
+	const FString GUIDToSearchFor = SearchString.TrimStartAndEnd();
+
+	// Test every possible format
+	const TArray<FString> GUIDStrings = {
+		GUID.ToString(EGuidFormats::Digits),
+        GUID.ToString(EGuidFormats::DigitsWithHyphens),
+        GUID.ToString(EGuidFormats::DigitsWithHyphensInBraces),
+        GUID.ToString(EGuidFormats::DigitsWithHyphensInParentheses),
+        GUID.ToString(EGuidFormats::HexValuesInBraces),
+        GUID.ToString(EGuidFormats::UniqueObjectGuid)
+    };
+	for (const FString& GUIDString : GUIDStrings)
+	{
+		if (GUIDString.Contains(GUIDToSearchFor))
+		{
+			OutGUIDString = GUIDString;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool FDialogueSearchUtilities::DoesObjectClassNameContainString(const UObject* Object, const FString& SearchString, FString& OutNameString)
+{
+	if (!Object)
+	{
+		return false;
+	}
+
+	const FString Name = FDlgHelper::CleanObjectName(Object->GetClass()->GetName());
+	if (Name.Contains(SearchString))
+	{
+		OutNameString = Name;
+		return true;
+	}
+
+	return false;
 }

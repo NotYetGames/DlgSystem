@@ -3,7 +3,7 @@
 
 #include "Widgets/Views/STreeView.h"
 
-#include "DialogueEditor/DialogueEditorUtilities.h"
+#include "DialogueEditorUtilities.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 
@@ -34,20 +34,30 @@ FName FDialogueBrowserTreeNode::GetParentVariableName() const
 	return NAME_None;
 }
 
+UClass* FDialogueBrowserTreeNode::GetParentClass() const
+{
+	if (Parent.IsValid())
+	{
+		return Parent.Pin()->GetParentClass();
+	}
+
+	return nullptr;
+}
+
 FString FDialogueBrowserTreeNode::ToString() const
 {
-	static const ANSICHAR* EDialogueTreeItemCategoryTypeStringMap[] = {
-		"Default",
-		"Participant",
-		"Dialogue",
-		"Event",
-		"Condition",
-		"Variable",
-		"VariableInt",
-		"VariableFloat",
-		"VariableBool",
-		"Max"
-	};
+	// static const ANSICHAR* EDialogueTreeItemCategoryTypeStringMap[] = {
+	// 	"Default",
+	// 	"Participant",
+	// 	"Dialogue",
+	// 	"Event",
+	// 	"Condition",
+	// 	"Variable",
+	// 	"VariableInt",
+	// 	"VariableFloat",
+	// 	"VariableBool",
+	// 	"Max"
+	// };
 
 	FString Output = "FTextItem { ";
 
@@ -151,6 +161,17 @@ FName FDialogueBrowserTreeVariableNode::GetParentVariableName() const
 	return Super::GetParentVariableName();
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// FDialogueBrowserTreeCustomObjectNode
+
+FDialogueBrowserTreeCustomObjectNode::FDialogueBrowserTreeCustomObjectNode(
+    const FText& InDisplayText,
+    const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
+    UClass* ObjectClass
+) : Super(InDisplayText, InParent), Class(ObjectClass)
+{
+
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueBrowserTreeCategoryParticipantNode

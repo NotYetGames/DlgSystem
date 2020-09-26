@@ -1,32 +1,13 @@
-Icons from http://game-icons.net/lorc/originals/conversation.html
-- Dialogue_64x.png
-- Dialogue_16x.png
-
-Icons from http://game-icons.net/lorc/originals/uncertainty.html
-- QuestionMark_16x.png
-
-Icons from http://game-icons.net/delapouite/gui/speaker.html
-- Speaker_96x.png
-
-Icons from https://material.io/icons
-- Event_96x.png
-
-Icons from https://thenounproject.com/ArtZ91/collection/strategy/
-- Condition_96x.png
-- Dialogue_ShowPrimarySecondaryEdges_40x.png
-
-Icons from https://discord.com/new/branding
-- Discord_96x.png
-
-Icons from NotYet https://www.warriorb.com/presskit/warriorb/
-- NotYet_96x.png
-- NotYet_128x_64x.png
-
-Icons from https://thenounproject.com/search/?q=forum&i=1871927
-- Forum_96x.png
-
-Icons from https://thenounproject.com/search/?q=marketplace&i=1257504
-- Marketplace_96x.png
-
-Icons from https://thenounproject.com/search/?q=book&i=2044267
-- Wiki_96x.png
+DlgDialogue_64x.png | DlgDialogue_16x.png - http://game-icons.net/lorc/originals/conversation.html
+DlgNodeData_64x.png | DlgNodeData_16x.png - https://thenounproject.com/search/?q=data&i=2556692
+Event_96x.png | DlgEventCustom_64x.png | DlgEventCustom_16x.png - https://thenounproject.com/search/?q=event&i=1757908
+Condition_96x.png | DlgConditionCustom_64x.png | DlgConditionCustom_16x.png - https://thenounproject.com/term/correct-answer/152639/
+DlgTextArgumentCustom_64x.png | DlgTextArgumentCustom_16x.png - https://thenounproject.com/search/?q=text&i=646000
+QuestionMark_16x.png - http://game-icons.net/lorc/originals/uncertainty.html
+Speaker_96x.png - http://game-icons.net/delapouite/gui/speaker.html
+Dialogue_ShowPrimarySecondaryEdges_40x.png - https://thenounproject.com/ArtZ91/collection/strategy/?i=152647
+Discord_96x.png - https://discord.com/new/branding
+NotYet_96x.png | NotYet_128x_64x.png - https://www.warriorb.com/presskit/warriorb/
+Forum_96x.png - https://thenounproject.com/search/?q=forum&i=1871927
+Marketplace_96x.png - https://thenounproject.com/search/?q=marketplace&i=1257504
+Wiki_96x.png - https://thenounproject.com/search/?q=book&i=2044267

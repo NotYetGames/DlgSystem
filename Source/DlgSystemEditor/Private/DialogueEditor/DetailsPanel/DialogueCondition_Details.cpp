@@ -12,7 +12,9 @@
 #include "IPropertyUtilities.h"
 #include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
 #include "DlgHelper.h"
+#include "Widgets/DialogueEnumTypeWithObject_CustomRowHelper.h"
 #include "Widgets/DialogueIntTextBox_CustomRowHelper.h"
+#include "Widgets/DialogueObject_CustomRowHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueCondition_Details"
 
@@ -52,14 +54,30 @@ void FDialogueCondition_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InS
 	}
 }
 
-void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStructPropertyHandle,
-	IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+void FDialogueCondition_Details::CustomizeChildren(
+	TSharedRef<IPropertyHandle> InStructPropertyHandle,
+	IDetailChildrenBuilder& StructBuilder,
+	IPropertyTypeCustomizationUtils& StructCustomizationUtils
+)
 {
 	const bool bHasDialogue = Dialogue != nullptr;
 
 	// Add common ConditionStrength, ConditionType
 	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, Strength)).ToSharedRef());
-	StructBuilder.AddProperty(ConditionTypePropertyHandle.ToSharedRef());
+
+	// ConditionType
+	{
+		ConditionTypePropertyRow = &StructBuilder.AddProperty(ConditionTypePropertyHandle.ToSharedRef());
+
+		// Add Custom buttons
+		ConditionTypePropertyRow_CustomDisplay = MakeShared<FDialogueEnumTypeWithObject_CustomRowHelper>(
+			ConditionTypePropertyRow,
+			Dialogue,
+			ParticipantNamePropertyHandle
+		);
+		ConditionTypePropertyRow_CustomDisplay->SetEnumType(EDialogueEnumWithObjectType::Condition);
+		ConditionTypePropertyRow_CustomDisplay->Update();
+	}
 
 	// ParticipantName
 	{
@@ -114,7 +132,6 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 		);
 		CompareTypePropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCompareTypeVisibility));
 	}
-
 
 	// OtherParticipantName
 	{
@@ -199,8 +216,8 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 	// GUID
 	{
 		GUIDPropertyRow = &StructBuilder.AddProperty(
-            StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, GUID)).ToSharedRef()
-        );
+			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, GUID)).ToSharedRef()
+		);
 		GUIDPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetGUIDVisibility));
 	}
 
@@ -210,6 +227,14 @@ void FDialogueCondition_Details::CustomizeChildren(TSharedRef<IPropertyHandle> I
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgCondition, CustomCondition)).ToSharedRef()
 		);
 		CustomConditionPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCustomConditionVisibility));
+
+		// Add Custom buttons
+		CustomConditionPropertyRow_CustomDisplay = MakeShared<FDialogueObject_CustomRowHelper>(CustomConditionPropertyRow);
+		CustomConditionPropertyRow_CustomDisplay->Update();
+		CustomConditionPropertyRow_CustomDisplay->SetFunctionNameToOpen(
+			EDialogueBlueprintOpenType::Function,
+			GET_FUNCTION_NAME_CHECKED(UDlgConditionCustom, IsConditionMet)
+		);
 	}
 
 	// Cache the initial values

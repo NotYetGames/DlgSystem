@@ -3,9 +3,9 @@
 
 #include "Algo/Reverse.h"
 
-#include "DlgSystemEditorPrivatePCH.h"
+#include "DlgSystemEditorModule.h"
 #include "DialogueEditor/Graph/DialogueGraph.h"
-#include "DialogueEditor/DialogueEditorUtilities.h"
+#include "DialogueEditorUtilities.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Root.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "Nodes/DlgNode.h"

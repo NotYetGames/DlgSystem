@@ -11,7 +11,7 @@
 #include "ToolMenu.h"
 #endif
 
-#include "DlgSystemEditorPrivatePCH.h"
+#include "DlgSystemEditorModule.h"
 #include "DlgDialogue.h"
 #include "DialogueGraphNode_Edge.h"
 #include "DialogueCommands.h"
@@ -873,10 +873,8 @@ bool UDialogueGraphNode::DoesEdgeMatchEdgeIndex(const FDlgEdge& Edge, int32 Edge
 	// Target node Index differs :(
 	if (Edge.TargetIndex != ChildNode->GetDialogueNodeIndex())
 	{
-		OutMessage = FString::Printf(
-			TEXT("The provided Edge.TargetIndex = %d is DIFFERENT from the ChildNode.NodeIndex = %d"),
-				Edge.TargetIndex, ChildNode->GetDialogueNodeIndex()
-			);
+		OutMessage = FString::Printf(TEXT("The provided Edge.TargetIndex = %d is DIFFERENT from the ChildNode.NodeIndex = %d"),
+				Edge.TargetIndex, ChildNode->GetDialogueNodeIndex());
 		return false;
 	}
 

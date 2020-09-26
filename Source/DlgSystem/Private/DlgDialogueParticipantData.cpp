@@ -45,6 +45,13 @@ void FDlgParticipantData::AddConditionPrimaryData(const FDlgCondition& Condition
 			ClassNameVariableNames.Add(ConditionName);
 			break;
 
+		case EDlgConditionType::Custom:
+			if (Condition.CustomCondition)
+			{
+				CustomConditions.Add(Condition.CustomCondition->GetClass());
+			}
+			break;
+
 		default:
 			break;
 	}
@@ -117,6 +124,13 @@ void FDlgParticipantData::AddEventData(const FDlgEvent& Event)
 			ClassNameVariableNames.Add(Event.EventName);
 			break;
 
+		case EDlgEventType::Custom:
+			if (Event.CustomEvent)
+			{
+				CustomEvents.Add(Event.CustomEvent->GetClass());
+			}
+			break;
+
 		default:
 			break;
 	}
@@ -129,20 +143,24 @@ void FDlgParticipantData::AddTextArgumentData(const FDlgTextArgument& TextArgume
 		case EDlgTextArgumentType::DialogueInt:
 			IntVariableNames.Add(TextArgument.VariableName);
 			break;
+		case EDlgTextArgumentType::DialogueFloat:
+			FloatVariableNames.Add(TextArgument.VariableName);
 
 		case EDlgTextArgumentType::ClassInt:
 			ClassIntVariableNames.Add(TextArgument.VariableName);
 			break;
-
-		case EDlgTextArgumentType::DialogueFloat:
-			FloatVariableNames.Add(TextArgument.VariableName);
-
 		case EDlgTextArgumentType::ClassFloat:
 			ClassFloatVariableNames.Add(TextArgument.VariableName);
 			break;
-
 		case EDlgTextArgumentType::ClassText:
 			ClassTextVariableNames.Add(TextArgument.VariableName);
+			break;
+
+		case EDlgTextArgumentType::Custom:
+			if (TextArgument.CustomTextArgument)
+			{
+				CustomTextArguments.Add(TextArgument.CustomTextArgument->GetClass());
+			}
 			break;
 
 		default:

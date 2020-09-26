@@ -16,7 +16,7 @@ class DLGSYSTEM_API UDlgEventCustom : public UDlgObject
 	GENERATED_BODY()
 public:
 	// Called when the event is triggered.
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Dialogue|Events", DisplayName = "Enter")
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Dialogue", DisplayName = "Enter")
 	void EnterEvent(UDlgContext* Context, UObject* Participant);
 	virtual void EnterEvent_Implementation(UDlgContext* Context, UObject* Participant) {}
 };

@@ -5,7 +5,7 @@
 #include "Interfaces/IPluginManager.h"
 #include "Styling/SlateStyleRegistry.h"
 
-#include "DlgSystemEditorPrivatePCH.h"
+#include "DlgSystemEditorModule.h"
 #include "DlgSystemModule.h"
 
 // Const icon sizes
@@ -18,8 +18,17 @@ static const FVector2D Icon96x96(96.0f, 96.0f);
 
 
 // What is displayed in the Content Browser
-const FName FDialogueStyle::PROPERTY_DialogueClassIcon(TEXT("ClassIcon.DlgDialogue"));
-const FName FDialogueStyle::PROPERTY_DialogueClassThumbnail(TEXT("ClassThumbnail.DlgDialogue"));
+const FName FDialogueStyle::PROPERTY_DlgDialogueClassIcon(TEXT("ClassIcon.DlgDialogue"));
+const FName FDialogueStyle::PROPERTY_DlgDialogueClassThumbnail(TEXT("ClassThumbnail.DlgDialogue"));
+const FName FDialogueStyle::PROPERTY_DlgEventCustomClassIcon(TEXT("ClassIcon.DlgEventCustom"));
+const FName FDialogueStyle::PROPERTY_DlgEventCustomClassThumbnail(TEXT("ClassThumbnail.DlgEventCustom"));
+const FName FDialogueStyle::PROPERTY_DlgConditionCustomClassIcon(TEXT("ClassIcon.DlgConditionCustom"));
+const FName FDialogueStyle::PROPERTY_DlgConditionCustomClassThumbnail(TEXT("ClassThumbnail.DlgConditionCustom"));
+const FName FDialogueStyle::PROPERTY_DlgTextArgumentCustomClassIcon(TEXT("ClassIcon.DlgTextArgumentCustom"));
+const FName FDialogueStyle::PROPERTY_DlgTextArgumentCustomClassThumbnail(TEXT("ClassThumbnail.DlgTextArgumentCustom"));
+const FName FDialogueStyle::PROPERTY_DlgNodeDataClassIcon(TEXT("ClassIcon.DlgNodeData"));
+const FName FDialogueStyle::PROPERTY_DlgNodeDataClassThumbnail(TEXT("ClassThumbnail.DlgNodeData"));
+
 
 // Inside the Dialogue Editor Window
 const FName FDialogueStyle::PROPERTY_GraphNodeCircleBox(TEXT("DlgSystemEditor.Graph.Node.Circle"));
@@ -109,14 +118,46 @@ void FDialogueStyle::Initialize()
 		return;
 	}
 
-	// Content Browser icons for the Dialogue Asset
+	// Content Browser icons for asset types
 	StyleSet->Set(
-		PROPERTY_DialogueClassIcon,
-		new FSlateImageBrush(GetPluginContentPath("Icons/Dialogue_16x.png"), Icon16x16)
+		PROPERTY_DlgDialogueClassIcon,
+		new FSlateImageBrush(GetPluginContentPath("Icons/DlgDialogue_16x.png"), Icon16x16)
 	);
 	StyleSet->Set(
-		PROPERTY_DialogueClassThumbnail,
-		new FSlateImageBrush(GetPluginContentPath("Icons/Dialogue_64x.png"), Icon64x64)
+		PROPERTY_DlgDialogueClassThumbnail,
+		new FSlateImageBrush(GetPluginContentPath("Icons/DlgDialogue_64x.png"), Icon64x64)
+	);
+	StyleSet->Set(
+		PROPERTY_DlgEventCustomClassIcon,
+		new FSlateImageBrush(GetPluginContentPath("Icons/DlgEventCustom_16x.png"), Icon16x16)
+	);
+	StyleSet->Set(
+		PROPERTY_DlgEventCustomClassThumbnail,
+		new FSlateImageBrush(GetPluginContentPath("Icons/DlgEventCustom_64x.png"), Icon64x64)
+	);
+	StyleSet->Set(
+		PROPERTY_DlgConditionCustomClassIcon,
+		new FSlateImageBrush(GetPluginContentPath("Icons/DlgConditionCustom_16x.png"), Icon16x16)
+	);
+	StyleSet->Set(
+		PROPERTY_DlgConditionCustomClassThumbnail,
+		new FSlateImageBrush(GetPluginContentPath("Icons/DlgConditionCustom_64x.png"), Icon64x64)
+	);
+	StyleSet->Set(
+		PROPERTY_DlgTextArgumentCustomClassIcon,
+		new FSlateImageBrush(GetPluginContentPath("Icons/DlgTextArgumentCustom_16x.png"), Icon16x16)
+	);
+	StyleSet->Set(
+		PROPERTY_DlgTextArgumentCustomClassThumbnail,
+		new FSlateImageBrush(GetPluginContentPath("Icons/DlgTextArgumentCustom_64x.png"), Icon64x64)
+	);
+	StyleSet->Set(
+		PROPERTY_DlgNodeDataClassIcon,
+		new FSlateImageBrush(GetPluginContentPath("Icons/DlgNodeData_16x.png"), Icon16x16)
+	);
+	StyleSet->Set(
+		PROPERTY_DlgNodeDataClassThumbnail,
+		new FSlateImageBrush(GetPluginContentPath("Icons/DlgNodeData_64x.png"), Icon64x64)
 	);
 
 	// Dialogue Search

@@ -6,12 +6,19 @@
 #include "Templates/Casts.h"
 #include "Containers/Queue.h"
 #include "EdGraphNode_Comment.h"
+#include "FileHelpers.h"
+#include "Kismet2/BlueprintEditorUtils.h"
+#include "Kismet2/SClassPickerDialog.h"
 
-#include "DlgSystemEditorPrivatePCH.h"
-#include "IDialogueEditor.h"
-#include "Nodes/DialogueGraphNode.h"
-#include "Nodes/DialogueGraphNode_Edge.h"
+#include "DlgSystemEditorModule.h"
+#include "DialogueEditor/IDialogueEditor.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DlgHelper.h"
+#include "DlgManager.h"
+#include "Factories/DialogueClassViewerFilters.h"
+#include "Kismet2/KismetEditorUtilities.h"
+#include "K2Node_Event.h"
 
 /** Useful for auto positioning */
 struct NodeWithParentPosition
@@ -802,7 +809,7 @@ void FDialogueEditorUtilities::RemapOldIndicesWithNewAndUpdateGUID(
 		for (int32 ConditionIndex = 0, ConditionNum = DialogueNode->GetNodeEnterConditions().Num(); ConditionIndex < ConditionNum; ConditionIndex++)
 		{
 			FDlgCondition* EnterCondition = DialogueNode->GetMutableEnterConditionAt(ConditionIndex);
-			if (EnterCondition->HasNodeIndex())
+			if (FDlgCondition::HasNodeIndex(EnterCondition->ConditionType))
 			{
 				UpdateConditionIndex(EnterCondition);
 				EnterCondition->GUID = Nodes[EnterCondition->IntValue]->GetGUID();
@@ -813,18 +820,22 @@ void FDialogueEditorUtilities::RemapOldIndicesWithNewAndUpdateGUID(
 		for (int32 EdgeIndex = 0, EdgesNum = DialogueNode->GetNodeChildren().Num(); EdgeIndex < EdgesNum; EdgeIndex++)
 		{
 			FDlgEdge* DialogueEdge = DialogueNode->GetSafeMutableNodeChildAt(EdgeIndex);
+			bool bModifiedConditions = false;
 
 			for (FDlgCondition& Condition : DialogueEdge->Conditions)
 			{
-				if (Condition.HasNodeIndex())
+				if (FDlgCondition::HasNodeIndex(Condition.ConditionType))
 				{
-					UpdateConditionIndex(&Condition);
+					bModifiedConditions = UpdateConditionIndex(&Condition) || bModifiedConditions;
 					Condition.GUID = Nodes[Condition.IntValue]->GetGUID();
 				}
 			}
 
 			// Update graph node edge
-			ChildEdgeNodes[EdgeIndex]->SetDialogueEdge(*DialogueEdge);
+			if (bModifiedConditions)
+			{
+				ChildEdgeNodes[EdgeIndex]->SetDialogueEdge(*DialogueEdge);
+			}
 		}
 
 		GraphNode->CheckDialogueNodeSyncWithGraphNode(true);
@@ -842,6 +853,245 @@ UDlgDialogue* FDialogueEditorUtilities::GetDialogueFromGraphNode(const UEdGraphN
 	if (const UDialogueGraph* DialogueGraph = Cast<UDialogueGraph>(GraphNode->GetGraph()))
 	{
 		return DialogueGraph->GetDialogue();
+	}
+
+	return nullptr;
+}
+
+bool FDialogueEditorUtilities::SaveAllDialogues()
+{
+	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
+	TArray<UPackage*> PackagesToSave;
+	const bool bBatchOnlyInGameDialogues = GetDefault<UDlgSystemSettings>()->bBatchOnlyInGameDialogues;
+
+	for (UDlgDialogue* Dialogue : Dialogues)
+	{
+		// Ignore, not in game directory
+		if (bBatchOnlyInGameDialogues && !Dialogue->IsInProjectDirectory())
+		{
+			continue;
+		}
+
+		Dialogue->MarkPackageDirty();
+		PackagesToSave.Add(Dialogue->GetOutermost());
+	}
+
+	static constexpr bool bCheckDirty = false;
+	static constexpr bool bPromptToSave = false;
+	return FEditorFileUtils::PromptForCheckoutAndSave(PackagesToSave, bCheckDirty, bPromptToSave) == FEditorFileUtils::EPromptReturnCode::PR_Success;
+}
+
+bool FDialogueEditorUtilities::DeleteAllDialoguesTextFiles()
+{
+	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
+	const bool bBatchOnlyInGameDialogues = GetDefault<UDlgSystemSettings>()->bBatchOnlyInGameDialogues;
+	for (const UDlgDialogue* Dialogue : Dialogues)
+	{
+		// Ignore, not in game directory
+		if (bBatchOnlyInGameDialogues && !Dialogue->IsInProjectDirectory())
+		{
+			continue;
+		}
+
+		Dialogue->DeleteAllTextFiles();
+	}
+
+	return true;
+}
+
+bool FDialogueEditorUtilities::PickChildrenOfClass(const FText& TitleText, UClass*& OutChosenClass, UClass* Class)
+{
+	// Create filter
+	TSharedPtr<FDialogueChildrenOfClassFilterViewer> Filter = MakeShareable(new FDialogueChildrenOfClassFilterViewer);
+	Filter->AllowedChildrenOfClasses.Add(Class);
+
+	// Fill in options
+	FClassViewerInitializationOptions Options;
+	Options.Mode = EClassViewerMode::ClassPicker;
+
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+	Options.DisplayMode = Settings->GetUnrealClassPickerDisplayMode();
+	Options.ClassFilter = Filter;
+	Options.bShowUnloadedBlueprints = true;
+	Options.bExpandRootNodes = true;
+	Options.NameTypeToDisplay = EClassViewerNameTypeToDisplay::Dynamic;
+
+	return SClassPickerDialog::PickClass(TitleText, Options, OutChosenClass, Class);
+}
+
+bool FDialogueEditorUtilities::OpenBlueprintEditor(
+    UBlueprint* Blueprint,
+    EDialogueBlueprintOpenType OpenType,
+    FName FunctionNameToOpen,
+    bool bForceFullEditor,
+	bool bAddBlueprintFunctionIfItDoesNotExist
+)
+{
+	if (!Blueprint)
+	{
+		return false;
+	}
+
+	Blueprint->bForceFullEditor = bForceFullEditor;
+
+	// Find Function Graph
+	UObject* ObjectToFocusOn = nullptr;
+	if (OpenType != EDialogueBlueprintOpenType::None && FunctionNameToOpen != NAME_None)
+	{
+		UClass* Class = Blueprint->GeneratedClass;
+		check(Class);
+
+		if (OpenType == EDialogueBlueprintOpenType::Function)
+		{
+			ObjectToFocusOn = bAddBlueprintFunctionIfItDoesNotExist
+                ? BlueprintGetOrAddFunction(Blueprint, FunctionNameToOpen, Class)
+                : BlueprintGetFunction(Blueprint, FunctionNameToOpen, Class);
+		}
+		else if (OpenType == EDialogueBlueprintOpenType::Event)
+		{
+			ObjectToFocusOn = bAddBlueprintFunctionIfItDoesNotExist
+                ? BlueprintGetOrAddEvent(Blueprint, FunctionNameToOpen, Class)
+                : BlueprintGetEvent(Blueprint, FunctionNameToOpen, Class);
+		}
+	}
+
+	// Default to the last uber graph
+	if (ObjectToFocusOn == nullptr)
+	{
+		ObjectToFocusOn = Blueprint->GetLastEditedUberGraph();
+	}
+	if (ObjectToFocusOn)
+	{
+		FKismetEditorUtilities::BringKismetToFocusAttentionOnObject(ObjectToFocusOn);
+		return true;
+	}
+
+	return OpenEditorForAsset(Blueprint);
+}
+
+UEdGraph* FDialogueEditorUtilities::BlueprintGetOrAddFunction(UBlueprint* Blueprint, FName FunctionName, UClass* FunctionClassSignature)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return nullptr;
+	}
+
+	// Find existing function
+	if (UEdGraph* GraphFunction = BlueprintGetFunction(Blueprint, FunctionName, FunctionClassSignature))
+	{
+		return GraphFunction;
+	}
+
+	// Create a new function
+	UEdGraph* NewGraph = FBlueprintEditorUtils::CreateNewGraph(Blueprint, FunctionName, UEdGraph::StaticClass(), UEdGraphSchema_K2::StaticClass());
+	FBlueprintEditorUtils::AddFunctionGraph(Blueprint, NewGraph, /*bIsUserCreated=*/ false, FunctionClassSignature);
+	Blueprint->LastEditedDocuments.Add(NewGraph);
+	return NewGraph;
+}
+
+UEdGraph* FDialogueEditorUtilities::BlueprintGetFunction(UBlueprint* Blueprint, FName FunctionName, UClass* FunctionClassSignature)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return nullptr;
+	}
+
+	// Find existing function
+	for (UEdGraph* GraphFunction : Blueprint->FunctionGraphs)
+	{
+		if (FunctionName == GraphFunction->GetFName())
+		{
+			return GraphFunction;
+		}
+	}
+
+	// Find in the implemented Interfaces Graphs
+	for (const FBPInterfaceDescription& Interface : Blueprint->ImplementedInterfaces)
+	{
+		for (UEdGraph* GraphFunction : Interface.Graphs)
+		{
+			if (FunctionName == GraphFunction->GetFName())
+			{
+				return GraphFunction;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+UK2Node_Event* FDialogueEditorUtilities::BlueprintGetOrAddEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return nullptr;
+	}
+
+	// Find existing event
+	if (UK2Node_Event* EventNode = BlueprintGetEvent(Blueprint, EventName, EventClassSignature))
+	{
+		return EventNode;
+	}
+
+	// Create a New Event
+	if (Blueprint->UbergraphPages.Num())
+	{
+		int32 NodePositionY = 0;
+		UK2Node_Event* NodeEvent = FKismetEditorUtilities::AddDefaultEventNode(
+			Blueprint,
+			Blueprint->UbergraphPages[0],
+			EventName,
+			EventClassSignature,
+			NodePositionY
+		);
+		NodeEvent->SetEnabledState(ENodeEnabledState::Enabled);
+		NodeEvent->NodeComment = "";
+		NodeEvent->bCommentBubbleVisible = false;
+		return NodeEvent;
+	}
+
+	return nullptr;
+}
+
+UK2Node_Event* FDialogueEditorUtilities::BlueprintGetEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return nullptr;
+	}
+
+	TArray<UK2Node_Event*> AllEvents;
+	FBlueprintEditorUtils::GetAllNodesOfClass<UK2Node_Event>(Blueprint, AllEvents);
+	for (UK2Node_Event* EventNode : AllEvents)
+	{
+		if (EventNode->bOverrideFunction && EventNode->EventReference.GetMemberName() == EventName)
+		{
+			return EventNode;
+		}
+	}
+
+	return nullptr;
+}
+
+UEdGraphNode_Comment* FDialogueEditorUtilities::BlueprintAddComment(UBlueprint* Blueprint, const FString& CommentString, FVector2D Location)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal || Blueprint->UbergraphPages.Num() == 0)
+	{
+		return nullptr;
+	}
+
+	UEdGraph* Graph = Blueprint->UbergraphPages[0];
+	TSharedPtr<FEdGraphSchemaAction> Action = Graph->GetSchema()->GetCreateCommentAction();
+	if (!Action.IsValid())
+	{
+		return nullptr;
+	}
+
+	UEdGraphNode* GraphNode = Action->PerformAction(Graph, nullptr, Location);
+	if (UEdGraphNode_Comment* CommentNode = Cast<UEdGraphNode_Comment>(GraphNode))
+	{
+		CommentNode->NodeComment = CommentString;
+		return CommentNode;
 	}
 
 	return nullptr;

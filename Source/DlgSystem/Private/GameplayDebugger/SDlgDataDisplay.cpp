@@ -136,7 +136,7 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 	}
 
 	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
-	const TArray<TWeakObjectPtr<AActor>> Actors = UDlgManager::GetAllActorsImplementingDialogueParticipantInterface(World);
+	const TArray<TWeakObjectPtr<AActor>> Actors = UDlgManager::GetAllWeakActorsWithDialogueParticipantInterface(World);
 
 	// Build fast lookup for ParticipantNames
 	// Maps from ParticipantName => Array of Dialogues that have this Participant.

@@ -4,7 +4,7 @@
 #include "DlgDialogue.h"
 #include "DialogueEditor/Graph/DialogueGraph.h"
 #include "DialogueEditor/Graph/DialogueGraphSchema.h"
-#include "DialogueEditor/DialogueEditorUtilities.h"
+#include "DialogueEditorUtilities.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueEditor/DialogueCompiler.h"
@@ -139,5 +139,5 @@ void FDlgDialogueEditorAccess::SetNewOuterForObjectFromGraphNode(UObject* Object
 		return;
 	}
 
-	Object->Rename(nullptr, ClosestNode,  REN_DontCreateRedirectors);
+	Object->Rename(nullptr, ClosestNode, REN_DontCreateRedirectors);
 }
