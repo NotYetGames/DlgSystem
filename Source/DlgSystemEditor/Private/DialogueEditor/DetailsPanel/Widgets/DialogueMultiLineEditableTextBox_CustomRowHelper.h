@@ -42,6 +42,7 @@ class FDialogueMultiLineEditableTextBox_CustomRowHelper :
 {
 	typedef FDialogueMultiLineEditableTextBox_CustomRowHelper Self;
 	typedef FDialogueBase_CustomRowHelper Super;
+
 public:
 	FDialogueMultiLineEditableTextBox_CustomRowHelper(FDetailWidgetRow* InDetailWidgetRow, const TSharedPtr<IPropertyHandle>& InPropertyHandle)
 		: FDialogueBase_CustomRowHelper(InDetailWidgetRow, InPropertyHandle)

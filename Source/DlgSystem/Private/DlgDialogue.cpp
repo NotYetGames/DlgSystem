@@ -97,7 +97,8 @@ void UDlgDialogue::PostLoad()
 	}
 
 	// Refresh the data, so that it is valid after loading.
-	if (DialogueVersion < FDlgDialogueObjectVersion::AddTextFormatArguments)
+	if (DialogueVersion < FDlgDialogueObjectVersion::AddTextFormatArguments ||
+		DialogueVersion < FDlgDialogueObjectVersion::AddCustomObjectsToParticipantsData)
 	{
 		UpdateAndRefreshData();
 	}
@@ -151,6 +152,8 @@ void UDlgDialogue::PostLoad()
 			}
 		}
 	}
+
+	bWasPostLoaded = true;
 }
 
 void UDlgDialogue::PostInitProperties()
@@ -725,6 +728,46 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 		else
 		{
 			FDlgLogger::Get().Warning(TEXT("Trying to fill ParticipantsClasses, got a Participant name = None. Ignoring!"));
+		}
+	}
+
+	// 3. Set auto default participant classes
+	if (bWasPostLoaded && Settings->bAutoSetDefaultParticipantClasses)
+	{
+		TArray<UClass*> NativeClasses;
+		TArray<UClass*> BlueprintClasses;
+		FDlgHelper::GetAllClassesImplementingInterface(UDlgDialogueParticipant::StaticClass(), NativeClasses, BlueprintClasses);
+
+		const TMap<FName, TArray<FDlgClassAndObject>> NativeClassesMap = FDlgHelper::ConvertDialogueParticipantsClassesIntoMap(NativeClasses);
+		const TMap<FName, TArray<FDlgClassAndObject>> BlueprintClassesMap = FDlgHelper::ConvertDialogueParticipantsClassesIntoMap(BlueprintClasses);
+
+		for (FDlgParticipantClass& Struct : ParticipantsClasses)
+		{
+			// Participant Name is not set or Class is set, ignore
+			if (Struct.ParticipantName == NAME_None || Struct.ParticipantClass != nullptr)
+			{
+				continue;
+			}
+
+			// Blueprint
+			if (BlueprintClassesMap.Contains(Struct.ParticipantName))
+			{
+				const TArray<FDlgClassAndObject>& Array = BlueprintClassesMap.FindChecked(Struct.ParticipantName);
+				if (Array.Num() == 1)
+				{
+					Struct.ParticipantClass = Array[0].Class;
+				}
+			}
+
+			// Native last resort
+			if (Struct.ParticipantClass == nullptr && NativeClassesMap.Contains(Struct.ParticipantName))
+			{
+				const TArray<FDlgClassAndObject>& Array = NativeClassesMap.FindChecked(Struct.ParticipantName);
+				if (Array.Num() == 1)
+				{
+					Struct.ParticipantClass = Array[0].Class;
+				}
+			}
 		}
 	}
 }

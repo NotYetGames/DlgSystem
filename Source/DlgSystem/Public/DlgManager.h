@@ -13,6 +13,16 @@ class UDlgContext;
 class UDlgDialogue;
 
 
+USTRUCT(BlueprintType)
+struct DLGSYSTEM_API FDlgObjectsArray
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TArray<UObject*> Array;
+};
+
 /**
  *  Class providing a collection of static functions to start a conversation and work with Dialogues.
  */
@@ -154,11 +164,17 @@ public:
 	static TArray<UDlgDialogue*> GetAllDialoguesFromMemory();
 
 	// Gets all the objects from the provided World that implement the Dialogue Participant Interface. Iterates through all objects, DO NOT CALL EACH FRAME
-	static TArray<TWeakObjectPtr<AActor>> GetAllActorsImplementingDialogueParticipantInterface(UWorld* World);
+	static TArray<TWeakObjectPtr<AActor>> GetAllWeakActorsWithDialogueParticipantInterface(UWorld* World);
 
 	// Gets all objects from the World that implement the Dialogue Participant Interface
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper", meta = (WorldContext = "WorldContextObject"))
 	static TArray<UObject*> GetAllObjectsWithDialogueParticipantInterface(UObject* WorldContextObject);
+
+	// Same as GetAllObjectsWithDialogueParticipantInterface but groups the Objects into a Map
+	// Where the Key is the Participant Name
+	// and the Value is the Participants Array
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper", meta = (WorldContext = "WorldContextObject"))
+	static TMap<FName, FDlgObjectsArray> GetAllObjectsMapWithDialogueParticipantInterface(UObject* WorldContextObject);
 
 	// Gets all the dialogues that have a duplicate GUID, should not happen, like ever.
 	static TArray<UDlgDialogue*> GetDialoguesWithDuplicateGUIDs();
@@ -184,16 +200,6 @@ public:
 	// Does the Object implement the Dialogue Participant Interface?
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper")
 	static bool DoesObjectImplementDialogueParticipantInterface(const UObject* Object);
-	static bool DoesClassImplementParticipantInterface(const UClass* Class)
-	{
-		static const UClass* DialogueParticipantClass = UDlgDialogueParticipant::StaticClass();
-		if (!Class)
-		{
-			return false;
-		}
-
-		return Class->ImplementsInterface(DialogueParticipantClass);
-	}
 
 	// Is Object a UDlgEventCustom or a child from that
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Helper", DisplayName = "Is Object A Custom Event")

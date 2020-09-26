@@ -9,16 +9,18 @@
 #include "WorkspaceMenuStructureModule.h"
 #include "WorkspaceMenuStructure.h"
 #include "Widgets/Docking/SDockTab.h"
-#include "FileHelpers.h"
 #include "Framework/MultiBox/MultiBoxExtender.h"
 #include "LevelEditor.h"
 #include "GenericPlatform/GenericPlatformMisc.h"
 #include "Editor.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
+#include "Kismet2/KismetEditorUtilities.h"
+#include "K2Node_Event.h"
 
-#include "DialogueGraphFactories.h"
-#include "DlgSystemEditorPrivatePCH.h"
-#include "DialogueAssetTypeActions.h"
+
+#include "Factories/DialogueGraphFactories.h"
+#include "AssetTypeActions/AssetTypeActions_DlgDialogue.h"
+#include "AssetTypeActions/AssetTypeActions_DlgBlueprintDerived.h"
 #include "DialogueCommands.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueBrowser/SDialogueBrowser.h"
@@ -69,6 +71,28 @@ void FDlgSystemEditorModule::StartupModule()
 	OnPostPIEStartedHandle = FEditorDelegates::PostPIEStarted.AddRaw(this, &Self::HandleOnPostPIEStarted);
 	OnEndPIEHandle = FEditorDelegates::EndPIE.AddRaw(this, &Self::HandleOnEndPIEHandle);
 
+	// Register Blueprint events
+	FKismetEditorUtilities::RegisterOnBlueprintCreatedCallback(
+		this,
+		UDlgConditionCustom::StaticClass(),
+		FKismetEditorUtilities::FOnBlueprintCreated::CreateRaw(this, &Self::HandleNewCustomConditionBlueprintCreated)
+	);
+	FKismetEditorUtilities::RegisterOnBlueprintCreatedCallback(
+		this,
+		UDlgTextArgumentCustom::StaticClass(),
+		FKismetEditorUtilities::FOnBlueprintCreated::CreateRaw(this, &Self::HandleNewCustomTextArgumentBlueprintCreated)
+	);
+	FKismetEditorUtilities::RegisterOnBlueprintCreatedCallback(
+		this,
+		UDlgEventCustom::StaticClass(),
+		FKismetEditorUtilities::FOnBlueprintCreated::CreateRaw(this, &Self::HandleNewCustomEventBlueprintCreated)
+	);
+	FKismetEditorUtilities::RegisterOnBlueprintCreatedCallback(
+	    this,
+	    UDlgNodeData::StaticClass(),
+	    FKismetEditorUtilities::FOnBlueprintCreated::CreateRaw(this, &Self::HandleNewNodeDataBlueprintCreated)
+	);
+
 	// Register slate style overrides
 	FDialogueStyle::Initialize();
 
@@ -81,10 +105,35 @@ void FDlgSystemEditorModule::StartupModule()
 	// make the DlgSystem be displayed in the filters menu and in the create new menu
 	DlgSystemAssetCategoryBit = AssetTools.RegisterAdvancedAssetCategory(DIALOGUE_SYSTEM_MENU_CATEGORY_KEY, DIALOGUE_SYSTEM_MENU_CATEGORY_KEY_TEXT);
 	{
-		auto Action = MakeShared<FDialogueAssetTypeActions>(DlgSystemAssetCategoryBit);
+		auto Action = MakeShared<FAssetTypeActions_DlgDialogue>(DlgSystemAssetCategoryBit);
 		AssetTools.RegisterAssetTypeActions(Action);
 		RegisteredAssetTypeActions.Add(Action);
 	}
+	{
+		auto Action = MakeShared<FAssetTypeActions_DlgEventCustom>(DlgSystemAssetCategoryBit);
+		AssetTools.RegisterAssetTypeActions(Action);
+		RegisteredAssetTypeActions.Add(Action);
+	}
+	{
+		auto Action = MakeShared<FAssetTypeActions_DlgConditionCustom>(DlgSystemAssetCategoryBit);
+		AssetTools.RegisterAssetTypeActions(Action);
+		RegisteredAssetTypeActions.Add(Action);
+	}
+	{
+		auto Action = MakeShared<FAssetTypeActions_DlgTextArgumentCustom>(DlgSystemAssetCategoryBit);
+		AssetTools.RegisterAssetTypeActions(Action);
+		RegisteredAssetTypeActions.Add(Action);
+	}
+	{
+		auto Action = MakeShared<FAssetTypeActions_DlgNodeData>(DlgSystemAssetCategoryBit);
+		AssetTools.RegisterAssetTypeActions(Action);
+		RegisteredAssetTypeActions.Add(Action);
+	}
+	// {
+	// 	auto Action = MakeShared<FAssetTypeActions_DlgParticipants>(DlgSystemAssetCategoryBit);
+	// 	AssetTools.RegisterAssetTypeActions(Action);
+	// 	RegisteredAssetTypeActions.Add(Action);
+	// }
 
 	// Register the details panel customizations
 	{
@@ -229,29 +278,6 @@ void FDlgSystemEditorModule::ShutdownModule()
 	UE_LOG(LogDlgSystemEditor, Log, TEXT("DlgSystemEditorModule: ShutdownModule"));
 }
 
-bool FDlgSystemEditorModule::SaveAllDialogues()
-{
-	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
-	TArray<UPackage*> PackagesToSave;
-	const bool bBatchOnlyInGameDialogues = GetDefault<UDlgSystemSettings>()->bBatchOnlyInGameDialogues;
-
-	for (UDlgDialogue* Dialogue : Dialogues)
-	{
-		// Ignore, not in game directory
-		if (bBatchOnlyInGameDialogues && !Dialogue->IsInProjectDirectory())
-		{
-			continue;
-		}
-
-		Dialogue->MarkPackageDirty();
-		PackagesToSave.Add(Dialogue->GetOutermost());
-	}
-
-	static constexpr bool bCheckDirty = false;
-	static constexpr bool bPromptToSave = false;
-	return FEditorFileUtils::PromptForCheckoutAndSave(PackagesToSave, bCheckDirty, bPromptToSave) == FEditorFileUtils::EPromptReturnCode::PR_Success;
-}
-
 void FDlgSystemEditorModule::HandleOnSaveAllDialogues()
 {
 	const EAppReturnType::Type Response = FPlatformMisc::MessageBoxExt(EAppMsgType::YesNo,
@@ -263,7 +289,7 @@ void FDlgSystemEditorModule::HandleOnSaveAllDialogues()
 		return;
 	}
 
-	if (!SaveAllDialogues())
+	if (!FDialogueEditorUtilities::SaveAllDialogues())
 	{
 		UE_LOG(LogDlgSystemEditor, Error, TEXT("Failed To save all Dialogues. An error occurred."));
 	}
@@ -284,28 +310,10 @@ void FDlgSystemEditorModule::HandleOnDeleteAllDialoguesTextFiles()
 		return;
 	}
 
-	if (!DeleteAllDialoguesTextFiles())
+	if (!FDialogueEditorUtilities::DeleteAllDialoguesTextFiles())
 	{
 		UE_LOG(LogDlgSystemEditor, Error, TEXT("Failed To delete all Dialogues text files. An error occurred."));
 	}
-}
-
-bool FDlgSystemEditorModule::DeleteAllDialoguesTextFiles()
-{
-	const TArray<UDlgDialogue*> Dialogues = UDlgManager::GetAllDialoguesFromMemory();
-	const bool bBatchOnlyInGameDialogues = GetDefault<UDlgSystemSettings>()->bBatchOnlyInGameDialogues;
-	for (const UDlgDialogue* Dialogue : Dialogues)
-	{
-		// Ignore, not in game directory
-		if (bBatchOnlyInGameDialogues && !Dialogue->IsInProjectDirectory())
-		{
-			continue;
-		}
-
-		Dialogue->DeleteAllTextFiles();
-	}
-
-	return true;
 }
 
 void FDlgSystemEditorModule::HandleOnPostEngineInit()
@@ -417,6 +425,73 @@ void FDlgSystemEditorModule::HandleOnEndPIEHandle(bool bIsSimulating)
 	}
 }
 
+void FDlgSystemEditorModule::HandleNewCustomConditionBlueprintCreated(UBlueprint* Blueprint)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return;
+	}
+
+	Blueprint->bForceFullEditor = true;
+	UEdGraph* FunctionGraph = FDialogueEditorUtilities::BlueprintGetOrAddFunction(
+		Blueprint,
+		GET_FUNCTION_NAME_CHECKED(UDlgConditionCustom, IsConditionMet),
+		UDlgConditionCustom::StaticClass()
+	);
+	if (FunctionGraph)
+	{
+		Blueprint->LastEditedDocuments.Add(FunctionGraph);
+	}
+}
+
+void FDlgSystemEditorModule::HandleNewCustomTextArgumentBlueprintCreated(UBlueprint* Blueprint)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return;
+	}
+
+	Blueprint->bForceFullEditor = true;
+	UEdGraph* FunctionGraph = FDialogueEditorUtilities::BlueprintGetOrAddFunction(
+        Blueprint,
+        GET_FUNCTION_NAME_CHECKED(UDlgTextArgumentCustom, GetText),
+        UDlgTextArgumentCustom::StaticClass()
+    );
+	if (FunctionGraph)
+	{
+		Blueprint->LastEditedDocuments.Add(FunctionGraph);
+	}
+}
+
+void FDlgSystemEditorModule::HandleNewCustomEventBlueprintCreated(UBlueprint* Blueprint)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return;
+	}
+
+	Blueprint->bForceFullEditor = true;
+	UK2Node_Event* EventNode = FDialogueEditorUtilities::BlueprintGetOrAddEvent(
+	    Blueprint,
+	    GET_FUNCTION_NAME_CHECKED(UDlgEventCustom, EnterEvent),
+	    UDlgEventCustom::StaticClass()
+	);
+	if (EventNode)
+	{
+		Blueprint->LastEditedDocuments.Add(EventNode->GetGraph());
+	}
+}
+
+void FDlgSystemEditorModule::HandleNewNodeDataBlueprintCreated(UBlueprint* Blueprint)
+{
+	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal)
+	{
+		return;
+	}
+
+	FDialogueEditorUtilities::BlueprintAddComment(Blueprint, TEXT("Add you own variables to see them in the Dialogue Editor"));
+}
+
 void FDlgSystemEditorModule::ExtendMenu()
 {
 	// Running in game mode (standalone game) exit as we can't get the LevelEditorModule.
@@ -443,7 +518,7 @@ void FDlgSystemEditorModule::ExtendMenu()
 				LOCTEXT("WorkspaceMenu_DialogueCategory", "Dialogue" ),
 				FSlateIcon(
 					FDialogueStyle::GetStyleSetName(),
-					FDialogueStyle::PROPERTY_DialogueClassIcon
+					FDialogueStyle::PROPERTY_DlgDialogueClassIcon
 				),
 				false
 			);
@@ -507,11 +582,13 @@ TSharedRef<FExtender> FDlgSystemEditorModule::CreateFileMenuExtender(
 
 TSharedRef<FExtender> FDlgSystemEditorModule::CreateHelpMenuExtender(TSharedRef<FUICommandList> Commands)
 {
-	// Fill after the Help->HelpBrowse
+	// Fill before the Help->BugReporting
+	// NOTE: Don't use HelpBrowse as that does not exist in later engine version
+	// https://gitlab.com/NotYetGames/DlgSystem/-/issues/36
 	TSharedRef<FExtender> HelpMenuExtender(new FExtender);
 	HelpMenuExtender->AddMenuExtension(
-		"HelpBrowse",
-		EExtensionHook::After,
+		"BugReporting",
+		EExtensionHook::Before,
 		Commands,
 		FMenuExtensionDelegate::CreateLambda([](FMenuBuilder& MenuBuilder)
 		{

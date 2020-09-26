@@ -7,7 +7,7 @@
 #include "IAssetTypeActions.h"
 #include "Framework/Commands/UICommandList.h"
 #include "Framework/Docking/WorkspaceItem.h"
-
+#include "Logging/LogMacros.h"
 
 class FSpawnTabArgs;
 class UK2Node;
@@ -15,6 +15,22 @@ class UDlgDialogue;
 struct FGraphPanelNodeFactory;
 struct FGraphPanelPinFactory;
 class FExtender;
+class UEdGraph;
+
+DECLARE_LOG_CATEGORY_EXTERN(LogDlgSystemEditor, Verbose, All)
+
+const FName DIALOGUE_SYSTEM_MENU_CATEGORY_KEY(TEXT("Dialogue System"));
+const FText DIALOGUE_SYSTEM_MENU_CATEGORY_KEY_TEXT(NSLOCTEXT("DlgSystemEditor", "DlgSystemAssetCategory", "Dialogue System"));
+
+const FName OTHER_DIALOGUE_SYSTEM_MENU_CATEGORY_KEY(TEXT("Other Dialogue System"));
+const FText OTHER_DIALOGUE_SYSTEM_MENU_CATEGORY_KEY_TEXT(NSLOCTEXT("OtherDlgSystemEditor", "OtherDlgSystemAssetCategory", "OtherDialogue System"));
+
+// Other Modules constants
+static const FName NAME_MODULE_AssetTools(TEXT("AssetTools"));
+static const FName NAME_MODULE_AssetRegistry(TEXT("AssetRegistry"));
+static const FName NAME_MODULE_LevelEditor(TEXT("LevelEditor"));
+static const FName NAME_MODULE_PropertyEditor(TEXT("PropertyEditor"));
+
 
 // Implementation of the DlgSystemEditor Module
 class DLGSYSTEMEDITOR_API FDlgSystemEditorModule : public IDlgSystemEditorModule
@@ -30,6 +46,9 @@ public:
 	void StartupModule() override;
 	void ShutdownModule() override;
 
+	EAssetTypeCategories::Type GetAssetCategory() const override { return DlgSystemAssetCategoryBit; }
+
+
 	//
 	// Own functions
 	//
@@ -42,14 +61,6 @@ public:
 	static TSharedRef<FExtender> CreateHelpMenuExtender(TSharedRef<FUICommandList> Commands);
 	static void MapActionsForFileMenuExtender(TSharedRef<FUICommandList> Commands);
 	static void MapActionsForHelpMenuExtender(TSharedRef<FUICommandList> Commands);
-
-	// Save all the dialogues.
-	// @return True on success or false on failure.
-	static bool SaveAllDialogues();
-
-	// Deletes all teh dialogues text files
-	// @return True on success or false on failure.
-	static bool DeleteAllDialoguesTextFiles();
 
 private:
 	// Handle clicking on save all dialogues.
@@ -65,6 +76,12 @@ private:
 	void HandleOnBeginPIE(bool bIsSimulating);
 	void HandleOnPostPIEStarted(bool bIsSimulating);
 	void HandleOnEndPIEHandle(bool bIsSimulating);
+
+	// Handle Blueprint Events
+	void HandleNewCustomConditionBlueprintCreated(UBlueprint* Blueprint);
+	void HandleNewCustomTextArgumentBlueprintCreated(UBlueprint* Blueprint);
+	void HandleNewCustomEventBlueprintCreated(UBlueprint* Blueprint);
+	void HandleNewNodeDataBlueprintCreated(UBlueprint* Blueprint);
 
 	// Extend the Menus of the editor
 	void ExtendMenu();

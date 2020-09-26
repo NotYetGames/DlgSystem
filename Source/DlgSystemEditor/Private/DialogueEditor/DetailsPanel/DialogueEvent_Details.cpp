@@ -12,6 +12,8 @@
 #include "Widgets/SDialogueTextPropertyPickList.h"
 #include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
 #include "DlgHelper.h"
+#include "Widgets/DialogueEnumTypeWithObject_CustomRowHelper.h"
+#include "Widgets/DialogueObject_CustomRowHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueEvent_Details"
 
@@ -32,7 +34,8 @@ void FDialogueEvent_Details::CustomizeHeader(TSharedRef<IPropertyHandle> InStruc
 
 	// Register handler for event type change
 	EventTypePropertyHandle->SetOnPropertyValueChanged(
-		FSimpleDelegate::CreateSP(this, &Self::OnEventTypeChanged, true));
+		FSimpleDelegate::CreateSP(this, &Self::OnEventTypeChanged, true)
+	);
 
 	const bool bShowOnlyInnerProperties = StructPropertyHandle->GetProperty()->HasMetaData(META_ShowOnlyInnerProperties);
 	if (!bShowOnlyInnerProperties)
@@ -67,7 +70,18 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 	}
 
 	// EventType
-	StructBuilder.AddProperty(EventTypePropertyHandle.ToSharedRef());
+	{
+		EventTypePropertyRow = &StructBuilder.AddProperty(EventTypePropertyHandle.ToSharedRef());
+
+		// Add Custom buttons
+		EventTypePropertyRow_CustomDisplay = MakeShared<FDialogueEnumTypeWithObject_CustomRowHelper>(
+            EventTypePropertyRow,
+            Dialogue,
+            ParticipantNamePropertyHandle
+        );
+		EventTypePropertyRow_CustomDisplay->SetEnumType(EDialogueEnumWithObjectType::Event);
+		EventTypePropertyRow_CustomDisplay->Update();
+	}
 
 	// EventName
 	{
@@ -135,6 +149,14 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgEvent, CustomEvent)).ToSharedRef()
 		);
 		CustomEventPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCustomEventVisibility));
+
+		// Add Custom buttons
+		CustomEventPropertyRow_CustomDisplay = MakeShared<FDialogueObject_CustomRowHelper>(CustomEventPropertyRow);
+		CustomEventPropertyRow_CustomDisplay->Update();
+		CustomEventPropertyRow_CustomDisplay->SetFunctionNameToOpen(
+			EDialogueBlueprintOpenType::Event,
+			GET_FUNCTION_NAME_CHECKED(UDlgEventCustom, EnterEvent)
+		);
 	}
 
 	// Cache the initial event type

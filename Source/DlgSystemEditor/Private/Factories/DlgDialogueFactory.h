@@ -17,8 +17,15 @@ class DLGSYSTEMEDITOR_API UDlgDialogueFactory : public UFactory
 public:
 	UDlgDialogueFactory(const FObjectInitializer& ObjectInitializer);
 
+	//
 	// UFactory interface
-	UObject* FactoryCreateNew(UClass* Class, UObject* InParent, FName Name, EObjectFlags Flags, UObject* Context,
-							  FFeedbackContext* Warn) override;
-	// End of UFactory interface
+	//
+	UObject* FactoryCreateNew(
+		UClass* Class,
+		UObject* InParent,
+		FName Name,
+		EObjectFlags Flags,
+		UObject* Context,
+		FFeedbackContext* Warn
+	) override;
 };

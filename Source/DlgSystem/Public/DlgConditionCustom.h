@@ -17,14 +17,13 @@ class DLGSYSTEM_API UDlgConditionCustom : public UDlgObject
 	GENERATED_BODY()
 public:
 	// Checks if the condition is met
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Dialogue|Conditions")
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Dialogue")
 	bool IsConditionMet(const UDlgContext* Context, const UObject* Participant);
 	virtual bool IsConditionMet_Implementation(const UDlgContext* Context, const UObject* Participant)
 	{
 		return false;
 	}
 };
-
 
 // This is the same as UDlgConditionCustom but it does NOT show the categories
 UCLASS(Blueprintable, BlueprintType, Abstract, EditInlineNew, CollapseCategories)

@@ -8,8 +8,25 @@
 #include "UObject/ObjectMacros.h"
 #include <functional>
 
+
+
+#include "DlgCondition.h"
+#include "DlgEvent.h"
 #include "NYReflectionTypes.h"
 
+#include "DlgHelper.generated.h"
+
+USTRUCT()
+struct FDlgClassAndObject
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY()
+	UClass* Class = nullptr;
+
+	UPROPERTY()
+	UObject* Object = nullptr;
+};
 
 class UDlgSystemSettings;
 
@@ -217,12 +234,80 @@ public:
 		return Object->GetClass()->GetName();
 	}
 
+	// Removes _C from the end of the Name
+	// And removes the .extension from the path names
+	static FString CleanObjectName(FString Name);
+
+	// Blueprint Helpers
+	static bool IsClassIgnored(const UClass* Class);
+	static bool IsABlueprintClass(const UClass* Class);
+	static bool IsABlueprintObject(const UObject* Object);
+
 	// This also works with Blueprints
-	static bool IsObjectAChildOf(const UObject* Object, const UClass* Class);
+	static bool IsObjectAChildOf(const UObject* Object, const UClass* ParentClass);
+
+	// This also works with Blueprints
+	static bool IsObjectImplementingInterface(const UObject* Object, const UClass* InterfaceClass);
+
+	// Gets all child classes of ParentClass
+	// NOTE: this is super slow, use with care
+	static bool GetAllChildClassesOf(const UClass* ParentClass, TArray<UClass*>& OutNativeClasses, TArray<UClass*>& OutBlueprintClasses);
+
+	// Gets all classes that implement InterfaceClass
+	// NOTE: this is super slow, use with care
+	static bool GetAllClassesImplementingInterface(const UClass* InterfaceClass, TArray<UClass*>& OutNativeClasses, TArray<UClass*>& OutBlueprintClasses);
+
+	// Converts the Classes Array that represent the Dialogue Participants into a map where
+	// Key: The participant Name
+	// Value: An array of structs that contain the class and the object for that participant name
+	static TMap<FName, TArray<FDlgClassAndObject>> ConvertDialogueParticipantsClassesIntoMap(const TArray<UClass*>& Classes);
 
 	// FileSystem
 	static bool DeleteFile(const FString& PathName, bool bVerbose = true);
 	static bool RenameFile(const FString& OldPathName, const FString& NewPathName, bool bOverWrite = false, bool bVerbose = true);
+
+	// Get the Interface Function Name for this Event Type
+	static FName GetFunctionNameForEventType(EDlgEventType EventType)
+	{
+		switch (EventType)
+		{
+		case EDlgEventType::Event:
+			return TEXT("OnDialogueEvent");
+		case EDlgEventType::ModifyBool:
+			return TEXT("ModifyBoolValue");
+		case EDlgEventType::ModifyFloat:
+			return TEXT("ModifyFloatValue");
+		case EDlgEventType::ModifyInt:
+			return TEXT("ModifyIntValue");
+		case EDlgEventType::ModifyName:
+			return TEXT("ModifyIntValue");
+		default:
+			break;
+		}
+
+		return NAME_None;
+	}
+
+	static FName GetFunctionNameForConditionType(EDlgConditionType ConditionType)
+	{
+		switch (ConditionType)
+		{
+		case EDlgConditionType::EventCall:
+			return TEXT("CheckCondition");
+		case EDlgConditionType::BoolCall:
+			return TEXT("GetBoolValue");
+		case EDlgConditionType::FloatCall:
+			return TEXT("GetFloatValue");
+		case EDlgConditionType::IntCall:
+			return TEXT("GetIntValue");
+		case EDlgConditionType::NameCall:
+			return TEXT("GetNameValue");
+		default:
+			break;
+		}
+
+		return NAME_None;
+	}
 
 	template<typename TEnum>
     static bool ConvertEnumToString(const FString& EnumName, TEnum EnumValue, bool bWithNameSpace, FString& OutEnumValue)

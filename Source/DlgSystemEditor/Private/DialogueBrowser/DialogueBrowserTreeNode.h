@@ -11,7 +11,7 @@ class UDlgDialogue;
 class UDialogueGraphNode;
 class UDialogueGraphNode_Edge;
 
-/** The types of categories. */
+// The types of categories.
 enum class EDialogueTreeNodeCategoryType : uint8
 {
 	Default = 0,
@@ -43,6 +43,7 @@ enum class EDialogueTreeNodeTextType : uint8
 
 	ParticipantDialogue,
 	ParticipantEvent,
+	ParticipantCustomEvent,
 	ParticipantCondition,
 	ParticipantVariableInt,
 	ParticipantVariableFloat,
@@ -55,7 +56,9 @@ enum class EDialogueTreeNodeTextType : uint8
 	ParticipantClassVariableFText,
 
 	EventDialogue,
+	CustomEventDialogue,
 	EventGraphNode,
+	CustomEventGraphNode,
 
 	ConditionDialogue,
 	ConditionGraphNode,
@@ -107,7 +110,12 @@ public:
 	/** Gets the Variable name that this Node belongs to if any. This could be empty in most cases. */
 	virtual FName GetParentVariableName() const;
 
-	/** Getters for the properties */
+	/** Gets the Class that this Node belongs to if any. This could be empty in most cases. */
+	virtual UClass* GetParentClass() const;
+
+	//
+	// Getters for the properties
+	//
 
 	// TextType:
 	EDialogueTreeNodeTextType GetTextType() const { return TextType; }
@@ -146,7 +154,7 @@ public:
 		}
 	}
 
-	/** Checks type of this Node. */
+	// Checks type of this Node.
 	virtual bool IsText() const { return TextType != EDialogueTreeNodeTextType::Default; }
 	virtual bool IsCategory() const { return false; }
 	virtual bool IsSeparator() const { return false; }
@@ -155,6 +163,7 @@ public:
 		return IsText() &&
 			  (TextType == EDialogueTreeNodeTextType::ParticipantDialogue
 			|| TextType == EDialogueTreeNodeTextType::EventDialogue
+			|| TextType == EDialogueTreeNodeTextType::CustomEventDialogue
 			|| TextType == EDialogueTreeNodeTextType::ConditionDialogue
 			|| TextType == EDialogueTreeNodeTextType::IntVariableDialogue
 			|| TextType == EDialogueTreeNodeTextType::FloatVariableDialogue
@@ -168,7 +177,11 @@ public:
 	}
 	bool IsEventText() const
 	{
-		return IsText() && (TextType == EDialogueTreeNodeTextType::ParticipantEvent);
+		return IsText() && TextType == EDialogueTreeNodeTextType::ParticipantEvent;
+	}
+	bool IsCustomEventText() const
+	{
+		return IsText() && TextType == EDialogueTreeNodeTextType::ParticipantCustomEvent;
 	}
 	bool IsConditionText() const
 	{
@@ -178,6 +191,7 @@ public:
 	{
 		return IsText() &&
 			  (TextType == EDialogueTreeNodeTextType::EventGraphNode
+			|| TextType == EDialogueTreeNodeTextType::CustomEventGraphNode
 			|| TextType == EDialogueTreeNodeTextType::ConditionGraphNode
 			|| TextType == EDialogueTreeNodeTextType::IntVariableGraphNode
 			|| TextType == EDialogueTreeNodeTextType::FloatVariableGraphNode
@@ -196,11 +210,10 @@ public:
 			|| TextType == EDialogueTreeNodeTextType::FNameVariableEdgeNode);
 	}
 
-	/** Gets the textual representation of this item */
+	// Gets the textual representation of this item
 	FString ToString() const;
 
-
-	/** Is this equal with Other? */
+	// Is this equal with Other?
 	virtual bool IsEqual(const Self& Other)
 	{
 		return TextType == Other.GetTextType() &&
@@ -258,7 +271,7 @@ protected:
 };
 
 
-/** Root node of the Dialogue browser */
+// Root node of the Dialogue browser
 class FDialogueBrowserTreeRootNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeNode Super;
@@ -267,7 +280,7 @@ public:
 };
 
 
-/** Separator node of the Dialogue browser */
+// Separator node of the Dialogue browser
 class FDialogueBrowserTreeSeparatorNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeNode Super;
@@ -298,7 +311,7 @@ public:
 };
 
 
-/** Node results that represents the Participant Name. */
+// Node results that represents the Participant Name.
 class FDialogueBrowserTreeParticipantNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeParticipantNode Self;
@@ -319,7 +332,7 @@ protected:
 };
 
 
-/** Node results that represents a Variable Name. */
+// Node results that represents a Variable Name.
 class FDialogueBrowserTreeVariableNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeVariableNode Self;
@@ -340,8 +353,30 @@ protected:
 	FName VariableName = NAME_None;
 };
 
+// Node result that represents a custom object
+class FDialogueBrowserTreeCustomObjectNode : public FDialogueBrowserTreeNode
+{
+	typedef FDialogueBrowserTreeCustomObjectNode Self;
+	typedef FDialogueBrowserTreeNode Super;
 
-/** Similar to the FDialogueBrowserTreeParticipantNode only this is a Category */
+public:
+	FDialogueBrowserTreeCustomObjectNode(
+        const FText& InDisplayText,
+        const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
+        UClass* ObjectClass
+    );
+
+	// Class
+	UClass* GetClass() const { return Class.Get(); }
+	UClass* GetParentClass() const { return GetClass(); }
+
+protected:
+	// Class this represents
+	TWeakObjectPtr<UClass> Class = nullptr;
+};
+
+
+// Similar to the FDialogueBrowserTreeParticipantNode only this is a Category
 class FDialogueBrowserTreeCategoryParticipantNode : public FDialogueBrowserTreeParticipantNode
 {
 	typedef FDialogueBrowserTreeParticipantNode Super;
@@ -357,7 +392,7 @@ public:
 };
 
 
-/** Node results that represents the Dialogue. */
+// Node results that represents the Dialogue.
 class FDialogueBrowserTreeDialogueNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeDialogueNode Self;
@@ -383,12 +418,12 @@ public:
 	}
 
 protected:
-	/** The Dialogue this represents. */
+	// The Dialogue this represents.
 	TWeakObjectPtr<const UDlgDialogue> Dialogue;
 };
 
 
-/** Node results that represents the GraphNode. */
+// Node results that represents the GraphNode.
 class FDialogueBrowserTreeGraphNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeGraphNode Self;
@@ -414,12 +449,12 @@ public:
 	}
 
 protected:
-	/** The GraphNode this represents. */
+	// The GraphNode this represents.
 	TWeakObjectPtr<const UDialogueGraphNode> GraphNode;
 };
 
 
-/** Node results that represents the EdgeNode. */
+// Node results that represents the EdgeNode.
 class FDialogueBrowserTreeEdgeNode : public FDialogueBrowserTreeNode
 {
 	typedef FDialogueBrowserTreeEdgeNode Self;
@@ -445,6 +480,6 @@ public:
 	}
 
 protected:
-	/** The EdgeNode this represents. */
+	// The EdgeNode this represents.
 	TWeakObjectPtr<const UDialogueGraphNode_Edge> EdgeNode;
 };

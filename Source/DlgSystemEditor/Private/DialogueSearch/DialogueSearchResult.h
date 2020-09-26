@@ -21,8 +21,10 @@ public:
 		return SearchString.IsEmpty()
 			&& bIncludeIndices == false
 			&& bIncludeDialogueGUID == false
+			&& bIncludeNodeGUID == false
 			&& bIncludeComments == true
-			&& bIncludeNumericalTypes == false;
+			&& bIncludeNumericalTypes == false
+			&& bIncludeCustomObjectNames == false;
 	}
 
 public:
@@ -35,6 +37,9 @@ public:
 	// Include the Dialogue GUID in search results
 	bool bIncludeDialogueGUID = false;
 
+	// Include the Node GUID in search results
+	bool bIncludeNodeGUID = false;
+
 	// Include node comments in search results?
 	bool bIncludeComments = true;
 
@@ -43,6 +48,9 @@ public:
 
 	// Include the Text localization data in search results (namespace, key)
 	bool bIncludeTextLocalizationData = false;
+
+	// Include the Custom Text Argument/Condition/Event/Node Data object names
+	bool bIncludeCustomObjectNames = true;
 };
 
 // Base class that matched the search results. When used by itself it is a simple text node.

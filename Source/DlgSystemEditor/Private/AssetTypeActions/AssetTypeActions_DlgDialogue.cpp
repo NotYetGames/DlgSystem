@@ -1,15 +1,15 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
-#include "DialogueAssetTypeActions.h"
+#include "AssetTypeActions_DlgDialogue.h"
 
 #include "DialogueEditor/DialogueEditor.h"
-#include "DlgSystemEditorPrivatePCH.h"
+#include "DlgSystemEditorModule.h"
 
-void FDialogueAssetTypeActions::GetActions(const TArray<UObject*>& InObjects, FMenuBuilder& MenuBuilder)
+void FAssetTypeActions_DlgDialogue::GetActions(const TArray<UObject*>& InObjects, FMenuBuilder& MenuBuilder)
 {
 	// Implement the menu actions here
 }
 
-void FDialogueAssetTypeActions::OpenAssetEditor(const TArray<UObject*>& InObjects,
+void FAssetTypeActions_DlgDialogue::OpenAssetEditor(const TArray<UObject*>& InObjects,
 												TSharedPtr<IToolkitHost> EditWithinLevelEditor)
 {
 	const EToolkitMode::Type Mode = EditWithinLevelEditor.IsValid() ? EToolkitMode::WorldCentric : EToolkitMode::Standalone;

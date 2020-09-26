@@ -12,6 +12,7 @@
 #include "Widgets/SDialogueTextPropertyPickList.h"
 #include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
 #include "DlgHelper.h"
+#include "Widgets/DialogueObject_CustomRowHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueTextArgument_Details"
 
@@ -97,6 +98,14 @@ void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle
 			StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FDlgTextArgument, CustomTextArgument)).ToSharedRef()
 		);
 		CustomTextArgumentPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetCustomTextArgumentVisibility));
+
+		// Add Custom buttons
+		CustomTextArgumentPropertyRow_CustomDisplay = MakeShared<FDialogueObject_CustomRowHelper>(CustomTextArgumentPropertyRow);
+		CustomTextArgumentPropertyRow_CustomDisplay->Update();
+		CustomTextArgumentPropertyRow_CustomDisplay->SetFunctionNameToOpen(
+			EDialogueBlueprintOpenType::Function,
+			GET_FUNCTION_NAME_CHECKED(UDlgTextArgumentCustom, GetText)
+		);
 	}
 
 	// Cache the initial event type

@@ -10,6 +10,7 @@
 
 class FDialogueTextPropertyPickList_CustomRowHelper;
 class IDetailPropertyRow;
+class FDialogueObject_CustomRowHelper;
 
 /**
  * How the details panel renders the FDlgTextArgument
@@ -118,8 +119,9 @@ private:
 	// Cache the rows of the properties, created in CustomizeChildren
 	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> ParticipantNamePropertyRow;
 	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> VariableNamePropertyRow;
-	class IDetailPropertyRow* CustomTextArgumentPropertyRow = nullptr;
 
+	IDetailPropertyRow* CustomTextArgumentPropertyRow = nullptr;
+	TSharedPtr<FDialogueObject_CustomRowHelper> CustomTextArgumentPropertyRow_CustomDisplay;
 
 	/** Hold a reference to dialogue we are displaying. */
 	UDlgDialogue* Dialogue = nullptr;

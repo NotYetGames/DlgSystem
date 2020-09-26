@@ -1,6 +1,7 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #pragma once
 
+#include "AssetTypeCategories.h"
 #include "Modules/ModuleManager.h"
 #include "Modules/ModuleInterface.h"
 
@@ -34,6 +35,9 @@ public:
 	{
 		return FModuleManager::Get().IsModuleLoaded(DIALOGUE_SYSTEM_EDITOR_PLUGIN_NAME);
 	}
+
+	// Returns the Asset Category for this plugin
+	virtual EAssetTypeCategories::Type GetAssetCategory() const = 0;
 
 public:
 	virtual ~IDlgSystemEditorModule() {}

@@ -7,7 +7,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "UObject/UObjectIterator.h"
 
-#include "DlgSystemEditorPrivatePCH.h"
+#include "DlgSystemEditorModule.h"
 #include "DlgManager.h"
 #include "DialogueBlueprintUtilities.h"
 
