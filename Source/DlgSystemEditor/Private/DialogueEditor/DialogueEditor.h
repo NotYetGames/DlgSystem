@@ -9,7 +9,7 @@
 
 #include "DialogueEditor/Graph/DialogueGraph.h"
 #include "DialogueEditor/IDialogueEditor.h"
-#include "DialogueEditor/DialogueEditorUtilities.h"
+#include "DialogueEditorUtilities.h"
 #include "DlgDialogue.h"
 #include "DlgSystemSettings.h"
 #include "NYReflectionTypes.h"

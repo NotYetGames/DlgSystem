@@ -42,10 +42,12 @@ class FDialogueSearchUtilities
 {
 public:
 
-	/**
-	 * Gets all the graph nodes that contain the specified EventName (of the EventType Event)
-	 */
+	// Gets all the graph nodes that contain the specified EventName (of the EventType Event)
 	static TSharedPtr<FDialogueSearchFoundResult> GetGraphNodesForEventEventName(FName EventName, const UDlgDialogue* Dialogue);
+
+	// Gets all the graph nodes that contain the custom Event EventClass
+	static TSharedPtr<FDialogueSearchFoundResult> GetGraphNodesForCustomEvent(const UClass* EventClass, const UDlgDialogue* Dialogue);
+
 
 	/**
 	 * Gets all the graph nodes that contain the specified ConditionName (of the ConditionType EventCall)
@@ -185,7 +187,7 @@ public:
 		return FoundResult;
 	}
 
-	/** Does Conditions contain the ConditionName (of type ConditionType)? */
+	// Does Conditions contain the ConditionName (of type ConditionType)?
 	static bool IsConditionInArray(
 		FName ConditionName,
 		EDlgConditionType ConditionType,
@@ -194,16 +196,25 @@ public:
 	{
 		for (const FDlgCondition& Condition : Conditions)
 		{
-			if (Condition.ConditionType == ConditionType &&
-				(Condition.CallbackName == ConditionName || Condition.OtherVariableName == ConditionName))
+			// Matches the First participant
+			if (Condition.CallbackName == ConditionName && Condition.ConditionType == ConditionType)
 			{
 				return true;
+			}
+
+			// Matches the second Participant
+			if (Condition.CompareType != EDlgCompare::ToConst && Condition.OtherVariableName == ConditionName)
+			{
+				if (FDlgCondition::IsSameValueType(ConditionType, Condition.ConditionType))
+				{
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 
-	/** Does Events contain the EventName (of type EventType)? */
+	// Does Events contain the EventName (of type EventType)?
 	static bool IsEventInArray(FName EventName, EDlgEventType EventType, const TArray<FDlgEvent>& Events)
 	{
 		for (const FDlgEvent& Event : Events)
@@ -216,7 +227,20 @@ public:
 		return false;
 	}
 
-	/** Does Events contain the EventName (of type EventType)? */
+	// Does the Events contain a Custom Event of Class EventClass
+	static bool IsCustomEventInArray(const UClass* EventClass,  const TArray<FDlgEvent>& Events)
+	{
+		for (const FDlgEvent& Event : Events)
+		{
+			if (Event.EventType == EDlgEventType::Custom && Event.CustomEvent && Event.CustomEvent->GetClass() == EventClass)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// Does Events contain the EventName (of type EventType)?
 	static bool IsTextArgumentInArray(FName TextArgumentName, EDlgTextArgumentType TextArgumentType, const TArray<FDlgTextArgument>& TextArguments)
 	{
 		for (const FDlgTextArgument& TextArgument : TextArguments)
@@ -228,6 +252,14 @@ public:
 		}
 		return false;
 	}
+
+	// Does the SearchString exist in the GUID? We test every possible format
+	// In case of success we return the GUID as a string in OutStringGUID
+	static bool DoesGUIDContainString(const FGuid& GUID, const FString& SearchString, FString& OutGUIDString);
+
+	// Does the SearchString exist in the GUID Class name?
+	// In case of success we return the GUID as a string in OutNameString
+	static bool DoesObjectClassNameContainString(const UObject* Object, const FString& SearchString, FString& OutNameString);
 
 private:
 	static TSharedPtr<FDialogueSearchFoundResult> GetGraphNodesForVariablesOfNameAndType(

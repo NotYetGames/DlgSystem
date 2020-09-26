@@ -12,6 +12,8 @@
 #include "Widgets/SDialogueTextPropertyPickList.h"
 #include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
 #include "Widgets/DialogueMultiLineEditableTextBox_CustomRowHelper.h"
+#include "Widgets/DialogueObject_CustomRowHelper.h"
+#include "Widgets/Input/SButton.h"
 
 #define LOCTEXT_NAMESPACE "DialoguGraphNode_Details"
 
@@ -179,6 +181,11 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 		);
 		NodeDataPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetNodeDataVisibility));
 		NodeDataPropertyRow->ShouldAutoExpand(true);
+		NodeDataPropertyRow->ShowPropertyButtons(true);
+
+		// Add Custom buttons
+		NodeDataPropertyRow_CustomDisplay = MakeShared<FDialogueObject_CustomRowHelper>(NodeDataPropertyRow);
+		NodeDataPropertyRow_CustomDisplay->Update();
 
 		// SoundWave
 		VoiceSoundWavePropertyRow = &SpeechDataCategory.AddProperty(

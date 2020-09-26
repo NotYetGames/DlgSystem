@@ -9,7 +9,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "EditorStyleSet.h"
 
-#include "DlgSystemEditorPrivatePCH.h"
+#include "DlgSystemEditorModule.h"
 #include "DlgManager.h"
 #include "DialogueBlueprintUtilities.h"
 

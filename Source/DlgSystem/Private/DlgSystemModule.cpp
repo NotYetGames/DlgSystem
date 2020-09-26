@@ -54,9 +54,11 @@ void FDlgSystemModule::StartupModule()
 #if WITH_GAMEPLAY_DEBUGGER
 	// If the gameplay debugger is available, register the category and notify the editor about the changes
 	IGameplayDebugger& GameplayDebuggerModule = IGameplayDebugger::Get();
-	GameplayDebuggerModule.RegisterCategory(DIALOGUE_SYSTEM_PLUGIN_NAME,
+	GameplayDebuggerModule.RegisterCategory(
+		DIALOGUE_SYSTEM_PLUGIN_NAME,
 		IGameplayDebugger::FOnGetCategory::CreateStatic(&FDlgGameplayDebuggerCategory::MakeInstance),
-		EGameplayDebuggerCategoryState::EnabledInGameAndSimulate);
+		EGameplayDebuggerCategoryState::EnabledInGameAndSimulate
+	);
 	GameplayDebuggerModule.NotifyCategoriesChanged();
 #endif // WITH_GAMEPLAY_DEBUGGER
 

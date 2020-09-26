@@ -51,10 +51,33 @@ UEdGraphNode* FNewNode_DialogueGraphSchemaAction::CreateNode(
 	// Create the dialogue node
 	auto DialogueNode = Dialogue->ConstructDialogueNode<UDlgNode>(CreateNodeType);
 
-	// Use the participant name from the first node as default
-	if (Dialogue->GetNodes().Num() > 0)
+	// Set the Participant Name
+	if (FromPin)
 	{
-		DialogueNode->SetNodeParticipantName(Dialogue->GetNodes()[0]->GetNodeParticipantName());
+		if (UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(FromPin->GetOwningNode()))
+		{
+			if (GraphNode->IsRootNode())
+			{
+				// Root Node use the first node from the Array
+				if (Dialogue->GetNodes().Num() > 0)
+				{
+					DialogueNode->SetNodeParticipantName(Dialogue->GetNodes()[0]->GetNodeParticipantName());
+				}
+			}
+			else
+			{
+				// Use the node from which we spawned this
+				DialogueNode->SetNodeParticipantName(GraphNode->GetDialogueNode().GetNodeParticipantName());
+			}
+		}
+	}
+	else
+	{
+		// Use first Node from the Array
+		if (Dialogue->GetNodes().Num() > 0)
+		{
+			DialogueNode->SetNodeParticipantName(Dialogue->GetNodes()[0]->GetNodeParticipantName());
+		}
 	}
 
 	// Create the graph node

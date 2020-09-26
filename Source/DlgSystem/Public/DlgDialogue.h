@@ -28,6 +28,7 @@ struct DLGSYSTEM_API FDlgDialogueObjectVersion
 		AddLocalizationOverwrittenNamespacesAndKeys,
 		AddVirtualParentFireDirectChildEnterEvents,
 		AddGUIDToNodes,
+		AddCustomObjectsToParticipantsData,
 
 		// -----<new versions can be added above this line>-------------------------------------------------
 		VersionPlusOne,
@@ -286,6 +287,16 @@ public:
 		if (ParticipantsData.Contains(ParticipantName))
 		{
 			OutSet.Append(ParticipantsData[ParticipantName].Events);
+		}
+	}
+
+	// Gets the Custom Events UClasses that correspond to the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	void GetCustomEvents(FName ParticipantName, TSet<UClass*>& OutSet) const
+	{
+		if (ParticipantsData.Contains(ParticipantName))
+		{
+			OutSet.Append(ParticipantsData[ParticipantName].CustomEvents);
 		}
 	}
 
@@ -598,4 +609,7 @@ protected:
 	int32 BroadcastPropertyNodeIndexChanged = INDEX_NONE;
 #endif
 
+
+	// Flag that indicates that PostLoad was called
+	bool bWasPostLoaded = false;
 };

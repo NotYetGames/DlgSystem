@@ -58,7 +58,9 @@ public:
 	bool QueryDlgCondition(
 		const FDialogueSearchFilter& SearchFilter,
 		const FDlgCondition& InDlgCondition,
-		const TSharedPtr<FDialogueSearchResult>& OutParentNode
+		const TSharedPtr<FDialogueSearchResult>& OutParentNode,
+		int32 ConditionIndex = INDEX_NONE,
+		FName ConditionMemberName = TEXT("Condition")
 	);
 
 	/**
@@ -68,7 +70,9 @@ public:
 	bool QueryDlgEvent(
 		const FDialogueSearchFilter& SearchFilter,
 		const FDlgEvent& InDlgEvent,
-		const TSharedPtr<FDialogueSearchResult>& OutParentNode
+		const TSharedPtr<FDialogueSearchResult>& OutParentNode,
+		int32 EventIndex = INDEX_NONE,
+		FName EventMemberName = TEXT("Event")
 	);
 
 	/**
@@ -121,34 +125,32 @@ public:
 		TSharedPtr<FDialogueSearchResult>& OutParentNode
 	);
 
-	/**
-	 * Searches for InSearchString in all Dialogues. Adds the result as children of OutParentNode.
-	 */
+	// Searches for InSearchString in all Dialogues. Adds the result as children of OutParentNode.
 	void QueryAllDialogues(const FDialogueSearchFilter& SearchFilter, TSharedPtr<FDialogueSearchResult>& OutParentNode);
 
-	/** Determines the global find results tab label */
+	// Determines the global find results tab label
 	FText GetGlobalFindResultsTabLabel(int32 TabIdx);
 
-	/** Close One of the global find results. */
+	// Close One of the global find results.
 	void CloseGlobalFindResults(const TSharedRef<SFindInDialogues>& FindResults);
 
-	/** Find or create the global find results widget */
+	// Find or create the global find results widget
 	TSharedPtr<SFindInDialogues> GetGlobalFindResults();
 
-	/** Enables the global find results tab feature in the Windows Menu. */
+	// Enables the global find results tab feature in the Windows Menu.
 	void EnableGlobalFindResults(TSharedPtr<FWorkspaceItem> ParentTabCategory = nullptr);
 
-	/** Disables the global find results tab feature in the Windows Menu. */
+	// Disables the global find results tab feature in the Windows Menu.
 	void DisableGlobalFindResults();
 
-	/** Initializes the manager. Should only be called once in the FDlgSystemEditorModule::StartupModule()  */
+	// Initializes the manager. Should only be called once in the FDlgSystemEditorModule::StartupModule()
 	void Initialize(TSharedPtr<FWorkspaceItem> ParentTabCategory = nullptr);
 
-	/** Uninitializes the manager. Should only be called once in the FDlgSystemEditorModule::ShutdownModule()  */
+	// Uninitializes the manager. Should only be called once in the FDlgSystemEditorModule::ShutdownModule()
 	void UnInitialize();
 
 private:
-	/** Helper method to make a Text Node and add it as a child to ParentNode */
+	// Helper method to make a Text Node and add it as a child to ParentNode
 	TSharedPtr<FDialogueSearchResult> MakeChildTextNode(
 		const TSharedPtr<FDialogueSearchResult>& ParentNode,
 		const FText& DisplayName, const FText& Category,
@@ -183,59 +185,63 @@ private:
 		if (CurrentFullNamespace.Contains(SearchString))
 		{
 			bContainsSearchString = true;
-			MakeChildTextNode(ParentNode,
+			MakeChildTextNode(
+				ParentNode,
 				FText::AsCultureInvariant(CurrentFullNamespace),
 				NamespaceCategory,
-				NamespaceCommentString);
+				NamespaceCommentString
+			);
 		}
 		if (CurrentKey.Contains(SearchString))
 		{
 			bContainsSearchString = true;
-			MakeChildTextNode(ParentNode,
+			MakeChildTextNode(
+				ParentNode,
 				FText::AsCultureInvariant(CurrentKey),
 				KeyCategory,
-				KeyCommentString);
+				KeyCommentString
+			);
 		}
 
 		return bContainsSearchString;
 	}
 
-	/** Handler for a request to spawn a new global find results tab */
+	// Handler for a request to spawn a new global find results tab
 	TSharedRef<SDockTab> SpawnGlobalFindResultsTab(const FSpawnTabArgs& SpawnTabArgs, int32 TabIdx);
 
-	/** Creates and opens a new global find results tab. The next one in the available list. */
+	// Creates and opens a new global find results tab. The next one in the available list.
 	TSharedPtr<SFindInDialogues> OpenGlobalFindResultsTab();
 
-	/** Builds the cache from all available Dialogues assets that the asset registry has discovered at the time of this function. Occurs on startup. */
+	// Builds the cache from all available Dialogues assets that the asset registry has discovered at the time of this function. Occurs on startup.
 	void BuildCache();
 
-	/** Callback hook from the Asset Registry when an asset is added */
+	// Callback hook from the Asset Registry when an asset is added
 	void HandleAssetAdded(const FAssetData& InAssetData);
 
-	/** Callback hook from the Asset Registry, marks the asset for deletion from the cache */
+	// Callback hook from the Asset Registry, marks the asset for deletion from the cache
 	void HandleAssetRemoved(const FAssetData& InAssetData);
 
-	/** Callback hook from the Asset Registry, marks the asset for deletion from the cache */
+	// Callback hook from the Asset Registry, marks the asset for deletion from the cache
 	void HandleAssetRenamed(const FAssetData& InAssetData, const FString& InOldName);
 
-	/** Callback hook from the Asset Registry when an asset is loaded */
+	// Callback hook from the Asset Registry when an asset is loaded
 	void HandleAssetLoaded(UObject* InAsset);
 
 private:
 	static Self* Instance;
 
-	/** Maps the Dialogue path => SearchData. */
+	// Maps the Dialogue path => SearchData.
 	TMap<FName, FDialogueSearchData> SearchMap;
 
-	/** Because we are unable to query for the module on another thread, cache it for use later */
+	// Because we are unable to query for the module on another thread, cache it for use later
 	FAssetRegistryModule* AssetRegistryModule;
 
-	/** The tab identifier/instance name for global find results */
+	// The tab identifier/instance name for global find results
 	FName GlobalFindResultsTabIDs[MAX_GLOBAL_DIALOGUE_SEARCH_RESULTS];
 
-	/** Array of open global find results widgets */
+	// Array of open global find results widgets
 	TArray<TWeakPtr<SFindInDialogues>> GlobalFindResultsWidgets;
 
-	/** Global Find Results workspace menu item */
+	// Global Find Results workspace menu item
 	TSharedPtr<FWorkspaceItem> GlobalFindResultsMenuItem;
 };

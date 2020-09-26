@@ -17,8 +17,14 @@ UDlgDialogueFactory::UDlgDialogueFactory(const FObjectInitializer& ObjectInitial
 	SupportedClass = UDlgDialogue::StaticClass();
 }
 
-UObject* UDlgDialogueFactory::FactoryCreateNew(UClass* Class, UObject* InParent, FName Name, EObjectFlags Flags,
-											   UObject* Context, FFeedbackContext* Warn)
+UObject* UDlgDialogueFactory::FactoryCreateNew(
+	UClass* Class,
+	UObject* InParent,
+	FName Name,
+	EObjectFlags Flags,
+	UObject* Context,
+	FFeedbackContext* Warn
+)
 {
 	UDlgDialogue* NewDialogue = NewObject<UDlgDialogue>(InParent, Class, Name, Flags | RF_Transactional);
 	return NewDialogue;

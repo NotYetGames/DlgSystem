@@ -427,7 +427,7 @@ TSharedRef<SWidget> SFindInDialogues::FillFilterEntries()
 {
 	FMenuBuilder MenuBuilder(true, nullptr);
 	MenuBuilder.AddMenuEntry(
-		LOCTEXT("IncludeIndices", "Include indices in search"),
+		LOCTEXT("IncludeIndices", "Include Indices"),
 		LOCTEXT("IncludeIndices_ToolTip", "Include indices of nodes/edges in the search result"),
 		FSlateIcon(),
 		FUIAction(
@@ -446,8 +446,8 @@ TSharedRef<SWidget> SFindInDialogues::FillFilterEntries()
 		EUserInterfaceActionType::ToggleButton
 	);
 	MenuBuilder.AddMenuEntry(
-		LOCTEXT("IncludeGUID", "Include Dialogue GUIDs in search"),
-		LOCTEXT("IncludeGUID_ToolTip", "Include Dialogue GUIDs in search in the search result"),
+		LOCTEXT("IncludeDialogueGUID", "Include Dialogue GUIDs"),
+		LOCTEXT("IncludeDialogueGUID_ToolTip", "Include Dialogue GUIDs in search in the search result"),
 		FSlateIcon(),
 		FUIAction(
 			FExecuteAction::CreateLambda([this]()
@@ -465,7 +465,26 @@ TSharedRef<SWidget> SFindInDialogues::FillFilterEntries()
 		EUserInterfaceActionType::ToggleButton
 	);
 	MenuBuilder.AddMenuEntry(
-		LOCTEXT("IncludeComments", "Include Comments in search"),
+		LOCTEXT("IncludeNodeGUID", "Include Node GUIDs"),
+		LOCTEXT("IncludeNodeGUID_ToolTip", "Include Node GUIDs in search in the search result"),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]()
+			{
+				CurrentFilter.bIncludeNodeGUID = !CurrentFilter.bIncludeNodeGUID;
+				MakeSearchQuery(CurrentFilter, bIsInFindWithinDialogueMode);
+			}),
+			FCanExecuteAction(),
+			FIsActionChecked::CreateLambda([this]() -> bool
+			{
+				return CurrentFilter.bIncludeNodeGUID;
+			})
+		),
+		NAME_None,
+		EUserInterfaceActionType::ToggleButton
+	);
+	MenuBuilder.AddMenuEntry(
+		LOCTEXT("IncludeComments", "Include Comments"),
 		LOCTEXT("IncludeComments_ToolTip", "Include Comments from nodes and comments on nodes in the search result"),
 		FSlateIcon(),
 		FUIAction(
@@ -484,7 +503,7 @@ TSharedRef<SWidget> SFindInDialogues::FillFilterEntries()
 		EUserInterfaceActionType::ToggleButton
 	);
 	MenuBuilder.AddMenuEntry(
-		LOCTEXT("IncludeNumericalTypes", "Include int32/floats in search"),
+		LOCTEXT("IncludeNumericalTypes", "Include Integers & Floats"),
 		LOCTEXT("IncludeNumericalTypes_ToolTip", "Include int32/floats in search result"),
 		FSlateIcon(),
 		FUIAction(
@@ -503,7 +522,7 @@ TSharedRef<SWidget> SFindInDialogues::FillFilterEntries()
 		EUserInterfaceActionType::ToggleButton
 	);
 	MenuBuilder.AddMenuEntry(
-		LOCTEXT("IncludeTextLocalizationData", "Include text localization data in search"),
+		LOCTEXT("IncludeTextLocalizationData", "Include Text Localization Data"),
 		LOCTEXT("IncludeTextLocalizationData_ToolTip", "Include text localization data in search (key/namespace)"),
 		FSlateIcon(),
 		FUIAction(
@@ -516,6 +535,25 @@ TSharedRef<SWidget> SFindInDialogues::FillFilterEntries()
 			FIsActionChecked::CreateLambda([this]() -> bool
 			{
 				return CurrentFilter.bIncludeTextLocalizationData;
+			})
+		),
+		NAME_None,
+		EUserInterfaceActionType::ToggleButton
+	);
+	MenuBuilder.AddMenuEntry(
+		LOCTEXT("IncludeCustomObjectNames", "Include Custom Object Names"),
+		LOCTEXT("IncludeCustomObjectNames_ToolTip", "Include the Custom Text Argument/Condition/Event/Node Data object names"),
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]()
+			{
+				CurrentFilter.bIncludeCustomObjectNames = !CurrentFilter.bIncludeCustomObjectNames;
+				MakeSearchQuery(CurrentFilter, bIsInFindWithinDialogueMode);
+			}),
+			FCanExecuteAction(),
+			FIsActionChecked::CreateLambda([this]() -> bool
+			{
+				return CurrentFilter.bIncludeCustomObjectNames;
 			})
 		),
 		NAME_None,

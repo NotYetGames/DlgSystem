@@ -4,7 +4,7 @@
 #include "Widgets/Images/SImage.h"
 #include "Toolkits/AssetEditorManager.h"
 
-#include "DialogueEditor/DialogueEditorUtilities.h"
+#include "DialogueEditorUtilities.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueStyle.h"
@@ -79,7 +79,7 @@ TWeakObjectPtr<const UDlgDialogue> FDialogueSearchResult_DialogueNode::GetParent
 
 TSharedRef<SWidget>	FDialogueSearchResult_DialogueNode::CreateIcon() const
 {
-	const FSlateBrush* Brush = FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_DialogueClassIcon);
+	const FSlateBrush* Brush = FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_DlgDialogueClassIcon);
 
 	return SNew(SImage)
 			.Image(Brush)

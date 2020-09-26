@@ -7,6 +7,10 @@
 #include "Layout/Margin.h"
 #include "Logging/INYLogger.h"
 
+#if WITH_EDITOR
+#include "ClassViewerModule.h"
+#endif
+
 #include "DlgSystemSettings.generated.h"
 
 // Defines the format of the Dialogue text
@@ -93,6 +97,20 @@ enum class EDlgTextNamespaceLocalization : uint8
 
 	// The system sets the Namespace for Text fields for each dialogue into the same value. Unique keys are also generated.
 	Global				UMETA(DisplayName = "Global Namespace")
+};
+
+
+UENUM()
+enum class EDlgClassPickerDisplayMode : uint8
+{
+	// Default will choose what view mode based on if in Viewer or Picker mode.
+	DefaultView,
+
+	// Displays all classes as a tree.
+    TreeView,
+
+    // Displays all classes as a list.
+    ListView
 };
 
 // UDeveloperSettings classes are auto discovered https://wiki.unrealengine.com/CustomSettings
@@ -188,6 +206,22 @@ public:
 	// GetAllCurrentTextFileExtensions() + AdditionalTextFormatFileExtensionsToLookFor
 	TSet<FString> GetAllTextFileExtensions() const;
 
+#if WITH_EDITOR
+	EClassViewerDisplayMode::Type GetUnrealClassPickerDisplayMode() const
+	{
+		if (ClassPickerDisplayMode == EDlgClassPickerDisplayMode::ListView)
+		{
+			return EClassViewerDisplayMode::ListView;
+		}
+		if (ClassPickerDisplayMode == EDlgClassPickerDisplayMode::TreeView)
+		{
+			return EClassViewerDisplayMode::TreeView;
+		}
+
+		return EClassViewerDisplayMode::DefaultView;
+	}
+#endif // WITH_EDITOR
+
 public:
 	// If enabled this clears the dialogue history automatically on Editor Start PIE and On Load New Map */
 	// Calls ClearDialogueHistory
@@ -208,6 +242,11 @@ public:
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere, DisplayName = "Text Input Key for NewLine")
 	EDlgTextInputKeyForNewLine DialogueTextInputKeyForNewLine = EDlgTextInputKeyForNewLine::Enter;
 
+	// If true, ParticipantsClasses from each Dialogue will be set to the first Class that matches the ParticipantName
+	// NOTE: This only sets the default for participant names that have only ONE participant class
+	// NOTE: This does not work for the None Participant Name
+	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
+	bool bAutoSetDefaultParticipantClasses = true;
 
 	// Shows the NodeData that you can customize yourself
 	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere)
@@ -232,6 +271,9 @@ public:
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
 	TArray<UClass*> BlacklistedReflectionClasses;
 
+	// How the Blueprint class pricker looks like
+	UPROPERTY(Category = "Blueprint", Config, EditAnywhere)
+	EDlgClassPickerDisplayMode ClassPickerDisplayMode = EDlgClassPickerDisplayMode::DefaultView;
 
 	// Should we only process batch dialogues that are only in the /Game folder.
 	// This is used for saving all dialogues or deleting all text files.

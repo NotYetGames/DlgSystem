@@ -9,6 +9,7 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueDetailsPanelUtils.h"
 
+class FDialogueObject_CustomRowHelper;
 class FDialogueTextPropertyPickList_CustomRowHelper;
 class FDialogueMultiLineEditableTextBox_CustomRowHelper;
 
@@ -85,6 +86,7 @@ private:
 	TSharedPtr<FDialogueTextPropertyPickList_CustomRowHelper> SpeakerStatePropertyRow;
 	TSharedPtr<FDialogueMultiLineEditableTextBox_CustomRowHelper> TextPropertyRow;
 	IDetailPropertyRow* NodeDataPropertyRow = nullptr;
+	TSharedPtr<FDialogueObject_CustomRowHelper> NodeDataPropertyRow_CustomDisplay;
 	IDetailPropertyRow* VoiceSoundWavePropertyRow = nullptr;
 	IDetailPropertyRow* VoiceDialogueWavePropertyRow = nullptr;
 	IDetailPropertyRow* GenericDataPropertyRow = nullptr;

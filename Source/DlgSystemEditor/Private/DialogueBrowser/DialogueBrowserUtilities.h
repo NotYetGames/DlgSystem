@@ -28,7 +28,7 @@ public:
 public:
 	EDialogueBrowserSortOption Option;
 
-	/** The name of the option. */
+	// The name of the option.
 	FName Name;
 
 	// TODO add ascending descending
@@ -37,7 +37,7 @@ public:
 class FDialogueBrowserUtilities
 {
 public:
-	/** Compare two FDialogueBrowserTreeNode */
+	// Compare two FDialogueBrowserTreeNode
 	static bool PredicateCompareDialogueTreeNode(
 		const TSharedPtr<FDialogueBrowserTreeNode>& FirstNode,
 		const TSharedPtr<FDialogueBrowserTreeNode> SecondNode
@@ -48,7 +48,7 @@ public:
 		return *FirstNode == *SecondNode;
 	}
 
-	/** Predicate that sorts participants by dialogue number references, in descending order. */
+	// Predicate that sorts participants by dialogue number references, in descending order.
 	static bool PredicateSortByDialoguesNumDescending(
 		FName FirstParticipant,
 		FName SecondParticipant,

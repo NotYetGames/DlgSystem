@@ -9,6 +9,13 @@
 #include "DialogueEditor/Graph/DialogueGraph.h"
 #include "Nodes/DlgNode.h"
 
+enum class EDialogueBlueprintOpenType : uint8
+{
+	None = 0,
+    Function,
+    Event
+};
+
 //////////////////////////////////////////////////////////////////////////
 // FDialogueEditorUtilities
 
@@ -17,6 +24,7 @@ class UEdGraphSchema;
 class UDlgNode;
 class UEdGraph;
 class FSlateRect;
+class UK2Node_Event;
 
 class FDialogueEditorUtilities
 {
@@ -187,12 +195,10 @@ public:
 	 */
 	static void ReplaceParentConnectionsToNode(const UDialogueGraphNode* OldNode, const UDialogueGraphNode* NewNode);
 
-	/**
-	 * Wrapper over standard message box that that also logs to the console
-	 */
+	// Wrapper over standard message box that that also logs to the console
 	static EAppReturnType::Type ShowMessageBox(EAppMsgType::Type MsgType, const FString& Text, const FString& Caption);
 
-	/** Returns true if the TestPoint is inside the Geometry. */
+	// Returns true if the TestPoint is inside the Geometry.
 	static bool IsPointInsideGeometry(const FVector2D& TestPoint, const FGeometry& Geometry)
 	{
 		TArray<FVector2D> GeometryPoints;
@@ -216,8 +222,53 @@ public:
 	// Gets the Dialogue for the provided UEdGraphNode
 	static UDlgDialogue* GetDialogueFromGraphNode(const UEdGraphNode* GraphNode);
 
+	// Save all the dialogues.
+	// @return True on success or false on failure.
+	static bool SaveAllDialogues();
+
+	// Deletes all teh dialogues text files
+	// @return True on success or false on failure.
+	static bool DeleteAllDialoguesTextFiles();
+
+	/***
+	* Pops up a class picker dialog to choose the class that is a child of the Classprovided.
+	*
+	* @param	TitleText		The title of the class picker dialog
+	* @param	OutChosenClass  The class chosen (if this function returns false, this will be null) by the the user
+	* @param	Class		    The children of this class we are displaying and prompting the user to choose from.
+	*
+	* @return true if OK was pressed, false otherwise
+	*/
+	static bool PickChildrenOfClass(const FText& TitleText, UClass*& OutChosenClass, UClass* Class);
+
+	// Opens the specified Blueprint at the last edited graph by default
+	// or if the OpenType is set to Function or Event it opens that with the FunctionNameToOpen
+	static bool OpenBlueprintEditor(
+        UBlueprint* Blueprint,
+        EDialogueBlueprintOpenType OpenType = EDialogueBlueprintOpenType::None,
+        FName FunctionNameToOpen = NAME_None,
+        bool bForceFullEditor = true,
+        bool bAddBlueprintFunctionIfItDoesNotExist = false
+    );
+
+	// Adds the function if it does not exist
+	// Return the Function Graph of the existing function or the newly created one
+	static UEdGraph* BlueprintGetOrAddFunction(UBlueprint* Blueprint, FName FunctionName, UClass* FunctionClassSignature);
+
+	// Same as BlueprintGetOrAddFunction but does not add it
+	static UEdGraph* BlueprintGetFunction(UBlueprint* Blueprint, FName FunctionName, UClass* FunctionClassSignature);
+
+	// Same as BlueprintGetOrAddFunction but only for an overriden event
+	static UK2Node_Event* BlueprintGetOrAddEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature);
+
+	// Same as BlueprintGetOrAddEvent but does not add it
+	static UK2Node_Event* BlueprintGetEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature);
+
+	// Adds a comment to the Blueprint
+	static UEdGraphNode_Comment* BlueprintAddComment(UBlueprint* Blueprint, const FString& CommentString, FVector2D Location = FVector2D::ZeroVector);
+
 private:
-	/** Get the DialogueEditor for given object, if it exists */
+	// Get the DialogueEditor for given object, if it exists
 	static TSharedPtr<class IDialogueEditor> GetDialogueEditorForGraph(const UEdGraph* Graph);
 
 	FDialogueEditorUtilities() = delete;
