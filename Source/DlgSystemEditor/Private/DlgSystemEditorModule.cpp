@@ -582,11 +582,13 @@ TSharedRef<FExtender> FDlgSystemEditorModule::CreateFileMenuExtender(
 
 TSharedRef<FExtender> FDlgSystemEditorModule::CreateHelpMenuExtender(TSharedRef<FUICommandList> Commands)
 {
-	// Fill after the Help->HelpBrowse
+	// Fill before the Help->BugReporting
+	// NOTE: Don't use HelpBrowse as that does not exist in later engine version
+	// https://gitlab.com/NotYetGames/DlgSystem/-/issues/36
 	TSharedRef<FExtender> HelpMenuExtender(new FExtender);
 	HelpMenuExtender->AddMenuExtension(
-		"HelpBrowse",
-		EExtensionHook::After,
+		"BugReporting",
+		EExtensionHook::Before,
 		Commands,
 		FMenuExtensionDelegate::CreateLambda([](FMenuBuilder& MenuBuilder)
 		{

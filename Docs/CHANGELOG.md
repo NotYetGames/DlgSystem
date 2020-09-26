@@ -1,5 +1,7 @@
 # V12
 
+- **Fix** crash when opening the Help Menu for UE 4.24 and 4.25
+
 ### Blueprint
 
 - When **creating a new Blueprint** of type **Custom Events/Conditions/Text Argument** the overridden function/event is automatically created for you and the blueprint opens there.
