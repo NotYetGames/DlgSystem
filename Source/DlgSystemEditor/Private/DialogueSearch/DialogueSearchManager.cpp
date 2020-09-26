@@ -11,6 +11,7 @@
 #include "DlgSystemEditorModule.h"
 #include "DlgDialogue.h"
 #include "DlgManager.h"
+#include "DlgHelper.h"
 #include "SFindInDialogues.h"
 #include "DialogueEditor/Graph/DialogueGraph.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
@@ -992,8 +993,11 @@ TSharedPtr<SFindInDialogues> FDialogueSearchManager::OpenGlobalFindResultsTab()
 		if (!OpenGlobalTabIDs.Contains(GlobalTabId))
 		{
 			// GlobalTabId is not opened, open it now
-			TSharedRef<SDockTab> NewTab = FGlobalTabmanager::Get()->InvokeTab(GlobalTabId);
-			return StaticCastSharedRef<SFindInDialogues>(NewTab->GetContent());
+			TSharedPtr<SDockTab> NewTab = FDlgHelper::InvokeTab(FGlobalTabmanager::Get(), GlobalTabId);
+			if (NewTab.IsValid())
+			{
+				return StaticCastSharedRef<SFindInDialogues>(NewTab->GetContent());
+			}
 		}
 	}
 
@@ -1017,7 +1021,7 @@ TSharedPtr<SFindInDialogues> FDialogueSearchManager::GetGlobalFindResults()
 	if (FindResultsToUse.IsValid())
 	{
 		// found invoke it
-		FGlobalTabmanager::Get()->InvokeTab(FindResultsToUse->GetHostTabId());
+		FDlgHelper::InvokeTab(FGlobalTabmanager::Get(), FindResultsToUse->GetHostTabId());
 	}
 	else
 	{

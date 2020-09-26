@@ -44,10 +44,6 @@
 // 	FLinearColor GetColor() const override  { return FLinearColor::Yellow; }
 // 	FName GetIconName() const override { return NAME_None; }
 //
-// 	void SetCurrentFilter(const FARFilter& InBaseFilter) override
-//     {
-//
-//     }
 //
 // 	//
 // 	// IFilter implementation
@@ -90,10 +86,6 @@ public:
 	FLinearColor GetColor() const override  { return FLinearColor(0.91f, 0.91f, 0.f); }
 	FName GetIconName() const override { return NAME_None; }
 
-	void SetCurrentFilter(const FARFilter& InBaseFilter) override
-	{
-
-	}
 
 	//
 	// IFilter implementation
@@ -102,6 +94,18 @@ public:
 	/** Returns whether the specified Item passes the Filter's restrictions */
 	bool PassesFilter(FAssetFilterType InItem) const override
 	{
+#if ENGINE_MINOR_VERSION >= 26
+		FAssetData ItemAssetData;
+		if (!InItem.Legacy_TryGetAssetData(ItemAssetData))
+		{
+			return false;
+		}
+
+		if (const UObject* Object = ItemAssetData.FastGetAsset(false))
+		{
+			return UDlgManager::DoesObjectImplementDialogueParticipantInterface(Object);
+		}
+#else
 		if (!InItem.IsAssetLoaded())
 		{
 			return false;
@@ -111,6 +115,7 @@ public:
 		{
 			return UDlgManager::DoesObjectImplementDialogueParticipantInterface(Object);
 		}
+#endif // ENGINE_MINOR_VERSION >= 26
 
 		return false;
 	}
@@ -147,10 +152,6 @@ public:
 // 	FLinearColor GetColor() const override  { return FLinearColor(1.f, 0.46f, 0.f); }
 // 	FName GetIconName() const override { return NAME_None; }
 //
-// 	void SetCurrentFilter(const FARFilter& InBaseFilter) override
-//     {
-//
-//     }
 //
 // 	//
 // 	// IFilter implementation
@@ -204,10 +205,6 @@ public:
 // 	FLinearColor GetColor() const override  { return FLinearColor(1.f, 0.46f, 0.f); }
 // 	FName GetIconName() const override { return NAME_None; }
 //
-// 	void SetCurrentFilter(const FARFilter& InBaseFilter) override
-//     {
-//
-//     }
 //
 // 	//
 // 	// IFilter implementation
@@ -261,10 +258,6 @@ public:
 // 	FLinearColor GetColor() const override  { return FLinearColor(1.f, 0.46f, 0.f); }
 // 	FName GetIconName() const override { return NAME_None; }
 //
-// 	void SetCurrentFilter(const FARFilter& InBaseFilter) override
-//     {
-//
-//     }
 //
 // 	//
 // 	// IFilter implementation

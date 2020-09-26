@@ -274,7 +274,7 @@ void FDialogueEditor::SummonSearchUI(bool bSetFindWithinDialogue, FString NewSea
 	{
 		// Open local tab
 		FindResultsToUse = FindResultsView;
-		TabManager->InvokeTab(FindInDialogueTabId);
+		FDlgHelper::InvokeTab(TabManager, FindInDialogueTabId);
 	}
 	else
 	{

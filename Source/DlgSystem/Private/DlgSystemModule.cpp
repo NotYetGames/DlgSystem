@@ -23,6 +23,7 @@
 #include "GameplayDebugger/DlgGameplayDebuggerCategory.h"
 #include "GameplayDebugger/SDlgDataDisplay.h"
 #include "Logging/DlgLogger.h"
+#include "DlgHelper.h"
 
 #define LOCTEXT_NAMESPACE "FDlgSystemModule"
 
@@ -200,7 +201,7 @@ void FDlgSystemModule::DisplayDialogueDataWindow()
 	if (!RefreshDisplayDialogueDataWindow())
 	{
 		// Create, because it does not exist yet
-		FGlobalTabmanager::Get()->InvokeTab(FTabId(DIALOGUE_DATA_DISPLAY_TAB_ID));
+		FDlgHelper::InvokeTab(FGlobalTabmanager::Get(), FTabId(DIALOGUE_DATA_DISPLAY_TAB_ID));
 	}
 }
 

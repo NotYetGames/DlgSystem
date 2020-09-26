@@ -88,6 +88,9 @@ public class DlgSystemEditor : ModuleRules
 #if UE_4_24_OR_LATER
 		PrivateDependencyModuleNames.Add("ToolMenus");
 #endif
+#if UE_4_26_OR_LATER
+		PrivateDependencyModuleNames.Add("ContentBrowserData");
+#endif
 
 		PrivateIncludePathModuleNames.AddRange(
 			new string[] {

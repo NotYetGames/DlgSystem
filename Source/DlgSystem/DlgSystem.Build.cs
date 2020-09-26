@@ -81,6 +81,10 @@ public class DlgSystem : ModuleRules
 			PublicDefinitions.Add("WITH_GAMEPLAY_DEBUGGER=0");
 		}
 
+#if UE_4_26_OR_LATER
+		PrivateDependencyModuleNames.Add("DeveloperSettings");
+#endif
+
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[] {
 				// ... add any modules that your module loads dynamically here ...

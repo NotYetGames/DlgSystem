@@ -9,6 +9,7 @@
 #include "Engine/BlueprintGeneratedClass.h"
 #include "Misc/Paths.h"
 #include "UObject/UObjectIterator.h"
+#include "Framework/Docking/TabManager.h"
 
 bool FDlgHelper::DeleteFile(const FString& PathName, bool bVerbose)
 {
@@ -83,6 +84,21 @@ bool FDlgHelper::RenameFile(const FString& OldPathName, const FString& NewPathNa
 		FDlgLogger::Get().Infof(TEXT("Text file moved/renamed from `%s` to `%s`"), *OldPathName, *NewPathName);
 	}
 	return true;
+}
+
+
+TSharedPtr<SDockTab> FDlgHelper::InvokeTab(TSharedPtr<FTabManager> TabManager, const FTabId& TabID)
+{
+	if (!TabManager.IsValid())
+	{
+		return nullptr;
+	}
+
+#if ENGINE_MINOR_VERSION >= 26
+	return TabManager->TryInvokeTab(TabID);
+#else
+	return TabManager->InvokeTab(TabID);
+#endif // ENGINE_MINOR_VERSION >= 26
 }
 
 FString FDlgHelper::CleanObjectName(FString Name)

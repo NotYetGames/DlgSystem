@@ -8,13 +8,15 @@
 #include "UObject/ObjectMacros.h"
 #include <functional>
 
-
-
 #include "DlgCondition.h"
 #include "DlgEvent.h"
 #include "NYReflectionTypes.h"
 
 #include "DlgHelper.generated.h"
+
+class SDockTab;
+class FTabManager;
+struct FTabId;
 
 USTRUCT()
 struct FDlgClassAndObject
@@ -233,6 +235,15 @@ public:
 		}
 		return Object->GetClass()->GetName();
 	}
+
+	/**
+	 * Try to open tab if it is closed at the last known location.  If it already exists, it will draw attention to the tab.
+	 *
+	 * @param TabManager The TabManager.
+	 * @param TabId The tab identifier.
+	 * @return The existing or newly spawned tab instance if successful.
+	 */
+	static TSharedPtr<SDockTab> InvokeTab(TSharedPtr<FTabManager> TabManager, const FTabId& TabID);
 
 	// Removes _C from the end of the Name
 	// And removes the .extension from the path names
