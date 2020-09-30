@@ -572,9 +572,11 @@ void UDialogueGraphNode::CheckDialogueNodeSyncWithGraphNode(bool bStrictCheck) c
 			const FDlgEdge& Edge = NodeEdges[EdgeIndex];
 			if (!DoesEdgeMatchEdgeIndex(Edge, EdgeIndex, OutMessage))
 			{
-				checkf(false,
+				checkf(
+					false,
 					TEXT("The node with OLD index = %d does not have the dialogue edge at index = %d matching the Edge in the GraphNode. Error message = `%s`"),
-					NodeIndex, EdgeIndex, *OutMessage);
+					NodeIndex, EdgeIndex, *OutMessage
+				);
 			}
 		}
 	}
@@ -873,8 +875,10 @@ bool UDialogueGraphNode::DoesEdgeMatchEdgeIndex(const FDlgEdge& Edge, int32 Edge
 	// Target node Index differs :(
 	if (Edge.TargetIndex != ChildNode->GetDialogueNodeIndex())
 	{
-		OutMessage = FString::Printf(TEXT("The provided Edge.TargetIndex = %d is DIFFERENT from the ChildNode.NodeIndex = %d"),
-				Edge.TargetIndex, ChildNode->GetDialogueNodeIndex());
+		OutMessage = FString::Printf(
+			TEXT("The provided Edge.TargetIndex = %d is DIFFERENT from the ChildNode.NodeIndex = %d"),
+			Edge.TargetIndex, ChildNode->GetDialogueNodeIndex()
+		);
 		return false;
 	}
 
