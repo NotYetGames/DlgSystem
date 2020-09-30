@@ -1,4 +1,5 @@
 # V12
+**Date:** September 30, 2020
 
 - **Fix** crash when opening the Help Menu for UE 4.24 and 4.25
 
