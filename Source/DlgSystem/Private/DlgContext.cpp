@@ -663,7 +663,7 @@ bool UDlgContext::CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObje
 	const UDlgNode& StartNode = InDialogue->GetStartNode();
 	for (const FDlgEdge& ChildLink : StartNode.GetNodeChildren())
 	{
-		if (ChildLink.IsValid() && ChildLink.Evaluate(*Context, {}))
+		if (ChildLink.Evaluate(*Context, {}))
 		{
 			// Simulate CanEnterNode but faster because we don't copy the context
 			UDlgNode* Node = Context->GetMutableNodeFromIndex(ChildLink.TargetIndex);
@@ -694,7 +694,7 @@ bool UDlgContext::StartWithContext(const FString& ContextString, UDlgDialogue* I
 	const UDlgNode& StartNode = Dialogue->GetStartNode();
 	for (const FDlgEdge& ChildLink : StartNode.GetNodeChildren())
 	{
-		if (ChildLink.IsValid() && ChildLink.Evaluate(*this, {}))
+		if (ChildLink.Evaluate(*this, {}))
 		{
 			if (EnterNode(ChildLink.TargetIndex, {}))
 			{
