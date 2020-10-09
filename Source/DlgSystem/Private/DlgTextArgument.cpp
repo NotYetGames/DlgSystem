@@ -3,7 +3,7 @@
 
 #include "UObject/TextProperty.h"
 
-#include "DlgSystemPrivatePCH.h"
+#include "DlgConstants.h"
 #include "DlgContext.h"
 #include "DlgHelper.h"
 #include "DlgDialogueParticipant.h"

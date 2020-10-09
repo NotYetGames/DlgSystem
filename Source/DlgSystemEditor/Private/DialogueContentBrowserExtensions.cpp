@@ -2,6 +2,7 @@
 #include "DialogueContentBrowserExtensions.h"
 
 #include "ContentBrowserModule.h"
+#include "DlgConstants.h"
 #include "DlgEventCustom.h"
 #include "Engine/Blueprint.h"
 

@@ -1,7 +1,7 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DlgContext.h"
 
-#include "DlgSystemPrivatePCH.h"
+#include "DlgConstants.h"
 #include "Nodes/DlgNode.h"
 #include "Nodes/DlgNode_End.h"
 #include "Nodes/DlgNode_SpeechSequence.h"
