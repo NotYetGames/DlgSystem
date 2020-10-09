@@ -1,3 +1,10 @@
+
+# v12.1
+**Date:** October 9, 2020
+
+- **Moved** loading all dialogues into memory into search manager init, but only after the content browser loads all the assets. This basically moves the loading to the editor so that it seems the plugin is not at fault for the long loading.
+- **Fixed** `CanStartDialogue` so that it matches the enter logic of `StartDialogue`
+
 # V12
 **Date:** September 30, 2020
 

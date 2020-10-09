@@ -367,6 +367,9 @@ public:
 	// Conditions are not checked here - they are expected to be satisfied
 	bool EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep);
 
+	// Same as EnterNode but just checks what would EnterNode return without any side effects (events firing)
+	bool CanEnterNode(int32 NodeIndex) const;
+
 	// Adds the node as visited in the current dialogue memory
 	void SetNodeVisited(int32 NodeIndex, const FGuid& NodeGUID);
 
@@ -528,6 +531,9 @@ public:
 		bool bFireEnterEvents
 	);
 
+	// Create a copy of the current Context
+	UDlgContext* CreateCopy() const;
+
 	// Checks if the context could be started, used to check if there is any reachable node from the start node
 	static bool CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
 
@@ -580,7 +586,7 @@ protected:
 	UPROPERTY(Replicated)
 	UDlgDialogue* Dialogue = nullptr;
 
-	//helper array to serialize to Participants map for clients as well
+	// Helper array to serialize to Participants map for clients as well
 	UPROPERTY(Replicated, ReplicatedUsing = OnRep_SerializedParticipants)
 	TArray<UObject*> SerializedParticipants;
 
