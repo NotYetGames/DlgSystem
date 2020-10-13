@@ -213,6 +213,7 @@ bool UDlgNode::HasAnySatisfiedChild(const UDlgContext& Context, TSet<const UDlgN
 {
 	for (const FDlgEdge& Edge : Children)
 	{
+		// Found at least one valid child
 		if (Edge.Evaluate(Context, AlreadyVisitedNodes))
 		{
 			return true;

@@ -16,6 +16,9 @@
 
 #include "DlgHelper.generated.h"
 
+class UDlgSystemSettings;
+
+
 USTRUCT()
 struct FDlgClassAndObject
 {
@@ -27,8 +30,6 @@ public:
 	UPROPERTY()
 	UObject* Object = nullptr;
 };
-
-class UDlgSystemSettings;
 
 // Const version of FScriptArrayHelper
 class FDlgConstScriptArrayHelper : public FScriptArrayHelper

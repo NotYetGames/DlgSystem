@@ -19,18 +19,6 @@ class UEdGraph;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogDlgSystemEditor, Verbose, All)
 
-const FName DIALOGUE_SYSTEM_MENU_CATEGORY_KEY(TEXT("Dialogue System"));
-const FText DIALOGUE_SYSTEM_MENU_CATEGORY_KEY_TEXT(NSLOCTEXT("DlgSystemEditor", "DlgSystemAssetCategory", "Dialogue System"));
-
-const FName OTHER_DIALOGUE_SYSTEM_MENU_CATEGORY_KEY(TEXT("Other Dialogue System"));
-const FText OTHER_DIALOGUE_SYSTEM_MENU_CATEGORY_KEY_TEXT(NSLOCTEXT("OtherDlgSystemEditor", "OtherDlgSystemAssetCategory", "OtherDialogue System"));
-
-// Other Modules constants
-static const FName NAME_MODULE_AssetTools(TEXT("AssetTools"));
-static const FName NAME_MODULE_AssetRegistry(TEXT("AssetRegistry"));
-static const FName NAME_MODULE_LevelEditor(TEXT("LevelEditor"));
-static const FName NAME_MODULE_PropertyEditor(TEXT("PropertyEditor"));
-
 
 // Implementation of the DlgSystemEditor Module
 class DLGSYSTEMEDITOR_API FDlgSystemEditorModule : public IDlgSystemEditorModule
@@ -76,6 +64,7 @@ private:
 	void HandleOnBeginPIE(bool bIsSimulating);
 	void HandleOnPostPIEStarted(bool bIsSimulating);
 	void HandleOnEndPIEHandle(bool bIsSimulating);
+	void HandleOnAssetRegistryFilesLoaded();
 
 	// Handle Blueprint Events
 	void HandleNewCustomConditionBlueprintCreated(UBlueprint* Blueprint);
@@ -117,4 +106,6 @@ private:
 	FDelegateHandle OnPostPIEStartedHandle; // after BeginPlay() has been called
 	FDelegateHandle OnEndPIEHandle;
 
+	// Flags
+	bool bIsEngineInitialized = false;
 };

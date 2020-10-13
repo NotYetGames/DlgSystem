@@ -11,13 +11,13 @@
 
 #if WITH_GAMEPLAY_DEBUGGER
 #include "GameplayDebugger.h"
-#endif
+#endif // WITH_GAMEPLAY_DEBUGGER
 #if WITH_EDITOR
 #include "WorkspaceMenuStructureModule.h"
 #include "WorkspaceMenuStructure.h"
-#endif
+#endif // WITH_EDITOR
 
-#include "DlgSystemPrivatePCH.h"
+#include "DlgConstants.h"
 #include "DlgManager.h"
 #include "DlgDialogue.h"
 #include "GameplayDebugger/DlgGameplayDebuggerCategory.h"
@@ -30,8 +30,6 @@
 DEFINE_LOG_CATEGORY(LogDlgSystem)
 //////////////////////////////////////////////////////////////////////////
 
-static const FName NAME_MODULE_AssetRegistry("AssetRegistry");
-
 void FDlgSystemModule::StartupModule()
 {
 	FDlgLogger::OnStart();
@@ -39,17 +37,17 @@ void FDlgSystemModule::StartupModule()
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 	FDlgLogger::Get().Info(TEXT("DlgSystemModule: StartupModule"));
 
-	OnPreLoadMapHandle = FCoreUObjectDelegates::PreLoadMap.AddRaw(this, &Self::HandlePreLoadMap);
-	OnPostLoadMapWithWorldHandle = FCoreUObjectDelegates::PostLoadMapWithWorld.AddRaw(this, &Self::HandlePostLoadMapWithWorld);
+	OnPreLoadMapHandle = FCoreUObjectDelegates::PreLoadMap.AddRaw(this, &Self::HandleOnPreLoadMap);
+	OnPostLoadMapWithWorldHandle = FCoreUObjectDelegates::PostLoadMapWithWorld.AddRaw(this, &Self::HandleOnPostLoadMapWithWorld);
 
 	// Listen for deleted assets
 	// Maybe even check OnAssetRemoved if not loaded into memory?
 	IAssetRegistry& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(NAME_MODULE_AssetRegistry).Get();
-	AssetRegistry.OnInMemoryAssetDeleted().AddRaw(this, &Self::HandleOnInMemoryAssetDeleted);
+	OnInMemoryAssetDeletedHandle = AssetRegistry.OnInMemoryAssetDeleted().AddRaw(this, &Self::HandleOnInMemoryAssetDeleted);
 	// NOTE: this seems to be the same as the OnInMemoryAssetDeleted as they are called from the same method inside
 	// the asset registry.
-	AssetRegistry.OnAssetRemoved().AddRaw(this, &Self::HandleAssetRemoved);
-	AssetRegistry.OnAssetRenamed().AddRaw(this, &Self::HandleAssetRenamed);
+	OnAssetRemovedHandle = AssetRegistry.OnAssetRemoved().AddRaw(this, &Self::HandleOnAssetRemoved);
+	OnAssetRenamedHandle = AssetRegistry.OnAssetRenamed().AddRaw(this, &Self::HandleOnAssetRenamed);
 
 #if WITH_GAMEPLAY_DEBUGGER
 	// If the gameplay debugger is available, register the category and notify the editor about the changes
@@ -108,9 +106,18 @@ void FDlgSystemModule::ShutdownModule()
 	if (ModuleManger.IsModuleLoaded(NAME_MODULE_AssetRegistry))
 	{
 		IAssetRegistry& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(NAME_MODULE_AssetRegistry).Get();
-		AssetRegistry.OnInMemoryAssetDeleted().RemoveAll(this);
-		AssetRegistry.OnAssetRemoved().RemoveAll(this);
-		AssetRegistry.OnAssetRenamed().RemoveAll(this);
+		if (OnInMemoryAssetDeletedHandle.IsValid())
+		{
+			AssetRegistry.OnInMemoryAssetDeleted().Remove(OnInMemoryAssetDeletedHandle);
+		}
+		if (OnAssetRemovedHandle.IsValid())
+		{
+			AssetRegistry.OnAssetRemoved().Remove(OnAssetRemovedHandle);
+		}
+		if (OnAssetRenamedHandle.IsValid())
+		{
+			AssetRegistry.OnAssetRenamed().Remove(OnAssetRenamedHandle);
+		}
 	}
 
 	if (OnPreLoadMapHandle.IsValid())
@@ -240,7 +247,7 @@ void FDlgSystemModule::HandleOnInMemoryAssetDeleted(UObject* DeletedObject)
 	}
 }
 
-void FDlgSystemModule::HandleAssetRemoved(const FAssetData& RemovedAsset)
+void FDlgSystemModule::HandleOnAssetRemoved(const FAssetData& RemovedAsset)
 {
 	if (!RemovedAsset.IsAssetLoaded())
 	{
@@ -248,7 +255,7 @@ void FDlgSystemModule::HandleAssetRemoved(const FAssetData& RemovedAsset)
 	}
 }
 
-void FDlgSystemModule::HandleAssetRenamed(const FAssetData& AssetRenamed, const FString& OldObjectPath)
+void FDlgSystemModule::HandleOnAssetRenamed(const FAssetData& AssetRenamed, const FString& OldObjectPath)
 {
 	UObject* ObjectRenamed = AssetRenamed.GetAsset();
 	if (UDlgDialogue* Dialogue = Cast<UDlgDialogue>(ObjectRenamed))
@@ -302,13 +309,9 @@ void FDlgSystemModule::HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, cons
 	}
 }
 
-void FDlgSystemModule::HandlePreLoadMap(const FString& MapName)
+void FDlgSystemModule::HandleOnPreLoadMap(const FString& MapName)
 {
 	// NOTE: only in NON editor game
-	if (!OnPreLoadMapHandle.IsValid())
-	{
-		return;
-	}
 	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 	if (!Settings)
 	{
@@ -322,13 +325,9 @@ void FDlgSystemModule::HandlePreLoadMap(const FString& MapName)
 	}
 }
 
-void FDlgSystemModule::HandlePostLoadMapWithWorld(UWorld* LoadedWorld)
+void FDlgSystemModule::HandleOnPostLoadMapWithWorld(UWorld* LoadedWorld)
 {
 	// NOTE: only in NON editor game
-	if (!OnPostLoadMapWithWorldHandle.IsValid())
-	{
-		return;
-	}
 	if (!LoadedWorld)
 	{
 		return;

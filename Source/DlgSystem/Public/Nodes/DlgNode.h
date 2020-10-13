@@ -82,11 +82,10 @@ public:
 	FDialogueNodePropertyChanged OnDialogueNodePropertyChanged;
 
 	virtual bool HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNode*> NodesEnteredWithThisStep);
-
 	virtual bool ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> AlreadyEvaluated);
 
 	virtual bool CheckNodeEnterConditions(const UDlgContext& Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
-	virtual bool HasAnySatisfiedChild(const UDlgContext& Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
+	bool HasAnySatisfiedChild(const UDlgContext& Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
 	virtual bool OptionSelected(int32 OptionIndex, UDlgContext& Context);
 
