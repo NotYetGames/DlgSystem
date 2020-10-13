@@ -1,6 +1,7 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "Logging/DlgLogger.h"
-#include "DlgSystemPrivatePCH.h"
+#include "DlgConstants.h"
+#include "DlgSystemModule.h"
 #include "DlgSystemSettings.h"
 
 #define LOCTEXT_NAMESPACE "DlgLogger"
@@ -12,7 +13,7 @@ FDlgLogger::FDlgLogger() : Super()
 	static constexpr bool bOwnMessageLogMirrorToOutputLog = true;
 	EnableMessageLog(bOwnMessageLogMirrorToOutputLog);
 	SetMessageLogMirrorToOutputLog(true);
-	
+
 	DisableOutputLog();
 	DisableOnScreen();
 	DisableClientConsole();
@@ -35,7 +36,7 @@ FDlgLogger& FDlgLogger::SyncWithSettings()
 	SetRedirectMessageLogLevelsHigherThan(Settings->RedirectMessageLogLevelsHigherThan);
 	SetOpenMessageLogLevelsHigherThan(Settings->OpenMessageLogLevelsHigherThan);
 	SetMessageLogOpenOnNewMessage(Settings->bMessageLogOpen);
-	
+
 	return *this;
 }
 

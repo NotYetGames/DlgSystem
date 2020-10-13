@@ -34,6 +34,53 @@ struct NodeWithParentPosition
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDialogueEditorUtilities
+void FDialogueEditorUtilities::LoadAllDialoguesAndCheckGUIDs()
+{
+	//const int32 NumDialoguesBefore = UDlgManager::GetAllDialoguesFromMemory().Num();
+	const int32 NumLoadedDialogues = UDlgManager::LoadAllDialoguesIntoMemory(false);
+	//const int32 NumDialoguesAfter = UDlgManager::GetAllDialoguesFromMemory().Num();
+	//check(NumDialoguesBefore == NumDialoguesAfter);
+	UE_LOG(LogDlgSystemEditor, Log, TEXT("UDlgManager::LoadAllDialoguesIntoMemory loaded %d Dialogues into Memory"), NumLoadedDialogues);
+
+	// Try to fix duplicate GUID
+	// Can happen for one of the following reasons:
+	// - duplicated files outside of UE
+	// - somehow loaded from text files?
+	// - the universe hates us? +_+
+	for (UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGUIDs())
+	{
+		UE_LOG(
+			LogDlgSystemEditor,
+			Warning,
+			TEXT("Dialogue = `%s`, GUID = `%s` has a Duplicate GUID. Regenerating."),
+			*Dialogue->GetPathName(), *Dialogue->GetGUID().ToString()
+		)
+		Dialogue->RegenerateGUID();
+		Dialogue->MarkPackageDirty();
+	}
+
+	// Give it another try, Give up :((
+	// May the math Gods have mercy on us!
+	for (const UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGUIDs())
+	{
+		// GUID already exists (╯°□°）╯︵ ┻━┻
+		// Does this break the universe?
+		UE_LOG(
+			LogDlgSystemEditor,
+			Error,
+			TEXT("Dialogue = `%s`, GUID = `%s`"),
+			*Dialogue->GetPathName(), *Dialogue->GetGUID().ToString()
+		)
+
+		UE_LOG(
+			LogDlgSystemEditor,
+			Fatal,
+			TEXT("(╯°□°）╯︵ ┻━┻ Congrats, you just broke the universe, are you even human? Now please go and proove an NP complete problem."
+				"The chance of generating two equal random FGuid (picking 4, uint32 numbers) is p = 9.3132257 * 10^(-10) % (or something like this)")
+		)
+	}
+}
+
 const TSet<UObject*> FDialogueEditorUtilities::GetSelectedNodes(const UEdGraph* Graph)
 {
 	TSharedPtr<IDialogueEditor> DialogueEditor = GetDialogueEditorForGraph(Graph);

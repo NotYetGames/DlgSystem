@@ -16,6 +16,7 @@
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
 #include "DialogueStyle.h"
+#include "DlgConstants.h"
 
 #define LOCTEXT_NAMESPACE "SDialogueBrowser"
 
@@ -1116,33 +1117,22 @@ void FDialogueSearchManager::DisableGlobalFindResults()
 void FDialogueSearchManager::Initialize(TSharedPtr<FWorkspaceItem> ParentTabCategory)
 {
 	// Must ensure we do not attempt to load the AssetRegistry Module while saving a package, however, if it is loaded already we can safely obtain it
-	if (!GIsSavingPackage || (GIsSavingPackage && FModuleManager::Get().IsModuleLoaded(NAME_MODULE_AssetRegistry)))
+	AssetRegistry = &FModuleManager::LoadModuleChecked<FAssetRegistryModule>(NAME_MODULE_AssetRegistry).Get();
+
+	OnAssetAddedHandle = AssetRegistry->OnAssetAdded().AddRaw(this, &Self::HandleOnAssetAdded);
+	OnAssetRemovedHandle = AssetRegistry->OnAssetRemoved().AddRaw(this, &Self::HandleOnAssetRemoved);
+	OnAssetRenamedHandle = AssetRegistry->OnAssetRenamed().AddRaw(this, &Self::HandleOnAssetRenamed);
+
+	if (AssetRegistry->IsLoadingAssets())
 	{
-		AssetRegistryModule = &FModuleManager::LoadModuleChecked<FAssetRegistryModule>(NAME_MODULE_AssetRegistry);
-		AssetRegistryModule->Get().OnAssetAdded().AddRaw(this, &Self::HandleAssetAdded);
-		AssetRegistryModule->Get().OnAssetRemoved().AddRaw(this, &Self::HandleAssetRemoved);
-		AssetRegistryModule->Get().OnAssetRenamed().AddRaw(this, &Self::HandleAssetRenamed);
+		OnFilesLoadedHandle = AssetRegistry->OnFilesLoaded().AddRaw(this, &Self::HandleOnAssetRegistryFilesLoaded);
 	}
 	else
 	{
-		// Log a warning to inform the Asset Registry could not be initialized when FiD initialized due to saving package
-		// The Asset Registry should be initialized before Find-in-Dialogues, or FiD should be explicitly initialized during a safe time
-		// This message will not appear in commandlets because most commandlets do not care. If a search query is made, further warnings will be produced even in commandlets.
-		if (!IsRunningCommandlet())
-		{
-			UE_LOG(LogDlgSystemEditor,
-				Warning,
-				TEXT("Find-in-Dialogues could not pre-cache all unloaded Dialogues due to the Asset Registry module being unable to initialize because a package is currently being saved. Pre-cache will not be reattempted!"));
-		}
+		// Already loaded
+		HandleOnAssetRegistryFilesLoaded();
 	}
-	FCoreUObjectDelegates::OnAssetLoaded.AddRaw(this, &Self::HandleAssetLoaded);
-
-	// TODO Pause search if garbage collecting?
-	if (!GIsSavingPackage && AssetRegistryModule)
-	{
-		// Do an immediate load of the cache to catch any Blueprints that were discovered by the asset registry before we initialized.
-		BuildCache();
-	}
+	OnAssetLoadedHandle = FCoreUObjectDelegates::OnAssetLoaded.AddRaw(this, &Self::HandleOnAssetLoaded);
 
 	// Register global find results tabs
 	EnableGlobalFindResults(ParentTabCategory);
@@ -1150,13 +1140,35 @@ void FDialogueSearchManager::Initialize(TSharedPtr<FWorkspaceItem> ParentTabCate
 
 void FDialogueSearchManager::UnInitialize()
 {
-	if (AssetRegistryModule)
+	if (AssetRegistry)
 	{
-		AssetRegistryModule->Get().OnAssetAdded().RemoveAll(this);
-		AssetRegistryModule->Get().OnAssetRemoved().RemoveAll(this);
-		AssetRegistryModule->Get().OnAssetRenamed().RemoveAll(this);
+		if (OnAssetAddedHandle.IsValid())
+		{
+			AssetRegistry->OnAssetAdded().Remove(OnAssetAddedHandle);
+			OnAssetAddedHandle.Reset();
+		}
+		if (OnAssetRemovedHandle.IsValid())
+		{
+			AssetRegistry->OnAssetRemoved().Remove(OnAssetRemovedHandle);
+			OnAssetRemovedHandle.Reset();
+		}
+		if (OnFilesLoadedHandle.IsValid())
+		{
+			AssetRegistry->OnFilesLoaded().Remove(OnFilesLoadedHandle);
+			OnFilesLoadedHandle.Reset();
+		}
+		if (OnAssetRenamedHandle.IsValid())
+		{
+			AssetRegistry->OnAssetRenamed().Remove(OnAssetRenamedHandle);
+			OnAssetRenamedHandle.Reset();
+		}
 	}
-	FCoreUObjectDelegates::OnAssetLoaded.RemoveAll(this);
+
+	if (OnAssetLoadedHandle.IsValid())
+	{
+		FCoreUObjectDelegates::OnAssetLoaded.Remove(OnAssetLoadedHandle);
+		OnAssetLoadedHandle.Reset();
+	}
 
 	// Shut down the global find results tab feature.
 	DisableGlobalFindResults();
@@ -1175,18 +1187,18 @@ void FDialogueSearchManager::BuildCache()
 	// AssetRegistryModule->Get().GetAssets(ClassFilter, DialogueAssets);
 	// for (FAssetData& Asset : DialogueAssets)
 	// {
-	// 	HandleAssetAdded(Asset);
+	// 	HandleOnAssetAdded(Asset);
 	// }
 
 	// We already loaded all Dialogues into memory in the StartupModule.
 	for (UDlgDialogue* Dialogue : UDlgManager::GetAllDialoguesFromMemory())
 	{
 		FAssetData AssetData(Dialogue);
-		HandleAssetAdded(AssetData);
+		HandleOnAssetAdded(AssetData);
 	}
 }
 
-void FDialogueSearchManager::HandleAssetAdded(const FAssetData& InAssetData)
+void FDialogueSearchManager::HandleOnAssetAdded(const FAssetData& InAssetData)
 {
 	// Confirm that the Dialogue has not been added already, this can occur during duplication of Dialogues.
 	FDialogueSearchData* SearchDataPtr = SearchMap.Find(InAssetData.ObjectPath);
@@ -1215,19 +1227,30 @@ void FDialogueSearchManager::HandleAssetAdded(const FAssetData& InAssetData)
 	SearchMap.Add(InAssetData.ObjectPath, MoveTemp(SearchData));
 }
 
-void FDialogueSearchManager::HandleAssetRemoved(const FAssetData& InAssetData)
+void FDialogueSearchManager::HandleOnAssetRemoved(const FAssetData& InAssetData)
 {
 	// TODO
 }
 
-void FDialogueSearchManager::HandleAssetRenamed(const FAssetData& InAssetData, const FString& InOldName)
+void FDialogueSearchManager::HandleOnAssetRenamed(const FAssetData& InAssetData, const FString& InOldName)
 {
 	// TODO
 }
 
-void FDialogueSearchManager::HandleAssetLoaded(UObject* InAsset)
+void FDialogueSearchManager::HandleOnAssetLoaded(UObject* InAsset)
 {
 
+}
+
+void FDialogueSearchManager::HandleOnAssetRegistryFilesLoaded()
+{
+	// TODO Pause search if garbage collecting?
+	FDialogueEditorUtilities::LoadAllDialoguesAndCheckGUIDs();
+	if (AssetRegistry)
+	{
+		// Do an immediate load of the cache to catch any Blueprints that were discovered by the asset registry before we initialized.
+		BuildCache();
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

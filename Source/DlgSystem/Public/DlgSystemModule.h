@@ -3,9 +3,6 @@
 
 #include "IDlgSystemModule.h"
 
-// DlgDataDisplay TabID
-const FName DIALOGUE_DATA_DISPLAY_TAB_ID(TEXT("DlgDataDisplayWindow"));
-
 class UDlgDialogue;
 class SWidget;
 struct FAssetData;
@@ -14,6 +11,8 @@ class SDockTab;
 struct IConsoleCommand;
 class AActor;
 struct FTabSpawnerEntry;
+
+DECLARE_LOG_CATEGORY_EXTERN(LogDlgSystem, All, All);
 
 // Implementation of the DlgSystem Module
 class DLGSYSTEM_API FDlgSystemModule : public IDlgSystemModule
@@ -39,10 +38,10 @@ private:
 	void HandleOnInMemoryAssetDeleted(UObject* DeletedObject);
 
 	// Handle the event for when assets are removed from the asset registry.
-	void HandleAssetRemoved(const FAssetData& RemovedAsset);
+	void HandleOnAssetRemoved(const FAssetData& RemovedAsset);
 
 	// Handle the event for when assets are renamed in the registry
-	void HandleAssetRenamed(const FAssetData& AssetRenamed, const FString& OldObjectPath);
+	void HandleOnAssetRenamed(const FAssetData& AssetRenamed, const FString& OldObjectPath);
 
 	// Handle the event after the Dialogue was deleted. Deletes the text file(s).
 	void HandleDialogueDeleted(UDlgDialogue* DeletedDialogue);
@@ -51,10 +50,10 @@ private:
 	void HandleDialogueRenamed(UDlgDialogue* RenamedDialogue, const FString& OldObjectPath);
 
 	// Handle event when a new map is loaded.
-	void HandlePreLoadMap(const FString& MapName);
+	void HandleOnPreLoadMap(const FString& MapName);
 
 	// Handle event when a new map with world is loaded is loaded.
-	void HandlePostLoadMapWithWorld(UWorld* LoadedWorld);
+	void HandleOnPostLoadMapWithWorld(UWorld* LoadedWorld);
 
 private:
 	// True if the tab spawners have been registered for this module
@@ -76,4 +75,7 @@ private:
 	// Handlers
 	FDelegateHandle OnPreLoadMapHandle;
 	FDelegateHandle OnPostLoadMapWithWorldHandle;
+	FDelegateHandle OnInMemoryAssetDeletedHandle;
+	FDelegateHandle OnAssetRemovedHandle;
+	FDelegateHandle OnAssetRenamedHandle;
 };

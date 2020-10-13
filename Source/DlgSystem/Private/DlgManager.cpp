@@ -9,7 +9,7 @@
 #include "Engine/Engine.h"
 
 #include "IDlgSystemModule.h"
-#include "DlgSystemPrivatePCH.h"
+#include "DlgConstants.h"
 #include "DlgDialogueParticipant.h"
 #include "DlgDialogue.h"
 #include "DlgMemory.h"
@@ -19,6 +19,8 @@
 #include "NYReflectionHelper.h"
 
 TWeakObjectPtr<const UObject> UDlgManager::UserWorldContextObjectPtr = nullptr;
+
+bool UDlgManager::bCalledLoadAllDialoguesIntoMemory = false;;
 
 UDlgContext* UDlgManager::StartDialogueWithDefaultParticipants(UObject* WorldContextObject, UDlgDialogue* Dialogue)
 {
@@ -217,11 +219,13 @@ UDlgContext* UDlgManager::StartDialogue4(UDlgDialogue* Dialogue, UObject* Partic
 	return StartDialogueWithContext(TEXT("StartDialogue4"), Dialogue, Participants);
 }
 
-int32 UDlgManager::LoadAllDialoguesIntoMemory()
+int32 UDlgManager::LoadAllDialoguesIntoMemory(bool bAsync)
 {
+	bCalledLoadAllDialoguesIntoMemory = true;
+
 	// NOTE: All paths must NOT have the forward slash "/" at the end.
 	// If they do, then this won't load Dialogues that are located in the Content root directory
-	UObjectLibrary* ObjectLibrary = UObjectLibrary::CreateLibrary(UDlgDialogue::StaticClass(), true, GIsEditor);
+	UObjectLibrary* ObjectLibrary = UObjectLibrary::CreateLibrary(UDlgDialogue::StaticClass(), false, GIsEditor);
 	TArray<FString> PathsToSearch = { TEXT("/Game") };
 	ObjectLibrary->AddToRoot();
 
@@ -236,14 +240,25 @@ int32 UDlgManager::LoadAllDialoguesIntoMemory()
 		PathsToSearch.Add(PluginPath);
 	}
 
-	ObjectLibrary->LoadAssetDataFromPaths(PathsToSearch);
-	const int32 Count = ObjectLibrary->LoadAssetsFromAssetData();
+	const bool bForceSynchronousScan = !bAsync;
+	const int32 Count = ObjectLibrary->LoadAssetDataFromPaths(PathsToSearch, bForceSynchronousScan);
+	ObjectLibrary->LoadAssetsFromAssetData();
 	ObjectLibrary->RemoveFromRoot();
+
 	return Count;
 }
 
 TArray<UDlgDialogue*> UDlgManager::GetAllDialoguesFromMemory()
 {
+#if WITH_EDITOR
+	// Hmm, something is wrong
+	if (!bCalledLoadAllDialoguesIntoMemory)
+	{
+		LoadAllDialoguesIntoMemory(false);
+	}
+// 	check(bCalledLoadAllDialoguesIntoMemory);
+#endif
+
 	TArray<UDlgDialogue*> Array;
 	for (TObjectIterator<UDlgDialogue> Itr; Itr; ++Itr)
 	{

@@ -1,7 +1,7 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DlgCondition.h"
 
-#include "DlgSystemPrivatePCH.h"
+#include "DlgConstants.h"
 #include "DlgMemory.h"
 #include "DlgContext.h"
 #include "Nodes/DlgNode.h"
