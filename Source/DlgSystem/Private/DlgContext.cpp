@@ -515,27 +515,6 @@ bool UDlgContext::EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredW
 	return Node->HandleNodeEnter(*this, NodesEnteredWithThisStep);
 }
 
-bool UDlgContext::CanEnterNode(int32 NodeIndex) const
-{
-	check(Dialogue);
-	UDlgNode* Node = GetMutableNodeFromIndex(NodeIndex);
-	if (!IsValid(Node))
-	{
-		return false;
-	}
-
-	// Call ReevaluateChildren on a copy of the current Context
-	// So that the current context remains Pure
-	// This could have been done in more code if the Nodes implemented CanReevaluateChildren
-	UDlgContext* TempContext = CreateCopy();
-	if (!TempContext)
-	{
-		return false;
-	}
-
-	return Node->ReevaluateChildren(*TempContext, {});
-}
-
 UDlgContext* UDlgContext::CreateCopy() const
 {
 	UObject* FirstParticipant = nullptr;
@@ -665,9 +644,9 @@ bool UDlgContext::CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObje
 	{
 		if (ChildLink.Evaluate(*Context, {}))
 		{
-			// Simulate CanEnterNode but faster because we don't copy the context
+			// Simulate EnterNode
 			UDlgNode* Node = Context->GetMutableNodeFromIndex(ChildLink.TargetIndex);
-			if (Node && Node->ReevaluateChildren(*Context, {}))
+			if (Node && Node->HasAnySatisfiedChild(*Context, {}))
 			{
 				return true;
 			}

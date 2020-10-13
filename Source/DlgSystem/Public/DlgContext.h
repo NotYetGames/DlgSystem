@@ -367,9 +367,6 @@ public:
 	// Conditions are not checked here - they are expected to be satisfied
 	bool EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep);
 
-	// Same as EnterNode but just checks what would EnterNode return without any side effects (events firing)
-	bool CanEnterNode(int32 NodeIndex) const;
-
 	// Adds the node as visited in the current dialogue memory
 	void SetNodeVisited(int32 NodeIndex, const FGuid& NodeGUID);
 
