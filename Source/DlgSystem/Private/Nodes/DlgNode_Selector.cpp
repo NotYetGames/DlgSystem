@@ -1,6 +1,6 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "Nodes/DlgNode_Selector.h"
-#include "DlgSystemPrivatePCH.h"
+#include "DlgConstants.h"
 #include "DlgContext.h"
 #include "Logging/DlgLogger.h"
 

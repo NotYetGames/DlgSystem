@@ -15,7 +15,6 @@ public class DlgSystem : ModuleRules
 		//MinFilesUsingPrecompiledHeaderOverride = 1;
 		// bFasterWithoutUnity = true;
 		// bUseUnity = false;
-		//PrivatePCHHeaderFile = "Private/DlgSystemPrivatePCH.h";
 
 		PublicIncludePaths.AddRange(
 			new string[] {

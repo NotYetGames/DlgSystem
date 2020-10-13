@@ -10,7 +10,7 @@
 #include "EdGraph/EdGraphSchema.h"
 #endif
 
-#include "DlgSystemPrivatePCH.h"
+#include "DlgSystemModule.h"
 #include "IO/DlgConfigParser.h"
 #include "IO/DlgConfigWriter.h"
 #include "IO/DlgJsonWriter.h"
@@ -147,8 +147,12 @@ void UDlgDialogue::PostLoad()
 
 			if (!Nodes.IsValidIndex(Edge.TargetIndex))
 			{
-				UE_LOG(LogDlgSystem, Fatal,
-					TEXT("Node with index = %d does not have a valid Edge index = %d with TargetIndex = %d"), NodeIndex, EdgeIndex, Edge.TargetIndex);
+				UE_LOG(
+					LogDlgSystem,
+					Fatal,
+					TEXT("Node with index = %d does not have a valid Edge index = %d with TargetIndex = %d"),
+					NodeIndex, EdgeIndex, Edge.TargetIndex
+				);
 			}
 		}
 	}

@@ -16,6 +16,7 @@ class FWorkspaceItem;
 class UDialogueGraphNode;
 class UDialogueGraphNode_Edge;
 class UEdGraphNode_Comment;
+class IAssetRegistry;
 struct FAssetData;
 struct FDlgCondition;
 struct FDlgEvent;
@@ -216,16 +217,19 @@ private:
 	void BuildCache();
 
 	// Callback hook from the Asset Registry when an asset is added
-	void HandleAssetAdded(const FAssetData& InAssetData);
+	void HandleOnAssetAdded(const FAssetData& InAssetData);
 
 	// Callback hook from the Asset Registry, marks the asset for deletion from the cache
-	void HandleAssetRemoved(const FAssetData& InAssetData);
+	void HandleOnAssetRemoved(const FAssetData& InAssetData);
 
 	// Callback hook from the Asset Registry, marks the asset for deletion from the cache
-	void HandleAssetRenamed(const FAssetData& InAssetData, const FString& InOldName);
+	void HandleOnAssetRenamed(const FAssetData& InAssetData, const FString& InOldName);
 
 	// Callback hook from the Asset Registry when an asset is loaded
-	void HandleAssetLoaded(UObject* InAsset);
+	void HandleOnAssetLoaded(UObject* InAsset);
+
+	// Callback when the Asset Registry loads all its assets
+	void HandleOnAssetRegistryFilesLoaded();
 
 private:
 	static Self* Instance;
@@ -234,7 +238,7 @@ private:
 	TMap<FName, FDialogueSearchData> SearchMap;
 
 	// Because we are unable to query for the module on another thread, cache it for use later
-	FAssetRegistryModule* AssetRegistryModule;
+	IAssetRegistry* AssetRegistry = nullptr;
 
 	// The tab identifier/instance name for global find results
 	FName GlobalFindResultsTabIDs[MAX_GLOBAL_DIALOGUE_SEARCH_RESULTS];
@@ -244,4 +248,11 @@ private:
 
 	// Global Find Results workspace menu item
 	TSharedPtr<FWorkspaceItem> GlobalFindResultsMenuItem;
+
+	// Handlers
+	FDelegateHandle OnAssetAddedHandle;
+	FDelegateHandle OnAssetRemovedHandle;
+	FDelegateHandle OnAssetRenamedHandle;
+	FDelegateHandle OnFilesLoadedHandle;
+	FDelegateHandle OnAssetLoadedHandle;
 };

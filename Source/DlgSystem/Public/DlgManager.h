@@ -158,7 +158,7 @@ public:
 	 * Loads all dialogues from the filesystem into memory
 	 * @return number of loaded dialogues
 	 */
-	static int32 LoadAllDialoguesIntoMemory();
+	static int32 LoadAllDialoguesIntoMemory(bool bAsync = false);
 
 	// Gets all loaded dialogues from memory. LoadAllDialoguesIntoMemory must be called before this
 	static TArray<UDlgDialogue*> GetAllDialoguesFromMemory();
@@ -290,4 +290,6 @@ private:
 
 	// Set by the user, we will default to automagically resolve the world
 	static TWeakObjectPtr<const UObject> UserWorldContextObjectPtr;
+
+	static bool bCalledLoadAllDialoguesIntoMemory;
 };

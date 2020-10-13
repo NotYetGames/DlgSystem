@@ -528,6 +528,9 @@ public:
 		bool bFireEnterEvents
 	);
 
+	// Create a copy of the current Context
+	UDlgContext* CreateCopy() const;
+
 	// Checks if the context could be started, used to check if there is any reachable node from the start node
 	static bool CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObject*>& InParticipants);
 
@@ -580,7 +583,7 @@ protected:
 	UPROPERTY(Replicated)
 	UDlgDialogue* Dialogue = nullptr;
 
-	//helper array to serialize to Participants map for clients as well
+	// Helper array to serialize to Participants map for clients as well
 	UPROPERTY(Replicated, ReplicatedUsing = OnRep_SerializedParticipants)
 	TArray<UObject*> SerializedParticipants;
 
