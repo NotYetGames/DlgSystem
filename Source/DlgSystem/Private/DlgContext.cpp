@@ -502,6 +502,7 @@ bool UDlgContext::IsOptionConnectedToEndNode(int32 Index, bool bIndexSkipsUnsati
 bool UDlgContext::EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
 	check(Dialogue);
+
 	UDlgNode* Node = GetMutableNodeFromIndex(NodeIndex);
 	if (!IsValid(Node))
 	{
@@ -675,8 +676,14 @@ bool UDlgContext::StartWithContext(const FString& ContextString, UDlgDialogue* I
 	{
 		if (ChildLink.Evaluate(*this, {}))
 		{
+			// Can Enter Node or the TargetIndex is an End Node
 			if (EnterNode(ChildLink.TargetIndex, {}))
 			{
+				return true;
+			}
+			else if (Dialogue->IsEndNode(ChildLink.TargetIndex))
+			{
+				bDialogueEnded = true;
 				return true;
 			}
 		}
@@ -729,13 +736,32 @@ bool UDlgContext::StartWithContextFromNode(
 
 	if (bFireEnterEvents)
 	{
-		return EnterNode(StartNodeIndex, {});
+		if (EnterNode(StartNodeIndex, {}))
+		{
+			return true;
+		}
+		else if (Dialogue->IsEndNode(StartNodeIndex))
+		{
+			bDialogueEnded = true;
+			return true;
+		}
+
+		return false;
 	}
 
 	ActiveNodeIndex = StartNodeIndex;
 	SetNodeVisited(StartNodeIndex, Node->GetGUID());
 
-	return Node->ReevaluateChildren(*this, {});
+	if (Node->ReevaluateChildren(*this, {}))
+	{
+		return true;
+	}
+	else if (Dialogue->IsEndNode(StartNodeIndex))
+	{
+		bDialogueEnded = true;
+		return true;
+	}
+	return false;
 }
 
 FString UDlgContext::GetContextString() const

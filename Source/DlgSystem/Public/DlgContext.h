@@ -364,7 +364,10 @@ public:
 	// the Dialogue jumps to the defined node, or the function returns with false if the conversation is over
 	// Depending on the node the EnterNode() call can lead to other EnterNode() calls - having NodeIndex as active node after the call
 	// is not granted
-	// Conditions are not checked here - they are expected to be satisfied
+	// Conditions are not checked here (but when edges are evaluated) - they are expected to be satisfied
+	//
+	// Returns true if this node has any valid children
+	// Returns false otherwise
 	bool EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep);
 
 	// Adds the node as visited in the current dialogue memory
