@@ -1,7 +1,7 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DlgContext.h"
 
-#include "DlgSystemPrivatePCH.h"
+#include "DlgConstants.h"
 #include "Nodes/DlgNode.h"
 #include "Nodes/DlgNode_End.h"
 #include "Nodes/DlgNode_SpeechSequence.h"
@@ -515,6 +515,34 @@ bool UDlgContext::EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredW
 	return Node->HandleNodeEnter(*this, NodesEnteredWithThisStep);
 }
 
+UDlgContext* UDlgContext::CreateCopy() const
+{
+	UObject* FirstParticipant = nullptr;
+	for (const auto& KeyValue : Participants)
+	{
+		if (KeyValue.Value)
+		{
+			FirstParticipant = KeyValue.Value;
+			break;
+		}
+	}
+	if (!FirstParticipant)
+	{
+		return nullptr;
+	}
+
+	auto* Context = NewObject<UDlgContext>(FirstParticipant, StaticClass());
+	Context->Dialogue = Dialogue;
+	Context->SetParticipants(Participants);
+	Context->ActiveNodeIndex = ActiveNodeIndex;
+	Context->AvailableChildren = AvailableChildren;
+	Context->AllChildren = AllChildren;
+	Context->History = History;
+	Context->bDialogueEnded = bDialogueEnded;
+
+	return Context;
+}
+
 void UDlgContext::SetNodeVisited(int32 NodeIndex, const FGuid& NodeGUID)
 {
 	FDlgMemory::Get().SetNodeVisited(Dialogue->GetGUID(), NodeIndex, NodeGUID);
@@ -614,9 +642,14 @@ bool UDlgContext::CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObje
 	const UDlgNode& StartNode = InDialogue->GetStartNode();
 	for (const FDlgEdge& ChildLink : StartNode.GetNodeChildren())
 	{
-		if (ChildLink.IsValid() && ChildLink.Evaluate(*Context, {}))
+		if (ChildLink.Evaluate(*Context, {}))
 		{
-			return true;
+			// Simulate EnterNode
+			UDlgNode* Node = Context->GetMutableNodeFromIndex(ChildLink.TargetIndex);
+			if (Node && Node->HasAnySatisfiedChild(*Context, {}))
+			{
+				return true;
+			}
 		}
 	}
 
@@ -640,7 +673,7 @@ bool UDlgContext::StartWithContext(const FString& ContextString, UDlgDialogue* I
 	const UDlgNode& StartNode = Dialogue->GetStartNode();
 	for (const FDlgEdge& ChildLink : StartNode.GetNodeChildren())
 	{
-		if (ChildLink.IsValid() && ChildLink.Evaluate(*this, {}))
+		if (ChildLink.Evaluate(*this, {}))
 		{
 			if (EnterNode(ChildLink.TargetIndex, {}))
 			{

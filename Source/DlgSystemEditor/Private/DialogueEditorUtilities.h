@@ -43,6 +43,9 @@ public:
 		return GraphNode;
 	}
 
+	// Loads all dialogues into memory and checks the GUIDs for duplicates
+	static void LoadAllDialoguesAndCheckGUIDs();
+
 	/** Gets the nodes that are currently selected */
 	static const TSet<UObject*> GetSelectedNodes(const UEdGraph* Graph);
 

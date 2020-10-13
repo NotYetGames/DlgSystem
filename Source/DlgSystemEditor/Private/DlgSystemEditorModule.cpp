@@ -22,6 +22,7 @@
 #include "AssetTypeActions/AssetTypeActions_DlgDialogue.h"
 #include "AssetTypeActions/AssetTypeActions_DlgBlueprintDerived.h"
 #include "DialogueCommands.h"
+#include "DlgConstants.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueBrowser/SDialogueBrowser.h"
 #include "DialogueSearch/DialogueSearchManager.h"
@@ -49,7 +50,6 @@ DEFINE_LOG_CATEGORY(LogDlgSystemEditor)
 // Just some constants
 static const FName DIALOGUE_BROWSER_TAB_ID("DialogueBrowser");
 
-
 FDlgSystemEditorModule::FDlgSystemEditorModule() : DlgSystemAssetCategoryBit(EAssetTypeCategories::UI)
 {
 }
@@ -71,6 +71,9 @@ void FDlgSystemEditorModule::StartupModule()
 	OnPostPIEStartedHandle = FEditorDelegates::PostPIEStarted.AddRaw(this, &Self::HandleOnPostPIEStarted);
 	OnEndPIEHandle = FEditorDelegates::EndPIE.AddRaw(this, &Self::HandleOnEndPIEHandle);
 
+	// Listen for when the asset registry has finished discovering files
+	IAssetRegistry& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(NAME_MODULE_AssetRegistry).Get();
+
 	// Register Blueprint events
 	FKismetEditorUtilities::RegisterOnBlueprintCreatedCallback(
 		this,
@@ -88,9 +91,9 @@ void FDlgSystemEditorModule::StartupModule()
 		FKismetEditorUtilities::FOnBlueprintCreated::CreateRaw(this, &Self::HandleNewCustomEventBlueprintCreated)
 	);
 	FKismetEditorUtilities::RegisterOnBlueprintCreatedCallback(
-	    this,
-	    UDlgNodeData::StaticClass(),
-	    FKismetEditorUtilities::FOnBlueprintCreated::CreateRaw(this, &Self::HandleNewNodeDataBlueprintCreated)
+		this,
+		UDlgNodeData::StaticClass(),
+		FKismetEditorUtilities::FOnBlueprintCreated::CreateRaw(this, &Self::HandleNewNodeDataBlueprintCreated)
 	);
 
 	// Register slate style overrides
@@ -274,6 +277,10 @@ void FDlgSystemEditorModule::ShutdownModule()
 	{
 		FEditorDelegates::EndPIE.Remove(OnEndPIEHandle);
 	}
+	if (OnPostEngineInitHandle.IsValid())
+	{
+		FCoreDelegates::OnPostEngineInit.Remove(OnPostEngineInitHandle);
+	}
 
 	UE_LOG(LogDlgSystemEditor, Log, TEXT("DlgSystemEditorModule: ShutdownModule"));
 }
@@ -316,77 +323,20 @@ void FDlgSystemEditorModule::HandleOnDeleteAllDialoguesTextFiles()
 	}
 }
 
+
+
 void FDlgSystemEditorModule::HandleOnPostEngineInit()
 {
-	if (!OnPostEngineInitHandle.IsValid())
-	{
-		return;
-	}
-
+	bIsEngineInitialized = true;
 	UE_LOG(LogDlgSystemEditor, Log, TEXT("DlgSystemEditorModule::HandleOnPostEngineInit"));
-	FCoreDelegates::OnPostEngineInit.Remove(OnPostEngineInitHandle);
-	OnPostEngineInitHandle.Reset();
-
-	//const int32 NumDialoguesBefore = UDlgManager::GetAllDialoguesFromMemory().Num();
-	const int32 NumLoadedDialogues = UDlgManager::LoadAllDialoguesIntoMemory();
-	//const int32 NumDialoguesAfter = UDlgManager::GetAllDialoguesFromMemory().Num();
-	//check(NumDialoguesBefore == NumDialoguesAfter);
-	UE_LOG(LogDlgSystemEditor, Log, TEXT("UDlgManager::LoadAllDialoguesIntoMemory loaded %d Dialogues into Memory"), NumLoadedDialogues);
-
-	// Try to fix duplicate GUID
-	// Can happen for one of the following reasons:
-	// - duplicated files outside of UE
-	// - somehow loaded from text files?
-	// - the universe hates us? +_+
-	for (UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGUIDs())
-	{
-		UE_LOG(
-			LogDlgSystemEditor,
-			Warning,
-			TEXT("Dialogue = `%s`, GUID = `%s` has a Duplicate GUID. Regenerating."),
-			*Dialogue->GetPathName(), *Dialogue->GetGUID().ToString()
-		)
-		Dialogue->RegenerateGUID();
-		Dialogue->MarkPackageDirty();
-	}
-
-	// Give it another try, Give up :((
-	// May the math Gods have mercy on us!
-	for (const UDlgDialogue* Dialogue : UDlgManager::GetDialoguesWithDuplicateGUIDs())
-	{
-		// GUID already exists (╯°□°）╯︵ ┻━┻
-		// Does this break the universe?
-		UE_LOG(
-			LogDlgSystemEditor,
-			Error,
-			TEXT("Dialogue = `%s`, GUID = `%s`"),
-			*Dialogue->GetPathName(), *Dialogue->GetGUID().ToString()
-		)
-
-		UE_LOG(
-			LogDlgSystemEditor,
-			Fatal,
-			TEXT("(╯°□°）╯︵ ┻━┻ Congrats, you just broke the universe, are you even human? Now please go and proove an NP complete problem."
-				"The chance of generating two equal random FGuid (picking 4, uint32 numbers) is p = 9.3132257 * 10^(-10) % (or something like this)")
-		)
-	}
 }
 
 void FDlgSystemEditorModule::HandleOnBeginPIE(bool bIsSimulating)
 {
-	if (!OnBeginPIEHandle.IsValid())
-	{
-		return;
-	}
 }
 
 void FDlgSystemEditorModule::HandleOnPostPIEStarted(bool bIsSimulating)
 {
-	if (!OnPostPIEStartedHandle.IsValid())
-	{
-		return;
-	}
-
 	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 	if (!Settings)
 	{
@@ -408,10 +358,6 @@ void FDlgSystemEditorModule::HandleOnPostPIEStarted(bool bIsSimulating)
 
 void FDlgSystemEditorModule::HandleOnEndPIEHandle(bool bIsSimulating)
 {
-	if (!OnEndPIEHandle.IsValid())
-	{
-		return;
-	}
 	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 	if (!Settings)
 	{
@@ -453,10 +399,10 @@ void FDlgSystemEditorModule::HandleNewCustomTextArgumentBlueprintCreated(UBluepr
 
 	Blueprint->bForceFullEditor = true;
 	UEdGraph* FunctionGraph = FDialogueEditorUtilities::BlueprintGetOrAddFunction(
-        Blueprint,
-        GET_FUNCTION_NAME_CHECKED(UDlgTextArgumentCustom, GetText),
-        UDlgTextArgumentCustom::StaticClass()
-    );
+		Blueprint,
+		GET_FUNCTION_NAME_CHECKED(UDlgTextArgumentCustom, GetText),
+		UDlgTextArgumentCustom::StaticClass()
+	);
 	if (FunctionGraph)
 	{
 		Blueprint->LastEditedDocuments.Add(FunctionGraph);
@@ -472,9 +418,9 @@ void FDlgSystemEditorModule::HandleNewCustomEventBlueprintCreated(UBlueprint* Bl
 
 	Blueprint->bForceFullEditor = true;
 	UK2Node_Event* EventNode = FDialogueEditorUtilities::BlueprintGetOrAddEvent(
-	    Blueprint,
-	    GET_FUNCTION_NAME_CHECKED(UDlgEventCustom, EnterEvent),
-	    UDlgEventCustom::StaticClass()
+		Blueprint,
+		GET_FUNCTION_NAME_CHECKED(UDlgEventCustom, EnterEvent),
+		UDlgEventCustom::StaticClass()
 	);
 	if (EventNode)
 	{

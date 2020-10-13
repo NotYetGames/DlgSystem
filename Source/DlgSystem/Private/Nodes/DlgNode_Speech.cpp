@@ -2,7 +2,7 @@
 #include "Nodes/DlgNode_Speech.h"
 
 #include "DlgContext.h"
-#include "DlgSystemPrivatePCH.h"
+#include "DlgConstants.h"
 #include "Logging/DlgLogger.h"
 #include "DlgLocalizationHelper.h"
 

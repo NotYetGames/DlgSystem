@@ -97,7 +97,7 @@ bool INYLogger::IsMessageLogNameRegistered(FName LogName)
 
 	return MessageLogModule->IsRegisteredLogListing(LogName);
 #else
-	return false;	
+	return false;
 #endif // WITH_UNREAL_DEVELOPER_TOOLS
 }
 
@@ -117,7 +117,7 @@ void INYLogger::MessageLogRegisterLogName(FName LogName, const FText& LogLabel, 
 	UnrealInitOptions.bDiscardDuplicates = InitOptions.bDiscardDuplicates;
 	UnrealInitOptions.MaxPageCount = InitOptions.MaxPageCount;
 	UnrealInitOptions.bShowInLogWindow = InitOptions.bShowInLogWindow;
-	
+
 	MessageLogModule->RegisterLogListing(LogName, LogLabel, UnrealInitOptions);
 #endif // WITH_UNREAL_DEVELOPER_TOOLS
 }
@@ -251,7 +251,7 @@ void INYLogger::LogClientConsole(ENYLoggerLogLevel Level, const FString& Message
 
 void INYLogger::LogMessageLog(ENYLoggerLogLevel Level, const FString& Message)
 {
-	// Should we be redirecting this message log because 
+	// Should we be redirecting this message log because
 	if (RedirectMessageLogLevelsHigherThan != ENYLoggerLogLevel::NoLogging &&
 		Level > RedirectMessageLogLevelsHigherThan)
 	{
@@ -262,7 +262,7 @@ void INYLogger::LogMessageLog(ENYLoggerLogLevel Level, const FString& Message)
 		}
 		return;
 	}
-	
+
 	// TSharedRef<FTokenizedMessage> NewMessage = FTokenizedMessage::Create(Severity);
 	const EMessageSeverity::Type Severity = GetMessageSeverityForLogLevel(Level);
 	auto MessageLog = FMessageLog(MessageLogName);
