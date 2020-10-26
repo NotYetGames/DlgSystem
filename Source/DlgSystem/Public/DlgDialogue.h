@@ -609,7 +609,6 @@ protected:
 	int32 BroadcastPropertyNodeIndexChanged = INDEX_NONE;
 #endif
 
-
-	// Flag that indicates that PostLoad was called
-	bool bWasPostLoaded = false;
+	// Flag that indicates that This Was Loaded was called
+	bool bWasLoaded = false;
 };

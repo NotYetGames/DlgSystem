@@ -51,18 +51,23 @@ class DLGSYSTEM_API IDlgDialogueParticipant
 	// Conditions
 	//
 
+	// Used for the condition type EDlgConditionType::EventCall (Check Dialogue Named Condition)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Condition")
 	bool CheckCondition(const UDlgContext* Context, FName ConditionName) const;
 
+	// Used for the condition type EDlgConditionType::FloatCall (Check Dialogue Float Value)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Condition")
 	float GetFloatValue(FName ValueName) const;
 
+	// Used for the condition type EDlgConditionType::IntCall (Check Dialogue Int Value)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Condition")
 	int32 GetIntValue(FName ValueName) const;
 
+	// Used for the condition type EDlgConditionType::BoolCall (Check Dialogue Bool Value)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Condition")
 	bool GetBoolValue(FName ValueName) const;
 
+	// Used for the condition type EDlgConditionType::NameCall (Check Dialogue Name Value)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Condition")
 	FName GetNameValue(FName ValueName) const;
 
@@ -70,29 +75,30 @@ class DLGSYSTEM_API IDlgDialogueParticipant
 	// Events
 	//
 
-	 /** @return value: irrelevant */
+	// Used for the event type EDlgEventType::Event (Event)
+	// @return value: irrelevant
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Event")
 	bool OnDialogueEvent(UDlgContext* Context, FName EventName);
 
-	/**
-	 * @param	bDelta Whether we expect the value to be set or modified
-	 * @return	Irrelevant, ignored
-	 */
+	// Used for the event type EDlgEventType::ModifyFloat (Modify Dialogue Float Value)
+	// @param	bDelta Whether we expect the value to be set or modified
+	// @return	Irrelevant, ignored
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Event")
 	bool ModifyFloatValue(FName ValueName, bool bDelta, float Value);
 
-	/**
-	 * @param	bDelta Whether we expect the value to be set or modified
-	 * @return	Irrelevant, ignored
-	 */
+	// Used for the event type EDlgEventType::ModifyInt (Modify Dialogue Int Value)
+	// @param	bDelta Whether we expect the value to be set or modified
+	// @return	Irrelevant, ignored
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Event")
 	bool ModifyIntValue(FName ValueName, bool bDelta, int32 Value);
 
-	/** @return value: irrelevant */
+	// Used for the event type EDlgEventType::ModifyBool (Modify Dialogue Bool Value)
+	// @return value: irrelevant
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Event")
 	bool ModifyBoolValue(FName ValueName, bool bNewValue);
 
-	/** @return value: irrelevant */
+	// Used for the event type EDlgEventType::ModifyName (Modify Dialogue Name Value)
+	// @return value: irrelevant
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dialogue|Participant|Event")
 	bool ModifyNameValue(FName ValueName, FName NameValue);
 };
