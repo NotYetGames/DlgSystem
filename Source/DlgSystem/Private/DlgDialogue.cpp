@@ -56,6 +56,7 @@ void UDlgDialogue::PreSave(const class ITargetPlatform* TargetPlatform)
 {
 	Super::PreSave(TargetPlatform);
 	Name = GetDialogueFName();
+	bWasLoaded = true;
 	OnPreAssetSaved();
 }
 
@@ -157,7 +158,7 @@ void UDlgDialogue::PostLoad()
 		}
 	}
 
-	bWasPostLoaded = true;
+	bWasLoaded = true;
 }
 
 void UDlgDialogue::PostInitProperties()
@@ -736,7 +737,7 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 	}
 
 	// 3. Set auto default participant classes
-	if (bWasPostLoaded && Settings->bAutoSetDefaultParticipantClasses)
+	if (bWasLoaded && Settings->bAutoSetDefaultParticipantClasses)
 	{
 		TArray<UClass*> NativeClasses;
 		TArray<UClass*> BlueprintClasses;
