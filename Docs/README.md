@@ -10,3 +10,14 @@ Brought to you by Not Yet:
 * [Plugin Forum post](https://bit.ly/DlgForum)
 * [Plugin Marketplace](https://bit.ly/DlgMarketplace)
 * [Wiki/Documentation](https://bit.ly/DlgWiki)
+
+
+## Modules dependency
+
+```mermaid
+graph TD;
+    A[DlgSystemEditor]-->B[UnrealEd];
+    A-->C[DlgSystem];
+    C-. WITH_EDITOR .->B;
+    C-. WITH_EDITOR using IDlgDialogueEditorAccess .->A
+```
