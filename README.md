@@ -48,8 +48,9 @@ Branch Unreal version: `4.24`
 ## Showcase games
 
 Games that use this Plugin:
-* [WarriOrb](http://www.warriorb.com) - Souls-like platformer metroidvania
+* [WarriOrb](http://www.warriorb.com) - Souls-like platformer metroidvania. This is our own game :)
 * [Backbone](https://store.steampowered.com/app/865610/Backbone/) - Roleplaying detective adventure
+* [Revolution: Path of a Weaponsmith](https://store.steampowered.com/app/1295560/Revolution_Path_of_a_Weaponsmith/) - Third person stealth shooter
 
 Want to have your game showcased here? Contact us!
 
