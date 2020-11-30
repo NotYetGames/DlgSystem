@@ -440,8 +440,8 @@ void FDlgSystemEditorModule::HandleNewNodeDataBlueprintCreated(UBlueprint* Bluep
 
 void FDlgSystemEditorModule::ExtendMenu()
 {
-	// Running in game mode (standalone game) exit as we can't get the LevelEditorModule.
-	if (IsRunningGame() || IsRunningCommandlet())
+	// Running in game mode (standalone game) or dedicated server (-server) exit as we can't get the LevelEditorModule.
+	if (IsRunningGame() || IsRunningCommandlet() || IsRunningDedicatedServer())
 	{
 		return;
 	}

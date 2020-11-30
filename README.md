@@ -1,8 +1,21 @@
-# DlgSystem (Dialogue System) Plugin
+# Not Yet: Dialogue Plugin System
+
+- [Not Yet: Dialogue Plugin System](#not-yet-dialogue-plugin-system)
+	- [Features](#features)
+	- [Links](#links)
+	- [Showcase games](#showcase-games)
+	- [General Information](#general-information)
+	- [Support](#support)
+		- [Buy](#buy)
+		- [Spread the word](#spread-the-word)
+	- [Conventions](#conventions)
+		- [Branches](#branches)
+		- [Code Style](#code-style)
+		- [Commit messages](#commit-messages)
 
 Branch Unreal version: `4.25`
 
-## Features:
+## Features
 
 - 100% free, source code included
 - Full Blueprint and C++ support
@@ -18,53 +31,48 @@ Branch Unreal version: `4.25`
     - Option to import from and export to plain text formats (e.g. json)
     - Real time display/edit functionality of the Dialogue runtime data.
 
-Not yet convinced? Have you seen our [`showcase page`][(https://gitlab.com/NotYetGames/DlgSystem/wikis/Feature-Showcase](https://bit.ly/DlgFeatureShowcase))?
+**Not yet convinced? Have you seen our [showcase page](https://gitlab.com/NotYetGames/DlgSystem/wikis/Feature-Showcase](https://bit.ly/DlgFeatureShowcase))?**
+
+## Links
+
+* [🐛 CHANGELOG](Docs/CHANGELOG.md)
+* [💵 Support](#support) for how to support this project.
+* [📖 Wiki/Documentation](https://bit.ly/DlgWiki) - manual and tutorials
+* [🔢 Source Code (this Page)](https://bit.ly/DlgSource)
+* [🛒 Marketplace **(BUY PLUGIN)**](https://bit.ly/DlgMarketplace)
+* [🏢 Example project](https://gitlab.com/NotYetGames/NotYetDlgSystemExample)
+* [Forum post](https://bit.ly/DlgForum)
+* [💬 Discord](https://bit.ly/NYDiscord)
+* [Twitter](https://twitter.com/NotYetDevs)
+
+## Showcase games
+
+Games that use this Plugin:
+* [WarriOrb](http://www.warriorb.com) - Souls-like platformer metroidvania. This is our own game :)
+* [Backbone](https://store.steampowered.com/app/865610/Backbone/) - Roleplaying detective adventure
+* [Revolution: Path of a Weaponsmith](https://store.steampowered.com/app/1295560/Revolution_Path_of_a_Weaponsmith/) - Third person stealth shooter
+
+Want to have your game showcased here? Contact us!
 
 ## General Information
+
 
 This plugin is primary developed and used for our own [game (WarriOrb)](http://www.warriorb.com).
 We have put significant effort into it and decided to make it open source in order to help out other teams facing similar challenges.
 
 Contribution, feedback and constructive criticism are appreciated and we would be really happy to hear about your game using our tool.
 
-See [Support](#support) for how to support this project.
-
-See the [Wiki](https://gitlab.com/NotYetGames/DlgSystem/wikis/home) for the manual and tutorials.
-
-[DlgSystemExample project](https://gitlab.com/NotYetGames/DlgSystemExample/tree/4.25) is also provided.
-
-Brought to you by Not Yet:
-* Discord: [HERE](https://bit.ly/NYDiscord)
-* Website: [warriorb.com](http://www.warriorb.com)
-* Twitter: https://twitter.com/NotYetDevs
-* [Plugin Forum post](https://bit.ly/DlgForum)
-* [Plugin Marketplace](https://bit.ly/DlgMarketplace)
-
 ## Support
 
-NOTE: that initially the plugin was free on the marketplace but later we switched to a small fee because maintaining all of the binary versions for different engine targets took a lot of time, consider buying the plugin on the marketplace as a donation :).
+**NOTE:** that initially the plugin was free on the marketplace but later we switched to a small fee because maintaining all of the binary versions for different engine targets took a lot of time, consider buying the plugin on the marketplace as a donation :).
 
-### Buy us some tea/coffee
+### Buy
 
-You can buy [this plugin](https://bit.ly/DlgMarketplace) or our other plugins on the [unreal engine marketplace](https://www.unrealengine.com/marketplace/en-US/profile/Not+Yet) and always get binary support for the latest 3 engine versions.
-
-Or you can just donate for that cup of tea/coffee :):
-
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MMCAD7TZL8N48&source=url)
+You can **buy** [this plugin](https://bit.ly/DlgMarketplace) or our other plugins on the [unreal engine marketplace](https://www.unrealengine.com/marketplace/en-US/profile/Not+Yet) and always get binary support for the latest 3 engine versions.
 
 ### Spread the word
 
 Should it prove useful to you, the best way to say thanks is to mention us and our game to your own audience.
-
-## Modules dependency
-
-```mermaid
-graph TD;
-    A[DlgSystemEditor]-->B[UnrealEd];
-    A-->C[DlgSystem];
-    C-. WITH_EDITOR .->B;
-    C-. WITH_EDITOR using IDlgDialogueEditorAccess .->A
-```
 
 ## Conventions
 
@@ -84,6 +92,7 @@ Every commit message that has `[C]` means that after updating to that commit, a 
 Eg: `[C] Added awesome Dialogue feature`
 
 Every commit message that has `[G]` means that after updating to that commit the solution files should be regenerated (and recompiled, *obvious*).
-(`Right click on project file` -> `Generate Visual Studio project files`) (or from the command line regenerate the project).
+
+`Right click on project file` -> `Generate Visual Studio project files` (or from the command line regenerate the project).
 
 Eg: `[G] New Dialogue Editor mode`
