@@ -1,3 +1,9 @@
+# v12.2
+**Date:** November 30, 2020
+
+- **Fixed** setting auto default participant classes on newly created Dialogues
+- **Fixed** crash when running editor as dedicated server
+- **Update** docs for the Interface class and update the example struct to have `SaveGame` enabled
 
 # v12.1
 **Date:** October 13, 2020
