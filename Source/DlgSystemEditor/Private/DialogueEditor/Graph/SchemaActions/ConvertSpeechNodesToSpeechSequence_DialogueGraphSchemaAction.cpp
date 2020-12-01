@@ -66,7 +66,37 @@ UEdGraphNode* FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction::Per
 	const UDialogueGraphNode* LastSelectedNode = SelectedGraphNodes.Last();
 	FDialogueEditorUtilities::CopyNodeChildren(LastSelectedNode, GraphNode_SpeechSequence);
 
-	// Step 4. Remove the nodes, this will break the existing input/output connections of the nodes
+	// Step 4. Copy existing enter events and/or conditions from the first node in the sequence
+	if (FirstSelectedGraphNode->HasEnterConditions() || FirstSelectedGraphNode->HasEnterEvents())
+	{
+		const UDlgNode_Speech& DialogueNode_Speech = FirstSelectedGraphNode->GetDialogueNode<UDlgNode_Speech>();
+		if (FirstSelectedGraphNode->HasEnterConditions())
+		{
+			TArray<FDlgCondition> EnterConditions = DialogueNode_Speech.GetNodeEnterConditions();
+			for (FDlgCondition& Condition : EnterConditions)
+			{
+				if (Condition.CustomCondition)
+				{
+					Condition.CustomCondition = DuplicateObject(Condition.CustomCondition, DialogueNode_SpeechSequence);
+				}
+			}
+			DialogueNode_SpeechSequence->SetNodeEnterConditions(EnterConditions);
+		}
+		if (FirstSelectedGraphNode->HasEnterEvents())
+		{
+			TArray<FDlgEvent> EnterEvents = DialogueNode_Speech.GetNodeEnterEvents();
+			for (FDlgEvent& Event : EnterEvents)
+			{
+				if (Event.CustomEvent)
+				{
+					Event.CustomEvent = DuplicateObject(Event.CustomEvent, DialogueNode_SpeechSequence);
+				}
+			}
+			DialogueNode_SpeechSequence->SetNodeEnterEvents(EnterEvents);
+		}
+	}
+
+	// Step 5. Remove the nodes, this will break the existing input/output connections of the nodes
 	for (UDialogueGraphNode* GraphNode : SelectedGraphNodes)
 		FDialogueEditorUtilities::RemoveNode(GraphNode);
 
