@@ -1,3 +1,9 @@
+# v12.3
+**Date:** December 3, 2020
+
+- **Transfer** `EnterConditions` and `EnterEvents` from first node when convert speech nodes to speech sequence
+- **Added** support for **UE 4.26**
+
 # v12.2
 **Date:** November 30, 2020
 
