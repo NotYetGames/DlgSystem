@@ -100,6 +100,6 @@ protected:
 
 protected:
 	EDialogueEnumWithObjectType EnumType = EDialogueEnumWithObjectType::None;
-	TWeakObjectPtr<UDlgDialogue> Dialogue = nullptr;
+	TWeakObjectPtr<const UDlgDialogue> Dialogue = nullptr;
 	TSharedPtr<IPropertyHandle> ParticipantNamePropertyHandle = nullptr;
 };
