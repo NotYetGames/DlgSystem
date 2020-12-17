@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 12,
-	"VersionName": "12.3",
+	"Version": 13,
+	"VersionName": "13",
 	"EngineVersion" : "4.24.0",
 	"FriendlyName": "Not Yet: Dialogue System",
 	"Description": "Dialogue system (with text based dialogues) and nice Editor for editing dialogues",
@@ -42,7 +42,7 @@
 			"Name": "DlgSystemEditor",
 			"Type": "UncookedOnly",
 			"LoadingPhase": "PreDefault",
-			"WhitelistPlatforms": ["Win64", "Win32", "Linux", "Mac"]
+			"WhitelistPlatforms": ["Win64", "Win32", "Linux", "LinuxAArch64", "Mac"]
 		}
 	]
 }
