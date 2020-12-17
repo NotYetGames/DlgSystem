@@ -43,6 +43,5 @@ private:
 	bool bAddResetToDefaultWidget = true;
 
 	TWeakObjectPtr<const UDlgDialogue> Dialogue = nullptr;
-
 	TAttribute<EVisibility> JumpToNodeVisibility;
 };
