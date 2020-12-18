@@ -6,6 +6,7 @@
 #include "Widgets/Layout/SMissingWidget.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/SBoxPanel.h"
+#include "Engine/World.h"
 
 // #if WITH_EDITOR
 // #include "Editor.h"

@@ -1,7 +1,7 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #pragma once
 
-#include "Launch/Resources/Version.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 // Protect against inclusion in multiple projects
 #ifndef NY_REFLECTION_TYPES

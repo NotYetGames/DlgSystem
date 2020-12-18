@@ -8,6 +8,7 @@
 #include "HAL/IConsoleManager.h"
 #include "HAL/FileManager.h"
 #include "GameFramework/Actor.h"
+#include "Engine/World.h"
 
 #if WITH_GAMEPLAY_DEBUGGER
 #include "GameplayDebugger.h"

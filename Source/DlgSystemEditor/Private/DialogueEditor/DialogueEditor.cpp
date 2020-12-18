@@ -1291,10 +1291,15 @@ void FDialogueEditor::OnSelectedNodesChanged(const TSet<UObject*>& NewSelection)
 	}
 }
 
-FActionMenuContent FDialogueEditor::OnCreateGraphActionMenu(UEdGraph* InGraph, const FVector2D& InNodePosition,
-	const TArray<UEdGraphPin*>& InDraggedPins, bool bAutoExpand, SGraphEditor::FActionMenuClosed InOnMenuClosed)
+FActionMenuContent FDialogueEditor::OnCreateGraphActionMenu(
+	UEdGraph* InGraph,
+	const FVector2D& InNodePosition,
+	const TArray<UEdGraphPin*>& InDraggedPins,
+	bool bAutoExpand,
+	SGraphEditor::FActionMenuClosed InOnMenuClosed
+)
 {
-	const TSharedRef<SDialogueActionMenu> ActionMenu = SNew(SDialogueActionMenu)
+	TSharedRef<SDialogueActionMenu> ActionMenu = SNew(SDialogueActionMenu)
 		.Graph(InGraph)
 		.NewNodePosition(InNodePosition)
 		.DraggedFromPins(InDraggedPins)

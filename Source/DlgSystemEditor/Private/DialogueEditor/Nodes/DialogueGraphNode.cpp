@@ -6,6 +6,7 @@
 #include "EdGraph/EdGraphNode.h"
 #include "Engine/Font.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #if ENGINE_MINOR_VERSION >= 24
 #include "ToolMenu.h"
