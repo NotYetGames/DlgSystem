@@ -280,8 +280,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 		const FGuid DialogueGUID = Dialogue->GetGUID();
 
 		// Populate Participants
-		TSet<FName> ParticipantsNames;
-		Dialogue->GetAllParticipantNames(ParticipantsNames);
+		TSet<FName> ParticipantsNames = Dialogue->GetParticipantNames();
 		for (const FName& ParticipantName : ParticipantsNames)
 		{
 			TSharedPtr<FDialogueBrowserTreeParticipantProperties>* ParticipantPropsPtr = ParticipantsProperties.Find(ParticipantName);
@@ -301,8 +300,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 			}
 
 			// Populate events
-			TSet<FName> EventsNames;
-			Dialogue->GetEvents(ParticipantName, EventsNames);
+			const TSet<FName> EventsNames = Dialogue->GetParticipantEventNames(ParticipantName);
 			for (const FName& EventName : EventsNames)
 			{
 				PopulateVariablePropertiesFromSearchResult(
@@ -313,8 +311,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 			}
 
 			// Populate Custom events
-			TSet<UClass*> CustomEventsClasses;
-			Dialogue->GetCustomEvents(ParticipantName, CustomEventsClasses);
+			const TSet<UClass*> CustomEventsClasses = Dialogue->GetParticipantCustomEvents(ParticipantName);
 			for (UClass* EventClass : CustomEventsClasses)
 			{
 				PopulateVariablePropertiesFromSearchResult(
@@ -325,8 +322,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 			}
 
 			// Populate conditions
-			TSet<FName> ConditionNames;
-			Dialogue->GetConditions(ParticipantName, ConditionNames);
+			const TSet<FName> ConditionNames = Dialogue->GetParticipantConditionNames(ParticipantName);
 			for (const FName& ConditionName : ConditionNames)
 			{
 				PopulateVariablePropertiesFromSearchResult(
@@ -337,8 +333,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 			}
 
 			// Populate int variable names
-			TSet<FName> IntVariableNames;
-			Dialogue->GetIntNames(ParticipantName, IntVariableNames);
+			const TSet<FName> IntVariableNames = Dialogue->GetParticipantIntNames(ParticipantName);
 			for (const FName& IntVariableName : IntVariableNames)
 			{
 				PopulateVariablePropertiesFromSearchResult(
@@ -349,8 +344,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 			}
 
 			// Populate float variable names
-			TSet<FName> FloatVariableNames;
-			Dialogue->GetFloatNames(ParticipantName, FloatVariableNames);
+			const TSet<FName> FloatVariableNames = Dialogue->GetParticipantFloatNames(ParticipantName);
 			for (const FName& FloatVariableName : FloatVariableNames)
 			{
 				PopulateVariablePropertiesFromSearchResult(
@@ -361,8 +355,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 			}
 
 			// Populate bool variable names
-			TSet<FName> BoolVariableNames;
-			Dialogue->GetBoolNames(ParticipantName, BoolVariableNames);
+			const TSet<FName> BoolVariableNames = Dialogue->GetParticipantBoolNames(ParticipantName);
 			for (const FName& BoolVariableName : BoolVariableNames)
 			{
 				PopulateVariablePropertiesFromSearchResult(
@@ -373,8 +366,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 			}
 
 			// Populate FName variable names
-			TSet<FName> FNameVariableNames;
-			Dialogue->GetNameNames(ParticipantName, FNameVariableNames);
+			const TSet<FName> FNameVariableNames = Dialogue->GetParticipantFNameNames(ParticipantName);
 			for (const FName& NameVariableName : FNameVariableNames)
 			{
 				PopulateVariablePropertiesFromSearchResult(
@@ -385,8 +377,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 			}
 
 			// Populate UClass int variable names
-			TSet<FName> ClassIntVariableNames;
-			Dialogue->GetClassIntNames(ParticipantName, ClassIntVariableNames);
+			const TSet<FName> ClassIntVariableNames = Dialogue->GetParticipantClassIntNames(ParticipantName);
 			for (const FName& IntVariableName : ClassIntVariableNames)
 			{
 				PopulateVariablePropertiesFromSearchResult(
@@ -397,8 +388,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 			}
 
 			// Populate UClass float variable names
-			TSet<FName> ClassFloatVariableNames;
-			Dialogue->GetClassFloatNames(ParticipantName, ClassFloatVariableNames);
+			const TSet<FName> ClassFloatVariableNames = Dialogue->GetParticipantClassFloatNames(ParticipantName);
 			for (const FName& FloatVariableName : ClassFloatVariableNames)
 			{
 				PopulateVariablePropertiesFromSearchResult(
@@ -409,8 +399,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 			}
 
 			// Populate UClass bool variable names
-			TSet<FName> ClassBoolVariableNames;
-			Dialogue->GetClassBoolNames(ParticipantName, ClassBoolVariableNames);
+			const TSet<FName> ClassBoolVariableNames = Dialogue->GetParticipantClassBoolNames(ParticipantName);
 			for (const FName& BoolVariableName : ClassBoolVariableNames)
 			{
 				PopulateVariablePropertiesFromSearchResult(
@@ -421,8 +410,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 			}
 
 			// Populate UClass FName variable names
-			TSet<FName> ClassFNameVariableNames;
-			Dialogue->GetClassNameNames(ParticipantName, ClassFNameVariableNames);
+			const TSet<FName> ClassFNameVariableNames = Dialogue->GetParticipantClassFNameNames(ParticipantName);
 			for (const FName& NameVariableName : ClassFNameVariableNames)
 			{
 				PopulateVariablePropertiesFromSearchResult(
@@ -433,8 +421,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 			}
 
 			// Populate UClass FText variable names
-			TSet<FName> ClassFTextVariableNames;
-			Dialogue->GetClassTextNames(ParticipantName, ClassFTextVariableNames);
+			const TSet<FName> ClassFTextVariableNames = Dialogue->GetParticipantClassFTextNames(ParticipantName);
 			for (const FName& TextVariableName : ClassFTextVariableNames)
 			{
 				PopulateVariablePropertiesFromSearchResult(

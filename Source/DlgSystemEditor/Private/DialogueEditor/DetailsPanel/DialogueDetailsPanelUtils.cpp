@@ -111,8 +111,7 @@ TArray<FName> FDialogueDetailsPanelUtils::GetDialogueSortedParticipantNames(UDlg
 		return {};
 	}
 
-	TSet<FName> ParticipantNames;
-	Dialogue->GetAllParticipantNames(ParticipantNames);
+	TSet<FName> ParticipantNames = Dialogue->GetParticipantNames();
 	FDlgHelper::SortDefault(ParticipantNames);
 	return ParticipantNames.Array();
 }

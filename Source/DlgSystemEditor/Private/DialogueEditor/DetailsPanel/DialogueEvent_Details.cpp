@@ -291,19 +291,19 @@ TArray<FName> FDialogueEvent_Details::GetCurrentDialogueEventNames() const
 	switch (EventType)
 	{
 	case EDlgEventType::ModifyBool:
-		Dialogue->GetBoolNames(ParticipantName, Suggestions);
+		Suggestions.Append(Dialogue->GetParticipantBoolNames(ParticipantName));
 		break;
 
 	case EDlgEventType::ModifyName:
-		Dialogue->GetNameNames(ParticipantName, Suggestions);
+		Suggestions.Append(Dialogue->GetParticipantFNameNames(ParticipantName));
 		break;
 
 	case EDlgEventType::ModifyFloat:
-		Dialogue->GetFloatNames(ParticipantName, Suggestions);
+		Suggestions.Append(Dialogue->GetParticipantFloatNames(ParticipantName));
 		break;
 
 	case EDlgEventType::ModifyInt:
-		Dialogue->GetIntNames(ParticipantName, Suggestions);
+		Suggestions.Append(Dialogue->GetParticipantIntNames(ParticipantName));
 		break;
 
 	case EDlgEventType::ModifyClassIntVariable:
@@ -344,7 +344,7 @@ TArray<FName> FDialogueEvent_Details::GetCurrentDialogueEventNames() const
 
 	case EDlgEventType::Event:
 	default:
-		Dialogue->GetEvents(ParticipantName, Suggestions);
+		Suggestions.Append(Dialogue->GetParticipantEventNames(ParticipantName));
 		break;
 	}
 

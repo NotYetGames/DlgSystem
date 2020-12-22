@@ -410,7 +410,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 		{
 			if (bCurrentOnly && Dialogue)
 			{
-				Dialogue->GetBoolNames(ParticipantName, SuggestionSet);
+				SuggestionSet.Append(Dialogue->GetParticipantBoolNames(ParticipantName));
 				Suggestions = SuggestionSet.Array();
 			}
 			else
@@ -435,7 +435,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 		{
 			if (bCurrentOnly && Dialogue)
 			{
-				Dialogue->GetFloatNames(ParticipantName, SuggestionSet);
+				SuggestionSet.Append(Dialogue->GetParticipantFloatNames(ParticipantName));
 			}
 			else
 			{
@@ -459,7 +459,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 		{
 			if (bCurrentOnly && Dialogue)
 			{
-				Dialogue->GetIntNames(ParticipantName, SuggestionSet);
+				SuggestionSet.Append(Dialogue->GetParticipantIntNames(ParticipantName));
 			}
 			else
 			{
@@ -483,7 +483,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 		{
 			if (bCurrentOnly && Dialogue)
 			{
-				Dialogue->GetNameNames(ParticipantName, SuggestionSet);
+				SuggestionSet.Append(Dialogue->GetParticipantFNameNames(ParticipantName));
 			}
 			else
 			{
@@ -497,7 +497,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 	default:
 		if (bCurrentOnly && Dialogue)
 		{
-			Dialogue->GetConditions(ParticipantName, SuggestionSet);
+			SuggestionSet.Append(Dialogue->GetParticipantConditionNames(ParticipantName));
 		}
 		else
 		{

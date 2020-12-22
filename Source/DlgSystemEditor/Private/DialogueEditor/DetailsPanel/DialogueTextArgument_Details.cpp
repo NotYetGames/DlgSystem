@@ -139,8 +139,7 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 		case EDlgTextArgumentType::DialogueInt:
 			if (bCurrentOnly && Dialogue)
 			{
-				TSet<FName> SuggestionsSet;
-				Dialogue->GetIntNames(ParticipantName, SuggestionsSet);
+				const TSet<FName> SuggestionsSet = Dialogue->GetParticipantIntNames(ParticipantName);
 				Suggestions = SuggestionsSet.Array();
 			}
 			else
@@ -161,8 +160,7 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 		case EDlgTextArgumentType::DialogueFloat:
 			if (bCurrentOnly && Dialogue)
 			{
-				TSet<FName> SuggestionsSet;
-				Dialogue->GetFloatNames(ParticipantName, SuggestionsSet);
+				const TSet<FName> SuggestionsSet = Dialogue->GetParticipantFloatNames(ParticipantName);
 				Suggestions = SuggestionsSet.Array();
 			}
 			else

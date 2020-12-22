@@ -31,8 +31,7 @@ UDlgContext* UDlgManager::StartDialogueWithDefaultParticipants(UObject* WorldCon
 	}
 
 	// Create empty map of participants we need
-	TSet<FName> ParticipantSet;
-	Dialogue->GetAllParticipantNames(ParticipantSet);
+	TSet<FName> ParticipantSet = Dialogue->GetParticipantNames();
 	TArray<UObject*> Participants;
 
 	// Maps from Participant Name => Objects that have that participant name
@@ -451,7 +450,7 @@ TArray<FName> UDlgManager::GetDialoguesParticipantNames()
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
 	{
-		Dialogue->GetAllParticipantNames(UniqueNames);
+		UniqueNames.Append(Dialogue->GetParticipantNames());
 	}
 
 	TArray<FName> Array;
@@ -464,7 +463,7 @@ TArray<FName> UDlgManager::GetDialoguesSpeakerStates()
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
 	{
-		Dialogue->GetAllSpeakerStates(UniqueNames);
+		UniqueNames.Append(Dialogue->GetSpeakerStates());
 	}
 
 	TArray<FName> Array;
@@ -477,7 +476,7 @@ TArray<FName> UDlgManager::GetDialoguesParticipantIntNames(FName ParticipantName
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
 	{
-		Dialogue->GetIntNames(ParticipantName, UniqueNames);
+		UniqueNames.Append(Dialogue->GetParticipantIntNames(ParticipantName));
 	}
 
 	TArray<FName> Array;
@@ -490,7 +489,7 @@ TArray<FName> UDlgManager::GetDialoguesParticipantFloatNames(FName ParticipantNa
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
 	{
-		Dialogue->GetFloatNames(ParticipantName, UniqueNames);
+		UniqueNames.Append(Dialogue->GetParticipantFloatNames(ParticipantName));
 	}
 
 	TArray<FName> Array;
@@ -503,7 +502,7 @@ TArray<FName> UDlgManager::GetDialoguesParticipantBoolNames(FName ParticipantNam
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
 	{
-		Dialogue->GetBoolNames(ParticipantName, UniqueNames);
+		UniqueNames.Append(Dialogue->GetParticipantBoolNames(ParticipantName));
 	}
 
 	TArray<FName> Array;
@@ -516,7 +515,7 @@ TArray<FName> UDlgManager::GetDialoguesParticipantFNameNames(FName ParticipantNa
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
 	{
-		Dialogue->GetNameNames(ParticipantName, UniqueNames);
+		UniqueNames.Append(Dialogue->GetParticipantFNameNames(ParticipantName));
 	}
 
 	TArray<FName> Array;
@@ -529,7 +528,7 @@ TArray<FName> UDlgManager::GetDialoguesParticipantConditionNames(FName Participa
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
 	{
-		Dialogue->GetConditions(ParticipantName, UniqueNames);
+		UniqueNames.Append(Dialogue->GetParticipantConditionNames(ParticipantName));
 	}
 
 	TArray<FName> Array;
@@ -542,7 +541,7 @@ TArray<FName> UDlgManager::GetDialoguesParticipantEventNames(FName ParticipantNa
 	TSet<FName> UniqueNames;
 	for (const UDlgDialogue* Dialogue : GetAllDialoguesFromMemory())
 	{
-		Dialogue->GetEvents(ParticipantName, UniqueNames);
+		UniqueNames.Append(Dialogue->GetParticipantEventNames(ParticipantName));
 	}
 
 	TArray<FName> Array;

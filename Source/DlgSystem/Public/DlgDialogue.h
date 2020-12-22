@@ -243,17 +243,19 @@ public:
 
 	// Gets all the keys (participant names) of the DlgData Map
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	void GetAllParticipantNames(TSet<FName>& OutSet) const
+	TSet<FName> GetParticipantNames() const
 	{
+		TSet<FName> Set;
 		for (const auto& Element : ParticipantsData)
 		{
 			// Key is the ParticipantName
-			OutSet.Add(Element.Key);
+			Set.Add(Element.Key);
 		}
+		return Set;
 	}
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	const TArray<FDlgParticipantClass>& GetAllParticipantClasses() const { return ParticipantsClasses; }
+	const TArray<FDlgParticipantClass>& GetParticipantClasses() const { return ParticipantsClasses; }
 
 	/// EDITOR function, it only works if the participant class is setup in the ParticipantsClasses array
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
@@ -269,133 +271,260 @@ public:
 		return nullptr;
 	}
 
+	// Gets all the SpeakerStates used inside this Dialogue
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	TSet<FName> GetSpeakerStates() const { return AllSpeakerStates; }
 
 	// Gets the Condition Names that correspond to the provided ParticipantName.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	void GetConditions(FName ParticipantName, TSet<FName>& OutSet) const
+	TSet<FName> GetParticipantConditionNames(FName ParticipantName) const
 	{
 		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(ParticipantsData[ParticipantName].Conditions);
+			return ParticipantsData[ParticipantName].Conditions;
 		}
+		return {};
 	}
 
 	// Gets the Event Names that correspond to the provided ParticipantName.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	void GetEvents(FName ParticipantName, TSet<FName>& OutSet) const
+	TSet<FName> GetParticipantEventNames(FName ParticipantName) const
 	{
 		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(ParticipantsData[ParticipantName].Events);
+			return ParticipantsData[ParticipantName].Events;
 		}
+		return {};
 	}
 
 	// Gets the Custom Events UClasses that correspond to the provided ParticipantName.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	void GetCustomEvents(FName ParticipantName, TSet<UClass*>& OutSet) const
+	TSet<UClass*> GetParticipantCustomEvents(FName ParticipantName) const
 	{
 		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(ParticipantsData[ParticipantName].CustomEvents);
+			return ParticipantsData[ParticipantName].CustomEvents;
 		}
+		return {};
+	}
+
+	// Gets the Custom Conditions UClasses that correspond to the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	TSet<UClass*> GetParticipantCustomConditions(FName ParticipantName) const
+	{
+		if (ParticipantsData.Contains(ParticipantName))
+		{
+			return ParticipantsData[ParticipantName].CustomConditions;
+		}
+		return {};
+	}
+
+	// Gets the Custom Text Arguments UClasses that correspond to the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	TSet<UClass*> GetParticipantCustomTextArguments(FName ParticipantName) const
+	{
+		if (ParticipantsData.Contains(ParticipantName))
+		{
+			return ParticipantsData[ParticipantName].CustomTextArguments;
+		}
+		return {};
 	}
 
 	// Gets the int variable Names that correspond to the provided ParticipantName.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	void GetIntNames(FName ParticipantName, TSet<FName>& OutSet) const
+	TSet<FName> GetParticipantIntNames(FName ParticipantName) const
 	{
 		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(ParticipantsData[ParticipantName].IntVariableNames);
+			return ParticipantsData[ParticipantName].IntVariableNames;
 		}
+		return {};
 	}
 
 	// Gets the float variable Names that correspond to the provided ParticipantName.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	void GetFloatNames(FName ParticipantName, TSet<FName>& OutSet) const
+	TSet<FName> GetParticipantFloatNames(FName ParticipantName) const
 	{
 		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(ParticipantsData[ParticipantName].FloatVariableNames);
+			return ParticipantsData[ParticipantName].FloatVariableNames;
 		}
+		return {};
 	}
 
 	// Gets the bool variable Names that correspond to the provided ParticipantName.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	void GetBoolNames(FName ParticipantName, TSet<FName>& OutSet) const
+	TSet<FName> GetParticipantBoolNames(FName ParticipantName) const
 	{
 		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(ParticipantsData[ParticipantName].BoolVariableNames);
+			return ParticipantsData[ParticipantName].BoolVariableNames;
 		}
+		return {};
 	}
 
-	// Gets the name variable Names that correspond to the provided ParticipantName.
+	// Gets the FName variable Names that correspond to the provided ParticipantName.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	void GetNameNames(FName ParticipantName, TSet<FName>& OutSet) const
+	TSet<FName> GetParticipantFNameNames(FName ParticipantName) const
 	{
 		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(ParticipantsData[ParticipantName].NameVariableNames);
+			return ParticipantsData[ParticipantName].NameVariableNames;
 		}
+		return {};
 	}
-
 
 	// Gets the int variable Names that correspond to the UClass of the provided ParticipantName.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	void GetClassIntNames(FName ParticipantName, TSet<FName>& OutSet) const
+	TSet<FName> GetParticipantClassIntNames(FName ParticipantName) const
 	{
 		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(ParticipantsData[ParticipantName].ClassIntVariableNames);
+			return ParticipantsData[ParticipantName].ClassIntVariableNames;
 		}
+		return {};
 	}
 
 	// Gets the float variable Names that correspond to the UClass of the provided ParticipantName.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	void GetClassFloatNames(FName ParticipantName, TSet<FName>& OutSet) const
+	TSet<FName> GetParticipantClassFloatNames(FName ParticipantName) const
 	{
 		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(ParticipantsData[ParticipantName].ClassFloatVariableNames);
+			return ParticipantsData[ParticipantName].ClassFloatVariableNames;
 		}
+		return {};
 	}
 
 	// Gets the bool variable Names that correspond to the UClass of the provided ParticipantName.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	void GetClassBoolNames(FName ParticipantName, TSet<FName>& OutSet) const
+	TSet<FName> GetParticipantClassBoolNames(FName ParticipantName) const
 	{
 		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(ParticipantsData[ParticipantName].ClassBoolVariableNames);
+			return ParticipantsData[ParticipantName].ClassBoolVariableNames;
 		}
+		return {};
 	}
 
-	// Gets the name variable Names that correspond to the UClass of the provided ParticipantName.
+	// Gets the FName variable Names that correspond to the UClass of the provided ParticipantName.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	void GetClassNameNames(FName ParticipantName, TSet<FName>& OutSet) const
+	TSet<FName> GetParticipantClassFNameNames(FName ParticipantName) const
 	{
 		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(ParticipantsData[ParticipantName].ClassNameVariableNames);
+			return ParticipantsData[ParticipantName].ClassNameVariableNames;
 		}
+		return {};
 	}
 
 	// Gets the FText variable Names that correspond to the UClass of the provided ParticipantName.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
-	void GetClassTextNames(FName ParticipantName, TSet<FName>& OutSet) const
+	TSet<FName> GetParticipantClassFTextNames(FName ParticipantName) const
 	{
 		if (ParticipantsData.Contains(ParticipantName))
 		{
-			OutSet.Append(ParticipantsData[ParticipantName].ClassTextVariableNames);
+			return ParticipantsData[ParticipantName].ClassTextVariableNames;
 		}
+		return {};
 	}
 
-	// Gets all the SpeakerStates used inside this dialogue
-	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	UE_DEPRECATED(4.24, "GetAllParticipantNames has been deprecated in favour of GetParticipantNames")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", meta = (DeprecatedFunction, DeprecationMessage = "GetAllParticipantNames has been deprecated in favour of GetParticipantNames"))
+	void GetAllParticipantNames(TSet<FName>& OutSet) const
+	{
+		OutSet.Append(GetParticipantNames());
+	}
+
+	UE_DEPRECATED(4.24, "GetAllSpeakerStates has been deprecated in favour of GetSpeakerStates")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", meta = (DeprecatedFunction, DeprecationMessage = "GetAllSpeakerStates has been deprecated in favour of GetSpeakerStates"))
 	void GetAllSpeakerStates(TSet<FName>& OutSet) const
 	{
-		OutSet.Append(AllSpeakerStates);
+		OutSet.Append(GetSpeakerStates());
+	}
+
+	UE_DEPRECATED(4.24, "GetConditions has been deprecated in favour of GetParticipantConditionNames")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", meta = (DeprecatedFunction, DeprecationMessage = "GetConditions has been deprecated in favour of GetParticipantConditionNames"))
+	void GetConditions(FName ParticipantName, TSet<FName>& OutSet) const
+	{
+		OutSet.Append(GetParticipantConditionNames(ParticipantName));
+	}
+
+	UE_DEPRECATED(4.24, "GetEvents has been deprecated in favour of GetParticipantEventNames")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", meta = (DeprecatedFunction, DeprecationMessage = "GetEvents has been deprecated in favour of GetParticipantEventNames"))
+	void GetEvents(FName ParticipantName, TSet<FName>& OutSet) const
+	{
+		OutSet.Append(GetParticipantEventNames(ParticipantName));
+	}
+
+	UE_DEPRECATED(4.24, "GetCustomEvents has been deprecated in favour of GetParticipantCustomEvents")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", meta = (DeprecatedFunction, DeprecationMessage = "GetCustomEvents has been deprecated in favour of GetParticipantCustomEvents"))
+	void GetCustomEvents(FName ParticipantName, TSet<UClass*>& OutSet) const
+	{
+		OutSet.Append(GetParticipantCustomEvents(ParticipantName));
+	}
+
+	UE_DEPRECATED(4.24, "GetIntNames has been deprecated in favour of GetParticipantIntNames")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", meta = (DeprecatedFunction, DeprecationMessage = "GetIntNames has been deprecated in favour of GetParticipantIntNames"))
+	void GetIntNames(FName ParticipantName, TSet<FName>& OutSet) const
+	{
+		OutSet.Append(GetParticipantIntNames(ParticipantName));
+	}
+
+	UE_DEPRECATED(4.24, "GetFloatNames has been deprecated in favour of GetParticipantFloatNames")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", meta = (DeprecatedFunction, DeprecationMessage = "GetFloatNames has been deprecated in favour of GetParticipantFloatNames"))
+	void GetFloatNames(FName ParticipantName, TSet<FName>& OutSet) const
+	{
+		OutSet.Append(GetParticipantFloatNames(ParticipantName));
+	}
+
+	UE_DEPRECATED(4.24, "GetBoolNames has been deprecated in favour of GetParticipantBoolNames")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", meta = (DeprecatedFunction, DeprecationMessage = "GetBoolNames has been deprecated in favour of GetParticipantBoolNames"))
+	void GetBoolNames(FName ParticipantName, TSet<FName>& OutSet) const
+	{
+		OutSet.Append(GetParticipantBoolNames(ParticipantName));
+	}
+
+	UE_DEPRECATED(4.24, "GetNameNames has been deprecated in favour of GetParticipantFNameNames")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", meta = (DeprecatedFunction, DeprecationMessage = "GetNameNames has been deprecated in favour of GetParticipantFNameNames"))
+	void GetNameNames(FName ParticipantName, TSet<FName>& OutSet) const
+	{
+		OutSet.Append(GetParticipantFNameNames(ParticipantName));
+	}
+
+	UE_DEPRECATED(4.24, "GetClassIntNames has been deprecated in favour of GetParticipantClassIntNames")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", meta = (DeprecatedFunction, DeprecationMessage = "GetClassIntNames has been deprecated in favour of GetParticipantClassIntNames"))
+	void GetClassIntNames(FName ParticipantName, TSet<FName>& OutSet) const
+	{
+		OutSet.Append(GetParticipantClassIntNames(ParticipantName));
+	}
+
+	UE_DEPRECATED(4.24, "GetClassFloatNames has been deprecated in favour of GetParticipantClassFloatNames")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", meta = (DeprecatedFunction, DeprecationMessage = "GetClassFloatNames has been deprecated in favour of GetParticipantClassFloatNames"))
+	void GetClassFloatNames(FName ParticipantName, TSet<FName>& OutSet) const
+	{
+		OutSet.Append(GetParticipantClassFloatNames(ParticipantName));
+	}
+
+	UE_DEPRECATED(4.24, "GetClassBoolNames has been deprecated in favour of GetParticipantClassBoolNames")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", meta = (DeprecatedFunction, DeprecationMessage = "GetClassBoolNames has been deprecated in favour of GetParticipantClassBoolNames"))
+	void GetClassBoolNames(FName ParticipantName, TSet<FName>& OutSet) const
+	{
+		OutSet.Append(GetParticipantClassBoolNames(ParticipantName));
+	}
+
+	UE_DEPRECATED(4.24, "GetClassNameNames has been deprecated in favour of GetParticipantClassFNameNames")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", meta = (DeprecatedFunction, DeprecationMessage = "GetClassNameNames has been deprecated in favour of GetParticipantClassFNameNames"))
+	void GetClassNameNames(FName ParticipantName, TSet<FName>& OutSet) const
+	{
+		OutSet.Append(GetParticipantClassFNameNames(ParticipantName));
+	}
+
+	UE_DEPRECATED(4.24, "GetClassTextNames has been deprecated in favour of GetParticipantClassFTextNames")
+	UFUNCTION(BlueprintPure, Category = "Dialogue", meta = (DeprecatedFunction, DeprecationMessage = "GetClassTextNames has been deprecated in favour of GetParticipantClassFTextNames"))
+	void GetClassTextNames(FName ParticipantName, TSet<FName>& OutSet) const
+	{
+		OutSet.Append(GetParticipantClassFTextNames(ParticipantName));
 	}
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
@@ -454,7 +583,7 @@ public:
 	UDlgNode* GetMutableNodeFromIndex(int32 NodeIndex) const { return Nodes.IsValidIndex(NodeIndex) ? Nodes[NodeIndex] : nullptr; }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "Get Node From GUID")
-    UDlgNode* GetMutableNodeFromGUID(const FGuid& NodeGUID) const { return GetMutableNodeFromIndex(GetNodeIndexForGUID(NodeGUID));   }
+	UDlgNode* GetMutableNodeFromGUID(const FGuid& NodeGUID) const { return GetMutableNodeFromIndex(GetNodeIndexForGUID(NodeGUID));   }
 
 	// Sets a new Start Node. Use with care.
 	void SetStartNode(UDlgNode* InStartNode);

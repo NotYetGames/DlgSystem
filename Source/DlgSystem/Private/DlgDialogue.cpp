@@ -708,8 +708,7 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 	//
 	// Fill ParticipantClasses
 	//
-	TSet<FName> Participants;
-	GetAllParticipantNames(Participants);
+	TSet<FName> Participants = GetParticipantNames();
 
 	// 1. remove outdated entries
 	for (int32 Index = ParticipantsClasses.Num() - 1; Index >= 0; --Index)

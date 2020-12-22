@@ -2,18 +2,42 @@
 
 ### Deprecations
 
-Deprecated the following functions, because they were hard to use in BP in favour with variants that are easier to use.
+Deprecated the following functions, because they were hard to use in BP in favour of variants that are easier to use.
+
+This was done because using Arrays/Sets reference in BP can lead to some weird bugs.
+
 - **Dialogue Manager**
-	- `GetAllDialoguesParticipantNames` -> `GetDialoguesParticipantNames`
-	- `GetAllDialoguesSpeakerStates` -> `GetDialoguesSpeakerStates`
-	- `GetAllDialoguesIntNames` -> `GetDialoguesParticipantIntNames`
-	- `GetAllDialoguesFloatNames` -> `GetDialoguesParticipantFloatNames`
-	- `GetAllDialoguesBoolNames` -> `GetDialoguesParticipantBoolNames`
-	- `GetAllDialoguesNameNames` -> `GetDialoguesParticipantFNameNames`
-	- `GetAllDialoguesConditionNames` -> `GetDialoguesParticipantConditionNames`
-	- `GetAllDialoguesEventNames` -> `GetDialoguesParticipantEventNames`
-	- `GetAllObjectsWithDialogueParticipantInterface` -> `GetObjectsWithDialogueParticipantInterface`
-	- `GetAllObjectsMapWithDialogueParticipantInterface` -> `GetObjectsMapWithDialogueParticipantInterface`
+  - `GetAllDialoguesParticipantNames` -> `GetDialoguesParticipantNames`
+  - `GetAllDialoguesSpeakerStates` -> `GetDialoguesSpeakerStates`
+  - `GetAllDialoguesIntNames` -> `GetDialoguesParticipantIntNames`
+  - `GetAllDialoguesFloatNames` -> `GetDialoguesParticipantFloatNames`
+  - `GetAllDialoguesBoolNames` -> `GetDialoguesParticipantBoolNames`
+  - `GetAllDialoguesNameNames` -> `GetDialoguesParticipantFNameNames`
+  - `GetAllDialoguesConditionNames` -> `GetDialoguesParticipantConditionNames`
+  - `GetAllDialoguesEventNames` -> `GetDialoguesParticipantEventNames`
+  - `GetAllObjectsWithDialogueParticipantInterface` -> `GetObjectsWithDialogueParticipantInterface`
+  - `GetAllObjectsMapWithDialogueParticipantInterface` -> `GetObjectsMapWithDialogueParticipantInterface`
+- **Dialogue Asset**
+  - `GetAllParticipantNames` -> `GetParticipantNames`
+  - `GetAllParticipantClasses` -> `GetParticipantClasses`
+  - `GetAllSpeakerStates` -> `GetSpeakerStates`
+  - `GetConditions` -> `GetParticipantConditionNames`
+  - `GetEvents` -> `GetParticipantEventNames`
+  - `GetCustomEvents` -> `GetParticipantCustomEvents`
+  - `GetIntNames` -> `GetParticipantIntNames`
+  - `GetBoolNames` -> `GetParticipantBoolNames`
+  - `GetNameNames` -> `GetParticipantFNameNames`
+  - `GetFloatNames` -> `GetParticipantFloatNames`
+  - `GetClassIntNames` -> `GetParticipantClassIntNames`
+  - `GetClassFloatNames` -> `GetParticipantClassFloatNames`
+  - `GetClassBoolNames` -> `GetParticipantClassBoolNames`
+  - `GetClassNameNames` -> `GetParticipantClassFNameNames`
+  - `GetClassTextNames` -> `GetParticipantClassFTextNames`
+
+### Add the following functions
+- **Dialogue Asset**
+  - `GetParticipantCustomConditions`
+  - `GetParticipantCustomTextArguments`
 
 # v12.3
 **Date:** December 3, 2020
