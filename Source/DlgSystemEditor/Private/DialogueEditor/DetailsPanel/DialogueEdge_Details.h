@@ -46,11 +46,9 @@ public:
 		IPropertyTypeCustomizationUtils& StructCustomizationUtils) override;
 
 	/** Gets the Speaker States from all Dialogues. */
-	TArray<FName> GetAllDialoguesSpeakerStates() const
+	TArray<FName> GetDialoguesSpeakerStates() const
 	{
-		TArray<FName> OutArray;
-		UDlgManager::GetAllDialoguesSpeakerStates(OutArray);
-		return OutArray;
+		return UDlgManager::GetDialoguesSpeakerStates();
 	}
 
 	/** Handler for when the speaker state is changed */
@@ -59,7 +57,7 @@ public:
 	/** Handler for when the text is changed */
 	void HandleTextCommitted(const FText& InText, ETextCommit::Type CommitInfo);
 	void HandleTextChanged(const FText& InText);
-	
+
 private:
 	// Getters for the visibility of some properties
 	EVisibility GetTextVisibility() const { return bShowTextProperty ? EVisibility::Visible : EVisibility::Hidden; }
@@ -70,7 +68,7 @@ private:
 		const bool bSettingsShow =
 			Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnEdge ||
 			Settings->DialogueSpeakerStateVisibility == EDlgSpeakerStateVisibility::ShowOnNodeAndEdge;
-		
+
 		return bShowTextProperty && bSettingsShow ? EVisibility::Visible : EVisibility::Hidden;
 	}
 

@@ -60,7 +60,7 @@ void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle
 		ParticipantNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
 		ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
 			SNew(SDialogueTextPropertyPickList)
-			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
+			.AvailableSuggestions(this, &Self::GetDialoguesParticipantNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(bHasDialogue)
 			.IsContextCheckBoxChecked(true)
@@ -145,7 +145,7 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 			}
 			else
 			{
-				UDlgManager::GetAllDialoguesIntNames(ParticipantName, Suggestions);
+				Suggestions.Append(UDlgManager::GetDialoguesParticipantIntNames(ParticipantName));
 			}
 			break;
 
@@ -167,7 +167,7 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 			}
 			else
 			{
-				UDlgManager::GetAllDialoguesFloatNames(ParticipantName, Suggestions);
+				Suggestions.Append(UDlgManager::GetDialoguesParticipantFloatNames(ParticipantName));
 			}
 			break;
 

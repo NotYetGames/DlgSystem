@@ -904,7 +904,7 @@ FString UDlgDialogue::GetTextFilePathName(bool bAddExtension/* = true*/) const
 
 FString UDlgDialogue::GetTextFilePathName(EDlgDialogueTextFormat TextFormat, bool bAddExtension/* = true*/) const
 {
-		// Extract filename from path
+	// Extract filename from path
 	// NOTE: this is not a filesystem path, it is an unreal path 'Outermost.[Outer:]Name'
 	// Usually GetPathName works, but the path name might be weird.
 	// FSoftObjectPath(this).ToString(); which does call this function GetPathName() but it returns a legit clean path

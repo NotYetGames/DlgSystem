@@ -87,7 +87,7 @@ void FDialogueCondition_Details::CustomizeChildren(
 		ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
 			SNew(SDialogueTextPropertyPickList)
 			.IsEnabled(InStructPropertyHandle->IsEditable())
-			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
+			.AvailableSuggestions(this, &Self::GetDialoguesParticipantNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(bHasDialogue)
 			.IsContextCheckBoxChecked(true)
@@ -141,7 +141,7 @@ void FDialogueCondition_Details::CustomizeChildren(
 		ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
 			SNew(SDialogueTextPropertyPickList)
 			.IsEnabled(InStructPropertyHandle->IsEditable())
-			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
+			.AvailableSuggestions(this, &Self::GetDialoguesParticipantNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(true)
 			.IsContextCheckBoxChecked(true)
@@ -415,7 +415,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 			}
 			else
 			{
-				UDlgManager::GetAllDialoguesBoolNames(ParticipantName, Suggestions);
+				Suggestions.Append(UDlgManager::GetDialoguesParticipantBoolNames(ParticipantName));
 			}
 		}
 		break;
@@ -439,7 +439,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 			}
 			else
 			{
-				UDlgManager::GetAllDialoguesFloatNames(ParticipantName, Suggestions);
+				Suggestions.Append(UDlgManager::GetDialoguesParticipantFloatNames(ParticipantName));
 			}
 		}
 		break;
@@ -463,7 +463,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 			}
 			else
 			{
-				UDlgManager::GetAllDialoguesIntNames(ParticipantName, Suggestions);
+				Suggestions.Append(UDlgManager::GetDialoguesParticipantIntNames(ParticipantName));
 			}
 		}
 		break;
@@ -487,7 +487,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 			}
 			else
 			{
-				UDlgManager::GetAllDialoguesNameNames(ParticipantName, Suggestions);
+				Suggestions.Append(UDlgManager::GetDialoguesParticipantFNameNames(ParticipantName));
 			}
 		}
 		break;
@@ -501,7 +501,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 		}
 		else
 		{
-			UDlgManager::GetAllDialoguesConditionNames(ParticipantName, Suggestions);
+			Suggestions.Append(UDlgManager::GetDialoguesParticipantConditionNames(ParticipantName));
 		}
 		break;
 	}

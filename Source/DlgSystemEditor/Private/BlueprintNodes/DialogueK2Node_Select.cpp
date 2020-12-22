@@ -531,19 +531,19 @@ bool UDialogueK2Node_Select::RefreshPinNames()
 	switch (VariableType)
 	{
 		case EDlgVariableType::Float:
-			UDlgManager::GetAllDialoguesFloatNames(ParticipantName, NewPinNames);
+			NewPinNames.Append(UDlgManager::GetDialoguesParticipantFloatNames(ParticipantName));
 			break;
 
 		case EDlgVariableType::Int:
-			UDlgManager::GetAllDialoguesIntNames(ParticipantName, NewPinNames);
+			NewPinNames.Append(UDlgManager::GetDialoguesParticipantIntNames(ParticipantName));
 			break;
 
 		case EDlgVariableType::Name:
-			UDlgManager::GetAllDialoguesNameNames(ParticipantName, NewPinNames);
+			NewPinNames.Append(UDlgManager::GetDialoguesParticipantFNameNames(ParticipantName));
 			break;
 
 		case EDlgVariableType::SpeakerState:
-			UDlgManager::GetAllDialoguesSpeakerStates(NewPinNames);
+			NewPinNames.Append(UDlgManager::GetDialoguesSpeakerStates());
 			break;
 
 		default:

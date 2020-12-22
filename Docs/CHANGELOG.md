@@ -1,3 +1,20 @@
+# v13
+
+### Deprecations
+
+Deprecated the following functions, because they were hard to use in BP in favour with variants that are easier to use.
+- **Dialogue Manager**
+	- `GetAllDialoguesParticipantNames` -> `GetDialoguesParticipantNames`
+	- `GetAllDialoguesSpeakerStates` -> `GetDialoguesSpeakerStates`
+	- `GetAllDialoguesIntNames` -> `GetDialoguesParticipantIntNames`
+	- `GetAllDialoguesFloatNames` -> `GetDialoguesParticipantFloatNames`
+	- `GetAllDialoguesBoolNames` -> `GetDialoguesParticipantBoolNames`
+	- `GetAllDialoguesNameNames` -> `GetDialoguesParticipantFNameNames`
+	- `GetAllDialoguesConditionNames` -> `GetDialoguesParticipantConditionNames`
+	- `GetAllDialoguesEventNames` -> `GetDialoguesParticipantEventNames`
+	- `GetAllObjectsWithDialogueParticipantInterface` -> `GetObjectsWithDialogueParticipantInterface`
+	- `GetAllObjectsMapWithDialogueParticipantInterface` -> `GetObjectsMapWithDialogueParticipantInterface`
+
 # v12.3
 **Date:** December 3, 2020
 

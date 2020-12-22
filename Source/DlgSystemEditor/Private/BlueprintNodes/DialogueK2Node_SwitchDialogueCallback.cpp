@@ -185,27 +185,27 @@ bool UDialogueK2Node_SwitchDialogueCallback::RefreshPinNames()
 	switch (CallbackType)
 	{
 		case EDlgDialogueCallback::Event:
-			UDlgManager::GetAllDialoguesEventNames(ParticipantName, NewPinNames);
+			NewPinNames.Append(UDlgManager::GetDialoguesParticipantEventNames(ParticipantName));
 			break;
 
 		case EDlgDialogueCallback::Condition:
-			UDlgManager::GetAllDialoguesConditionNames(ParticipantName, NewPinNames);
+			NewPinNames.Append(UDlgManager::GetDialoguesParticipantConditionNames(ParticipantName));
 			break;
 
 		case EDlgDialogueCallback::FloatValue:
-			UDlgManager::GetAllDialoguesFloatNames(ParticipantName, NewPinNames);
+			NewPinNames.Append(UDlgManager::GetDialoguesParticipantFloatNames(ParticipantName));
 			break;
 
 		case EDlgDialogueCallback::IntValue:
-			UDlgManager::GetAllDialoguesIntNames(ParticipantName, NewPinNames);
+			NewPinNames.Append(UDlgManager::GetDialoguesParticipantIntNames(ParticipantName));
 			break;
 
 		case EDlgDialogueCallback::BoolValue:
-			UDlgManager::GetAllDialoguesBoolNames(ParticipantName, NewPinNames);
+			NewPinNames.Append(UDlgManager::GetDialoguesParticipantBoolNames(ParticipantName));
 			break;
 
 		case EDlgDialogueCallback::NameValue:
-			UDlgManager::GetAllDialoguesNameNames(ParticipantName, NewPinNames);
+			NewPinNames.Append(UDlgManager::GetDialoguesParticipantFNameNames(ParticipantName));
 			break;
 
 		default:
