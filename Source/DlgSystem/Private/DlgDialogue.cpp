@@ -431,7 +431,6 @@ void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
 		default:
 			checkNoEntry();
 			break;
-
 	}
 
 	if (!IsValid(StartNode))
@@ -850,7 +849,7 @@ bool UDlgDialogue::IsEndNode(int32 NodeIndex) const
 
 void UDlgDialogue::AutoFixGraph()
 {
-	check(StartNode);
+	verify(StartNode);
 	// syntax correction 1: if there is no start node, we create one pointing to the first node
 	if (StartNode->GetNodeChildren().Num() == 0 && Nodes.Num() > 0)
 	{
@@ -863,7 +862,7 @@ void UDlgDialogue::AutoFixGraph()
 	// check if the end node is already there
 	for (UDlgNode* Node : Nodes)
 	{
-		check(Node);
+		verify(Node);
 		Node->SetFlags(RF_Transactional);
 		if (Node->IsA<UDlgNode_End>())
 		{

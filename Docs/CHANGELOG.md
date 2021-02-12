@@ -39,6 +39,10 @@ This was done because using Arrays/Sets reference in BP can lead to some weird b
   - `GetParticipantCustomConditions`
   - `GetParticipantCustomTextArguments`
 
+### Bug fixes
+
+- **Fixed** the `FDlgJsonWriter` so that it works in `Shipping` builds
+
 # v12.3
 **Date:** December 3, 2020
 
