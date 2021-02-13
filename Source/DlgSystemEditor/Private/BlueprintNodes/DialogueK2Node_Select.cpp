@@ -516,16 +516,13 @@ void UDialogueK2Node_Select::GetPrintStringFunction(FName& FunctionName, UClass*
 bool UDialogueK2Node_Select::RefreshPinNames()
 {
 	// Stop anything if the blueprint is loading, this can happen because we now have reference to blueprint UClasses (reflection system) from the UDlgDialogue
-	if (!FDialogueBlueprintUtilities::IsBlueprintLoadedForGraphNode(this))
-	{
-		return false;
-	}
-
-	const FName ParticipantName = FDialogueBlueprintUtilities::GetParticipantNameFromNode(this);
+	static constexpr bool bBlueprintMustBeLoaded = true;
+	const FName ParticipantName = FDialogueBlueprintUtilities::GetParticipantNameFromNode(this, bBlueprintMustBeLoaded);
 	if (ParticipantName == NAME_None && VariableType != EDlgVariableType::SpeakerState)
 	{
 		return false;
 	}
+	// EDlgVariableType::SpeakerState does not need a Participant
 
 	TArray<FName> NewPinNames;
 	switch (VariableType)
