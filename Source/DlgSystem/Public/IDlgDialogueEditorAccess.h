@@ -4,9 +4,10 @@
 #include "CoreMinimal.h"
 
 #if WITH_EDITOR
+#include "EdGraph/EdGraphNode.h"
+
 class UEdGraph;
 class UDlgDialogue;
-class UEdGraphNode;
 class UDlgNode;
 
 /**
@@ -39,4 +40,4 @@ public:
 	// Tries to set the new outer for Object to the closes UDlgNode from UEdGraphNode
 	virtual void SetNewOuterForObjectFromGraphNode(UObject* Object, UEdGraphNode* GraphNode) const = 0;
 };
-#endif
+#endif // WITH_EDITOR

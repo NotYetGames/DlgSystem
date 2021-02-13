@@ -16,7 +16,7 @@
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "K2Node_Event.h"
-
+#include "Runtime/Launch/Resources/Version.h"
 
 #include "Factories/DialogueGraphFactories.h"
 #include "AssetTypeActions/AssetTypeActions_DlgDialogue.h"

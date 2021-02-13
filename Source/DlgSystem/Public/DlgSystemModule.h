@@ -2,6 +2,8 @@
 #pragma once
 
 #include "IDlgSystemModule.h"
+#include "UObject/WeakObjectPtr.h"
+#include "UObject/WeakObjectPtrTemplates.h"
 
 class UDlgDialogue;
 class SWidget;

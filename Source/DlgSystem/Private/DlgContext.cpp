@@ -1,15 +1,17 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DlgContext.h"
 
+#include "Net/UnrealNetwork.h"
+#include "Engine/Texture2D.h"
+#include "Engine/Blueprint.h"
+
 #include "DlgConstants.h"
 #include "Nodes/DlgNode.h"
 #include "Nodes/DlgNode_End.h"
 #include "Nodes/DlgNode_SpeechSequence.h"
 #include "DlgDialogueParticipant.h"
 #include "DlgMemory.h"
-#include "Engine/Texture2D.h"
 #include "Logging/DlgLogger.h"
-#include "Net/UnrealNetwork.h"
 
 
 UDlgContext::UDlgContext(const FObjectInitializer& ObjectInitializer)

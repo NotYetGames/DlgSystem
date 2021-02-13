@@ -44,7 +44,7 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 		ParticipantNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
 		ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
 			SNew(SDialogueTextPropertyPickList)
-			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
+			.AvailableSuggestions(this, &Self::GetDialoguesParticipantNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(bHasDialogue)
 			.IsContextCheckBoxChecked(true)
@@ -88,7 +88,7 @@ void FDialogueSpeechSequenceEntry_Details::CustomizeChildren(TSharedRef<IPropert
 		SpeakerStatePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, SpeakerStatePropertyHandle);
 		SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
 			SNew(SDialogueTextPropertyPickList)
-			.AvailableSuggestions(this, &Self::GetAllDialoguesSpeakerStates)
+			.AvailableSuggestions(this, &Self::GetDialoguesSpeakerStates)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(false)
 		)

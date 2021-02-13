@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/UnrealType.h"
+#include "UObject/Package.h"
 
 #include "NYReflectionTypes.h"
 

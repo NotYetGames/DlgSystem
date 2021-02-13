@@ -7,6 +7,7 @@
 #include "WorkspaceMenuStructureModule.h"
 #include "WorkspaceMenuStructure.h"
 #include "EdGraphNode_Comment.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #include "DlgSystemEditorModule.h"
 #include "DlgDialogue.h"

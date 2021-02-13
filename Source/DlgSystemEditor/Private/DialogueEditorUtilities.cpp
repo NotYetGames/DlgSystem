@@ -9,6 +9,8 @@
 #include "FileHelpers.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/SClassPickerDialog.h"
+#include "Runtime/Launch/Resources/Version.h"
+#include "Engine/Blueprint.h"
 
 #include "DlgSystemEditorModule.h"
 #include "DialogueEditor/IDialogueEditor.h"

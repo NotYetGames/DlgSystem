@@ -587,7 +587,17 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 
 		//  Create the new Object
 		FString JsonObjectType;
-		check(JsonObject->TryGetStringField(SpecialKeyType, JsonObjectType));
+		const bool bExists = JsonObject->TryGetStringField(SpecialKeyType, JsonObjectType);
+		if (!bExists)
+		{
+			UE_LOG(
+				LogDlgJsonParser,
+				Error,
+				TEXT("ConvertScalarJsonValueToProperty - Trying to load by string reference. Can't find key = `%s` for FNYObjectProperty = `%s`. Ignored"),
+				*SpecialKeyType, *Property->GetNameCPP()
+			);
+			return false;
+		}
 
 		const UClass* ChildClass = GetChildClassFromName(ObjectClass, JsonObjectType);
 		if (ChildClass == nullptr)

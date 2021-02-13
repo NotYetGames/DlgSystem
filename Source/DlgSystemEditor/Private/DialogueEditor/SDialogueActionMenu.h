@@ -5,6 +5,7 @@
 #include "SGraphPalette.h"
 #include "GraphEditor.h"
 #include "SGraphActionMenu.h"
+#include "Widgets/Input/SEditableTextBox.h"
 
 //////////////////////////////////////////////////////////////////////////
 /**

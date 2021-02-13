@@ -2,6 +2,7 @@
 #include "DlgSystemSettings.h"
 
 #include "GameFramework/Character.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #include "DlgManager.h"
 #include "Logging/DlgLogger.h"

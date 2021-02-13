@@ -90,7 +90,7 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 		SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
 			SNew(SDialogueTextPropertyPickList)
 			.IsEnabled(InStructPropertyHandle->IsEditable())
-			.AvailableSuggestions(this, &Self::GetAllDialoguesSpeakerStates)
+			.AvailableSuggestions(this, &Self::GetDialoguesSpeakerStates)
 			.OnTextCommitted(this, &Self::HandleSpeakerStateCommitted)
 			.HasContextCheckbox(false)
 		)

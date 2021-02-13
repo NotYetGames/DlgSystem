@@ -2,9 +2,11 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Misc/Build.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #include "Engine/DeveloperSettings.h"
 #include "Layout/Margin.h"
+
 #include "Logging/INYLogger.h"
 
 #if WITH_EDITOR

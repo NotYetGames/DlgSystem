@@ -181,11 +181,9 @@ private:
 	TArray<FName> GetCallbackNamesForParticipant(bool bCurrentOnly, bool bOtherValue) const;
 
 	// Gets the ParticipantNames from all Dialogues.
-	TArray<FName> GetAllDialoguesParticipantNames() const
+	TArray<FName> GetDialoguesParticipantNames() const
 	{
-		TArray<FName> OutArray;
-		UDlgManager::GetAllDialoguesParticipantNames(OutArray);
-		return OutArray;
+		return UDlgManager::GetDialoguesParticipantNames();
 	}
 
 	// Gets the current Dialogue Participant Names.

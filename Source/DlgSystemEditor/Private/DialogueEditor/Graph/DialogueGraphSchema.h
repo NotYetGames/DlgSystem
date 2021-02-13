@@ -3,6 +3,7 @@
 
 #include "CoreTypes.h"
 #include "EdGraph/EdGraphSchema.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #include "Nodes/DlgNode.h"
 #include "DialogueEditorUtilities.h"

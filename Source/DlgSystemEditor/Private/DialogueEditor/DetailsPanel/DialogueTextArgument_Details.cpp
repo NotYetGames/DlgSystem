@@ -60,7 +60,7 @@ void FDialogueTextArgument_Details::CustomizeChildren(TSharedRef<IPropertyHandle
 		ParticipantNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
 		ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
 			SNew(SDialogueTextPropertyPickList)
-			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
+			.AvailableSuggestions(this, &Self::GetDialoguesParticipantNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(bHasDialogue)
 			.IsContextCheckBoxChecked(true)
@@ -139,13 +139,12 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 		case EDlgTextArgumentType::DialogueInt:
 			if (bCurrentOnly && Dialogue)
 			{
-				TSet<FName> SuggestionsSet;
-				Dialogue->GetIntNames(ParticipantName, SuggestionsSet);
+				const TSet<FName> SuggestionsSet = Dialogue->GetParticipantIntNames(ParticipantName);
 				Suggestions = SuggestionsSet.Array();
 			}
 			else
 			{
-				UDlgManager::GetAllDialoguesIntNames(ParticipantName, Suggestions);
+				Suggestions.Append(UDlgManager::GetDialoguesParticipantIntNames(ParticipantName));
 			}
 			break;
 
@@ -161,13 +160,12 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 		case EDlgTextArgumentType::DialogueFloat:
 			if (bCurrentOnly && Dialogue)
 			{
-				TSet<FName> SuggestionsSet;
-				Dialogue->GetFloatNames(ParticipantName, SuggestionsSet);
+				const TSet<FName> SuggestionsSet = Dialogue->GetParticipantFloatNames(ParticipantName);
 				Suggestions = SuggestionsSet.Array();
 			}
 			else
 			{
-				UDlgManager::GetAllDialoguesFloatNames(ParticipantName, Suggestions);
+				Suggestions.Append(UDlgManager::GetDialoguesParticipantFloatNames(ParticipantName));
 			}
 			break;
 
