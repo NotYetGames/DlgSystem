@@ -6,6 +6,7 @@
 #include "ScopedTransaction.h"
 #include "AssetData.h"
 #include "GraphEditorActions.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #if ENGINE_MINOR_VERSION >= 24
 #include "ToolMenu.h"

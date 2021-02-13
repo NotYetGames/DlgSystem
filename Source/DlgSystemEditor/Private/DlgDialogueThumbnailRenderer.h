@@ -2,6 +2,7 @@
 #pragma once
 
 #include "ThumbnailRendering/DefaultSizedThumbnailRenderer.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #include "DlgDialogueThumbnailRenderer.generated.h"
 

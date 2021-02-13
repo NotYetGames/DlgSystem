@@ -6,6 +6,7 @@
 #include "Widgets/Layout/SMissingWidget.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/SBoxPanel.h"
+#include "Engine/World.h"
 
 // #if WITH_EDITOR
 // #include "Editor.h"
@@ -143,8 +144,7 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 	TMap<FName, TSet<TWeakObjectPtr<const UDlgDialogue>>> ParticipantNamesDialoguesMap;
 	for (const UDlgDialogue* Dialogue : Dialogues)
 	{
-		TSet<FName> ParticipantsNames;
-		Dialogue->GetAllParticipantNames(ParticipantsNames);
+		TSet<FName> ParticipantsNames = Dialogue->GetParticipantNames();
 
 		for (const FName& ParticipantName : ParticipantsNames)
 		{
@@ -198,88 +198,77 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 			}
 
 			// Populate Event Names
-			TSet<FName> EventsNames;
-			Dialogue->GetEvents(ParticipantName, EventsNames);
+			const TSet<FName> EventsNames = Dialogue->GetParticipantEventNames(ParticipantName);
 			for (const FName& EventName : EventsNames)
 			{
 				ActorsPropertiesValue->AddDialogueToEvent(EventName, Dialogue);
 			}
 
 			// Populate conditions
-			TSet<FName> ConditionNames;
-			Dialogue->GetConditions(ParticipantName, ConditionNames);
+			const TSet<FName> ConditionNames = Dialogue->GetParticipantConditionNames(ParticipantName);
 			for (const FName& ConditionName : ConditionNames)
 			{
 				ActorsPropertiesValue->AddDialogueToCondition(ConditionName, Dialogue);
 			}
 
 			// Populate int variable names
-			TSet<FName> IntVariableNames;
-			Dialogue->GetIntNames(ParticipantName, IntVariableNames);
+			const TSet<FName> IntVariableNames = Dialogue->GetParticipantIntNames(ParticipantName);
 			for (const FName& IntVariableName : IntVariableNames)
 			{
 				ActorsPropertiesValue->AddDialogueToIntVariable(IntVariableName, Dialogue);
 			}
 
 			// Populate float variable names
-			TSet<FName> FloatVariableNames;
-			Dialogue->GetFloatNames(ParticipantName, FloatVariableNames);
+			const TSet<FName> FloatVariableNames = Dialogue->GetParticipantFloatNames(ParticipantName);
 			for (const FName& FloatVariableName : FloatVariableNames)
 			{
 				ActorsPropertiesValue->AddDialogueToFloatVariable(FloatVariableName, Dialogue);
 			}
 
 			// Populate bool variable names
-			TSet<FName> BoolVariableNames;
-			Dialogue->GetBoolNames(ParticipantName, BoolVariableNames);
+			const TSet<FName> BoolVariableNames = Dialogue->GetParticipantBoolNames(ParticipantName);
 			for (const FName& BoolVariableName : BoolVariableNames)
 			{
 				ActorsPropertiesValue->AddDialogueToBoolVariable(BoolVariableName, Dialogue);
 			}
 
 			// Populate FName variable names
-			TSet<FName> FNameVariableNames;
-			Dialogue->GetNameNames(ParticipantName, FNameVariableNames);
+			const TSet<FName> FNameVariableNames = Dialogue->GetParticipantFNameNames(ParticipantName);
 			for (const FName& NameVariableName : FNameVariableNames)
 			{
 				ActorsPropertiesValue->AddDialogueToFNameVariable(NameVariableName, Dialogue);
 			}
 
 			// Populate UClass int variable names
-			TSet<FName> ClassIntVariableNames;
-			Dialogue->GetClassIntNames(ParticipantName, ClassIntVariableNames);
+			const TSet<FName> ClassIntVariableNames = Dialogue->GetParticipantClassIntNames(ParticipantName);
 			for (const FName& IntVariableName : ClassIntVariableNames)
 			{
 				ActorsPropertiesValue->AddDialogueToClassIntVariable(IntVariableName, Dialogue);
 			}
 
 			// Populate UClass float variable names
-			TSet<FName> ClassFloatVariableNames;
-			Dialogue->GetClassFloatNames(ParticipantName, ClassFloatVariableNames);
+			const TSet<FName> ClassFloatVariableNames = Dialogue->GetParticipantClassFloatNames(ParticipantName);
 			for (const FName& FloatVariableName : ClassFloatVariableNames)
 			{
 				ActorsPropertiesValue->AddDialogueToClassFloatVariable(FloatVariableName, Dialogue);
 			}
 
 			// Populate UClass bool variable names
-			TSet<FName> ClassBoolVariableNames;
-			Dialogue->GetClassBoolNames(ParticipantName, ClassBoolVariableNames);
+			const TSet<FName> ClassBoolVariableNames = Dialogue->GetParticipantClassBoolNames(ParticipantName);
 			for (const FName& BoolVariableName : ClassBoolVariableNames)
 			{
 				ActorsPropertiesValue->AddDialogueToClassBoolVariable(BoolVariableName, Dialogue);
 			}
 
 			// Populate UClass FName variable names
-			TSet<FName> ClassFNameVariableNames;
-			Dialogue->GetClassNameNames(ParticipantName, ClassFNameVariableNames);
+			const TSet<FName> ClassFNameVariableNames = Dialogue->GetParticipantClassFNameNames(ParticipantName);
 			for (const FName& NameVariableName : ClassFNameVariableNames)
 			{
 				ActorsPropertiesValue->AddDialogueToClassFNameVariable(NameVariableName, Dialogue);
 			}
 
 			// Populate UClass FText variable names
-			TSet<FName> ClassFTextVariableNames;
-			Dialogue->GetClassTextNames(ParticipantName, ClassFTextVariableNames);
+			const TSet<FName> ClassFTextVariableNames = Dialogue->GetParticipantClassFTextNames(ParticipantName);
 			for (const FName& NameVariableName : ClassFTextVariableNames)
 			{
 				ActorsPropertiesValue->AddDialogueToClassFTextVariable(NameVariableName, Dialogue);

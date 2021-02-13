@@ -264,8 +264,6 @@ public:
 struct FDlgTestHelper
 {
 public:
-
-
 	template <typename ValueType>
 	static void CheckMapStringKeyInvariants(const TMap<FString, ValueType>& ThisMap)
 	{

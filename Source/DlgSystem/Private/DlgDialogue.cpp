@@ -431,7 +431,6 @@ void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
 		default:
 			checkNoEntry();
 			break;
-
 	}
 
 	if (!IsValid(StartNode))
@@ -708,8 +707,7 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 	//
 	// Fill ParticipantClasses
 	//
-	TSet<FName> Participants;
-	GetAllParticipantNames(Participants);
+	TSet<FName> Participants = GetParticipantNames();
 
 	// 1. remove outdated entries
 	for (int32 Index = ParticipantsClasses.Num() - 1; Index >= 0; --Index)
@@ -851,7 +849,7 @@ bool UDlgDialogue::IsEndNode(int32 NodeIndex) const
 
 void UDlgDialogue::AutoFixGraph()
 {
-	check(StartNode);
+	verify(StartNode);
 	// syntax correction 1: if there is no start node, we create one pointing to the first node
 	if (StartNode->GetNodeChildren().Num() == 0 && Nodes.Num() > 0)
 	{
@@ -864,7 +862,7 @@ void UDlgDialogue::AutoFixGraph()
 	// check if the end node is already there
 	for (UDlgNode* Node : Nodes)
 	{
-		check(Node);
+		verify(Node);
 		Node->SetFlags(RF_Transactional);
 		if (Node->IsA<UDlgNode_End>())
 		{
@@ -904,7 +902,7 @@ FString UDlgDialogue::GetTextFilePathName(bool bAddExtension/* = true*/) const
 
 FString UDlgDialogue::GetTextFilePathName(EDlgDialogueTextFormat TextFormat, bool bAddExtension/* = true*/) const
 {
-		// Extract filename from path
+	// Extract filename from path
 	// NOTE: this is not a filesystem path, it is an unreal path 'Outermost.[Outer:]Name'
 	// Usually GetPathName works, but the path name might be weird.
 	// FSoftObjectPath(this).ToString(); which does call this function GetPathName() but it returns a legit clean path

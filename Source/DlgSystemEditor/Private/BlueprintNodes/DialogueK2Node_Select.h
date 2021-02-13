@@ -72,7 +72,7 @@ public:
 	}
 
 	/** Returns a list of pins that represent the selectable options */
-	const TArray<UEdGraphPin*> GetOptionPins() const
+	TArray<UEdGraphPin*> GetOptionPins() const
 	{
 		// The end of the array is all option pins
 		TArray<UEdGraphPin*> OptionPins;

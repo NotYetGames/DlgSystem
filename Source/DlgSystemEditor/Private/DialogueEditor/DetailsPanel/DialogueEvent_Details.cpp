@@ -60,7 +60,7 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 		ParticipantNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
 		ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
 			SNew(SDialogueTextPropertyPickList)
-			.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
+			.AvailableSuggestions(this, &Self::GetDialoguesParticipantNames)
 			.OnTextCommitted(this, &Self::HandleTextCommitted)
 			.HasContextCheckbox(bHasDialogue)
 			.IsContextCheckBoxChecked(true)
@@ -93,7 +93,7 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 		EventNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, EventNamePropertyHandle);
 		EventNamePropertyRow->SetTextPropertyPickListWidget(
 				SNew(SDialogueTextPropertyPickList)
-				.AvailableSuggestions(this, &Self::GetAllDialoguesEventNames)
+				.AvailableSuggestions(this, &Self::GetDialoguesParticipantEventNames)
 				.OnTextCommitted(this, &Self::HandleTextCommitted)
 				.HasContextCheckbox(bHasDialogue)
 				.IsContextCheckBoxChecked(false)
@@ -193,7 +193,7 @@ void FDialogueEvent_Details::OnEventTypeChanged(bool bForceRefresh)
 	}
 }
 
-TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
+TArray<FName> FDialogueEvent_Details::GetDialoguesParticipantEventNames() const
 {
 	TArray<FName> Suggestions;
 	const FName ParticipantName = FDialogueDetailsPanelUtils::GetParticipantNameFromPropertyHandle(ParticipantNamePropertyHandle.ToSharedRef());
@@ -201,19 +201,19 @@ TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
 	switch (EventType)
 	{
 	case EDlgEventType::ModifyBool:
-		UDlgManager::GetAllDialoguesBoolNames(ParticipantName, Suggestions);
+		Suggestions.Append(UDlgManager::GetDialoguesParticipantBoolNames(ParticipantName));
 		break;
 
 	case EDlgEventType::ModifyFloat:
-		UDlgManager::GetAllDialoguesFloatNames(ParticipantName, Suggestions);
+		Suggestions.Append(UDlgManager::GetDialoguesParticipantFloatNames(ParticipantName));
 		break;
 
 	case EDlgEventType::ModifyInt:
-		UDlgManager::GetAllDialoguesIntNames(ParticipantName, Suggestions);
+		Suggestions.Append(UDlgManager::GetDialoguesParticipantIntNames(ParticipantName));
 		break;
 
 	case EDlgEventType::ModifyName:
-		UDlgManager::GetAllDialoguesNameNames(ParticipantName, Suggestions);
+		Suggestions.Append(UDlgManager::GetDialoguesParticipantFNameNames(ParticipantName));
 		break;
 
 	case EDlgEventType::ModifyClassIntVariable:
@@ -271,7 +271,7 @@ TArray<FName> FDialogueEvent_Details::GetAllDialoguesEventNames() const
 
 	case EDlgEventType::Event:
 	default:
-		UDlgManager::GetAllDialoguesEventNames(ParticipantName, Suggestions);
+		Suggestions.Append(UDlgManager::GetDialoguesParticipantEventNames(ParticipantName));
 		break;
 	}
 
@@ -291,19 +291,19 @@ TArray<FName> FDialogueEvent_Details::GetCurrentDialogueEventNames() const
 	switch (EventType)
 	{
 	case EDlgEventType::ModifyBool:
-		Dialogue->GetBoolNames(ParticipantName, Suggestions);
+		Suggestions.Append(Dialogue->GetParticipantBoolNames(ParticipantName));
 		break;
 
 	case EDlgEventType::ModifyName:
-		Dialogue->GetNameNames(ParticipantName, Suggestions);
+		Suggestions.Append(Dialogue->GetParticipantFNameNames(ParticipantName));
 		break;
 
 	case EDlgEventType::ModifyFloat:
-		Dialogue->GetFloatNames(ParticipantName, Suggestions);
+		Suggestions.Append(Dialogue->GetParticipantFloatNames(ParticipantName));
 		break;
 
 	case EDlgEventType::ModifyInt:
-		Dialogue->GetIntNames(ParticipantName, Suggestions);
+		Suggestions.Append(Dialogue->GetParticipantIntNames(ParticipantName));
 		break;
 
 	case EDlgEventType::ModifyClassIntVariable:
@@ -344,7 +344,7 @@ TArray<FName> FDialogueEvent_Details::GetCurrentDialogueEventNames() const
 
 	case EDlgEventType::Event:
 	default:
-		Dialogue->GetEvents(ParticipantName, Suggestions);
+		Suggestions.Append(Dialogue->GetParticipantEventNames(ParticipantName));
 		break;
 	}
 

@@ -311,7 +311,7 @@ public:
 	}
 
 	template<typename TEnum>
-    static bool ConvertEnumToString(const FString& EnumName, TEnum EnumValue, bool bWithNameSpace, FString& OutEnumValue)
+	static bool ConvertEnumToString(const FString& EnumName, TEnum EnumValue, bool bWithNameSpace, FString& OutEnumValue)
 	{
 		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *EnumName, true);
 		if (!EnumPtr)
@@ -321,12 +321,12 @@ public:
 		}
 
 		OutEnumValue = bWithNameSpace ? EnumPtr->GetNameByIndex(static_cast<int32>(EnumValue)).ToString()
-                                      : EnumPtr->GetNameStringByIndex(static_cast<int32>(EnumValue));
+									  : EnumPtr->GetNameStringByIndex(static_cast<int32>(EnumValue));
 		return true;
 	}
 
 	template<typename TEnum>
-    static bool ConvertStringToEnum(const FString& String, const FString& EnumName, TEnum& OutEnumValue)
+	static bool ConvertStringToEnum(const FString& String, const FString& EnumName, TEnum& OutEnumValue)
 	{
 		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *EnumName, true);
 		if (!EnumPtr)
@@ -340,7 +340,7 @@ public:
 	}
 
 	template<typename TEnum>
-    static bool ConvertFNameToEnum(FName Name, const FString& EnumName, TEnum& OutEnumValue)
+	static bool ConvertFNameToEnum(FName Name, const FString& EnumName, TEnum& OutEnumValue)
 	{
 		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *EnumName, true);
 		if (!EnumPtr)
@@ -435,9 +435,9 @@ public:
 
 	/** Default sorting function used by all the Dialogue related methods. Sorts alphabetically ascending. */
 	static void SortDefault(TArray<FName>& OutArray)
-    {
+	{
 		OutArray.Sort(PredicateSortFNameAlphabeticallyAscending);
-    }
+	}
 	static void SortDefault(TSet<FName>& OutSet)
 	{
 		OutSet.Sort(PredicateSortFNameAlphabeticallyAscending);

@@ -30,21 +30,26 @@ public:
 	// Checks if the Blueprint for the Node is loaded or not.
 	static bool IsBlueprintLoadedForGraphNode(const UK2Node* Node)
 	{
-		if (UBlueprint* Blueprint = GetBlueprintForGraphNode(Node))
-		{
-			return !Blueprint->HasAnyFlags(RF_NeedLoad | RF_NeedPostLoad);
-		}
-		return false;
+		return IsBlueprintLoaded(GetBlueprintForGraphNode(Node));
+	}
+	static bool IsBlueprintLoaded(const UBlueprint* Blueprint)
+	{
+		return Blueprint ? !Blueprint->HasAnyFlags(RF_NeedLoad | RF_NeedPostLoad) : false;
 	}
 
 	/**
 	 * Tries to get the dialogue name... it expects the owner of the node to implement IDlgDialogueParticipant interface
 	 * @return		the participant name on success or NAME_None on failure.
 	 */
-	static FName GetParticipantNameFromNode(const UK2Node* Node)
+	static FName GetParticipantNameFromNode(const UK2Node* Node, bool bBlueprintMustBeLoaded)
 	{
 		if (const UBlueprint* Blueprint = GetBlueprintForGraphNode(Node))
 		{
+			if (bBlueprintMustBeLoaded && !IsBlueprintLoaded(Blueprint))
+			{
+				return NAME_None;
+			}
+
 			if (UDlgManager::DoesObjectImplementDialogueParticipantInterface(Blueprint))
 			{
 				return IDlgDialogueParticipant::Execute_GetParticipantName(Blueprint->GeneratedClass->GetDefaultObject());

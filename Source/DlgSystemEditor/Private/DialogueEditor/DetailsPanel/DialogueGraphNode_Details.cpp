@@ -73,7 +73,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 			ParticipantNamePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, ParticipantNamePropertyHandle);
 			ParticipantNamePropertyRow->SetTextPropertyPickListWidget(
 				SNew(SDialogueTextPropertyPickList)
-				.AvailableSuggestions(this, &Self::GetAllDialoguesParticipantNames)
+				.AvailableSuggestions(this, &Self::GetDialoguesParticipantNames)
 				.OnTextCommitted(this, &Self::HandleParticipantTextCommitted)
 				.HasContextCheckbox(true)
 				.IsContextCheckBoxChecked(true)
@@ -167,7 +167,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 			SpeakerStatePropertyRow = MakeShared<FDialogueTextPropertyPickList_CustomRowHelper>(DetailWidgetRow, SpeakerStatePropertyHandle);
 			SpeakerStatePropertyRow->SetTextPropertyPickListWidget(
 				SNew(SDialogueTextPropertyPickList)
-				.AvailableSuggestions(this, &Self::GetAllDialoguesSpeakerStates)
+				.AvailableSuggestions(this, &Self::GetDialoguesSpeakerStates)
 				.OnTextCommitted(this, &Self::HandleSpeakerStateCommitted)
 				.HasContextCheckbox(false)
 			)

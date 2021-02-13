@@ -13,9 +13,7 @@ public class DlgSystemEditor : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		bEnforceIWYU = true;
 		//MinFilesUsingPrecompiledHeaderOverride = 1;
-		// bFasterWithoutUnity = true;
 		// bUseUnity = false;
-		//PrivatePCHHeaderFile = "Private/DlgSystemEditorPrivatePCH.h";
 
 		//if ((Target.Platform == UnrealTargetPlatform.Win32 || Target.Platform == UnrealTargetPlatform.Win64)
 		//	&& WindowsPlatform.Compiler >= WindowsCompiler.VisualStudio2015)

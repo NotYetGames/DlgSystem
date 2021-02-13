@@ -4,7 +4,7 @@
 #include "CoreMinimal.h"
 #include "Logging/TokenizedMessage.h"
 #include "Logging/LogCategory.h"
-// #include "INYLogger.generated.h"
+#include "INYLogger.generated.h"
 
 class FOutputDevice;
 class APlayerController;
@@ -38,7 +38,6 @@ struct FNYMessageLogInitializationOptions
 	// Whether to show this log in the main log window
 	bool bShowInLogWindow = true;
 };
-
 
 UENUM()
 enum class ENYLoggerLogLevel : uint8

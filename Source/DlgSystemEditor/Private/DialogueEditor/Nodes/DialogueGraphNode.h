@@ -3,6 +3,7 @@
 
 #include "CoreTypes.h"
 #include "UObject/ObjectMacros.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #include "Nodes/DlgNode_End.h"
 #include "Nodes/DlgNode_Speech.h"

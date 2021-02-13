@@ -6,6 +6,7 @@
 #include "Widgets/Images/SImage.h"
 #include "Widgets/SToolTip.h"
 #include "Widgets/Layout/SBox.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #include "DialogueGraphNode.h"
 #include "SDialogueNodeOverlayWidget.h"

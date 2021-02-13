@@ -36,11 +36,9 @@ private:
 
 
 	/** Gets the ParticipantNames from all Dialogues. */
-	TArray<FName> GetAllDialoguesParticipantNames() const
+	TArray<FName> GetDialoguesParticipantNames() const
 	{
-		TArray<FName> OutArray;
-		UDlgManager::GetAllDialoguesParticipantNames(OutArray);
-		return OutArray;
+		return UDlgManager::GetDialoguesParticipantNames();
 	}
 
 	/** Gets the current Dialogue Participant Names. */
@@ -50,11 +48,9 @@ private:
 	}
 
 	/** Gets the Speaker States from all Dialogues. */
-	TArray<FName> GetAllDialoguesSpeakerStates() const
+	TArray<FName> GetDialoguesSpeakerStates() const
 	{
-		TArray<FName> OutArray;
-		UDlgManager::GetAllDialoguesSpeakerStates(OutArray);
-		return OutArray;
+		return UDlgManager::GetDialoguesSpeakerStates();
 	}
 
 	/** Handler for when text in the editable text box changed */

@@ -6,6 +6,8 @@
 #define NY_REFLECTION_HELPER
 
 #include "CoreMinimal.h"
+#include "Runtime/Launch/Resources/Version.h"
+#include "UObject/WeakObjectPtrTemplates.h"
 #include "NYReflectionTypes.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogDlgSystemReflectionHelper, All, All)

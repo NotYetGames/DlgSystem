@@ -102,17 +102,15 @@ private:
 	}
 
 	// Gets all the event name suggestions depending on EventType from all Dialogues.
-	TArray<FName> GetAllDialoguesEventNames() const;
+	TArray<FName> GetDialoguesParticipantEventNames() const;
 
 	// Gets all the event name suggestions depending on EventType from the current Dialogue
 	TArray<FName> GetCurrentDialogueEventNames() const;
 
 	// Gets the ParticipantNames from all Dialogues.
-	TArray<FName> GetAllDialoguesParticipantNames() const
+	TArray<FName> GetDialoguesParticipantNames() const
 	{
-		TArray<FName> OutArray;
-		UDlgManager::GetAllDialoguesParticipantNames(OutArray);
-		return OutArray;
+		return UDlgManager::GetDialoguesParticipantNames();
 	}
 
 	// Gets the current Dialogue Participant Names.

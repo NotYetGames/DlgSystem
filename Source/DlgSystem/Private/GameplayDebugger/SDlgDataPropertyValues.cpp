@@ -9,6 +9,7 @@
 #include "Widgets/Input/SEditableTextBox.h"
 
 #include "NYReflectionHelper.h"
+#include "UObject/TextProperty.h"
 
 #define LOCTEXT_NAMESPACE "SDlgDataPropertyValues"
 
@@ -122,8 +123,8 @@ void SDlgDataPropertyValue::UpdateVariableNodeFromActor()
 			VariableNode->SetVariableValue(FString::SanitizeFloat(Value));
 			break;
 		}
-		case EDlgDataDisplayVariableTreeNodeType::ClassBool:
 		{
+		case EDlgDataDisplayVariableTreeNodeType::ClassBool:
 			const bool Value = FNYReflectionHelper::GetVariable<FNYBoolProperty, bool>(Actor.Get(), VariableName);
 			VariableNode->SetVariableValue(BoolToFString(Value));
 			break;
