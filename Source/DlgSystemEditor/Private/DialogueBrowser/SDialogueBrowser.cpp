@@ -435,7 +435,7 @@ void SDialogueBrowser::RefreshTree(bool bPreserveExpansion)
 
 	// Sort the properties
 	TArray<FName> AllParticipants;
-	for (const auto Elem : ParticipantsProperties)
+	for (const auto& Elem : ParticipantsProperties)
 	{
 		AllParticipants.Add(Elem.Key);
 		TSharedPtr<FDialogueBrowserTreeParticipantProperties> Property = Elem.Value;
@@ -1469,7 +1469,7 @@ void SDialogueBrowser::HandleSetExpansionRecursive(TSharedPtr<FDialogueBrowserTr
 	if (InItem.IsValid() && InItem->HasChildren())
 	{
 		ParticipantsTreeView->SetItemExpansion(InItem, bInIsItemExpanded);
-		for (const TSharedPtr<FDialogueBrowserTreeNode> Child : InItem->GetChildren())
+		for (const TSharedPtr<FDialogueBrowserTreeNode>& Child : InItem->GetChildren())
 		{
 			HandleSetExpansionRecursive(Child, bInIsItemExpanded);
 		}
