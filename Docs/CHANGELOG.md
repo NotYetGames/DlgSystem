@@ -39,6 +39,12 @@ This was done because using Arrays/Sets reference in BP can lead to some weird b
   - `GetParticipantCustomConditions`
   - `GetParticipantCustomTextArguments`
 
+### Blueprint
+
+- Do not refresh pins if the Blueprint is not fully loaded
+	- This stops refreshing the pins automatically on startup because it is not reliable (this happened all the time if the participant is inherited from another blueprint)
+	- This change basically makes the refreshing of the pin names to be explicit (by the user) rather than implicit.
+- Use wildcard pins for all Dialogue Select Nodes
 ### Bug fixes
 
 - **Fixed** the `FDlgJsonWriter` so that it works in `Shipping` builds

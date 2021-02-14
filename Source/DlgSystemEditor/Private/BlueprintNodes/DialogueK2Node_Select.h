@@ -98,23 +98,7 @@ private:
 	/** Refreshes the VariablePinType  */
 	void RefreshVariablePinType()
 	{
-		switch (VariableType)
-		{
-		case EDlgVariableType::Float:
-			VariablePinType = UEdGraphSchema_K2::PC_Float;
-			break;
-		case EDlgVariableType::Int:
-			VariablePinType = UEdGraphSchema_K2::PC_Int;
-			break;
-		case EDlgVariableType::Name:
-			VariablePinType = UEdGraphSchema_K2::PC_Name;
-			break;
-		case EDlgVariableType::SpeakerState:
-			VariablePinType = UEdGraphSchema_K2::PC_Wildcard;
-			break;
-		default:
-			unimplemented();
-		}
+		VariablePinType = UEdGraphSchema_K2::PC_Wildcard;
 	}
 
 public:
