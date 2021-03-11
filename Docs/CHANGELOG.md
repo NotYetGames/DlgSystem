@@ -1,5 +1,5 @@
 # v13
-
+**Date:** March 11, 2021
 ### Deprecations
 
 Deprecated the following functions, because they were hard to use in BP in favour of variants that are easier to use.
@@ -48,6 +48,7 @@ This was done because using Arrays/Sets reference in BP can lead to some weird b
 ### Bug fixes
 
 - **Fixed** the `FDlgJsonWriter` so that it works in `Shipping` builds
+- **Fixed** Linux compilation for UE `4.26`
 
 # v12.3
 **Date:** December 3, 2020
