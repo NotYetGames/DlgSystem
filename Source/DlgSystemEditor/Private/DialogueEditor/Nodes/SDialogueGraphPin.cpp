@@ -193,8 +193,8 @@ FReply SDialogueGraphPin::OnCtrlAndLeftMouseButtonDown(const FGeometry& SenderGe
 {
 	// Control-Left clicking will break all existing connections to a pin
 	// Note: that for some nodes, this can cause reconstruction. In that case, pins we had previously linked to may now be destroyed.
-	//       So the break MUST come after the SpawnPinDragEvent(), since that acquires handles from PinArray (the pins need to be
-	//       around for us to construct valid handles from).
+	//	   So the break MUST come after the SpawnPinDragEvent(), since that acquires handles from PinArray (the pins need to be
+	//	   around for us to construct valid handles from).
 	TSharedPtr<SGraphNode> ThisOwnerNodeWidget = OwnerNodePtr.Pin();
 	check(ThisOwnerNodeWidget.IsValid());
 	TSharedPtr<SGraphPanel> OwnerPanelPtr = ThisOwnerNodeWidget->GetOwnerPanel();

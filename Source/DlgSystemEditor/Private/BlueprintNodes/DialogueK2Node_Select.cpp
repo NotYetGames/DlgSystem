@@ -64,18 +64,18 @@ public:
 		// PrevIfNotStatement = null
 		//
 		// for Option in Options:
-		//    OptionValue = Value of Option
-		//    CallConditionFunctionStatement = AddStatement `BoolTerm = ConditionFunction(IndexValue, OptionValue)`
+		//	OptionValue = Value of Option
+		//	CallConditionFunctionStatement = AddStatement `BoolTerm = ConditionFunction(IndexValue, OptionValue)`
 		//
-		//    // where the previous statement jumps if it fails
-		//    if PrevIfNotStatement is not null:
-		//       PrevIfNotStatement.JumpTarget = CallConditionFunctionStatement
+		//	// where the previous statement jumps if it fails
+		//	if PrevIfNotStatement is not null:
+		//	   PrevIfNotStatement.JumpTarget = CallConditionFunctionStatement
 		//
-		//    // the target is set above
-		//    IfNotStatement = AddStatement `GoToTargetIfNot(BoolTerm, JumpTarget=null)`
+		//	// the target is set above
+		//	IfNotStatement = AddStatement `GoToTargetIfNot(BoolTerm, JumpTarget=null)`
 		//
-		//    // Add return option for this Option
-		//    AddStatement `ReturnValue = OptionValue`
+		//	// Add return option for this Option
+		//	AddStatement `ReturnValue = OptionValue`
 		//
 		//   PrevIfNotStatement = IfNotStatement
 		//   // add some goto statements that allows us to to safely exit the loop

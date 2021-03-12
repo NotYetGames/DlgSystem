@@ -90,9 +90,9 @@ public:
 	static bool HasDialogueValue(EDlgEventType Type)
 	{
 		return Type == EDlgEventType::ModifyBool
-            || Type == EDlgEventType::ModifyFloat
-            || Type == EDlgEventType::ModifyInt
-            || Type == EDlgEventType::ModifyName;
+			|| Type == EDlgEventType::ModifyFloat
+			|| Type == EDlgEventType::ModifyInt
+			|| Type == EDlgEventType::ModifyName;
 	}
 
 	// Same as HasDialogueValue but also Has the Event
@@ -105,9 +105,9 @@ public:
 	static bool HasClassVariable(EDlgEventType Type)
 	{
 		return Type == EDlgEventType::ModifyClassBoolVariable
-            || Type == EDlgEventType::ModifyClassFloatVariable
-            || Type == EDlgEventType::ModifyClassIntVariable
-            || Type == EDlgEventType::ModifyClassNameVariable;
+			|| Type == EDlgEventType::ModifyClassFloatVariable
+			|| Type == EDlgEventType::ModifyClassIntVariable
+			|| Type == EDlgEventType::ModifyClassNameVariable;
 	}
 
 protected:
@@ -163,5 +163,5 @@ struct TStructOpsTypeTraits<FDlgEvent> : public TStructOpsTypeTraitsBase2<FDlgEv
 	enum
 	{
 		WithIdenticalViaEquality = true
-    };
+	};
 };

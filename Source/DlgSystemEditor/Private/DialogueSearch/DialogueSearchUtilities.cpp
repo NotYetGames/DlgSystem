@@ -180,12 +180,12 @@ bool FDialogueSearchUtilities::DoesGUIDContainString(const FGuid& GUID, const FS
 	// Test every possible format
 	const TArray<FString> GUIDStrings = {
 		GUID.ToString(EGuidFormats::Digits),
-        GUID.ToString(EGuidFormats::DigitsWithHyphens),
-        GUID.ToString(EGuidFormats::DigitsWithHyphensInBraces),
-        GUID.ToString(EGuidFormats::DigitsWithHyphensInParentheses),
-        GUID.ToString(EGuidFormats::HexValuesInBraces),
-        GUID.ToString(EGuidFormats::UniqueObjectGuid)
-    };
+		GUID.ToString(EGuidFormats::DigitsWithHyphens),
+		GUID.ToString(EGuidFormats::DigitsWithHyphensInBraces),
+		GUID.ToString(EGuidFormats::DigitsWithHyphensInParentheses),
+		GUID.ToString(EGuidFormats::HexValuesInBraces),
+		GUID.ToString(EGuidFormats::UniqueObjectGuid)
+	};
 	for (const FString& GUIDString : GUIDStrings)
 	{
 		if (GUIDString.Contains(GUIDToSearchFor))

@@ -107,5 +107,5 @@ struct TStructOpsTypeTraits<FDlgTextArgument> : public TStructOpsTypeTraitsBase2
 	enum
 	{
 		WithIdenticalViaEquality = true
-    };
+	};
 };

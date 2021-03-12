@@ -82,7 +82,7 @@ private:
 	 * Used to keep track of how indices change.
 	 * Key: Old index
 	 * Value: New index
-     */
+	 */
 	TMap<int32, int32> IndicesHistory;
 
 	/** The root graph node. */

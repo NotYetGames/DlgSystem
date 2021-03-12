@@ -12,8 +12,8 @@
 enum class EDialogueBlueprintOpenType : uint8
 {
 	None = 0,
-    Function,
-    Event
+	Function,
+	Event
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -238,7 +238,7 @@ public:
 	*
 	* @param	TitleText		The title of the class picker dialog
 	* @param	OutChosenClass  The class chosen (if this function returns false, this will be null) by the the user
-	* @param	Class		    The children of this class we are displaying and prompting the user to choose from.
+	* @param	Class			The children of this class we are displaying and prompting the user to choose from.
 	*
 	* @return true if OK was pressed, false otherwise
 	*/
@@ -247,12 +247,12 @@ public:
 	// Opens the specified Blueprint at the last edited graph by default
 	// or if the OpenType is set to Function or Event it opens that with the FunctionNameToOpen
 	static bool OpenBlueprintEditor(
-        UBlueprint* Blueprint,
-        EDialogueBlueprintOpenType OpenType = EDialogueBlueprintOpenType::None,
-        FName FunctionNameToOpen = NAME_None,
-        bool bForceFullEditor = true,
-        bool bAddBlueprintFunctionIfItDoesNotExist = false
-    );
+		UBlueprint* Blueprint,
+		EDialogueBlueprintOpenType OpenType = EDialogueBlueprintOpenType::None,
+		FName FunctionNameToOpen = NAME_None,
+		bool bForceFullEditor = true,
+		bool bAddBlueprintFunctionIfItDoesNotExist = false
+	);
 
 	// Adds the function if it does not exist
 	// Return the Function Graph of the existing function or the newly created one

@@ -20,35 +20,35 @@
 // class FFrontendFilter_Dialogue : public FFrontendFilter
 // {
 // public:
-//     FFrontendFilter_Dialogue(const TSharedPtr<FFrontendFilterCategory>& InCategory)
-//         : FFrontendFilter(InCategory)
-//     {
-//     }
+//	 FFrontendFilter_Dialogue(const TSharedPtr<FFrontendFilterCategory>& InCategory)
+//		 : FFrontendFilter(InCategory)
+//	 {
+//	 }
 //
 // 	//
 // 	// FFrontendFilter implementation
 // 	//
 //
 // 	FString GetName() const override
-//     {
-//     	return TEXT("Dialogue");
-//     }
+//	 {
+//	 	return TEXT("Dialogue");
+//	 }
 // 	FText GetDisplayName() const override
-//     {
-//     	return LOCTEXT("FilterDialogue_Name", "Dialogue");
-//     }
+//	 {
+//	 	return LOCTEXT("FilterDialogue_Name", "Dialogue");
+//	 }
 // 	FText GetToolTipText() const override
-//     {
-//     	return LOCTEXT("FilterDialogue_ToolTip", "Filter By Dialogue");
-//     }
+//	 {
+//	 	return LOCTEXT("FilterDialogue_ToolTip", "Filter By Dialogue");
+//	 }
 //
 // 	FLinearColor GetColor() const override  { return FLinearColor::Yellow; }
 // 	FName GetIconName() const override { return NAME_None; }
 //
 // 	void SetCurrentFilter(const FARFilter& InBaseFilter) override
-//     {
+//	 {
 //
-//     }
+//	 }
 //
 // 	//
 // 	// IFilter implementation
@@ -56,9 +56,9 @@
 //
 // 	/** Returns whether the specified Item passes the Filter's restrictions */
 // 	bool PassesFilter(FAssetFilterType InItem) const override
-//     {
-//     	return InItem.GetClass() == UDlgDialogue::StaticClass();
-//     }
+//	 {
+//	 	return InItem.GetClass() == UDlgDialogue::StaticClass();
+//	 }
 // };
 
 //////////////////////////////////////////////////////////////////////////
@@ -122,36 +122,36 @@ public:
 // class FFrontendFilter_DialogueCustomEvent : public FFrontendFilter
 // {
 // public:
-//     FFrontendFilter_DialogueCustomEvent(const TSharedPtr<FFrontendFilterCategory>& InCategory)
-//         : FFrontendFilter(InCategory)
-//     {
-//     }
+//	 FFrontendFilter_DialogueCustomEvent(const TSharedPtr<FFrontendFilterCategory>& InCategory)
+//		 : FFrontendFilter(InCategory)
+//	 {
+//	 }
 //
 // 	//
 // 	// FFrontendFilter implementation
 // 	//
 //
 // 	FString GetName() const override
-//     {
-//     	return TEXT("Dialogue Custom Event");
-//     }
+//	 {
+//	 	return TEXT("Dialogue Custom Event");
+//	 }
 // 	FText GetDisplayName() const override
-//     {
-//     	return LOCTEXT("FilterDialogueCustomEvent_Name", "Dialogue Custom Event");
-//     }
+//	 {
+//	 	return LOCTEXT("FilterDialogueCustomEvent_Name", "Dialogue Custom Event");
+//	 }
 // 	FText GetToolTipText() const override
-//     {
-//     	return LOCTEXT("FilterDialogueCustomEvent__ToolTip", "Search for any Blueprints that is a Dialogue Custom Event");
-//     }
+//	 {
+//	 	return LOCTEXT("FilterDialogueCustomEvent__ToolTip", "Search for any Blueprints that is a Dialogue Custom Event");
+//	 }
 //
 // 	// Orange
 // 	FLinearColor GetColor() const override  { return FLinearColor(1.f, 0.46f, 0.f); }
 // 	FName GetIconName() const override { return NAME_None; }
 //
 // 	void SetCurrentFilter(const FARFilter& InBaseFilter) override
-//     {
+//	 {
 //
-//     }
+//	 }
 //
 // 	//
 // 	// IFilter implementation
@@ -159,19 +159,19 @@ public:
 //
 // 	/** Returns whether the specified Item passes the Filter's restrictions */
 // 	bool PassesFilter(FAssetFilterType InItem) const override
-//     {
-//     	if (!InItem.IsAssetLoaded())
-//     	{
-//     		return false;
-//     	}
+//	 {
+//	 	if (!InItem.IsAssetLoaded())
+//	 	{
+//	 		return false;
+//	 	}
 //
-//     	if (const UObject* Object = InItem.GetAsset())
-//     	{
-//     		return UDlgManager::IsObjectACustomEvent(Object);
-//     	}
+//	 	if (const UObject* Object = InItem.GetAsset())
+//	 	{
+//	 		return UDlgManager::IsObjectACustomEvent(Object);
+//	 	}
 //
-//     	return false;
-//     }
+//	 	return false;
+//	 }
 // };
 //
 // //////////////////////////////////////////////////////////////////////////
@@ -179,36 +179,36 @@ public:
 // class FFrontendFilter_DialogueCustomCondition : public FFrontendFilter
 // {
 // public:
-//     FFrontendFilter_DialogueCustomCondition(const TSharedPtr<FFrontendFilterCategory>& InCategory)
-//         : FFrontendFilter(InCategory)
-//     {
-//     }
+//	 FFrontendFilter_DialogueCustomCondition(const TSharedPtr<FFrontendFilterCategory>& InCategory)
+//		 : FFrontendFilter(InCategory)
+//	 {
+//	 }
 //
 // 	//
 // 	// FFrontendFilter implementation
 // 	//
 //
 // 	FString GetName() const override
-//     {
-//     	return TEXT("Dialogue Custom Condtition");
-//     }
+//	 {
+//	 	return TEXT("Dialogue Custom Condtition");
+//	 }
 // 	FText GetDisplayName() const override
-//     {
-//     	return LOCTEXT("FilterDialogueCustomCondition_Name", "Dialogue Custom Condition");
-//     }
+//	 {
+//	 	return LOCTEXT("FilterDialogueCustomCondition_Name", "Dialogue Custom Condition");
+//	 }
 // 	FText GetToolTipText() const override
-//     {
-//     	return LOCTEXT("FilterDialogueCustomCondition_ToolTip", "Search for any Blueprints that is a Dialogue Custom Condition");
-//     }
+//	 {
+//	 	return LOCTEXT("FilterDialogueCustomCondition_ToolTip", "Search for any Blueprints that is a Dialogue Custom Condition");
+//	 }
 //
 // 	// Orange
 // 	FLinearColor GetColor() const override  { return FLinearColor(1.f, 0.46f, 0.f); }
 // 	FName GetIconName() const override { return NAME_None; }
 //
 // 	void SetCurrentFilter(const FARFilter& InBaseFilter) override
-//     {
+//	 {
 //
-//     }
+//	 }
 //
 // 	//
 // 	// IFilter implementation
@@ -216,19 +216,19 @@ public:
 //
 // 	/** Returns whether the specified Item passes the Filter's restrictions */
 // 	bool PassesFilter(FAssetFilterType InItem) const override
-//     {
-//     	if (!InItem.IsAssetLoaded())
-//     	{
-//     		return false;
-//     	}
+//	 {
+//	 	if (!InItem.IsAssetLoaded())
+//	 	{
+//	 		return false;
+//	 	}
 //
-//     	if (const UObject* Object = InItem.GetAsset())
-//     	{
-//     		return UDlgManager::IsObjectACustomCondition(Object);
-//     	}
+//	 	if (const UObject* Object = InItem.GetAsset())
+//	 	{
+//	 		return UDlgManager::IsObjectACustomCondition(Object);
+//	 	}
 //
-//     	return false;
-//     }
+//	 	return false;
+//	 }
 // };
 //
 // //////////////////////////////////////////////////////////////////////////
@@ -236,36 +236,36 @@ public:
 // class FFrontendFilter_DialogueCustomTextArgument : public FFrontendFilter
 // {
 // public:
-//     FFrontendFilter_DialogueCustomTextArgument(const TSharedPtr<FFrontendFilterCategory>& InCategory)
-//         : FFrontendFilter(InCategory)
-//     {
-//     }
+//	 FFrontendFilter_DialogueCustomTextArgument(const TSharedPtr<FFrontendFilterCategory>& InCategory)
+//		 : FFrontendFilter(InCategory)
+//	 {
+//	 }
 //
 // 	//
 // 	// FFrontendFilter implementation
 // 	//
 //
 // 	FString GetName() const override
-//     {
-//     	return TEXT("Dialogue Custom Text Argument");
-//     }
+//	 {
+//	 	return TEXT("Dialogue Custom Text Argument");
+//	 }
 // 	FText GetDisplayName() const override
-//     {
-//     	return LOCTEXT("FilterDialogueCustomTextArgument_Name", "Dialogue Custom Text Argument");
-//     }
+//	 {
+//	 	return LOCTEXT("FilterDialogueCustomTextArgument_Name", "Dialogue Custom Text Argument");
+//	 }
 // 	FText GetToolTipText() const override
-//     {
-//     	return LOCTEXT("FilterDialogueCustomTextArgument_ToolTip", "Search for any Blueprints that is a Dialogue Custom Text Argument");
-//     }
+//	 {
+//	 	return LOCTEXT("FilterDialogueCustomTextArgument_ToolTip", "Search for any Blueprints that is a Dialogue Custom Text Argument");
+//	 }
 //
 // 	// Orange
 // 	FLinearColor GetColor() const override  { return FLinearColor(1.f, 0.46f, 0.f); }
 // 	FName GetIconName() const override { return NAME_None; }
 //
 // 	void SetCurrentFilter(const FARFilter& InBaseFilter) override
-//     {
+//	 {
 //
-//     }
+//	 }
 //
 // 	//
 // 	// IFilter implementation
@@ -273,19 +273,19 @@ public:
 //
 // 	/** Returns whether the specified Item passes the Filter's restrictions */
 // 	bool PassesFilter(FAssetFilterType InItem) const override
-//     {
-//     	if (!InItem.IsAssetLoaded())
-//     	{
-//     		return false;
-//     	}
+//	 {
+//	 	if (!InItem.IsAssetLoaded())
+//	 	{
+//	 		return false;
+//	 	}
 //
-//     	if (const UObject* Object = InItem.GetAsset())
-//     	{
-//     		return UDlgManager::IsObjectACustomTextArgument(Object);
-//     	}
+//	 	if (const UObject* Object = InItem.GetAsset())
+//	 	{
+//	 		return UDlgManager::IsObjectACustomTextArgument(Object);
+//	 	}
 //
-//     	return false;
-//     }
+//	 	return false;
+//	 }
 // };
 
 //////////////////////////////////////////////////////////////////////////
@@ -300,8 +300,8 @@ void UDialogueSearchFilter::AddFrontEndFilterExtensions(
 	// 	LOCTEXT("DlgSystemCategoryTooltip", "Filter Dialogue System assets")
 	// );
 	TSharedPtr<FFrontendFilterCategory> DialogueCategory = MakeShared<FFrontendFilterCategory>(
-	     FText::FromName(OTHER_DIALOGUE_SYSTEM_MENU_CATEGORY_KEY),
-	     OTHER_DIALOGUE_SYSTEM_MENU_CATEGORY_KEY_TEXT
+		 FText::FromName(OTHER_DIALOGUE_SYSTEM_MENU_CATEGORY_KEY),
+		 OTHER_DIALOGUE_SYSTEM_MENU_CATEGORY_KEY_TEXT
 	);
 
 	// NOTE: we can't combine these with multiple filters

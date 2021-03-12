@@ -20,7 +20,7 @@ struct FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction : public FE
 
 	FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction() : FEdGraphSchemaAction() {}
 	FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction(const TArray<UDialogueGraphNode*>& InSelectedGraphNodes)
-        : FEdGraphSchemaAction(), SelectedGraphNodes(InSelectedGraphNodes) {}
+		: FEdGraphSchemaAction(), SelectedGraphNodes(InSelectedGraphNodes) {}
 
 	FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction(
 		const FText& InNodeCategory,
