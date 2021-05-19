@@ -559,7 +559,7 @@ bool FDlgConfigParser::ReadSet(void* TargetObject, FNYSetProperty& Property, UOb
 		const int32 Index = Helper.AddDefaultValue_Invalid_NeedsRehash();
 		bool bDone = false;
 		uint8* ElementPtr = Helper.GetElementPtr(Index);
-		if (FNYReflectionHelper::CastProperty<FNYBoolProperty>(Helper.ElementProp))       { *(bool*)ElementPtr = GetAsBool();		bDone = true; }
+		if (FNYReflectionHelper::CastProperty<FNYBoolProperty>(Helper.ElementProp))	   { *(bool*)ElementPtr = GetAsBool();		bDone = true; }
 		else if (FNYReflectionHelper::CastProperty<FNYFloatProperty>(Helper.ElementProp)) { *(float*)ElementPtr = GetAsFloat();		bDone = true; }
 		else if (FNYReflectionHelper::CastProperty<FNYIntProperty>(Helper.ElementProp))   { *(int32*)ElementPtr = GetAsInt32();		bDone = true; }
 		else if (FNYReflectionHelper::CastProperty<FNYInt64Property>(Helper.ElementProp)) { *(int64*)ElementPtr = GetAsInt64();		bDone = true; }

@@ -78,18 +78,11 @@ bool UDlgContext::ChooseSpeechSequenceOptionFromReplicated(int32 OptionIndex)
 	return false;
 }
 
-bool UDlgContext::ChooseOptionBasedOnAllOptionIndex(int32 Index)
+bool UDlgContext::ChooseOptionFromAll(int32 Index)
 {
 	if (!AllChildren.IsValidIndex(Index))
 	{
-		LogErrorWithContext(FString::Printf(TEXT("ChooseOptionBasedOnAllOptionIndex - INVALID given Index = %d"), Index));
-		bDialogueEnded = true;
-		return false;
-	}
-
-	if (!AllChildren[Index].IsSatisfied())
-	{
-		LogErrorWithContext(FString::Printf(TEXT("ChooseOptionBasedOnAllOptionIndex - given Index = %d is an unsatisfied edge"), Index));
+		LogErrorWithContext(FString::Printf(TEXT("ChooseOptionFromAll - INVALID given Index = %d"), Index));
 		bDialogueEnded = true;
 		return false;
 	}
@@ -851,10 +844,10 @@ bool UDlgContext::ValidateParticipantForDialogue(
 			return false;
 
 		// case EDlgValidateStatus::DialogueDoesNotContainParticipant:
-	 //        FDlgLogger::Get().Errorf(
-	 //            TEXT("%s - Participant Path = `%s` with ParticipantName = `%s` is NOT referenced (DOES) not exist inside the Dialogue.\nContext:\n\tDialogue = `%s`"),
-	 //            *ContextString, *Participant->GetPathName(), *IDlgDialogueParticipant::Execute_GetParticipantName(Participant).ToString(), *Dialogue->GetPathName()
-	 //        );
+	 //		FDlgLogger::Get().Errorf(
+	 //			TEXT("%s - Participant Path = `%s` with ParticipantName = `%s` is NOT referenced (DOES) not exist inside the Dialogue.\nContext:\n\tDialogue = `%s`"),
+	 //			*ContextString, *Participant->GetPathName(), *IDlgDialogueParticipant::Execute_GetParticipantName(Participant).ToString(), *Dialogue->GetPathName()
+	 //		);
 		// 	return false;
 
 		default:

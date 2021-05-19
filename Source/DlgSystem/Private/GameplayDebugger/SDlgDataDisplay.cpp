@@ -177,7 +177,7 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 		// Find out the Dialogues that have the ParticipantName of this Actor.
 		const FName ParticipantName = IDlgDialogueParticipant::Execute_GetParticipantName(Actor.Get());
 		TSet<TWeakObjectPtr<const UDlgDialogue>> ActorDialogues;
-	    TSet<TWeakObjectPtr<const UDlgDialogue>>* ActorDialoguesPtr = ParticipantNamesDialoguesMap.Find(ParticipantName);
+		TSet<TWeakObjectPtr<const UDlgDialogue>>* ActorDialoguesPtr = ParticipantNamesDialoguesMap.Find(ParticipantName);
 		if (ActorDialoguesPtr != nullptr)
 		{
 			// Found some dialogue

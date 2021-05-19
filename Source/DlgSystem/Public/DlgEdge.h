@@ -33,11 +33,11 @@ public:
 	bool operator==(const FDlgEdge& Other) const
 	{
 		return TargetIndex == Other.TargetIndex &&
-            SpeakerState == Other.SpeakerState &&
-            Text.EqualTo(Other.Text) &&
-            bIncludeInAllOptionListIfUnsatisfied == Other.bIncludeInAllOptionListIfUnsatisfied &&
-            TextArguments == Other.TextArguments &&
-            Conditions == Other.Conditions;
+			SpeakerState == Other.SpeakerState &&
+			Text.EqualTo(Other.Text) &&
+			bIncludeInAllOptionListIfUnsatisfied == Other.bIncludeInAllOptionListIfUnsatisfied &&
+			TextArguments == Other.TextArguments &&
+			Conditions == Other.Conditions;
 	}
 
 	bool operator!=(const FDlgEdge& Other) const
@@ -151,5 +151,5 @@ struct TStructOpsTypeTraits<FDlgEdge> : public TStructOpsTypeTraitsBase2<FDlgEdg
 	enum
 	{
 		WithIdenticalViaEquality = true
-    };
+	};
 };

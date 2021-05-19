@@ -32,7 +32,7 @@ public:
 	// - Developer does NOT resave the Dialogue files so that the Nodes don't have a valid GUID
 	//
 	// Result:
-	//     The history will just use the Node Indices because the GUID will not be valid for any Node
+	//	 The history will just use the Node Indices because the GUID will not be valid for any Node
 	//
 	// ---------------------------------------------------------------------------------------
 	// B. Scenario
@@ -40,11 +40,11 @@ public:
 	// - Developer DOES resave the Dialogue files so that the Nodes have a valid GUID
 	//
 	// Result:
-	//     The history will still use the Node Indices to figure out if a Node Is Visited,
-	//     even tho the Dialogue Nodes have a valid GUIDs we won't use those because the user save files
-	//     has VisitedNodeGUIDs.Num() < VisitedNodeIndices.Num() (the user most likely has empty VisitedNodeGUIDs),
-	//     because the way the history is constructed now the following is a requirement
-	//     VisitedNodeGUIDs.Num() >= VisitedNodeIndices.Num(), if this is not met we just fallback to the Node Indices
+	//	 The history will still use the Node Indices to figure out if a Node Is Visited,
+	//	 even tho the Dialogue Nodes have a valid GUIDs we won't use those because the user save files
+	//	 has VisitedNodeGUIDs.Num() < VisitedNodeIndices.Num() (the user most likely has empty VisitedNodeGUIDs),
+	//	 because the way the history is constructed now the following is a requirement
+	//	 VisitedNodeGUIDs.Num() >= VisitedNodeIndices.Num(), if this is not met we just fallback to the Node Indices
 	//
 	// ---------------------------------------------------------------------------------------
 	// C. Scenario
@@ -54,8 +54,8 @@ public:
 	//   hands for some time for them to play.
 	//
 	// Result:
-	//     Same as in Scenario B we will still use the Node Indices, because the requirement
-	//     VisitedNodeGUIDs.Num() >= VisitedNodeIndices.Num() is NOT met
+	//	 Same as in Scenario B we will still use the Node Indices, because the requirement
+	//	 VisitedNodeGUIDs.Num() >= VisitedNodeIndices.Num() is NOT met
 	bool CanUseGUIDForSearch() const
 	{
 		return VisitedNodeGUIDs.Num() >= VisitedNodeIndices.Num();

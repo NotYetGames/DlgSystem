@@ -23,7 +23,7 @@ enum class EDlgDialogueTextFormat : uint8
 	None	UMETA(DisplayName = "No Text Format"),
 
 	// Output all text formats, mostly used for debugging
-	All     UMETA(Hidden),
+	All	 UMETA(Hidden),
 
 	// DEPRECATED. The own Dialogue Text format. DEPRECATED.
 	// NOTE: this format is deprecated AND in the next version it will be removed
@@ -109,10 +109,10 @@ enum class EDlgClassPickerDisplayMode : uint8
 	DefaultView,
 
 	// Displays all classes as a tree.
-    TreeView,
+	TreeView,
 
-    // Displays all classes as a list.
-    ListView
+	// Displays all classes as a list.
+	ListView
 };
 
 // UDeveloperSettings classes are auto discovered https://wiki.unrealengine.com/CustomSettings

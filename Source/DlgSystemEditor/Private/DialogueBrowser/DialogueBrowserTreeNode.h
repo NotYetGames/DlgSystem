@@ -361,10 +361,10 @@ class FDialogueBrowserTreeCustomObjectNode : public FDialogueBrowserTreeNode
 
 public:
 	FDialogueBrowserTreeCustomObjectNode(
-        const FText& InDisplayText,
-        const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
-        UClass* ObjectClass
-    );
+		const FText& InDisplayText,
+		const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
+		UClass* ObjectClass
+	);
 
 	// Class
 	UClass* GetClass() const { return Class.Get(); }

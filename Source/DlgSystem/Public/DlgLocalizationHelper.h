@@ -42,7 +42,7 @@ public:
 
 protected:
 	// Returns true if we should do an update of the FText
-	//         false otherwise
+	//		 false otherwise
 	static bool GetNewNamespaceAndKey(
 		const UObject* Object,
 		const UDlgSystemSettings& Settings,

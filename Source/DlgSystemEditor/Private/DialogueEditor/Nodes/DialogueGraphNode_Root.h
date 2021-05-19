@@ -34,7 +34,7 @@ public:
 	bool IsRootNode() const override { return true; }
 
 	/** Sets the Dialogue node index number, this represents the index from the DlgDialogue.Nodes Array */
-    void SetDialogueNodeIndex(int32 InIndex) override { NodeIndex = INDEX_NONE; }
+	void SetDialogueNodeIndex(int32 InIndex) override { NodeIndex = INDEX_NONE; }
 
 	/** Gets the Dialogue node index number for the DlgDialogue.Nodes Array */
 	int32 GetDialogueNodeIndex() const override { return INDEX_NONE; }

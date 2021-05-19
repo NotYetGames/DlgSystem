@@ -150,13 +150,13 @@ protected:
 
 	// Makes a widget for a Class that has IconName. Text of item.
 	TSharedRef<SHorizontalBox> MakeCustomObjectIconAndTextWidget(
-        const FText& InText,
-        const FSlateBrush* IconBrush,
-        UClass* Class,
-        EDialogueBlueprintOpenType OpenType,
+		const FText& InText,
+		const FSlateBrush* IconBrush,
+		UClass* Class,
+		EDialogueBlueprintOpenType OpenType,
 		FName FunctionNameToOpen,
-        int32 IconSize = 24
-    );
+		int32 IconSize = 24
+	);
 
 	// Fills the menu of the View Options
 	TSharedRef<SWidget>	FillViewOptionsEntries();

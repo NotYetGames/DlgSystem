@@ -91,7 +91,7 @@ private: // UStruct -> JSON
 	 *
 	 * @param StructDefinition UStruct definition that is looked over for properties
 	 * @param ContainerPtr	   The object the UStruct represents.
-	 * @param OutJsonObject    Json Object to be filled in with data from the ustruct
+	 * @param OutJsonObject	Json Object to be filled in with data from the ustruct
 	 *
 	 * @return False if faile to fill properties
 	 */
@@ -105,7 +105,7 @@ private: // UStruct -> JSON
 	 *
 	 * @param StructDefinition UStruct definition that is looked over for properties
 	 * @param ContainerPtr	   The object the UStruct represents.
-	 * @param OutJsonString    Json Object to be filled in with data from the ustruct
+	 * @param OutJsonString	Json Object to be filled in with data from the ustruct
 	 *
 	 * @return False if failed to serialize to string
 	 */
