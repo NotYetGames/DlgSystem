@@ -165,9 +165,9 @@ FName FDialogueBrowserTreeVariableNode::GetParentVariableName() const
 // FDialogueBrowserTreeCustomObjectNode
 
 FDialogueBrowserTreeCustomObjectNode::FDialogueBrowserTreeCustomObjectNode(
-    const FText& InDisplayText,
-    const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
-    UClass* ObjectClass
+	const FText& InDisplayText,
+	const TSharedPtr<FDialogueBrowserTreeNode>& InParent,
+	UClass* ObjectClass
 ) : Super(InDisplayText, InParent), Class(ObjectClass)
 {
 

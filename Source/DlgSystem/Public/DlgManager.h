@@ -87,7 +87,7 @@ public:
 	 *
 	 * @param Dialogue				- The dialogue asset to start
 	 * @param Participants			- Array of participants, has to match with the expected input for the Dialogue
-	 * @param StartIndex		    - Index of the node the dialogue is resumed at
+	 * @param StartIndex			- Index of the node the dialogue is resumed at
 	 * @param AlreadyVisitedNodes	- Set of nodes already visited in the context the last time this Dialogue was going on.
 	 *								  Can be acquired via GetVisitedNodeIndices() on the context
 	 * @param bFireEnterEvents		- decides if the enter events should be fired on the resumed node or not
@@ -320,8 +320,8 @@ public:
 	// This tries to get the source world for the dialogues
 	// In the following order (the first one that is valid, returns that):
 	// 1. The user set one UserWorldContextObjectPtr (if it is set):
-	//    - Set  with SetDialoguePersistentWorldContextObject
-	//    - Clear with ClearDialoguePersistentWorldContextObject
+	//	- Set with SetDialoguePersistentWorldContextObject_NameMethod
+	//	- Clear with ClearDialoguePersistentWorldContextObject
 	// 2. The first PIE world
 	// 3. The first Game World
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Persistence")

@@ -1,3 +1,10 @@
+# v14
+### Deprecations
+
+- **Dialogue Manager**
+  - `ChooseOptionBasedOnAllOptionIndex` -> `ChooseOptionFromAll`
+	- **NOTE**: This function used to check if the option was satisfied, it does not anymore. Use `IsOptionSatisfied` if you want to check for that.
+
 # v13
 **Date:** March 11, 2021
 ### Deprecations

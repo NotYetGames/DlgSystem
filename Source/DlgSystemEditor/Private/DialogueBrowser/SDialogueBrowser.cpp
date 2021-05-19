@@ -1364,12 +1364,12 @@ TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(
 		else if (InItem->IsCustomEventText())
 		{
 			RowContent = MakeCustomObjectIconAndTextWidget(
-                InItem->GetDisplayText(),
-                FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_EventIcon),
-                InItem->GetParentClass(),
-                EDialogueBlueprintOpenType::Event,
-                GET_FUNCTION_NAME_CHECKED(UDlgEventCustom, EnterEvent)
-            );
+				InItem->GetDisplayText(),
+				FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_EventIcon),
+				InItem->GetParentClass(),
+				EDialogueBlueprintOpenType::Event,
+				GET_FUNCTION_NAME_CHECKED(UDlgEventCustom, EnterEvent)
+			);
 		}
 		else if (InItem->IsConditionText())
 		{
@@ -1709,55 +1709,55 @@ TSharedRef<SHorizontalBox> SDialogueBrowser::MakeIconAndTextWidget(
 }
 
 TSharedRef<SHorizontalBox> SDialogueBrowser::MakeCustomObjectIconAndTextWidget(
-    const FText& InText,
-    const FSlateBrush* IconBrush,
-    UClass* Class,
-    EDialogueBlueprintOpenType OpenType,
+	const FText& InText,
+	const FSlateBrush* IconBrush,
+	UClass* Class,
+	EDialogueBlueprintOpenType OpenType,
 	FName FunctionNameToOpen,
-    int32 IconSize
+	int32 IconSize
 )
 {
 	TSharedRef<SHorizontalBox> HorizontalBox = MakeIconAndTextWidget(InText, IconBrush, IconSize);
 
 	// Browse Asset
 	HorizontalBox->AddSlot()
-    .AutoWidth()
-    .VAlign(VAlign_Center)
-    .Padding(4.f)
-    [
-        SNew(SButton)
-        .ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
-        .ToolTipText_Static(&Self::GetBrowseAssetText, Class)
-        .ContentPadding(4.f)
-        .ForegroundColor(FSlateColor::UseForeground())
-        .Visibility_Static(&Self::GetBrowseAssetButtonVisibility, Class)
-        .OnClicked_Static(&Self::OnBrowseAssetClicked, Class)
-        [
-            SNew(SImage)
-            .Image(FEditorStyle::GetBrush("PropertyWindow.Button_Browse"))
-            .ColorAndOpacity(FSlateColor::UseForeground())
-        ]
-    ];
+	.AutoWidth()
+	.VAlign(VAlign_Center)
+	.Padding(4.f)
+	[
+		SNew(SButton)
+		.ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
+		.ToolTipText_Static(&Self::GetBrowseAssetText, Class)
+		.ContentPadding(4.f)
+		.ForegroundColor(FSlateColor::UseForeground())
+		.Visibility_Static(&Self::GetBrowseAssetButtonVisibility, Class)
+		.OnClicked_Static(&Self::OnBrowseAssetClicked, Class)
+		[
+			SNew(SImage)
+			.Image(FEditorStyle::GetBrush("PropertyWindow.Button_Browse"))
+			.ColorAndOpacity(FSlateColor::UseForeground())
+		]
+	];
 
 	// Jump to Object
 	HorizontalBox->AddSlot()
-    .AutoWidth()
-    .VAlign(VAlign_Center)
-    .Padding(4.f, 2.f)
-    [
-        SNew(SButton)
-        .ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
-        .ToolTipText_Static(&Self::GetJumpToAssetText, Class)
-        .ContentPadding(4.f)
-        .ForegroundColor(FSlateColor::UseForeground())
-        .Visibility_Static(&Self::GetOpenAssetButtonVisibility, Class)
-        .OnClicked_Static(&Self::OnOpenAssetClicked, Class, OpenType, FunctionNameToOpen)
-        [
-            SNew(SImage)
-             .Image(FEditorStyle::GetBrush("PropertyWindow.Button_Edit"))
-             .ColorAndOpacity( FSlateColor::UseForeground() )
-        ]
-    ];
+	.AutoWidth()
+	.VAlign(VAlign_Center)
+	.Padding(4.f, 2.f)
+	[
+		SNew(SButton)
+		.ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
+		.ToolTipText_Static(&Self::GetJumpToAssetText, Class)
+		.ContentPadding(4.f)
+		.ForegroundColor(FSlateColor::UseForeground())
+		.Visibility_Static(&Self::GetOpenAssetButtonVisibility, Class)
+		.OnClicked_Static(&Self::OnOpenAssetClicked, Class, OpenType, FunctionNameToOpen)
+		[
+			SNew(SImage)
+			 .Image(FEditorStyle::GetBrush("PropertyWindow.Button_Edit"))
+			 .ColorAndOpacity( FSlateColor::UseForeground() )
+		]
+	];
 
 	return HorizontalBox;
 }
@@ -1807,8 +1807,8 @@ FReply SDialogueBrowser::OnBrowseAssetClicked(UClass* Class)
 
 FReply SDialogueBrowser::OnOpenAssetClicked(
 	UClass* Class,
-    EDialogueBlueprintOpenType OpenType,
-    FName FunctionNameToOpen
+	EDialogueBlueprintOpenType OpenType,
+	FName FunctionNameToOpen
 )
 {
 	UBlueprint* Blueprint = nullptr;
@@ -1822,12 +1822,12 @@ FReply SDialogueBrowser::OnOpenAssetClicked(
 		static constexpr bool bForceFullEditor = true;
 		static constexpr bool bAddBlueprintFunctionIfItDoesNotExist = true;
 		FDialogueEditorUtilities::OpenBlueprintEditor(
-            Blueprint,
-            OpenType,
-            FunctionNameToOpen,
-            bForceFullEditor,
-            bAddBlueprintFunctionIfItDoesNotExist
-        );
+			Blueprint,
+			OpenType,
+			FunctionNameToOpen,
+			bForceFullEditor,
+			bAddBlueprintFunctionIfItDoesNotExist
+		);
 	}
 	else if (UObject* Object = Class->GetDefaultObject())
 	{
@@ -1848,9 +1848,9 @@ FText SDialogueBrowser::GetJumpToAssetText(UClass* Class)
 
 	// Native
 	return FText::Format(
-        LOCTEXT("OpenObjectBlueprintTooltipKey", "Open Source File in {0}"),
-        FSourceCodeNavigation::GetSelectedSourceCodeIDE()
-    );
+		LOCTEXT("OpenObjectBlueprintTooltipKey", "Open Source File in {0}"),
+		FSourceCodeNavigation::GetSelectedSourceCodeIDE()
+	);
 }
 
 FText SDialogueBrowser::GetBrowseAssetText(UClass* Class)

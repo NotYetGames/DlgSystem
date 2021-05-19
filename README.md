@@ -38,9 +38,9 @@ Branch Unreal version: `4.25`
 * [🐛 CHANGELOG](Docs/CHANGELOG.md)
 * [💵 Support](#support) for how to support this project.
 * [📖 Wiki/Documentation](https://bit.ly/DlgWiki) - manual and tutorials
-* [🔢 Source Code (this Page)](https://bit.ly/DlgSource)
+* [🔢 Source Code (this Page)](https://bit.ly/DlgSource) - [Github Mirror](https://github.com/NotYetGames/DlgSystem)
 * [🛒 Marketplace **(BUY PLUGIN)**](https://bit.ly/DlgMarketplace)
-* [🏢 Example project](https://gitlab.com/NotYetGames/NotYetDlgSystemExample)
+* [🏢 Example project](http://bit.ly/NYDlgSystemExample)
 * [Forum post](https://bit.ly/DlgForum)
 * [💬 Discord](https://bit.ly/NYDiscord)
 * [Twitter](https://twitter.com/NotYetDevs)

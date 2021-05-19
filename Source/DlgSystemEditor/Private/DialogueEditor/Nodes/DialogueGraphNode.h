@@ -126,7 +126,7 @@ public:
 	/**
 	 * Called when something external to this node has changed the connection list of any of the pins in the node
 	 *   - Different from PinConnectionListChanged as this is called outside of any loops iterating over our pins allowing
-	 *     us to do things like reconstruct the node safely without trashing pins we are already iterating on
+	 *	 us to do things like reconstruct the node safely without trashing pins we are already iterating on
 	 *   - Typically called after a user induced action like making a pin connection or a pin break
 	 */
 	void NodeConnectionListChanged() override

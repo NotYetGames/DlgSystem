@@ -76,7 +76,7 @@ public:
 	 * The concession is to return a can_handled/cannot_handle
 	 * boolean rather than a full FReply.
 	 *
-	 * @param MyGeometry      The geometry of the widget receiving the event.
+	 * @param MyGeometry	  The geometry of the widget receiving the event.
 	 * @param DragDropEvent   The drag and drop event.
 	 *
 	 * @return A reply that indicated whether the contents of the DragDropEvent can potentially be processed by this widget.
@@ -93,7 +93,7 @@ public:
 	/**
 	 * Called during drag and drop when the the mouse is being dragged over a widget.
 	 *
-	 * @param MyGeometry      The geometry of the widget receiving the event.
+	 * @param MyGeometry	  The geometry of the widget receiving the event.
 	 * @param DragDropEvent   The drag and drop event.
 	 * @return A reply that indicated whether this event was handled.
 	 */
@@ -102,7 +102,7 @@ public:
 	/**
 	 * Called when the user is dropping something onto a widget; terminates drag and drop.
 	 *
-	 * @param MyGeometry      The geometry of the widget receiving the event.
+	 * @param MyGeometry	  The geometry of the widget receiving the event.
 	 * @param DragDropEvent   The drag and drop event.
 	 * @return A reply that indicated whether this event was handled.
 	 */

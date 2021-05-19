@@ -75,10 +75,10 @@ void FDialogueEvent_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStr
 
 		// Add Custom buttons
 		EventTypePropertyRow_CustomDisplay = MakeShared<FDialogueEnumTypeWithObject_CustomRowHelper>(
-            EventTypePropertyRow,
-            Dialogue,
-            ParticipantNamePropertyHandle
-        );
+			EventTypePropertyRow,
+			Dialogue,
+			ParticipantNamePropertyHandle
+		);
 		EventTypePropertyRow_CustomDisplay->SetEnumType(EDialogueEnumWithObjectType::Event);
 		EventTypePropertyRow_CustomDisplay->Update();
 	}

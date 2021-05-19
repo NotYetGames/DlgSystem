@@ -965,10 +965,10 @@ bool FDialogueEditorUtilities::PickChildrenOfClass(const FText& TitleText, UClas
 }
 
 bool FDialogueEditorUtilities::OpenBlueprintEditor(
-    UBlueprint* Blueprint,
-    EDialogueBlueprintOpenType OpenType,
-    FName FunctionNameToOpen,
-    bool bForceFullEditor,
+	UBlueprint* Blueprint,
+	EDialogueBlueprintOpenType OpenType,
+	FName FunctionNameToOpen,
+	bool bForceFullEditor,
 	bool bAddBlueprintFunctionIfItDoesNotExist
 )
 {
@@ -989,14 +989,14 @@ bool FDialogueEditorUtilities::OpenBlueprintEditor(
 		if (OpenType == EDialogueBlueprintOpenType::Function)
 		{
 			ObjectToFocusOn = bAddBlueprintFunctionIfItDoesNotExist
-                ? BlueprintGetOrAddFunction(Blueprint, FunctionNameToOpen, Class)
-                : BlueprintGetFunction(Blueprint, FunctionNameToOpen, Class);
+				? BlueprintGetOrAddFunction(Blueprint, FunctionNameToOpen, Class)
+				: BlueprintGetFunction(Blueprint, FunctionNameToOpen, Class);
 		}
 		else if (OpenType == EDialogueBlueprintOpenType::Event)
 		{
 			ObjectToFocusOn = bAddBlueprintFunctionIfItDoesNotExist
-                ? BlueprintGetOrAddEvent(Blueprint, FunctionNameToOpen, Class)
-                : BlueprintGetEvent(Blueprint, FunctionNameToOpen, Class);
+				? BlueprintGetOrAddEvent(Blueprint, FunctionNameToOpen, Class)
+				: BlueprintGetEvent(Blueprint, FunctionNameToOpen, Class);
 		}
 	}
 

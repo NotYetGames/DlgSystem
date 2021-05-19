@@ -451,10 +451,10 @@ bool FDlgConfigWriter::WriteComplexArrayToString(const FNYProperty* Property,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool FDlgConfigWriter::WriteMapToString(const FNYProperty* Property,
-									    const void* Object,
-									    const FString& PreString,
-									    const FString& PostString,
-									    FString& Target)
+										const void* Object,
+										const FString& PreString,
+										const FString& PostString,
+										FString& Target)
 {
 	const auto* MapProp = FNYReflectionHelper::CastProperty<FNYMapProperty>(Property);
 	if (MapProp == nullptr)

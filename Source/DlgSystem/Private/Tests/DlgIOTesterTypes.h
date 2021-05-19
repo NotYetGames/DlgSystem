@@ -97,6 +97,30 @@ public:
 	FString String;
 };
 
+UCLASS(DefaultToInstanced)
+class UDlgTestObjectPrimitives_DefaultToInstanced : public UDlgTestObjectPrimitivesBase
+{
+	GENERATED_BODY()
+	typedef UDlgTestObjectPrimitives_DefaultToInstanced Self;
+public:
+	UDlgTestObjectPrimitives_DefaultToInstanced() { SetToDefaults(); }
+	void GenerateRandomData(const FDlgIOTesterOptions& InOptions) override;
+	void SetToDefaults() override;
+	bool IsEqual(const Super* Other, FString& OutError) const override;
+	bool operator==(const Self& Other) const
+	{
+		FString DiscardError;
+		return IsEqual(&Other, DiscardError);
+	}
+
+public:
+	// Tester Options
+	FDlgIOTesterOptions Options;
+
+	UPROPERTY()
+	int32 InstancedChild;
+};
+
 UCLASS()
 class UDlgTestObjectPrimitives_ChildA : public UDlgTestObjectPrimitivesBase
 {
@@ -296,6 +320,9 @@ public:
 
 	UPROPERTY()
 	UDlgTestObjectPrimitivesBase* ObjectPrimitivesBase;
+
+	UPROPERTY()
+	UDlgTestObjectPrimitives_DefaultToInstanced* ObjectDefaultToInstanced;
 
 	UPROPERTY()
 	UDlgTestObjectPrimitives_ChildA* ObjectPrimitivesChildA;
@@ -577,12 +604,12 @@ public:
 	UPROPERTY()
 	TMap<FName, FColor> NameToColorMap;
 
+	UPROPERTY()
+	TMap<FString, UDlgTestObjectPrimitivesBase*> ObjectFrequentsNullsMap;
+
 	// Filled with only nulls, check if the writers support it
 	UPROPERTY()
 	TMap<FString, UDlgTestObjectPrimitivesBase*> ObjectConstantNullMap;
-
-	UPROPERTY()
-	TMap<FString, UDlgTestObjectPrimitivesBase*> ObjectFrequentsNullsMap;
 
 	UPROPERTY()
 	TMap<FString, UDlgTestObjectPrimitivesBase*> ObjectPrimitivesAllMap;

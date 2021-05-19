@@ -150,9 +150,9 @@ public:
 	static bool HasDialogueValue(EDlgConditionType Type)
 	{
 		return Type == EDlgConditionType::BoolCall
-		    || Type == EDlgConditionType::FloatCall
-		    || Type == EDlgConditionType::IntCall
-		    || Type == EDlgConditionType::NameCall;
+			|| Type == EDlgConditionType::FloatCall
+			|| Type == EDlgConditionType::IntCall
+			|| Type == EDlgConditionType::NameCall;
 	}
 
 	// Same as HasDialogueValue but also Has the Event
@@ -165,9 +165,9 @@ public:
 	static bool HasClassVariable(EDlgConditionType Type)
 	{
 		return Type == EDlgConditionType::ClassBoolVariable
-            || Type == EDlgConditionType::ClassFloatVariable
-            || Type == EDlgConditionType::ClassIntVariable
-            || Type == EDlgConditionType::ClassNameVariable;
+			|| Type == EDlgConditionType::ClassFloatVariable
+			|| Type == EDlgConditionType::ClassIntVariable
+			|| Type == EDlgConditionType::ClassNameVariable;
 	}
 
 	// Does the type for FirstType and SecondType match?
