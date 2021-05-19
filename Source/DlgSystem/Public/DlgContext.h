@@ -124,16 +124,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control")
 	bool ChooseSpeechSequenceOptionFromReplicated(int32 OptionIndex);
 
-	UE_DEPRECATED(4.22, "ChooseChildBasedOnAllOptionIndex has been deprecated in Favour of ChooseOptionBasedOnAllOptionIndex")
-	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control|All", meta = (DeprecatedFunction, DeprecationMessage = "ChooseChildBasedOnAllOptionIndex has been deprecated in Favour of ChooseOptionBasedOnAllOptionIndex"))
-	bool ChooseChildBasedOnAllOptionIndex(int32 Index) { return ChooseOptionBasedOnAllOptionIndex(Index); }
-
 	/**
-	 *  Exactly as ChooseChild but expects an index from the AllOptions array
-	 *  If the index is invalid or the selected edge is not satisfied the call fails
+	 *  Exactly as ChooseOption but expects an index from the AllOptions array
+	 *  If the index is invalid the call fails
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control|All")
-	bool ChooseOptionBasedOnAllOptionIndex(int32 Index);
+	bool ChooseOptionFromAll(int32 Index);
 
 	UE_DEPRECATED(4.22, "ReevaluateChildren has been deprecated in Favour of ReevaluateOptions")
 	UFUNCTION(BlueprintCallable, Category = "Dialogue|Control", meta = (DeprecatedFunction, DeprecationMessage = "ReevaluateChildren has been deprecated in Favour of ReevaluateOptions"))

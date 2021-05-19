@@ -78,18 +78,11 @@ bool UDlgContext::ChooseSpeechSequenceOptionFromReplicated(int32 OptionIndex)
 	return false;
 }
 
-bool UDlgContext::ChooseOptionBasedOnAllOptionIndex(int32 Index)
+bool UDlgContext::ChooseOptionFromAll(int32 Index)
 {
 	if (!AllChildren.IsValidIndex(Index))
 	{
-		LogErrorWithContext(FString::Printf(TEXT("ChooseOptionBasedOnAllOptionIndex - INVALID given Index = %d"), Index));
-		bDialogueEnded = true;
-		return false;
-	}
-
-	if (!AllChildren[Index].IsSatisfied())
-	{
-		LogErrorWithContext(FString::Printf(TEXT("ChooseOptionBasedOnAllOptionIndex - given Index = %d is an unsatisfied edge"), Index));
+		LogErrorWithContext(FString::Printf(TEXT("ChooseOptionFromAll - INVALID given Index = %d"), Index));
 		bDialogueEnded = true;
 		return false;
 	}
