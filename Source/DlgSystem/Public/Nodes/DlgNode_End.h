@@ -26,7 +26,7 @@ public:
 
 	// Begin UDlgNode Interface.
 	bool ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> AlreadyEvaluated) override { return false; }
-	bool OptionSelected(int32 OptionIndex, UDlgContext& Context) override { return false; }
+	bool OptionSelected(int32 OptionIndex, bool bFromAll, UDlgContext& Context) override { return false; }
 
 #if WITH_EDITOR
 	FString GetNodeTypeString() const override { return TEXT("End"); }

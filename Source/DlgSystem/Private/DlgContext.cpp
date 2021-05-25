@@ -53,7 +53,7 @@ bool UDlgContext::ChooseOption(int32 OptionIndex)
 	check(Dialogue);
 	if (UDlgNode* Node = GetMutableActiveNode())
 	{
-		if (Node->OptionSelected(OptionIndex, *this))
+		if (Node->OptionSelected(OptionIndex, false, *this))
 		{
 			return true;
 		}
@@ -68,7 +68,7 @@ bool UDlgContext::ChooseSpeechSequenceOptionFromReplicated(int32 OptionIndex)
 	check(Dialogue);
 	if (UDlgNode_SpeechSequence* Node = GetMutableActiveNodeAsSpeechSequence())
 	{
-		if (Node->OptionSelectedFromReplicated(OptionIndex, *this))
+		if (Node->OptionSelectedFromReplicated(OptionIndex, false, *this))
 		{
 			return true;
 		}
@@ -87,15 +87,14 @@ bool UDlgContext::ChooseOptionFromAll(int32 Index)
 		return false;
 	}
 
-	for (int32 i = 0; i < AvailableChildren.Num(); ++i)
+	if (UDlgNode* Node = GetMutableActiveNode())
 	{
-		if (AvailableChildren[i] == AllChildren[Index].GetEdge())
+		if (Node->OptionSelected(Index, true, *this))
 		{
-			return ChooseOption(i);
+			return true;
 		}
 	}
 
-	ensure(false);
 	bDialogueEnded = true;
 	return false;
 }
