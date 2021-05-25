@@ -78,7 +78,7 @@ public:
 	void UpdateTextsNamespacesAndKeys(const UDlgSystemSettings& Settings, bool bEdges, bool bUpdateGraphNode = true) override;
 	bool HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNode*> NodesEnteredWithThisStep) override;
 	bool ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> AlreadyEvaluated) override;
-	bool OptionSelected(int32 OptionIndex, UDlgContext& Context) override;
+	bool OptionSelected(int32 OptionIndex, bool bFromAll, UDlgContext& Context) override;
 
 	// Getters
 	const FText& GetNodeText() const override;
@@ -103,7 +103,7 @@ public:
 	// This is different from OptionSelected  because this just sets the ActualIndex = OptionIndex instead of incremeting
 	// the Actual Index
 	// TODO: Proper replicate ActualIndex instead of this hack and all the subnodes
-	bool OptionSelectedFromReplicated(int32 OptionIndex, UDlgContext& Context);
+	bool OptionSelectedFromReplicated(int32 OptionIndex, bool bFromAll, UDlgContext& Context);
 	int32 GetSpeechSequenceIndex() const { return ActualIndex; }
 
 	// Fills the inner edges from the corresponding  input data (SpeechSequence)

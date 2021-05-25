@@ -223,19 +223,36 @@ bool UDlgNode::HasAnySatisfiedChild(const UDlgContext& Context, TSet<const UDlgN
 	return false;
 }
 
-bool UDlgNode::OptionSelected(int32 OptionIndex, UDlgContext& Context)
+bool UDlgNode::OptionSelected(int32 OptionIndex, bool bFromAll, UDlgContext& Context)
 {
-	const TArray<FDlgEdge>& AvailableOptions = Context.GetOptionsArray();
-	if (AvailableOptions.IsValidIndex(OptionIndex))
+	if (bFromAll)
 	{
-		check(AvailableOptions[OptionIndex].IsValid());
-		return Context.EnterNode(AvailableOptions[OptionIndex].TargetIndex, {});
-	}
+		const TArray<FDlgEdgeData>& AllOptions = Context.GetAllOptionsArray();
+		if (AllOptions.IsValidIndex(OptionIndex))
+		{
+			check(AllOptions[OptionIndex].IsValid());
+			return Context.EnterNode(AllOptions[OptionIndex].GetEdge().TargetIndex, {});
+		}
 
-	FDlgLogger::Get().Errorf(
-		TEXT("OptionSelected - Failed to choose OptionIndex = %d - it only has %d valid options.\nContext:\n\t%s"),
-		OptionIndex, AvailableOptions.Num(), *Context.GetContextString()
-	);
+		FDlgLogger::Get().Errorf(
+			TEXT("OptionSelected - Failed to choose OptionIndex = %d from AllOptions - it only has %d valid options.\nContext:\n\t%s"),
+			OptionIndex, AllOptions.Num(), *Context.GetContextString()
+		);
+	}
+	else
+	{
+		const TArray<FDlgEdge>& AvailableOptions = Context.GetOptionsArray();
+		if (AvailableOptions.IsValidIndex(OptionIndex))
+		{
+			check(AvailableOptions[OptionIndex].IsValid());
+			return Context.EnterNode(AvailableOptions[OptionIndex].TargetIndex, {});
+		}
+
+		FDlgLogger::Get().Errorf(
+			TEXT("OptionSelected - Failed to choose OptionIndex = %d from AvailableOptions - it only has %d valid options.\nContext:\n\t%s"),
+			OptionIndex, AvailableOptions.Num(), *Context.GetContextString()
+		);
+	}
 	return false;
 }
 
