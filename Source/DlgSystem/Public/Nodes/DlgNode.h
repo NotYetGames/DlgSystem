@@ -87,7 +87,9 @@ public:
 	virtual bool CheckNodeEnterConditions(const UDlgContext& Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 	bool HasAnySatisfiedChild(const UDlgContext& Context, TSet<const UDlgNode*> AlreadyVisitedNodes) const;
 
-	virtual bool OptionSelected(int32 OptionIndex, UDlgContext& Context);
+	// if bFromAll = true it uses all the options (even unsatisfied)
+	// if bFromAll = false it only uses the satisfied options.
+	virtual bool OptionSelected(int32 OptionIndex, bool bFromAll, UDlgContext& Context);
 
 	//
 	// Getters/Setters:

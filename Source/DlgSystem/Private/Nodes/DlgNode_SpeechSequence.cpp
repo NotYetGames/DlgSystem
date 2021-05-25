@@ -79,7 +79,7 @@ bool UDlgNode_SpeechSequence::ReevaluateChildren(UDlgContext& Context, TSet<cons
 	return false;
 }
 
-bool UDlgNode_SpeechSequence::OptionSelected(int32 OptionIndex, UDlgContext& Context)
+bool UDlgNode_SpeechSequence::OptionSelected(int32 OptionIndex, bool bFromAll, UDlgContext& Context)
 {
 	// Actual index is valid, and not the last node in the speech sequence, increment
 	if (ActualIndex >= 0 && ActualIndex < SpeechSequence.Num() - 1)
@@ -91,10 +91,10 @@ bool UDlgNode_SpeechSequence::OptionSelected(int32 OptionIndex, UDlgContext& Con
 	// node finished -> generate true children
 	ActualIndex = 0;
 	Super::ReevaluateChildren(Context, { this });
-	return Super::OptionSelected(OptionIndex, Context);
+	return Super::OptionSelected(OptionIndex, bFromAll, Context);
 }
 
-bool UDlgNode_SpeechSequence::OptionSelectedFromReplicated(int32 OptionIndex, UDlgContext& Context)
+bool UDlgNode_SpeechSequence::OptionSelectedFromReplicated(int32 OptionIndex, bool bFromAll, UDlgContext& Context)
 {
 	// Is the new option index valid? set that for the actual index
 	if (SpeechSequence.IsValidIndex(OptionIndex))
@@ -106,7 +106,7 @@ bool UDlgNode_SpeechSequence::OptionSelectedFromReplicated(int32 OptionIndex, UD
 	// node finished -> generate true children
 	ActualIndex = 0;
 	Super::ReevaluateChildren(Context, { this });
-	return Super::OptionSelected(OptionIndex, Context);
+	return Super::OptionSelected(OptionIndex, bFromAll, Context);
 }
 
 const FText& UDlgNode_SpeechSequence::GetNodeText() const
