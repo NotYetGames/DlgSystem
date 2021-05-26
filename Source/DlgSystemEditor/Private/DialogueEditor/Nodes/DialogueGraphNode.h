@@ -139,7 +139,7 @@ public:
 	void PinConnectionListChanged(UEdGraphPin* Pin) override;
 
 	/** Gets a list of actions that can be done to this particular node */
-#if ENGINE_MINOR_VERSION >= 24
+#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
 	void GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
 #else
 	void GetContextMenuActions(const FGraphNodeContextMenuBuilder& Context) const override;

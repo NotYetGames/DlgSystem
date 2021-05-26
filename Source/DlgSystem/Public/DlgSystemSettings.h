@@ -142,7 +142,7 @@ public:
 	bool SupportsAutoRegistration() const override { return true; }
 
 	// UObject interface
-#if ENGINE_MINOR_VERSION >= 25
+#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 25)
 	bool CanEditChange(const FProperty* InProperty) const override;
 #else
 	bool CanEditChange(const UProperty* InProperty) const override;

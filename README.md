@@ -13,7 +13,7 @@
 		- [Code Style](#code-style)
 		- [Commit messages](#commit-messages)
 
-Branch Unreal version: `4.26`
+Branch Unreal version: `5.0EA`
 
 ## Features
 

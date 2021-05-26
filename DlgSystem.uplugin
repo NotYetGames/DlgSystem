@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 14,
 	"VersionName": "14",
-	"EngineVersion" : "4.26.0",
+	"EngineVersion" : "5.0EA",
 	"FriendlyName": "Not Yet: Dialogue System",
 	"Description": "Dialogue system (with text based dialogues) and nice Editor for editing dialogues",
 	"Category": "Misc",

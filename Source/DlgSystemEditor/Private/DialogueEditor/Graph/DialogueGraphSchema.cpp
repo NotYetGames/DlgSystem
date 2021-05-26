@@ -8,7 +8,7 @@
 #include "GraphEditorActions.h"
 #include "Runtime/Launch/Resources/Version.h"
 
-#if ENGINE_MINOR_VERSION >= 24
+#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
 #include "ToolMenu.h"
 #endif
 
@@ -69,7 +69,7 @@ void UDialogueGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& Cont
 	}
 }
 
-#if ENGINE_MINOR_VERSION >= 24
+#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
 void UDialogueGraphSchema::GetContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const
 {
 	if (Context->Node && !Context->bIsDebugging)
@@ -109,7 +109,7 @@ void UDialogueGraphSchema::GetContextMenuActions(
 	// The rest of the menus are implemented in the each nodes GetContextMenuActions method
 	Super::GetContextMenuActions(CurrentGraph, InGraphNode, InGraphPin, MenuBuilder, bIsDebugging);
 }
-#endif // ENGINE_MINOR_VERSION >= 24
+#endif // ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
 
 void UDialogueGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
 {

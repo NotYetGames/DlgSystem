@@ -684,7 +684,7 @@ void FDialogueEditorUtilities::CloseOtherEditors(UObject* Asset, IAssetEditorIns
 		return;
 	}
 
-#if ENGINE_MINOR_VERSION >= 24
+#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
 	GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->CloseOtherEditors(Asset, OnlyEditor);
 #else
 	FAssetEditorManager::Get().CloseOtherEditors(Asset, OnlyEditor);
@@ -698,7 +698,7 @@ bool FDialogueEditorUtilities::OpenEditorForAsset(const UObject* Asset)
 		return false;
 	}
 
-#if ENGINE_MINOR_VERSION >= 24
+#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
 	return GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->OpenEditorForAsset(const_cast<UObject*>(Asset));
 #else
 	return FAssetEditorManager::Get().OpenEditorForAsset(const_cast<UObject*>(Asset));
@@ -712,7 +712,7 @@ IAssetEditorInstance* FDialogueEditorUtilities::FindEditorForAsset(UObject* Asse
 		return nullptr;
 	}
 
-#if ENGINE_MINOR_VERSION >= 24
+#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
 	return GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorForAsset(Asset, bFocusIfOpen);
 #else
 	return FAssetEditorManager::Get().FindEditorForAsset(Asset, bFocusIfOpen);

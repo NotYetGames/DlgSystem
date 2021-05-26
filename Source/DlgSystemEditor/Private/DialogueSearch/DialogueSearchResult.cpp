@@ -2,7 +2,6 @@
 #include "DialogueSearchResult.h"
 
 #include "Widgets/Images/SImage.h"
-#include "Toolkits/AssetEditorManager.h"
 
 #include "DialogueEditorUtilities.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"

@@ -44,7 +44,7 @@ public:
 	 * @param	Menu				The menu to append actions to.
 	 * @param	Context				The menu's context.
 	 */
-#if ENGINE_MINOR_VERSION >= 24
+#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
 	void GetContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
 #else
 	void GetContextMenuActions(

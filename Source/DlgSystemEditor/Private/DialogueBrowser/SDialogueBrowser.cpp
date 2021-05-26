@@ -2,7 +2,6 @@
 #include "SDialogueBrowser.h"
 
 #include "Editor.h"
-#include "Toolkits/AssetEditorManager.h"
 #include "Widgets/Input/SComboBox.h"
 #include "Widgets/Input/SSearchBox.h"
 #include "Widgets/Images/SImage.h"

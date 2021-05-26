@@ -7,7 +7,7 @@
 #ifndef NY_REFLECTION_TYPES
 #define NY_REFLECTION_TYPES
 
-#if ENGINE_MINOR_VERSION >= 25
+#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 25)
 // 4.25 Reflection system changes
 
 typedef FFieldClass FNYPropertyClass;
@@ -93,7 +93,7 @@ typedef UStructProperty FNYStructProperty;
 // typedef UMulticastSparseDelegateProperty FNYMulticastSparseDelegateProperty;
 typedef UEnumProperty FNYEnumProperty;
 
-#endif //  ENGINE_MINOR_VERSION >= 25
+#endif // ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 25)
 
 
 #endif // NY_REFLECTION_TYPES

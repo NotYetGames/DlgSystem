@@ -3,7 +3,6 @@
 
 #include "ConnectionDrawingPolicy.h"
 #include "PropertyHandle.h"
-#include "Toolkits/AssetEditorManager.h"
 #include "EdGraphNode_Comment.h"
 
 #include "DialogueEditor/Graph/DialogueGraph.h"

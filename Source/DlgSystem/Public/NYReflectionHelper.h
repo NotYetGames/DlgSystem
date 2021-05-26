@@ -16,7 +16,7 @@ class DLGSYSTEM_API FNYReflectionHelper
 {
 public:
 
-#if ENGINE_MINOR_VERSION >= 25
+#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 25)
 	// From 4.25 UProperties are different
 	template<typename FieldType>
 	FORCEINLINE static FieldType* CastProperty(FField* Src)
@@ -84,7 +84,7 @@ public:
 		}
 		return Result;
 	}
-#endif // ENGINE_MINOR_VERSION >= 25
+#endif // ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 25)
 
 	// Attempts to get the property VariableName from Object
 	template <typename PropertyType, typename VariableType>

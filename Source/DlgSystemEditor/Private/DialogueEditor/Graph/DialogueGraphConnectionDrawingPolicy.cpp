@@ -131,8 +131,14 @@ void FDialogueGraphConnectionDrawingPolicy::DrawConnection(
 		// Distance to consider as an overlap
 		const float QueryDistanceTriggerThresholdSquared = FMath::Square(Settings->SplineHoverTolerance + Params.WireThickness * 0.5f);
 
+#if ENGINE_MAJOR_VERSION >= 5
+		// Distance to pass the bounding box cull test. This is used for the bCloseToSpline output that can be used as a
+		// dead zone to avoid mistakes caused by missing a double-click on a connection.
+		const float QueryDistanceForCloseSquared = FMath::Square(FMath::Sqrt(QueryDistanceTriggerThresholdSquared) + Settings->SplineCloseTolerance);
+#else
 		// Distance to pass the bounding box cull test (may want to expand this later on if we want to do 'closest pin' actions that don't require an exact hit)
 		const float QueryDistanceToBoundingBoxSquared = QueryDistanceTriggerThresholdSquared;
+#endif
 
 		bool bCloseToSpline = false;
 		{
@@ -146,7 +152,11 @@ void FDialogueGraphConnectionDrawingPolicy::DrawConnection(
 			Bounds += FVector2D(P1);
 			Bounds += FVector2D(P1 - MaximumTangentContribution * P1Tangent);
 
+#if ENGINE_MAJOR_VERSION >= 5
+			bCloseToSpline = Bounds.ComputeSquaredDistanceToPoint(LocalMousePosition) < QueryDistanceForCloseSquared;
+#else
 			bCloseToSpline = Bounds.ComputeSquaredDistanceToPoint(LocalMousePosition) < QueryDistanceToBoundingBoxSquared;
+#endif
 		}
 
 		if (bCloseToSpline)
@@ -175,6 +185,22 @@ void FDialogueGraphConnectionDrawingPolicy::DrawConnection(
 			}
 
 			// Record the overlap
+#if ENGINE_MAJOR_VERSION >= 5
+			if (ClosestDistanceSquared < QueryDistanceTriggerThresholdSquared)
+			{
+				if (ClosestDistanceSquared < SplineOverlapResult.GetDistanceSquared())
+				{
+					const float SquaredDistToPin1 = (Params.AssociatedPin1 != nullptr) ? (P0 - ClosestPoint).SizeSquared() : FLT_MAX;
+					const float SquaredDistToPin2 = (Params.AssociatedPin2 != nullptr) ? (P1 - ClosestPoint).SizeSquared() : FLT_MAX;
+
+					SplineOverlapResult = FGraphSplineOverlapResult(Params.AssociatedPin1, Params.AssociatedPin2, ClosestDistanceSquared, SquaredDistToPin1, SquaredDistToPin2, true);
+				}
+			}
+			else if (ClosestDistanceSquared < QueryDistanceForCloseSquared)
+			{
+				SplineOverlapResult.SetCloseToSpline(true);
+			}
+#else
 			if (ClosestDistanceSquared < QueryDistanceTriggerThresholdSquared)
 			{
 				if (ClosestDistanceSquared < SplineOverlapResult.GetDistanceSquared())
@@ -193,10 +219,13 @@ void FDialogueGraphConnectionDrawingPolicy::DrawConnection(
 					}
 
 					// The AssociatedPin2 is the Edge pin, which is not displayed, always hover over the current NodePin
-					SplineOverlapResult = FGraphSplineOverlapResult(Params.AssociatedPin1, Params.AssociatedPin1, ClosestDistanceSquared,
-																	SquaredDistToPin1, SquaredDistToPin1);
+					SplineOverlapResult = FGraphSplineOverlapResult(
+						Params.AssociatedPin1, Params.AssociatedPin1,
+						ClosestDistanceSquared,
+						SquaredDistToPin1, SquaredDistToPin1);
 				}
 			}
+#endif // ENGINE_MAJOR_VERSION >= 5
 		}
 	}
 

@@ -16,7 +16,7 @@
 
 #include "Modules/ModuleManager.h"
 
-#if ENGINE_MINOR_VERSION >= 24
+#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
 	#define NY_ARRAY_COUNT UE_ARRAY_COUNT
 #else
 	#define NY_ARRAY_COUNT ARRAY_COUNT
