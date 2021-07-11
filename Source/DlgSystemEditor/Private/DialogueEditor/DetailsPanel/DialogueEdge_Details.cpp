@@ -103,6 +103,12 @@ void FDialogueEdge_Details::CustomizeChildren(TSharedRef<IPropertyHandle> InStru
 		GET_MEMBER_NAME_CHECKED(FDlgEdge, bIncludeInAllOptionListIfUnsatisfied)).ToSharedRef()
 	);
 	BoolPropertyRow.Visibility(CREATE_VISIBILITY_CALLBACK(&Self::GetTextVisibility));
+
+	// Node Data that can be anything set by the user
+	StructBuilder.AddProperty(StructPropertyHandle->GetChildHandle(FDlgEdge::GetMemberNameEdgeData()).ToSharedRef())
+		.Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDialogueDetailsPanelUtils::GetEdgeDataVisibility))
+		.ShouldAutoExpand(true)
+		.ShowPropertyButtons(true);
 }
 
 void FDialogueEdge_Details::HandleSpeakerStateCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo)
