@@ -254,6 +254,10 @@ public:
 	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere)
 	bool bShowNodeData = true;
 
+	// Shows the EdgeData that you can customize yourself
+	UPROPERTY(Category = "Dialogue Edge Data", Config, EditAnywhere)
+	bool bShowEdgeData = true;
+
 	// Where to display the SpeakerState FName property
 	UPROPERTY(Category = "Dialogue Node Data", Config, EditAnywhere, DisplayName = "SpeakerState Visibility")
 	EDlgSpeakerStateVisibility DialogueSpeakerStateVisibility = EDlgSpeakerStateVisibility::ShowOnNodeAndEdge;
