@@ -5,7 +5,7 @@
 #include "UObject/UnrealType.h"
 #include "UObject/Package.h"
 
-#include "NYReflectionTypes.h"
+#include "NYEngineVersionHelpers.h"
 
 /**
  * The writer will ignore properties by default that are marked DEPRECATED or TRANSIENT, see SkipFlags variable.
@@ -39,7 +39,7 @@ public:
 	virtual const FString& GetAsString() const = 0;
 
 	/** Can we skip this property from exporting? */
-	static bool CanSkipProperty(const FNYProperty* Property)
+	static bool CanSkipProperty(const FProperty* Property)
 	{
 		if (!Property)
 		{
@@ -61,7 +61,7 @@ public:
 	}
 
 	/** Should  write one item per line for Property? */
-	static bool CanWriteOneLinePerItem(const FNYProperty* Property)
+	static bool CanWriteOneLinePerItem(const FProperty* Property)
 	{
 #if WITH_EDITOR
 		return Property && Property->HasMetaData(TEXT("DlgLinePerItem"));
@@ -71,7 +71,7 @@ public:
 	}
 
 	/** Should write the index number for Property? */
-	static bool CanWriteIndex(const FNYProperty* Property)
+	static bool CanWriteIndex(const FProperty* Property)
 	{
 #if WITH_EDITOR
 		return Property && Property->HasMetaData(TEXT("DlgWriteIndex"));
@@ -81,10 +81,10 @@ public:
 	}
 
 	/** Decides if the path to the object should be serialized, or the object itself */
-	virtual bool CanSaveAsReference(const FNYProperty* Property, const UObject* Object)
+	virtual bool CanSaveAsReference(const FProperty* Property, const UObject* Object)
 	{
 		// UClass
-		if (Property && Property->IsA<FNYClassProperty>())
+		if (Property && Property->IsA<FClassProperty>())
 		{
 			return true;
 		}

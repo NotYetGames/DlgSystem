@@ -140,7 +140,7 @@ public:
 
 	/**
 	 * This alternate version of PostEditChange is called when properties inside structs are modified.  The property that was actually modified
-	 * is located at the tail of the list.  The head of the list of the FNYStructProperty member variable that contains the property that was modified.
+	 * is located at the tail of the list.  The head of the list of the FStructProperty member variable that contains the property that was modified.
 	 */
 	void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent) override;
 

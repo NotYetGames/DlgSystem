@@ -32,11 +32,7 @@ FText UDlgSystemSettings::GetSectionDescription() const
 }
 
 
-#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 25)
 bool UDlgSystemSettings::CanEditChange(const FProperty* InProperty) const
-#else
-bool UDlgSystemSettings::CanEditChange(const UProperty* InProperty) const
-#endif
 {
 	const bool bIsEditable = Super::CanEditChange(InProperty);
 	if (bIsEditable && InProperty)

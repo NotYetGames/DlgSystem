@@ -10,7 +10,7 @@
 
 #include "DlgCondition.h"
 #include "DlgEvent.h"
-#include "NYReflectionTypes.h"
+#include "NYEngineVersionHelpers.h"
 
 #include "DlgHelper.generated.h"
 
@@ -37,7 +37,7 @@ class FDlgConstScriptArrayHelper : public FScriptArrayHelper
 	typedef FScriptArrayHelper Super;
 	typedef FDlgConstScriptArrayHelper Self;
 public:
-	FORCEINLINE FDlgConstScriptArrayHelper(const FNYArrayProperty* InProperty, const void *InArray)
+	FORCEINLINE FDlgConstScriptArrayHelper(const FArrayProperty* InProperty, const void *InArray)
 		: Super(InProperty, InArray) {}
 
 	FORCEINLINE const uint8* GetConstRawPtr(int32 Index = 0) const
@@ -54,7 +54,7 @@ class FDlgConstScriptMapHelper : public FScriptMapHelper
 	typedef FDlgConstScriptMapHelper Self;
 public:
 
-	FORCEINLINE FDlgConstScriptMapHelper(const FNYMapProperty* InProperty, const void* InMap)
+	FORCEINLINE FDlgConstScriptMapHelper(const FMapProperty* InProperty, const void* InMap)
 		: Super(InProperty, InMap) {}
 
 

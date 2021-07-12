@@ -151,7 +151,7 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 		case EDlgTextArgumentType::ClassInt:
 			FNYReflectionHelper::GetVariableNames(
 				Dialogue->GetParticipantClass(ParticipantName),
-				FNYIntProperty::StaticClass(),
+				FIntProperty::StaticClass(),
 				Suggestions,
 				GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses
 			);
@@ -174,7 +174,7 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 			{
 				FNYReflectionHelper::GetVariableNames(
 					Dialogue->GetParticipantClass(ParticipantName),
-					FNYFloatProperty::StaticClass(),
+					FFloatProperty::StaticClass(),
 					Suggestions,
 					GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses
 				);
@@ -186,7 +186,7 @@ TArray<FName> FDialogueTextArgument_Details::GetDialogueVariableNames(bool bCurr
 			{
 				FNYReflectionHelper::GetVariableNames(
 					Dialogue->GetParticipantClass(ParticipantName),
-					FNYTextProperty::StaticClass(),
+					FTextProperty::StaticClass(),
 					Suggestions,
 					GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses
 				);

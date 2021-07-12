@@ -10,6 +10,7 @@
 #include "Nodes/DlgNode_Selector.h"
 #include "Nodes/DlgNode_SpeechSequence.h"
 #include "DialogueGraphNode_Base.h"
+#include "NYEngineVersionHelpers.h"
 
 #include "DialogueGraphNode.generated.h"
 
@@ -88,7 +89,7 @@ public:
 
 	/**
 	 * This alternate version of PostEditChange is called when properties inside structs are modified.  The property that was actually modified
-	 * is located at the tail of the list.  The head of the list of the FNYStructProperty member variable that contains the property that was modified.
+	 * is located at the tail of the list.  The head of the list of the FStructProperty member variable that contains the property that was modified.
 	 */
 	void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent) override;
 
@@ -139,7 +140,7 @@ public:
 	void PinConnectionListChanged(UEdGraphPin* Pin) override;
 
 	/** Gets a list of actions that can be done to this particular node */
-#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
+#if NY_ENGINE_VERSION >= 424
 	void GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
 #else
 	void GetContextMenuActions(const FGraphNodeContextMenuBuilder& Context) const override;

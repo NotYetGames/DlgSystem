@@ -8,7 +8,7 @@
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "Runtime/Launch/Resources/Version.h"
 
-#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
+#if NY_ENGINE_VERSION >= 424
 #include "ToolMenu.h"
 #endif
 
@@ -198,7 +198,7 @@ void UDialogueGraphNode::PinConnectionListChanged(UEdGraphPin* Pin)
 	}
 }
 
-#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
+#if NY_ENGINE_VERSION >= 424
 void UDialogueGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const
 {
 	// These actions (commands) are handled and registered in the FDialogueEditor class
@@ -252,7 +252,7 @@ void UDialogueGraphNode::GetContextMenuActions(const FGraphNodeContextMenuBuilde
 		Context.MenuBuilder->EndSection();
 	}
 }
-#endif // #if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
+#endif // NY_ENGINE_VERSION >= 424
 
 void UDialogueGraphNode::AutowireNewNode(UEdGraphPin* FromPin)
 {

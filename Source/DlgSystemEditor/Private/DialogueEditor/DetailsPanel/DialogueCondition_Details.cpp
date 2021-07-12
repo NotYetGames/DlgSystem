@@ -401,7 +401,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 		{
 			FNYReflectionHelper::GetVariableNames(
 				Dialogue->GetParticipantClass(ParticipantName),
-				FNYBoolProperty::StaticClass(),
+				FBoolProperty::StaticClass(),
 				Suggestions,
 				GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses
 			);
@@ -426,7 +426,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 		{
 			FNYReflectionHelper::GetVariableNames(
 				Dialogue->GetParticipantClass(ParticipantName),
-				FNYFloatProperty::StaticClass(),
+				FFloatProperty::StaticClass(),
 				Suggestions,
 				GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses
 			);
@@ -450,7 +450,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 		{
 			FNYReflectionHelper::GetVariableNames(
 				Dialogue->GetParticipantClass(ParticipantName),
-				FNYIntProperty::StaticClass(),
+				FIntProperty::StaticClass(),
 				Suggestions,
 				GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses
 			);
@@ -474,7 +474,7 @@ TArray<FName> FDialogueCondition_Details::GetCallbackNamesForParticipant(bool bC
 		{
 			FNYReflectionHelper::GetVariableNames(
 				Dialogue->GetParticipantClass(ParticipantName),
-				FNYNameProperty::StaticClass(),
+				FNameProperty::StaticClass(),
 				Suggestions,
 				GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses
 			);

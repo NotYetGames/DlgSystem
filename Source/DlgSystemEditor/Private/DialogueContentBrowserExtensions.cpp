@@ -99,7 +99,7 @@ public:
 	/** Returns whether the specified Item passes the Filter's restrictions */
 	bool PassesFilter(FAssetFilterType InItem) const override
 	{
-#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 26)
+#if NY_ENGINE_VERSION >= 426
 		FAssetData ItemAssetData;
 		if (!InItem.Legacy_TryGetAssetData(ItemAssetData))
 		{
@@ -120,7 +120,7 @@ public:
 		{
 			return UDlgManager::DoesObjectImplementDialogueParticipantInterface(Object);
 		}
-#endif // ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 26)
+#endif // NY_ENGINE_VERSION >= 426
 
 		return false;
 	}

@@ -439,7 +439,7 @@ void FDialogueEditor::SetDialogueBeingEdited(UDlgDialogue* NewDialogue)
 	// Update the asset picker to select the new active dialogue
 }
 
-void FDialogueEditor::NotifyPostChange(const FPropertyChangedEvent& PropertyChangedEvent, FNYProperty* PropertyThatChanged)
+void FDialogueEditor::NotifyPostChange(const FPropertyChangedEvent& PropertyChangedEvent, FProperty* PropertyThatChanged)
 {
 	if (GraphEditorView.IsValid() && PropertyChangedEvent.ChangeType != EPropertyChangeType::Interactive)
 	{

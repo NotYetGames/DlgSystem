@@ -589,7 +589,7 @@ void UDlgManager::GatherParticipantsRecursive(UObject* Object, TArray<UObject*>&
 	// Gather recursive from children
 	for (auto* Property = Object->GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 	{
-		if (auto* ObjectProperty = FNYReflectionHelper::CastProperty<FNYObjectProperty>(Property))
+		if (auto* ObjectProperty = FNYReflectionHelper::CastProperty<FObjectProperty>(Property))
 		{
 			GatherParticipantsRecursive(ObjectProperty->GetPropertyValue_InContainer(Object), Array, AlreadyVisited);
 		}

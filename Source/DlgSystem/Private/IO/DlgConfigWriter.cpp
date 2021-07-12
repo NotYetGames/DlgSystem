@@ -43,13 +43,13 @@ void FDlgConfigWriter::WriteComplexMembersToString(const UStruct* StructDefiniti
 	}
 
 	// order
-	TArray<const FNYProperty*> Primitives;
-	TArray<const FNYProperty*> PrimitiveContainers;
-	TArray<const FNYProperty*> ComplexElements;
-	TArray<const FNYProperty*> ComplexContainers;
+	TArray<const FProperty*> Primitives;
+	TArray<const FProperty*> PrimitiveContainers;
+	TArray<const FProperty*> ComplexElements;
+	TArray<const FProperty*> ComplexContainers;
 
 	constexpr int32 PropCategoryNum = 4;
-	TArray<const FNYProperty*>* PropCategory[PropCategoryNum] = { &Primitives, &PrimitiveContainers, &ComplexElements, &ComplexContainers };
+	TArray<const FProperty*>* PropCategory[PropCategoryNum] = { &Primitives, &PrimitiveContainers, &ComplexElements, &ComplexContainers };
 
 	// Handle UObject inheritance (children of class)
 	if (StructDefinition->IsA<UClass>())
@@ -68,7 +68,7 @@ void FDlgConfigWriter::WriteComplexMembersToString(const UStruct* StructDefiniti
 	}
 
 	// Populate categories
-	for (TFieldIterator<FNYProperty> It(StructDefinition); It; ++It)
+	for (TFieldIterator<FProperty> It(StructDefinition); It; ++It)
 	{
 		const auto* Property = *It;
 		if (IsPrimitive(Property))
@@ -104,7 +104,7 @@ void FDlgConfigWriter::WriteComplexMembersToString(const UStruct* StructDefiniti
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool FDlgConfigWriter::WritePropertyToString(const FNYProperty* Property,
+bool FDlgConfigWriter::WritePropertyToString(const FProperty* Property,
 											 const void* Object,
 											 bool bContainerElement,
 											 const FString& PreString,
@@ -157,7 +157,7 @@ bool FDlgConfigWriter::WritePropertyToString(const FNYProperty* Property,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool FDlgConfigWriter::WritePrimitiveElementToString(const FNYProperty* Property,
+bool FDlgConfigWriter::WritePrimitiveElementToString(const FProperty* Property,
 													 const void* Object,
 													 bool bInContainer,
 													 const FString& PreS,
@@ -165,31 +165,31 @@ bool FDlgConfigWriter::WritePrimitiveElementToString(const FNYProperty* Property
 													 FString& Target)
 {
 	// Try every possible primitive type
-	if (WritePrimitiveElementToStringTemplated<FNYBoolProperty, bool>(Property, Object, bInContainer, BoolToString, PreS, PostS, Target))
+	if (WritePrimitiveElementToStringTemplated<FBoolProperty, bool>(Property, Object, bInContainer, BoolToString, PreS, PostS, Target))
 	{
 		return true;
 	}
-	if (WritePrimitiveElementToStringTemplated<FNYIntProperty, int32>(Property, Object, bInContainer, IntToString, PreS, PostS, Target))
+	if (WritePrimitiveElementToStringTemplated<FIntProperty, int32>(Property, Object, bInContainer, IntToString, PreS, PostS, Target))
 	{
 		return true;
 	}
-	if (WritePrimitiveElementToStringTemplated<FNYInt64Property, int64>(Property, Object, bInContainer, IntToString, PreS, PostS, Target))
+	if (WritePrimitiveElementToStringTemplated<FInt64Property, int64>(Property, Object, bInContainer, IntToString, PreS, PostS, Target))
 	{
 		return true;
 	}
-	if (WritePrimitiveElementToStringTemplated<FNYFloatProperty, float>(Property, Object, bInContainer, FloatToString, PreS, PostS, Target))
+	if (WritePrimitiveElementToStringTemplated<FFloatProperty, float>(Property, Object, bInContainer, FloatToString, PreS, PostS, Target))
 	{
 		return true;
 	}
-	if (WritePrimitiveElementToStringTemplated<FNYStrProperty, FString>(Property, Object, bInContainer, StringToString, PreS, PostS, Target))
+	if (WritePrimitiveElementToStringTemplated<FStrProperty, FString>(Property, Object, bInContainer, StringToString, PreS, PostS, Target))
 	{
 		return true;
 	}
-	if (WritePrimitiveElementToStringTemplated<FNYNameProperty, FName>(Property, Object, bInContainer, NameToString, PreS, PostS, Target))
+	if (WritePrimitiveElementToStringTemplated<FNameProperty, FName>(Property, Object, bInContainer, NameToString, PreS, PostS, Target))
 	{
 		return true;
 	}
-	if (WritePrimitiveElementToStringTemplated<FNYTextProperty, FText>(Property, Object, bInContainer, TextToString, PreS, PostS, Target))
+	if (WritePrimitiveElementToStringTemplated<FTextProperty, FText>(Property, Object, bInContainer, TextToString, PreS, PostS, Target))
 	{
 		return true;
 	}
@@ -197,7 +197,7 @@ bool FDlgConfigWriter::WritePrimitiveElementToString(const FNYProperty* Property
 	// TODO: enum in container - why isn't it implemented in the reader?
 	if (!bInContainer)
 	{
-		const auto* EnumProp = FNYReflectionHelper::CastProperty<FNYEnumProperty>(Property);
+		const auto* EnumProp = FNYReflectionHelper::CastProperty<FEnumProperty>(Property);
 		if (EnumProp != nullptr)
 		{
 			const void* Value = EnumProp->ContainerPtrToValuePtr<uint8>(Object);
@@ -211,44 +211,44 @@ bool FDlgConfigWriter::WritePrimitiveElementToString(const FNYProperty* Property
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool FDlgConfigWriter::WritePrimitiveArrayToString(const FNYProperty* Property,
+bool FDlgConfigWriter::WritePrimitiveArrayToString(const FProperty* Property,
 												   const void* Object,
 												   const FString& PreString,
 												   const FString& PostString,
 												   FString& Target)
 {
-	const auto* ArrayProp = FNYReflectionHelper::CastProperty<FNYArrayProperty>(Property);
+	const auto* ArrayProp = FNYReflectionHelper::CastProperty<FArrayProperty>(Property);
 	if (ArrayProp == nullptr)
 	{
 		return false;
 	}
 
 	// Try every possible primitive array type
-	if (WritePrimitiveArrayToStringTemplated<FNYBoolProperty, bool>(ArrayProp, Object, BoolToString, PreString, PostString, Target))
+	if (WritePrimitiveArrayToStringTemplated<FBoolProperty, bool>(ArrayProp, Object, BoolToString, PreString, PostString, Target))
 	{
 		return true;
 	}
-	if (WritePrimitiveArrayToStringTemplated<FNYIntProperty, int32>(ArrayProp, Object, IntToString, PreString, PostString, Target))
+	if (WritePrimitiveArrayToStringTemplated<FIntProperty, int32>(ArrayProp, Object, IntToString, PreString, PostString, Target))
 	{
 		return true;
 	}
-	if (WritePrimitiveArrayToStringTemplated<FNYInt64Property, int64>(ArrayProp, Object, IntToString, PreString, PostString, Target))
+	if (WritePrimitiveArrayToStringTemplated<FInt64Property, int64>(ArrayProp, Object, IntToString, PreString, PostString, Target))
 	{
 		return true;
 	}
-	if (WritePrimitiveArrayToStringTemplated<FNYFloatProperty, float>(ArrayProp, Object, FloatToString, PreString, PostString, Target))
+	if (WritePrimitiveArrayToStringTemplated<FFloatProperty, float>(ArrayProp, Object, FloatToString, PreString, PostString, Target))
 	{
 		return true;
 	}
-	if (WritePrimitiveArrayToStringTemplated<FNYStrProperty, FString>(ArrayProp, Object, StringToString, PreString, PostString, Target))
+	if (WritePrimitiveArrayToStringTemplated<FStrProperty, FString>(ArrayProp, Object, StringToString, PreString, PostString, Target))
 	{
 		return true;
 	}
-	if (WritePrimitiveArrayToStringTemplated<FNYNameProperty, FName>(ArrayProp, Object, NameToString, PreString, PostString, Target))
+	if (WritePrimitiveArrayToStringTemplated<FNameProperty, FName>(ArrayProp, Object, NameToString, PreString, PostString, Target))
 	{
 		return true;
 	}
-	if (WritePrimitiveArrayToStringTemplated<FNYTextProperty, FText>(ArrayProp, Object, TextToString, PreString, PostString, Target))
+	if (WritePrimitiveArrayToStringTemplated<FTextProperty, FText>(ArrayProp, Object, TextToString, PreString, PostString, Target))
 	{
 		return true;
 	}
@@ -257,7 +257,7 @@ bool FDlgConfigWriter::WritePrimitiveArrayToString(const FNYProperty* Property,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool FDlgConfigWriter::WriteComplexElementToString(const FNYProperty* Property,
+bool FDlgConfigWriter::WriteComplexElementToString(const FProperty* Property,
 												   const void* Object,
 												   bool bContainerElement,
 												   const FString& PreString,
@@ -271,7 +271,7 @@ bool FDlgConfigWriter::WriteComplexElementToString(const FNYProperty* Property,
 	}
 
 	// UStruct
-	if (const auto* StructProperty = FNYReflectionHelper::CastProperty<FNYStructProperty>(Property))
+	if (const auto* StructProperty = FNYReflectionHelper::CastProperty<FStructProperty>(Property))
 	{
 		const void* StructObject = StructProperty->ContainerPtrToValuePtr<void>(Object, 0);
 		if (StructObject == nullptr)
@@ -291,7 +291,7 @@ bool FDlgConfigWriter::WriteComplexElementToString(const FNYProperty* Property,
 	}
 
 	// UObject
-	if (const auto* ObjectProperty = FNYReflectionHelper::CastProperty<FNYObjectProperty>(Property))
+	if (const auto* ObjectProperty = FNYReflectionHelper::CastProperty<FObjectProperty>(Property))
 	{
 		UObject** ObjPtrPtr = ((UObject**)ObjectProperty->ContainerPtrToValuePtr<void>(Object, 0));
 		const FString Path = *ObjPtrPtr != nullptr ? (*ObjPtrPtr)->GetPathName() : "";
@@ -337,7 +337,7 @@ bool FDlgConfigWriter::WriteComplexElementToString(const FNYProperty* Property,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void FDlgConfigWriter::WriteComplexToString(const UStruct* StructDefinition,
-											const FNYProperty* Property,
+											const FProperty* Property,
 											const void* Object,
 											const FString& PreString,
 											const FString& PostString,
@@ -390,19 +390,19 @@ void FDlgConfigWriter::WriteComplexToString(const UStruct* StructDefinition,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool FDlgConfigWriter::WriteComplexArrayToString(const FNYProperty* Property,
+bool FDlgConfigWriter::WriteComplexArrayToString(const FProperty* Property,
 												 const void* Object,
 												 const FString& PreString,
 												 const FString& PostString,
 												 FString& Target)
 {
-	const auto* ArrayProp = FNYReflectionHelper::CastProperty<FNYArrayProperty>(Property);
+	const auto* ArrayProp = FNYReflectionHelper::CastProperty<FArrayProperty>(Property);
 	if (ArrayProp == nullptr)
 	{
 		return false;
 	}
-	if (FNYReflectionHelper::CastProperty<FNYStructProperty>(ArrayProp->Inner) == nullptr
-		&& FNYReflectionHelper::CastProperty<FNYObjectProperty>(ArrayProp->Inner) == nullptr)
+	if (FNYReflectionHelper::CastProperty<FStructProperty>(ArrayProp->Inner) == nullptr
+		&& FNYReflectionHelper::CastProperty<FObjectProperty>(ArrayProp->Inner) == nullptr)
 	{
 		return false;
 	}
@@ -416,7 +416,7 @@ bool FDlgConfigWriter::WriteComplexArrayToString(const FNYProperty* Property,
 
 	const bool bWriteIndex = CanWriteIndex(Property);
 	FString TypeText = "";
-	auto* ObjProp = FNYReflectionHelper::CastProperty<FNYObjectProperty>(ArrayProp->Inner);
+	auto* ObjProp = FNYReflectionHelper::CastProperty<FObjectProperty>(ArrayProp->Inner);
 	if (ObjProp != nullptr && ObjProp->PropertyClass != nullptr)
 	{
 		TypeText = GetStringWithoutPrefix(ObjProp->PropertyClass->GetName()) + " ";
@@ -450,13 +450,13 @@ bool FDlgConfigWriter::WriteComplexArrayToString(const FNYProperty* Property,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool FDlgConfigWriter::WriteMapToString(const FNYProperty* Property,
+bool FDlgConfigWriter::WriteMapToString(const FProperty* Property,
 										const void* Object,
 										const FString& PreString,
 										const FString& PostString,
 										FString& Target)
 {
-	const auto* MapProp = FNYReflectionHelper::CastProperty<FNYMapProperty>(Property);
+	const auto* MapProp = FNYReflectionHelper::CastProperty<FMapProperty>(Property);
 	if (MapProp == nullptr)
 	{
 		return false;
@@ -514,13 +514,13 @@ bool FDlgConfigWriter::WriteMapToString(const FNYProperty* Property,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool FDlgConfigWriter::WriteSetToString(const FNYProperty* Property,
+bool FDlgConfigWriter::WriteSetToString(const FProperty* Property,
 										const void* Object,
 										const FString& PreString,
 										const FString& PostString,
 										FString& Target)
 {
-	const auto* SetProp = FNYReflectionHelper::CastProperty<FNYSetProperty>(Property);
+	const auto* SetProp = FNYReflectionHelper::CastProperty<FSetProperty>(Property);
 	if (SetProp == nullptr)
 	{
 		return false;
@@ -584,45 +584,45 @@ bool FDlgConfigWriter::WriteSetToString(const FNYProperty* Property,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool FDlgConfigWriter::IsPrimitive(const FNYProperty* Property)
+bool FDlgConfigWriter::IsPrimitive(const FProperty* Property)
 {
-	return FNYReflectionHelper::CastProperty<FNYBoolProperty>(Property) != nullptr ||
-		   FNYReflectionHelper::CastProperty<FNYIntProperty>(Property) != nullptr ||
-		   FNYReflectionHelper::CastProperty<FNYInt64Property>(Property) != nullptr ||
-		   FNYReflectionHelper::CastProperty<FNYFloatProperty>(Property) != nullptr ||
-		   FNYReflectionHelper::CastProperty<FNYStrProperty>(Property) != nullptr ||
-		   FNYReflectionHelper::CastProperty<FNYNameProperty>(Property) != nullptr ||
-		   FNYReflectionHelper::CastProperty<FNYTextProperty>(Property) != nullptr ||
-		   FNYReflectionHelper::CastProperty<FNYEnumProperty>(Property) != nullptr;
+	return FNYReflectionHelper::CastProperty<FBoolProperty>(Property) != nullptr ||
+		   FNYReflectionHelper::CastProperty<FIntProperty>(Property) != nullptr ||
+		   FNYReflectionHelper::CastProperty<FInt64Property>(Property) != nullptr ||
+		   FNYReflectionHelper::CastProperty<FFloatProperty>(Property) != nullptr ||
+		   FNYReflectionHelper::CastProperty<FStrProperty>(Property) != nullptr ||
+		   FNYReflectionHelper::CastProperty<FNameProperty>(Property) != nullptr ||
+		   FNYReflectionHelper::CastProperty<FTextProperty>(Property) != nullptr ||
+		   FNYReflectionHelper::CastProperty<FEnumProperty>(Property) != nullptr;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool FDlgConfigWriter::IsContainer(const FNYProperty* Property)
+bool FDlgConfigWriter::IsContainer(const FProperty* Property)
 {
-	return FNYReflectionHelper::CastProperty<FNYArrayProperty>(Property) != nullptr ||
-		   FNYReflectionHelper::CastProperty<FNYMapProperty>(Property) != nullptr ||
-		   FNYReflectionHelper::CastProperty<FNYSetProperty>(Property) != nullptr;
+	return FNYReflectionHelper::CastProperty<FArrayProperty>(Property) != nullptr ||
+		   FNYReflectionHelper::CastProperty<FMapProperty>(Property) != nullptr ||
+		   FNYReflectionHelper::CastProperty<FSetProperty>(Property) != nullptr;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool FDlgConfigWriter::IsPrimitiveContainer(const FNYProperty* Property)
+bool FDlgConfigWriter::IsPrimitiveContainer(const FProperty* Property)
 {
 	// Array
-	if (FNYReflectionHelper::CastProperty<FNYArrayProperty>(Property) != nullptr
-		&& IsPrimitive(FNYReflectionHelper::CastProperty<FNYArrayProperty>(Property)->Inner))
+	if (FNYReflectionHelper::CastProperty<FArrayProperty>(Property) != nullptr
+		&& IsPrimitive(FNYReflectionHelper::CastProperty<FArrayProperty>(Property)->Inner))
 	{
 		return true;
 	}
 
 	// Map
-	if (FNYReflectionHelper::CastProperty<FNYMapProperty>(Property) != nullptr &&
-		IsPrimitive(FNYReflectionHelper::CastProperty<FNYMapProperty>(Property)->KeyProp) &&
-		IsPrimitive(FNYReflectionHelper::CastProperty<FNYMapProperty>(Property)->ValueProp))
+	if (FNYReflectionHelper::CastProperty<FMapProperty>(Property) != nullptr &&
+		IsPrimitive(FNYReflectionHelper::CastProperty<FMapProperty>(Property)->KeyProp) &&
+		IsPrimitive(FNYReflectionHelper::CastProperty<FMapProperty>(Property)->ValueProp))
 	{
 		return true;
 	}
 
 	// Set
-	if (FNYReflectionHelper::CastProperty<FNYSetProperty>(Property) != nullptr
-		&& IsPrimitive(FNYReflectionHelper::CastProperty<FNYSetProperty>(Property)->ElementProp))
+	if (FNYReflectionHelper::CastProperty<FSetProperty>(Property) != nullptr
+		&& IsPrimitive(FNYReflectionHelper::CastProperty<FSetProperty>(Property)->ElementProp))
 	{
 		return true;
 	}
@@ -630,14 +630,14 @@ bool FDlgConfigWriter::IsPrimitiveContainer(const FNYProperty* Property)
 	return false;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const UStruct* FDlgConfigWriter::GetComplexType(const FNYProperty* Property)
+const UStruct* FDlgConfigWriter::GetComplexType(const FProperty* Property)
 {
-	if (const auto* StructProperty = FNYReflectionHelper::CastProperty<FNYStructProperty>(Property))
+	if (const auto* StructProperty = FNYReflectionHelper::CastProperty<FStructProperty>(Property))
 	{
 		return StructProperty->Struct;
 	}
 
-	if (const auto* ObjectProperty = FNYReflectionHelper::CastProperty<FNYObjectProperty>(Property))
+	if (const auto* ObjectProperty = FNYReflectionHelper::CastProperty<FObjectProperty>(Property))
 	{
 		return ObjectProperty->PropertyClass;
 	}
@@ -652,7 +652,7 @@ bool FDlgConfigWriter::WouldWriteNonPrimitive(const UStruct* StructDefinition, c
 		return false;
 	}
 
-	for (TFieldIterator<const FNYProperty> It(StructDefinition); It; ++It)
+	for (TFieldIterator<const FProperty> It(StructDefinition); It; ++It)
 	{
 		const auto* Property = *It;
 
@@ -665,7 +665,7 @@ bool FDlgConfigWriter::WouldWriteNonPrimitive(const UStruct* StructDefinition, c
 		if (IsContainer(Property))
 		{
 			// Map
-			if (const auto* MapProperty = FNYReflectionHelper::CastProperty<FNYMapProperty>(Property))
+			if (const auto* MapProperty = FNYReflectionHelper::CastProperty<FMapProperty>(Property))
 			{
 				const FScriptMapHelper Helper(MapProperty, Property->ContainerPtrToValuePtr<uint8>(Owner));
 				if (Helper.Num() > 0)
@@ -675,7 +675,7 @@ bool FDlgConfigWriter::WouldWriteNonPrimitive(const UStruct* StructDefinition, c
 			}
 
 			// Array
-			if (const auto* ArrayProperty = FNYReflectionHelper::CastProperty<FNYArrayProperty>(Property))
+			if (const auto* ArrayProperty = FNYReflectionHelper::CastProperty<FArrayProperty>(Property))
 			{
 				const FScriptArrayHelper Helper(ArrayProperty, Property->ContainerPtrToValuePtr<uint8>(Owner));
 				if (Helper.Num() > 0)
@@ -685,7 +685,7 @@ bool FDlgConfigWriter::WouldWriteNonPrimitive(const UStruct* StructDefinition, c
 			}
 
 			// Set
-			if (const auto* SetProperty = FNYReflectionHelper::CastProperty<FNYSetProperty>(Property))
+			if (const auto* SetProperty = FNYReflectionHelper::CastProperty<FSetProperty>(Property))
 			{
 				const FScriptSetHelper Helper(SetProperty, Property->ContainerPtrToValuePtr<uint8>(Owner));
 				if (Helper.Num() > 0)
@@ -696,12 +696,12 @@ bool FDlgConfigWriter::WouldWriteNonPrimitive(const UStruct* StructDefinition, c
 		}
 		else
 		{
-			if (FNYReflectionHelper::CastProperty<FNYStructProperty>(Property) != nullptr)
+			if (FNYReflectionHelper::CastProperty<FStructProperty>(Property) != nullptr)
 			{
 				return true;
 			}
 
-			if (const auto* ObjectProperty = FNYReflectionHelper::CastProperty<FNYObjectProperty>(Property))
+			if (const auto* ObjectProperty = FNYReflectionHelper::CastProperty<FObjectProperty>(Property))
 			{
 				UObject** ObjPtrPtr = ((UObject**)ObjectProperty->ContainerPtrToValuePtr<void>(Owner, 0));
 				if (ObjPtrPtr != nullptr && !CanSaveAsReference(Property, *ObjPtrPtr))
@@ -714,14 +714,14 @@ bool FDlgConfigWriter::WouldWriteNonPrimitive(const UStruct* StructDefinition, c
 	return false;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-FString FDlgConfigWriter::GetNameWithoutPrefix(const FNYProperty* Property, const UObject* ObjectPtr)
+FString FDlgConfigWriter::GetNameWithoutPrefix(const FProperty* Property, const UObject* ObjectPtr)
 {
-	if (const auto* StructProperty = FNYReflectionHelper::CastProperty<FNYStructProperty>(Property))
+	if (const auto* StructProperty = FNYReflectionHelper::CastProperty<FStructProperty>(Property))
 	{
 		return GetStringWithoutPrefix(StructProperty->Struct->GetName());
 	}
 
-	if (const auto* ObjectProperty = FNYReflectionHelper::CastProperty<FNYObjectProperty>(Property))
+	if (const auto* ObjectProperty = FNYReflectionHelper::CastProperty<FObjectProperty>(Property))
 	{
 		// Get the Class from the ObjectProperty
 		if (ObjectPtr == nullptr)

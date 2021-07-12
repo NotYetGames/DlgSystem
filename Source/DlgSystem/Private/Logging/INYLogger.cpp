@@ -16,13 +16,6 @@
 
 #include "Modules/ModuleManager.h"
 
-#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
-	#define NY_ARRAY_COUNT UE_ARRAY_COUNT
-#else
-	#define NY_ARRAY_COUNT ARRAY_COUNT
-#endif
-
-
 // Pulled the two FOutputDevice::Logf functions into shared code. Needs to be a #define
 // since it uses GET_VARARGS_RESULT which uses the va_list stuff which operates on the
 // current function, so we can't easily call a function

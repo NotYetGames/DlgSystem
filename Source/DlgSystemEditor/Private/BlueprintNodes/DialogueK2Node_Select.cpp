@@ -500,7 +500,7 @@ UFunction* UDialogueK2Node_Select::GetConditionalFunction()
 	// The IndexPin (select by type)  is always an String (FName), so only use that
 	const FName FunctionName = GET_FUNCTION_NAME_CHECKED(UKismetMathLibrary, EqualEqual_NameName);
 
-#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 25)
+#if NY_ENGINE_VERSION >= 425
 	return FindUField<UFunction>(UKismetMathLibrary::StaticClass(), FunctionName);
 #else
 	return FindField<UFunction>(UKismetMathLibrary::StaticClass(), FunctionName);

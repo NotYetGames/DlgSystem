@@ -131,7 +131,7 @@ void FDialogueGraphConnectionDrawingPolicy::DrawConnection(
 		// Distance to consider as an overlap
 		const float QueryDistanceTriggerThresholdSquared = FMath::Square(Settings->SplineHoverTolerance + Params.WireThickness * 0.5f);
 
-#if ENGINE_MAJOR_VERSION >= 5
+#if NY_ENGINE_VERSION >= 500
 		// Distance to pass the bounding box cull test. This is used for the bCloseToSpline output that can be used as a
 		// dead zone to avoid mistakes caused by missing a double-click on a connection.
 		const float QueryDistanceForCloseSquared = FMath::Square(FMath::Sqrt(QueryDistanceTriggerThresholdSquared) + Settings->SplineCloseTolerance);
@@ -152,7 +152,7 @@ void FDialogueGraphConnectionDrawingPolicy::DrawConnection(
 			Bounds += FVector2D(P1);
 			Bounds += FVector2D(P1 - MaximumTangentContribution * P1Tangent);
 
-#if ENGINE_MAJOR_VERSION >= 5
+#if NY_ENGINE_VERSION >= 500
 			bCloseToSpline = Bounds.ComputeSquaredDistanceToPoint(LocalMousePosition) < QueryDistanceForCloseSquared;
 #else
 			bCloseToSpline = Bounds.ComputeSquaredDistanceToPoint(LocalMousePosition) < QueryDistanceToBoundingBoxSquared;
@@ -185,7 +185,7 @@ void FDialogueGraphConnectionDrawingPolicy::DrawConnection(
 			}
 
 			// Record the overlap
-#if ENGINE_MAJOR_VERSION >= 5
+#if NY_ENGINE_VERSION >= 500
 			if (ClosestDistanceSquared < QueryDistanceTriggerThresholdSquared)
 			{
 				if (ClosestDistanceSquared < SplineOverlapResult.GetDistanceSquared())
@@ -225,7 +225,7 @@ void FDialogueGraphConnectionDrawingPolicy::DrawConnection(
 						SquaredDistToPin1, SquaredDistToPin1);
 				}
 			}
-#endif // ENGINE_MAJOR_VERSION >= 5
+#endif // NY_ENGINE_VERSION >= 500
 		}
 	}
 

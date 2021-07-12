@@ -82,16 +82,16 @@ bool FDlgCondition::IsConditionMet(const UDlgContext& Context, const UObject* Pa
 
 
 		case EDlgConditionType::ClassBoolVariable:
-			return CheckBool(Context, FNYReflectionHelper::GetVariable<FNYBoolProperty, bool>(Participant, CallbackName));
+			return CheckBool(Context, FNYReflectionHelper::GetVariable<FBoolProperty, bool>(Participant, CallbackName));
 
 		case EDlgConditionType::ClassFloatVariable:
-			return CheckFloat(Context, FNYReflectionHelper::GetVariable<FNYFloatProperty, float>(Participant, CallbackName));
+			return CheckFloat(Context, FNYReflectionHelper::GetVariable<FFloatProperty, float>(Participant, CallbackName));
 
 		case EDlgConditionType::ClassIntVariable:
-			return CheckInt(Context, FNYReflectionHelper::GetVariable<FNYIntProperty, int32>(Participant, CallbackName));
+			return CheckInt(Context, FNYReflectionHelper::GetVariable<FIntProperty, int32>(Participant, CallbackName));
 
 		case EDlgConditionType::ClassNameVariable:
-			return CheckName(Context, FNYReflectionHelper::GetVariable<FNYNameProperty, FName>(Participant, CallbackName));
+			return CheckName(Context, FNYReflectionHelper::GetVariable<FNameProperty, FName>(Participant, CallbackName));
 
 
 		case EDlgConditionType::WasNodeVisited:
@@ -132,7 +132,7 @@ bool FDlgCondition::CheckFloat(const UDlgContext& Context, float Value) const
 		}
 		else
 		{
-			ValueToCheckAgainst = FNYReflectionHelper::GetVariable<FNYFloatProperty, float>(OtherParticipant, OtherVariableName);
+			ValueToCheckAgainst = FNYReflectionHelper::GetVariable<FFloatProperty, float>(OtherParticipant, OtherVariableName);
 		}
 	}
 
@@ -182,7 +182,7 @@ bool FDlgCondition::CheckInt(const UDlgContext& Context, int32 Value) const
 		}
 		else
 		{
-			ValueToCheckAgainst = FNYReflectionHelper::GetVariable<FNYIntProperty, int32>(OtherParticipant, OtherVariableName);
+			ValueToCheckAgainst = FNYReflectionHelper::GetVariable<FIntProperty, int32>(OtherParticipant, OtherVariableName);
 		}
 	}
 
@@ -233,7 +233,7 @@ bool FDlgCondition::CheckBool(const UDlgContext& Context, bool bValue) const
 		}
 		else
 		{
-			bValueToCheckAgainst = FNYReflectionHelper::GetVariable<FNYBoolProperty, bool>(OtherParticipant, OtherVariableName);
+			bValueToCheckAgainst = FNYReflectionHelper::GetVariable<FBoolProperty, bool>(OtherParticipant, OtherVariableName);
 		}
 
 		// Check if value matches other variable
@@ -260,7 +260,7 @@ bool FDlgCondition::CheckName(const UDlgContext& Context, FName Value) const
 		}
 		else
 		{
-			ValueToCheckAgainst = FNYReflectionHelper::GetVariable<FNYNameProperty, FName>(OtherParticipant, OtherVariableName);
+			ValueToCheckAgainst = FNYReflectionHelper::GetVariable<FNameProperty, FName>(OtherParticipant, OtherVariableName);
 		}
 	}
 

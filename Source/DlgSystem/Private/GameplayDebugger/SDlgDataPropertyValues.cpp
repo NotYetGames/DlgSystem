@@ -113,31 +113,31 @@ void SDlgDataPropertyValue::UpdateVariableNodeFromActor()
 
 		case EDlgDataDisplayVariableTreeNodeType::ClassInteger:
 		{
-			const int32 Value = FNYReflectionHelper::GetVariable<FNYIntProperty, int32>(Actor.Get(), VariableName);
+			const int32 Value = FNYReflectionHelper::GetVariable<FIntProperty, int32>(Actor.Get(), VariableName);
 			VariableNode->SetVariableValue(FString::FromInt(Value));
 			break;
 		}
 		case EDlgDataDisplayVariableTreeNodeType::ClassFloat:
 		{
-			const float Value = FNYReflectionHelper::GetVariable<FNYFloatProperty, float>(Actor.Get(), VariableName);
+			const float Value = FNYReflectionHelper::GetVariable<FFloatProperty, float>(Actor.Get(), VariableName);
 			VariableNode->SetVariableValue(FString::SanitizeFloat(Value));
 			break;
 		}
 		{
 		case EDlgDataDisplayVariableTreeNodeType::ClassBool:
-			const bool Value = FNYReflectionHelper::GetVariable<FNYBoolProperty, bool>(Actor.Get(), VariableName);
+			const bool Value = FNYReflectionHelper::GetVariable<FBoolProperty, bool>(Actor.Get(), VariableName);
 			VariableNode->SetVariableValue(BoolToFString(Value));
 			break;
 		}
 		case EDlgDataDisplayVariableTreeNodeType::ClassFName:
 		{
-			const FName Value = FNYReflectionHelper::GetVariable<FNYNameProperty, FName>(Actor.Get(), VariableName);
+			const FName Value = FNYReflectionHelper::GetVariable<FNameProperty, FName>(Actor.Get(), VariableName);
 			VariableNode->SetVariableValue(Value.ToString());
 			break;
 		}
 		case EDlgDataDisplayVariableTreeNodeType::ClassFText:
 		{
-			const FText Value = FNYReflectionHelper::GetVariable<FNYTextProperty, FText>(Actor.Get(), VariableName);
+			const FText Value = FNYReflectionHelper::GetVariable<FTextProperty, FText>(Actor.Get(), VariableName);
 			VariableNode->SetVariableValue(Value.ToString());
 			break;
 		}
@@ -240,32 +240,32 @@ void SDlgDataTextPropertyValue::HandleTextCommitted(const FText& NewText, ETextC
 		case EDlgDataDisplayVariableTreeNodeType::ClassInteger:
 		{
 			const int32 Value = NewString.IsNumeric() ? FCString::Atoi(*NewString) : 0;
-			FNYReflectionHelper::SetVariable<FNYIntProperty>(Actor.Get(), VariableName, Value);
+			FNYReflectionHelper::SetVariable<FIntProperty>(Actor.Get(), VariableName, Value);
 			break;
 		}
 		case EDlgDataDisplayVariableTreeNodeType::ClassFloat:
 		{
 			const float Value = NewString.IsNumeric() ? FCString::Atof(*NewString) : 0.f;
-			FNYReflectionHelper::SetVariable<FNYFloatProperty>(Actor.Get(), VariableName, Value);
+			FNYReflectionHelper::SetVariable<FFloatProperty>(Actor.Get(), VariableName, Value);
 			break;
 		}
 		case EDlgDataDisplayVariableTreeNodeType::ClassBool:
 		{
 			const bool Value = FStringToBool(NewString);
-			FNYReflectionHelper::SetVariable<FNYBoolProperty>(Actor.Get(), VariableName, Value);
+			FNYReflectionHelper::SetVariable<FBoolProperty>(Actor.Get(), VariableName, Value);
 			break;
 		}
 		case EDlgDataDisplayVariableTreeNodeType::ClassFName:
 		{
 			const FName Value(*NewString);
-			FNYReflectionHelper::SetVariable<FNYNameProperty>(Actor.Get(), VariableName, Value);
+			FNYReflectionHelper::SetVariable<FNameProperty>(Actor.Get(), VariableName, Value);
 			break;
 		}
 
 		case EDlgDataDisplayVariableTreeNodeType::ClassFText:
 		{
 			const FText Value = FText::FromString(NewString);
-			FNYReflectionHelper::SetVariable<FNYTextProperty>(Actor.Get(), VariableName, Value);
+			FNYReflectionHelper::SetVariable<FTextProperty>(Actor.Get(), VariableName, Value);
 			break;
 		}
 
@@ -419,7 +419,7 @@ void SDlgDataBoolPropertyValue::HandleCheckStateChanged(ECheckBoxState InNewStat
 	const bool Value = InNewState == ECheckBoxState::Checked || InNewState == ECheckBoxState::Undetermined;
 	if (VariableNode->GetVariableType() == EDlgDataDisplayVariableTreeNodeType::ClassBool)
 	{
-		FNYReflectionHelper::SetVariable<FNYBoolProperty>(Actor.Get(), VariableName, Value);
+		FNYReflectionHelper::SetVariable<FBoolProperty>(Actor.Get(), VariableName, Value);
 	}
 	else
 	{

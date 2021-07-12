@@ -140,7 +140,7 @@ void UDialogueK2Node_SwitchDialogueCallback::CreateFunctionPin()
 	FunctionPin->bNotConnectable = true;
 	FunctionPin->bHidden = true;
 
-#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 25)
+#if NY_ENGINE_VERSION >= 425
 	UFunction* Function = FindUField<UFunction>(FunctionClass, FunctionName);
 #else
 	UFunction* Function = FindField<UFunction>(FunctionClass, FunctionName);

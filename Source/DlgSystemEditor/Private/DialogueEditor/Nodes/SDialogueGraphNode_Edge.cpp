@@ -150,7 +150,7 @@ void SDialogueGraphNode_Edge::UpdateGraphNode()
 		[
 			SNew(SOverlay)
 
-#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
+#if NY_ENGINE_VERSION >= 424
 			// >= 4.24
 			+SOverlay::Slot()
 			[
@@ -185,7 +185,7 @@ void SDialogueGraphNode_Edge::UpdateGraphNode()
 				SNew(SImage)
 				.Image(FEditorStyle::GetBrush("Graph.TransitionNode.Gloss"))
 			]
-#endif // ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
+#endif // NY_ENGINE_VERSION >= 424
 		];
 }
 //  End SGraphNode Interface

@@ -6,6 +6,7 @@
 #include "Runtime/Launch/Resources/Version.h"
 
 #include "Nodes/DlgNode.h"
+#include "NYEngineVersionHelpers.h"
 #include "DialogueEditorUtilities.h"
 #include "DialogueGraphConnectionDrawingPolicy.h"
 #include "SchemaActions/NewComment_DialogueGraphSchemaAction.h"
@@ -44,7 +45,7 @@ public:
 	 * @param	Menu				The menu to append actions to.
 	 * @param	Context				The menu's context.
 	 */
-#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
+#if NY_ENGINE_VERSION >= 424
 	void GetContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
 #else
 	void GetContextMenuActions(

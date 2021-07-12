@@ -12,7 +12,7 @@
 #include "DialogueEditorUtilities.h"
 #include "DlgDialogue.h"
 #include "DlgSystemSettings.h"
-#include "NYReflectionTypes.h"
+#include "NYEngineVersionHelpers.h"
 
 class IDetailsView;
 class UDlgDialogue;
@@ -168,7 +168,7 @@ private:
 	//
 	// FNotifyHook interface
 	//
-	void NotifyPostChange(const FPropertyChangedEvent& PropertyChangedEvent, FNYProperty* PropertyThatChanged) override;
+	void NotifyPostChange(const FPropertyChangedEvent& PropertyChangedEvent, FProperty* PropertyThatChanged) override;
 
 	//
 	// Own methods

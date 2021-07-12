@@ -182,15 +182,15 @@ private:
 
 
 	/** Tries to read the actual config value as a primitive property (all supported primitive is checked) */
-	bool TryToReadPrimitiveProperty(void* Target, FNYProperty* PropertyBase);
+	bool TryToReadPrimitiveProperty(void* Target, FProperty* PropertyBase);
 
-	bool TryToReadEnum(void* TargetObject, FNYProperty* PropertyBase);
-
-	/** Return value shows if it was read properly or not */
-	bool ReadSet(void* TargetObject, FNYSetProperty& Property, UObject* DefaultObjectOuter);
+	bool TryToReadEnum(void* TargetObject, FProperty* PropertyBase);
 
 	/** Return value shows if it was read properly or not */
-	bool ReadMap(void* TargetObject, FNYMapProperty& Property, UObject* DefaultObjectOuter);
+	bool ReadSet(void* TargetObject, FSetProperty& Property, UObject* DefaultObjectOuter);
+
+	/** Return value shows if it was read properly or not */
+	bool ReadMap(void* TargetObject, FMapProperty& Property, UObject* DefaultObjectOuter);
 
 	/**
 	 * Tries to read the actual config value as a Type
@@ -204,7 +204,7 @@ private:
 	 */
 	template <typename Type, typename PropertyType>
 	bool ReadPrimitiveProperty(void* Target,
-							   FNYProperty* PropertyBase,
+							   FProperty* PropertyBase,
 							   std::function<Type()> OnGetAsValue,
 							   const FString& TypeName,
 							   bool bCanBeEmpty);
@@ -223,7 +223,7 @@ private:
 	 */
 	template <typename PropertyType>
 	bool ReadComplexProperty(void* Target,
-							 FNYProperty* Property,
+							 FProperty* Property,
 							 const UStruct* ReferenceType,
 							 std::function<void*(void*, const UClass*, UObject*)> OnInitValue,
 							 UObject* Outer);
@@ -242,7 +242,7 @@ private:
 	void* OnInitObject(void* ValuePtr, const UClass* ChildClass, UObject* OuterInit);
 
 	/** gets the UClass from an UObject or from an array of UObjects */
-	const UClass* SmartGetPropertyClass(FNYProperty* Property, const FString& TypeName);
+	const UClass* SmartGetPropertyClass(FProperty* Property, const FString& TypeName);
 
 private:
 
@@ -270,7 +270,7 @@ private:
 
 template <typename Type, typename PropertyType>
 bool FDlgConfigParser::ReadPrimitiveProperty(void* Target,
-											 FNYProperty* PropertyBase,
+											 FProperty* PropertyBase,
 											 std::function<Type()> OnGetAsValue,
 											 const FString& TypeName,
 											 bool bCanBeEmpty)
@@ -281,7 +281,7 @@ bool FDlgConfigParser::ReadPrimitiveProperty(void* Target,
 	{
 		// Array
 		// No property found, let's check if there is an array with the same name
-		auto* ArrayProp = FNYReflectionHelper::CastProperty<FNYArrayProperty>(PropertyBase);
+		auto* ArrayProp = FNYReflectionHelper::CastProperty<FArrayProperty>(PropertyBase);
 
 		// SmartCastProperty gets the inner type of the array and uses dynamic_cast to cast it to the proper type
 		if (ArrayProp == nullptr || FNYReflectionHelper::SmartCastProperty<PropertyType>(ArrayProp) == nullptr)
@@ -328,7 +328,7 @@ bool FDlgConfigParser::ReadPrimitiveProperty(void* Target,
 
 template <typename PropertyType>
 bool FDlgConfigParser::ReadComplexProperty(void* Target,
-										   FNYProperty* Property,
+										   FProperty* Property,
 										   const UStruct* ReferenceType,
 										   std::function<void*(void*, const UClass*, UObject*)> OnInitValue,
 										   UObject* Outer)
@@ -336,7 +336,7 @@ bool FDlgConfigParser::ReadComplexProperty(void* Target,
 	PropertyType* ElementProp = FNYReflectionHelper::CastProperty<PropertyType>(Property);
 	if (ElementProp == nullptr)
 	{
-		auto* ArrayProp = FNYReflectionHelper::CastProperty<FNYArrayProperty>(Property);
+		auto* ArrayProp = FNYReflectionHelper::CastProperty<FArrayProperty>(Property);
 		if (ArrayProp == nullptr || FNYReflectionHelper::SmartCastProperty<PropertyType>(ArrayProp) == nullptr)
 		{
 			return false;

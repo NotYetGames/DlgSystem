@@ -22,12 +22,6 @@
 
 #define LOCTEXT_NAMESPACE "SDialogueBrowser"
 
-#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 24)
-	#define NY_ARRAY_COUNT UE_ARRAY_COUNT
-#else
-	#define NY_ARRAY_COUNT ARRAY_COUNT
-#endif
-
 FDialogueSearchManager* FDialogueSearchManager::Instance = nullptr;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1060,7 +1054,7 @@ void FDialogueSearchManager::EnableGlobalFindResults(TSharedPtr<FWorkspaceItem> 
 		const FName TabID = GlobalFindResultsTabIDs[TabIdx];
 
 		// Tab not registered yet, good.
-#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 23)
+#if NY_ENGINE_VERSION >= 423
 		if (!GlobalTabManager->HasTabSpawner(TabID))
 #else
 		if (!GlobalTabManager->CanSpawnTab(TabID))
@@ -1101,7 +1095,7 @@ void FDialogueSearchManager::DisableGlobalFindResults()
 	{
 		const FName TabID = GlobalFindResultsTabIDs[TabIdx];
 
-#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 23)
+#if NY_ENGINE_VERSION >= 423
 		if (!GlobalTabManager->HasTabSpawner(TabID))
 #else
 		if (!GlobalTabManager->CanSpawnTab(TabID))

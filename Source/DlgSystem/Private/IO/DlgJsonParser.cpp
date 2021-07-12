@@ -106,7 +106,7 @@ void FDlgJsonParser::ReadAllProperty( const UStruct* ReferenceClass, void* Targe
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValue>& JsonValue, FNYProperty* Property, void* ContainerPtr, void* ValuePtr)
+bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValue>& JsonValue, FProperty* Property, void* ContainerPtr, void* ValuePtr)
 {
 	check(Property);
 	if (bLogVerbose)
@@ -120,7 +120,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 	}
 
 	// Enum
-	if (auto* EnumProperty = FNYReflectionHelper::CastProperty<FNYEnumProperty>(Property))
+	if (auto* EnumProperty = FNYReflectionHelper::CastProperty<FEnumProperty>(Property))
 	{
 		if (JsonValue->Type == EJson::String)
 		{
@@ -150,7 +150,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 	}
 
 	// Numeric, int, float, possible enum
-	if (auto* NumericProperty = FNYReflectionHelper::CastProperty<FNYNumericProperty>(Property))
+	if (auto* NumericProperty = FNYReflectionHelper::CastProperty<FNumericProperty>(Property))
 	{
 		if (NumericProperty->IsEnum() && JsonValue->Type == EJson::String)
 		{
@@ -204,7 +204,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 	}
 
 	// Bool
-	if (auto* BoolProperty = FNYReflectionHelper::CastProperty<FNYBoolProperty>(Property))
+	if (auto* BoolProperty = FNYReflectionHelper::CastProperty<FBoolProperty>(Property))
 	{
 		// AsBool will log an error for completely inappropriate types (then give us a default)
 		BoolProperty->SetPropertyValue(ValuePtr, JsonValue->AsBool());
@@ -212,7 +212,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 	}
 
 	// FString
-	if (auto* StringProperty = FNYReflectionHelper::CastProperty<FNYStrProperty>(Property))
+	if (auto* StringProperty = FNYReflectionHelper::CastProperty<FStrProperty>(Property))
 	{
 		// Seems unsafe: AsString will log an error for completely inappropriate types (then give us a default)
 		FString String = JsonValue->AsString();
@@ -221,7 +221,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 	}
 
 	// FName
-	if (auto* NameProperty = FNYReflectionHelper::CastProperty<FNYNameProperty>(Property))
+	if (auto* NameProperty = FNYReflectionHelper::CastProperty<FNameProperty>(Property))
 	{
 		FString String;
 		const FName StringFName = FName(*JsonValue->AsString());
@@ -230,7 +230,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 	}
 
 	// FText
-	if (auto* TextProperty = FNYReflectionHelper::CastProperty<FNYTextProperty>(Property))
+	if (auto* TextProperty = FNYReflectionHelper::CastProperty<FTextProperty>(Property))
 	{
 		if (JsonValue->Type == EJson::String)
 		{
@@ -272,7 +272,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 	}
 
 	// TArray
-	if (auto* ArrayProperty = FNYReflectionHelper::CastProperty<FNYArrayProperty>(Property))
+	if (auto* ArrayProperty = FNYReflectionHelper::CastProperty<FArrayProperty>(Property))
 	{
 		if (JsonValue->Type == EJson::Array)
 		{
@@ -315,7 +315,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 	}
 
 	// Set
-	if (auto* SetProperty = FNYReflectionHelper::CastProperty<FNYSetProperty>(Property))
+	if (auto* SetProperty = FNYReflectionHelper::CastProperty<FSetProperty>(Property))
 	{
 		if (JsonValue->Type == EJson::Array)
 		{
@@ -361,7 +361,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 	}
 
 	// TMap
-	if (auto* MapProperty = FNYReflectionHelper::CastProperty<FNYMapProperty>(Property))
+	if (auto* MapProperty = FNYReflectionHelper::CastProperty<FMapProperty>(Property))
 	{
 		if (JsonValue->Type == EJson::Object)
 		{
@@ -377,7 +377,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 				{
 					const int32 NewIndex = Helper.AddDefaultValue_Invalid_NeedsRehash();
 
-					// NOTE if key is a FNYStructProperty no need to Import the text item here as it will do that below in UStruct
+					// NOTE if key is a FStructProperty no need to Import the text item here as it will do that below in UStruct
 					// Add key
 					const TSharedPtr<FJsonValueString> KeyAsString = MakeShared<FJsonValueString>(Entry.Key);
 					const bool bKeySuccess = JsonValueToProperty(KeyAsString, Helper.GetKeyProperty(), ContainerPtr, Helper.GetKeyPtr(NewIndex));
@@ -411,7 +411,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 	}
 
 	// UStruct
-	if (auto* StructProperty = FNYReflectionHelper::CastProperty<FNYStructProperty>(Property))
+	if (auto* StructProperty = FNYReflectionHelper::CastProperty<FStructProperty>(Property))
 	{
 		static const FName NAME_DateTime(TEXT("DateTime"));
 		static const FName NAME_Color(TEXT("Color"));
@@ -524,7 +524,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 	}
 
 	// UObject
-	if (auto* ObjectProperty = FNYReflectionHelper::CastProperty<FNYObjectProperty>(Property))
+	if (auto* ObjectProperty = FNYReflectionHelper::CastProperty<FObjectProperty>(Property))
 	{
 		// NOTE: The Value here should be a pointer to a pointer
 		// Because the UObjects are pointers, we must deference it. So instead of it being a void** we want it to be a void*
@@ -534,7 +534,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 			UE_LOG(
 				LogDlgJsonParser,
 				Error,
-				TEXT("PropertyName = `%s` Is a FNYObjectProperty but can't get non null ContainerPtrToValuePtr from it's StructObject"),
+				TEXT("PropertyName = `%s` Is a FObjectProperty but can't get non null ContainerPtrToValuePtr from it's StructObject"),
 				*Property->GetNameCPP()
 			);
 			return false;
@@ -593,7 +593,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 			UE_LOG(
 				LogDlgJsonParser,
 				Error,
-				TEXT("ConvertScalarJsonValueToProperty - Trying to load by string reference. Can't find key = `%s` for FNYObjectProperty = `%s`. Ignored"),
+				TEXT("ConvertScalarJsonValueToProperty - Trying to load by string reference. Can't find key = `%s` for FObjectProperty = `%s`. Ignored"),
 				*SpecialKeyType, *Property->GetNameCPP()
 			);
 			return false;
@@ -605,7 +605,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 			UE_LOG(
 				LogDlgJsonParser,
 				Error,
-				TEXT("ConvertScalarJsonValueToProperty - Trying to load by string reference. Could not find class `%s` for FNYObjectProperty = `%s`. Ignored."),
+				TEXT("ConvertScalarJsonValueToProperty - Trying to load by string reference. Could not find class `%s` for FObjectProperty = `%s`. Ignored."),
 				*JsonObjectType, *Property->GetNameCPP()
 			);
 			return false;
@@ -618,7 +618,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 			UE_LOG(
 				LogDlgJsonParser,
 				Error,
-				TEXT("JsonValueToProperty - PropertyName = `%s` Is a FNYObjectProperty but could not build any valid UObject"),
+				TEXT("JsonValueToProperty - PropertyName = `%s` Is a FObjectProperty but could not build any valid UObject"),
 				*Property->GetNameCPP()
 			);
 			return false;
@@ -656,7 +656,7 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool FDlgJsonParser::JsonValueToProperty(const TSharedPtr<FJsonValue>& JsonValue, FNYProperty* Property, void* ContainerPtr, void* ValuePtr)
+bool FDlgJsonParser::JsonValueToProperty(const TSharedPtr<FJsonValue>& JsonValue, FProperty* Property, void* ContainerPtr, void* ValuePtr)
 {
 	check(Property);
 	if (bLogVerbose)
@@ -669,8 +669,8 @@ bool FDlgJsonParser::JsonValueToProperty(const TSharedPtr<FJsonValue>& JsonValue
 		return false;
 	}
 
-	const bool bArrayProperty = Property->IsA<FNYArrayProperty>();
-	const bool bSetProperty = Property->IsA<FNYSetProperty>();
+	const bool bArrayProperty = Property->IsA<FArrayProperty>();
+	const bool bSetProperty = Property->IsA<FSetProperty>();
 	const bool bJsonArray = JsonValue->Type == EJson::Array;
 
 	// Scalar only one property
@@ -782,7 +782,7 @@ bool FDlgJsonParser::JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJso
 	}
 
 	// iterate over the struct properties
-	for (TFieldIterator<FNYProperty> PropIt(StructDefinition); PropIt; ++PropIt)
+	for (TFieldIterator<FProperty> PropIt(StructDefinition); PropIt; ++PropIt)
 	{
 		auto* Property = *PropIt;
 		if (!ensure(Property))
@@ -816,7 +816,7 @@ bool FDlgJsonParser::JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJso
 		}
 
 		void* ValuePtr = nullptr;
-		if (Property->IsA<FNYObjectProperty>())
+		if (Property->IsA<FObjectProperty>())
 		{
 			// Handle pointers, only allowed to be UObjects (are already pointers to the Value)
 			ValuePtr = ContainerPtr;

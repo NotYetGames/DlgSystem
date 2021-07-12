@@ -94,7 +94,7 @@ TSharedPtr<SDockTab> FDlgHelper::InvokeTab(TSharedPtr<FTabManager> TabManager, c
 		return nullptr;
 	}
 
-#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 26)
+#if NY_ENGINE_VERSION >= 426
 	return TabManager->TryInvokeTab(TabID);
 #else
 	return TabManager->InvokeTab(TabID);

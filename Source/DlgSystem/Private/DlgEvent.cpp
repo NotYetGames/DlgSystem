@@ -57,16 +57,16 @@ void FDlgEvent::Call(UDlgContext& Context, const FString& ContextString, UObject
 			break;
 
 		case EDlgEventType::ModifyClassIntVariable:
-			FNYReflectionHelper::ModifyVariable<FNYIntProperty>(Participant, EventName, IntValue, bDelta);
+			FNYReflectionHelper::ModifyVariable<FIntProperty>(Participant, EventName, IntValue, bDelta);
 			break;
 		case EDlgEventType::ModifyClassFloatVariable:
-			FNYReflectionHelper::ModifyVariable<FNYFloatProperty>(Participant, EventName, FloatValue, bDelta);
+			FNYReflectionHelper::ModifyVariable<FFloatProperty>(Participant, EventName, FloatValue, bDelta);
 			break;
 		case EDlgEventType::ModifyClassBoolVariable:
-			FNYReflectionHelper::SetVariable<FNYBoolProperty>(Participant, EventName, bValue);
+			FNYReflectionHelper::SetVariable<FBoolProperty>(Participant, EventName, bValue);
 			break;
 		case EDlgEventType::ModifyClassNameVariable:
-			FNYReflectionHelper::SetVariable<FNYNameProperty>(Participant, EventName, NameValue);
+			FNYReflectionHelper::SetVariable<FNameProperty>(Participant, EventName, NameValue);
 			break;
 
 		default:

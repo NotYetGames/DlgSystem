@@ -8,7 +8,7 @@
 #include "CoreMinimal.h"
 #include "Runtime/Launch/Resources/Version.h"
 #include "UObject/WeakObjectPtrTemplates.h"
-#include "NYReflectionTypes.h"
+#include "NYEngineVersionHelpers.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogDlgSystemReflectionHelper, All, All)
 
@@ -16,7 +16,7 @@ class DLGSYSTEM_API FNYReflectionHelper
 {
 public:
 
-#if ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 25)
+#if NY_ENGINE_VERSION >= 425
 	// From 4.25 UProperties are different
 	template<typename FieldType>
 	FORCEINLINE static FieldType* CastProperty(FField* Src)
@@ -42,7 +42,7 @@ public:
 		To* Result = CastProperty<To>(Src);
 		if (Result == nullptr)
 		{
-			FNYArrayProperty* ArrayProp = CastProperty<FNYArrayProperty>(Src);
+			FArrayProperty* ArrayProp = CastProperty<FArrayProperty>(Src);
 			if (ArrayProp != nullptr)
 			{
 				Result = CastProperty<To>(ArrayProp->Inner);
@@ -76,7 +76,7 @@ public:
 		To* Result = dynamic_cast<To*>(Src);
 		if (Result == nullptr)
 		{
-			FNYArrayProperty* ArrayProp = dynamic_cast<FNYArrayProperty*>(Src);
+			FArrayProperty* ArrayProp = dynamic_cast<FArrayProperty*>(Src);
 			if (ArrayProp != nullptr)
 			{
 				Result = dynamic_cast<To*>(ArrayProp->Inner);
@@ -84,7 +84,7 @@ public:
 		}
 		return Result;
 	}
-#endif // ENGINE_MAJOR_VERSION >= 5 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 25)
+#endif // NY_ENGINE_VERSION >= 425
 
 	// Attempts to get the property VariableName from Object
 	template <typename PropertyType, typename VariableType>
@@ -200,7 +200,7 @@ public:
 	template <typename ContainerType>
 	static void GetVariableNames(
 		const UClass* ParticipantClass,
-		const FNYPropertyClass* PropertyClass,
+		const FFieldClass* PropertyClass,
 		ContainerType& OutContainer,
 		const TArray<UClass*>& BlacklistedClasses
 	)
@@ -210,7 +210,7 @@ public:
 			return;
 		}
 
-		auto IsPropertyAtStartOfBlacklistedClass = [&BlacklistedClasses](FNYProperty* CheckProperty) -> bool
+		auto IsPropertyAtStartOfBlacklistedClass = [&BlacklistedClasses](FProperty* CheckProperty) -> bool
 		{
 			for (UClass* Class : BlacklistedClasses)
 			{
