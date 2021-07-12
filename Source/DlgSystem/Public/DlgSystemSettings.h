@@ -6,6 +6,7 @@
 
 #include "Engine/DeveloperSettings.h"
 #include "Layout/Margin.h"
+#include "NYEngineVersionHelpers.h"
 
 #include "Logging/INYLogger.h"
 
