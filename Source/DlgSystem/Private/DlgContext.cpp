@@ -200,7 +200,7 @@ FName UDlgContext::GetOptionSpeakerStateFromAll(int32 Index) const
 const FDlgEdgeData& UDlgContext::GetOptionFromAll(int32 Index) const
 {
 	check(Dialogue);
-	if (!AvailableChildren.IsValidIndex(Index))
+	if (!AllChildren.IsValidIndex(Index))
 	{
 		LogErrorWithContext(FString::Printf(TEXT("GetOptionFromAll - INVALID given Index = %d"), Index));
 		return FDlgEdgeData::GetInvalidEdge();
