@@ -5,6 +5,9 @@
   - `ChooseOptionBasedOnAllOptionIndex` -> `ChooseOptionFromAll`
 	- **NOTE**: This function used to check if the option was satisfied, it does not anymore. Use `IsOptionSatisfied` if you want to check for that.
 
+### Buf fixes
+- **Fixed** `GetOptionFromAll` because it was using the available children instead of the all chidren.
+
 # v13
 **Date:** March 11, 2021
 ### Deprecations
