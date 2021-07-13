@@ -1,4 +1,7 @@
 # v14
+### New Features
+- Added the option to have an `UDlgNodeData` on the Edges, this works exactly like on the nodes.
+
 ### Deprecations
 
 - **Dialogue Manager**
