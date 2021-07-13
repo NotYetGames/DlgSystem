@@ -46,12 +46,6 @@ void SDialogueGraphNode_Edge::OnMouseLeave(const FPointerEvent& MouseEvent)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin SNodePanel::SNode Interface
-void SDialogueGraphNode_Edge::MoveTo(const FVector2D& NewPosition, FNodeSet& NodeFilter)
-{
-	// Ignored; position is set by the location of the attached nodes
-	Super::MoveTo(NewPosition, NodeFilter);
-}
-
 void SDialogueGraphNode_Edge::PerformSecondPassLayout(const TMap<UObject*, TSharedRef<SNode>>& NodeToWidgetLookup) const
 {
 	// Find the geometry of the nodes we're connecting

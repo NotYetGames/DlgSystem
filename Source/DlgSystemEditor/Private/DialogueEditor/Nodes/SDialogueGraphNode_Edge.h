@@ -42,12 +42,6 @@ public:
 
 	// Begin SNodePanel::SNode Interface
 
-	/**
-	 * @param NewPosition	The Node should be relocated to this position in the graph panel
-	 * @param NodeFilter		Set of nodes to prevent movement on, after moving successfully a node is added to this set.
-	 */
-	void MoveTo(const FVector2D& NewPosition, FNodeSet& NodeFilter) override;
-
 	/** Returns true if this node is dependent on the location of other nodes (it can only depend on the location of first-pass only nodes) */
 	bool RequiresSecondPassLayout() const override { return true; }
 
