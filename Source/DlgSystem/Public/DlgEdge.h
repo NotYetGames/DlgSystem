@@ -142,7 +142,7 @@ protected:
 	FText Text;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Instanced, Category = "Dialogue|Edge")
-	UDlgNodeData* EdgeData;
+	UDlgNodeData* EdgeData = nullptr;
 
 	// If you want replaceable portions inside your Text nodes just add {identifier} inside it and set the value it should have at runtime.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, EditFixedSize, Category = "Dialogue|Edge")
