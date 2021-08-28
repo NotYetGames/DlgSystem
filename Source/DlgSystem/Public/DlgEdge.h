@@ -104,8 +104,6 @@ public:
 	// Returns if the Edge is valid, has the TargetIndex non negative
 	bool IsValid() const { return TargetIndex > INDEX_NONE; }
 
-	UDlgNodeData* GetEdgeData() const { return EdgeData; }
-
 	static const FDlgEdge& GetInvalidEdge()
 	{
 		static FDlgEdge DlgEdge;
@@ -119,33 +117,33 @@ public:
 
 public:
 	// Index of the node in the Nodes TArray of the dialogue this edge is leading to
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Dialogue|Edge", Meta = (ClampMin = -1))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "DialogueEdge", Meta = (ClampMin = -1))
 	int32 TargetIndex = INDEX_NONE;
 
 	// Required but not sufficient conditions - target node's enter conditions are checked too
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Edge")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DialogueEdge")
 	TArray<FDlgCondition> Conditions;
 
 	// Player emotion/state attached to this player choice
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Edge")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DialogueEdge")
 	FName SpeakerState;
 
 	// Set this to false in order to skip this edge in the AllChildren array (which lists both satisfied and not satisfied player choices
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Edge")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DialogueEdge")
 	bool bIncludeInAllOptionListIfUnsatisfied = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Instanced, Category = "DialogueEdge")
+	UDlgNodeData* EdgeData = nullptr;
 
 protected:
 	// Some Variables are here to stop misuse
 
 	// Text associated with the child, can be used for user choices
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Edge", Meta = (MultiLine = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DialogueEdge", Meta = (MultiLine = true))
 	FText Text;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Instanced, Category = "Dialogue|Edge")
-	UDlgNodeData* EdgeData = nullptr;
-
 	// If you want replaceable portions inside your Text nodes just add {identifier} inside it and set the value it should have at runtime.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, EditFixedSize, Category = "Dialogue|Edge")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, EditFixedSize, Category = "DialogueEdge")
 	TArray<FDlgTextArgument> TextArguments;
 
 	// Constructed at runtime from the original text and the arguments if there is any.
