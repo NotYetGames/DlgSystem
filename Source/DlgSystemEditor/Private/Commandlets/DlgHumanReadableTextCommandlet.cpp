@@ -2,7 +2,13 @@
 #include "DlgHumanReadableTextCommandlet.h"
 
 #include "Misc/Paths.h"
-#include "HAL/PlatformFilemanager.h"
+
+#if ENGINE_MAJOR_VERSION >= 5
+    #include "HAL/PlatformFileManager.h"
+#else
+    #include "HAL/PlatformFilemanager.h"
+#endif
+
 #include "GenericPlatform/GenericPlatformFile.h"
 #include "UObject/Package.h"
 #include "FileHelpers.h"
