@@ -515,6 +515,11 @@ void UDialogueK2Node_Select::GetPrintStringFunction(FName& FunctionName, UClass*
 
 bool UDialogueK2Node_Select::RefreshPinNames()
 {
+	if (!UDlgManager::HasCalledLoadAllDialoguesIntoMemory())
+	{
+		return false;
+	}
+
 	// Stop anything if the blueprint is loading, this can happen because we now have reference to blueprint UClasses (reflection system) from the UDlgDialogue
 	static constexpr bool bBlueprintMustBeLoaded = true;
 	const FName ParticipantName = FDialogueBlueprintUtilities::GetParticipantNameFromNode(this, bBlueprintMustBeLoaded);

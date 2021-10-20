@@ -341,6 +341,8 @@ public:
 		UserWorldContextObjectPtr.Reset();
 	}
 
+	static bool HasCalledLoadAllDialoguesIntoMemory() { return bCalledLoadAllDialoguesIntoMemory; }
+
 private:
 	static void GatherParticipantsRecursive(UObject* Object, TArray<UObject*>& Array, TSet<UObject*>& AlreadyVisited);
 
