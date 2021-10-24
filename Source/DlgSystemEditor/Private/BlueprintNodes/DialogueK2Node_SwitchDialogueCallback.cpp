@@ -175,6 +175,11 @@ void UDialogueK2Node_SwitchDialogueCallback::AddPinToSwitchNode()
 // Begin own functions
 bool UDialogueK2Node_SwitchDialogueCallback::RefreshPinNames()
 {
+	if (!UDlgManager::HasCalledLoadAllDialoguesIntoMemory())
+	{
+		return false;
+	}
+
 	static constexpr bool bBlueprintMustBeLoaded = true;
 	const FName ParticipantName = FDialogueBlueprintUtilities::GetParticipantNameFromNode(this, bBlueprintMustBeLoaded);
 	if (ParticipantName == NAME_None)

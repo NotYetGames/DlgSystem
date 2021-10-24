@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 14,
-	"VersionName": "14",
+	"VersionName": "14.1",
 	"EngineVersion" : "ANY_VERSION",
 	"FriendlyName": "Not Yet: Dialogue System",
 	"Description": "Dialogue system (with text based dialogues) and nice Editor for editing dialogues",

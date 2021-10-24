@@ -1,4 +1,10 @@
+# v14.1
+**Date:** October 24, 2021
+### Bug fixes
+- **Fixed** Prevent helper blueprint nodes from being refreshed if the dialogues are not loaded into memory.
+
 # v14
+**Date:** August 28, 2021
 ### New Features
 - Added the option to have an `UDlgNodeData` on the Edges, this works exactly like on the nodes.
 
