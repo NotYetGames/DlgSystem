@@ -1,11 +1,11 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
-#include "DialogueEnumTypeWithObject_CustomRowHelper.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueEnumTypeWithObject_CustomRowHelper.h"
 
 #include "DetailWidgetRow.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Input/SComboButton.h"
 #include "Internationalization/TextNamespaceUtil.h"
-#include "DialogueEditableTextPropertyHandle.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueEditableTextPropertyHandle.h"
 #include "DlgHelper.h"
 #include "Editor.h"
 #include "SourceCodeNavigation.h"

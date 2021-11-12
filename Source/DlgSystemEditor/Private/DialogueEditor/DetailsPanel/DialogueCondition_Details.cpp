@@ -8,13 +8,13 @@
 #include "NYReflectionHelper.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
-#include "Widgets/SDialogueTextPropertyPickList.h"
+#include "DialogueEditor/DetailsPanel/Widgets/SDialogueTextPropertyPickList.h"
 #include "IPropertyUtilities.h"
-#include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
 #include "DlgHelper.h"
-#include "Widgets/DialogueEnumTypeWithObject_CustomRowHelper.h"
-#include "Widgets/DialogueIntTextBox_CustomRowHelper.h"
-#include "Widgets/DialogueObject_CustomRowHelper.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueEnumTypeWithObject_CustomRowHelper.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueIntTextBox_CustomRowHelper.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueObject_CustomRowHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueCondition_Details"
 

@@ -9,7 +9,7 @@ class FDetailWidgetRow;
  * Base class for all Custom Row Helpers.
  * Makes sure that the ToolTips and Display Names are in sync with the PropertyHandle and the SWidget that is represented by.
  */
-class FDialogueBase_CustomRowHelper
+class DLGSYSTEMEDITOR_API FDialogueBase_CustomRowHelper
 {
 	typedef FDialogueBase_CustomRowHelper Self;
 public:

@@ -413,9 +413,9 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 	// UStruct
 	if (auto* StructProperty = FNYReflectionHelper::CastProperty<FStructProperty>(Property))
 	{
-		static const FName NAME_DateTime(TEXT("DateTime"));
-		static const FName NAME_Color(TEXT("Color"));
-		static const FName NAME_LinearColor(TEXT("LinearColor"));
+		static const FName NAME_JSON_DateTime(TEXT("DateTime"));
+		static const FName NAME_JSON_Color(TEXT("Color"));
+		static const FName NAME_JSON_LinearColor(TEXT("LinearColor"));
 
 		// Default struct export
 		if (JsonValue->Type == EJson::Object)
@@ -435,20 +435,20 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 		}
 
 		// Handle some structs that are exported to string in a special way
-		else if (JsonValue->Type == EJson::String && StructProperty->Struct->GetFName() == NAME_LinearColor)
+		else if (JsonValue->Type == EJson::String && StructProperty->Struct->GetFName() == NAME_JSON_LinearColor)
 		{
 			const FString ColorString = JsonValue->AsString();
 			const FColor IntermediateColor = FColor::FromHex(ColorString);
 			FLinearColor& ColorOut = *static_cast<FLinearColor*>(ValuePtr);
 			ColorOut = IntermediateColor;
 		}
-		else if (JsonValue->Type == EJson::String && StructProperty->Struct->GetFName() == NAME_Color)
+		else if (JsonValue->Type == EJson::String && StructProperty->Struct->GetFName() == NAME_JSON_Color)
 		{
 			const FString ColorString = JsonValue->AsString();
 			FColor& ColorOut = *static_cast<FColor*>(ValuePtr);
 			ColorOut = FColor::FromHex(ColorString);
 		}
-		else if (JsonValue->Type == EJson::String && StructProperty->Struct->GetFName() == NAME_DateTime)
+		else if (JsonValue->Type == EJson::String && StructProperty->Struct->GetFName() == NAME_JSON_DateTime)
 		{
 			const FString DateString = JsonValue->AsString();
 			FDateTime& DateTimeOut = *static_cast<FDateTime*>(ValuePtr);

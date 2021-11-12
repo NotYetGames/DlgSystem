@@ -9,7 +9,7 @@ class SDialogueTextPropertyPickList;
 class FDetailWidgetRow;
 
 // Helper for details panel, when we want to use SDialogueTextPropertyPickList in a custom row in the details panel
-class FDialogueTextPropertyPickList_CustomRowHelper : public FDialogueBase_CustomRowHelper
+class DLGSYSTEMEDITOR_API FDialogueTextPropertyPickList_CustomRowHelper : public FDialogueBase_CustomRowHelper
 {
 	typedef FDialogueTextPropertyPickList_CustomRowHelper Self;
 	typedef FDialogueBase_CustomRowHelper Super;

@@ -1,5 +1,5 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
-#include "DialogueTextPropertyPickList_CustomRowHelper.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
 
 #include "DetailWidgetRow.h"
 

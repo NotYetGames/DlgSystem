@@ -9,7 +9,7 @@
 #include "DlgCondition.h"
 #include "DlgManager.h"
 #include "DialogueDetailsPanelUtils.h"
-#include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
 
 class FDialogueTextPropertyPickList_CustomRowHelper;
 class FDialogueIntTextBox_CustomRowHelper;

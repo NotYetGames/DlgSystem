@@ -14,7 +14,7 @@ class IPropertyHandle;
  * A widget to edit a Text property but it allows you to pick from a list of possible values and search in it.
  * Inspired from SPropertyMenuAssetPicker and SAssetPicker and SAssetView
  */
-class SDialogueTextPropertyPickList : public SCompoundWidget
+class DLGSYSTEMEDITOR_API SDialogueTextPropertyPickList : public SCompoundWidget
 {
 	typedef TSharedPtr<FName> TextListItem;
 	typedef SDialogueTextPropertyPickList Self;

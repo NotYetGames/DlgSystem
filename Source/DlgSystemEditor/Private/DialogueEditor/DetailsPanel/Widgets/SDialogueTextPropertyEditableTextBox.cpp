@@ -1,5 +1,5 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
-#include "SDialogueTextPropertyEditableTextBox.h"
+#include "DialogueEditor/DetailsPanel/Widgets/SDialogueTextPropertyEditableTextBox.h"
 #include "Internationalization/TextNamespaceUtil.h"
 #include "Widgets/SBoxPanel.h"
 #include "Widgets/Images/SImage.h"

@@ -8,9 +8,9 @@
 #include "Nodes/DlgNode.h"
 #include "DialogueDetailsPanelUtils.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
-#include "Widgets/DialogueMultiLineEditableTextBox_CustomRowHelper.h"
-#include "Widgets/SDialogueTextPropertyPickList.h"
-#include "Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueMultiLineEditableTextBox_CustomRowHelper.h"
+#include "DialogueEditor/DetailsPanel/Widgets/SDialogueTextPropertyPickList.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
 
 #define LOCTEXT_NAMESPACE "DialogueEdge_Details"
 

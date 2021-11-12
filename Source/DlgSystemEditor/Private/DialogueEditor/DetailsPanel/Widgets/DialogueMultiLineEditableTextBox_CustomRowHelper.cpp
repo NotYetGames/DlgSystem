@@ -1,5 +1,5 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
-#include "DialogueMultiLineEditableTextBox_CustomRowHelper.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueMultiLineEditableTextBox_CustomRowHelper.h"
 
 #include "PropertyHandle.h"
 #include "DetailWidgetRow.h"
@@ -9,7 +9,7 @@
 #include "Widgets/Layout/SUniformGridPanel.h"
 #include "Internationalization/TextNamespaceUtil.h"
 #include "IPropertyUtilities.h"
-#include "DialogueEditableTextPropertyHandle.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueEditableTextPropertyHandle.h"
 #include "DialogueEditor/DetailsPanel/DialogueDetailsPanelUtils.h"
 
 #define LOCTEXT_NAMESPACE "MultiLineEditableTextBox_CustomRowHelper"

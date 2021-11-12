@@ -1,5 +1,5 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
-#include "SDialogueTextPropertyPickList.h"
+#include "DialogueEditor/DetailsPanel/Widgets/SDialogueTextPropertyPickList.h"
 
 #include "PropertyHandle.h"
 #include "Widgets/Input/SSearchBox.h"

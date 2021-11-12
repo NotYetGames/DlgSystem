@@ -1,5 +1,5 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
-#include "DialogueBase_CustomRowHelper.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueBase_CustomRowHelper.h"
 
 #include "PropertyHandle.h"
 #include "DetailWidgetRow.h"

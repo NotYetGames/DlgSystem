@@ -1,5 +1,5 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
-#include "DialogueObject_CustomRowHelper.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueObject_CustomRowHelper.h"
 
 #include "PropertyHandle.h"
 #include "DetailWidgetRow.h"
@@ -7,7 +7,7 @@
 #include "Widgets/Input/SComboButton.h"
 #include "Widgets/Layout/SUniformGridPanel.h"
 #include "Internationalization/TextNamespaceUtil.h"
-#include "DialogueEditableTextPropertyHandle.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueEditableTextPropertyHandle.h"
 #include "Editor.h"
 #include "DialogueEditor/DetailsPanel/DialogueDetailsPanelUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
