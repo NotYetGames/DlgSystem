@@ -118,6 +118,20 @@ enum class EDlgClassPickerDisplayMode : uint8
 	ListView
 };
 
+// Defines the runtime behavior when a non-end node has no valid child
+UENUM()
+enum class EDlgNoSatisfiedChildBehavior : uint8
+{
+	// Error messaage is fired, dialogue context marks that the dialogue ended and returns with false
+	PrintErrorAndEndDialogue,
+
+	// No error messaage is fired, dialogue context marks that the dialogue ended and returns with false
+	EndDialogue,
+
+	// System assumes this is normal and the context returns with True. The game is expected to handle that there are no valid options.
+	ContinueDialogue
+};
+
 // UDeveloperSettings classes are auto discovered https://wiki.unrealengine.com/CustomSettings
 UCLASS(Config = Engine, DefaultConfig, meta = (DisplayName = "Dialogue System Settings"))
 class DLGSYSTEM_API UDlgSystemSettings : public UDeveloperSettings
@@ -233,6 +247,11 @@ public:
 	// Calls RegisterDialogueConsoleCommands and UnregisterDialogueConsoleCommands
 	UPROPERTY(Category = "Runtime", Config, EditAnywhere)
 	bool bRegisterDialogueConsoleCommandsAutomatically = true;
+
+	// By default the dialogue assumes that there should always be a valid child (with satisfied conditions) for each non-end node
+	// Use this setting to override that behavior
+	UPROPERTY(Category = "Runtime", Config, EditAnywhere)
+	EDlgNoSatisfiedChildBehavior NoSatisfiedChildBehavior;
 
 
 	// The dialogue text format used for saving and reloading from text files.

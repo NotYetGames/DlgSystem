@@ -178,11 +178,22 @@ bool UDlgNode::ReevaluateChildren(UDlgContext& Context, TSet<const UDlgNode*> Al
 	// no child, but no end node?
 	if (AvailableOptions.Num() == 0)
 	{
-		FDlgLogger::Get().Errorf(
-			TEXT("ReevaluateChildren (ReevaluateOptions) - no valid child option for a NODE.\nContext:\n\t%s"),
-			*Context.GetContextString()
-		);
-		return false;
+		switch (GetDefault<UDlgSystemSettings>()->NoSatisfiedChildBehavior)
+		{
+			case EDlgNoSatisfiedChildBehavior::PrintErrorAndEndDialogue:
+				FDlgLogger::Get().Errorf(
+					TEXT("ReevaluateChildren (ReevaluateOptions) - no valid child option for a NODE.\nContext:\n\t%s"),
+					*Context.GetContextString());
+
+			case EDlgNoSatisfiedChildBehavior::EndDialogue:
+				return false;
+
+			case EDlgNoSatisfiedChildBehavior::ContinueDialogue:
+				return true;
+
+			default:
+				check(false);
+		}
 	}
 
 	return true;
