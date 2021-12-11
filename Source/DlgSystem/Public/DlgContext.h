@@ -5,6 +5,7 @@
 #include "DlgDialogue.h"
 #include "Nodes/DlgNode.h"
 #include "DlgMemory.h"
+#include "DlgParticipantName.h"
 
 #include "DlgContext.generated.h"
 
@@ -295,6 +296,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
 	const TMap<FName, UObject*>& GetParticipantsMap() const { return Participants; }
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Data")
+	UObject* GetParticipantFromName(const FDlgParticipantName& Participant);
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|ActiveNode")
 	int32 GetActiveNodeIndex() const { return ActiveNodeIndex; }

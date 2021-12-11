@@ -396,6 +396,16 @@ const UObject* UDlgContext::GetParticipant(FName ParticipantName) const
 	return nullptr;
 }
 
+UObject* UDlgContext::GetParticipantFromName(const FDlgParticipantName& Participant)
+{
+	if (UObject** ParticipantObjectPtr = Participants.Find(Participant.ParticipantName))
+	{
+		return *ParticipantObjectPtr;
+	}
+
+	return nullptr;
+}
+
 bool UDlgContext::IsValidNodeIndex(int32 NodeIndex) const
 {
 	return Dialogue ? Dialogue->IsValidNodeIndex(NodeIndex) : false;

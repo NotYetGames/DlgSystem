@@ -24,10 +24,18 @@ public:
 		return *this;
 	}
 
+	// Call this before Update is called to have the default buttons (like array add/remove/duplicate) added next to the row
+	// See FDialogueParticipantName_Details for an example
+	void SetParentStructPropertyHandle(const TSharedRef<IPropertyHandle>& InParentStructPropertyHandle) { ParentStructPropertyHandle = InParentStructPropertyHandle; }
+
 private:
 	void UpdateInternal() override;
 
 private:
 	// The TextPropertyPickList Widget.
 	TSharedPtr<SDialogueTextPropertyPickList> TextPropertyPickListWidget;
+
+
+	// Optional struct widget for additional buttons for one liners, only used if set
+	TSharedPtr<IPropertyHandle> ParentStructPropertyHandle;
 };
