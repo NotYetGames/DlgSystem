@@ -222,6 +222,7 @@ public:
 	{
 		// Set flag to be transactional so it registers with undo system
 		T* DialogueNode = NewObject<T>(this, DialogueNodeClass, NAME_None, RF_Transactional);
+		DialogueNode->OnCreatedInEditor();
 		return DialogueNode;
 	}
 

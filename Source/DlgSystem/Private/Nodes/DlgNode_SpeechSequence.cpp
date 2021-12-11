@@ -9,8 +9,34 @@ void UDlgNode_SpeechSequence::PostEditChangeProperty(FPropertyChangedEvent& Prop
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
+	InitializeNodeDataOnArrayAdd(PropertyChangedEvent);
+
 	// fill edges automatically based on input data
 	AutoGenerateInnerEdges();
+}
+
+void UDlgNode_SpeechSequence::InitializeNodeDataOnArrayAdd(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+	if (Settings == nullptr || Settings->DefaultCustomNodeDataClass == nullptr)
+	{
+		return;
+	}
+
+	if (PropertyChangedEvent.GetPropertyName() != GetMemberNameSpeechSequence() ||
+		PropertyChangedEvent.ChangeType != EPropertyChangeType::ArrayAdd)
+	{
+		return;
+	}
+
+	int32 Index = PropertyChangedEvent.GetArrayIndex(GetMemberNameSpeechSequence().ToString());
+	if (Index == INDEX_NONE)
+	{
+		return;
+	}
+
+	check(SpeechSequence.IsValidIndex(Index));
+	SpeechSequence[Index].NodeData = NewObject<UDlgNodeData>(this, Settings->DefaultCustomNodeDataClass, NAME_None, GetMaskedFlags(RF_PropagateToSubObjects), NULL);
 }
 #endif
 

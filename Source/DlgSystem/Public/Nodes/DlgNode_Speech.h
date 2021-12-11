@@ -18,6 +18,9 @@ class DLGSYSTEM_API UDlgNode_Speech : public UDlgNode
 	GENERATED_BODY()
 
 public:
+
+	virtual void OnCreatedInEditor() override;
+
 	// Begin UObject Interface.
 	FString GetDesc() override
 	{

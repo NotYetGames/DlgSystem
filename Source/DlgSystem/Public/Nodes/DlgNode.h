@@ -71,6 +71,8 @@ public:
 	virtual FString GetNodeTypeString() const { return TEXT("INVALID"); }
 #endif //WITH_EDITOR
 
+	virtual void OnCreatedInEditor() {};
+
 #if WITH_EDITOR
 	void SetGraphNode(UEdGraphNode* InNode) { GraphNode = InNode; }
 	void ClearGraphNode() { GraphNode = nullptr; }

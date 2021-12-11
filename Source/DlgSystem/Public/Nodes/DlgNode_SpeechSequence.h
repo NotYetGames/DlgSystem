@@ -93,6 +93,8 @@ public:
 
 #if WITH_EDITOR
 	FString GetNodeTypeString() const override { return TEXT("Speech Sequence"); }
+
+	void InitializeNodeDataOnArrayAdd(FPropertyChangedEvent& PropertyChangedEvent);
 #endif
 
 	//

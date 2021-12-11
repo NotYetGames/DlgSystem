@@ -6,6 +6,18 @@
 #include "Logging/DlgLogger.h"
 #include "DlgLocalizationHelper.h"
 
+
+void UDlgNode_Speech::OnCreatedInEditor()
+{
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+	if (NodeData != nullptr || Settings == nullptr || Settings->DefaultCustomNodeDataClass == nullptr)
+	{
+		return;
+	}
+	NodeData = NewObject<UDlgNodeData>(this, Settings->DefaultCustomNodeDataClass, NAME_None, GetMaskedFlags(RF_PropagateToSubObjects), NULL);
+}
+
+
 #if WITH_EDITOR
 void UDlgNode_Speech::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {

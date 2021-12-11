@@ -16,6 +16,8 @@
 
 #include "DlgSystemSettings.generated.h"
 
+class UDlgNodeData;
+
 // Defines the format of the Dialogue text
 UENUM()
 enum class EDlgDialogueTextFormat : uint8
@@ -273,6 +275,10 @@ public:
 	// Any properties that belong to these classes won't be shown in the suggestion list when you use the reflection system (class variables).
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
 	TArray<UClass*> BlacklistedReflectionClasses;
+
+	// Default class to use for custom node data
+	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
+	TSubclassOf<UDlgNodeData> DefaultCustomNodeDataClass;
 
 	// How the Blueprint class pricker looks like
 	UPROPERTY(Category = "Blueprint", Config, EditAnywhere)
