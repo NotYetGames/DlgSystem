@@ -551,7 +551,9 @@ void UDlgContext::SetNodeVisited(int32 NodeIndex, const FGuid& NodeGUID)
 bool UDlgContext::IsNodeVisited(int32 NodeIndex, const FGuid& NodeGUID, bool bLocalHistory) const
 {
 	if (bLocalHistory)
+	{
 		return History.Contains(NodeIndex, NodeGUID);
+	}
 
 	return FDlgMemory::Get().IsNodeVisited(Dialogue->GetGUID(), NodeIndex, NodeGUID);
 }
