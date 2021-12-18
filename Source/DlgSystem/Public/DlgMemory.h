@@ -132,13 +132,8 @@ public:
 	void SetNodeVisited(const FGuid& DialogueGUID, int32 NodeIndex, const FGuid& NodeGUID)
 	{
 		// Add it if it does not exist already
-		FDlgHistory* History = HistoryMap.Find(DialogueGUID);
-		if (History == nullptr)
-		{
-			History = &HistoryMap.Add(DialogueGUID);
-		}
-
-		History->Add(NodeIndex, NodeGUID);
+		FDlgHistory& History = HistoryMap.FindOrAdd(DialogueGUID);
+		History.Add(NodeIndex, NodeGUID);
 	}
 
 	bool IsNodeVisited(const FGuid& DialogueGUID, int32 NodeIndex, const FGuid& NodeGUID) const

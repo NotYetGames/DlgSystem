@@ -95,12 +95,7 @@ bool FDlgCondition::IsConditionMet(const UDlgContext& Context, const UObject* Pa
 
 
 		case EDlgConditionType::WasNodeVisited:
-			if (bLongTermMemory)
-			{
-				return FDlgMemory::Get().IsNodeVisited(Context.GetDialogueGUID(), IntValue, GUID) == bBoolValue;
-			}
-
-			return Context.GetHistoryOfThisContext().Contains(IntValue, GUID) == bBoolValue;
+			return Context.IsNodeVisited(IntValue, GUID, !bLongTermMemory) == bBoolValue;
 
 		case EDlgConditionType::HasSatisfiedChild:
 			{

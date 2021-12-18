@@ -450,18 +450,13 @@ bool UDlgContext::IsOptionConnectedToVisitedNode(int32 Index, bool bLocalHistory
 	}
 
 	const FGuid TargetGUID = GetNodeGUIDForIndex(TargetIndex);
-	if (bLocalHistory)
-	{
-		return History.Contains(TargetIndex, TargetGUID);
-	}
-
-	if (Dialogue == nullptr)
+	if (!bLocalHistory && Dialogue == nullptr)
 	{
 		LogErrorWithContext(TEXT("IsOptionConnectedToVisitedNode - This Context does not have a valid Dialogue"));
 		return false;
 	}
 
-	return FDlgMemory::Get().IsNodeVisited(Dialogue->GetGUID(), TargetIndex, TargetGUID);
+	return IsNodeVisited(TargetIndex, TargetGUID, bLocalHistory);
 }
 
 bool UDlgContext::IsOptionConnectedToEndNode(int32 Index, bool bIndexSkipsUnsatisfiedEdges) const
@@ -535,7 +530,7 @@ UDlgContext* UDlgContext::CreateCopy() const
 		return nullptr;
 	}
 
-	auto* Context = NewObject<UDlgContext>(FirstParticipant, StaticClass());
+	auto* Context = NewObject<UDlgContext>(FirstParticipant, GetClass());
 	Context->Dialogue = Dialogue;
 	Context->SetParticipants(Participants);
 	Context->ActiveNodeIndex = ActiveNodeIndex;
@@ -551,6 +546,14 @@ void UDlgContext::SetNodeVisited(int32 NodeIndex, const FGuid& NodeGUID)
 {
 	FDlgMemory::Get().SetNodeVisited(Dialogue->GetGUID(), NodeIndex, NodeGUID);
 	History.Add(NodeIndex, NodeGUID);
+}
+
+bool UDlgContext::IsNodeVisited(int32 NodeIndex, const FGuid& NodeGUID, bool bLocalHistory) const
+{
+	if (bLocalHistory)
+		return History.Contains(NodeIndex, NodeGUID);
+
+	return FDlgMemory::Get().IsNodeVisited(Dialogue->GetGUID(), NodeIndex, NodeGUID);
 }
 
 UDlgNode_SpeechSequence* UDlgContext::GetMutableActiveNodeAsSpeechSequence() const
@@ -638,7 +641,7 @@ bool UDlgContext::CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObje
 	check(FirstParticipant != nullptr);
 
 	// Create temporary context that is Garbage Collected after this function returns (hopefully)
-	auto* Context = NewObject<UDlgContext>(FirstParticipant, StaticClass());
+	auto* Context = NewObject<UDlgContext>(FirstParticipant, UDlgContext::StaticClass());
 	Context->Dialogue = InDialogue;
 	Context->SetParticipants(InParticipants);
 

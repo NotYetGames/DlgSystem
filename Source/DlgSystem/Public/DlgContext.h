@@ -368,7 +368,8 @@ public:
 	bool EnterNode(int32 NodeIndex, TSet<const UDlgNode*> NodesEnteredWithThisStep);
 
 	// Adds the node as visited in the current dialogue memory
-	void SetNodeVisited(int32 NodeIndex, const FGuid& NodeGUID);
+	virtual void SetNodeVisited(int32 NodeIndex, const FGuid& NodeGUID);
+	virtual bool IsNodeVisited(int32 NodeIndex, const FGuid& NodeGUID, bool bLocalHistory) const;
 
 	// Gets the Node at the NodeIndex index
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "Get Node From Index")

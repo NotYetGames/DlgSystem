@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Engine/Engine.h"
 #include "Logging/MessageLog.h"
+#include "NYEngineVersionHelpers.h"
 #include "Runtime/Launch/Resources/Version.h"
 
 #if WITH_UNREAL_DEVELOPER_TOOLS
