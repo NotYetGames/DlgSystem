@@ -8,6 +8,7 @@
 #include "Nodes/DlgNode_End.h"
 #include "Nodes/DlgNode_Speech.h"
 #include "Nodes/DlgNode_Selector.h"
+#include "Nodes/DlgNode_Proxy.h"
 #include "Nodes/DlgNode_SpeechSequence.h"
 #include "DialogueGraphNode_Base.h"
 #include "NYEngineVersionHelpers.h"
@@ -159,7 +160,7 @@ public:
 	bool CanHaveInputConnections() const override { return NodeIndex != INDEX_NONE && !IsRootNode(); }
 
 	/** Checks whether an output connection can be added from this node */
-	bool CanHaveOutputConnections() const override { return !IsEndNode(); }
+	bool CanHaveOutputConnections() const override { return !IsEndNode() && !IsProxyNode(); }
 
 	/** Checks if this node has a output connection to the TargetNode. */
 	bool HasOutputConnectionToNode(const UEdGraphNode* TargetNode) const override;
@@ -208,6 +209,9 @@ public:
 	/** Is this a selector Node? */
 	bool IsSelectorNode() const { return DialogueNode->IsA<UDlgNode_Selector>(); }
 
+	/** Is this a selector Node? */
+	bool IsProxyNode() const { return DialogueNode->IsA<UDlgNode_Proxy>(); }
+
 	/** Is this a selector First Node? */
 	bool IsSelectorFirstNode() const
 	{
@@ -247,6 +251,8 @@ public:
 
 	/** Does this node has any voice properties set? */
 	bool HasVoicePropertiesSet() const;
+
+	bool IsProxyNodeLeadingToIt() const;
 
 	/** Does this node has any voice properties set? */
 	bool HasGenericDataSet() const;
@@ -361,6 +367,9 @@ public:
 	/** Should this node be drawn? */
 	bool ShouldDrawNode() const { return !bForceHideNode; }
 
+	bool ShouldUseBorderHighlight() const { return bUseBorderHighlight; }
+	void SetUseBorderHighlight(bool bUse) { bUseBorderHighlight = bUse; }
+
 	/** Helper constants to get the names of some properties. Used by the DlgSystemEditor module. */
 	static FName GetMemberNameDialogueNode() { return GET_MEMBER_NAME_CHECKED(UDialogueGraphNode, DialogueNode); }
 	static FName GetMemberNameNodeIndex() { return GET_MEMBER_NAME_CHECKED(UDialogueGraphNode, NodeIndex); }
@@ -385,7 +394,7 @@ protected:
 		CreatePin(EGPD_Output, UDialogueGraphSchema::PIN_CATEGORY_Output, PinName, PinParams);
 
 		// This enables or disables dragging of the pin from the Node, see SGraphPin::OnPinMouseDown for details
-		GetOutputPin()->bNotConnectable = IsEndNode();
+		GetOutputPin()->bNotConnectable = !CanHaveOutputConnections();
 	}
 
 	/** Registers all the listener this class listens to. */
@@ -417,12 +426,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = DialogueGraphNode)
 	int32 NodeIndex = INDEX_NONE;
 
-	// Indicates the distance from the start node. This is only set after the graph is compiled.
+	/** Indicates the distance from the start node. This is only set after the graph is compiled. */
 	UPROPERTY()
 	int32 NodeDepth = INDEX_NONE;
 
-	/**
-	 * Forcefully hide this node from the graph.
-	 */
+	/** Used to highlight the node if the currently selected node is a proxy targeting it */
+	UPROPERTY(Transient)
+	bool bUseBorderHighlight = false;
+
+	/** Forcefully hide this node from the graph. */
 	bool bForceHideNode = false;
 };

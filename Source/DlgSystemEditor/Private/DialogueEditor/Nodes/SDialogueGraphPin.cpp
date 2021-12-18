@@ -155,6 +155,31 @@ FReply SDialogueGraphPin::OnDrop(const FGeometry& MyGeometry, const FDragDropEve
 {
 	return Super::OnDrop(MyGeometry, DragDropEvent);
 }
+
+FSlateColor SDialogueGraphPin::GetPinColor() const
+{
+	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
+	const FSlateColor& DefaultPinColor = IsHovered() ? Settings->BorderHoveredBackgroundColor : Settings->BorderBackgroundColor;
+	if (GraphPinObj == nullptr)
+	{
+		return DefaultPinColor;
+	}
+
+	if (UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(GraphPinObj->GetOwningNode()))
+	{
+		if (!GraphNode->CanHaveOutputConnections())
+		{
+			return IsHovered() ? Settings->BorderHoveredBackgroundColorNoChildren : Settings->BorderBackgroundColorNoChildren;
+		}
+
+		if (GraphNode->ShouldUseBorderHighlight())
+		{
+			return Settings->BorderBackgroundColorHighlighted;
+		}
+	}
+
+	return DefaultPinColor;
+}
 // End SWidget interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

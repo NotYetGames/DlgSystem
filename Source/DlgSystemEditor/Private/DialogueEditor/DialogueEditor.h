@@ -297,6 +297,9 @@ private:
 
 	const UDlgSystemSettings& GetSettings() const { return *Settings; }
 
+	/** Selected proxy nodes highlights their targets */
+	void UpdateNodesHighlightedByProxy(const TSet<UObject*>& NewSelection);
+	
 private:
 	// The dialogue we are currently editing
 	UDlgDialogue* DialogueBeingEdited;

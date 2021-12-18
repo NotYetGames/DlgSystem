@@ -8,11 +8,14 @@
 #include "Nodes/DlgNode_SpeechSequence.h"
 #include "Nodes/DlgNode_Speech.h"
 #include "Nodes/DlgNode_Selector.h"
+#include "Nodes/DlgNode_Proxy.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DialogueEditor/DetailsPanel/Widgets/SDialogueTextPropertyPickList.h"
 #include "DialogueEditor/DetailsPanel/Widgets/DialogueTextPropertyPickList_CustomRowHelper.h"
 #include "DialogueEditor/DetailsPanel/Widgets/DialogueMultiLineEditableTextBox_CustomRowHelper.h"
 #include "DialogueEditor/DetailsPanel/Widgets/DialogueObject_CustomRowHelper.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueIntTextBox_CustomRowHelper.h"
+
 #include "Widgets/Input/SButton.h"
 
 #define LOCTEXT_NAMESPACE "DialoguGraphNode_Details"
@@ -47,6 +50,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 	const bool bIsEndNode = GraphNode->IsEndNode();
 	const bool bIsSpeechNode = GraphNode->IsSpeechNode();
 	const bool bIsSelectorNode = GraphNode->IsSelectorNode();;
+	const bool bIsProxyNode = GraphNode->IsProxyNode();;
 	const bool bIsSpeechSequenceNode = GraphNode->IsSpeechSequenceNode();
 	const bool bIsVirtualParentNode = GraphNode->IsVirtualParentNode();
 
@@ -82,8 +86,8 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 			.Update();
 		}
 
-		// End Nodes can't have children
-		if (!bIsEndNode)
+		// End Nodes and Proxy Nodes can't have children
+		if (!bIsEndNode && !bIsProxyNode)
 		{
 			BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameCheckChildrenOnEvaluation()));
 		}
@@ -98,7 +102,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 	BaseDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameGUID()))
 		.ShouldAutoExpand(true);
 
-	if (!bIsEndNode)
+	if (GraphNode->CanHaveOutputConnections())
 	{
 		ChildrenPropertyRow = &BaseDataCategory.AddProperty(
 			PropertyDialogueNode->GetChildHandle(UDlgNode::GetMemberNameChildren())
@@ -210,6 +214,17 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 		IDetailCategoryBuilder& SpeechDataCategory = DetailLayoutBuilder->EditCategory(TEXT("Selector Node"));
 		SpeechDataCategory.InitiallyCollapsed(false);
 		SpeechDataCategory.AddProperty(PropertyDialogueNode->GetChildHandle(UDlgNode_Selector::GetMemberNameSelectorType()));
+	}
+	else if (bIsProxyNode)
+	{
+		IDetailCategoryBuilder& ProxyDataCategory = DetailLayoutBuilder->EditCategory(TEXT("Proxy Node"));
+		ProxyDataCategory.InitiallyCollapsed(false);
+
+		TSharedPtr<IPropertyHandle> NodeIndexPropertyHandle = PropertyDialogueNode->GetChildHandle(UDlgNode_Proxy::GetMemberNameNodeIndex());
+		FDetailWidgetRow* DetailWidgetRow = &ProxyDataCategory.AddCustomRow(LOCTEXT("TargetNodeSearchKey", "Target Node"));
+		NodeIndexPropertyRow = MakeShared<FDialogueIntTextBox_CustomRowHelper>(DetailWidgetRow, NodeIndexPropertyHandle, Dialogue);
+		NodeIndexPropertyRow->Update();
+		FDialogueDetailsPanelUtils::SetNumericPropertyLimits<int32>(NodeIndexPropertyHandle, 0, Dialogue->GetNodes().Num() - 1);
 	}
 	else if (bIsSpeechSequenceNode)
 	{

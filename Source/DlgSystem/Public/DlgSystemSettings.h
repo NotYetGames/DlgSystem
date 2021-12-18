@@ -475,6 +475,11 @@ public:
 	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor SpeechSequenceNodeColor = FLinearColor{0.050980f, 0.278431f, 0.631373f, 1.f}; // blueish
 
+	// The background color of the proxy node.
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
+	FLinearColor ProxyNodeColor = FLinearColor{ 0.050980f, 0.631373f, 0.278431f, 1.f }; // greenish
+
+
 	// The background color of the node borders.
 	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor BorderBackgroundColor = FLinearColor::Black;
@@ -482,6 +487,19 @@ public:
 	// The background color of the node borders when hovered over
 	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
 	FLinearColor BorderHoveredBackgroundColor = FLinearColor(0.380392f, 0.380392f, 0.380392f, 1.0f); // gray
+
+	// The background color of the node borders for nodes which can't have children.
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
+	FLinearColor BorderBackgroundColorNoChildren = FLinearColor(0.0f, 0.05f, 0.1f, 1.0f);
+
+	// The background color of the node borders for nodes which can't have children when hovered over
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
+	FLinearColor BorderHoveredBackgroundColorNoChildren = FLinearColor(0.0f, 0.1f, 0.2f, 1.0f);
+
+	// The background color of the node borders for nodes which are highlighted
+	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
+	FLinearColor BorderBackgroundColorHighlighted = FLinearColor{ 0.050980f, 0.631373f, 0.278431f, 1.f }; // greenish
+
 
 	// The amount of blank space left around the edges of the speaker text area in case of speech sequence nodes.
 	UPROPERTY(Category = "Graph Node Speech Sequence", Config, EditAnywhere)

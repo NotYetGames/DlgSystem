@@ -1289,6 +1289,8 @@ void FDialogueEditor::OnSelectedNodesChanged(const TSet<UObject*>& NewSelection)
 	{
 		DetailsView->SetObjects(ViewSelection, /*bForceRefresh=*/ true);
 	}
+
+	UpdateNodesHighlightedByProxy(NewSelection);
 }
 
 FActionMenuContent FDialogueEditor::OnCreateGraphActionMenu(
@@ -1331,6 +1333,46 @@ void FDialogueEditor::OnNodeTitleCommitted(const FText& NewText, ETextCommit::Ty
 	verify(NodeBeingChanged->Modify());
 	NodeBeingChanged->OnRenameNode(NewText.ToString());
 }
+
+void FDialogueEditor::UpdateNodesHighlightedByProxy(const TSet<UObject*>& NewSelection)
+{
+	// gather highlighted node indices based on selection
+	TSet<int32> HighlightedNodeIndices;
+	for (UObject* NodeObject : NewSelection)
+	{
+		UDialogueGraphNode* Node = Cast<UDialogueGraphNode>(NodeObject);
+		if (Node == nullptr)
+		{
+			continue;
+		}
+
+		if (const UDlgNode_Proxy* Proxy = Cast<UDlgNode_Proxy>(&Node->GetDialogueNode()))
+		{
+			HighlightedNodeIndices.Add(Proxy->GetTargetNodeIndex());
+		}
+	}
+
+	// Go through all the nodes in graph, update border highlight if changed
+	for (UEdGraphNode* EdGraphNode : DialogueBeingEdited->GetGraph()->Nodes)
+	{
+		UDialogueGraphNode* Node = Cast<UDialogueGraphNode>(EdGraphNode);
+		if (Node == nullptr)
+		{
+			continue;
+		}
+
+		const bool bShouldBeHighlighted = HighlightedNodeIndices.Contains(Node->GetDialogueNodeIndex());
+		if (Node->ShouldUseBorderHighlight() != bShouldBeHighlighted)
+		{
+			Node->SetUseBorderHighlight(bShouldBeHighlighted);
+			if (GraphEditorView.IsValid())
+			{
+				GraphEditorView->RefreshNode(*Node);
+			}
+		}
+	}
+}
+
 // End of own functions
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

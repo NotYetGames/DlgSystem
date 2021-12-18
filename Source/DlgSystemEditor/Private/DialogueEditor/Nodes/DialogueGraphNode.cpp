@@ -100,6 +100,11 @@ FText UDialogueGraphNode::GetNodeTitle(ENodeTitleType::Type TitleType) const
 		return Super::GetNodeTitle(TitleType);
 	}
 
+	if (UDlgNode_Proxy* Proxy = Cast<UDlgNode_Proxy>(DialogueNode))
+	{
+		return FText::FromString(FString("Proxy to ") + FString::FromInt(Proxy->GetTargetNodeIndex()));
+	}
+
 	const FString FullString = DialogueNode->GetNodeParticipantName().ToString();
 	// Display the full title
 	return FText::FromString(FullString);
@@ -296,6 +301,11 @@ FLinearColor UDialogueGraphNode::GetNodeBackgroundColor() const
 		return Settings->SpeechNodeColor;
 	}
 
+	if (IsProxyNode())
+	{
+		return Settings->ProxyNodeColor;
+	}
+
 	if (IsSelectorNode())
 	{
 		if (IsSelectorFirstNode())
@@ -367,6 +377,23 @@ bool UDialogueGraphNode::HasVoicePropertiesSet() const
 		for (const FDlgSpeechSequenceEntry& Sequence : GetDialogueNode<UDlgNode_SpeechSequence>().GetNodeSpeechSequence())
 		{
 			if (Sequence.VoiceSoundWave != nullptr || Sequence.VoiceDialogueWave != nullptr)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool UDialogueGraphNode::IsProxyNodeLeadingToIt() const
+{
+	const UDlgDialogue* Dialogue = GetDialogue();
+	for (UDlgNode* Node : Dialogue->GetNodes())
+	{
+		if (UDlgNode_Proxy* Proxy = Cast<UDlgNode_Proxy>(Node))
+		{
+			if (Proxy->GetTargetNodeIndex() == NodeIndex)
 			{
 				return true;
 			}
@@ -487,9 +514,9 @@ void UDialogueGraphNode::ApplyCompilerWarnings()
 	ClearCompilerMessage();
 
 	// Is Orphan node
-	if (!IsRootNode() && GetInputPin()->LinkedTo.Num() == 0)
+	if (!IsRootNode() && GetInputPin()->LinkedTo.Num() == 0 && !IsProxyNodeLeadingToIt())
 	{
-		SetCompilerWarningMessage(TEXT("Node has no input connections (orphan). It will not be accessible from anywhere"));
+		SetCompilerWarningMessage(TEXT("Node has no input connections (orphan) and no proxy node points to it. It will not be accessible from anywhere"));
 	}
 	else if (DialogueNode->GetNodeOpenChildren_DEPRECATED().Num() > 0)
 	{

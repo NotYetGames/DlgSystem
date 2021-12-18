@@ -42,10 +42,7 @@ public:
 	}
 	FReply OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override;
 
-	FReply OnMouseButtonDoubleClick(const FGeometry& InMyGeometry, const FPointerEvent& InMouseEvent) override
-	{
-		return Super::OnMouseButtonDoubleClick(InMyGeometry, InMouseEvent);
-	}
+	FReply OnMouseButtonDoubleClick(const FGeometry& InMyGeometry, const FPointerEvent& InMouseEvent) override;
 	FReply OnMouseMove(const FGeometry& SenderGeometry, const FPointerEvent& MouseEvent) override
 	{
 		return Super::OnMouseMove(SenderGeometry, MouseEvent);

@@ -118,11 +118,7 @@ protected:
 	}
 
 	/** @return The color that we should use to draw this pin */
-	FSlateColor GetPinColor() const override
-	{
-		const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-		return IsHovered() ? Settings->BorderHoveredBackgroundColor : Settings->BorderBackgroundColor;
-	}
+	FSlateColor GetPinColor() const override;
 
 	// Begin own functions
 	/** Handles when the alt button and left mouse is on the pin.  */

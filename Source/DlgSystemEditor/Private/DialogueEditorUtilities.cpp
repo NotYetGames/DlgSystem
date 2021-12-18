@@ -883,6 +883,12 @@ void FDialogueEditorUtilities::RemapOldIndicesWithNewAndUpdateGUID(
 			ChildEdgeNodes[EdgeIndex]->SetDialogueEdge(*DialogueEdge);
 		}
 
+		// update proxy node
+		if (UDlgNode_Proxy* AsProxy = Cast<UDlgNode_Proxy>(DialogueNode))
+		{
+			AsProxy->RemapOldIndicesWithNew(OldToNewIndexMap);
+		}
+
 		GraphNode->CheckDialogueNodeSyncWithGraphNode(true);
 	}
 }

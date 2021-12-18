@@ -44,6 +44,30 @@ FReply SDialogueGraphNode::OnDrop(const FGeometry& MyGeometry, const FDragDropEv
 	return Super::OnDrop(MyGeometry, DragDropEvent);
 }
 
+FReply SDialogueGraphNode::OnMouseButtonDoubleClick(const FGeometry& InMyGeometry, const FPointerEvent& InMouseEvent)
+{
+	if (DialogueGraphNode == nullptr)
+	{
+		return Super::OnMouseButtonDoubleClick(InMyGeometry, InMouseEvent);
+	}
+
+	const UDlgNode_Proxy* Proxy = Cast<UDlgNode_Proxy>(&DialogueGraphNode->GetDialogueNode());
+	if (Proxy == nullptr)
+	{
+		return Super::OnMouseButtonDoubleClick(InMyGeometry, InMouseEvent);
+	}
+
+	const int32 TargetIndex = Proxy->GetTargetNodeIndex();
+	const TArray<UDlgNode*>& Nodes = DialogueGraphNode->GetDialogue()->GetNodes();
+	if (Nodes.IsValidIndex(TargetIndex))
+	{
+		FDialogueEditorUtilities::JumpToGraphNode(Nodes[TargetIndex]->GetGraphNode());
+		return FReply::Handled();
+	}
+
+	return Super::OnMouseButtonDoubleClick(InMyGeometry, InMouseEvent);
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin SNodePanel::SNode Interface
 TArray<FOverlayWidgetInfo> SDialogueGraphNode::GetOverlayWidgets(bool bSelected, const FVector2D& WidgetSize) const
