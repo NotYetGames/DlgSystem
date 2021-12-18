@@ -33,6 +33,7 @@
 #include "DialogueEditor/DetailsPanel/DialogueCondition_Details.h"
 #include "DialogueEditor/DetailsPanel/DialogueEvent_Details.h"
 #include "DialogueEditor/DetailsPanel/DialogueTextArgument_Details.h"
+#include "DialogueEditor/DetailsPanel/DialogueParticipantName_Details.h"
 #include "DialogueEditor/DetailsPanel/DialogueSpeechSequenceEntry_Details.h"
 #include "DlgManager.h"
 #include "IDlgSystemModule.h"
