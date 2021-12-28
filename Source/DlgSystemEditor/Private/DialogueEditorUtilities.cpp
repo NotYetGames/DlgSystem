@@ -294,7 +294,11 @@ bool FDialogueEditorUtilities::CheckAndTryToFixDialogue(UDlgDialogue* Dialogue, 
 		return EdgesToRemove.Num() == 0;
 	};
 
-	bIsDataValid = bIsDataValid && checkIfMultipleEdgesToSameNode(Dialogue->GetMutableStartNode());
+	for (UDlgNode* Node : Dialogue->GetMutableStartNodes())
+	{
+		bIsDataValid = bIsDataValid && checkIfMultipleEdgesToSameNode(Node);
+	}
+
 	for (UDlgNode* Node : DialogueNodes)
 	{
 		bIsDataValid = bIsDataValid && checkIfMultipleEdgesToSameNode(Node);
@@ -357,7 +361,7 @@ void FDialogueEditorUtilities::TryToCreateDefaultGraph(UDlgDialogue* Dialogue, b
 bool FDialogueEditorUtilities::AreDialogueNodesInSyncWithGraphNodes(const UDlgDialogue* Dialogue)
 {
 	const int32 NumGraphNodes = CastChecked<UDialogueGraph>(Dialogue->GetGraph())->GetAllDialogueGraphNodes().Num();
-	const int32 NumDialogueNodes = Dialogue->GetNodes().Num() + 1; // (plus the start node)
+	const int32 NumDialogueNodes = Dialogue->GetNodes().Num() + Dialogue->GetStartNodes().Num(); // (normal nodes + the start nodes)
 	if (NumGraphNodes == NumDialogueNodes)
 	{
 		return true;
@@ -1146,4 +1150,13 @@ UEdGraphNode_Comment* FDialogueEditorUtilities::BlueprintAddComment(UBlueprint* 
 	}
 
 	return nullptr;
+}
+
+void FDialogueEditorUtilities::RefreshDialogueEditorForGraph(const UEdGraph* Graph)
+{
+	TSharedPtr<IDialogueEditor> DialogueEditor = GetDialogueEditorForGraph(Graph);
+	if (DialogueEditor.IsValid())
+	{
+		DialogueEditor->Refresh(true);
+	}
 }

@@ -43,12 +43,12 @@ bool UDialogueGraph::Modify(bool bAlwaysMarkDirty)
 	return bWasSaved;
 }
 
-UDialogueGraphNode_Root* UDialogueGraph::GetRootGraphNode() const
+TArray<UDialogueGraphNode_Root*> UDialogueGraph::GetRootGraphNodes() const
 {
 	TArray<UDialogueGraphNode_Root*> RootNodeList;
 	GetNodesOfClass<UDialogueGraphNode_Root>(/*out*/ RootNodeList);
-	check(RootNodeList.Num() == 1);
-	return RootNodeList[0];
+	check(RootNodeList.Num() >= 1);
+	return RootNodeList;
 }
 
 TArray<UDialogueGraphNode_Base*> UDialogueGraph::GetAllBaseDialogueGraphNodes() const
@@ -99,22 +99,24 @@ void UDialogueGraph::CreateGraphNodesFromDialogue()
 	UDlgDialogue* Dialogue = GetDialogue();
 	FDialogueEditorUtilities::CheckAndTryToFixDialogue(Dialogue, false);
 
-	// Step 1: Create the root (start) node
+	// Step 1: Create the root (start) nodes
 	{
+		TArray<UDlgNode*> StartNodes = Dialogue->GetMutableStartNodes();
 		FGraphNodeCreator<UDialogueGraphNode_Root> NodeCreator(*this);
-		UDialogueGraphNode_Root* StartGraphNode = NodeCreator.CreateNode();
+		check(StartNodes.Num() > 0);
+		for (int32 i = 0; i < StartNodes.Num(); ++i)
+		{
+			UDialogueGraphNode_Root* StartGraphNode = NodeCreator.CreateNode();
 
-		// Create two way direction for both Dialogue Node and Graph Node.
-		UDlgNode* StartNode = Dialogue->GetMutableStartNode();
-		check(StartNode);
+			// Create two way direction for both Dialogue Node and Graph Node.
+			StartGraphNode->SetDialogueNode(StartNodes[i]);
 
-		StartGraphNode->SetDialogueNode(StartNode);
-		Dialogue->SetStartNode(StartNode);
-
-		// Finalize creation
-		StartGraphNode->SetPosition(0, 0);
-		NodeCreator.Finalize();
+			// Finalize creation
+			StartGraphNode->SetPosition(i * 300.0f, 0);
+			NodeCreator.Finalize();
+		}
 	}
+	
 
 	// Step 2: Create the Graph Nodes for all the Nodes
 	const TArray<UDlgNode*>& DialogueNodes = Dialogue->GetNodes();
@@ -135,16 +137,19 @@ void UDialogueGraph::CreateGraphNodesFromDialogue()
 
 void UDialogueGraph::LinkGraphNodesFromDialogue() const
 {
-	UDialogueGraphNode_Root* StartNodeGraph = GetRootGraphNode();
 	UDlgDialogue* Dialogue = GetDialogue();
 
 	// Assume we have all the nodes created (plus the start node)
 	check(FDialogueEditorUtilities::AreDialogueNodesInSyncWithGraphNodes(Dialogue));
 
-	const UDlgNode& StartNodeDialogue = Dialogue->GetStartNode();
+	const TArray<UDlgNode*> StartNodesDialogue = Dialogue->GetStartNodes();
 	const TArray<UDlgNode*>& NodesDialogue = Dialogue->GetNodes();
+
 	// Step 1. Make the root (start) node connections
-	LinkGraphNodeToChildren(NodesDialogue, StartNodeDialogue, StartNodeGraph);
+	for (int32 i = 0; i < StartNodesDialogue.Num(); ++i)
+	{
+		LinkGraphNodeToChildren(NodesDialogue, *StartNodesDialogue[i], Cast<UDialogueGraphNode>(StartNodesDialogue[i]->GetGraphNode()));
+	}
 
 	// Step 2: Create all the connections between the rest of the nodes
 	for (UDlgNode* DialogueNode : NodesDialogue)
@@ -201,7 +206,8 @@ void UDialogueGraph::LinkGraphNodeToChildren(
 void UDialogueGraph::AutoPositionGraphNodes() const
 {
 	static constexpr bool bIsDirectionVertical = true;
-	UDialogueGraphNode_Root* RootNode = GetRootGraphNode();
+	// TODO: multiple start node support
+	UDialogueGraphNode_Root* RootNode = GetRootGraphNodes()[0];
 	const TArray<UDialogueGraphNode*> DialogueGraphNodes = GetAllDialogueGraphNodes();
 	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 

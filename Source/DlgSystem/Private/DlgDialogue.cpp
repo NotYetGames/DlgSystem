@@ -17,6 +17,7 @@
 #include "IO/DlgJsonParser.h"
 #include "Nodes/DlgNode_Speech.h"
 #include "Nodes/DlgNode_End.h"
+#include "Nodes/DlgNode_Start.h"
 #include "DlgManager.h"
 #include "Logging/DlgLogger.h"
 #include "DlgHelper.h"
@@ -102,6 +103,11 @@ void UDlgDialogue::PostLoad()
 		DialogueVersion < FDlgDialogueObjectVersion::AddCustomObjectsToParticipantsData)
 	{
 		UpdateAndRefreshData();
+	}
+
+	if (DialogueVersion < FDlgDialogueObjectVersion::AddSupportForMultipleStartNodes && StartNode_DEPRECATED != nullptr)
+	{
+		StartNodes.Add(StartNode_DEPRECATED);
 	}
 
 	// Create thew new GUID
@@ -315,9 +321,9 @@ void UDlgDialogue::CreateGraph()
 		return;
 	}
 
-	if (!IsValid(StartNode))
+	if (StartNodes.Num() == 0 || !IsValid(StartNodes[0]))
 	{
-		StartNode = ConstructDialogueNode<UDlgNode_Speech>();
+		StartNodes.Add(ConstructDialogueNode<UDlgNode_Start>());
 	}
 
 	FDlgLogger::Get().Debugf(TEXT("Creating graph for Dialogue = `%s`"), *GetPathName());
@@ -404,8 +410,9 @@ void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
 	}
 
 	// Clear data first
-	StartNode = nullptr;
+	StartNode_DEPRECATED = nullptr;
 	Nodes.Empty();
+	StartNodes.Empty();
 
 	// TODO handle Name == NAME_None or invalid filename
 	FDlgLogger::Get().Infof(TEXT("Reloading data for Dialogue = `%s` FROM file = `%s`"), *GetPathName(), *TextFileName);
@@ -433,9 +440,15 @@ void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
 			break;
 	}
 
-	if (!IsValid(StartNode))
+	if (IsValid(StartNode_DEPRECATED))
 	{
-		StartNode = ConstructDialogueNode<UDlgNode_Speech>();
+		StartNodes.Add(StartNode_DEPRECATED);
+	}
+
+
+	if (StartNodes.Num() == 0)
+	{
+		StartNodes.Add(ConstructDialogueNode<UDlgNode_Speech>());
 	}
 
 	// TODO(vampy): validate if data is legit, indicies exist and that sort.
@@ -463,7 +476,6 @@ void UDlgDialogue::ImportFromFileFormat(EDlgDialogueTextFormat TextFormat)
 	}
 
 	Name = GetDialogueFName();
-	AutoFixGraph();
 	UpdateAndRefreshData(true);
 }
 
@@ -612,7 +624,7 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 	AllSpeakerStates.Empty();
 
 	// do not forget about the edges of the Root/Start Node
-	if (IsValid(StartNode))
+	for (UDlgNode* StartNode : StartNodes)
 	{
 		AddConditionsDataFromNodeEdges(StartNode, INDEX_NONE);
 		RebuildAndUpdateNode(StartNode, *Settings, bUpdateTextsNamespacesAndKeys);
@@ -796,14 +808,9 @@ int32 UDlgDialogue::GetNodeIndexForGUID(const FGuid& NodeGUID) const
 	return INDEX_NONE;
 }
 
-void UDlgDialogue::SetStartNode(UDlgNode* InStartNode)
+void UDlgDialogue::SetStartNodes(TArray<UDlgNode*> InStartNodes)
 {
-	if (!InStartNode)
-	{
-		return;
-	}
-
-	StartNode = InStartNode;
+	StartNodes = InStartNodes;
 	// UpdateGUIDToIndexMap(StartNode, INDEX_NONE);
 }
 
@@ -845,54 +852,6 @@ bool UDlgDialogue::IsEndNode(int32 NodeIndex) const
 	}
 
 	return Nodes[NodeIndex]->IsA<UDlgNode_End>();
-}
-
-void UDlgDialogue::AutoFixGraph()
-{
-	verify(StartNode);
-	// syntax correction 1: if there is no start node, we create one pointing to the first node
-	if (StartNode->GetNodeChildren().Num() == 0 && Nodes.Num() > 0)
-	{
-		StartNode->AddNodeChild({ 0 });
-	}
-	StartNode->SetFlags(RF_Transactional);
-
-	// syntax correction 2: if there is no end node, we add one
-	bool bHasEndNode = false;
-	// check if the end node is already there
-	for (UDlgNode* Node : Nodes)
-	{
-		verify(Node);
-		Node->SetFlags(RF_Transactional);
-		if (Node->IsA<UDlgNode_End>())
-		{
-			bHasEndNode = true;
-			break;
-		}
-	}
-	// add it if not
-	if (!bHasEndNode && Nodes.Num() > 0)
-	{
-		auto* EndNode = ConstructDialogueNode<UDlgNode_End>();
-		EndNode->SetNodeParticipantName(Nodes[0]->GetNodeParticipantName());
-		Nodes.Add(EndNode);
-	}
-
-	// syntax correction 3: if a node is not an end node but has no children it will "adopt" the next node
-	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-	for (int32 i = 0; i < Nodes.Num() - 1; ++i)
-	{
-		UDlgNode* Node = Nodes[i];
-		const TArray<FDlgEdge>& NodeChildren = Node->GetNodeChildren();
-
-		if (!Node->IsA<UDlgNode_End>() && NodeChildren.Num() == 0)
-		{
-			Node->AddNodeChild({ i + 1 });
-		}
-
-		// Add some text to the edges.
-		Node->UpdateTextsValuesFromDefaultsAndRemappings(*Settings, true, true);
-	}
 }
 
 FString UDlgDialogue::GetTextFilePathName(bool bAddExtension/* = true*/) const

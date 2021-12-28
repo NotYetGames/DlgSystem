@@ -66,7 +66,10 @@ int32 UDlgStatsCommandlet::Main(const FString& Params)
 bool UDlgStatsCommandlet::GetStatsForDialogue(const UDlgDialogue& Dialogue, FDlgStatsDialogue& OutStats)
 {
 	// Root
-	OutStats.WordCount += GetNodeWordCount(Dialogue.GetStartNode());
+	for (const UDlgNode* StartNode : Dialogue.GetStartNodes())
+	{
+		OutStats.WordCount += GetNodeWordCount(*StartNode);
+	}
 
 	// Nodes
 	const TArray<UDlgNode*>& Nodes = Dialogue.GetNodes();

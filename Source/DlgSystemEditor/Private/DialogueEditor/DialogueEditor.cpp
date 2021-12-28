@@ -894,6 +894,7 @@ void FDialogueEditor::OnCommandDeleteSelectedNodes() const
 	int32 NumDialogueNodesRemoved = 0;
 	int32 NumBaseDialogueNodesRemoved = 0;
 	int32 NumEdgeDialogueNodesRemoved = 0;
+	int32 NumStartNodesRemoved = 0;
 
 #if DO_CHECK
 	const int32 Initial_DialogueNodesNum = DialogueBeingEdited->GetNodes().Num();
@@ -902,6 +903,7 @@ void FDialogueEditor::OnCommandDeleteSelectedNodes() const
 	const int32 Initial_GraphBaseDialogueNodesNum = DialogueGraph->GetAllBaseDialogueGraphNodes().Num();
 	const int32 Initial_GraphEdgeDialogueNodesNum = DialogueGraph->GetAllEdgeDialogueGraphNodes().Num();
 #endif
+	const int32 Initial_StartNodeNum = DialogueGraph->GetRootGraphNodes().Num();
 
 	// Unselect nodes we are about to delete
 	ClearViewportSelection();
@@ -934,18 +936,38 @@ void FDialogueEditor::OnCommandDeleteSelectedNodes() const
 		}
 	};
 
-
 	for (UObject* NodeObject : SelectedNodes)
 	{
 		UEdGraphNode* SelectedNode = CastChecked<UEdGraphNode>(NodeObject);
+
 		if (!SelectedNode->CanUserDeleteNode())
 		{
 			continue;
 		}
 
-		// Base Node type
-		if (UDialogueGraphNode_Base* NodeBase = Cast<UDialogueGraphNode_Base>(SelectedNode))
+		// only allow root nodes until there is at least one remaining
+		if (UDialogueGraphNode_Root* Root = Cast<UDialogueGraphNode_Root>(SelectedNode))
 		{
+			if (NumStartNodesRemoved == Initial_StartNodeNum - 1)
+			{
+				continue;
+			}
+
+			for (UDialogueGraphNode_Edge* ChildNodeEdge : Root->GetChildEdgeNodes())
+			{
+				RemoveGraphEdgeNode(ChildNodeEdge);
+			}
+
+			// Remove the Node
+			// No need to recompile as the the break node links step will do that for us
+			verify(FDialogueEditorUtilities::RemoveNode(Root));
+			NumStartNodesRemoved++;
+			NumBaseDialogueNodesRemoved++;
+		}
+		else if (UDialogueGraphNode_Base* NodeBase = Cast<UDialogueGraphNode_Base>(SelectedNode))
+		{
+			// Base Node type
+
 			if (UDialogueGraphNode* Node = Cast<UDialogueGraphNode>(NodeBase))
 			{
 				// Remove the parent/child edges
@@ -991,22 +1013,23 @@ void FDialogueEditor::OnCommandDeleteSelectedNodes() const
 #if DO_CHECK
 	// Check if we removed as we counted
 	check(Initial_DialogueNodesNum - NumDialogueNodesRemoved == DialogueBeingEdited->GetNodes().Num());
-	check(Initial_GraphNodesNum - NumNodesRemoved == DialogueGraph->Nodes.Num());
-	check(Initial_GraphDialogueNodesNum - NumDialogueNodesRemoved == DialogueGraph->GetAllDialogueGraphNodes().Num());
+	check(Initial_GraphNodesNum - NumNodesRemoved - NumStartNodesRemoved == DialogueGraph->Nodes.Num());
+	check(Initial_GraphDialogueNodesNum - NumDialogueNodesRemoved - NumStartNodesRemoved == DialogueGraph->GetAllDialogueGraphNodes().Num());
 	check(Initial_GraphBaseDialogueNodesNum - NumBaseDialogueNodesRemoved == DialogueGraph->GetAllBaseDialogueGraphNodes().Num());
 	check(Initial_GraphEdgeDialogueNodesNum - NumEdgeDialogueNodesRemoved == DialogueGraph->GetAllEdgeDialogueGraphNodes().Num());
 	check(NumEdgeDialogueNodesRemoved == RemovedEdges.Num());
+	check(Initial_StartNodeNum - NumStartNodesRemoved == DialogueGraph->GetRootGraphNodes().Num());
 #endif
 }
 
 bool FDialogueEditor::CanDeleteNodes() const
 {
 	const TSet<UObject*>& SelectedNodes = GetSelectedNodes();
-	// Return false if only root node is selected, as it can't be deleted
+	// Return false if only the last root node is selected, as it can't be deleted
 	if (SelectedNodes.Num() == 1)
 	{
 		const UObject* SelectedNode = *FDlgHelper::GetFirstSetElement(SelectedNodes);
-		return !SelectedNode->IsA(UDialogueGraphNode_Root::StaticClass());
+		return !SelectedNode->IsA(UDialogueGraphNode_Root::StaticClass()) || GetDialogueGraph()->GetRootGraphNodes().Num() > 0;
 	}
 
 	return SelectedNodes.Num() > 0;

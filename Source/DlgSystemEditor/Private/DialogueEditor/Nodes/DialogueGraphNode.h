@@ -119,9 +119,6 @@ public:
 	/** Whether or not this node can be safely duplicated (via copy/paste, etc...) in the graph. */
 	bool CanDuplicateNode() const override { return !IsRootNode(); }
 
-	/** Whether or not this node can be deleted by user action. */
-	bool CanUserDeleteNode() const override { return !IsRootNode(); }
-
 	/** Perform any steps necessary prior to copying a node into the paste buffer */
 	void PrepareForCopying() override;
 

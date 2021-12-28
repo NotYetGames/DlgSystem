@@ -24,6 +24,10 @@ public:
 	void Compile();
 
 private:
+
+	/** Reorders start nodes based on their position */
+	void OrderRootGraphNodes();
+
 	/** Applies necessary steps before the main compile routine (CompileGraphNode) has compiled on a node. */
 	void PreCompileGraphNode(UDialogueGraphNode* GraphNode);
 
@@ -85,8 +89,8 @@ private:
 	 */
 	TMap<int32, int32> IndicesHistory;
 
-	/** The root graph node. */
-	UDialogueGraphNode_Root* GraphNodeRoot = nullptr;
+	/** The root graph nodes. */
+	TArray<UDialogueGraphNode_Root*> GraphNodeRoots;
 
 	/**
 	 * Keep track of paths. Use pointers as the indices change at compile time.

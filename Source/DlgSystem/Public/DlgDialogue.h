@@ -29,6 +29,7 @@ struct DLGSYSTEM_API FDlgDialogueObjectVersion
 		AddVirtualParentFireDirectChildEnterEvents,
 		AddGUIDToNodes,
 		AddCustomObjectsToParticipantsData,
+		AddSupportForMultipleStartNodes,
 
 		// -----<new versions can be added above this line>-------------------------------------------------
 		VersionPlusOne,
@@ -166,7 +167,6 @@ public:
 	static FName GetMemberNameName() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, Name); }
 	static FName GetMemberNameGUID() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, GUID); }
 	static FName GetMemberNameParticipantsData() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, ParticipantsData); }
-	static FName GetMemberNameStartNode() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, StartNode); }
 	static FName GetMemberNameNodes() { return GET_MEMBER_NAME_CHECKED(UDlgDialogue, Nodes); }
 
 	// Create the basic dialogue graph.
@@ -560,9 +560,13 @@ public:
 	const TArray<UDlgNode*>& GetNodes() const { return Nodes; }
 
 	// Gets the Start Node as a mutable pointer.
-	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "Get Start Node")
-	UDlgNode* GetMutableStartNode() const { return StartNode; }
-	const UDlgNode& GetStartNode() const { return *StartNode; }
+	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "Get Start Node", meta = (DeprecatedFunction, DeprecationMessage = "Function has been deprecated, Please use GetMutableStartNodes"))
+	UDlgNode* GetMutableStartNode() const { check(StartNodes.Num() > 0); return StartNodes[0]; }
+	// Deprecated function
+	const UDlgNode& GetStartNode() const { check(StartNodes.Num() > 0);  return *StartNodes[0]; }
+
+	TArray<UDlgNode*>& GetMutableStartNodes() { return StartNodes; }
+	const TArray<UDlgNode*>& GetStartNodes() const { return StartNodes; }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	bool IsValidNodeIndex(int32 NodeIndex) const { return Nodes.IsValidIndex(NodeIndex); }
@@ -586,8 +590,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "Get Node From GUID")
 	UDlgNode* GetMutableNodeFromGUID(const FGuid& NodeGUID) const { return GetMutableNodeFromIndex(GetNodeIndexForGUID(NodeGUID));   }
 
-	// Sets a new Start Node. Use with care.
-	void SetStartNode(UDlgNode* InStartNode);
+	// Sets the new Start Node. Use with care.
+	void SetStartNodes(TArray<UDlgNode*> InStartNodes);
 
 	// NOTE: don't call this if you don't know what you are doing, you most likely need to call
 	// SetStartNode
@@ -633,6 +637,9 @@ public:
 	// Adds a new node to this dialogue, returns the index location of the added node in the Nodes array.
 	int32 AddNode(UDlgNode* NodeToAdd) { return Nodes.Add(NodeToAdd); }
 
+	// Adds a new start node to this dialogue, returns the index location of the added node in the Nodes array.
+	int32 AddStartNode(UDlgNode* NodeToAdd) { return StartNodes.Add(NodeToAdd); }
+
 	/**
 	 * @param	bAddExtension	If this adds the .dlg or .dlg.json extension depending on the TextFormat.
 	 * @return The path (as a relative path) and name of the text file, or empty string if something is wrong.
@@ -667,14 +674,6 @@ private:
 	void ImportFromFileFormat(EDlgDialogueTextFormat TextFormat);
 	void ExportToFileFormat(EDlgDialogueTextFormat TextFormat) const;
 
-	/**
-	 * Tries to fix the internal graph of this Dialogue in the following ways:
-	 * 1. If there is no start node, we create one pointing to the first node
-	 * 2. If there is no end node, we add one
-	 * 3. If a node is not an end node but has no children it will "adopt" the next node
-	 */
-	void AutoFixGraph();
-
 	// Updates NodesGUIDToIndexMap with Node
 	void UpdateGUIDToIndexMap(const UDlgNode* Node, int32 NodeIndex);
 
@@ -706,7 +705,12 @@ protected:
 	// Root node, Dialogue is started from the first child with satisfied condition (like the SelectorFirst node)
 	// NOTE: Add VisibleAnywhere to make it easier to debug
 	UPROPERTY(Instanced)
-	UDlgNode* StartNode;
+	UDlgNode* StartNode_DEPRECATED;
+
+	// Root nodes, Dialogue is started from the first one which has a child with satisfied condition
+	// (node itself works like the SelectorFirst node, first satisfied child will be picked)
+	UPROPERTY(Instanced, VisibleAnywhere)
+	TArray<UDlgNode*> StartNodes;
 
 	// The new list of all nodes that belong to this Dialogue. Each nodes has children (edges) that have indices that point
 	// to other nodes in this array.

@@ -46,7 +46,7 @@ public:
 	}
 
 	/** Gets the root graph node of this graph */
-	UDialogueGraphNode_Root* GetRootGraphNode() const;
+	TArray<UDialogueGraphNode_Root*> GetRootGraphNodes() const;
 
 	/** Gets all the graph nodes of this  Graph */
 	const TArray<UEdGraphNode*>& GetAllGraphNodes() const { return Nodes;  }

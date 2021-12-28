@@ -5,6 +5,20 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin UEdGraphNode interface
+
+FText UDialogueGraphNode_Root::GetNodeTitle(ENodeTitleType::Type TitleType) const
+{
+	const TArray<UDlgNode*> StartNodes = GetDialogue()->GetStartNodes();
+	if (StartNodes.Num() == 1)
+	{
+		return NSLOCTEXT("DialogueGraphNode_Root", "RootTitle", "Start");
+	}
+
+	const int32 StartNodeIndex = StartNodes.Find(DialogueNode);
+	const FString AsString = FString("Start ") + FString::FromInt(StartNodeIndex);
+	return FText::FromString(AsString);
+}
+
 void UDialogueGraphNode_Root::PinConnectionListChanged(UEdGraphPin* Pin)
 {
 	// Root node can only have output nodes so any other type should not be supported.
@@ -21,12 +35,6 @@ void UDialogueGraphNode_Root::PinConnectionListChanged(UEdGraphPin* Pin)
 void UDialogueGraphNode_Root::OnDialoguePropertyChanged(const FPropertyChangedEvent& PropertyChangedEvent)
 {
 	if (!PropertyChangedEvent.Property || !PropertyChangedEvent.MemberProperty)
-	{
-		return;
-	}
-
-	// Only interested in the Dialogue.StartNode
-	if (PropertyChangedEvent.MemberProperty->GetFName() != UDlgDialogue::GetMemberNameStartNode())
 	{
 		return;
 	}

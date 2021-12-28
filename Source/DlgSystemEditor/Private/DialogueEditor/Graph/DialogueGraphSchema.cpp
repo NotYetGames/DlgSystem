@@ -18,6 +18,7 @@
 #include "SchemaActions/NewComment_DialogueGraphSchemaAction.h"
 #include "SchemaActions/NewNode_DialogueGraphSchemaAction.h"
 #include "SchemaActions/ConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction.h"
+#include "Nodes/DlgNode_Start.h"
 
 #define LOCTEXT_NAMESPACE "DlgDialogueGraphSchema"
 
@@ -507,6 +508,12 @@ void UDialogueGraphSchema::GetAllDialogueNodeActions(FGraphActionMenuBuilder& Ac
 	// Generate menu actions for all the node types
 	for (TSubclassOf<UDlgNode> DialogueNodeClass : DialogueNodeClasses)
 	{
+		// start node can't be added as a child
+		if (ActionMenuBuilder.FromPin != nullptr && DialogueNodeClass == UDlgNode_Start::StaticClass())
+		{
+			continue;
+		}
+
 		const UDlgNode* DialogueNode = DialogueNodeClass->GetDefaultObject<UDlgNode>();
 		Arguments.Add(TEXT("Name"), FText::FromString(DialogueNode->GetNodeTypeString()));
 

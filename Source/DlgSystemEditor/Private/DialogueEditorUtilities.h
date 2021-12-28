@@ -269,6 +269,8 @@ public:
 	// Adds a comment to the Blueprint
 	static UEdGraphNode_Comment* BlueprintAddComment(UBlueprint* Blueprint, const FString& CommentString, FVector2D Location = FVector2D::ZeroVector);
 
+	static void RefreshDialogueEditorForGraph(const UEdGraph* Graph);
+
 private:
 	// Get the DialogueEditor for given object, if it exists
 	static TSharedPtr<class IDialogueEditor> GetDialogueEditorForGraph(const UEdGraph* Graph);

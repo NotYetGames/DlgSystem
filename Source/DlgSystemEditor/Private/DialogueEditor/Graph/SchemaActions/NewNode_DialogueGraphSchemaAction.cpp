@@ -4,7 +4,9 @@
 #include "ScopedTransaction.h"
 
 #include "DlgDialogue.h"
+#include "Nodes/DlgNode_Start.h"
 #include "DialogueEditor/Nodes/DialogueGraphNode.h"
+#include "DialogueEditor/Nodes/DialogueGraphNode_Root.h"
 
 #define LOCTEXT_NAMESPACE "NewNode_DialogueGraphSchemaAction"
 
@@ -81,6 +83,26 @@ UEdGraphNode* FNewNode_DialogueGraphSchemaAction::CreateNode(
 	}
 
 	// Create the graph node
+	if (UDlgNode_Start* AsStartNode = Cast<UDlgNode_Start>(DialogueNode))
+	{
+		FGraphNodeCreator<UDialogueGraphNode_Root> NodeCreator(*ParentGraph);
+		UDialogueGraphNode_Root* GraphNode = NodeCreator.CreateUserInvokedNode(bSelectNewNode);
+
+		// Link dialogue node <-> graph node
+		DialogueNode->SetGraphNode(GraphNode);
+		GraphNode->SetDialogueNode(DialogueNode);
+		Dialogue->AddStartNode(DialogueNode);
+
+		// Finalize graph node creation
+		NodeCreator.Finalize(); // Calls on the node: CreateNewGuid, PostPlacedNewNode, AllocateDefaultPins
+
+		// Position graph node
+		GraphNode->SetPosition(Location.X, Location.Y);
+		//ResultNode->SnapToGrid(SNAP_GRID);
+
+		return CastChecked<UEdGraphNode>(GraphNode);
+	}
+
 	FGraphNodeCreator<UDialogueGraphNode> NodeCreator(*ParentGraph);
 	UDialogueGraphNode* GraphNode = NodeCreator.CreateUserInvokedNode(bSelectNewNode);
 

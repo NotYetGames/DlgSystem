@@ -18,7 +18,9 @@ void FDialogueCompilerContext::Compile()
 	UDialogueGraph* DialogueGraph = CastChecked<UDialogueGraph>(Dialogue->GetGraph());
 	DialogueGraphNodes = DialogueGraph->GetAllDialogueGraphNodes();
 	if (DialogueGraphNodes.Num() == 0)
+	{
 		return;
+	}
 
 	ResultDialogueNodes.Empty();
 	VisitedNodes.Empty();
@@ -33,17 +35,30 @@ void FDialogueCompilerContext::Compile()
 	// we simply walk the graph with a breath first search and reassign the indices as they appear.
 	// This also has the advantage that close nodes will also have indices close to each other.
 
+
 	// TODO(vampy): Add checking and output errors for the nodes, like orphans
-	// Step 1. Find the root and set the start node
-	GraphNodeRoot = DialogueGraph->GetRootGraphNode();
-	check(GraphNodeRoot);
-	VisitedNodes.Add(GraphNodeRoot);
+	// Step 1. Find the roots and set the start nodes
+	GraphNodeRoots = DialogueGraph->GetRootGraphNodes();
+	check(GraphNodeRoots.Num() > 0);
+
+	OrderRootGraphNodes();
+	TArray<UDlgNode*> StartNodes;
+	for (UDialogueGraphNode_Root* RootNode : GraphNodeRoots)
+	{
+		StartNodes.Add(RootNode->GetMutableDialogueNode());
+	}
+	Dialogue->SetStartNodes(StartNodes);
 
 	// Add initially the children as we do not add the StartNode to the array of DialogueNodes
 	NodeDepth = 0;
 	NodesNumberUntilDepthIncrease = 1; // root/start node
 	NodesNumberNextDepth = 0; // we do not know yet
-	CompileGraphNode(GraphNodeRoot);
+
+	for (UDialogueGraphNode_Root* RootNode : GraphNodeRoots)
+	{
+		VisitedNodes.Add(RootNode);
+		CompileGraphNode(RootNode);
+	}
 
 	// Step 2. Walk the graph and set the rest of the nodes.
 	CompileGraph();
@@ -56,13 +71,23 @@ void FDialogueCompilerContext::Compile()
 
 	// Step 5. Update the dialogue data.
 	Dialogue->EmptyNodesGUIDToIndexMap();
-	Dialogue->SetStartNode(GraphNodeRoot->GetMutableDialogueNode());
 	Dialogue->SetNodes(ResultDialogueNodes);
 
 	// Step 6. Fix old indices and update GUID for the Conditions
 	FixBrokenOldIndicesAndUpdateGUID();
 
 	Dialogue->PostEditChange();
+
+	FDialogueEditorUtilities::RefreshDialogueEditorForGraph(DialogueGraph);
+}
+
+void FDialogueCompilerContext::OrderRootGraphNodes()
+{
+	// order based on position
+	GraphNodeRoots.Sort([](const UDialogueGraphNode_Root& First, const UDialogueGraphNode_Root& Second)
+	{
+		return First.GetPosition().X < Second.GetPosition().X;
+	});
 }
 
 void FDialogueCompilerContext::PreCompileGraphNode(UDialogueGraphNode* GraphNode)
@@ -235,18 +260,29 @@ bool FDialogueCompilerContext::GetPathToNodeAsSet(
 
 void FDialogueCompilerContext::SetEdgesCategorization()
 {
-	// If there is an unique path from the root node to the child node (the node the edge points to) of this edge it means the
+	// If there is an unique path from any root node to the child node (the node the edge points to) of this edge it means the
 	// edge is primary, otherwise it is secondary.
 	for (UDialogueGraphNode* GraphNode : VisitedNodes)
 	{
-		// Ignore the root node
+		// Ignore the root nodes
 		if (GraphNode->IsRootNode())
 		{
 			continue;
 		}
 
-		TSet<const UDialogueGraphNode*> PathToThisNodeSet;
-		if (!GetPathToNodeAsSet(GraphNodeRoot, GraphNode, PathToThisNodeSet))
+		// Get existing path from all root nodes, multiple root node could lead to the same node
+		TArray<TSet<const UDialogueGraphNode*>> PathListToThisNodeSet;
+		for (int32 i = 0; i < GraphNodeRoots.Num(); ++i)
+		{
+			TSet<const UDialogueGraphNode*> Path;
+			if (GetPathToNodeAsSet(GraphNodeRoots[0], GraphNode, Path))
+			{
+				PathListToThisNodeSet.Add(Path);
+			}
+		}
+
+		// not a single root node reaches the node -> skip
+		if (PathListToThisNodeSet.Num() == 0)
 		{
 			UE_LOG(LogDlgSystemEditor, Warning, TEXT("Can't find a path from the root node to the node with index = %d"), GraphNode->GetDialogueNodeIndex());
 			continue;
@@ -258,7 +294,19 @@ void FDialogueCompilerContext::SetEdgesCategorization()
 			// Unique path is determined by:
 			// If the path to the parent Node of this Edge (aka PathToThisNode) does not contain the ChildNode
 			// it means this path is unique (primary edge) to the ChildNode
-			ChildEdgeNode->SetIsPrimaryEdge(!PathToThisNodeSet.Contains(ChildEdgeNode->GetChildNode()));
+
+			// if any path is unique the edge is considered to be primary
+			bool bHasPrimaryPath = false;
+			for (int32 i = 0; i < PathListToThisNodeSet.Num(); ++i)
+			{
+				if (!PathListToThisNodeSet[i].Contains(ChildEdgeNode->GetChildNode()))
+				{
+					bHasPrimaryPath = true;
+					break;
+				}
+			}
+
+			ChildEdgeNode->SetIsPrimaryEdge(bHasPrimaryPath);
 		}
 	}
 }

@@ -45,12 +45,13 @@ void FDlgDialogueEditorAccess::RemoveAllGraphNodes(UDlgDialogue* Dialogue) const
 	CastChecked<UDialogueGraph>(Dialogue->GetGraph())->RemoveAllNodes();
 
 	// Clear the references from the Dialogue Nodes
-	Dialogue->GetMutableStartNode()->ClearGraphNode();
-	const TArray<UDlgNode*>& Nodes = Dialogue->GetNodes();
-	const int32 NodesNum = Nodes.Num();
-	for (int32 NodeIndex = 0; NodeIndex < NodesNum; NodeIndex++)
+	for (UDlgNode* Node : Dialogue->GetMutableStartNodes())
 	{
-		Nodes[NodeIndex]->ClearGraphNode();
+		Node->ClearGraphNode();
+	}
+	for (UDlgNode* Node : Dialogue->GetNodes())
+	{
+		Node->ClearGraphNode();
 	}
 }
 

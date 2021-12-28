@@ -648,16 +648,18 @@ bool UDlgContext::CanBeStarted(UDlgDialogue* InDialogue, const TMap<FName, UObje
 	Context->SetParticipants(InParticipants);
 
 	// Evaluate edges/children of the start node
-	const UDlgNode& StartNode = InDialogue->GetStartNode();
-	for (const FDlgEdge& ChildLink : StartNode.GetNodeChildren())
+	for (const UDlgNode* StartNode : InDialogue->GetStartNodes())
 	{
-		if (ChildLink.Evaluate(*Context, {}))
+		for (const FDlgEdge& ChildLink : StartNode->GetNodeChildren())
 		{
-			// Simulate EnterNode
-			UDlgNode* Node = Context->GetMutableNodeFromIndex(ChildLink.TargetIndex);
-			if (Node && Node->HasAnySatisfiedChild(*Context, {}))
+			if (ChildLink.Evaluate(*Context, {}))
 			{
-				return true;
+				// Simulate EnterNode
+				UDlgNode* Node = Context->GetMutableNodeFromIndex(ChildLink.TargetIndex);
+				if (Node && Node->HasAnySatisfiedChild(*Context, {}))
+				{
+					return true;
+				}
 			}
 		}
 	}
@@ -679,20 +681,23 @@ bool UDlgContext::StartWithContext(const FString& ContextString, UDlgDialogue* I
 	}
 
 	// Evaluate edges/children of the start node
-	const UDlgNode& StartNode = Dialogue->GetStartNode();
-	for (const FDlgEdge& ChildLink : StartNode.GetNodeChildren())
+	
+	for (const UDlgNode* StartNode : Dialogue->GetStartNodes())
 	{
-		if (ChildLink.Evaluate(*this, {}))
+		for (const FDlgEdge& ChildLink : StartNode->GetNodeChildren())
 		{
-			if (EnterNode(ChildLink.TargetIndex, {}))
+			if (ChildLink.Evaluate(*this, {}))
 			{
-				return true;
+				if (EnterNode(ChildLink.TargetIndex, {}))
+				{
+					return true;
+				}
 			}
 		}
 	}
 
 	LogErrorWithContext(FString::Printf(
-		TEXT("%s - FAILED because all possible start node condition failed. Edge conditions and children enter conditions from the start node are not satisfied"),
+		TEXT("%s - FAILED because all possible start node condition failed. Edge conditions and children enter conditions from the start nodes are not satisfied"),
 		*ContextMessage
 	));
 	return false;

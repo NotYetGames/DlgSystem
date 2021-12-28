@@ -164,6 +164,8 @@ int32 UDlgExportTwineCommandlet::Main(const FString& Params)
 		const TArray<UDlgNode*>& Nodes = Dialogue->GetNodes();
 		MinimumGraphX = 0;
 		MinimumGraphY = 0;
+
+		// TODO: multiple start nodes?
 		if (const UDialogueGraphNode* DialogueGraphNode = Cast<UDialogueGraphNode>(Dialogue->GetStartNode().GetGraphNode()))
 		{
 			MinimumGraphX = FMath::Min(MinimumGraphX, DialogueGraphNode->NodePosX);
@@ -181,6 +183,8 @@ int32 UDlgExportTwineCommandlet::Main(const FString& Params)
 			MinimumGraphY = FMath::Min(MinimumGraphY, DialogueGraphNode->NodePosY);
 		}
 		//UE_LOG(LogDlgExportTwineCommandlet, Verbose, TEXT("MinimumGraphX = %d, MinimumGraphY = %d"), MinimumGraphX, MinimumGraphY);
+
+		// TODO: multiple start nodes?
 
 		// Gather passages data
 		CurrentNodesAreas.Empty();

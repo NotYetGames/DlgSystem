@@ -16,10 +16,7 @@ class UDialogueGraphNode_Root : public UDialogueGraphNode
 public:
 	// Begin UEdGraphNode interface
 	/** Gets the name of this node, shown in title bar */
-	FText GetNodeTitle(ENodeTitleType::Type TitleType) const override
-	{
-		return NSLOCTEXT("DialogueGraphNode_Root", "RootTitle", "Start");
-	}
+	FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 
 	/** Gets the tooltip to display when over the node */
 	FText GetTooltipText() const override
