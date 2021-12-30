@@ -523,6 +523,33 @@ TSharedRef<SWidget> SDialogueGraphNode::GetDescriptionWidget()
 	return DescriptionWidget.ToSharedRef();
 }
 
+FText SDialogueGraphNode::GetDescription() const
+{
+	if (DialogueGraphNode && DialogueGraphNode->IsDialogueNodeSet())
+	{
+		const UDlgNode& DlgNode = DialogueGraphNode->GetDialogueNode();
+
+		if (const UDlgNode_Proxy* AsProxy = Cast<UDlgNode_Proxy>(&DlgNode))
+		{
+			// if proxy node let's try to return with the text of the node the proxy leads to
+
+			const int32 TargetNodeIndex = AsProxy->GetTargetNodeIndex();
+			const UDlgDialogue* Dialogue = DialogueGraphNode->GetDialogue();
+			const TArray<UDlgNode*>& Nodes = Dialogue->GetNodes();
+			if (Nodes.IsValidIndex(TargetNodeIndex))
+			{
+				return Nodes[TargetNodeIndex]->GetNodeUnformattedText();
+			}
+		}
+		else
+		{
+			return DialogueGraphNode->GetDialogueNode().GetNodeUnformattedText();
+		}
+	}
+
+	return FText::GetEmpty();
+}
+
 EVisibility SDialogueGraphNode::GetOverlayWidgetVisibility() const
 {
 	// always hide the index on the root node

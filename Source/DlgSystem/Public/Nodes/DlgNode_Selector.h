@@ -29,6 +29,8 @@ class DLGSYSTEM_API UDlgNode_Selector : public UDlgNode
 public:
 	UDlgNode_Selector() { bCheckChildrenOnEvaluation = true; }
 
+	const FText& GetNodeText() const override;
+
 	// @return a one line description of an object.
 	FString GetDesc() override
 	{
@@ -89,4 +91,8 @@ protected:
 	// e.g. for options {A, B, C} A-B-C-C-A-B-B... is a valid series of choices
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "SelectorType == EDlgNodeSelectorType::Random", EditConditionHides), Category = "Dialogue|Node")
 	bool bCycleThroughSatisfiedOptionsWithoutRepetition = false;
+
+
+	UPROPERTY(Transient)
+	mutable FText DynamicDisplayText;
 };

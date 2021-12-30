@@ -4,6 +4,39 @@
 #include "DlgContext.h"
 #include "Logging/DlgLogger.h"
 
+const FText& UDlgNode_Selector::GetNodeText() const
+{
+	static const FText SelectFirstText = FText::FromString("First Satisfied");
+	switch (SelectorType)
+	{
+		case EDlgNodeSelectorType::First:
+		{
+			return SelectFirstText;
+		}
+
+		case EDlgNodeSelectorType::Random:
+		{
+			FString SelectRandomString = TEXT("Random Satisfied");
+
+			if (bCycleThroughSatisfiedOptionsWithoutRepetition)
+			{
+				SelectRandomString += TEXT("\nCycle options");
+			}
+
+			if (bAvoidPickingSameOptionTwiceInARow)
+			{
+				SelectRandomString += TEXT("\nAvoid repetition");
+			}
+			DynamicDisplayText = FText::FromString(SelectRandomString);
+			return DynamicDisplayText;
+		}
+
+		default:
+		{
+			return FText::GetEmpty();
+		}
+	}
+}
 
 bool UDlgNode_Selector::HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {

@@ -113,15 +113,7 @@ protected:
 	FSlateColor GetBackgroundColor() const { return DialogueGraphNode->GetNodeBackgroundColor(); }
 
 	// Gets the main description of this Node.
-	FText GetDescription() const
-	{
-		if (DialogueGraphNode && DialogueGraphNode->IsDialogueNodeSet())
-		{
-			return DialogueGraphNode->GetDialogueNode().GetNodeUnformattedText();
-		}
-
-		return FText::GetEmpty();
-	}
+	FText GetDescription() const;
 
 	// Gets all speech sequence entries for the Node of type Speech Sequence
 	const TArray<FDlgSpeechSequenceEntry>& GetSpeechSequenceEntries() const

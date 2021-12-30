@@ -449,7 +449,7 @@ public:
 
 	// The background color of the normal speech node. */
 	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
-	FLinearColor SpeechNodeColor = FLinearColor{0.050980f, 0.278431f, 0.631373f, 1.f}; // blueish
+	FLinearColor SpeechNodeColor = FLinearColor{0.04f, 0.22f, 0.48f, 1.f}; // blueish
 
 	// The background color of the root node.
 	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
@@ -465,11 +465,11 @@ public:
 
 	// The background color of the selector first node.
 	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
-	FLinearColor SelectorFirstNodeColor = FLinearColor{0.f, 0.721569f, 0.831373f, 1.f};  // cyan
+	FLinearColor SelectorFirstNodeColor = FLinearColor{0.f, 0.13f, 0.15f, 1.f};  // dark cyan
 
 	// The background color of the selector random node.
 	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
-	FLinearColor SelectorRandomNodeColor = FLinearColor{1.f, 0.839216f, 0.f, 1.f}; // yellow
+	FLinearColor SelectorRandomNodeColor = FLinearColor{0.18f, 0.15f, 0.f, 1.f}; // dark yellow
 
 	// The background color of the selector random node.
 	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
@@ -477,7 +477,7 @@ public:
 
 	// The background color of the proxy node.
 	UPROPERTY(Category = "Graph Node Color", Config, EditAnywhere)
-	FLinearColor ProxyNodeColor = FLinearColor{ 0.050980f, 0.631373f, 0.278431f, 1.f }; // greenish
+	FLinearColor ProxyNodeColor = FLinearColor{ 0.01f, 0.2f, 0.09f, 1.f }; // greenish
 
 
 	// The background color of the node borders.
