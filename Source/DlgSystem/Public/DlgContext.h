@@ -371,6 +371,8 @@ public:
 	virtual void SetNodeVisited(int32 NodeIndex, const FGuid& NodeGUID);
 	virtual bool IsNodeVisited(int32 NodeIndex, const FGuid& NodeGUID, bool bLocalHistory) const;
 
+	virtual FDlgNodeSavedData& GetNodeSavedData(const FGuid& NodeGUID);
+
 	// Gets the Node at the NodeIndex index
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Data", DisplayName = "Get Node From Index")
 	UDlgNode* GetMutableNodeFromIndex(int32 NodeIndex) const;

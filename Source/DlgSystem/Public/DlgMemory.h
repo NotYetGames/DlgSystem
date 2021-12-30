@@ -5,6 +5,21 @@
 
 #include "DlgMemory.generated.h"
 
+
+// Struct to store any data a node might want to read/write
+USTRUCT(BlueprintType)
+struct DLGSYSTEM_API FDlgNodeSavedData
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	// used by random selector node to avoid repetition
+	UPROPERTY()
+	TArray<FGuid> GUIDList;
+};
+
+
 USTRUCT(BlueprintType)
 struct DLGSYSTEM_API FDlgHistory
 {
@@ -12,17 +27,7 @@ struct DLGSYSTEM_API FDlgHistory
 public:
 	FDlgHistory() {}
 
-	void Add(int32 NodeIndex, const FGuid& NodeGUID)
-	{
-		if (NodeIndex >= 0)
-		{
-			VisitedNodeIndices.Add(NodeIndex);
-		}
-		if (NodeGUID.IsValid())
-		{
-			VisitedNodeGUIDs.Add(NodeGUID);
-		}
-	}
+	void Add(int32 NodeIndex, const FGuid& NodeGUID);
 
 	// The following scenarios will be present:
 	//
@@ -61,19 +66,11 @@ public:
 		return VisitedNodeGUIDs.Num() >= VisitedNodeIndices.Num();
 	}
 
-	bool Contains(int32 NodeIndex, const FGuid& NodeGUID) const
-	{
-		// Use GUID
-		if (CanUseGUIDForSearch() && NodeGUID.IsValid())
-		{
-			return VisitedNodeGUIDs.Contains(NodeGUID);
-		}
-
-		// FallBack to Node Index
-		return VisitedNodeIndices.Contains(NodeIndex);
-	}
+	bool Contains(int32 NodeIndex, const FGuid& NodeGUID) const;
 
 	bool operator==(const FDlgHistory& Other) const;
+
+	FDlgNodeSavedData& GetNodeData(const FGuid& NodeGUID);
 
 public:
 	// Sed of already visited Node indices
@@ -86,6 +83,12 @@ public:
 	// This was added to fix Issue 30 (https://gitlab.com/NotYetGames/DlgSystem/-/issues/30)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|History")
 	TSet<FGuid> VisitedNodeGUIDs;
+
+
+	// Key: Dialogue node identifier GUID
+	// Value: data used by the node
+	UPROPERTY()
+	TMap<FGuid, FDlgNodeSavedData> NodeData;
 };
 
 // Singleton to store Dialogue history
@@ -128,6 +131,8 @@ public:
 
 	// Returns the entry for the given name, or nullptr if it does not exist */
 	FDlgHistory* GetEntry(const FGuid& DialogueGUID) { return HistoryMap.Find(DialogueGUID); }
+
+	FDlgHistory& FindOrAddEntry(const FGuid& DialogueGUID) { return HistoryMap.FindOrAdd(DialogueGUID); }
 
 	void SetNodeVisited(const FGuid& DialogueGUID, int32 NodeIndex, const FGuid& NodeGUID)
 	{

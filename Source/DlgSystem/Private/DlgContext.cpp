@@ -558,6 +558,11 @@ bool UDlgContext::IsNodeVisited(int32 NodeIndex, const FGuid& NodeGUID, bool bLo
 	return FDlgMemory::Get().IsNodeVisited(Dialogue->GetGUID(), NodeIndex, NodeGUID);
 }
 
+FDlgNodeSavedData& UDlgContext::GetNodeSavedData(const FGuid& NodeGUID)
+{
+	return FDlgMemory::Get().FindOrAddEntry(Dialogue->GetGUID()).GetNodeData(NodeGUID);
+}
+
 UDlgNode_SpeechSequence* UDlgContext::GetMutableActiveNodeAsSpeechSequence() const
 {
 	return Cast<UDlgNode_SpeechSequence>(GetMutableNodeFromIndex(ActiveNodeIndex));

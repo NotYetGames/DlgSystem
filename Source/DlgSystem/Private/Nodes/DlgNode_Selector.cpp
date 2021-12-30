@@ -28,28 +28,23 @@ bool UDlgNode_Selector::HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNod
 		{
 			// Find first child with satisfies conditions
 			for (const FDlgEdge& Edge : Children)
-				if (Edge.Evaluate(Context, {this}))
+			{
+				if (Edge.Evaluate(Context, { this }))
+				{
 					return Context.EnterNode(Edge.TargetIndex, NodesEnteredWithThisStep);
-
+				}
+			}
 			break;
 		}
 
 		case EDlgNodeSelectorType::Random:
 		{
-			// Build the list of all valid children
-			TArray<int32> Candidates;
-			for (int32 EdgeIndex = 0; EdgeIndex < Children.Num(); ++EdgeIndex)
-				if (Children[EdgeIndex].Evaluate(Context, { this }))
-					Candidates.Add(EdgeIndex);
-
-			// No candidates :(
-			if (Candidates.Num() == 0)
-				break;
-
 			// Select Random
-			const int32 SelectedIndex = FMath::RandHelper(Candidates.Num());
-			const int32 TargetNodeIndex = Children[Candidates[SelectedIndex]].TargetIndex;
-			return Context.EnterNode(TargetNodeIndex, NodesEnteredWithThisStep);
+			const int32 ChildNodeIndex = GetRandomChildNodeIndex(Context);
+			if (ChildNodeIndex != INDEX_NONE)
+			{
+				return Context.EnterNode(ChildNodeIndex, NodesEnteredWithThisStep);
+			}
 		}
 
 		default:
@@ -61,4 +56,76 @@ bool UDlgNode_Selector::HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNod
 		*Context.GetContextString()
 	);
 	return false;
+}
+
+int32 UDlgNode_Selector::GetRandomChildNodeIndex(UDlgContext& Context)
+{
+	FDlgNodeSavedData& SavedData = Context.GetNodeSavedData(NodeGUID);
+
+	// The list of all valid children (ones with satisfied condition)
+	TArray<int32> Candidates;
+
+	// List of possible candidates if we want to avoid repetition based on the booleans
+	TArray<int32> CandidatesLimited;
+
+	for (int32 EdgeIndex = 0; EdgeIndex < Children.Num(); ++EdgeIndex)
+	{
+		if (Children[EdgeIndex].Evaluate(Context, { this }))
+		{
+			Candidates.Add(EdgeIndex);
+
+			const FGuid ChildNodeGUID = Context.GetNodeGUIDForIndex(Children[EdgeIndex].TargetIndex);
+			if (!SavedData.GUIDList.Contains(ChildNodeGUID))
+			{
+				CandidatesLimited.Add(EdgeIndex);
+			}
+		}
+	}
+
+	// No candidates :(
+	if (Candidates.Num() == 0)
+	{
+		return INDEX_NONE;
+	}
+
+	// Option cycle is over or something is wrong with the setup
+	if (CandidatesLimited.Num() == 0)
+	{
+		// Only allow to preserve last option in list if it is needed and we are sure that
+		// a valid option can be picked even if it stays there
+		const bool bTempBlockLast = bAvoidPickingSameOptionTwiceInARow && Candidates.Num() > 1;
+		if (bTempBlockLast)
+		{
+			const FGuid TempBlockedEntry = SavedData.GUIDList.Last();
+			SavedData.GUIDList.Empty();
+			SavedData.GUIDList.Add(TempBlockedEntry);
+			const int32 RandomChildNodeIndex = GetRandomChildNodeIndex(Context);
+			SavedData.GUIDList.Remove(TempBlockedEntry);
+			return RandomChildNodeIndex;
+		}
+		else
+		{
+			SavedData.GUIDList.Empty();
+			return GetRandomChildNodeIndex(Context);
+		}
+	}
+
+	// Select Random
+	const int32 SelectedIndex = FMath::RandHelper(CandidatesLimited.Num());
+	const int32 TargetNodeIndex = Children[CandidatesLimited[SelectedIndex]].TargetIndex;
+	const FGuid TargetNodeGUID = Context.GetNodeGUIDForIndex(TargetNodeIndex);
+
+	// if we cycle through everything the list of picked nodes is needed
+	if (bCycleThroughSatisfiedOptionsWithoutRepetition)
+	{
+		// add the currently picked node to the disallow list, it will be cleared on selection if all valid options are added
+		SavedData.GUIDList.Add(TargetNodeGUID);
+	}
+	else if (bAvoidPickingSameOptionTwiceInARow)
+	{
+		// only disallow the currently picked node for the next selection
+		SavedData.GUIDList = { TargetNodeGUID };
+	}
+
+	return TargetNodeIndex;
 }
