@@ -53,6 +53,7 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 	const bool bIsProxyNode = GraphNode->IsProxyNode();;
 	const bool bIsSpeechSequenceNode = GraphNode->IsSpeechSequenceNode();
 	const bool bIsVirtualParentNode = GraphNode->IsVirtualParentNode();
+	const bool bIsCustomNode = GraphNode->IsCustomNode();
 
 	// Hide the existing category
 	DetailLayoutBuilder->HideCategory(UDialogueGraphNode::StaticClass()->GetFName());
@@ -115,6 +116,23 @@ void FDialogueGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBu
 	// Do nothing
 	if (bIsRootNode)
 	{
+		return;
+	}
+
+	if (bIsCustomNode)
+	{
+		IDetailCategoryBuilder& CustomCategory = DetailLayoutBuilder->EditCategory(Cast<UDlgNode_Custom>(&DialogueNode)->GetCategoryName());
+		CustomCategory.InitiallyCollapsed(false);
+
+		for (FProperty* Property = DialogueNode.GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
+		{
+			if (Property->GetOwnerClass() == UDlgNode_Custom::StaticClass() || Property->GetOwnerClass() == UDlgNode::StaticClass())
+			{
+				return;
+			}
+			CustomCategory.AddProperty(PropertyDialogueNode->GetChildHandle(Property->GetFName()));
+		}
+
 		return;
 	}
 

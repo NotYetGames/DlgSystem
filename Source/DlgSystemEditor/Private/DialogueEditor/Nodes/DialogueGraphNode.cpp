@@ -17,6 +17,7 @@
 #include "DialogueGraphNode_Edge.h"
 #include "DialogueCommands.h"
 #include "DlgSystemSettings.h"
+#include "Nodes/DlgNode_Custom.h"
 
 #define LOCTEXT_NAMESPACE "DialogueGraphNode"
 
@@ -278,6 +279,27 @@ void UDialogueGraphNode::AutowireNewNode(UEdGraphPin* FromPin)
 	verify(Schema->TryCreateConnection(FromPin, InputpIn));
 	FromPin->GetOwningNode()->NodeConnectionListChanged();
 }
+
+bool UDialogueGraphNode::CanHaveInputConnections() const
+{
+	if (const UDlgNode_Custom* AsCustom = Cast<const UDlgNode_Custom>(DialogueNode))
+	{
+		return AsCustom->CanHaveInputConnections();
+	}
+
+	return NodeIndex != INDEX_NONE && !IsRootNode();
+}
+
+bool UDialogueGraphNode::CanHaveOutputConnections() const
+{
+	if (const UDlgNode_Custom* AsCustom = Cast<const UDlgNode_Custom>(DialogueNode))
+	{
+		return AsCustom->CanHaveOutputConnections();
+	}
+
+	return !IsEndNode() && !IsProxyNode();
+}
+
 // End UEdGraphNode interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -288,6 +310,11 @@ FLinearColor UDialogueGraphNode::GetNodeBackgroundColor() const
 	if (NodeIndex == INDEX_NONE)
 	{
 		return FLinearColor::Black;
+	}
+
+	if (const UDlgNode_Custom* AsCustom = Cast<const UDlgNode_Custom>(DialogueNode))
+	{
+		return AsCustom->GetNodeColor();
 	}
 
 	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
@@ -398,6 +425,21 @@ bool UDialogueGraphNode::IsProxyNodeLeadingToIt() const
 				return true;
 			}
 		}
+	}
+
+	return false;
+}
+
+bool UDialogueGraphNode::CanBeOrphan() const
+{
+	if (IsRootNode() || IsProxyNodeLeadingToIt())
+	{
+		return true;
+	}
+
+	if (const UDlgNode_Custom* AsCustom = Cast<const UDlgNode_Custom>(DialogueNode))
+	{
+		return AsCustom->CanBeOrphan();
 	}
 
 	return false;
@@ -514,7 +556,7 @@ void UDialogueGraphNode::ApplyCompilerWarnings()
 	ClearCompilerMessage();
 
 	// Is Orphan node
-	if (!IsRootNode() && GetInputPin()->LinkedTo.Num() == 0 && !IsProxyNodeLeadingToIt())
+	if (GetInputPin()->LinkedTo.Num() == 0 && !CanBeOrphan())
 	{
 		SetCompilerWarningMessage(TEXT("Node has no input connections (orphan) and no proxy node points to it. It will not be accessible from anywhere"));
 	}

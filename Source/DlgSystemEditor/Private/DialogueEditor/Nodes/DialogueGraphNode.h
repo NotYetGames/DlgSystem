@@ -9,6 +9,7 @@
 #include "Nodes/DlgNode_Speech.h"
 #include "Nodes/DlgNode_Selector.h"
 #include "Nodes/DlgNode_Proxy.h"
+#include "Nodes/DlgNode_Custom.h"
 #include "Nodes/DlgNode_SpeechSequence.h"
 #include "DialogueGraphNode_Base.h"
 #include "NYEngineVersionHelpers.h"
@@ -154,10 +155,10 @@ public:
 	// Begin UDialogueGraphNode_Base interface
 
 	/** Checks whether an input connection can be added to this node */
-	bool CanHaveInputConnections() const override { return NodeIndex != INDEX_NONE && !IsRootNode(); }
+	bool CanHaveInputConnections() const override;
 
 	/** Checks whether an output connection can be added from this node */
-	bool CanHaveOutputConnections() const override { return !IsEndNode() && !IsProxyNode(); }
+	bool CanHaveOutputConnections() const override;
 
 	/** Checks if this node has a output connection to the TargetNode. */
 	bool HasOutputConnectionToNode(const UEdGraphNode* TargetNode) const override;
@@ -209,6 +210,9 @@ public:
 	/** Is this a selector Node? */
 	bool IsProxyNode() const { return DialogueNode->IsA<UDlgNode_Proxy>(); }
 
+	/** Is custom Node? */
+	bool IsCustomNode() const { return DialogueNode->IsA<UDlgNode_Custom>(); }
+
 	/** Is this a selector First Node? */
 	bool IsSelectorFirstNode() const
 	{
@@ -250,6 +254,9 @@ public:
 	bool HasVoicePropertiesSet() const;
 
 	bool IsProxyNodeLeadingToIt() const;
+
+	/** Checks if it is normal for the node to not have a parent */
+	bool CanBeOrphan() const;
 
 	/** Does this node has any voice properties set? */
 	bool HasGenericDataSet() const;
