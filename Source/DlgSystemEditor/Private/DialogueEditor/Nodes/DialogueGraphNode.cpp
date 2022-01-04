@@ -106,6 +106,15 @@ FText UDialogueGraphNode::GetNodeTitle(ENodeTitleType::Type TitleType) const
 		return FText::FromString(FString("Proxy to ") + FString::FromInt(Proxy->GetTargetNodeIndex()));
 	}
 
+	if (const UDlgNode_Custom* AsCustom = Cast<const UDlgNode_Custom>(DialogueNode))
+	{
+		FString TitleOverride;
+		if (AsCustom->GetNodeTitleOverride(TitleOverride))
+		{
+			return FText::FromString(TitleOverride);
+		}
+	}
+
 	const FString FullString = DialogueNode->GetNodeParticipantName().ToString();
 	// Display the full title
 	return FText::FromString(FullString);

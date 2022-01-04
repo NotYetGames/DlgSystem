@@ -51,5 +51,8 @@ public:
 
 	/** Override and return to false if the node should not be able to have children (like UDlgNode_Proxy) */
 	virtual bool CanHaveOutputConnections() const { return true; }
+
+	/** Option to override the node title (to have a custom one instead of the node owner). Return true if you want to use OutTitle */
+	virtual bool GetNodeTitleOverride(FString& OutTitle) const { return false; }
 #endif
 };
