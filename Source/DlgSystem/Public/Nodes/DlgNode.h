@@ -139,7 +139,7 @@ public:
 	//
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
-	virtual bool HasAnyEnterConditions() const { return GetNodeEnterConditions().Num() > 0; }
+	virtual bool HasAnyEnterConditions() const { return GetNodeEnterConditions().Num() > 0 || EnterRestriction != EDlgEntryRestriction::None; }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue|Node")
 	virtual const TArray<FDlgCondition>& GetNodeEnterConditions() const { return EnterConditions; }
