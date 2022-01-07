@@ -25,6 +25,22 @@ class UDialogueWave;
 struct FDlgTextArgument;
 class UDlgDialogue;
 
+
+UENUM(BlueprintType)
+enum class EDlgEntryRestriction : uint8
+{
+	// Node can be entered multiple times
+	None				UMETA(DisplayName = "None"),
+
+	// Node can only be entered once per context (same as WasNodeAlreadyVisited check in local memory)
+	OncePerContext		UMETA(DisplayName = "Once per Context"),
+
+	// Node can only be entered once globally (same as WasNodeAlreadyVisited check in global memory (Dialogue history))
+	Once				UMETA(DisplayName = "Only Once")
+};
+
+
+
 /**
  *  Abstract base class for Dialogue nodes
  *  Depending on the implementation in the child class the dialogue node can contain one or more lines of one or more participants,
@@ -268,6 +284,7 @@ public:
 	static FName GetMemberNameOwnerName() { return GET_MEMBER_NAME_CHECKED(UDlgNode, OwnerName); }
 	static FName GetMemberNameCheckChildrenOnEvaluation() { return GET_MEMBER_NAME_CHECKED(UDlgNode, bCheckChildrenOnEvaluation); }
 	static FName GetMemberNameEnterConditions() { return GET_MEMBER_NAME_CHECKED(UDlgNode, EnterConditions); }
+	static FName GetMemberNameEnterRestriction() { return GET_MEMBER_NAME_CHECKED(UDlgNode, EnterRestriction); }
 	static FName GetMemberNameEnterEvents() { return GET_MEMBER_NAME_CHECKED(UDlgNode, EnterEvents); }
 	static FName GetMemberNameChildren() { return GET_MEMBER_NAME_CHECKED(UDlgNode, Children); }
 	static FName GetMemberNameGUID() { return GET_MEMBER_NAME_CHECKED(UDlgNode, NodeGUID); }
@@ -302,6 +319,10 @@ protected:
 	// Conditions necessary to enter this node
 	UPROPERTY(EditAnywhere, Category = "Dialogue|Node")
 	TArray<FDlgCondition> EnterConditions;
+
+	// Additional restriction on node enter
+	UPROPERTY(EditAnywhere, Category = "Dialogue|Node")
+	EDlgEntryRestriction EnterRestriction;
 
 	// Events fired when the node is reached in the dialogue
 	UPROPERTY(EditAnywhere, Category = "Dialogue|Node")

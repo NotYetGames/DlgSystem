@@ -211,6 +211,30 @@ bool UDlgNode::CheckNodeEnterConditions(const UDlgContext& Context, TSet<const U
 	{
 		return false;
 	}
+
+	switch (EnterRestriction)
+	{
+		case EDlgEntryRestriction::None:
+			break;
+
+		case EDlgEntryRestriction::OncePerContext:
+			if (Context.IsNodeVisited(Context.GetNodeIndexForGUID(NodeGUID), NodeGUID, true))
+			{
+				return false;
+			}
+			break;
+
+		case EDlgEntryRestriction::Once:
+			if (Context.IsNodeVisited(Context.GetNodeIndexForGUID(NodeGUID), NodeGUID, false))
+			{
+				return false;
+			}
+			break;
+
+		default:
+			break;
+	}
+
 	if (!bCheckChildrenOnEvaluation)
 	{
 		return true;
