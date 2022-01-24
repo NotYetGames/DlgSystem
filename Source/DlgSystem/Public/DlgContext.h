@@ -369,6 +369,8 @@ public:
 
 	// Adds the node as visited in the current dialogue memory
 	virtual void SetNodeVisited(int32 NodeIndex, const FGuid& NodeGUID);
+
+	UFUNCTION(BlueprintPure, Category = "Dialogue|Context|History")
 	virtual bool IsNodeVisited(int32 NodeIndex, const FGuid& NodeGUID, bool bLocalHistory) const;
 
 	virtual FDlgNodeSavedData& GetNodeSavedData(const FGuid& NodeGUID);
