@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Misc/Build.h"
 #include "Runtime/Launch/Resources/Version.h"
+#include "Templates/SubclassOf.h"
 
 #include "Engine/DeveloperSettings.h"
 #include "Layout/Margin.h"
@@ -14,9 +15,10 @@
 #include "ClassViewerModule.h"
 #endif
 
+#include "DlgNodeData.h"
+
 #include "DlgSystemSettings.generated.h"
 
-class UDlgNodeData;
 
 // Defines the format of the Dialogue text
 UENUM()

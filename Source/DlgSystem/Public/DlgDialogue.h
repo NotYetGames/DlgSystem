@@ -709,7 +709,7 @@ protected:
 
 	// Root nodes, Dialogue is started from the first one which has a child with satisfied condition
 	// (node itself works like the SelectorFirst node, first satisfied child will be picked)
-	UPROPERTY(Instanced, VisibleAnywhere)
+	UPROPERTY(Instanced, VisibleAnywhere, Category = "Dialogue")
 	TArray<UDlgNode*> StartNodes;
 
 	// The new list of all nodes that belong to this Dialogue. Each nodes has children (edges) that have indices that point
