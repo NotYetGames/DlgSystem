@@ -1,5 +1,5 @@
 # v15
-**Date:** December 30, 2021
+**Date:** March 8, 2022
 ### New Features
 
 - **Added default class option** for `NodeData` which is used on `Speech` nodes and `SpeechSequence` node entries (Project Settings -> Editor -> Dialogue -> DefaultCustomNodeDataClass).
@@ -10,10 +10,13 @@
 - **Added support for multiple** `Start` **nodes** to reduce visual complexity. `Start` nodes are evaluated from left to right until one has a satisfied child.
 - The Random mode of the `Selector`node was exteneded to **support avoiding repetition and cycling through options.**
 - `Speech` and `Selector` node colors are darker, more information is displayed on `Selector` nodes.
+- Added custom node support, see `UDlgNode_Custom`
+- **Added `EnterRestriction` parameter** on DlgNodes - can be used as a quicker way to make a node only enterable once
+- Expose `IsNodeVisited` from the DlgContext inside Blueprint
 
 ### Deprecations
 
-- **DlgDialogue**
+**DlgDialogue**
 - `GetMutableStartNode` -> `GetMutableStartNodes`
 - `GetStartNode` -> `GetStartNodes`
 - `StartNode` -> `StartNodes`
