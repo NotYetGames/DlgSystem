@@ -560,12 +560,16 @@ public:
 	const TArray<UDlgNode*>& GetNodes() const { return Nodes; }
 
 	// Gets the Start Node as a mutable pointer.
+	UE_DEPRECATED(4.24, "GetMutableStartNode has been deprecated in favour of GetMutableStartNodes")
 	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "Get Start Node", meta = (DeprecatedFunction, DeprecationMessage = "Function has been deprecated, Please use GetMutableStartNodes"))
 	UDlgNode* GetMutableStartNode() const { check(StartNodes.Num() > 0); return StartNodes[0]; }
+
 	// Deprecated function
+	UE_DEPRECATED(4.24, "GetStartNode has been deprecated in favour of GetStartNodes")
 	const UDlgNode& GetStartNode() const { check(StartNodes.Num() > 0);  return *StartNodes[0]; }
 
-	TArray<UDlgNode*>& GetMutableStartNodes() { return StartNodes; }
+	UFUNCTION(BlueprintPure, Category = "Dialogue", DisplayName = "Get Start Nodes")
+	const TArray<UDlgNode*>& GetMutableStartNodes() { return StartNodes; }
 	const TArray<UDlgNode*>& GetStartNodes() const { return StartNodes; }
 
 	UFUNCTION(BlueprintPure, Category = "Dialogue")

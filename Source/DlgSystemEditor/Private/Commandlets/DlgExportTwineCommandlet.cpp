@@ -166,7 +166,7 @@ int32 UDlgExportTwineCommandlet::Main(const FString& Params)
 		MinimumGraphY = 0;
 
 		// TODO: multiple start nodes?
-		if (const UDialogueGraphNode* DialogueGraphNode = Cast<UDialogueGraphNode>(Dialogue->GetStartNode().GetGraphNode()))
+		if (const UDialogueGraphNode* DialogueGraphNode = Cast<UDialogueGraphNode>(Dialogue->GetStartNodes()[0]->GetGraphNode()))
 		{
 			MinimumGraphX = FMath::Min(MinimumGraphX, DialogueGraphNode->NodePosX);
 			MinimumGraphY = FMath::Min(MinimumGraphY, DialogueGraphNode->NodePosY);
@@ -189,7 +189,7 @@ int32 UDlgExportTwineCommandlet::Main(const FString& Params)
 		// Gather passages data
 		CurrentNodesAreas.Empty();
 		FString PassagesData;
-		PassagesData += CreateTwinePassageDataFromNode(*Dialogue, Dialogue->GetStartNode(), INDEX_NONE) + TEXT("\n");
+		PassagesData += CreateTwinePassageDataFromNode(*Dialogue, *Dialogue->GetStartNodes()[0], INDEX_NONE) + TEXT("\n");
 
 		// The rest of the nodes
 		for (int32 NodeIndex = 0; NodeIndex < Nodes.Num(); NodeIndex++)
