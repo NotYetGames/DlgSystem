@@ -1208,7 +1208,7 @@ void FDialogueSearchManager::HandleOnAssetAdded(const FAssetData& InAssetData)
 	}
 
 	// Ignore other assets
-	if (InAssetData.GetClass() && !InAssetData.GetClass()->IsChildOf<UDlgDialogue>())
+	if (!InAssetData.GetClass() || !InAssetData.GetClass()->IsChildOf<UDlgDialogue>())
 	{
 		return;
 	}
