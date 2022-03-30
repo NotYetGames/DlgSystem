@@ -31,7 +31,7 @@ Supported unreal versions: `4.25`, `4.26`, `4.27`, `5.0`
     - Option to import from and export to plain text formats (e.g. json)
     - Real time display/edit functionality of the Dialogue runtime data.
 
-**Not yet convinced? Have you seen our [showcase page](https://gitlab.com/NotYetGames/DlgSystem/wikis/Feature-Showcase](https://bit.ly/DlgFeatureShowcase))?**
+**Not yet convinced? Have you seen our [showcase page](https://gitlab.com/NotYetGames/DlgSystem/wikis/Feature-Showcase)?**
 
 ## Links
 
