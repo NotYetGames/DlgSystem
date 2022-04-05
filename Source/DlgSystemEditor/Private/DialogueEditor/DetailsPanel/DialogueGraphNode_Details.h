@@ -12,6 +12,7 @@
 class FDialogueObject_CustomRowHelper;
 class FDialogueTextPropertyPickList_CustomRowHelper;
 class FDialogueMultiLineEditableTextBox_CustomRowHelper;
+class FDialogueIntTextBox_CustomRowHelper;
 
 /**
  * How the details customization panel looks for UDialogueGraphNode object
