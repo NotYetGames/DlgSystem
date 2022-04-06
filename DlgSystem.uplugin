@@ -23,25 +23,19 @@
 			"WhitelistPlatforms":
 			[
 				"Win64",
-				"Win32",
 				"Linux",
-				"LinuxAArch64",
 				"Mac",
 				"Android",
 				"IOS",
 				"TVOS",
-				"XboxOne",
-				"Switch",
-				"PS4",
 				"HoloLens",
-				"Lumin"
 			]
 		},
 		{
 			"Name": "DlgSystemEditor",
 			"Type": "UncookedOnly",
 			"LoadingPhase": "PreDefault",
-			"WhitelistPlatforms": ["Win64", "Win32", "Linux", "LinuxAArch64", "Mac"]
+			"WhitelistPlatforms": ["Win64", "Linux", "Mac"]
 		}
 	]
 }
