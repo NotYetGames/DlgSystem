@@ -62,6 +62,7 @@ public class DlgSystem : ModuleRules
 		{
 			PrivateDependencyModuleNames.Add("EditorWidgets");
 			PrivateDependencyModuleNames.Add("UnrealEd");
+			PrivateDependencyModuleNames.Add("EditorStyle");
 
 			// Accessing the menu
 			PrivateDependencyModuleNames.Add("WorkspaceMenuStructure");

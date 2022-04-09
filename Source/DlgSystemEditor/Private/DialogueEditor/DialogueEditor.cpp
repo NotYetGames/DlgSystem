@@ -793,22 +793,16 @@ TSharedRef<SDockTab> FDialogueEditor::SpawnTab_Details(const FSpawnTabArgs& Args
 {
 	check(Args.GetTabId() == DetailsTabID);
 
-	// TODO use DialogueEditor.Tabs.Properties
-	const auto* IconBrush = FEditorStyle::GetBrush(TEXT("GenericEditor.Tabs.Properties"));
-
 	TSharedRef<SDockTab> NewTab = SNew(SDockTab)
-#if NY_ENGINE_VERSION < 500
-		.Icon(IconBrush)
-#endif
 		.Label(LOCTEXT("DialogueDetailsTitle", "Details"))
 		.TabColorScale(GetTabColorScale())
 		[
 			DetailsView.ToSharedRef()
 		];
 
-#if NY_ENGINE_VERSION >= 500
+	// TODO use DialogueEditor.Tabs.Properties
+	const auto* IconBrush = FEditorStyle::GetBrush(TEXT("GenericEditor.Tabs.Properties"));
 	NewTab->SetTabIcon(IconBrush);
-#endif
 
 	return NewTab;
 }
@@ -826,20 +820,15 @@ TSharedRef<SDockTab> FDialogueEditor::SpawnTab_GraphCanvas(const FSpawnTabArgs& 
 TSharedRef<SDockTab> FDialogueEditor::SpawnTab_Palette(const FSpawnTabArgs& Args) const
 {
 	check(Args.GetTabId() == PaletteTabId);
-	const auto* IconBrush = FEditorStyle::GetBrush(TEXT("Kismet.Tabs.Palette"));
 
 	TSharedRef<SDockTab> NewTab = SNew(SDockTab)
-#if NY_ENGINE_VERSION < 500
-		.Icon(IconBrush)
-#endif
 		.Label(LOCTEXT("DialoguePaletteTitle", "Palette"))
 		[
 			PaletteView.ToSharedRef()
 		];
 
-#if NY_ENGINE_VERSION >= 500
+	const auto* IconBrush = FEditorStyle::GetBrush(TEXT("Kismet.Tabs.Palette"));
 	NewTab->SetTabIcon(IconBrush);
-#endif
 
 	return NewTab;
 }
@@ -847,20 +836,15 @@ TSharedRef<SDockTab> FDialogueEditor::SpawnTab_Palette(const FSpawnTabArgs& Args
 TSharedRef<SDockTab> FDialogueEditor::SpawnTab_FindInDialogue(const FSpawnTabArgs& Args) const
 {
 	check(Args.GetTabId() == FindInDialogueTabId);
-	const auto* IconBrush = FEditorStyle::GetBrush(TEXT("Kismet.Tabs.FindResults"));
 
 	TSharedRef<SDockTab> NewTab = SNew(SDockTab)
-#if NY_ENGINE_VERSION < 500
-		.Icon(IconBrush)
-#endif
 		.Label(LOCTEXT("FindResultsView", "Find Results"))
 		[
 			FindResultsView.ToSharedRef()
 		];
 
-#if NY_ENGINE_VERSION >= 500
+	const auto* IconBrush = FEditorStyle::GetBrush(TEXT("Kismet.Tabs.FindResults"));
 	NewTab->SetTabIcon(IconBrush);
-#endif
 
 	return NewTab;
 }

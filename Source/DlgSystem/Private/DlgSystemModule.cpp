@@ -74,6 +74,12 @@ void FDlgSystemModule::StartupModule()
 				[
 					GetDialogueDataDisplayWindow()
 				];
+
+#if WITH_EDITOR
+			const auto* IconBrush = FEditorStyle::GetBrush(TEXT("DebugTools.TabIcon"));
+			DialogueDataDisplayTab->SetTabIcon(IconBrush);
+#endif
+
 			return DialogueDataDisplayTab;
 		}))
 		.SetDisplayName(LOCTEXT("DialogueDataDisplayTitle", "Dialogue Data Display"))
