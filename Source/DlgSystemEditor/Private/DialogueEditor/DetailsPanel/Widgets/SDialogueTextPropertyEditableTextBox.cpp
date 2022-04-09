@@ -482,7 +482,12 @@ FText SDialogueTextPropertyEditableTextBox::GetToolTipText() const
 		{
 			FName TableId;
 			FString Key;
+
+#if NY_ENGINE_VERSION >= 500
+			FTextInspector::GetTableIdAndKey(TextValue, TableId, Key);
+#else
 			FStringTableRegistry::Get().FindTableIdAndKey(TextValue, TableId, Key);
+#endif
 
 			LocalizedTextToolTip = FText::Format(
 				LOCTEXT("StringTableTextToolTipFmt", "--- String Table Reference ---\nTable ID: {0}\nKey: {1}"),
@@ -498,7 +503,18 @@ FText SDialogueTextPropertyEditableTextBox::GetToolTipText() const
 
 			if (SourceString && TextValue.ShouldGatherForLocalization())
 			{
+#if NY_ENGINE_VERSION >= 500
+				const FTextId TextId = FTextInspector::GetTextId(TextValue);
+				bIsLocalized = !TextId.IsEmpty();
+				if (bIsLocalized)
+				{
+					Namespace = TextId.GetNamespace().GetChars();
+					Key = TextId.GetKey().GetChars();
+				}
+#else
 				bIsLocalized = FTextLocalizationManager::Get().FindNamespaceAndKeyFromDisplayString(FTextInspector::GetSharedDisplayString(TextValue), Namespace, Key);
+#endif
+
 			}
 
 			if (bIsLocalized)

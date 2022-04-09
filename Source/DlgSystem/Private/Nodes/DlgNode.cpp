@@ -15,7 +15,12 @@
 void UDlgNode::Serialize(FArchive& Ar)
 {
 	Super::Serialize(Ar);
-	if (Ar.UE4Ver() >= VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
+#if NY_ENGINE_VERSION >= 500
+	const auto CurrentVersion = Ar.UEVer();
+#else
+	const auto CurrentVersion = Ar.UE4Ver();
+#endif
+	if (CurrentVersion >= VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
 	{
 		// NOTE: This modifies the Archive
 		// DO NOT REMOVE THIS

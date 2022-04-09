@@ -92,7 +92,13 @@ FReply SDialogueGraphPin::OnMouseMove(const FGeometry& MyGeometry, const FPointe
 
 void SDialogueGraphPin::OnMouseEnter(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-	if (!bIsHovered && GraphPinObj && !GraphPinObj->IsPendingKill() && GraphPinObj->GetOuter())
+#if NY_ENGINE_VERSION >= 500
+	const bool bLocalIsHovered = IsHovered();
+#else
+	const bool bLocalIsHovered = bIsHovered;
+#endif
+
+	if (!bLocalIsHovered && GraphPinObj && !GraphPinObj->IsPendingKill() && GraphPinObj->GetOuter())
 	{
 		TSharedPtr<SGraphPanel> OwnerPanelPtr = OwnerNodePtr.Pin()->GetOwnerPanel();
 		check(OwnerPanelPtr.IsValid());

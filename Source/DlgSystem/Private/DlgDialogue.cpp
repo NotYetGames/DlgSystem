@@ -53,9 +53,16 @@ void UpdateDialogueToVersion_UseOnlyOneOutputAndInputPin(UDlgDialogue* Dialogue)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin UObject interface
+#if NY_ENGINE_VERSION >= 500
+void UDlgDialogue::PreSave(FObjectPreSaveContext SaveContext)
+{
+	Super::PreSave(SaveContext);
+#else
 void UDlgDialogue::PreSave(const class ITargetPlatform* TargetPlatform)
 {
 	Super::PreSave(TargetPlatform);
+#endif
+
 	Name = GetDialogueFName();
 	bWasLoaded = true;
 	OnPreAssetSaved();

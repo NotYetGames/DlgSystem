@@ -7,6 +7,10 @@
 #include "DlgSystemSettings.h"
 #include "DlgDialogueParticipantData.h"
 
+#if NY_ENGINE_VERSION >= 500
+#include "UObject/ObjectSaveContext.h"
+#endif
+
 #include "DlgDialogue.generated.h"
 
 class UDlgNode;
@@ -86,8 +90,11 @@ public:
 	 *
 	 * @warning: Objects created from within PreSave will NOT have PreSave called on them!!!
 	 */
+#if NY_ENGINE_VERSION >= 500
+	void PreSave(FObjectPreSaveContext SaveContext) override;
+#else
 	void PreSave(const class ITargetPlatform* TargetPlatform) override;
-
+#endif
 	/** UObject serializer. */
 	void Serialize(FArchive& Ar) override;
 

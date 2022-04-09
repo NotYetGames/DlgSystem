@@ -330,7 +330,9 @@ void FDialogueEditor::InitDialogueEditor(
 				// Toolbar
 				FTabManager::NewStack()
 				->SetSizeCoefficient(0.1f)
+#if NY_ENGINE_VERSION < 500
 				->AddTab(GetToolbarTabId(), ETabState::OpenedTab)
+#endif
 				->SetHideTabWell(true)
 			)
 			->Split
@@ -790,14 +792,25 @@ void FDialogueEditor::ExtendToolbar()
 TSharedRef<SDockTab> FDialogueEditor::SpawnTab_Details(const FSpawnTabArgs& Args) const
 {
 	check(Args.GetTabId() == DetailsTabID);
-	return SNew(SDockTab)
-		// TODO use DialogueEditor.Tabs.Properties
-		.Icon(FEditorStyle::GetBrush("GenericEditor.Tabs.Properties"))
+
+	// TODO use DialogueEditor.Tabs.Properties
+	const auto* IconBrush = FEditorStyle::GetBrush(TEXT("GenericEditor.Tabs.Properties"));
+
+	TSharedRef<SDockTab> NewTab = SNew(SDockTab)
+#if NY_ENGINE_VERSION < 500
+		.Icon(IconBrush)
+#endif
 		.Label(LOCTEXT("DialogueDetailsTitle", "Details"))
 		.TabColorScale(GetTabColorScale())
 		[
 			DetailsView.ToSharedRef()
 		];
+
+#if NY_ENGINE_VERSION >= 500
+	NewTab->SetTabIcon(IconBrush);
+#endif
+
+	return NewTab;
 }
 
 TSharedRef<SDockTab> FDialogueEditor::SpawnTab_GraphCanvas(const FSpawnTabArgs& Args) const
@@ -813,23 +826,43 @@ TSharedRef<SDockTab> FDialogueEditor::SpawnTab_GraphCanvas(const FSpawnTabArgs& 
 TSharedRef<SDockTab> FDialogueEditor::SpawnTab_Palette(const FSpawnTabArgs& Args) const
 {
 	check(Args.GetTabId() == PaletteTabId);
-	return SNew(SDockTab)
-		.Icon(FEditorStyle::GetBrush("Kismet.Tabs.Palette"))
+	const auto* IconBrush = FEditorStyle::GetBrush(TEXT("Kismet.Tabs.Palette"));
+
+	TSharedRef<SDockTab> NewTab = SNew(SDockTab)
+#if NY_ENGINE_VERSION < 500
+		.Icon(IconBrush)
+#endif
 		.Label(LOCTEXT("DialoguePaletteTitle", "Palette"))
 		[
 			PaletteView.ToSharedRef()
 		];
+
+#if NY_ENGINE_VERSION >= 500
+	NewTab->SetTabIcon(IconBrush);
+#endif
+
+	return NewTab;
 }
 
 TSharedRef<SDockTab> FDialogueEditor::SpawnTab_FindInDialogue(const FSpawnTabArgs& Args) const
 {
 	check(Args.GetTabId() == FindInDialogueTabId);
-	return SNew(SDockTab)
-		.Icon(FEditorStyle::GetBrush("Kismet.Tabs.FindResults"))
+	const auto* IconBrush = FEditorStyle::GetBrush(TEXT("Kismet.Tabs.FindResults"));
+
+	TSharedRef<SDockTab> NewTab = SNew(SDockTab)
+#if NY_ENGINE_VERSION < 500
+		.Icon(IconBrush)
+#endif
 		.Label(LOCTEXT("FindResultsView", "Find Results"))
 		[
 			FindResultsView.ToSharedRef()
 		];
+
+#if NY_ENGINE_VERSION >= 500
+	NewTab->SetTabIcon(IconBrush);
+#endif
+
+	return NewTab;
 }
 
 void FDialogueEditor::OnCommandUndoGraphAction() const

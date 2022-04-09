@@ -526,6 +526,6 @@ public:
 			return false;
 		}
 
-		return !Object->IsPendingKillOrUnreachable();
+		return IsValid(Object);
 	}
 };

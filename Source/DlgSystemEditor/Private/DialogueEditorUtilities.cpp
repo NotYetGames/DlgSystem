@@ -966,7 +966,11 @@ bool FDialogueEditorUtilities::PickChildrenOfClass(const FText& TitleText, UClas
 
 	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 	Options.DisplayMode = Settings->GetUnrealClassPickerDisplayMode();
+#if NY_ENGINE_VERSION >= 500
+	Options.ClassFilters.Add(Filter.ToSharedRef());
+#else
 	Options.ClassFilter = Filter;
+#endif
 	Options.bShowUnloadedBlueprints = true;
 	Options.bExpandRootNodes = true;
 	Options.NameTypeToDisplay = EClassViewerNameTypeToDisplay::Dynamic;

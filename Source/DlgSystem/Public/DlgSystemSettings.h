@@ -201,7 +201,11 @@ public:
 		const UClass* ThisClass = GetClass();
 		if (ThisClass->HasAnyClassFlags(CLASS_DefaultConfig))
 		{
+#if NY_ENGINE_VERSION >= 500
+			TryUpdateDefaultConfigFile();
+#else
 			UpdateDefaultConfigFile();
+#endif
 		}
 		else if (ThisClass->HasAnyClassFlags(CLASS_GlobalUserConfig))
 		{
