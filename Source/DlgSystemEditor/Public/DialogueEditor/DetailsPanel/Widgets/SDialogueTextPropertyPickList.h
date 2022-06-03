@@ -16,13 +16,14 @@ class IPropertyHandle;
  */
 class DLGSYSTEMEDITOR_API SDialogueTextPropertyPickList : public SCompoundWidget
 {
-	typedef TSharedPtr<FName> TextListItem;
+	typedef TSharedPtr<FString> TextListItem;
 	typedef SDialogueTextPropertyPickList Self;
 	typedef SCompoundWidget Super;
 
 public:
 	SLATE_BEGIN_ARGS(Self)
 		: _PropertyHandle()
+		, _UseStringSuggestions(false)
 		, _HasContextCheckbox(false)
 		, _IsContextCheckBoxChecked(false)
 		, _ContextCheckBoxText(NSLOCTEXT("SDialogueTextPropertyPickList", "ContextCheckBoxText", "Local Search"))
@@ -39,6 +40,9 @@ public:
 	{}
 		/** The Property handle of the property this widget represents. */
 		SLATE_ARGUMENT(TSharedPtr<IPropertyHandle>, PropertyHandle)
+
+		/** If set to true, AvailableStringSuggestions is used instead of AvailableSuggestions */
+		SLATE_ARGUMENT(bool, UseStringSuggestions)
 
 		/** Does this pick list has a checkbox for ContextSensitive suggestions? */
 		SLATE_ARGUMENT(bool, HasContextCheckbox)
@@ -67,6 +71,9 @@ public:
 
 		/** All possible suggestions for the search text. If the context sensitive checkbox is false. */
 		SLATE_ATTRIBUTE(TArray<FName>, AvailableSuggestions)
+
+		/** All possible suggestions for the search text, as string. */
+		SLATE_ATTRIBUTE(TArray<FString>, AvailableStringSuggestions)
 
 		/** Invoked whenever the text changes */
 		SLATE_EVENT(FOnTextChanged, OnTextChanged)
@@ -209,11 +216,14 @@ private:
 	/** The Property handle of the property this widget represents. */
 	TSharedPtr<IPropertyHandle> PropertyHandle;
 
+	/** All possible suggestions for the search text. Only used if bUseStringSuggestions is set to true */
+	TAttribute<TArray<FString>> SuggestionStringAttributes;
+
 	/** All possible suggestions for the search text. When there is no context sensitive checkbox or the context sensitive checkbox is unchecked. */
 	TAttribute<TArray<FName>> SuggestionAttributes;
 
 	/** Used when the context sensitive checkbox is cehcked */
-	TAttribute<TArray<FName>> CurrentContextSuggestionAttributes;;
+	TAttribute<TArray<FName>> CurrentContextSuggestionAttributes;
 
 	/** Text Value to display for the search text/Combo Button */
 	TAttribute<FText> TextAttribute;
@@ -275,4 +285,7 @@ private:
 
 	/** Is the box checked? */
 	bool bIsContextCheckBoxChecked = false;
+
+	/** Do we display the context sensitive checkbox? */
+	bool bUseStringSuggestions = false;
 };

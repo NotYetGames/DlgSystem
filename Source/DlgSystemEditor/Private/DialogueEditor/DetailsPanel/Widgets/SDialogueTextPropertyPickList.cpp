@@ -22,6 +22,7 @@ void SDialogueTextPropertyPickList::Construct(const FArguments& InArgs)
 	SetToolTipAttribute(InArgs._ToolTipText);
 
 	// Context checkbox arguments
+	bUseStringSuggestions = InArgs._UseStringSuggestions;
 	bHasContextCheckBox = InArgs._HasContextCheckbox;
 	bIsContextCheckBoxChecked = bHasContextCheckBox ? InArgs._IsContextCheckBoxChecked : false;
 	CurrentContextSuggestionAttributes = InArgs._CurrentContextAvailableSuggestions;
@@ -30,6 +31,7 @@ void SDialogueTextPropertyPickList::Construct(const FArguments& InArgs)
 
 	HintTextAttribute = InArgs._HintText;
 	SuggestionAttributes = InArgs._AvailableSuggestions;
+	SuggestionStringAttributes = InArgs._AvailableStringSuggestions;
 	OnTextChanged = InArgs._OnTextChanged;
 	OnTextCommitted = InArgs._OnTextCommitted;
 	OnKeyDownHandler = InArgs._OnKeyDownHandler;
@@ -287,7 +289,7 @@ TSharedRef<ITableRow> SDialogueTextPropertyPickList::HandleListGenerateRow(TextL
 	return SNew(STableRow<TextListItem>, OwnerTable)
 		[
 			SNew(STextBlock)
-			.Text(FText::FromName(*Text.Get()))
+			.Text(FText::FromString(*Text.Get()))
 			.HighlightText(this, &Self::GetHighlightText)
 		];
 }
@@ -326,12 +328,12 @@ void SDialogueTextPropertyPickList::HandleTextCommitted(const FText& NewText, ET
 		return;
 	}
 
-	TSharedPtr<FName> SelectedSuggestion = GetSelectedSuggestion();
+	TSharedPtr<FString> SelectedSuggestion = GetSelectedSuggestion();
 	FText CommittedText;
 	if (SelectedSuggestion.IsValid() && CommitType != ETextCommit::OnCleared)
 	{
 		// Pressed selected a suggestion, set the text
-		CommittedText = FText::FromName(*SelectedSuggestion.Get());
+		CommittedText = FText::FromString(*SelectedSuggestion.Get());
 	}
 	else
 	{
@@ -369,7 +371,7 @@ FReply SDialogueTextPropertyPickList::HandleKeyDown(const FGeometry& MyGeometry,
 	if (InKeyEvent.GetKey() == EKeys::Up || InKeyEvent.GetKey() == EKeys::Down)
 	{
 		const bool bSelectingUp = InKeyEvent.GetKey() == EKeys::Up;
-		TSharedPtr<FName> SelectedSuggestion = GetSelectedSuggestion();
+		TSharedPtr<FString> SelectedSuggestion = GetSelectedSuggestion();
 
 		if (SelectedSuggestion.IsValid())
 		{
@@ -422,7 +424,7 @@ void SDialogueTextPropertyPickList::HandleListSelectionChanged(TextListItem NewV
 	{
 		if (NewValue.IsValid())
 		{
-			SetText(FText::FromName(*NewValue.Get()));
+			SetText(FText::FromString(*NewValue.Get()));
 			FocusSearchBox();
 		}
 		else
@@ -449,36 +451,39 @@ void SDialogueTextPropertyPickList::UpdateSuggestionList()
 	Suggestions.Empty();
 
 	// Find out what pool of suggestions ot use
-	TArray<FName> AllSuggestions;
-	if (bHasContextCheckBox && bIsContextCheckBoxChecked)
+	TArray<FString> AllSuggestions;
+	if (bUseStringSuggestions)
 	{
-		// has checkbox and it is true
-		AllSuggestions = CurrentContextSuggestionAttributes.Get();
+		AllSuggestions = SuggestionStringAttributes.Get();
 	}
 	else
 	{
-		// default
-		AllSuggestions = SuggestionAttributes.Get();
-	}
-
-	// Must have typed something, but that something must be different than the set value
-	if (TypedText.Len() > 0 && TypedText != TextAttribute.Get().ToString())
-	{
-		// Match typed text
-		for (const FName& Suggestion : AllSuggestions)
+		TArray<FName> Temp;
+		if (bHasContextCheckBox && bIsContextCheckBoxChecked)
 		{
-			if (Suggestion.ToString().Contains(TypedText))
-			{
-				Suggestions.Add(MakeShared<FName>(Suggestion));
-			}
+			// has checkbox and it is true
+			Temp = CurrentContextSuggestionAttributes.Get();
+		}
+		else
+		{
+			// default
+			Temp = SuggestionAttributes.Get();
+		}
+
+		for (FName Name : Temp)
+		{
+			AllSuggestions.Add(Name.ToString());
 		}
 	}
-	else
+	
+
+	// Must have typed something, but that something must be different than the set value
+	const bool bTypedSomething = TypedText.Len() > 0 && TypedText != TextAttribute.Get().ToString();
+	for (const FString& Suggestion : AllSuggestions)
 	{
-		// Copy all
-		for (const FName& Suggestion : AllSuggestions)
+		if (!bTypedSomething || Suggestion.Contains(TypedText))
 		{
-			Suggestions.Add(MakeShared<FName>(Suggestion));
+			Suggestions.Add(MakeShared<FString>(Suggestion));
 		}
 	}
 
@@ -495,10 +500,10 @@ void SDialogueTextPropertyPickList::FocusSearchBox() const
 	FSlateApplication::Get().SetKeyboardFocus(WidgetToFocusPath, EFocusCause::SetDirectly);
 }
 
-TSharedPtr<FName> SDialogueTextPropertyPickList::GetSelectedSuggestion() const
+TSharedPtr<FString> SDialogueTextPropertyPickList::GetSelectedSuggestion() const
 {
-	TSharedPtr<FName> SelectedSuggestion;
-	const TArray<TSharedPtr<FName>>& SelectedSuggestionList = ListViewWidget->GetSelectedItems();
+	TSharedPtr<FString> SelectedSuggestion;
+	const TArray<TSharedPtr<FString>>& SelectedSuggestionList = ListViewWidget->GetSelectedItems();
 	if (SelectedSuggestionList.Num() > 0)
 	{
 		// Selection mode is Single, so there should only be one suggestion at the most

@@ -21,6 +21,7 @@
 #include "Internationalization/StringTableRegistry.h"
 #include "Serialization/TextReferenceCollector.h"
 #include "DlgLocalizationHelper.h"
+#include "NYEngineVersionHelpers.h"
 
 #define LOCTEXT_NAMESPACE "STextPropertyEditableTextBox"
 
