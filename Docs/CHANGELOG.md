@@ -1,4 +1,7 @@
 # v15
+- Fixed DialogueDataDisplay Icon
+
+# v15
 **Date:** March 8, 2022
 ### New Features
 

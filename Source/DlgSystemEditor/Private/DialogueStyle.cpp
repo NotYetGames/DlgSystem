@@ -229,7 +229,7 @@ void FDialogueStyle::Initialize()
 	// Dialogue Data Display
 	StyleSet->Set(
 		PROPERTY_DialogueDataDisplay_TabIcon,
-		new FSlateImageBrush(GetEngineContentPath("Icons/icon_tab_DebugTools_40x.png"), Icon16x16)
+		new FSlateImageBrush(GetPluginContentPath("Icons/DebugTools_40x.png"), Icon16x16)
 	);
 
 	// Dialogue Editor Window
