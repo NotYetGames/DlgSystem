@@ -85,6 +85,14 @@ public:
 		Collector.AddReferencedObject(DialogueBeingEdited);
 	}
 
+#if ENGINE_MAJOR_VERSION >= 5
+	virtual FString GetReferencerName() const override
+	{
+		return "FDialogueEditor";
+	}
+#endif
+
+
 	//
 	// IDialogueEditor interface
 	//
@@ -299,7 +307,7 @@ private:
 
 	/** Selected proxy nodes highlights their targets */
 	void UpdateNodesHighlightedByProxy(const TSet<UObject*>& NewSelection);
-	
+
 private:
 	// The dialogue we are currently editing
 	UDlgDialogue* DialogueBeingEdited;
