@@ -3,7 +3,7 @@
 
 #include "Misc/Paths.h"
 
-#if ENGINE_MAJOR_VERSION >= 5
+#if NY_ENGINE_VERSION >= 500
     #include "HAL/PlatformFileManager.h"
 #else
     #include "HAL/PlatformFilemanager.h"

@@ -85,10 +85,10 @@ public:
 		Collector.AddReferencedObject(DialogueBeingEdited);
 	}
 
-#if ENGINE_MAJOR_VERSION >= 5
+#if NY_ENGINE_VERSION >= 500
 	virtual FString GetReferencerName() const override
 	{
-		return "FDialogueEditor";
+		return TEXT("FDialogueEditor");
 	}
 #endif
 
