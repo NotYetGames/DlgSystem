@@ -61,7 +61,7 @@ public:
 
 	// The Participant Class corresponding for the ParticipantName
 	// This is used to autocomplete and retrieve the Variables from that Class automatically when Using Class based Conditions/Events
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Participant", meta = (MustImplement = "DlgDialogueParticipant"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Participant", meta = (MustImplement = "/Script/DlgSystem.DlgDialogueParticipant"))
 	UClass* ParticipantClass = nullptr;
 };
 
