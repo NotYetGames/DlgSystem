@@ -56,8 +56,8 @@ void SDialogueTextPropertyPickList::Construct(const FArguments& InArgs)
 	// TODO maybe have a look at SNameComboBox and SComboBox
 	// Build the button and text view
 	ComboButtonWidget = SNew(SComboButton)
-		.ButtonStyle(FEditorStyle::Get(), "PropertyEditor.AssetComboStyle")
-		.ForegroundColor(FEditorStyle::GetColor("PropertyEditor.AssetName.ColorAndOpacity"))
+		.ButtonStyle(FNYAppStyle::Get(), "PropertyEditor.AssetComboStyle")
+		.ForegroundColor(FNYAppStyle::GetColor("PropertyEditor.AssetName.ColorAndOpacity"))
 		.OnGetMenuContent(this, &Self::GetMenuWidget)
 		.OnMenuOpenChanged(this, &Self::HandleMenuOpenChanged)
 		.OnComboBoxOpened(this, &Self::HandleComboBoxOpened)
@@ -68,7 +68,7 @@ void SDialogueTextPropertyPickList::Construct(const FArguments& InArgs)
 		[
 			// Show the name of the asset or actor
 			SAssignNew(ComboButtonTextWidget, STextBlock)
-			.TextStyle(FEditorStyle::Get(), "PropertyEditor.AssetClass")
+			.TextStyle(FNYAppStyle::Get(), "PropertyEditor.AssetClass")
 			.Text(TextAttribute)
 		];
 
@@ -268,7 +268,7 @@ TSharedRef<SWidget> SDialogueTextPropertyPickList::GetListViewWidget()
 	// Cache it
 	ListViewContainerWidget = SNew(SBorder)
 		.Padding(0)
-		.BorderImage(FEditorStyle::GetBrush("NoBorder"));
+		.BorderImage(FNYAppStyle::GetBrush("NoBorder"));
 
 	ListViewWidget = SNew(SListView<TextListItem>)
 		.SelectionMode(ESelectionMode::Single)
@@ -475,7 +475,7 @@ void SDialogueTextPropertyPickList::UpdateSuggestionList()
 			AllSuggestions.Add(Name.ToString());
 		}
 	}
-	
+
 
 	// Must have typed something, but that something must be different than the set value
 	const bool bTypedSomething = TypedText.Len() > 0 && TypedText != TextAttribute.Get().ToString();

@@ -7,6 +7,7 @@
 #include "DialogueBase_CustomRowHelper.h"
 #include "SDialogueTextPropertyEditableTextBox.h"
 
+class FDialogueEditableTextPropertyHandle;
 class FDetailWidgetRow;
 
 struct FDialogueMultiLineEditableTextBoxOptions
@@ -92,5 +93,5 @@ private:
 	FDialogueMultiLineEditableTextBoxOptions Options;
 
 	// Editable text property
-	TSharedPtr<IEditableTextProperty> EditableTextProperty;
+	TSharedPtr<FDialogueEditableTextPropertyHandle> EditableTextProperty;
 };

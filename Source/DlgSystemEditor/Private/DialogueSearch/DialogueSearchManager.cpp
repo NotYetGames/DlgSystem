@@ -2,7 +2,7 @@
 #include "DialogueSearchManager.h"
 
 #include "Widgets/Docking/SDockTab.h"
-#include "AssetRegistryModule.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "DialogueSearchUtilities.h"
 #include "WorkspaceMenuStructureModule.h"
 #include "WorkspaceMenuStructure.h"
@@ -1200,7 +1200,7 @@ void FDialogueSearchManager::BuildCache()
 void FDialogueSearchManager::HandleOnAssetAdded(const FAssetData& InAssetData)
 {
 	// Confirm that the Dialogue has not been added already, this can occur during duplication of Dialogues.
-	FDialogueSearchData* SearchDataPtr = SearchMap.Find(InAssetData.ObjectPath);
+	const FDialogueSearchData* SearchDataPtr = SearchMap.Find(InAssetData.ToSoftObjectPath());
 	if (SearchDataPtr != nullptr)
 	{
 		// Already exists
@@ -1223,7 +1223,7 @@ void FDialogueSearchManager::HandleOnAssetAdded(const FAssetData& InAssetData)
 	// Add to the loaded cached map
 	FDialogueSearchData SearchData;
 	SearchData.Dialogue = Dialogue;
-	SearchMap.Add(InAssetData.ObjectPath, MoveTemp(SearchData));
+	SearchMap.Add(InAssetData.ToSoftObjectPath(), MoveTemp(SearchData));
 }
 
 void FDialogueSearchManager::HandleOnAssetRemoved(const FAssetData& InAssetData)

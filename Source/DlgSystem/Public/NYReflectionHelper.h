@@ -21,13 +21,14 @@ public:
 	template<typename FieldType>
 	FORCEINLINE static FieldType* CastProperty(FField* Src)
 	{
-		return Src && Src->HasAnyCastFlags(FieldType::StaticClassCastFlagsPrivate()) ? static_cast<FieldType*>(Src) : nullptr;
+		return CastField<FieldType>(Src);
 	}
+
 	// Const Version
 	template<typename FieldType>
 	FORCEINLINE static const FieldType* CastProperty(const FField* Src)
 	{
-		return Src && Src->HasAnyCastFlags(FieldType::StaticClassCastFlagsPrivate()) ? static_cast<const FieldType*>(Src) : nullptr;
+		return CastField<FieldType>(Src);
 	}
 
 	FORCEINLINE static FField* GetStructChildren(const UStruct* Struct)

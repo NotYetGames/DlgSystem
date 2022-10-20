@@ -106,7 +106,11 @@ public:
 	}
 #endif // USE_STABLE_LOCALIZATION_KEYS
 
+#if NY_ENGINE_VERSION >= 501
+	void RequestRefresh()
+#else
 	void RequestRefresh() override
+#endif // NY_ENGINE_VERSION <= 500
 	{
 		if (PropertyUtilities.IsValid())
 		{

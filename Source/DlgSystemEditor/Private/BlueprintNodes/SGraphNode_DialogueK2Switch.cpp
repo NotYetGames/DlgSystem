@@ -66,7 +66,7 @@ void SGraphNode_DialogueK2Switch::CreatePinWidgets()
 			.Padding(1.0f)
 			[
 				SNew(SImage)
-				.Image(FEditorStyle::GetBrush("Graph.Pin.DefaultPinSeparator"))
+				.Image(FNYAppStyle::GetBrush("Graph.Pin.DefaultPinSeparator"))
 			];
 
 		// Create the pin itself

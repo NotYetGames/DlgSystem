@@ -6,6 +6,7 @@
 #include "STextPropertyEditableTextBox.h"
 #include "PropertyHandle.h"
 
+class FDialogueEditableTextPropertyHandle;
 DECLARE_MULTICAST_DELEGATE_TwoParams(FDialogueTextCommitedDelegate, const FText&, ETextCommit::Type);
 DECLARE_MULTICAST_DELEGATE_OneParam(FDialogueTextChangedDelegate, const FText&);
 
@@ -76,7 +77,7 @@ class SDialogueTextPropertyEditableTextBox : public SCompoundWidget
 public:
 	void Construct(
 		const FArguments& Arguments,
-		const TSharedRef<IEditableTextProperty>& InEditableTextProperty,
+		const TSharedRef<FDialogueEditableTextPropertyHandle>& InEditableTextProperty,
 		const TSharedRef<IPropertyHandle>& InPropertyHandle
 	);
 	bool SupportsKeyboardFocus() const override;
@@ -139,7 +140,7 @@ protected:
 	FDialogueTextChangedDelegate TextChangedEvent;
 
 	// Property variables
-	TSharedPtr<IEditableTextProperty> EditableTextProperty;
+	TSharedPtr<FDialogueEditableTextPropertyHandle> EditableTextProperty;
 	TSharedPtr<IPropertyHandle> PropertyHandle;
 
 	TSharedPtr<SWidget> PrimaryWidget;
