@@ -53,7 +53,7 @@
 
 #if WITH_EDITOR
 	#if NY_ENGINE_VERSION >= 501
-		using FNYAppStyle = FNYAppStyle;
+		using FNYAppStyle = FAppStyle;
 		#define NY_GET_APP_STYLE_NAME() FNYAppStyle::GetAppStyleSetName()
 	#else
 		#include "EditorStyleSet.h"
