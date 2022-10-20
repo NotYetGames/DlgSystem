@@ -2,7 +2,7 @@
 #include "DlgSystemModule.h"
 
 #include "Modules/ModuleManager.h"
-#include "AssetRegistryModule.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "Framework/Docking/TabManager.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "HAL/IConsoleManager.h"
@@ -76,7 +76,7 @@ void FDlgSystemModule::StartupModule()
 				];
 
 #if WITH_EDITOR
-			const auto* IconBrush = FEditorStyle::GetBrush(TEXT("DebugTools.TabIcon"));
+			const auto* IconBrush = FAppStyle::GetBrush(TEXT("DebugTools.TabIcon"));
 			DialogueDataDisplayTab->SetTabIcon(IconBrush);
 #endif
 

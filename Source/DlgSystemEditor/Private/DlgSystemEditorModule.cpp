@@ -4,7 +4,7 @@
 #include "DialogueContentBrowserExtensions.h"
 #include "Engine/BlueprintCore.h"
 #include "Templates/SharedPointer.h"
-#include "AssetRegistryModule.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "WorkspaceMenuStructureModule.h"
 #include "WorkspaceMenuStructure.h"
@@ -61,7 +61,7 @@ void FDlgSystemEditorModule::StartupModule()
 #if NY_ENGINE_VERSION >= 424
 	// Fix blueprint Nativization https://gitlab.com/NotYetGames/DlgSystem/-/issues/28
 	const FString LongName = FPackageName::ConvertToLongScriptPackageName(TEXT("DlgSystemEditor"));
-	if (UPackage* Package = Cast<UPackage>(StaticFindObjectFast(UPackage::StaticClass(), nullptr, *LongName, false, false)))
+	if (UPackage* Package = Cast<UPackage>(StaticFindObjectFast(UPackage::StaticClass(), nullptr, *LongName, false)))
 	{
 		Package->SetPackageFlags(PKG_EditorOnly);
 	}

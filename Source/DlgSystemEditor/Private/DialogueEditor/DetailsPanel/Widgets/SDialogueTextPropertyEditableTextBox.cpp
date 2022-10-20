@@ -14,14 +14,13 @@
 #include "Widgets/Input/SComboBox.h"
 #include "Widgets/Input/SCheckBox.h"
 #include "EditorStyleSet.h"
-#include "AssetRegistryModule.h"
-#include "Internationalization/StringTable.h"
-#include "Internationalization/TextPackageNamespaceUtil.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "Internationalization/StringTableCore.h"
 #include "Internationalization/StringTableRegistry.h"
-#include "Serialization/TextReferenceCollector.h"
+
 #include "DlgLocalizationHelper.h"
 #include "NYEngineVersionHelpers.h"
+#include "DialogueEditor/DetailsPanel/Widgets/DialogueEditableTextPropertyHandle.h"
 
 #define LOCTEXT_NAMESPACE "STextPropertyEditableTextBox"
 
@@ -29,7 +28,7 @@ FText SDialogueTextPropertyEditableTextBox::MultipleValuesText(NSLOCTEXT("Proper
 
 void SDialogueTextPropertyEditableTextBox::Construct(
 	const FArguments& InArgs,
-	const TSharedRef<IEditableTextProperty>& InEditableTextProperty,
+	const TSharedRef<FDialogueEditableTextPropertyHandle>& InEditableTextProperty,
 	const TSharedRef<IPropertyHandle>& InPropertyHandle
 )
 {
@@ -89,7 +88,7 @@ void SDialogueTextPropertyEditableTextBox::Construct(
 			.HAlign(HAlign_Center)
 			.VAlign(VAlign_Center)
 			.ContentPadding(FMargin(4, 0))
-			.ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
+			.ButtonStyle(FAppStyle::Get(), "HoverHintOnly")
 			.ForegroundColor(FSlateColor::UseForeground())
 			.ToolTipText(LOCTEXT("AdvancedTextSettingsComboToolTip", "Edit advanced text settings."))
 			.MenuContent()
@@ -109,7 +108,7 @@ void SDialogueTextPropertyEditableTextBox::Construct(
 					.VAlign(VAlign_Center)
 					[
 						SNew(STextBlock)
-						.TextStyle(FEditorStyle::Get(), "LargeText")
+						.TextStyle(FAppStyle::Get(), "LargeText")
 						.Text(LOCTEXT("TextInlineTextLabel", "Inline Text"))
 					]
 
@@ -137,7 +136,7 @@ void SDialogueTextPropertyEditableTextBox::Construct(
 							+SUniformGridPanel::Slot(0, 0)
 							[
 								SNew(SCheckBox)
-								.Style(FEditorStyle::Get(), "ToggleButtonCheckbox")
+								.Style(FAppStyle::Get(), "ToggleButtonCheckbox")
 								.ToolTipText(LOCTEXT("TextLocalizableToggleYesToolTip", "Assign this text a key and allow it to be gathered for localization."))
 								.Padding(FMargin(4, 2))
 								.HAlign(HAlign_Center)
@@ -153,7 +152,7 @@ void SDialogueTextPropertyEditableTextBox::Construct(
 							+SUniformGridPanel::Slot(1, 0)
 							[
 								SNew(SCheckBox)
-								.Style(FEditorStyle::Get(), "ToggleButtonCheckbox")
+								.Style(FAppStyle::Get(), "ToggleButtonCheckbox")
 								.ToolTipText(LOCTEXT("TextLocalizableToggleNoToolTip", "Mark this text as 'culture invariant' to prevent it being gathered for localization."))
 								.Padding(FMargin(4, 2))
 								.HAlign(HAlign_Center)
@@ -259,7 +258,7 @@ void SDialogueTextPropertyEditableTextBox::Construct(
 					.VAlign(VAlign_Center)
 					[
 						SNew(STextBlock)
-						.TextStyle(FEditorStyle::Get(), "LargeText")
+						.TextStyle(FAppStyle::Get(), "LargeText")
 						.Text(LOCTEXT("TextReferencedTextLabel", "Referenced Text"))
 						.Visibility(this, &Self::GetLocalizableVisibility)
 					]
@@ -310,14 +309,14 @@ void SDialogueTextPropertyEditableTextBox::Construct(
 			SNew(SButton)
 			.IsFocusable(false)
 			.ToolTipText(this, &Self::GetResetToolTip)
-			.ButtonStyle(FEditorStyle::Get(), "NoBorder")
+			.ButtonStyle(FAppStyle::Get(), "NoBorder")
 			.ContentPadding(0)
 			.Visibility(this, &Self::GetDiffersFromDefaultAsVisibility)
 			.OnClicked(this, &Self::OnResetClicked)
 			.Content()
 			[
 				SNew(SImage)
-				.Image(FEditorStyle::GetBrush("PropertyWindow.DiffersFromDefault"))
+				.Image(FAppStyle::GetBrush("PropertyWindow.DiffersFromDefault"))
 			]
 		];
 	}

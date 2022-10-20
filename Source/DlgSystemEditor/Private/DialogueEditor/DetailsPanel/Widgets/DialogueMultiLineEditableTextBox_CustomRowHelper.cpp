@@ -30,7 +30,7 @@ void FDialogueMultiLineEditableTextBoxOptions::SetDefaults()
 
 	// Set values that can't be set in the class definition
 	Style = FCoreStyle::Get().GetWidgetStyle<FEditableTextBoxStyle>("NormalEditableTextBox");
-	Font = FEditorStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont"));
+	Font = FAppStyle::GetFontStyle(TEXT("PropertyWindow.NormalFont"));
 	// ForegroundColor =
 }
 

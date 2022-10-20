@@ -217,7 +217,11 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarPropertyToJsonValue(const FP
 				if (auto* KeyStructProperty = FNYReflectionHelper::CastProperty<FStructProperty>(MapProperty->KeyProp))
 				{
 					// Key is a struct
+#if NY_ENGINE_VERSION >= 501
+					MapProperty->KeyProp->ExportTextItem_Direct(KeyString, MapKeyPtr, MapKeyPtr, nullptr, PPF_None);
+#else
 					MapProperty->KeyProp->ExportTextItem(KeyString, MapKeyPtr, MapKeyPtr, nullptr, PPF_None);
+#endif
 				}
 				else
 				{
@@ -228,7 +232,12 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarPropertyToJsonValue(const FP
 				// Fallback for anything else, what could this be :O
 				if (KeyString.IsEmpty())
 				{
+
+#if NY_ENGINE_VERSION >= 501
+					MapProperty->KeyProp->ExportTextItem_Direct(KeyString, MapKeyPtr, MapKeyPtr, nullptr, PPF_None);
+#else
 					MapProperty->KeyProp->ExportTextItem(KeyString, MapKeyPtr, MapKeyPtr, nullptr, PPF_None);
+#endif
 
 					if (KeyString.IsEmpty())
 					{
@@ -339,7 +348,12 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::ConvertScalarPropertyToJsonValue(const FP
 
 	// Default, convert to string
 	FString ValueString;
+#if NY_ENGINE_VERSION >= 501
+	Property->ExportTextItem_Direct(ValueString, ValuePtr, ValuePtr, nullptr, PPF_None);
+#else
 	Property->ExportTextItem(ValueString, ValuePtr, ValuePtr, nullptr, PPF_None);
+#endif
+
 	return MakeShared<FJsonValueString>(ValueString);
 }
 

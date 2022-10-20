@@ -235,7 +235,7 @@ private:
 	static Self* Instance;
 
 	// Maps the Dialogue path => SearchData.
-	TMap<FName, FDialogueSearchData> SearchMap;
+	TMap<FSoftObjectPath, FDialogueSearchData> SearchMap;
 
 	// Because we are unable to query for the module on another thread, cache it for use later
 	IAssetRegistry* AssetRegistry = nullptr;

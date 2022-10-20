@@ -4,7 +4,7 @@
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "UObject/UObjectIterator.h"
 #include "ScopedTransaction.h"
-#include "AssetData.h"
+#include "AssetRegistry/AssetData.h"
 #include "GraphEditorActions.h"
 #include "Runtime/Launch/Resources/Version.h"
 

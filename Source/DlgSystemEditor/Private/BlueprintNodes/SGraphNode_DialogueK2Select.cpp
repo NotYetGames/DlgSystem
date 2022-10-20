@@ -40,7 +40,7 @@ void SGraphNode_DialogueK2Select::CreatePinWidgets()
 		.Padding(1.0f)
 		[
 			SNew(SImage)
-			.Image(FEditorStyle::GetBrush("Graph.Pin.DefaultPinSeparator"))
+			.Image(FAppStyle::GetBrush("Graph.Pin.DefaultPinSeparator"))
 		];
 
 	CreateStandardPinWidget(DialogueK2Node_Select->GetDefaultValuePin());
@@ -53,7 +53,7 @@ void SGraphNode_DialogueK2Select::CreatePinWidgets()
 		.Padding(1.0f)
 		[
 			SNew(SImage)
-			.Image(FEditorStyle::GetBrush("Graph.Pin.DefaultPinSeparator"))
+			.Image(FAppStyle::GetBrush("Graph.Pin.DefaultPinSeparator"))
 		];
 
 	CreateStandardPinWidget(DialogueK2Node_Select->GetVariableNamePin());

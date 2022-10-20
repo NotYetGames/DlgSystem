@@ -159,7 +159,7 @@ void SDialogueGraphNode::UpdateGraphNode()
 			SNew(STextBlock)
 			.Text(this, &Self::GetIndexText)
 			.ColorAndOpacity(FLinearColor::White)
-			.Font(FEditorStyle::GetFontStyle("BTEditor.Graph.BTNode.IndexText"))
+			.Font(FAppStyle::GetFontStyle("BTEditor.Graph.BTNode.IndexText"))
 		)
 		.ToolTipText(this, &Self::GetIndexOverlayTooltipText)
 		.Visibility(this, &Self::GetOverlayWidgetVisibility)
@@ -249,7 +249,7 @@ void SDialogueGraphNode::UpdateGraphNode()
 			.VAlign(VAlign_Center)
 			[
 				SNew(SBorder)
-				.BorderImage(FEditorStyle::GetBrush("Graph.StateNode.Body"))
+				.BorderImage(FAppStyle::GetBrush("Graph.StateNode.Body"))
 				.Padding(0)
 				.BorderBackgroundColor(Settings->BorderBackgroundColor)
 				[
@@ -321,7 +321,7 @@ TSharedRef<SWidget> SDialogueGraphNode::GetNodeBodyWidget()
 
 	NodeBodyWidget =
 		SNew(SBorder)
-		.BorderImage(FEditorStyle::GetBrush("BTEditor.Graph.BTNode.Body"))
+		.BorderImage(FAppStyle::GetBrush("BTEditor.Graph.BTNode.Body"))
 		.BorderBackgroundColor(this, &Self::GetBackgroundColor)
 		.HAlign(HAlign_Center)
 		.VAlign(VAlign_Center)
@@ -438,7 +438,7 @@ TSharedRef<SWidget> SDialogueGraphNode::GetTitleWidget()
 						[
 							SNew(STextBlock)
 							// See FSlateEditorStyle for styles
-							.TextStyle(FEditorStyle::Get(), "Graph.StateNode.NodeTitle")
+							.TextStyle(FAppStyle::Get(), "Graph.StateNode.NodeTitle")
 							// gets always the first line of the title
 							.Text(NodeTitleMultipleLines.Get(), &SNodeTitle::GetHeadTitle)
 						]
@@ -477,7 +477,7 @@ TSharedRef<SWidget> SDialogueGraphNode::GetDescriptionWidget()
 				[
 					// Black border around each entry
 					SNew(SBorder)
-					.BorderImage(FEditorStyle::GetBrush("PlainBorder"))
+					.BorderImage(FAppStyle::GetBrush("PlainBorder"))
 					.BorderBackgroundColor(Settings->BorderBackgroundColor)
 					.Padding(FMargin(0.f, 2.f))
 					[
@@ -492,7 +492,7 @@ TSharedRef<SWidget> SDialogueGraphNode::GetDescriptionWidget()
 							SNew(STextBlock)
 							.Visibility(this, &Self::GetDescriptionVisibility)
 							.Text(this, &Self::GetSpeakerForSpeechSequenceEntryAt, EntryIndex)
-							.TextStyle(FEditorStyle::Get(), "Graph.Node.NodeTitle")
+							.TextStyle(FAppStyle::Get(), "Graph.Node.NodeTitle")
 							.Margin(Settings->DescriptionSpeakerMargin)
 						]
 
