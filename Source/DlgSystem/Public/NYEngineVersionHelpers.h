@@ -51,10 +51,13 @@
 	#define NY_ARRAY_COUNT ARRAY_COUNT
 #endif
 
-#if NY_ENGINE_VERSION >= 501
-	using FNYAppStyle = FNYAppStyle;
-	#define NY_GET_APP_STYLE_NAME() FNYAppStyle::GetAppStyleSetName()
-#else
-	using FNYAppStyle = FEditorStyle;
-	#define NY_GET_APP_STYLE_NAME() FNYAppStyle::GetStyleSetName()
-#endif
+#if WITH_EDITOR
+	#if NY_ENGINE_VERSION >= 501
+		using FNYAppStyle = FNYAppStyle;
+		#define NY_GET_APP_STYLE_NAME() FNYAppStyle::GetAppStyleSetName()
+	#else
+		#include "EditorStyleSet.h"
+		using FNYAppStyle = FEditorStyle;
+		#define NY_GET_APP_STYLE_NAME() FNYAppStyle::GetStyleSetName()
+	#endif // NY_ENGINE_VERSION >= 501
+#endif // WITH_EDITOR
