@@ -70,7 +70,7 @@ void FDialogueObject_CustomRowHelper::Update()
 	.Padding(4.f)
 	[
 		SNew(SButton)
-		.ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
+		.ButtonStyle(FNYAppStyle::Get(), "HoverHintOnly")
 		.ToolTipText(this, &Self::GetBrowseObjectText)
 		.ContentPadding(4.f)
 		.ForegroundColor(FSlateColor::UseForeground())
@@ -78,7 +78,7 @@ void FDialogueObject_CustomRowHelper::Update()
 		.OnClicked(this, &Self::OnBrowseClicked)
 		[
 			SNew(SImage)
-			.Image(FEditorStyle::GetBrush("PropertyWindow.Button_Browse"))
+			.Image(FNYAppStyle::GetBrush("PropertyWindow.Button_Browse"))
 			.ColorAndOpacity(FSlateColor::UseForeground())
 		]
 	];
@@ -90,7 +90,7 @@ void FDialogueObject_CustomRowHelper::Update()
 	.Padding(4.f, 2.f)
 	[
 		SNew(SButton)
-		.ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
+		.ButtonStyle(FNYAppStyle::Get(), "HoverHintOnly")
 		.ToolTipText(this, &Self::GetJumpToObjectText)
 		.ContentPadding(4.f)
 		.ForegroundColor(FSlateColor::UseForeground())
@@ -98,7 +98,7 @@ void FDialogueObject_CustomRowHelper::Update()
 		.OnClicked(this, &Self::OnOpenClicked)
 		[
 			SNew(SImage)
-			 .Image(FEditorStyle::GetBrush("PropertyWindow.Button_Edit"))
+			 .Image(FNYAppStyle::GetBrush("PropertyWindow.Button_Edit"))
 			 .ColorAndOpacity( FSlateColor::UseForeground() )
 
 			// SNew(STextBlock)

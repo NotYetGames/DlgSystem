@@ -26,7 +26,7 @@ void SDialogueActionMenu::Construct(const FArguments& InArgs)
 
 	// Build the widget layout
 	SBorder::Construct(SBorder::FArguments()
-		.BorderImage(FEditorStyle::GetBrush("Menu.Background"))
+		.BorderImage(FNYAppStyle::GetBrush("Menu.Background"))
 		.Padding(5)
 		[
 			// Achieving fixed width by nesting items within a fixed width box.

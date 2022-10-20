@@ -322,7 +322,7 @@ public:
 	template<typename TEnum>
 	static bool ConvertEnumToString(const FString& EnumName, TEnum EnumValue, bool bWithNameSpace, FString& OutEnumValue)
 	{
-		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *EnumName, true);
+		const UEnum* EnumPtr = FindObject<UEnum>(nullptr, *EnumName, true);
 		if (!EnumPtr)
 		{
 			OutEnumValue = FString::Printf(TEXT("INVALID EnumName = `%s`"), *EnumName);
@@ -337,7 +337,7 @@ public:
 	template<typename TEnum>
 	static bool ConvertStringToEnum(const FString& String, const FString& EnumName, TEnum& OutEnumValue)
 	{
-		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *EnumName, true);
+		const UEnum* EnumPtr = FindObject<UEnum>(nullptr, *EnumName, true);
 		if (!EnumPtr)
 		{
 			return false;
@@ -351,7 +351,7 @@ public:
 	template<typename TEnum>
 	static bool ConvertFNameToEnum(FName Name, const FString& EnumName, TEnum& OutEnumValue)
 	{
-		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *EnumName, true);
+		const UEnum* EnumPtr = FindObject<UEnum>(nullptr, *EnumName, true);
 		if (!EnumPtr)
 		{
 			return false;

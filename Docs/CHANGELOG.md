@@ -1,5 +1,12 @@
-# v15
-- Fixed DialogueDataDisplay Icon
+# v16
+### New Features
+
+- Added String support for Dialogue Text Property Pick List suggestions.
+
+### Bug fixes
+- **Fixed** DialogueDataDisplay Icon.
+- **Fixed** crash on editor launch when an AssetData has a null class.
+- **Fixed** Crash exception inside [GCObjectReferencer.cpp:165](https://gitlab.com/NotYetGames/DlgSystem/-/merge_requests/13)
 
 # v15
 **Date:** March 8, 2022

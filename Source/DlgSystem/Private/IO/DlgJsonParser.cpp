@@ -498,7 +498,12 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 			if (!TheCppStructOps->ImportTextItem(ImportTextPtr, ValuePtr, PPF_None, nullptr, static_cast<FOutputDevice*>(GWarn)))
 			{
 				// Fall back to trying the tagged property approach if custom ImportTextItem couldn't get it done
+#if NY_ENGINE_VERSION >= 501
+				Property->ImportText_Direct(ImportTextPtr, ValuePtr, nullptr, PPF_None);
+#else
 				Property->ImportText(ImportTextPtr, ValuePtr, PPF_None, nullptr);
+#endif
+
 			}
 		}
 		else if (JsonValue->Type == EJson::String)
@@ -507,7 +512,11 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 			// UTextBuffer* ImportErrors = NewObject<UTextBuffer>();
 			const FString ImportTextString = JsonValue->AsString();
 			const TCHAR* ImportTextPtr = *ImportTextString;
+#if NY_ENGINE_VERSION >= 501
+			Property->ImportText_Direct(ImportTextPtr, ValuePtr, nullptr, PPF_None);
+#else
 			Property->ImportText(ImportTextPtr, ValuePtr, PPF_None, nullptr);
+#endif
 		}
 		else
 		{
@@ -642,7 +651,12 @@ bool FDlgJsonParser::ConvertScalarJsonValueToProperty(const TSharedPtr<FJsonValu
 	// Default to expect a string for everything else
 	check(JsonValue->Type != EJson::Object);
 	const FString Buffer = JsonValue->AsString();
+
+#if NY_ENGINE_VERSION >= 501
+	if (Property->ImportText_Direct(*Buffer, ValuePtr, nullptr, PPF_None) == nullptr)
+#else
 	if (Property->ImportText(*Buffer, ValuePtr, PPF_None, nullptr) == nullptr)
+#endif
 	{
 		UE_LOG(
 			LogDlgJsonParser,

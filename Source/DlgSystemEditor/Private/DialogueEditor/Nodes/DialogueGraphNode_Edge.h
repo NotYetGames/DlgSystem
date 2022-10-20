@@ -65,7 +65,7 @@ public:
 	/** @return Icon to use in menu or on node */
 	FSlateIcon GetIconAndTint(FLinearColor& OutColor) const override
 	{
-		static const FSlateIcon Icon = FSlateIcon(FEditorStyle::GetStyleSetName(), "Graph.TransitionNode.Icon");
+		static const FSlateIcon Icon = FSlateIcon(NY_GET_APP_STYLE_NAME(), "Graph.TransitionNode.Icon");
 		OutColor = GetNodeBackgroundColor();
 		return Icon;
 	}
