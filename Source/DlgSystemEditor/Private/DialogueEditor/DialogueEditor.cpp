@@ -70,7 +70,7 @@ void FDialogueEditor::RegisterTabSpawners(const TSharedRef<class FTabManager>& I
 	)
 	.SetDisplayName(LOCTEXT("GraphCanvasTab", "Viewport"))
 	.SetGroup(WorkspaceMenuCategoryRef)
-	.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "GraphEditor.EventGraph_16x"));
+	.SetIcon(FSlateIcon(NY_GET_APP_STYLE_NAME(), "GraphEditor.EventGraph_16x"));
 
 	InTabManager->RegisterTabSpawner(
 		DetailsTabID,
@@ -78,7 +78,7 @@ void FDialogueEditor::RegisterTabSpawners(const TSharedRef<class FTabManager>& I
 	)
 	.SetDisplayName(LOCTEXT("DetailsTabLabel", "Details"))
 	.SetGroup(WorkspaceMenuCategoryRef)
-	.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Details"));
+	.SetIcon(FSlateIcon(NY_GET_APP_STYLE_NAME(), "LevelEditor.Tabs.Details"));
 
 	InTabManager->RegisterTabSpawner(
 		PaletteTabId,
@@ -86,7 +86,7 @@ void FDialogueEditor::RegisterTabSpawners(const TSharedRef<class FTabManager>& I
 	)
 	.SetDisplayName(LOCTEXT("PaletteTab", "Palette"))
 	.SetGroup(WorkspaceMenuCategoryRef)
-	.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "Kismet.Tabs.Palette"));
+	.SetIcon(FSlateIcon(NY_GET_APP_STYLE_NAME(), "Kismet.Tabs.Palette"));
 
 	InTabManager->RegisterTabSpawner(
 		FindInDialogueTabId,
@@ -94,7 +94,7 @@ void FDialogueEditor::RegisterTabSpawners(const TSharedRef<class FTabManager>& I
 	)
 	.SetDisplayName(LOCTEXT("FindInDialogueTab", "Find Results"))
 	.SetGroup(WorkspaceMenuCategoryRef)
-	.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "Kismet.Tabs.FindResults"));
+	.SetIcon(FSlateIcon(NY_GET_APP_STYLE_NAME(), "Kismet.Tabs.FindResults"));
 }
 
 void FDialogueEditor::UnregisterTabSpawners(const TSharedRef<class FTabManager>& InTabManager)
@@ -802,7 +802,7 @@ TSharedRef<SDockTab> FDialogueEditor::SpawnTab_Details(const FSpawnTabArgs& Args
 		];
 
 	// TODO use DialogueEditor.Tabs.Properties
-	const auto* IconBrush = FAppStyle::GetBrush(TEXT("GenericEditor.Tabs.Properties"));
+	const auto* IconBrush = FNYAppStyle::GetBrush(TEXT("GenericEditor.Tabs.Properties"));
 	NewTab->SetTabIcon(IconBrush);
 
 	return NewTab;
@@ -828,7 +828,7 @@ TSharedRef<SDockTab> FDialogueEditor::SpawnTab_Palette(const FSpawnTabArgs& Args
 			PaletteView.ToSharedRef()
 		];
 
-	const auto* IconBrush = FAppStyle::GetBrush(TEXT("Kismet.Tabs.Palette"));
+	const auto* IconBrush = FNYAppStyle::GetBrush(TEXT("Kismet.Tabs.Palette"));
 	NewTab->SetTabIcon(IconBrush);
 
 	return NewTab;
@@ -844,7 +844,7 @@ TSharedRef<SDockTab> FDialogueEditor::SpawnTab_FindInDialogue(const FSpawnTabArg
 			FindResultsView.ToSharedRef()
 		];
 
-	const auto* IconBrush = FAppStyle::GetBrush(TEXT("Kismet.Tabs.FindResults"));
+	const auto* IconBrush = FNYAppStyle::GetBrush(TEXT("Kismet.Tabs.FindResults"));
 	NewTab->SetTabIcon(IconBrush);
 
 	return NewTab;

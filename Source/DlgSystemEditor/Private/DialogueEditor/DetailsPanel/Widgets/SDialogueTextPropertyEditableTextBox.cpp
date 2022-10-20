@@ -88,7 +88,7 @@ void SDialogueTextPropertyEditableTextBox::Construct(
 			.HAlign(HAlign_Center)
 			.VAlign(VAlign_Center)
 			.ContentPadding(FMargin(4, 0))
-			.ButtonStyle(FAppStyle::Get(), "HoverHintOnly")
+			.ButtonStyle(FNYAppStyle::Get(), "HoverHintOnly")
 			.ForegroundColor(FSlateColor::UseForeground())
 			.ToolTipText(LOCTEXT("AdvancedTextSettingsComboToolTip", "Edit advanced text settings."))
 			.MenuContent()
@@ -108,7 +108,7 @@ void SDialogueTextPropertyEditableTextBox::Construct(
 					.VAlign(VAlign_Center)
 					[
 						SNew(STextBlock)
-						.TextStyle(FAppStyle::Get(), "LargeText")
+						.TextStyle(FNYAppStyle::Get(), "LargeText")
 						.Text(LOCTEXT("TextInlineTextLabel", "Inline Text"))
 					]
 
@@ -136,7 +136,7 @@ void SDialogueTextPropertyEditableTextBox::Construct(
 							+SUniformGridPanel::Slot(0, 0)
 							[
 								SNew(SCheckBox)
-								.Style(FAppStyle::Get(), "ToggleButtonCheckbox")
+								.Style(FNYAppStyle::Get(), "ToggleButtonCheckbox")
 								.ToolTipText(LOCTEXT("TextLocalizableToggleYesToolTip", "Assign this text a key and allow it to be gathered for localization."))
 								.Padding(FMargin(4, 2))
 								.HAlign(HAlign_Center)
@@ -152,7 +152,7 @@ void SDialogueTextPropertyEditableTextBox::Construct(
 							+SUniformGridPanel::Slot(1, 0)
 							[
 								SNew(SCheckBox)
-								.Style(FAppStyle::Get(), "ToggleButtonCheckbox")
+								.Style(FNYAppStyle::Get(), "ToggleButtonCheckbox")
 								.ToolTipText(LOCTEXT("TextLocalizableToggleNoToolTip", "Mark this text as 'culture invariant' to prevent it being gathered for localization."))
 								.Padding(FMargin(4, 2))
 								.HAlign(HAlign_Center)
@@ -258,7 +258,7 @@ void SDialogueTextPropertyEditableTextBox::Construct(
 					.VAlign(VAlign_Center)
 					[
 						SNew(STextBlock)
-						.TextStyle(FAppStyle::Get(), "LargeText")
+						.TextStyle(FNYAppStyle::Get(), "LargeText")
 						.Text(LOCTEXT("TextReferencedTextLabel", "Referenced Text"))
 						.Visibility(this, &Self::GetLocalizableVisibility)
 					]
@@ -309,14 +309,14 @@ void SDialogueTextPropertyEditableTextBox::Construct(
 			SNew(SButton)
 			.IsFocusable(false)
 			.ToolTipText(this, &Self::GetResetToolTip)
-			.ButtonStyle(FAppStyle::Get(), "NoBorder")
+			.ButtonStyle(FNYAppStyle::Get(), "NoBorder")
 			.ContentPadding(0)
 			.Visibility(this, &Self::GetDiffersFromDefaultAsVisibility)
 			.OnClicked(this, &Self::OnResetClicked)
 			.Content()
 			[
 				SNew(SImage)
-				.Image(FAppStyle::GetBrush("PropertyWindow.DiffersFromDefault"))
+				.Image(FNYAppStyle::GetBrush("PropertyWindow.DiffersFromDefault"))
 			]
 		];
 	}

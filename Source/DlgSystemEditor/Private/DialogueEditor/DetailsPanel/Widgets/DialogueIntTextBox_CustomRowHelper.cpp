@@ -53,14 +53,14 @@ void FDialogueIntTextBox_CustomRowHelper::UpdateInternal()
 			SNew(SButton)
 			.IsFocusable(false)
 			.ToolTipText(this, &Self::GetResetToolTip)
-			.ButtonStyle(FAppStyle::Get(), "NoBorder")
+			.ButtonStyle(FNYAppStyle::Get(), "NoBorder")
 			.ContentPadding(0)
 			.Visibility(this, &Self::GetDiffersFromDefaultAsVisibility)
 			.OnClicked(this, &Self::OnResetClicked)
 			.Content()
 			[
 				SNew(SImage)
-				.Image(FAppStyle::GetBrush("PropertyWindow.DiffersFromDefault"))
+				.Image(FNYAppStyle::GetBrush("PropertyWindow.DiffersFromDefault"))
 			]
 		];
 	}

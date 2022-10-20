@@ -68,7 +68,7 @@ public:
 
 		STableRow<ItemType>::ConstructInternal(
 			typename STableRow<ItemType>::FArguments()
-			.Style(FAppStyle::Get(), "DetailsView.TreeView.TableRow")
+			.Style(FNYAppStyle::Get(), "DetailsView.TreeView.TableRow")
 			.ShowSelection(false),
 			InOwnerTableView
 		);
@@ -78,10 +78,10 @@ public:
 	{
 		if (STableRow<ItemType>::IsHovered())
 		{
-			return STableRow<ItemType>::IsItemExpanded() ? FAppStyle::GetBrush("DetailsView.CategoryTop_Hovered") : FAppStyle::GetBrush("DetailsView.CollapsedCategory_Hovered");
+			return STableRow<ItemType>::IsItemExpanded() ? FNYAppStyle::GetBrush("DetailsView.CategoryTop_Hovered") : FNYAppStyle::GetBrush("DetailsView.CollapsedCategory_Hovered");
 		}
 
-		return STableRow<ItemType>::IsItemExpanded() ? FAppStyle::GetBrush("DetailsView.CategoryTop") : FAppStyle::GetBrush("DetailsView.CollapsedCategory");
+		return STableRow<ItemType>::IsItemExpanded() ? FNYAppStyle::GetBrush("DetailsView.CategoryTop") : FNYAppStyle::GetBrush("DetailsView.CollapsedCategory");
 	}
 
 	void SetContent(TSharedRef<SWidget> InContent) override
@@ -130,7 +130,7 @@ void SDialogueBrowser::Construct(const FArguments& InArgs)
 	[
 		SNew(SBorder)
 		.Padding(FMargin(3.f))
-		.BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
+		.BorderImage(FNYAppStyle::GetBrush("ToolPanel.GroupBorder"))
 		[
 			SNew(SVerticalBox)
 
@@ -155,7 +155,7 @@ void SDialogueBrowser::Construct(const FArguments& InArgs)
 				.Padding(2.0f, 2.0f)
 				[
 					SNew(SComboButton)
-					.ComboButtonStyle(FAppStyle::Get(), "GenericFilters.ComboButtonStyle")
+					.ComboButtonStyle(FNYAppStyle::Get(), "GenericFilters.ComboButtonStyle")
 					.ForegroundColor(FLinearColor::White)
 					.ContentPadding(0)
 					.ToolTipText(LOCTEXT("View_Tooltip", "View Options for the Dialogue Browser"))
@@ -169,8 +169,8 @@ void SDialogueBrowser::Construct(const FArguments& InArgs)
 						.AutoWidth()
 						[
 							SNew(STextBlock)
-							.TextStyle(FAppStyle::Get(), "GenericFilters.TextStyle")
-							.Font(FAppStyle::Get().GetFontStyle("FontAwesome.9"))
+							.TextStyle(FNYAppStyle::Get(), "GenericFilters.TextStyle")
+							.Font(FNYAppStyle::Get().GetFontStyle("FontAwesome.9"))
 							.Text(FText::FromString(FString(TEXT("\xf0b0"))) /*fa-filter*/)
 						]
 						+SHorizontalBox::Slot()
@@ -178,7 +178,7 @@ void SDialogueBrowser::Construct(const FArguments& InArgs)
 						.Padding(2, 0, 0, 0)
 						[
 							SNew(STextBlock)
-							.TextStyle(FAppStyle::Get(), "GenericFilters.TextStyle")
+							.TextStyle(FNYAppStyle::Get(), "GenericFilters.TextStyle")
 							.Text(LOCTEXT("View_Key", "View Options"))
 						]
 					]
@@ -227,7 +227,7 @@ void SDialogueBrowser::Construct(const FArguments& InArgs)
 			.FillHeight(1.0f)
 			[
 				SNew(SBorder)
-				.BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
+				.BorderImage(FNYAppStyle::GetBrush("ToolPanel.GroupBorder"))
 				.Padding(FMargin(0.0f, 4.0f))
 				[
 					ParticipantsTreeView.ToSharedRef()
@@ -1170,7 +1170,7 @@ TSharedRef<SWidget> SDialogueBrowser::MakeButtonsWidgetForDialogue(const TShared
 		.HAlign(HAlign_Left)
 		[
 			SNew(SButton)
-			.ButtonStyle(FAppStyle::Get(), "HoverHintOnly")
+			.ButtonStyle(FNYAppStyle::Get(), "HoverHintOnly")
 			.ToolTipText(LOCTEXT("FindInContentBrowserToolTip", "Find the Dialogue in the Context Browser"))
 			.OnClicked(this, &Self::FindInContentBrowserForItem, InItem)
 			[
@@ -1192,7 +1192,7 @@ TSharedRef<SWidget> SDialogueBrowser::MakeButtonsWidgetForDialogue(const TShared
 		.HAlign(HAlign_Left)
 		[
 			SNew(SButton)
-			.ButtonStyle(FAppStyle::Get(), "HoverHintOnly")
+			.ButtonStyle(FNYAppStyle::Get(), "HoverHintOnly")
 			.ToolTipText(LOCTEXT("OpenDialogueToolTip", "Opens the dialogue editor."))
 			.OnClicked(InItem.Get(), &FDialogueBrowserTreeNode::OnClick)
 			[
@@ -1277,10 +1277,10 @@ TSharedRef<ITableRow> SDialogueBrowser::HandleGenerateRow(
 				SNew(SBorder)
 
 				// We'll use the border's padding to actually create the horizontal line
-				.Padding(FAppStyle::GetMargin(TEXT("Menu.Separator.Padding")))
+				.Padding(FNYAppStyle::GetMargin(TEXT("Menu.Separator.Padding")))
 
 				// Separator graphic
-				.BorderImage(FAppStyle::GetBrush(TEXT("Menu.Separator")))
+				.BorderImage(FNYAppStyle::GetBrush(TEXT("Menu.Separator")))
 			];
 	}
 	else if (bIsCategory)
@@ -1725,7 +1725,7 @@ TSharedRef<SHorizontalBox> SDialogueBrowser::MakeCustomObjectIconAndTextWidget(
 	.Padding(4.f)
 	[
 		SNew(SButton)
-		.ButtonStyle(FAppStyle::Get(), "HoverHintOnly")
+		.ButtonStyle(FNYAppStyle::Get(), "HoverHintOnly")
 		.ToolTipText_Static(&Self::GetBrowseAssetText, Class)
 		.ContentPadding(4.f)
 		.ForegroundColor(FSlateColor::UseForeground())
@@ -1733,7 +1733,7 @@ TSharedRef<SHorizontalBox> SDialogueBrowser::MakeCustomObjectIconAndTextWidget(
 		.OnClicked_Static(&Self::OnBrowseAssetClicked, Class)
 		[
 			SNew(SImage)
-			.Image(FAppStyle::GetBrush("PropertyWindow.Button_Browse"))
+			.Image(FNYAppStyle::GetBrush("PropertyWindow.Button_Browse"))
 			.ColorAndOpacity(FSlateColor::UseForeground())
 		]
 	];
@@ -1745,7 +1745,7 @@ TSharedRef<SHorizontalBox> SDialogueBrowser::MakeCustomObjectIconAndTextWidget(
 	.Padding(4.f, 2.f)
 	[
 		SNew(SButton)
-		.ButtonStyle(FAppStyle::Get(), "HoverHintOnly")
+		.ButtonStyle(FNYAppStyle::Get(), "HoverHintOnly")
 		.ToolTipText_Static(&Self::GetJumpToAssetText, Class)
 		.ContentPadding(4.f)
 		.ForegroundColor(FSlateColor::UseForeground())
@@ -1753,7 +1753,7 @@ TSharedRef<SHorizontalBox> SDialogueBrowser::MakeCustomObjectIconAndTextWidget(
 		.OnClicked_Static(&Self::OnOpenAssetClicked, Class, OpenType, FunctionNameToOpen)
 		[
 			SNew(SImage)
-			 .Image(FAppStyle::GetBrush("PropertyWindow.Button_Edit"))
+			 .Image(FNYAppStyle::GetBrush("PropertyWindow.Button_Edit"))
 			 .ColorAndOpacity( FSlateColor::UseForeground() )
 		]
 	];

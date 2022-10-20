@@ -76,7 +76,7 @@ void FDlgSystemModule::StartupModule()
 				];
 
 #if WITH_EDITOR
-			const auto* IconBrush = FAppStyle::GetBrush(TEXT("DebugTools.TabIcon"));
+			const auto* IconBrush = FNYAppStyle::GetBrush(TEXT("DebugTools.TabIcon"));
 			DialogueDataDisplayTab->SetTabIcon(IconBrush);
 #endif
 

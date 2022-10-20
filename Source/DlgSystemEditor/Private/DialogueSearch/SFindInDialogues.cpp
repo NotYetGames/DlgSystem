@@ -66,7 +66,7 @@ void SFindInDialogues::Construct(const FArguments& InArgs, const TSharedPtr<FDia
 			.Padding(2.0f, 2.0f)
 			[
 				SNew(SComboButton)
-				.ComboButtonStyle(FAppStyle::Get(), "GenericFilters.ComboButtonStyle")
+				.ComboButtonStyle(FNYAppStyle::Get(), "GenericFilters.ComboButtonStyle")
 				.ForegroundColor(FLinearColor::White)
 				.ContentPadding(0)
 				.ToolTipText(LOCTEXT("Filters_Tooltip", "Filter options for the Dialogue Search."))
@@ -80,8 +80,8 @@ void SFindInDialogues::Construct(const FArguments& InArgs, const TSharedPtr<FDia
 					.AutoWidth()
 					[
 						SNew(STextBlock)
-						.TextStyle(FAppStyle::Get(), "GenericFilters.TextStyle")
-						.Font(FAppStyle::Get().GetFontStyle("FontAwesome.9"))
+						.TextStyle(FNYAppStyle::Get(), "GenericFilters.TextStyle")
+						.Font(FNYAppStyle::Get().GetFontStyle("FontAwesome.9"))
 						.Text(FText::FromString(FString(TEXT("\xf0b0"))) /*fa-filter*/)
 					]
 					+SHorizontalBox::Slot()
@@ -89,7 +89,7 @@ void SFindInDialogues::Construct(const FArguments& InArgs, const TSharedPtr<FDia
 					.Padding(2, 0, 0, 0)
 					[
 						SNew(STextBlock)
-						.TextStyle(FAppStyle::Get(), "GenericFilters.TextStyle")
+						.TextStyle(FNYAppStyle::Get(), "GenericFilters.TextStyle")
 						.Text(LOCTEXT("Filters", "Filters"))
 					]
 				]
@@ -107,7 +107,7 @@ void SFindInDialogues::Construct(const FArguments& InArgs, const TSharedPtr<FDia
 				.ToolTipText(LOCTEXT("OpenInGlobalFindResultsButtonTooltip", "Find in all Dialogues"))
 				[
 					SNew(STextBlock)
-					.TextStyle(FAppStyle::Get(), "FindResults.FindInBlueprints")
+					.TextStyle(FNYAppStyle::Get(), "FindResults.FindInBlueprints")
 					.Text(FText::FromString(FString(TEXT("\xf1e5"))) /*fa-binoculars*/)
 				]
 			]
@@ -134,7 +134,7 @@ void SFindInDialogues::Construct(const FArguments& InArgs, const TSharedPtr<FDia
 		.Padding(0.f, 4.f, 0.f, 0.f)
 		[
 			SNew(SBorder)
-			.BorderImage(FAppStyle::GetBrush("Menu.Background"))
+			.BorderImage(FNYAppStyle::GetBrush("Menu.Background"))
 			[
 				SAssignNew(TreeView, STreeView<TSharedPtr<FDialogueSearchResult>>)
 				.ItemHeight(24)
@@ -329,9 +329,9 @@ TSharedRef<ITableRow> SFindInDialogues::HandleGenerateRow(TSharedPtr<FDialogueSe
 			[
 				SNew(SBorder)
 				.VAlign(VAlign_Center)
-				.BorderImage(FAppStyle::GetBrush("PropertyWindow.CategoryBackground"))
+				.BorderImage(FNYAppStyle::GetBrush("PropertyWindow.CategoryBackground"))
 				.Padding(FMargin(2.0f))
-				.ForegroundColor(FAppStyle::GetColor("PropertyWindow.CategoryForeground"))
+				.ForegroundColor(FNYAppStyle::GetColor("PropertyWindow.CategoryForeground"))
 				[
 					SNew(SHorizontalBox)
 

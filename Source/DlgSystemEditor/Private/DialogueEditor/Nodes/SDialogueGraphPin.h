@@ -136,6 +136,6 @@ protected:
 	/** Gets the pin border */
 	const FSlateBrush* GetPinBorder() const
 	{
-		return FAppStyle::GetBrush(TEXT("Graph.StateNode.Body"));
+		return FNYAppStyle::GetBrush(TEXT("Graph.StateNode.Body"));
 	}
 };

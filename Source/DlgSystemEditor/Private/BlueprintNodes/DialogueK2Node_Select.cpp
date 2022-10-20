@@ -358,7 +358,7 @@ FText UDialogueK2Node_Select::GetNodeTitle(ENodeTitleType::Type TitleType) const
 
 FSlateIcon UDialogueK2Node_Select::GetIconAndTint(FLinearColor& OutColor) const
 {
-	static FSlateIcon Icon(FAppStyle::GetAppStyleSetName(), "GraphEditor.Select_16x");
+	static FSlateIcon Icon(NY_GET_APP_STYLE_NAME(), "GraphEditor.Select_16x");
 	return Icon;
 }
 // End UEdGraphNode interface

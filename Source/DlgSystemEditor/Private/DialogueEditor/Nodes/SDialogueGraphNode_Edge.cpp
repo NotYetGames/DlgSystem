@@ -149,35 +149,35 @@ void SDialogueGraphNode_Edge::UpdateGraphNode()
 			+SOverlay::Slot()
 			[
 				SNew(SImage)
-				.Image(FAppStyle::GetBrush("Graph.TransitionNode.ColorSpill"))
+				.Image(FNYAppStyle::GetBrush("Graph.TransitionNode.ColorSpill"))
 				.ColorAndOpacity(this, &Self::GetTransitionColor)
 			]
 			+SOverlay::Slot()
 			[
 				SNew(SImage)
-				.Image(FAppStyle::GetBrush("Graph.TransitionNode.Icon"))
+				.Image(FNYAppStyle::GetBrush("Graph.TransitionNode.Icon"))
 			]
 #else
 			+SOverlay::Slot()
 			[
 				SNew(SImage)
-				.Image(FAppStyle::GetBrush("Graph.TransitionNode.Body"))
+				.Image(FNYAppStyle::GetBrush("Graph.TransitionNode.Body"))
 			]
 			+SOverlay::Slot()
 			[
 				SNew(SImage)
-				.Image(FAppStyle::GetBrush("Graph.TransitionNode.ColorSpill"))
+				.Image(FNYAppStyle::GetBrush("Graph.TransitionNode.ColorSpill"))
 				.ColorAndOpacity(this, &Self::GetTransitionColor)
 			]
 			+SOverlay::Slot()
 			[
 				SNew(SImage)
-				.Image(FAppStyle::GetBrush("Graph.TransitionNode.Icon"))
+				.Image(FNYAppStyle::GetBrush("Graph.TransitionNode.Icon"))
 			]
 			+SOverlay::Slot()
 			[
 				SNew(SImage)
-				.Image(FAppStyle::GetBrush("Graph.TransitionNode.Gloss"))
+				.Image(FNYAppStyle::GetBrush("Graph.TransitionNode.Gloss"))
 			]
 #endif // NY_ENGINE_VERSION >= 424
 		];
