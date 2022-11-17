@@ -2,6 +2,7 @@
 #include "DlgHumanReadableTextCommandlet.h"
 
 #include "Misc/Paths.h"
+#include "NYEngineVersionHelpers.h"
 
 #if NY_ENGINE_VERSION >= 500
     #include "HAL/PlatformFileManager.h"

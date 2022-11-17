@@ -9,6 +9,7 @@
 #include "Widgets/Images/SImage.h"
 
 #include "DialogueK2Node_Select.h"
+#include "NYEngineVersionHelpers.h"
 
 void SGraphNode_DialogueK2Select::Construct(const FArguments& InArgs, UDialogueK2Node_Select* InNode)
 {

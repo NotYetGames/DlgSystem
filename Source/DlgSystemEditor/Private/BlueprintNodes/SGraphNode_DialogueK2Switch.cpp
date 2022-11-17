@@ -11,6 +11,7 @@
 #include "K2Node_Switch.h"
 
 #include "DialogueK2Node_SwitchDialogueCallback.h"
+#include "NYEngineVersionHelpers.h"
 
 
 //////////////////////////////////////////////////////////////////////////

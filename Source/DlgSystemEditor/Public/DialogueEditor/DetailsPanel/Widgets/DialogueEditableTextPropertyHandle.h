@@ -1,10 +1,12 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #pragma once
+
 #include "CoreMinimal.h"
-#include "SDialogueTextPropertyEditableTextBox.h"
-#include "IPropertyUtilities.h"
 #include "PropertyHandle.h"
+#include "IPropertyUtilities.h"
+
 #include "DlgLocalizationHelper.h"
+#include "NYEngineVersionHelpers.h"
 
 // FROM: FTextCustomization
 // Allows us to edit a property handle

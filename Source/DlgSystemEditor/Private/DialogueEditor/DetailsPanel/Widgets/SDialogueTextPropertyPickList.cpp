@@ -8,6 +8,8 @@
 #include "IDocumentation.h"
 #include "Layout/WidgetPath.h"
 
+#include "NYEngineVersionHelpers.h"
+
 #define LOCTEXT_NAMESPACE "SDialogueTextPropertyPickList"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
