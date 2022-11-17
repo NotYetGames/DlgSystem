@@ -1,7 +1,7 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DlgConditionCustomFactory.h"
 
-#include "DlgSystemEditor/DialogueEditorUtilities.h"
+#include "DlgSystemEditor/DlgEditorUtilities.h"
 #include "DlgSystem/DlgConditionCustom.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "Misc/MessageDialog.h"
@@ -29,7 +29,7 @@ bool UDlgConditionCustomFactory::ConfigureProperties()
 	ParentClass = nullptr;
 
 	UClass* ChosenClass = nullptr;
-	const bool bPressedOk = FDialogueEditorUtilities::PickChildrenOfClass(TitleText, ChosenClass, SupportedClass);
+	const bool bPressedOk = FDlgEditorUtilities::PickChildrenOfClass(TitleText, ChosenClass, SupportedClass);
 	if (bPressedOk)
 	{
 		ParentClass = ChosenClass;

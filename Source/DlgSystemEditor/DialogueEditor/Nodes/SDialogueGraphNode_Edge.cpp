@@ -10,7 +10,7 @@
 
 #include "DialogueGraphNode.h"
 #include "SDialogueNodeOverlayWidget.h"
-#include "DlgSystemEditor/DialogueStyle.h"
+#include "DlgSystemEditor/DlgStyle.h"
 
 #define LOCTEXT_NAMESPACE "DialogueEditor"
 
@@ -122,7 +122,7 @@ void SDialogueGraphNode_Edge::UpdateGraphNode()
 			.HeightOverride(HeightOverride)
 			[
 				SNew(SImage)
-				.Image(FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_QuestionMarkIcon))
+				.Image(FDlgStyle::Get()->GetBrush(FDlgStyle::PROPERTY_QuestionMarkIcon))
 			]
 		)
 		.ToolTipText(this, &Self::GetConditionOverlayTooltipText)

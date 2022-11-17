@@ -6,8 +6,8 @@
 
 #include "DlgSystem/Nodes/DlgNode.h"
 #include "DlgSystem/NYEngineVersionHelpers.h"
-#include "DlgSystemEditor/DialogueEditorUtilities.h"
-#include "DialogueGraphConnectionDrawingPolicy.h"
+#include "DlgSystemEditor/DlgEditorUtilities.h"
+#include "DlgGraphConnectionDrawingPolicy.h"
 #include "SchemaActions/NewComment_DialogueGraphSchemaAction.h"
 
 #include "DialogueGraphSchema.generated.h"
@@ -145,7 +145,7 @@ public:
 	 *
 	 * @param	Graph			The active graph to find the selection count for
 	 */
-	int32 GetNodeSelectionCount(const UEdGraph* Graph) const override { return FDialogueEditorUtilities::GetSelectedNodes(Graph).Num(); }
+	int32 GetNodeSelectionCount(const UEdGraph* Graph) const override { return FDlgEditorUtilities::GetSelectedNodes(Graph).Num(); }
 
 	/**
 	 * When a node is removed, this method determines whether we should remove it immediately or use the old (slower) code path that
@@ -169,7 +169,7 @@ public:
 		UEdGraph* InGraphObj
 	) const override
 	{
-		return new FDialogueGraphConnectionDrawingPolicy(InBackLayerID, InFrontLayerID, InZoomFactor, InClippingRect, InDrawElements, InGraphObj);
+		return new FDlgGraphConnectionDrawingPolicy(InBackLayerID, InFrontLayerID, InZoomFactor, InClippingRect, InDrawElements, InGraphObj);
 	}
 	//~ End EdGraphSchema Interface
 

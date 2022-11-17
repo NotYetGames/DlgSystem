@@ -7,7 +7,7 @@
 #include "Kismet/KismetMathLibrary.h"
 
 #include "DlgSystem/DlgManager.h"
-#include "DialogueBlueprintUtilities.h"
+#include "DlgBlueprintUtilities.h"
 
 #define LOCTEXT_NAMESPACE "DlgK2Node_Select"
 
@@ -179,7 +179,7 @@ bool UDialogueK2Node_SwitchDialogueCallback::RefreshPinNames()
 	}
 
 	static constexpr bool bBlueprintMustBeLoaded = true;
-	const FName ParticipantName = FDialogueBlueprintUtilities::GetParticipantNameFromNode(this, bBlueprintMustBeLoaded);
+	const FName ParticipantName = FDlgBlueprintUtilities::GetParticipantNameFromNode(this, bBlueprintMustBeLoaded);
 	if (ParticipantName == NAME_None)
 	{
 		return false;

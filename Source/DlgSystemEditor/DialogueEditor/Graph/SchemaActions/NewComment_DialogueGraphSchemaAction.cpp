@@ -3,7 +3,7 @@
 
 #include "EdGraphNode_Comment.h"
 
-#include "DlgSystemEditor/DialogueEditorUtilities.h"
+#include "DlgSystemEditor/DlgEditorUtilities.h"
 
 #define LOCTEXT_NAMESPACE "NewComment_DialogueGraphSchemaAction"
 
@@ -18,7 +18,7 @@ UEdGraphNode* FNewComment_DialogueGraphSchemaAction::PerformAction(UEdGraph* Par
 	// Wrap comment around other nodes, this makes it possible to select other nodes and press the "C" key on the keyboard.
 	FVector2D SpawnLocation = Location;
 	FSlateRect Bounds;
-	if (FDialogueEditorUtilities::GetBoundsForSelectedNodes(ParentGraph, Bounds, 50.0f))
+	if (FDlgEditorUtilities::GetBoundsForSelectedNodes(ParentGraph, Bounds, 50.0f))
 	{
 		CommentTemplate->SetBounds(Bounds);
 		SpawnLocation.X = CommentTemplate->NodePosX;

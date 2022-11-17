@@ -10,7 +10,7 @@
 #include "EditorStyleSet.h"
 
 #include "DlgSystem/DlgManager.h"
-#include "DialogueBlueprintUtilities.h"
+#include "DlgBlueprintUtilities.h"
 
 #define LOCTEXT_NAMESPACE "DlgK2Node_Select"
 
@@ -521,7 +521,7 @@ bool UDialogueK2Node_Select::RefreshPinNames()
 
 	// Stop anything if the blueprint is loading, this can happen because we now have reference to blueprint UClasses (reflection system) from the UDlgDialogue
 	static constexpr bool bBlueprintMustBeLoaded = true;
-	const FName ParticipantName = FDialogueBlueprintUtilities::GetParticipantNameFromNode(this, bBlueprintMustBeLoaded);
+	const FName ParticipantName = FDlgBlueprintUtilities::GetParticipantNameFromNode(this, bBlueprintMustBeLoaded);
 	if (ParticipantName == NAME_None && VariableType != EDlgVariableType::SpeakerState)
 	{
 		return false;

@@ -5,7 +5,7 @@
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Layout/SBorder.h"
 
-#include "DlgSystemEditor/DialogueStyle.h"
+#include "DlgSystemEditor/DlgStyle.h"
 
 /////////////////////////////////////////////////////
 // SDialogueNodeOverlayWidget
@@ -15,7 +15,7 @@ void SDialogueNodeOverlayWidget::Construct(const FArguments& InArgs)
 	OnGetBackgroundColorEvent = InArgs._OnGetBackgroundColor;
 	OverlayBody = InArgs._OverlayBody.Get();
 
-	const FSlateBrush* CircleBrush = FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_GraphNodeCircleBox);
+	const FSlateBrush* CircleBrush = FDlgStyle::Get()->GetBrush(FDlgStyle::PROPERTY_GraphNodeCircleBox);
 	ChildSlot
 	[
 		SNew(SOverlay)

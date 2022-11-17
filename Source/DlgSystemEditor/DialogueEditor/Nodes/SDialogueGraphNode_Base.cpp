@@ -22,7 +22,7 @@ void SDialogueGraphNode_Base::Construct(const FArguments& InArgs, UDialogueGraph
 
 void SDialogueGraphNode_Base::CreatePinWidgets()
 {
-	// Create only one pin, the output one, the rest is handled by FDialogueGraphConnectionDrawingPolicy
+	// Create only one pin, the output one, the rest is handled by FDlgGraphConnectionDrawingPolicy
 	UEdGraphPin* OutputPin = DialogueGraphNode_Base->GetOutputPin();
 	UEdGraphPin* InputPin = DialogueGraphNode_Base->GetInputPin();
 

@@ -15,7 +15,7 @@
 #include "DlgSystemEditor/DlgSystemEditorModule.h"
 #include "DlgSystem/DlgDialogue.h"
 #include "DialogueGraphNode_Edge.h"
-#include "DlgSystemEditor/DialogueCommands.h"
+#include "DlgSystemEditor/DlgCommands.h"
 #include "DlgSystem/DlgSystemSettings.h"
 #include "DlgSystem/Nodes/DlgNode_Custom.h"
 
@@ -223,12 +223,12 @@ void UDialogueGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeCo
 		FToolMenuSection& Section = Menu->AddSection("DialogueGraphNode_BaseNodeEditCRUD");
 		if (IsSpeechSequenceNode())
 		{
-			Section.AddMenuEntry(FDialogueCommands::Get().ConvertSpeechSequenceNodeToSpeechNodes);
+			Section.AddMenuEntry(FDlgCommands::Get().ConvertSpeechSequenceNodeToSpeechNodes);
 		}
 		if (IsSpeechNode()
-			&& FDialogueEditorUtilities::CanConvertSpeechNodesToSpeechSequence(FDialogueEditorUtilities::GetSelectedNodes(Context->Graph)))
+			&& FDlgEditorUtilities::CanConvertSpeechNodesToSpeechSequence(FDlgEditorUtilities::GetSelectedNodes(Context->Graph)))
 		{
-			Section.AddMenuEntry(FDialogueCommands::Get().ConvertSpeechNodesToSpeechSequence);
+			Section.AddMenuEntry(FDlgCommands::Get().ConvertSpeechNodesToSpeechSequence);
 		}
 
 		Section.AddMenuEntry(FGenericCommands::Get().Delete);
@@ -251,12 +251,12 @@ void UDialogueGraphNode::GetContextMenuActions(const FGraphNodeContextMenuBuilde
 		{
 			if (IsSpeechSequenceNode())
 			{
-				Context.MenuBuilder->AddMenuEntry(FDialogueCommands::Get().ConvertSpeechSequenceNodeToSpeechNodes);
+				Context.MenuBuilder->AddMenuEntry(FDlgCommands::Get().ConvertSpeechSequenceNodeToSpeechNodes);
 			}
 			if (IsSpeechNode()
-				&& FDialogueEditorUtilities::CanConvertSpeechNodesToSpeechSequence(FDialogueEditorUtilities::GetSelectedNodes(Context.Graph)))
+				&& FDlgEditorUtilities::CanConvertSpeechNodesToSpeechSequence(FDlgEditorUtilities::GetSelectedNodes(Context.Graph)))
 			{
-				Context.MenuBuilder->AddMenuEntry(FDialogueCommands::Get().ConvertSpeechNodesToSpeechSequence);
+				Context.MenuBuilder->AddMenuEntry(FDlgCommands::Get().ConvertSpeechNodesToSpeechSequence);
 			}
 
 			Context.MenuBuilder->AddMenuEntry(FGenericCommands::Get().Delete);

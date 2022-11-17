@@ -235,7 +235,7 @@ bool UDialogueGraphSchema::TryCreateConnection(UEdGraphPin* PinA, UEdGraphPin* P
 		PinA->GetOwningNode()->Modify();
 		PinB->GetOwningNode()->Modify();
 		Graph->Modify();
-		FDialogueEditorUtilities::GetDialogueForGraph(Graph)->Modify();
+		FDlgEditorUtilities::GetDialogueForGraph(Graph)->Modify();
 	}
 
 	const bool bModified = Super::TryCreateConnection(PinA, PinB);
@@ -253,7 +253,7 @@ bool UDialogueGraphSchema::TryCreateConnection(UEdGraphPin* PinA, UEdGraphPin* P
 	}
 
 	// Reset the value
-	FDialogueEditorUtilities::SetLastTargetGraphEdgeBeforeDrag(Graph, nullptr);
+	FDlgEditorUtilities::SetLastTargetGraphEdgeBeforeDrag(Graph, nullptr);
 
 	return bModified;
 }
@@ -266,7 +266,7 @@ bool UDialogueGraphSchema::CreateAutomaticConversionNodeAndConnections(UEdGraphP
 
 	// NOTE: NodeB does not have a valid position yet so we can't use it
 	UDialogueGraphNode_Edge* GraphNode_Edge =
-		FDialogueEditorUtilities::SpawnGraphNodeFromTemplate<UDialogueGraphNode_Edge>(
+		FDlgEditorUtilities::SpawnGraphNodeFromTemplate<UDialogueGraphNode_Edge>(
 			Graph, NodeA->GetDefaultEdgePosition(), false
 		);
 
@@ -281,7 +281,7 @@ bool UDialogueGraphSchema::CreateAutomaticConversionNodeAndConnections(UEdGraphP
 	}
 
 	// Was this from a modify drag and drop event? copy from the previous node
-	if (UDialogueGraphNode_Edge* GraphNode_Edge_DragDop = FDialogueEditorUtilities::GetLastTargetGraphEdgeBeforeDrag(Graph))
+	if (UDialogueGraphNode_Edge* GraphNode_Edge_DragDop = FDlgEditorUtilities::GetLastTargetGraphEdgeBeforeDrag(Graph))
 	{
 		// Copy the data from the old node, without the target index
 		FDlgEdge NewEdge = GraphNode_Edge->GetDialogueEdge();
@@ -308,7 +308,7 @@ void UDialogueGraphSchema::BreakNodeLinks(UEdGraphNode& TargetNode) const
 {
 	// NOTE: The SGraphEditorImpl::BreakNodeLinks that calls this (method) has the transaction declared, so do not make another one here.
 	UEdGraph* Graph = TargetNode.GetGraph();
-	UDlgDialogue* Dialogue = FDialogueEditorUtilities::GetDialogueForGraph(Graph);
+	UDlgDialogue* Dialogue = FDlgEditorUtilities::GetDialogueForGraph(Graph);
 
 	// Mark for undo system
 	verify(Graph->Modify());
@@ -332,7 +332,7 @@ void UDialogueGraphSchema::BreakPinLinks(UEdGraphPin& TargetPin, bool bSendsNode
 	const FScopedTransaction Transaction(LOCTEXT("GraphEd_BreakPinLinks", "Dialogue Editor: Break Pin Links"));
 	UEdGraphNode* Node = TargetPin.GetOwningNode();
 	UEdGraph* Graph = Node->GetGraph();
-	UDlgDialogue* Dialogue = FDialogueEditorUtilities::GetDialogueForGraph(Graph);
+	UDlgDialogue* Dialogue = FDlgEditorUtilities::GetDialogueForGraph(Graph);
 
 	// Mark for undo system
 	verify(Node->Modify());
@@ -384,7 +384,7 @@ void UDialogueGraphSchema::BreakLinkTo(UEdGraphPin* FromPin, UEdGraphPin* ToPin,
 	UEdGraphNode* FromNode = FromPin->GetOwningNode();
 	UEdGraphNode* ToNode = ToPin->GetOwningNode();
 	UEdGraph* Graph = FromNode->GetGraph();
-	UDlgDialogue* Dialogue = FDialogueEditorUtilities::GetDialogueForGraph(Graph);
+	UDlgDialogue* Dialogue = FDlgEditorUtilities::GetDialogueForGraph(Graph);
 
 	// Mark for undo system
 	verify(FromNode->Modify());
@@ -449,13 +449,13 @@ void UDialogueGraphSchema::GetConvertActions(FGraphActionMenuBuilder& ActionMenu
 		return;
 	}
 
-	const TSet<UObject*> SelectedNodes = FDialogueEditorUtilities::GetSelectedNodes(CurrentGraph);
+	const TSet<UObject*> SelectedNodes = FDlgEditorUtilities::GetSelectedNodes(CurrentGraph);
 	int32 Grouping = 1;
 
 	// Try conversion from speech nodes to a sequence node
 	{
 		TArray<UDialogueGraphNode*> SelectedGraphNodes;
-		if (FDialogueEditorUtilities::CanConvertSpeechNodesToSpeechSequence(SelectedNodes, SelectedGraphNodes))
+		if (FDlgEditorUtilities::CanConvertSpeechNodesToSpeechSequence(SelectedNodes, SelectedGraphNodes))
 		{
 			const FText MenuDescription =
 				LOCTEXT("ConvertSpeechNodesToSequenceNodeDesc", "Converts selected Speech node(s) to a Speech Sequence Node");

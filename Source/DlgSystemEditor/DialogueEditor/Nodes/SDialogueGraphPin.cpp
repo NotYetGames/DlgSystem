@@ -200,7 +200,7 @@ FReply SDialogueGraphPin::OnAltAndLeftMouseButtonDown(const FGeometry& SenderGeo
 	const FVector2D& MouseLocation = MouseEvent.GetScreenSpacePosition();
 
 	// Is the click inside the node?
-	if (FDialogueEditorUtilities::IsPointInsideGeometry(MouseLocation, ThisOwnerNodeWidget->GetCachedGeometry()))
+	if (FDlgEditorUtilities::IsPointInsideGeometry(MouseLocation, ThisOwnerNodeWidget->GetCachedGeometry()))
 	{
 		// break all links
 		Schema->BreakPinLinks(*GraphPinObj, true);
@@ -246,7 +246,7 @@ FReply SDialogueGraphPin::OnCtrlAndLeftMouseButtonDown(const FGeometry& SenderGe
 	if (UDialogueGraphNode_Edge* GraphEdge = Cast<UDialogueGraphNode_Edge>(ToPin->GetOwningNode()))
 	{
 		// true almost all the times, but just to be sure in the future
-		FDialogueEditorUtilities::SetLastTargetGraphEdgeBeforeDrag(GraphEdge->GetGraph(), GraphEdge);
+		FDlgEditorUtilities::SetLastTargetGraphEdgeBeforeDrag(GraphEdge->GetGraph(), GraphEdge);
 	}
 
 	const UDialogueGraphSchema* Schema = CastChecked<UDialogueGraphSchema>(GraphPinObj->GetSchema());

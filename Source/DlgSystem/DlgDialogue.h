@@ -3,7 +3,7 @@
 
 #include "Templates/SubclassOf.h"
 
-#include "IDlgDialogueEditorAccess.h"
+#include "IDlgEditorAccess.h"
 #include "DlgSystemSettings.h"
 #include "DlgDialogueParticipantData.h"
 
@@ -208,7 +208,7 @@ public:
 	void CompileDialogueNodesFromGraphNodes();
 
 	// Sets the dialogue editor implementation. This is called in the constructor of the DlgDialogueGraph in the DlgSytemEditor module.
-	static void SetDialogueEditorAccess(const TSharedPtr<IDlgDialogueEditorAccess>& InDialogueEditor)
+	static void SetDialogueEditorAccess(const TSharedPtr<IDlgEditorAccess>& InDialogueEditor)
 	{
 		check(!DialogueEditorAccess.IsValid());
 		check(InDialogueEditor.IsValid());
@@ -216,7 +216,7 @@ public:
 	}
 
 	// Gets the dialogue editor implementation.
-	static TSharedPtr<IDlgDialogueEditorAccess> GetDialogueEditorAccess() { return DialogueEditorAccess; }
+	static TSharedPtr<IDlgEditorAccess> GetDialogueEditorAccess() { return DialogueEditorAccess; }
 
 	// Enables/disables the compilation of the dialogues in the editor, use with care. Mainly used for optimization.
 	void EnableCompileDialogue() { bCompileDialogue = true; }
@@ -742,7 +742,7 @@ protected:
 	UEdGraph* DlgGraph;
 
 	// Ptr to interface to dialogue editor operations. See function SetDialogueEditorAccess for more details.
-	static TSharedPtr<IDlgDialogueEditorAccess> DialogueEditorAccess;
+	static TSharedPtr<IDlgEditorAccess> DialogueEditorAccess;
 
 	// Flag used for optimization, used to enable/disable compiling of the dialogue for bulk operations.
 	bool bCompileDialogue = true;

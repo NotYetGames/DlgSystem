@@ -8,8 +8,8 @@
 #include "DlgSystemEditor/DialogueEditor/Nodes/DialogueGraphNode_Root.h"
 #include "DlgSystemEditor/DialogueEditor/Nodes/DialogueGraphNode.h"
 #include "DlgSystemEditor/DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
-#include "DlgSystemEditor/DialogueEditor/DialogueCompiler.h"
-#include "DlgSystemEditor/DlgDialogueEditorAccess.h"
+#include "DlgSystemEditor/DialogueEditor/DlgCompiler.h"
+#include "DlgSystemEditor/DlgEditorAccess.h"
 
 UDialogueGraph::UDialogueGraph(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -17,7 +17,7 @@ UDialogueGraph::UDialogueGraph(const FObjectInitializer& ObjectInitializer)
 	// Set the static editor module interface used by all the dialogues in the DlgSystem module to communicate with the editor.
 	if (!UDlgDialogue::GetDialogueEditorAccess().IsValid())
 	{
-		UDlgDialogue::SetDialogueEditorAccess(TSharedPtr<IDlgDialogueEditorAccess>(new FDlgDialogueEditorAccess));
+		UDlgDialogue::SetDialogueEditorAccess(TSharedPtr<IDlgEditorAccess>(new FDlgEditorAccess));
 	}
 }
 
@@ -97,7 +97,7 @@ void UDialogueGraph::CreateGraphNodesFromDialogue()
 	// Assume empty graph
 	check(Nodes.Num() == 0);
 	UDlgDialogue* Dialogue = GetDialogue();
-	FDialogueEditorUtilities::CheckAndTryToFixDialogue(Dialogue, false);
+	FDlgEditorUtilities::CheckAndTryToFixDialogue(Dialogue, false);
 
 	// Step 1: Create the root (start) nodes
 	{
@@ -140,7 +140,7 @@ void UDialogueGraph::LinkGraphNodesFromDialogue() const
 	UDlgDialogue* Dialogue = GetDialogue();
 
 	// Assume we have all the nodes created (plus the start node)
-	check(FDialogueEditorUtilities::AreDialogueNodesInSyncWithGraphNodes(Dialogue));
+	check(FDlgEditorUtilities::AreDialogueNodesInSyncWithGraphNodes(Dialogue));
 
 	const TArray<UDlgNode*> StartNodesDialogue = Dialogue->GetStartNodes();
 	const TArray<UDlgNode*>& NodesDialogue = Dialogue->GetNodes();
@@ -191,7 +191,7 @@ void UDialogueGraph::LinkGraphNodeToChildren(
 
 		// Make connection
 		UDialogueGraphNode_Edge* GraphNode_Edge =
-			FDialogueEditorUtilities::SpawnGraphNodeFromTemplate<UDialogueGraphNode_Edge>(
+			FDlgEditorUtilities::SpawnGraphNodeFromTemplate<UDialogueGraphNode_Edge>(
 				GraphNode->GetGraph(), GraphNode->GetDefaultEdgePosition(), false
 			);
 
@@ -212,7 +212,7 @@ void UDialogueGraph::AutoPositionGraphNodes() const
 	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
 
 	// TODO investigate Node->SnapToGrid
-	FDialogueEditorUtilities::AutoPositionGraphNodes(
+	FDlgEditorUtilities::AutoPositionGraphNodes(
 		RootNode,
 		DialogueGraphNodes,
 		Settings->OffsetBetweenColumnsX,

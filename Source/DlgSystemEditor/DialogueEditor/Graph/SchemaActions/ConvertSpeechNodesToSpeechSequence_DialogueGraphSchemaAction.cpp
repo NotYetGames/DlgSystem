@@ -5,7 +5,7 @@
 
 #include "NewNode_DialogueGraphSchemaAction.h"
 #include "DlgSystem/DlgDialogue.h"
-#include "DlgSystemEditor/DialogueEditorUtilities.h"
+#include "DlgSystemEditor/DlgEditorUtilities.h"
 #include "DlgSystem/Nodes/DlgNode_SpeechSequence.h"
 #include "DlgSystem/Nodes/DlgNode_Speech.h"
 #include "DlgSystemEditor/DialogueEditor/Nodes/DialogueGraphNode.h"
@@ -20,7 +20,7 @@ UEdGraphNode* FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction::Per
 	// Should have been stopped in GetConvertActions
 	check(SelectedGraphNodes.Num() > 0);
 	const FScopedTransaction Transaction(LOCTEXT("DialogueditorConvertSpeechNodesToSpeechSequence", "Convert Speech Nodes to a Sequence Node"));
-	UDlgDialogue* Dialogue = FDialogueEditorUtilities::GetDialogueForGraph(ParentGraph);
+	UDlgDialogue* Dialogue = FDlgEditorUtilities::GetDialogueForGraph(ParentGraph);
 
 	// Disable compiling for optimization
 	Dialogue->DisableCompileDialogue();
@@ -60,11 +60,11 @@ UEdGraphNode* FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction::Per
 	// Step 3. Copy existing connections from the first and last node in the sequence
 	// Replace connections from parents
 	const UDialogueGraphNode* FirstSelectedGraphNode = SelectedGraphNodes[0];
-	FDialogueEditorUtilities::ReplaceParentConnectionsToNode(FirstSelectedGraphNode, GraphNode_SpeechSequence);
+	FDlgEditorUtilities::ReplaceParentConnectionsToNode(FirstSelectedGraphNode, GraphNode_SpeechSequence);
 
 	// Copy connections from the last node to the speech sequence
 	const UDialogueGraphNode* LastSelectedNode = SelectedGraphNodes.Last();
-	FDialogueEditorUtilities::CopyNodeChildren(LastSelectedNode, GraphNode_SpeechSequence);
+	FDlgEditorUtilities::CopyNodeChildren(LastSelectedNode, GraphNode_SpeechSequence);
 
 	// Step 4. Copy existing enter events and/or conditions from the first node in the sequence
 	if (FirstSelectedGraphNode->HasEnterConditions() || FirstSelectedGraphNode->HasEnterEvents())
@@ -98,7 +98,7 @@ UEdGraphNode* FConvertSpeechNodesToSpeechSequence_DialogueGraphSchemaAction::Per
 
 	// Step 5. Remove the nodes, this will break the existing input/output connections of the nodes
 	for (UDialogueGraphNode* GraphNode : SelectedGraphNodes)
-		FDialogueEditorUtilities::RemoveNode(GraphNode);
+		FDlgEditorUtilities::RemoveNode(GraphNode);
 
 #if DO_CHECK
 	GraphNode_SpeechSequence->CheckAll();

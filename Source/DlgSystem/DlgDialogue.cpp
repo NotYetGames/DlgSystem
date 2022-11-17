@@ -130,7 +130,7 @@ void UDlgDialogue::PostLoad()
 #if WITH_EDITOR
 	const bool bHasDialogueEditorModule = GetDialogueEditorAccess().IsValid();
 	// If this is false it means the graph nodes are not even created? Check for old files that were saved
-	// before graph editor was even implemented. The editor will popup a prompt from FDialogueEditorUtilities::TryToCreateDefaultGraph
+	// before graph editor was even implemented. The editor will popup a prompt from FDlgEditorUtilities::TryToCreateDefaultGraph
 	if (bHasDialogueEditorModule && !GetDialogueEditorAccess()->AreDialogueNodesInSyncWithGraphNodes(this))
 	{
 		return;
@@ -242,7 +242,7 @@ void UDlgDialogue::PostEditImport()
 }
 
 #if WITH_EDITOR
-TSharedPtr<IDlgDialogueEditorAccess> UDlgDialogue::DialogueEditorAccess = nullptr;
+TSharedPtr<IDlgEditorAccess> UDlgDialogue::DialogueEditorAccess = nullptr;
 
 bool UDlgDialogue::Modify(bool bAlwaysMarkDirty)
 {

@@ -12,7 +12,7 @@
 
 #include "SDialogueNodeOverlayWidget.h"
 #include "SDialogueGraphPin.h"
-#include "DlgSystemEditor/DialogueStyle.h"
+#include "DlgSystemEditor/DlgStyle.h"
 
 #define LOCTEXT_NAMESPACE "DialogueEditor"
 
@@ -61,7 +61,7 @@ FReply SDialogueGraphNode::OnMouseButtonDoubleClick(const FGeometry& InMyGeometr
 	const TArray<UDlgNode*>& Nodes = DialogueGraphNode->GetDialogue()->GetNodes();
 	if (Nodes.IsValidIndex(TargetIndex))
 	{
-		FDialogueEditorUtilities::JumpToGraphNode(Nodes[TargetIndex]->GetGraphNode());
+		FDlgEditorUtilities::JumpToGraphNode(Nodes[TargetIndex]->GetGraphNode());
 		return FReply::Handled();
 	}
 
@@ -178,7 +178,7 @@ void SDialogueGraphNode::UpdateGraphNode()
 			.HeightOverride(HeightOverride)
 			[
 				SNew(SImage)
-				.Image(FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_ConditionIcon))
+				.Image(FDlgStyle::Get()->GetBrush(FDlgStyle::PROPERTY_ConditionIcon))
 			]
 		)
 		.ToolTipText(this, &Self::GetConditionOverlayTooltipText)
@@ -194,7 +194,7 @@ void SDialogueGraphNode::UpdateGraphNode()
 			.HeightOverride(HeightOverride)
 			[
 				SNew(SImage)
-				.Image(FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_EventIcon))
+				.Image(FDlgStyle::Get()->GetBrush(FDlgStyle::PROPERTY_EventIcon))
 			]
 		)
 		.ToolTipText(this, &Self::GetEventOverlayTooltipText)
@@ -210,7 +210,7 @@ void SDialogueGraphNode::UpdateGraphNode()
 			.HeightOverride(HeightOverride)
 			[
 				SNew(SImage)
-				.Image(FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_VoiceIcon))
+				.Image(FDlgStyle::Get()->GetBrush(FDlgStyle::PROPERTY_VoiceIcon))
 			]
 		)
 		.ToolTipText(this, &Self::GetVoiceOverlayTooltipText)
@@ -226,7 +226,7 @@ void SDialogueGraphNode::UpdateGraphNode()
 			.HeightOverride(HeightOverride)
 			[
 				SNew(SImage)
-				.Image(FDialogueStyle::Get()->GetBrush(FDialogueStyle::PROPERTY_GenericIcon))
+				.Image(FDlgStyle::Get()->GetBrush(FDlgStyle::PROPERTY_GenericIcon))
 			]
 		)
 		.ToolTipText(this, &Self::GetGenericOverlayTooltipText)
