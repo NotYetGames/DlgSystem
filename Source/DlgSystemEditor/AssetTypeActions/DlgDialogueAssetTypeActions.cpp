@@ -1,7 +1,7 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "DlgDialogueAssetTypeActions.h"
 
-#include "DlgSystemEditor/DialogueEditor/DlgEditor.h"
+#include "DlgSystemEditor/Editor/DlgEditor.h"
 #include "DlgSystemEditor/DlgSystemEditorModule.h"
 
 void FDlgDialogueAssetTypeActions::GetActions(const TArray<UObject*>& InObjects, FMenuBuilder& MenuBuilder)

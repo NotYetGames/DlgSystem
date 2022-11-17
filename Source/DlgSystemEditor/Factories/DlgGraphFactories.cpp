@@ -3,13 +3,13 @@
 
 #include "K2Node.h"
 
-#include "DlgSystemEditor/DialogueEditor/Nodes/DialogueGraphNode_Base.h"
-#include "DlgSystemEditor/DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
-#include "DlgSystemEditor/DialogueEditor/Nodes/DialogueGraphNode_Root.h"
-#include "DlgSystemEditor/DialogueEditor/Nodes/SDialogueGraphNode.h"
-#include "DlgSystemEditor/DialogueEditor/Nodes/SDialogueGraphNode_Root.h"
-#include "DlgSystemEditor/DialogueEditor/Nodes/SDialogueGraphNode_Edge.h"
-#include "DlgSystemEditor/DialogueEditor/Nodes/SDialogueGraphPin.h"
+#include "DlgSystemEditor/Editor/Nodes/DialogueGraphNode_Base.h"
+#include "DlgSystemEditor/Editor/Nodes/DialogueGraphNode_Edge.h"
+#include "DlgSystemEditor/Editor/Nodes/DialogueGraphNode_Root.h"
+#include "DlgSystemEditor/Editor/Nodes/SDlgGraphNode.h"
+#include "DlgSystemEditor/Editor/Nodes/SDlgGraphNode_Root.h"
+#include "DlgSystemEditor/Editor/Nodes/SDlgGraphNode_Edge.h"
+#include "DlgSystemEditor/Editor/Nodes/SDlgGraphPin.h"
 #include "DlgSystemEditor/BlueprintNodes/DialogueK2Node_Select.h"
 #include "DlgSystemEditor/BlueprintNodes/SGraphNode_DialogueK2Select.h"
 #include "DlgSystemEditor/BlueprintNodes/SGraphNode_DialogueK2Switch.h"
@@ -25,16 +25,16 @@ TSharedPtr<class SGraphNode> FDlgGraphNodeFactory::CreateNode(class UEdGraphNode
 		{
 			if (UDialogueGraphNode_Root* DialogueStartNode = Cast<UDialogueGraphNode_Root>(DialogueNode))
 			{
-				return SNew(SDialogueGraphNode_Root, DialogueStartNode);
+				return SNew(SDlgGraphNode_Root, DialogueStartNode);
 			}
 
-			return SNew(SDialogueGraphNode, DialogueNode);
+			return SNew(SDlgGraphNode, DialogueNode);
 		}
 
 		// Edge
 		if (UDialogueGraphNode_Edge* DialogueEdge = Cast<UDialogueGraphNode_Edge>(DialogueNode_Base))
 		{
-			return SNew(SDialogueGraphNode_Edge, DialogueEdge);
+			return SNew(SDlgGraphNode_Edge, DialogueEdge);
 		}
 	}
 
@@ -59,7 +59,7 @@ TSharedPtr<class SGraphPin> FDlgGraphPinFactory::CreatePin(class UEdGraphPin* Pi
 {
 	if (Pin->GetSchema()->IsA<UDialogueGraphSchema>())
 	{
-		return SNew(SDialogueGraphPin, Pin);
+		return SNew(SDlgGraphPin, Pin);
 	}
 
 	return nullptr;

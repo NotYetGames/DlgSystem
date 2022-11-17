@@ -18,7 +18,7 @@
 #include "DlgSystem/Nodes/DlgNode_Speech.h"
 #include "DlgSystem/IO/DlgJsonWriter.h"
 #include "DlgSystem/Nodes/DlgNode_SpeechSequence.h"
-#include "DlgSystemEditor/DialogueEditor/Nodes/DialogueGraphNode.h"
+#include "DlgSystemEditor/Editor/Nodes/DialogueGraphNode.h"
 #include "DlgSystem/IO/DlgJsonParser.h"
 #include "DlgCommandletHelper.h"
 #include "DlgSystem/DlgHelper.h"

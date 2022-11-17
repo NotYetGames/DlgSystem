@@ -19,7 +19,7 @@
 #include "DlgSystem/DlgManager.h"
 #include "DlgSystem/Nodes/DlgNode_Speech.h"
 #include "DlgSystem/Nodes/DlgNode_SpeechSequence.h"
-#include "DlgSystemEditor/DialogueEditor/Nodes/DialogueGraphNode.h"
+#include "DlgSystemEditor/Editor/Nodes/DialogueGraphNode.h"
 #include "DlgSystem/DlgHelper.h"
 
 

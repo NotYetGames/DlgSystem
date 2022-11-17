@@ -13,9 +13,9 @@
 #include "Engine/Blueprint.h"
 
 #include "DlgSystemEditorModule.h"
-#include "DialogueEditor/IDlgEditor.h"
-#include "DialogueEditor/Nodes/DialogueGraphNode.h"
-#include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
+#include "Editor/IDlgEditor.h"
+#include "Editor/Nodes/DialogueGraphNode.h"
+#include "Editor/Nodes/DialogueGraphNode_Edge.h"
 #include "DlgSystem/DlgHelper.h"
 #include "DlgSystem/DlgManager.h"
 #include "Factories/DlgClassViewerFilters.h"

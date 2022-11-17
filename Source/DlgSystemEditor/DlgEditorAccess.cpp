@@ -2,12 +2,12 @@
 #include "DlgEditorAccess.h"
 
 #include "DlgSystem/DlgDialogue.h"
-#include "DialogueEditor/Graph/DialogueGraph.h"
-#include "DialogueEditor/Graph/DialogueGraphSchema.h"
+#include "Editor/Graph/DialogueGraph.h"
+#include "Editor/Graph/DialogueGraphSchema.h"
 #include "DlgEditorUtilities.h"
-#include "DialogueEditor/Nodes/DialogueGraphNode.h"
-#include "DialogueEditor/Nodes/DialogueGraphNode_Edge.h"
-#include "DialogueEditor/DlgCompiler.h"
+#include "Editor/Nodes/DialogueGraphNode.h"
+#include "Editor/Nodes/DialogueGraphNode_Edge.h"
+#include "Editor/DlgCompiler.h"
 #include "DlgSystem/Nodes/DlgNode.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

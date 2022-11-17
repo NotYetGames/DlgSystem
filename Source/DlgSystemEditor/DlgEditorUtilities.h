@@ -4,7 +4,7 @@
 #include "ConnectionDrawingPolicy.h"
 #include "EdGraphNode_Comment.h"
 
-#include "DialogueEditor/Graph/DialogueGraph.h"
+#include "Editor/Graph/DialogueGraph.h"
 #include "DlgSystem/Nodes/DlgNode.h"
 
 enum class EDlgBlueprintOpenType : uint8
