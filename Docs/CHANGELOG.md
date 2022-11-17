@@ -1,4 +1,8 @@
 # v16
+
+### Upgrade Notes
+- The Private/Public directories don't exist anymore, everything is public now by default
+
 ### New Features
 
 - Added String support for Dialogue Text Property Pick List suggestions.

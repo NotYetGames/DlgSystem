@@ -15,20 +15,6 @@ public class DlgSystem : ModuleRules
 		//MinFilesUsingPrecompiledHeaderOverride = 1;
 		// bUseUnity = false;
 
-		PublicIncludePaths.AddRange(
-			new string[] {
-				Path.Combine(ModuleDirectory, "Public")
-				// ... add public include paths required here ...
-			});
-
-
-		PrivateIncludePaths.AddRange(
-			new string[] {
-				Path.Combine(ModuleDirectory, "Private")
-				// ... add other private include paths required here ...
-			});
-
-
 		PublicDependencyModuleNames.AddRange(
 			new string[] {
 				"Core",

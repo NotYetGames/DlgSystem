@@ -23,22 +23,6 @@ public class DlgSystemEditor : ModuleRules
 
 		// Docs see https://docs.unrealengine.com/latest/INT/Programming/UnrealBuildSystem/ModuleFiles/
 
-		PublicIncludePaths.AddRange(
-			new string[] {
-				Path.Combine(ModuleDirectory, "Public")
-				// ... add public include paths required here ...
-			});
-
-
-		string PrivateDirectory = Path.Combine(ModuleDirectory, "Private");
-		PrivateIncludePaths.AddRange(
-			new string[] {
-				PrivateDirectory,
-				Path.Combine(PrivateDirectory, "Commandlets")
-				// ... add other private include paths required here ...
-			});
-
-
 		PublicDependencyModuleNames.AddRange(
 			new string[] {
 				"Core",
