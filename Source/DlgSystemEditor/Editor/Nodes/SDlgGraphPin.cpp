@@ -147,8 +147,9 @@ void SDlgGraphPin::OnMouseLeave(const FPointerEvent& MouseEvent)
 void SDlgGraphPin::OnDragEnter(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent)
 {
 	// NOTE: Super default implementation will not work properly with nodes that are not GetIsConnectable
-	// Super::OnDragEnter(MyGeometry, DragDropEvent);
-
+#if NY_ENGINE_VERSION < 500
+	Super::OnDragEnter(MyGeometry, DragDropEvent);
+#else
 	TSharedPtr<FDragDropOperation> Operation = DragDropEvent.GetOperation();
 	if (!Operation.IsValid())
 	{
@@ -169,12 +170,15 @@ void SDlgGraphPin::OnDragEnter(const FGeometry& MyGeometry, const FDragDropEvent
 		// Pins treat being dragged over the same as being hovered outside of drag and drop if they know how to respond to the drag action.
 		SBorder::OnMouseEnter(MyGeometry, DragDropEvent);
 	}
+#endif  // NY_ENGINE_VERSION < 500
 }
 
 void SDlgGraphPin::OnDragLeave(const FDragDropEvent& DragDropEvent)
 {
 	// NOTE: Super default implementation will not work properly with nodes that are not GetIsConnectable
-
+#if NY_ENGINE_VERSION < 500
+	Super::OnDragLeave(DragDropEvent);
+#else
 	TSharedPtr<FDragDropOperation> Operation = DragDropEvent.GetOperation();
 	if (!Operation.IsValid())
 	{
@@ -196,6 +200,7 @@ void SDlgGraphPin::OnDragLeave(const FDragDropEvent& DragDropEvent)
 		TSharedPtr<FAssetDragDropOp> AssetOp = StaticCastSharedPtr<FAssetDragDropOp>(Operation);
 		AssetOp->ResetToDefaultToolTip();
 	}
+#endif // NY_ENGINE_VERSION < 500
 }
 
 FReply SDlgGraphPin::OnDragOver(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent)
@@ -206,7 +211,9 @@ FReply SDlgGraphPin::OnDragOver(const FGeometry& MyGeometry, const FDragDropEven
 FReply SDlgGraphPin::OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent)
 {
 	// NOTE: Super default implementation will not work properly with nodes that are not GetIsConnectable
-
+#if NY_ENGINE_VERSION < 500
+	return Super::OnDrop(MyGeometry, DragDropEvent);
+#else
 	TSharedPtr<SGraphNode> NodeWidget = OwnerNodePtr.Pin();
 	bool bReadOnly = NodeWidget.IsValid() ? !NodeWidget->IsNodeEditable() : false;
 
@@ -273,6 +280,7 @@ FReply SDlgGraphPin::OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& D
 	}
 
 	return FReply::Unhandled();
+#endif // NY_ENGINE_VERSION < 500
 }
 
 FSlateColor SDlgGraphPin::GetPinColor() const
