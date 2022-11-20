@@ -1,13 +1,15 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #include "SDlgGraphPin.h"
 
-#include "ScopedTransaction.h"
 #include "SGraphPanel.h"
 #include "SGraphNode.h"
 #include "Math/UnitConversion.h"
+#include "GraphEditorDragDropAction.h"
+#include "DragAndDrop/AssetDragDropOp.h"
 
 #include "DialogueGraphNode_Edge.h"
 #include "DialogueGraphNode.h"
+
 
 #define LOCTEXT_NAMESPACE "SDlgGraphPin"
 
@@ -56,7 +58,7 @@ FReply SDlgGraphPin::OnPinMouseDown(const FGeometry& SenderGeometry, const FPoin
 		}
 
 		// Regular drag operation, to create new links
-		if (!GraphPinObj->bNotConnectable)
+		if (GetIsConnectable())
 		{
 			// Start a drag-drop on the pin
 			TSharedPtr<SGraphNode> ThisOwnerNodeWidget = OwnerNodePtr.Pin();
@@ -144,12 +146,56 @@ void SDlgGraphPin::OnMouseLeave(const FPointerEvent& MouseEvent)
 //
 void SDlgGraphPin::OnDragEnter(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent)
 {
-	Super::OnDragEnter(MyGeometry, DragDropEvent);
+	// NOTE: Super default implementation will not work properly with nodes that are not GetIsConnectable
+	// Super::OnDragEnter(MyGeometry, DragDropEvent);
+
+	TSharedPtr<FDragDropOperation> Operation = DragDropEvent.GetOperation();
+	if (!Operation.IsValid())
+	{
+		return;
+	}
+
+	// Is someone dragging a connection?
+	if (Operation->IsOfType<FGraphEditorDragDropAction>())
+	{
+		// Ensure that the pin is valid before using it
+		if(GraphPinObj != NULL && !GraphPinObj->IsPendingKill() && GraphPinObj->GetOuter() != NULL && GraphPinObj->GetOuter()->IsA(UEdGraphNode::StaticClass()))
+		{
+			// Inform the Drag and Drop operation that we are hovering over this pin.
+			TSharedPtr<FGraphEditorDragDropAction> DragConnectionOp = StaticCastSharedPtr<FGraphEditorDragDropAction>(Operation);
+			DragConnectionOp->SetHoveredPin(GraphPinObj);
+		}
+
+		// Pins treat being dragged over the same as being hovered outside of drag and drop if they know how to respond to the drag action.
+		SBorder::OnMouseEnter(MyGeometry, DragDropEvent);
+	}
 }
 
 void SDlgGraphPin::OnDragLeave(const FDragDropEvent& DragDropEvent)
 {
-	Super::OnDragLeave(DragDropEvent);
+	// NOTE: Super default implementation will not work properly with nodes that are not GetIsConnectable
+
+	TSharedPtr<FDragDropOperation> Operation = DragDropEvent.GetOperation();
+	if (!Operation.IsValid())
+	{
+		return;
+	}
+
+	// Is someone dragging a connection?
+	if (Operation->IsOfType<FGraphEditorDragDropAction>())
+	{
+		// Inform the Drag and Drop operation that we are not hovering any pins
+		TSharedPtr<FGraphEditorDragDropAction> DragConnectionOp = StaticCastSharedPtr<FGraphEditorDragDropAction>(Operation);
+		DragConnectionOp->SetHoveredPin(nullptr);
+
+		SBorder::OnMouseLeave(DragDropEvent);
+	}
+
+	else if (Operation->IsOfType<FAssetDragDropOp>())
+	{
+		TSharedPtr<FAssetDragDropOp> AssetOp = StaticCastSharedPtr<FAssetDragDropOp>(Operation);
+		AssetOp->ResetToDefaultToolTip();
+	}
 }
 
 FReply SDlgGraphPin::OnDragOver(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent)
@@ -159,7 +205,74 @@ FReply SDlgGraphPin::OnDragOver(const FGeometry& MyGeometry, const FDragDropEven
 
 FReply SDlgGraphPin::OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent)
 {
-	return Super::OnDrop(MyGeometry, DragDropEvent);
+	// NOTE: Super default implementation will not work properly with nodes that are not GetIsConnectable
+
+	TSharedPtr<SGraphNode> NodeWidget = OwnerNodePtr.Pin();
+	bool bReadOnly = NodeWidget.IsValid() ? !NodeWidget->IsNodeEditable() : false;
+
+	TSharedPtr<FDragDropOperation> Operation = DragDropEvent.GetOperation();
+	if (!Operation.IsValid() || bReadOnly)
+	{
+		return FReply::Unhandled();
+	}
+
+	// Is someone dropping a connection onto this pin?
+	if (Operation->IsOfType<FGraphEditorDragDropAction>())
+	{
+		TSharedPtr<FGraphEditorDragDropAction> DragConnectionOp = StaticCastSharedPtr<FGraphEditorDragDropAction>(Operation);
+
+		FVector2D NodeAddPosition = FVector2D::ZeroVector;
+		TSharedPtr<SGraphNode> OwnerNode = OwnerNodePtr.Pin();
+		if (OwnerNode.IsValid())
+		{
+			NodeAddPosition	= OwnerNode->GetPosition() + FVector2D(MyGeometry.Position);
+
+			//Don't have access to bounding information for node, using fixed offset that should work for most cases.
+			const float FixedOffset = 200.0f;
+
+			//Line it up vertically with pin
+			NodeAddPosition.Y += MyGeometry.Size.Y;
+
+			// if the pin widget is nested into another compound
+			if (MyGeometry.Position == FVector2f::ZeroVector)
+			{
+				FVector2D PinOffsetPosition = FVector2D(MyGeometry.AbsolutePosition) - FVector2D(NodeWidget->GetTickSpaceGeometry().AbsolutePosition);
+				NodeAddPosition = OwnerNode->GetPosition() + PinOffsetPosition;
+			}
+
+			if(GetDirection() == EEdGraphPinDirection::EGPD_Input)
+			{
+				//left side just offset by fixed amount
+				//@TODO: knowing the width of the node we are about to create would allow us to line this up more precisely,
+				//       but this information is not available currently
+				NodeAddPosition.X -= FixedOffset;
+			}
+			else
+			{
+				//right side we need the width of the pin + fixed amount because our reference position is the upper left corner of pin(which is variable length)
+				NodeAddPosition.X += MyGeometry.Size.X + FixedOffset;
+			}
+
+		}
+
+		return DragConnectionOp->DroppedOnPin(DragDropEvent.GetScreenSpacePosition(), NodeAddPosition);
+	}
+	// handle dropping an asset on the pin
+	else if (Operation->IsOfType<FAssetDragDropOp>() && NodeWidget.IsValid())
+	{
+		UEdGraphNode* Node = NodeWidget->GetNodeObj();
+		if(Node != NULL && Node->GetSchema() != NULL)
+		{
+			TSharedPtr<FAssetDragDropOp> AssetOp = StaticCastSharedPtr<FAssetDragDropOp>(Operation);
+			if (AssetOp->HasAssets())
+			{
+				Node->GetSchema()->DroppedAssetsOnPin(AssetOp->GetAssets(), NodeWidget->GetPosition() + FVector2D(MyGeometry.Position), GraphPinObj);
+			}
+		}
+		return FReply::Handled();
+	}
+
+	return FReply::Unhandled();
 }
 
 FSlateColor SDlgGraphPin::GetPinColor() const

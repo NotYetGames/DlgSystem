@@ -383,7 +383,7 @@ protected:
 	/** Creates the input pin for this node. */
 	virtual void CreateInputPin()
 	{
-		static const FName PinName(TEXT("Input Pin"));
+		static const FName PinName(TEXT("Dlg Input Pin"));
 		FCreatePinParams PinParams;
 		PinParams.Index = INDEX_PIN_Input;
 		CreatePin(EGPD_Input, UDialogueGraphSchema::PIN_CATEGORY_Input, PinName, PinParams);
@@ -392,7 +392,7 @@ protected:
 	/** Creates the output pin for this node. */
 	virtual void CreateOutputPin()
 	{
-		static const FName PinName(TEXT("Output Pin"));
+		static const FName PinName(TEXT("Dlg Output Pin"));
 		FCreatePinParams PinParams;
 		PinParams.Index = INDEX_PIN_Output;
 		CreatePin(EGPD_Output, UDialogueGraphSchema::PIN_CATEGORY_Output, PinName, PinParams);

@@ -115,7 +115,6 @@ void FDlgGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder
 		ChildrenPropertyRow->Visibility(CREATE_VISIBILITY_CALLBACK_STATIC(&FDlgDetailsPanelUtils::GetChildrenVisibility));
 	}
 
-
 	// Do nothing
 	if (bIsRootNode)
 	{

@@ -38,6 +38,8 @@ void UDialogueGraphNode_Base::AllocateDefaultPins()
 	CreateInputPin();
 	CreateOutputPin();
 	check(Pins.Num() == 2);
+	// check(GetOutputPin()->bNotConnectable == false);
+	// check(GetInputPin()->bNotConnectable == false);
 }
 
 void UDialogueGraphNode_Base::ReconstructNode()
