@@ -4,7 +4,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
-#include "TreeViewHelpers/DlgTreeViewNode.h"
+#include "DlgSystem/TreeViewHelpers/DlgTreeViewNode.h"
 
 // Type of Variable
 enum class EDlgDataDisplayVariableTreeNodeType : uint8

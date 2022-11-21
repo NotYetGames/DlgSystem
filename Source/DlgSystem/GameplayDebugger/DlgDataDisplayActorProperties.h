@@ -3,8 +3,8 @@
 
 #include "CoreMinimal.h"
 
-#include "TreeViewHelpers/DlgTreeViewParticipantProperties.h"
-#include "TreeViewHelpers/DlgTreeViewVariableProperties.h"
+#include "DlgSystem/TreeViewHelpers/DlgTreeViewParticipantProperties.h"
+#include "DlgSystem/TreeViewHelpers/DlgTreeViewVariableProperties.h"
 
 
 /** Used as a key for the variable property */
