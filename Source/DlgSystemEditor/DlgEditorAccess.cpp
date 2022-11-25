@@ -4,7 +4,7 @@
 #include "DlgSystem/DlgDialogue.h"
 #include "Editor/Graph/DialogueGraph.h"
 #include "Editor/Graph/DialogueGraphSchema.h"
-#include "DlgEditorUtilities.h"
+#include "DlgSystemEditor/DlgEditorUtilities.h"
 #include "Editor/Nodes/DialogueGraphNode.h"
 #include "Editor/Nodes/DialogueGraphNode_Edge.h"
 #include "Editor/DlgCompiler.h"

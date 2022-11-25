@@ -1,6 +1,4 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
-#pragma once
-
 #include "DlgObject.h"
 
 #include "DlgManager.h"

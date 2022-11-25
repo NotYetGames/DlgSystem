@@ -5,8 +5,8 @@
 #include "Widgets/Views/STreeView.h"
 #include "Widgets/Input/SSearchBox.h"
 
-#include "DlgSystem/GameplayDebugger/DlgDataDisplayTreeNode.h"
-#include "DlgSystem/GameplayDebugger/DlgDataDisplayActorProperties.h"
+#include "DlgDataDisplayTreeNode.h"
+#include "DlgDataDisplayActorProperties.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogDlgSystemDataDisplay, Verbose, All);
 
