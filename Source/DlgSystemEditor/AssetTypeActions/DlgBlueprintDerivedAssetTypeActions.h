@@ -7,7 +7,7 @@
 
 #include "DlgSystem/DlgNodeData.h"
 #include "DlgSystem/DlgTextArgumentCustom.h"
-#include "DlgEditorUtilities.h"
+#include "DlgSystemEditor/DlgEditorUtilities.h"
 #include "DlgSystem/DlgHelper.h"
 
 class IToolkitHost;
