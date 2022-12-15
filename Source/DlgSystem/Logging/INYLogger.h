@@ -4,6 +4,9 @@
 #include "CoreMinimal.h"
 #include "Logging/TokenizedMessage.h"
 #include "Logging/LogCategory.h"
+
+#include "DlgSystem/NYEngineVersionHelpers.h"
+
 #include "INYLogger.generated.h"
 
 class FOutputDevice;
@@ -293,7 +296,11 @@ public:
 	template <typename FmtType, typename... Types>
 	void Logf(ENYLoggerLogLevel Level, const FmtType& Fmt, Types... Args)
 	{
+#if NY_ENGINE_VERSION >= 501
+		static_assert(TIsArrayOrRefOfTypeByPredicate<FmtType, TIsCharEncodingCompatibleWithTCHAR>::Value, "Formatting string must be a TCHAR array.");
+#else
 		static_assert(TIsArrayOrRefOfType<FmtType, TCHAR>::Value, "Formatting string must be a TCHAR array.");
+#endif
 		static_assert(TAnd<TIsValidVariadicFunctionArg<Types>...>::Value, "Invalid argument(s) passed to INYLogger::Logf");
 		LogfImplementation(Level, Fmt, Args...);
 	}
