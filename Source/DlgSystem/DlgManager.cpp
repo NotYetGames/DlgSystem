@@ -276,7 +276,7 @@ TArray<TWeakObjectPtr<AActor>> UDlgManager::GetAllWeakActorsWithDialogueParticip
 	for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
 	{
 		AActor* Actor = *Itr;
-		if (IsValid(Actor) && !IsValid(Actor) && Actor->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
+		if (IsValid(Actor) && Actor->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
 		{
 			Array.Add(Actor);
 		}
