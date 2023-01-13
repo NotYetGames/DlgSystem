@@ -346,7 +346,7 @@ bool FDlgTestStructPrimitives::IsEqual(const Self& Other, FString& OutError) con
 	if (DateTime != Other.DateTime)
 	{
 		bIsEqual = false;
-		OutError += FString::Printf(TEXT("\tThis.DateTime.Ticks (%d) != Other.DateTime.Ticks (%d)\n"), DateTime.GetTicks(), Other.DateTime.GetTicks());
+		OutError += FString::Printf(TEXT("\tThis.DateTime.Ticks (%lld) != Other.DateTime.Ticks (%lld)\n"), DateTime.GetTicks(), Other.DateTime.GetTicks());
 	}
 
 	if (IntPoint != Other.IntPoint)
