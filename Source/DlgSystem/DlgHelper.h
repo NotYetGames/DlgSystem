@@ -322,7 +322,11 @@ public:
 	template<typename TEnum>
 	static bool ConvertEnumToString(const FString& EnumName, TEnum EnumValue, bool bWithNameSpace, FString& OutEnumValue)
 	{
-		const UEnum* EnumPtr = FindObject<UEnum>(nullptr, *EnumName, true);
+#if NY_ENGINE_VERSION >= 501
+		const UEnum* EnumPtr = FindFirstObject<UEnum>(*EnumName, EFindFirstObjectOptions::ExactClass);
+#else
+		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *EnumName, true);
+#endif
 		if (!EnumPtr)
 		{
 			OutEnumValue = FString::Printf(TEXT("INVALID EnumName = `%s`"), *EnumName);
@@ -337,7 +341,11 @@ public:
 	template<typename TEnum>
 	static bool ConvertStringToEnum(const FString& String, const FString& EnumName, TEnum& OutEnumValue)
 	{
-		const UEnum* EnumPtr = FindObject<UEnum>(nullptr, *EnumName, true);
+#if NY_ENGINE_VERSION >= 501
+		const UEnum* EnumPtr = FindFirstObject<UEnum>(*EnumName, EFindFirstObjectOptions::ExactClass);
+#else
+		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *EnumName, true);
+#endif
 		if (!EnumPtr)
 		{
 			return false;
@@ -351,7 +359,11 @@ public:
 	template<typename TEnum>
 	static bool ConvertFNameToEnum(FName Name, const FString& EnumName, TEnum& OutEnumValue)
 	{
-		const UEnum* EnumPtr = FindObject<UEnum>(nullptr, *EnumName, true);
+#if NY_ENGINE_VERSION >= 501
+		const UEnum* EnumPtr = FindFirstObject<UEnum>(*EnumName, EFindFirstObjectOptions::ExactClass);
+#else
+		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *EnumName, true);
+#endif
 		if (!EnumPtr)
 		{
 			return false;
