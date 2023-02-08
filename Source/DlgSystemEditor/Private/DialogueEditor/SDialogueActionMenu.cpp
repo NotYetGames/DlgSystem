@@ -3,6 +3,7 @@
 
 #include "EdGraph/EdGraph.h"
 #include "EditorStyleSet.h"
+#include "NYEngineVersionHelpers.h"
 #include "Framework/Application/SlateApplication.h"
 
 
