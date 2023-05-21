@@ -31,13 +31,13 @@ Supported unreal versions: `5.0`, `5.1`, `5.2`
     - Option to import from and export to plain text formats (e.g. json)
     - Real time display/edit functionality of the Dialogue runtime data.
 
-**Not yet convinced? Have you seen our [showcase page](https://gitlab.com/NotYetGames/DlgSystem/wikis/Feature-Showcase)?**
+**Not yet convinced? Have you seen our [showcase page](https://github.com/NotYetGames/DlgSystem/wiki/Feature-Showcase)?**
 
 ## Links
 
 * [🐛 CHANGELOG](Docs/CHANGELOG.md)
 * [💵 Support](#support) for how to support this project.
-* [📖 Wiki/Documentation](https://bit.ly/DlgWiki) - manual and tutorials
+* [📖 Wiki/Documentation](https://github.com/NotYetGames/DlgSystem/wiki) - manual and tutorials
 * [🔢 Source Code (this Page)](https://bit.ly/NYDlgSystemSource)
 * [🛒 Marketplace **(BUY PLUGIN)**](https://bit.ly/DlgMarketplace)
 * [🏢 Example project](https://github.com/NotYetGames/NotYetDlgSystemExample)
