@@ -13,7 +13,7 @@
 		- [Code Style](#code-style)
 		- [Commit messages](#commit-messages)
 
-Supported unreal versions: `4.27`, `5.0`, `5.1`
+Supported unreal versions: `5.0`, `5.1`, `5.2`
 
 ## Features
 
@@ -38,10 +38,9 @@ Supported unreal versions: `4.27`, `5.0`, `5.1`
 * [🐛 CHANGELOG](Docs/CHANGELOG.md)
 * [💵 Support](#support) for how to support this project.
 * [📖 Wiki/Documentation](https://bit.ly/DlgWiki) - manual and tutorials
-* [🔢 Source Code (this Page)](https://bit.ly/DlgSource) - [Github Mirror](https://github.com/NotYetGames/DlgSystem)
+* [🔢 Source Code (this Page)](https://bit.ly/NYDlgSystemSource)
 * [🛒 Marketplace **(BUY PLUGIN)**](https://bit.ly/DlgMarketplace)
-* [🏢 Example project](http://bit.ly/NYDlgSystemExample)
-* [Forum post](https://bit.ly/DlgForum)
+* [🏢 Example project](https://github.com/NotYetGames/NotYetDlgSystemExample)
 * [💬 Discord](https://bit.ly/NYDiscord)
 * [Twitter](https://twitter.com/NotYetDevs)
 

@@ -10,7 +10,7 @@
 	"CreatedByURL": "https://bit.ly/NYMarketplaceEditor",
 	"DocsURL": "https://bit.ly/DlgWikiEditor",
 	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/6d0255a60be340dfa1c556503cc57eb3",
-	"SupportURL": "https://bit.ly/DlgSourceEditor",
+	"SupportURL": "https://bit.ly/NYDlgSystemSource",
 	"CanContainContent": true,
 	"IsBetaVersion": false,
 	"Installed": false,
