@@ -413,7 +413,7 @@ public:
 	FString URLNotYetPlugins = "https://bit.ly/NotYetPluginsEditor";
 	FString URLMarketplace = "https://bit.ly/DlgMarketplaceEditor";
 	FString URLWiki = "https://github.com/NotYetGames/DlgSystem/wiki";
-	FString URLForum = "https://bit.ly/NYDiscordEditor";
+	FString URLForum = "https://github.com/NotYetGames/DlgSystem/discussions";
 	FString URLDiscord = "https://bit.ly/NYDiscordEditor";
 
 	//
