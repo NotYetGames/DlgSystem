@@ -18,7 +18,6 @@ public class DlgSystem : ModuleRules
 		bEnforceIWYU = true;
 #endif
 
-		//MinFilesUsingPrecompiledHeaderOverride = 1;
 		// bUseUnity = false;
 
 		PublicDependencyModuleNames.AddRange(

@@ -3,6 +3,7 @@
 
 #include "Misc/FileHelper.h"
 #include "UObject/EnumProperty.h"
+#include "UObject/TextProperty.h"
 
 #include "DlgSystem/DlgHelper.h"
 #include "DlgSystem/NYReflectionHelper.h"

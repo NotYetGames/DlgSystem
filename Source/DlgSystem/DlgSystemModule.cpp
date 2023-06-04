@@ -3,6 +3,7 @@
 
 #include "Modules/ModuleManager.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "AssetRegistry/AssetData.h"
 #include "Framework/Docking/TabManager.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "HAL/IConsoleManager.h"
@@ -13,6 +14,7 @@
 #if WITH_GAMEPLAY_DEBUGGER
 #include "GameplayDebugger.h"
 #endif // WITH_GAMEPLAY_DEBUGGER
+
 #if WITH_EDITOR
 #include "WorkspaceMenuStructureModule.h"
 #include "WorkspaceMenuStructure.h"

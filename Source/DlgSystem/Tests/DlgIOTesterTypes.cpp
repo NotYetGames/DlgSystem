@@ -2,10 +2,10 @@
 #include "DlgIOTesterTypes.h"
 
 #include "Engine/Engine.h"
+#include "GameFramework/Actor.h"
+#include "GameFramework/Pawn.h"
 
 #include "DlgTesterHelper.h"
-#include "DlgSystem/NYEngineVersionHelpers.h"
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // UDlgTestObjectPrimitivesBase

@@ -18,7 +18,6 @@ public class DlgSystemEditor : ModuleRules
 		bEnforceIWYU = true;
 #endif
 
-		//MinFilesUsingPrecompiledHeaderOverride = 1;
 		// bUseUnity = false;
 
 		//if ((Target.Platform == UnrealTargetPlatform.Win32 || Target.Platform == UnrealTargetPlatform.Win64)
