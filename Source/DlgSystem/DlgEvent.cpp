@@ -42,7 +42,6 @@ void FDlgEvent::Call(UDlgContext& Context, const FString& ContextString, UObject
 		case EDlgEventType::Event:
 			IDlgDialogueParticipant::Execute_OnDialogueEvent(Participant, &Context, EventName);
 			break;
-
 		case EDlgEventType::ModifyInt:
 			IDlgDialogueParticipant::Execute_ModifyIntValue(Participant, EventName, bDelta, IntValue);
 			break;
@@ -67,6 +66,10 @@ void FDlgEvent::Call(UDlgContext& Context, const FString& ContextString, UObject
 			break;
 		case EDlgEventType::ModifyClassNameVariable:
 			FNYReflectionHelper::SetVariable<FNameProperty>(Participant, EventName, NameValue);
+			break;
+
+		case EDlgEventType::UnrealFunction:
+			CallUnrealFunction(Context, ContextString, Participant);
 			break;
 
 		default:
@@ -104,4 +107,24 @@ FString FDlgEvent::EventTypeToString(EDlgEventType Type)
 	FString EnumValue;
 	FDlgHelper::ConvertEnumToString<EDlgEventType>(TEXT("EDlgEventType"), Type, false, EnumValue);
 	return EnumValue;
+}
+
+void FDlgEvent::CallUnrealFunction(UDlgContext& Context, const FString& ContextString, UObject* Participant) const
+{
+	if (!IsValid(Participant))
+	{
+		return;
+	}
+
+	if (UFunction* Function = Participant->FindFunction(EventName))
+	{
+		Participant->ProcessEvent(Function, nullptr);
+	}
+	else
+	{
+		FDlgLogger::Get().Warningf(
+			TEXT("Unreal Function %s Not Found. Ignoring. Context:\n\t%s, Participant = %s"),
+			*EventName.ToString(), *Context.GetContextString(), Participant ? *Participant->GetPathName() : TEXT("INVALID")
+		);
+	}
 }

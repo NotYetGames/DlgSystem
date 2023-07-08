@@ -42,7 +42,10 @@ enum class EDlgEventType : uint8
 	//
 	// 1. Create a new Blueprint derived from DlgEventCustom (or DlgEventCustomHideCategories)
 	// 2. Override EnterEvent
-	Custom						UMETA(DisplayName = "Custom Event")
+	Custom						UMETA(DisplayName = "Custom Event"),
+
+	// Calls a regular Function (or Event) on the Participant (without any parameters)
+	UnrealFunction				UMETA(DisplayName = "Unreal Function")
 };
 
 
@@ -115,6 +118,8 @@ protected:
 
 	// Is the participant required?
 	bool MustHaveParticipant() const { return EventType != EDlgEventType::Custom; }
+
+	void CallUnrealFunction(UDlgContext& Context, const FString& ContextString, UObject* Participant) const;
 
 public:
 	// Name of the participant (speaker) the event is called on.

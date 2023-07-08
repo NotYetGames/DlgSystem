@@ -143,6 +143,7 @@ void SDlgDataPropertyValue::UpdateVariableNodeFromActor()
 		}
 
 		case EDlgDataDisplayVariableTreeNodeType::Event:
+		case EDlgDataDisplayVariableTreeNodeType::UnrealFunction:
 		{
 			// Event does not have any state value, ignore
 			break;
@@ -271,6 +272,7 @@ void SDlgDataTextPropertyValue::HandleTextCommitted(const FText& NewText, ETextC
 
 		// The remaining variable types do not make sense to be text
 		case EDlgDataDisplayVariableTreeNodeType::Event:
+		case EDlgDataDisplayVariableTreeNodeType::UnrealFunction:
 		case EDlgDataDisplayVariableTreeNodeType::Condition:
 		case EDlgDataDisplayVariableTreeNodeType::Default:
 		default:
@@ -303,12 +305,16 @@ void SDlgDataEventPropertyValue::Construct(const FArguments& InArgs, const TShar
 		return;
 	}
 
-	if (VariableNode->GetVariableType() == EDlgDataDisplayVariableTreeNodeType::Event)
+	const bool bEvent = VariableNode->GetVariableType() == EDlgDataDisplayVariableTreeNodeType::Event;
+	if (bEvent || VariableNode->GetVariableType() == EDlgDataDisplayVariableTreeNodeType::UnrealFunction)
 	{
+		const FText Tooltip = bEvent
+			? LOCTEXT("EventValueTooltipKey", "Triggers this event. Calls OnDialogueEvent on the Actor.")
+			: LOCTEXT("FunctionValueTooltipKey", "Triggers this event. Calls the function on the Actor.");
 		ChildSlot
 		[
 			SAssignNew(PrimaryWidget, SButton)
-			.ToolTipText(LOCTEXT("EventValueTooltipKey", "Triggers this event. Calls OnDialogueEvent on the Actor."))
+			.ToolTipText(Tooltip)
 			.OnClicked(this, &Self::HandleTriggerEventClicked)
 			[
 				SNew(STextBlock)
@@ -328,20 +334,33 @@ void SDlgDataEventPropertyValue::Construct(const FArguments& InArgs, const TShar
 
 FReply SDlgDataEventPropertyValue::HandleTriggerEventClicked()
 {
-	if (!VariableNode.IsValid() || VariableNode->GetVariableType() != EDlgDataDisplayVariableTreeNodeType::Event)
+	if (!VariableNode.IsValid())
 	{
 		return FReply::Unhandled();
 	}
 
+	const bool bEvent = VariableNode->GetVariableType() == EDlgDataDisplayVariableTreeNodeType::Event;
+	const bool bFunction = VariableNode->GetVariableType() == EDlgDataDisplayVariableTreeNodeType::UnrealFunction;
+
 	TWeakObjectPtr<AActor> Actor = VariableNode->GetParentActor();
-	if (!Actor.IsValid())
+	if (!Actor.IsValid() || !(bEvent || bFunction))
 	{
 		return FReply::Unhandled();
 	}
 
 	// Trigger the event
 	const FName EventName = VariableNode->GetVariableName();
-	IDlgDialogueParticipant::Execute_OnDialogueEvent(Actor.Get(), nullptr, EventName);
+	if (bEvent)
+	{
+		IDlgDialogueParticipant::Execute_OnDialogueEvent(Actor.Get(), nullptr, EventName);
+	}
+	else
+	{
+		if (UFunction* Function = Actor->FindFunction(EventName))
+		{
+			Actor->ProcessEvent(Function, nullptr);
+		}
+	}
 
 	return FReply::Handled();
 }

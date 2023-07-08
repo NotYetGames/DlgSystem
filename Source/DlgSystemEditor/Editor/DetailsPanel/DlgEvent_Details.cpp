@@ -180,6 +180,11 @@ void FDlgEvent_Details::OnEventTypeChanged(bool bForceRefresh)
 		EventNameDisplayName = LOCTEXT("DlgEvent_EventNameDisplayName", "Event Name");
 		EventNameToolTip = LOCTEXT("DlgEvent_EventNameToolTip", "Name of the relevant event");
 	}
+	else if (EventType == EDlgEventType::UnrealFunction)
+	{
+		EventNameDisplayName = LOCTEXT("DlgEvent_FunctionNameDisplayName", "Function Name");
+		EventNameToolTip = LOCTEXT("DlgEvent_FunctionNameToolTip", "Name of the function the event will call on the participant");
+	}
 
 	EventNamePropertyRow->SetDisplayName(EventNameDisplayName)
 		.SetToolTip(EventNameToolTip)
@@ -267,6 +272,9 @@ TArray<FName> FDlgEvent_Details::GetDialoguesParticipantEventNames() const
 		}
 		break;
 
+	case EDlgEventType::UnrealFunction:
+		Suggestions.Append(GetParticipantFunctionNames(ParticipantName).Array());
+		break;
 
 	case EDlgEventType::Event:
 	default:
@@ -341,6 +349,10 @@ TArray<FName> FDlgEvent_Details::GetCurrentDialogueEventNames() const
 		);
 		break;
 
+	case EDlgEventType::UnrealFunction:
+		Suggestions.Append(GetParticipantFunctionNames(ParticipantName));
+		break;
+
 	case EDlgEventType::Event:
 	default:
 		Suggestions.Append(Dialogue->GetParticipantEventNames(ParticipantName));
@@ -349,6 +361,44 @@ TArray<FName> FDlgEvent_Details::GetCurrentDialogueEventNames() const
 
 	FDlgHelper::SortDefault(Suggestions);
 	return Suggestions.Array();
+}
+
+TSet<FName> FDlgEvent_Details::GetParticipantFunctionNames(FName ParticipantName) const
+{
+	if (Dialogue == nullptr)
+	{
+		return {};
+	}
+	UClass* ParticipantClass = Dialogue->GetParticipantClass(ParticipantName);
+	if (ParticipantClass == nullptr)
+	{
+		return {};
+	}
+
+	static const TArray<UClass*> BlacklistedClasses = GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses;
+	static const TArray<FName> BlacklistedFunctionNames = { TEXT("UserConstructionScript"), TEXT("ReceiveBeginPlay") };
+
+	TSet<FName> PossibleFunctionNames;
+
+	// Property link goes from the left to right where on the left there are the most inner child properties and at the right there are the top most parents.
+	const UField* Field = ParticipantClass->Children;
+	for (UClass* Class = ParticipantClass; Class != nullptr && !BlacklistedClasses.Contains(Field->GetOwnerClass()); Class = Class->GetSuperClass())
+	{
+		Field = Class->Children;
+		while (Field != nullptr && !BlacklistedClasses.Contains(Field->GetOwnerClass()))
+		{
+			if (const UFunction* Function = Cast<UFunction>(Field))
+			{
+				// No arguments and name is not blacklisted
+				if (Function->ParmsSize == 0 && !BlacklistedFunctionNames.Contains(Function->GetFName()))
+				{
+					PossibleFunctionNames.Add(Function->GetFName());
+				}
+			}
+			Field = Field->Next;
+		}
+	}
+	return PossibleFunctionNames;
 }
 
 #undef LOCTEXT_NAMESPACE

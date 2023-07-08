@@ -28,6 +28,27 @@ TSharedPtr<FDlgSearchFoundResult> FDlgSearchUtilities::GetGraphNodesForEventEven
 	return FoundResult;
 }
 
+TSharedPtr<FDlgSearchFoundResult> FDlgSearchUtilities::GetGraphNodesForFunctionEventName(
+	FName EventName,
+	const UDlgDialogue* Dialogue
+)
+{
+	TSharedPtr<FDlgSearchFoundResult> FoundResult = FDlgSearchFoundResult::Make();
+
+	const UDialogueGraph* Graph = CastChecked<UDialogueGraph>(Dialogue->GetGraph());
+	for (const UDialogueGraphNode* GraphNode : Graph->GetAllDialogueGraphNodes())
+	{
+		// Enter events
+		if (IsEventInArray(EventName, EDlgEventType::UnrealFunction, GraphNode->GetDialogueNode().GetNodeEnterEvents()))
+		{
+			FoundResult->GraphNodes.Add(GraphNode);
+		}
+	}
+
+	return FoundResult;
+}
+
+
 TSharedPtr<FDlgSearchFoundResult> FDlgSearchUtilities::GetGraphNodesForCustomEvent(
 	const UClass* EventClass,
 	const UDlgDialogue* Dialogue

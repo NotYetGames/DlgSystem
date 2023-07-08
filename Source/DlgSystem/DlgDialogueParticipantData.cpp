@@ -98,6 +98,10 @@ void FDlgParticipantData::AddEventData(const FDlgEvent& Event)
 			Events.Add(Event.EventName);
 			break;
 
+		case EDlgEventType::UnrealFunction:
+			UnrealFunctions.Add(Event.EventName);
+			break;
+
 		case EDlgEventType::ModifyInt:
 			IntVariableNames.Add(Event.EventName);
 			break;

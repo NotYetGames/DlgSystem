@@ -27,8 +27,13 @@ public:
 		{
 			Pair.Value->Sort();
 		}
+		for (const auto& Pair : UnrealFunctions)
+		{
+			Pair.Value->Sort();
+		}
 
 		FDlgHelper::SortDefault(Events);
+		FDlgHelper::SortDefault(UnrealFunctions);
 		FDlgHelper::SortDefault(Conditions);
 		FDlgHelper::SortDefault(Integers);
 		FDlgHelper::SortDefault(Floats);
@@ -50,6 +55,12 @@ public:
 	TSharedPtr<VariablePropertyType> AddDialogueToEvent(FName EventName, TWeakObjectPtr<const UDlgDialogue> Dialogue)
 	{
 		return AddDialogueToVariable(&Events, EventName, Dialogue);
+	}
+
+	// Returns the EventName Property
+	TSharedPtr<VariablePropertyType> AddDialogueToUnrealFunction(FName EventName, TWeakObjectPtr<const UDlgDialogue> Dialogue)
+	{
+		return AddDialogueToVariable(&UnrealFunctions, EventName, Dialogue);
 	}
 
 	// Returns the EventClass Property
@@ -121,6 +132,7 @@ public:
 	// Getters
 	const TSet<TWeakObjectPtr<const UDlgDialogue>>& GetDialogues() const { return Dialogues; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetEvents() const { return Events; }
+	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetUnrealFunctions() const { return UnrealFunctions; }
 	const TMap<UClass*, TSharedPtr<VariablePropertyType>>& GetCustomEvents() const { return CustomEvents; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetConditions() const { return Conditions; }
 	const TMap<FName, TSharedPtr<VariablePropertyType>>& GetIntegers() const { return Integers; }
@@ -147,6 +159,7 @@ public:
 
 	bool HasDialogues() const { return Dialogues.Num() > 0; }
 	bool HasEvents() const { return Events.Num() > 0; }
+	bool HasUnrealFunctions() const { return UnrealFunctions.Num() > 0; }
 	bool HasCustomEvents() const { return CustomEvents.Num() > 0; }
 	bool HasConditions() const { return Conditions.Num() > 0; }
 	bool HasIntegers() const { return Integers.Num() > 0; }
@@ -199,6 +212,13 @@ protected:
 	 * Value: The properties of this event
 	 */
 	TMap<FName, TSharedPtr<VariablePropertyType>> Events;
+
+	/**
+	 * Unreal Functions that belong to this participant
+	 * Key: Function Name
+	 * Value: The properties of this event
+	 */
+	TMap<FName, TSharedPtr<VariablePropertyType>> UnrealFunctions;
 
 	/**
 	 * Custom Events that belong to this participant

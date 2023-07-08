@@ -125,6 +125,7 @@ public:
 
 protected:
 	FReply HandleTriggerEventClicked();
+	FReply HandleTriggerEventClicked_Function();
 };
 
 

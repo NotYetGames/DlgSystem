@@ -45,6 +45,9 @@ public:
 	// Gets all the graph nodes that contain the specified EventName (of the EventType Event)
 	static TSharedPtr<FDlgSearchFoundResult> GetGraphNodesForEventEventName(FName EventName, const UDlgDialogue* Dialogue);
 
+	// Gets all the graph nodes that contain the specified EventName (of the EventType UnrealFunction)
+	static TSharedPtr<FDlgSearchFoundResult> GetGraphNodesForFunctionEventName(FName EventName, const UDlgDialogue* Dialogue);
+
 	// Gets all the graph nodes that contain the custom Event EventClass
 	static TSharedPtr<FDlgSearchFoundResult> GetGraphNodesForCustomEvent(const UClass* EventClass, const UDlgDialogue* Dialogue);
 

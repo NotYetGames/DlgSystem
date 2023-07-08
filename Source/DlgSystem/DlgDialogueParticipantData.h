@@ -33,6 +33,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Dialogue|Participant")
 	TSet<FName> Events;
 
+	// Unreal Function based events
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Dialogue|Participant")
+	TSet<FName> UnrealFunctions;
+
 	// Custom Events UClasses of type UDlgEventCustom
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Dialogue|Participant")
 	TSet<UClass*> CustomEvents;

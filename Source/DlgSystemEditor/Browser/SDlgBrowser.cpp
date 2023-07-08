@@ -309,6 +309,17 @@ void SDlgBrowser::RefreshTree(bool bPreserveExpansion)
 				);
 			}
 
+			// Populate Unreal Function Names
+			const TSet<FName> FunctionNames = Dialogue->GetParticipantFunctionNames(ParticipantName);
+			for (const FName& FunctionName : FunctionNames)
+			{
+				PopulateVariablePropertiesFromSearchResult(
+					ParticipantProps->AddDialogueToEvent(FunctionName, Dialogue),
+					FDlgSearchUtilities::GetGraphNodesForFunctionEventName(FunctionName, Dialogue),
+					DialogueGUID
+				);
+			}
+
 			// Populate Custom events
 			const TSet<UClass*> CustomEventsClasses = Dialogue->GetParticipantCustomEvents(ParticipantName);
 			for (UClass* EventClass : CustomEventsClasses)

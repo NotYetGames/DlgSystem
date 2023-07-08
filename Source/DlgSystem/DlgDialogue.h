@@ -305,6 +305,17 @@ public:
 		return {};
 	}
 
+	// Gets the Unreal Functions that can be called based on the provided ParticipantName.
+	UFUNCTION(BlueprintPure, Category = "Dialogue")
+	TSet<FName> GetParticipantFunctionNames(FName ParticipantName) const
+	{
+		if (ParticipantsData.Contains(ParticipantName))
+		{
+			return ParticipantsData[ParticipantName].UnrealFunctions;
+		}
+		return {};
+	}
+
 	// Gets the Custom Events UClasses that correspond to the provided ParticipantName.
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	TSet<UClass*> GetParticipantCustomEvents(FName ParticipantName) const

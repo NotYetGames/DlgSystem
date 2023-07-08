@@ -12,6 +12,7 @@ enum class EDlgDataDisplayVariableTreeNodeType : uint8
 	Default = 0,
 
 	Event,
+	UnrealFunction,
 	Condition,
 
 	Integer,

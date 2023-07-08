@@ -128,6 +128,9 @@ private:
 		}
 	}
 
+	// Gets all the event name suggestions depending on EventType from the current Dialogue
+	TSet<FName> GetParticipantFunctionNames(FName ParticipantName) const;
+
 private:
 	// The current Event type of the struct.
 	EDlgEventType EventType = EDlgEventType::Event;

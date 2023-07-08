@@ -204,6 +204,13 @@ void SDlgDataDisplay::RefreshTree(bool bPreserveExpansion)
 				ActorsPropertiesValue->AddDialogueToEvent(EventName, Dialogue);
 			}
 
+			// Populate Unreal Function Names
+			const TSet<FName> FunctionNames = Dialogue->GetParticipantFunctionNames(ParticipantName);
+			for (const FName& FunctionName : FunctionNames)
+			{
+				ActorsPropertiesValue->AddDialogueToUnrealFunction(FunctionName, Dialogue);
+			}
+
 			// Populate conditions
 			const TSet<FName> ConditionNames = Dialogue->GetParticipantConditionNames(ParticipantName);
 			for (const FName& ConditionName : ConditionNames)
@@ -437,6 +444,13 @@ void SDlgDataDisplay::BuildTreeViewItem(const TSharedPtr<FDlgDataDisplayTreeNode
 					);
 					Item->AddChild(EventItem);
 				}
+				for (const auto& Pair : ActorPropertiesValue->GetUnrealFunctions())
+				{
+					const TSharedPtr<FDlgDataDisplayTreeNode> EventItem = MakeShared<FDlgDataDisplayTreeVariableNode>(
+						FText::FromName(Pair.Key), Item, Pair.Key, EDlgDataDisplayVariableTreeNodeType::UnrealFunction
+					);
+					Item->AddChild(EventItem);
+				}
 				break;
 
 			case EDlgDataDisplayCategoryTreeNodeType::Condition:
@@ -533,6 +547,7 @@ TSharedRef<ITableRow> SDlgDataDisplay::HandleGenerateRow(TSharedPtr<FDlgDataDisp
 					break;
 
 				case EDlgDataDisplayVariableTreeNodeType::Event:
+				case EDlgDataDisplayVariableTreeNodeType::UnrealFunction:
 					// Trigger Event Button
 					SAssignNew(RightWidget, SDlgDataEventPropertyValue, VariableNode);
 					break;
