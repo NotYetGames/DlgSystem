@@ -10,11 +10,11 @@
 void UDlgNode_Speech::OnCreatedInEditor()
 {
 	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-	if (NodeData != nullptr || Settings == nullptr || Settings->DefaultCustomNodeDataClass == nullptr)
+	if (NodeData != nullptr || Settings == nullptr || Settings->DefaultCustomNodeDataClass.IsNull())
 	{
 		return;
 	}
-	NodeData = NewObject<UDlgNodeData>(this, Settings->DefaultCustomNodeDataClass, NAME_None, GetMaskedFlags(RF_PropagateToSubObjects), NULL);
+	NodeData = NewObject<UDlgNodeData>(this, Settings->DefaultCustomNodeDataClass.Get(), NAME_None, GetMaskedFlags(RF_PropagateToSubObjects), NULL);
 }
 
 

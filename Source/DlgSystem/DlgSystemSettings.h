@@ -303,7 +303,7 @@ public:
 
 	// Default class to use for custom node data
 	UPROPERTY(Category = "Dialogue", Config, EditAnywhere)
-	TSubclassOf<UDlgNodeData> DefaultCustomNodeDataClass;
+	TAssetSubclassOf<UDlgNodeData> DefaultCustomNodeDataClass;
 
 	// How the Blueprint class pricker looks like
 	UPROPERTY(Category = "Blueprint", Config, EditAnywhere)
