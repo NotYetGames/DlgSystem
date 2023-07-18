@@ -19,7 +19,7 @@ void UDlgNode_SpeechSequence::PostEditChangeProperty(FPropertyChangedEvent& Prop
 void UDlgNode_SpeechSequence::InitializeNodeDataOnArrayAdd(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	const UDlgSystemSettings* Settings = GetDefault<UDlgSystemSettings>();
-	if (Settings == nullptr || Settings->DefaultCustomNodeDataClass == nullptr)
+	if (Settings == nullptr || Settings->DefaultCustomNodeDataClass.IsNull())
 	{
 		return;
 	}
@@ -37,7 +37,7 @@ void UDlgNode_SpeechSequence::InitializeNodeDataOnArrayAdd(FPropertyChangedEvent
 	}
 
 	check(SpeechSequence.IsValidIndex(Index));
-	SpeechSequence[Index].NodeData = NewObject<UDlgNodeData>(this, Settings->DefaultCustomNodeDataClass, NAME_None, GetMaskedFlags(RF_PropagateToSubObjects), NULL);
+	SpeechSequence[Index].NodeData = NewObject<UDlgNodeData>(this, Settings->DefaultCustomNodeDataClass.Get(), NAME_None, GetMaskedFlags(RF_PropagateToSubObjects), NULL);
 }
 #endif
 
