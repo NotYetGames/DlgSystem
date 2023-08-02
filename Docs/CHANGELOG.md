@@ -1,3 +1,11 @@
+# v16.1.0
+- Add Unreal Function event type, which calls a function on the provided participant (without any parameters).
+- Switch to TSoftClassPtr for DefaultCustomNodeDataClass setting.
+  - TSubclassOf forces the editor to load the class when it's loading
+settings which can be far too early for certain classes that reference
+objects in the project instead of the engine.
+- Fixed some non unity build errors.
+
 # v16.0.1 & v16.0.2
 
 - Fix building on 5.1 in a few scenarios
