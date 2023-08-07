@@ -41,6 +41,9 @@ const FName FDlgStyle::PROPERTY_QuestionMarkIcon(TEXT("DlgSystemEditor.QuestionM
 // Tied with FDlgCommands::DialogueReloadData
 const FName FDlgStyle::PROPERTY_ReloadAssetIcon(TEXT("DlgSystemEditor.DialogueReloadData"));
 
+// Tied with FDlgCommands::ToggleShowEdgeText
+const FName FDlgStyle::PROPERTY_ShowEdgeTextIcon(TEXT("DlgSystemEditor.ToggleShowEdgeText"));
+
 // Tied with FDlgCommands::ToggleShowPrimarySecondaryEdges
 const FName FDlgStyle::PROPERTY_ShowPrimarySecondaryEdgesIcon(TEXT("DlgSystemEditor.ToggleShowPrimarySecondaryEdges"));
 
@@ -240,6 +243,15 @@ void FDlgStyle::Initialize()
 	StyleSet->Set(
 		GetSmallProperty(PROPERTY_ReloadAssetIcon),
 		new FSlateImageBrush(GetEngineContentPath("Icons/icon_Refresh_16x.png"), Icon16x16)
+	);
+
+	StyleSet->Set(
+		PROPERTY_ShowEdgeTextIcon,
+		new FSlateImageBrush(GetEngineContentPath("Icons/icon_FontEd_Update_40x.png"), Icon40x40)
+	);
+	StyleSet->Set(
+		GetSmallProperty(PROPERTY_ShowEdgeTextIcon),
+		new FSlateImageBrush(GetEngineContentPath("Icons/icon_FontEd_Update_40x.png"), Icon16x16)
 	);
 
 	StyleSet->Set(

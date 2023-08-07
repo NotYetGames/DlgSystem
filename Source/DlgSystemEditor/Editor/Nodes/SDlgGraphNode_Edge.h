@@ -80,6 +80,11 @@ protected:
 	/** Get the visibility of the overlay widgets. */
 	EVisibility GetOverlayWidgetVisibility() const;
 
+	// Edge text visualization:
+	FText GetEdgeText() const;
+	EVisibility GetEdgeTextVisibility() const;
+	EVisibility GetEdgeIconVisibility() const;
+
 	/** Get the background color to display for the widget overlay. This changes on hover state of sibling nodes */
 	FSlateColor GetOverlayWidgetBackgroundColor(bool bHovered) const
 	{

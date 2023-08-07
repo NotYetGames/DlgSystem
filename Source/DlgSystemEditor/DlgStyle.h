@@ -57,6 +57,7 @@ public:
 	static const FName PROPERTY_GenericIcon;
 	static const FName PROPERTY_QuestionMarkIcon;
 
+	static const FName PROPERTY_ShowEdgeTextIcon;
 	static const FName PROPERTY_ShowPrimarySecondaryEdgesIcon;
 	static const FName PROPERTY_ReloadAssetIcon;
 	static const FName PROPERTY_OpenAssetIcon;

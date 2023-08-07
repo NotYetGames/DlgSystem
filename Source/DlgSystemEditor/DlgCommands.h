@@ -28,6 +28,9 @@ public:
 	// Reloads the dialogue data from the .dlg text file that match the name of this dialogue
 	TSharedPtr<FUICommandInfo> DialogueReloadData;
 
+	// Draw edge texts
+	TSharedPtr<FUICommandInfo> ToggleShowEdgeText;
+
 	// Shows the primary/secondary edges
 	TSharedPtr<FUICommandInfo> ToggleShowPrimarySecondaryEdges;
 

@@ -151,11 +151,29 @@ void SDlgGraphNode_Edge::UpdateGraphNode()
 				SNew(SImage)
 				.Image(FNYAppStyle::GetBrush("Graph.TransitionNode.ColorSpill"))
 				.ColorAndOpacity(this, &Self::GetTransitionColor)
+				.Visibility(this, &Self::GetEdgeIconVisibility)
 			]
 			+SOverlay::Slot()
 			[
 				SNew(SImage)
 				.Image(FNYAppStyle::GetBrush("Graph.TransitionNode.Icon"))
+				.Visibility(this, &Self::GetEdgeIconVisibility)
+			]
+			+SOverlay::Slot()
+			[
+				SNew(SBorder)
+				.BorderImage(FNYAppStyle::GetBrush("BTEditor.Graph.BTNode.Body"))
+				.BorderBackgroundColor(Settings->GraphEdgeTextBackgroundColor)
+				.HAlign(HAlign_Fill)
+				.VAlign(VAlign_Fill)
+				.Visibility(this, &Self::GetEdgeTextVisibility)
+				[
+					SNew(STextBlock)
+					.ColorAndOpacity(Settings->GraphEdgeTextColor)
+					.Text(this, &Self::GetEdgeText)
+					.WrapTextAt(Settings->GraphEdgeTextWrapAt)
+					.Margin(Settings->GraphEdgeTextMargin)
+				]
 			]
 #else
 			+SOverlay::Slot()
@@ -237,11 +255,33 @@ FText SDlgGraphNode_Edge::GetConditionOverlayTooltipText() const
 	return LOCTEXT("NodeConditionTooltip", "Edge has conditions.\nOnly if these conditions are satisfied then this edge is considered as an option.");
 }
 
+FText SDlgGraphNode_Edge::GetEdgeText() const
+{
+	if (DialogueGraphNode_Edge != nullptr)
+	{
+		return DialogueGraphNode_Edge->GetDialogueEdge().GetText();
+	}
+
+	return FText::GetEmpty();
+}
+
 EVisibility SDlgGraphNode_Edge::GetOverlayWidgetVisibility() const
 {
 	// LOD this out once things get too small
 	TSharedPtr<SGraphPanel> MyOwnerPanel = GetOwnerPanel();
 	return !MyOwnerPanel.IsValid() || MyOwnerPanel->GetCurrentLOD() > EGraphRenderingLOD::LowDetail ? EVisibility::Visible : EVisibility::Collapsed;
+}
+
+EVisibility SDlgGraphNode_Edge::GetEdgeTextVisibility() const
+{
+	const bool bVisible = Settings->bShowEdgeText && !DialogueGraphNode_Edge->GetDialogueEdge().GetUnformattedText().IsEmpty();
+	return bVisible ? EVisibility::Visible : EVisibility::Collapsed;
+}
+
+EVisibility SDlgGraphNode_Edge::GetEdgeIconVisibility() const
+{
+	const bool bTextVisible = Settings->bShowEdgeText && !DialogueGraphNode_Edge->GetDialogueEdge().GetUnformattedText().IsEmpty();
+	return bTextVisible ? EVisibility::Collapsed : EVisibility::Visible;
 }
 
 // End own functions

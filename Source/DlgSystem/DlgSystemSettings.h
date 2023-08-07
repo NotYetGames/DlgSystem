@@ -177,6 +177,7 @@ public:
 		}                                                         \
 	}
 
+	CREATE_SETTER(SetShowEdgeText, bool, bShowEdgeText)
 	CREATE_SETTER(SetShowPrimarySecondaryEdges, bool, bShowPrimarySecondaryEdges)
 	CREATE_SETTER(SetDrawPrimaryEdges, bool, bDrawPrimaryEdges)
 	CREATE_SETTER(SetDrawSecondaryEdges, bool, bDrawSecondaryEdges)
@@ -527,6 +528,28 @@ public:
 	// To show or not the condition icon in the case the edge has any conditions defined on it.
 	UPROPERTY(Category = "Graph Edge", Config, EditAnywhere)
 	bool bShowEdgeHasConditionsIcon = true;
+
+	// To show or not the edge text
+	UPROPERTY(Category = "Graph Edge Text", Config, EditAnywhere)
+	bool bShowEdgeText = true;
+
+	// To show or not the edge text
+	UPROPERTY(Category = "Graph Edge Text", Config, EditAnywhere)
+	float GraphEdgeTextWrapAt = 120.0f;
+
+	// The amount of blank space left around the edges of the description text area.
+	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
+	FMargin GraphEdgeTextMargin = FMargin(5.f);
+
+	UPROPERTY(Category = "Graph Edge Text", Config, EditAnywhere)
+	FVector2D GraphEdgeTextPadding = FVector2D(4.0f, 4.0f);
+
+	// The base color of the wire.
+	UPROPERTY(Category = "Graph Edge Text", Config, EditAnywhere)
+	FLinearColor GraphEdgeTextColor = FLinearColor{ 0.9f, 0.9f, 0.9f, 1.0f };
+
+	UPROPERTY(Category = "Graph Edge Text", Config, EditAnywhere)
+	FLinearColor GraphEdgeTextBackgroundColor = FLinearColor{ 0.0f, 0.0f, 0.0f, 1.0f };
 
 	// The base color of the wire.
 	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)

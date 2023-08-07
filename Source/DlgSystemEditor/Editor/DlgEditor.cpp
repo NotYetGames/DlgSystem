@@ -596,6 +596,17 @@ void FDlgEditor::BindEditorCommands()
 		})
 	);
 
+	// The Show Edge Text button
+	ToolkitCommands->MapAction(
+		DialogueCommands.ToggleShowEdgeText,
+		FExecuteAction::CreateLambda([this]
+		{
+			Settings->SetShowEdgeText(!GetSettings().bShowEdgeText);
+		}),
+		FCanExecuteAction::CreateLambda([] { return true; } ),
+		FIsActionChecked::CreateLambda([this] { return GetSettings().bShowEdgeText; })
+	);
+
 	// The Show primary/secondary edge buttons
 	ToolkitCommands->MapAction(
 		DialogueCommands.ToggleShowPrimarySecondaryEdges,
@@ -732,6 +743,8 @@ void FDlgEditor::ExtendToolbar()
 				{
 					ToolbarBuilder.AddToolBarButton(FDlgCommands::Get().DialogueReloadData);
 					ToolbarBuilder.AddToolBarButton(FDlgCommands::Get().FindInDialogue);
+
+					ToolbarBuilder.AddToolBarButton(FDlgCommands::Get().ToggleShowEdgeText);
 
 					ToolbarBuilder.AddToolBarButton(FDlgCommands::Get().ToggleShowPrimarySecondaryEdges);
 					ToolbarBuilder.AddComboButton(
