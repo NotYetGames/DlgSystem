@@ -537,12 +537,13 @@ public:
 	UPROPERTY(Category = "Graph Edge Text", Config, EditAnywhere)
 	float GraphEdgeTextWrapAt = 120.0f;
 
-	// The amount of blank space left around the edges of the description text area.
-	UPROPERTY(Category = "Graph Node", Config, EditAnywhere)
-	FMargin GraphEdgeTextMargin = FMargin(5.f);
-
+	// Limits the displayed character count if > 0
 	UPROPERTY(Category = "Graph Edge Text", Config, EditAnywhere)
-	FVector2D GraphEdgeTextPadding = FVector2D(4.0f, 4.0f);
+	int32 GraphEdgeTextCharLimit = 0;
+
+	// The amount of blank space left around the edges of the description text area.
+	UPROPERTY(Category = "Graph Edge Text", Config, EditAnywhere)
+	FMargin GraphEdgeTextMargin = FMargin(5.f);
 
 	// The base color of the wire.
 	UPROPERTY(Category = "Graph Edge Text", Config, EditAnywhere)

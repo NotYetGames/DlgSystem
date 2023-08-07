@@ -259,7 +259,21 @@ FText SDlgGraphNode_Edge::GetEdgeText() const
 {
 	if (DialogueGraphNode_Edge != nullptr)
 	{
-		return DialogueGraphNode_Edge->GetDialogueEdge().GetText();
+		const FText EdgeText = DialogueGraphNode_Edge->GetDialogueEdge().GetText();
+		if (Settings->GraphEdgeTextCharLimit <= 0)
+		{
+			return EdgeText;
+		}
+
+		FString AsString = EdgeText.ToString();
+		if (AsString.Len() <= Settings->GraphEdgeTextCharLimit)
+		{
+			return EdgeText;
+		}
+
+		AsString.LeftChopInline(AsString.Len() - Settings->GraphEdgeTextCharLimit + 3);
+		AsString.Append(TEXT("..."));
+		return FText::FromString(AsString);
 	}
 
 	return FText::GetEmpty();
