@@ -26,7 +26,7 @@ public:
 	virtual FString GetEditorDisplayString_Implementation(UDlgDialogue* OwnerDialogue, FName ParticipantName)
 	{
 		const FString TargetPreFix = (ParticipantName != NAME_None) ? (FString(TEXT("[")) + ParticipantName.ToString() + FString(TEXT("] "))) : TEXT("");
-		return TargetPreFix + GetName();
+		return TargetPreFix + GetClass()->GetDisplayNameText().ToString();
 	}
 };
 
