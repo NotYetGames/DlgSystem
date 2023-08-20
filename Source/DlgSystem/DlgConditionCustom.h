@@ -29,7 +29,7 @@ public:
 	FString GetEditorDisplayString(UDlgDialogue* OwnerDialogue, FName ParticipantName);
 	virtual FString GetEditorDisplayString_Implementation(UDlgDialogue* OwnerDialogue, FName ParticipantName)
 	{
-		return FString(TEXT("[")) + ParticipantName.ToString() + FString(TEXT("] ")) + GetName();
+		return FString(TEXT("[")) + ParticipantName.ToString() + FString(TEXT("] ")) + GetClass()->GetDisplayNameText().ToString();
 	}
 };
 
