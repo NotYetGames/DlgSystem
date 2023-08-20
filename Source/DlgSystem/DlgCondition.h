@@ -9,6 +9,7 @@
 
 class IDlgDialogueParticipant;
 class UDlgContext;
+class UDlgDialogue;
 
 // Defines the way the condition is interpreted inside a condition array
 UENUM(BlueprintType)
@@ -194,9 +195,16 @@ public:
 		return false;
 	}
 
+	FString GetEditorDisplayString(UDlgDialogue* OwnerDialogue) const;
+
+	FString GetParticipantNameAsStringPrefix() const;
+
 	static FString ConditionTypeToString(EDlgConditionType Type);
 
 protected:
+
+	const FString& GetOperationAsString() const;
+
 	//
 	// Helper functions doing the check on the primary value based on EDlgCompare
 	//

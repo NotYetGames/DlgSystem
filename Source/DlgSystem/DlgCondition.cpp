@@ -289,6 +289,88 @@ bool FDlgCondition::IsSecondParticipantInvolved() const
 	return CompareType != EDlgCompare::ToConst && IsParticipantInvolved();
 }
 
+FString FDlgCondition::GetEditorDisplayString(UDlgDialogue* OwnerDialogue) const
+{
+	auto GetOther = [&](const FString& ConstAsString) -> FString
+	{
+		const FString OtherAsString = FString(TEXT("[")) + OtherParticipantName.ToString() + FString(TEXT("] "));
+		switch (CompareType)
+		{
+			case EDlgCompare::ToConst:
+				return ConstAsString;
+
+			case EDlgCompare::ToVariable:
+				return OtherAsString + OtherVariableName.ToString();
+
+			case EDlgCompare::ToClassVariable:
+				return OtherAsString + TEXT(" C ") + OtherVariableName.ToString();
+
+			default:
+				return TEXT("");
+		}
+	};
+
+	switch (ConditionType)
+	{
+		case EDlgConditionType::EventCall:
+			return GetParticipantNameAsStringPrefix() + FString(TEXT("Dlg Call - ")) + CallbackName.ToString();
+
+		case EDlgConditionType::IntCall:
+			return GetParticipantNameAsStringPrefix() + CallbackName.ToString() + GetOperationAsString() + GetOther(FString::FromInt(IntValue));
+
+		case EDlgConditionType::FloatCall:
+			return GetParticipantNameAsStringPrefix() + CallbackName.ToString() + GetOperationAsString() + GetOther(FString::SanitizeFloat(FloatValue));
+
+		case EDlgConditionType::BoolCall:
+			return GetParticipantNameAsStringPrefix() + CallbackName.ToString() + (bBoolValue ? TEXT(" Is True") : TEXT(" Is False"));
+
+		case EDlgConditionType::NameCall:
+			return GetParticipantNameAsStringPrefix() + CallbackName.ToString() + (bBoolValue ? TEXT(" == ") : TEXT(" != ")) + GetOther(NameValue.ToString());
+
+		case EDlgConditionType::ClassIntVariable:
+			return GetParticipantNameAsStringPrefix() + TEXT("C ") + CallbackName.ToString() + GetOperationAsString() + GetOther(FString::FromInt(IntValue));
+
+		case EDlgConditionType::ClassFloatVariable:
+			return GetParticipantNameAsStringPrefix() + TEXT("C ") + CallbackName.ToString() + GetOperationAsString() + GetOther(FString::SanitizeFloat(FloatValue));
+
+		case EDlgConditionType::ClassBoolVariable:
+			return GetParticipantNameAsStringPrefix() + TEXT("C ") + CallbackName.ToString() + (bBoolValue ? TEXT(" Is True") : TEXT(" Is False"));
+
+		case EDlgConditionType::ClassNameVariable:
+			return GetParticipantNameAsStringPrefix() + TEXT("C ") + CallbackName.ToString() + (bBoolValue ? TEXT(" == ") : TEXT(" != ")) + GetOther(NameValue.ToString());
+
+		case EDlgConditionType::WasNodeVisited:
+		{
+			FString RetVal = FString(TEXT("Node [")) + FString::FromInt(OwnerDialogue->GetNodeIndexForGUID(GUID)) +
+				(bBoolValue ? TEXT("] Was Visited") : TEXT("] Was Not Visited"));
+			if (bLongTermMemory)
+			{
+				RetVal += TEXT("\nLong Term Memory Check");
+			}
+			return RetVal;
+		}
+
+		case EDlgConditionType::HasSatisfiedChild:
+			return FString(TEXT("Node [")) + FString::FromInt(OwnerDialogue->GetNodeIndexForGUID(GUID)) +
+				(bBoolValue ? TEXT("] Has Satisfied Child") : TEXT("] Has No Satisfied Child"));
+
+		case EDlgConditionType::Custom:
+			if (CustomCondition != nullptr)
+			{
+				return CustomCondition->GetEditorDisplayString(OwnerDialogue, ParticipantName);
+			}
+			return GetParticipantNameAsStringPrefix() + TEXT(" INVALID CUSTOM");
+
+		default:
+			return TEXT("???");
+	}
+}
+
+FString FDlgCondition::GetParticipantNameAsStringPrefix() const
+{
+	return FString(TEXT("[")) + ParticipantName.ToString() + FString(TEXT("] "));
+}
+
 FString FDlgCondition::ConditionTypeToString(EDlgConditionType Type)
 {
 	FString EnumValue;
@@ -296,4 +378,33 @@ FString FDlgCondition::ConditionTypeToString(EDlgConditionType Type)
 		return EnumValue;
 
 	return EnumValue;
+}
+
+const FString& FDlgCondition::GetOperationAsString() const
+{
+	static const FString AsString_Equal = TEXT(" == ");
+	static const FString AsString_NotEqual = TEXT(" != ");
+	static const FString AsString_Less = TEXT(" < ");
+	static const FString AsString_LessOrEqual = TEXT(" <= ");
+	static const FString AsString_Greater = TEXT(" > ");
+	static const FString AsString_GreaterOrEqual = TEXT(" >= ");
+
+	switch (Operation)
+	{
+		case EDlgOperation::Equal:
+			return AsString_Equal;
+		case EDlgOperation::NotEqual:
+			return AsString_NotEqual;
+		case EDlgOperation::Less:
+			return AsString_Less;
+		case EDlgOperation::LessOrEqual:
+			return AsString_LessOrEqual;
+		case EDlgOperation::Greater:
+			return AsString_Greater;
+		case EDlgOperation::GreaterOrEqual:
+			return AsString_GreaterOrEqual;
+	}
+
+	static const FString Invalid = TEXT("?");
+	return Invalid;
 }

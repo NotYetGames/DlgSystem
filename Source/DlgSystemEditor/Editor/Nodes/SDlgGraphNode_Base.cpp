@@ -76,10 +76,92 @@ void SDlgGraphNode_Base::SetOwner(const TSharedRef<SGraphPanel>& OwnerPanel)
 	}
 }
 
+EVisibility SDlgGraphNode_Base::GetEventAndConditionVisibility() const
+{
+	return Settings->bShowEventsAndConditions ? EVisibility::Visible : EVisibility::Collapsed;
+}
+
 TSharedPtr<SGraphPin> SDlgGraphNode_Base::CreatePinWidget(UEdGraphPin* Pin) const
 {
 	// Called by CreateStandardPinWidget
 	return SNew(SDlgGraphPin, Pin);
+}
+
+void SDlgGraphNode_Base::CreateEventAndConditionWidgets(TSharedPtr<SVerticalBox> TargetWidget)
+{
+	for (int32 i = 0; i < GetEnterConditions()->Num(); ++i)
+	{
+		TargetWidget->AddSlot()
+		.AutoHeight()
+		.HAlign(HAlign_Fill)
+		.VAlign(VAlign_Fill)
+		.Padding(2.0f)
+		[
+			SNew(SBorder)
+			.BorderImage(FNYAppStyle::GetBrush("BTEditor.Graph.BTNode.Body"))
+			.BorderBackgroundColor(Settings->GraphConditionBorderColor)
+			.HAlign(HAlign_Fill)
+			.VAlign(VAlign_Fill)
+			.Visibility(this, &Self::GetEventAndConditionVisibility)
+			.Padding(Settings->GraphConditionBorderSize)
+			[
+				SNew(SBorder)
+				.BorderImage(FNYAppStyle::GetBrush("BTEditor.Graph.BTNode.Body"))
+				.BorderBackgroundColor(Settings->GraphConditionBackgroundColor)
+				.HAlign(HAlign_Fill)
+				.VAlign(VAlign_Fill)
+				.Padding(Settings->GraphConditionTextMargin)
+				[
+					SNew(STextBlock)
+					.ColorAndOpacity(Settings->GraphConditionTextColor)
+					.Text_Lambda([this, i]()
+					{
+						return FText::FromString((*GetEnterConditions())[i].GetEditorDisplayString(DialogueGraphNode_Base->GetDialogue()));
+					})
+				]
+			]
+		];
+	}
+
+	const TArray<FDlgEvent>* EnterEventsPtr = GetEnterEvents();
+	if (EnterEventsPtr == nullptr)
+	{
+		return;
+	}
+
+	for (int32 i = 0; i < EnterEventsPtr->Num(); ++i)
+	{
+		TargetWidget->AddSlot()
+		.AutoHeight()
+		.HAlign(HAlign_Fill)
+		.VAlign(VAlign_Fill)
+		.Padding(2.0f)
+		[
+			SNew(SBorder)
+			.Visibility(this, &Self::GetEventAndConditionVisibility)
+			.BorderImage(FNYAppStyle::GetBrush("BTEditor.Graph.BTNode.Body"))
+			.BorderBackgroundColor(Settings->GraphEventBorderColor)
+			.HAlign(HAlign_Fill)
+			.VAlign(VAlign_Fill)
+			.Padding(Settings->GraphEventBorderSize)
+			[
+				SNew(SBorder)
+				.BorderImage(FNYAppStyle::GetBrush("BTEditor.Graph.BTNode.Body"))
+				.BorderBackgroundColor(Settings->GraphEventBackgroundColor)
+				.HAlign(HAlign_Fill)
+				.VAlign(VAlign_Fill)
+				.Padding(Settings->GraphEventTextMargin)
+				[
+					SNew(STextBlock)
+					.ColorAndOpacity(Settings->GraphEventTextColor)
+					.Text_Lambda([this, i]()
+					{
+						return FText::FromString((*GetEnterEvents())[i].GetEditorDisplayString(DialogueGraphNode_Base->GetDialogue()));
+					})
+				]
+			]
+		];
+	}
 }
 
 void SDlgGraphNode_Base::AddPin(const TSharedRef<SGraphPin>& PinToAdd)

@@ -178,6 +178,7 @@ public:
 	}
 
 	CREATE_SETTER(SetShowEdgeText, bool, bShowEdgeText)
+	CREATE_SETTER(SetShowEventsAndConditions, bool, bShowEventsAndConditions)
 	CREATE_SETTER(SetShowPrimarySecondaryEdges, bool, bShowPrimarySecondaryEdges)
 	CREATE_SETTER(SetDrawPrimaryEdges, bool, bDrawPrimaryEdges)
 	CREATE_SETTER(SetDrawSecondaryEdges, bool, bDrawSecondaryEdges)
@@ -547,10 +548,10 @@ public:
 
 	// The base color of the wire.
 	UPROPERTY(Category = "Graph Edge Text", Config, EditAnywhere)
-	FLinearColor GraphEdgeTextColor = FLinearColor{ 0.9f, 0.9f, 0.9f, 1.0f };
+	FLinearColor GraphEdgeTextColor = FLinearColor{ 0.5f, 0.5f, 0.5f, 1.0f };
 
 	UPROPERTY(Category = "Graph Edge Text", Config, EditAnywhere)
-	FLinearColor GraphEdgeTextBackgroundColor = FLinearColor{ 0.0f, 0.0f, 0.0f, 1.0f };
+	FLinearColor GraphEdgeTextBackgroundColor = FLinearColor{ 0.02f, 0.02f, 0.02f, 1.0f };
 
 	// The base color of the wire.
 	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
@@ -587,6 +588,39 @@ public:
 	// The Color of the wire when the edge is secondary.
 	UPROPERTY(Category = "Graph Edge Color", Config, EditAnywhere)
 	FLinearColor WireSecondaryEdgeColor = FLinearColor{0.101961f, 0.137255f, 0.494118f, 1.f}; // blueish
+
+	UPROPERTY(Category = "Graph Event And Condition", Config, EditAnywhere)
+	bool bShowEventsAndConditions = true;
+
+	UPROPERTY(Category = "Graph Event And Condition", Config, EditAnywhere)
+	FLinearColor GraphConditionBackgroundColor = FLinearColor{ 0.02f, 0.02f, 0.02f, 1.0f };
+
+	UPROPERTY(Category = "Graph Event And Condition", Config, EditAnywhere)
+	FLinearColor GraphConditionBorderColor = FLinearColor{ 0.348958f, 0.029080f, 0.029080f, 1.0f };
+
+	UPROPERTY(Category = "Graph Edge Text", Config, EditAnywhere)
+	FLinearColor GraphConditionTextColor = FLinearColor{ 0.5f, 0.5f, 0.5f, 1.0f };
+
+	UPROPERTY(Category = "Graph Event And Condition", Config, EditAnywhere)
+	FMargin GraphConditionBorderSize = FMargin{ 4.0f };
+
+	UPROPERTY(Category = "Graph Event And Condition", Config, EditAnywhere)
+	FMargin GraphConditionTextMargin = FMargin{ 2.0f };
+
+	UPROPERTY(Category = "Graph Event And Condition", Config, EditAnywhere)
+	FLinearColor GraphEventBackgroundColor = FLinearColor{ 0.02f, 0.02f, 0.02f, 1.0f };
+
+	UPROPERTY(Category = "Graph Event And Condition", Config, EditAnywhere)
+	FLinearColor GraphEventBorderColor = FLinearColor{ 0.231553f, 0.042100f, 0.505208f, 1.0f };
+
+	UPROPERTY(Category = "Graph Event And Condition", Config, EditAnywhere)
+	FLinearColor GraphEventTextColor = FLinearColor{ 0.5f, 0.5f, 0.5f, 1.0f };
+
+	UPROPERTY(Category = "Graph Event And Condition", Config, EditAnywhere)
+	FMargin GraphEventBorderSize = FMargin{ 4.0f };
+
+	UPROPERTY(Category = "Graph Event And Condition", Config, EditAnywhere)
+	FMargin GraphEventTextMargin = FMargin{ 2.0f };
 
 	//
 	// Advanced Section

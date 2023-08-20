@@ -40,6 +40,9 @@ public:
 	// Draw the secondary edges
 	TSharedPtr<FUICommandInfo> ToggleDrawSecondaryEdges;
 
+	// Draw events and conditions
+	TSharedPtr<FUICommandInfo> ToggleShowEventsAndConditions;
+
 	// Converts a speech sequence node to a list of speech node
 	TSharedPtr<FUICommandInfo> ConvertSpeechSequenceNodeToSpeechNodes;
 

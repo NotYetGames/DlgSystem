@@ -77,6 +77,71 @@ void FDlgEvent::Call(UDlgContext& Context, const FString& ContextString, UObject
 	}
 }
 
+FString FDlgEvent::GetEditorDisplayString(UDlgDialogue* OwnerDialogue) const
+{
+	const FString TargetPreFix = (ParticipantName != NAME_None) ? (FString(TEXT("[")) + ParticipantName.ToString() + FString(TEXT("] "))) : TEXT("");
+
+	auto GetSignCharIfNegative = [](auto Number) -> FString
+	{
+		return (Number < 0) ? TEXT("-") : TEXT("");
+	};
+	auto GetSignChar = [](auto Number) -> FString
+	{
+		return (Number < 0) ? TEXT("-") : TEXT("+");
+	};
+
+	auto CreateValueModificationText = [&](const FString& VariableName, auto Number, const FString& ValueAsString) -> FString
+	{
+			if (bDelta)
+			{
+				return TargetPreFix + VariableName + TEXT(" ") + GetSignChar(Number) + TEXT("= ") + ValueAsString;
+			}
+			else
+			{
+				return TargetPreFix + VariableName + TEXT(" = ") + GetSignCharIfNegative(Number) + ValueAsString;
+			}
+	};
+
+	switch (EventType)
+	{
+		case EDlgEventType::Event:
+			return TargetPreFix + TEXT("Call DlgEvent ") + EventName.ToString();
+
+		case EDlgEventType::ModifyInt:
+			return CreateValueModificationText(EventName.ToString(), IntValue, FString::FromInt(IntValue));
+
+		case EDlgEventType::ModifyFloat:
+			return CreateValueModificationText(EventName.ToString(), FloatValue, FString::SanitizeFloat(FloatValue));
+
+		case EDlgEventType::ModifyBool:
+			return TargetPreFix + EventName.ToString() + TEXT(" = ") + (bValue ? TEXT("True") : TEXT("False"));
+
+		case EDlgEventType::ModifyName:
+			return TargetPreFix + EventName.ToString() + TEXT(" = ") + NameValue.ToString();
+
+		case EDlgEventType::ModifyClassIntVariable:
+			return CreateValueModificationText(TEXT("C ") + EventName.ToString(), IntValue, FString::FromInt(IntValue));
+
+		case EDlgEventType::ModifyClassFloatVariable:
+			return CreateValueModificationText(TEXT("C ") + EventName.ToString(), FloatValue, FString::SanitizeFloat(FloatValue));
+
+		case EDlgEventType::ModifyClassBoolVariable:
+			return TargetPreFix + TEXT("C ") + EventName.ToString() + TEXT(" = ") + (bValue ? TEXT("True") : TEXT("False"));
+
+		case EDlgEventType::ModifyClassNameVariable:
+			return TargetPreFix + TEXT("C ") + EventName.ToString() + TEXT(" = ") + NameValue.ToString();
+
+		case EDlgEventType::Custom:
+			return CustomEvent == nullptr ? TEXT("Invalid") : CustomEvent->GetEditorDisplayString(OwnerDialogue, ParticipantName);
+
+		case EDlgEventType::UnrealFunction:
+			return TargetPreFix + TEXT("Call Function ") + EventName.ToString();
+
+		default:
+			return TEXT("TODO");
+	}
+}
+
 bool FDlgEvent::ValidateIsParticipantValid(const UDlgContext& Context, const FString& ContextString, const UObject* Participant) const
 {
 	if (IsValid(Participant))

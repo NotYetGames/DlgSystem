@@ -69,6 +69,10 @@ public:
 	{
 		return DialogueGraphNode && DialogueGraphNode->ShouldDrawNode() ? EVisibility::Visible : EVisibility::Hidden;
 	}
+
+	virtual const TArray<FDlgCondition>* GetEnterConditions() const override;
+	virtual const TArray<FDlgEvent>* GetEnterEvents() const override;
+
 	// End SDlgGraphNode_Base Interface
 
 protected:

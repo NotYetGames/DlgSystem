@@ -44,6 +44,8 @@ public:
 	/** Is the current node visible? */
 	virtual EVisibility GetNodeVisibility() const { return EVisibility::Visible; }
 
+	EVisibility GetEventAndConditionVisibility() const;
+
 protected:
 	// SGraphNode Interface
 	/**
@@ -55,6 +57,12 @@ protected:
 
 	/** Hook that allows derived classes to supply their own SGraphPin derivatives for any pin. Used by CreateStandardPinWidget. */
 	TSharedPtr<SGraphPin> CreatePinWidget(UEdGraphPin* Pin) const override;
+
+	/** Creates a vertical box containing the graph visualization data for events/conditions */
+	void CreateEventAndConditionWidgets(TSharedPtr<SVerticalBox> TargetWidget);
+
+	virtual const TArray<FDlgCondition>* GetEnterConditions() const { return nullptr; }
+	virtual const TArray<FDlgEvent>* GetEnterEvents() const { return nullptr; }
 
 private:
 	/** Tells us if the provided pin is valid.  */

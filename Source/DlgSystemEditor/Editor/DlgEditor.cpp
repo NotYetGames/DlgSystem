@@ -636,6 +636,17 @@ void FDlgEditor::BindEditorCommands()
 		FIsActionChecked::CreateLambda([this] { return GetSettings().bDrawSecondaryEdges; })
 	);
 
+	// The Show Events And Conditions button
+	ToolkitCommands->MapAction(
+		DialogueCommands.ToggleShowEventsAndConditions,
+		FExecuteAction::CreateLambda([this]
+			{
+				Settings->SetShowEventsAndConditions(!GetSettings().bShowEventsAndConditions);
+			}),
+		FCanExecuteAction::CreateLambda([] { return true; }),
+		FIsActionChecked::CreateLambda([this] { return GetSettings().bShowEventsAndConditions; })
+	);
+
 	// Find in All Dialogues
 	ToolkitCommands->MapAction(
 		FDlgCommands::Get().FindInAllDialogues,
@@ -761,6 +772,8 @@ void FDlgEditor::ExtendToolbar()
 						FSlateIcon(),
 						true
 					);
+
+					ToolbarBuilder.AddToolBarButton(FDlgCommands::Get().ToggleShowEventsAndConditions);
 				}
 				ToolbarBuilder.EndSection();
 			})

@@ -137,6 +137,8 @@ void SDlgGraphNode_Edge::UpdateGraphNode()
 		SetToolTip(DefaultToolTip);
 	}
 
+	TSharedPtr<SVerticalBox> EdgeTextVerticalBox;
+
 	ContentScale.Bind(this, &Super::GetContentScale);
 	GetOrAddSlot(ENodeZone::Center)
 		.HAlign(HAlign_Center)
@@ -168,11 +170,7 @@ void SDlgGraphNode_Edge::UpdateGraphNode()
 				.VAlign(VAlign_Fill)
 				.Visibility(this, &Self::GetEdgeTextVisibility)
 				[
-					SNew(STextBlock)
-					.ColorAndOpacity(Settings->GraphEdgeTextColor)
-					.Text(this, &Self::GetEdgeText)
-					.WrapTextAt(Settings->GraphEdgeTextWrapAt)
-					.Margin(Settings->GraphEdgeTextMargin)
+					SAssignNew(EdgeTextVerticalBox, SVerticalBox)
 				]
 			]
 #else
@@ -199,7 +197,19 @@ void SDlgGraphNode_Edge::UpdateGraphNode()
 			]
 #endif // NY_ENGINE_VERSION >= 424
 		];
+
+	CreateEventAndConditionWidgets(EdgeTextVerticalBox);
+
+	EdgeTextVerticalBox->AddSlot()
+	[
+		SNew(STextBlock)
+		.ColorAndOpacity(Settings->GraphEdgeTextColor)
+		.Text(this, &Self::GetEdgeText)
+		.WrapTextAt(Settings->GraphEdgeTextWrapAt)
+		.Margin(Settings->GraphEdgeTextMargin)
+	];
 }
+
 //  End SGraphNode Interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -249,6 +259,13 @@ void SDlgGraphNode_Edge::PositionBetweenTwoNodesWithOffset(const FGeometry& Star
 	GraphNode->NodePosX = NewCorner.X;
 	GraphNode->NodePosY = NewCorner.Y;
 }
+
+
+const TArray<FDlgCondition>* SDlgGraphNode_Edge::GetEnterConditions() const
+{
+	return &DialogueGraphNode_Edge->GetDialogueEdge().Conditions;
+}
+
 
 FText SDlgGraphNode_Edge::GetConditionOverlayTooltipText() const
 {

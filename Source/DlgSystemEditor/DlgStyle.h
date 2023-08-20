@@ -59,6 +59,7 @@ public:
 
 	static const FName PROPERTY_ShowEdgeTextIcon;
 	static const FName PROPERTY_ShowPrimarySecondaryEdgesIcon;
+	static const FName PROPERTY_ShowEventsAndConditionsIcon;
 	static const FName PROPERTY_ReloadAssetIcon;
 	static const FName PROPERTY_OpenAssetIcon;
 	static const FName PROPERTY_FindAssetIcon;

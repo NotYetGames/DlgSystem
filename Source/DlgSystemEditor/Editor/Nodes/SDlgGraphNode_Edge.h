@@ -71,6 +71,8 @@ public:
 	/** Gets the transition color of this node and wire. */
 	FSlateColor GetTransitionColor() const { return DialogueGraphNode_Edge->GetEdgeColor(IsHovered()); }
 
+	virtual const TArray<FDlgCondition>* GetEnterConditions() const override;
+
 	// End own functions
 
 protected:

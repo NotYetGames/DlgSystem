@@ -306,6 +306,16 @@ void SDlgGraphNode::UpdateGraphNode()
 // End SGraphNode interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const TArray<FDlgCondition>* SDlgGraphNode::GetEnterConditions() const
+{
+	return &DialogueGraphNode->GetDialogueNode().GetNodeEnterConditions(); 
+}
+
+const TArray<FDlgEvent>* SDlgGraphNode::GetEnterEvents() const
+{
+	return &DialogueGraphNode->GetDialogueNode().GetNodeEnterEvents();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin own functions
 TSharedRef<SWidget> SDlgGraphNode::GetNodeBodyWidget()
@@ -319,6 +329,8 @@ TSharedRef<SWidget> SDlgGraphNode::GetNodeBodyWidget()
 //	FGraphNodeMetaData TagMeta(TEXT("UDialogueGraphNode_Base"));
 //	PopulateMetaTag(&TagMeta);
 
+	TSharedPtr<SVerticalBox> NodeVerticalBox;
+	
 	NodeBodyWidget =
 		SNew(SBorder)
 		.BorderImage(FNYAppStyle::GetBrush("BTEditor.Graph.BTNode.Body"))
@@ -329,26 +341,27 @@ TSharedRef<SWidget> SDlgGraphNode::GetNodeBodyWidget()
 		.Visibility(EVisibility::Visible)
 		[
 			// Main Content
-			SNew(SVerticalBox)
-
-			// Title
-			+SVerticalBox::Slot()
-			.HAlign(HAlign_Fill)
-			.VAlign(VAlign_Fill)
-			.AutoHeight()
-			[
-				GetTitleWidget()
-			]
-
-			// Description
-			+SVerticalBox::Slot()
-			.HAlign(HAlign_Fill)
-			.VAlign(VAlign_Fill)
-			.AutoHeight()
-			[
-				GetDescriptionWidget()
-			]
+			SAssignNew(NodeVerticalBox, SVerticalBox)
 		];
+
+	NodeVerticalBox->AddSlot()
+	.HAlign(HAlign_Fill)
+	.VAlign(VAlign_Fill)
+	.AutoHeight()
+	[
+		GetTitleWidget()
+	];
+
+	CreateEventAndConditionWidgets(NodeVerticalBox);
+
+	// Description
+	NodeVerticalBox->AddSlot()
+	.HAlign(HAlign_Fill)
+	.VAlign(VAlign_Fill)
+	.AutoHeight()
+	[
+		GetDescriptionWidget()
+	];
 
 	return NodeBodyWidget.ToSharedRef();
 }

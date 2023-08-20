@@ -19,6 +19,15 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Dialogue", DisplayName = "Enter")
 	void EnterEvent(UDlgContext* Context, UObject* Participant);
 	virtual void EnterEvent_Implementation(UDlgContext* Context, UObject* Participant) {}
+
+	// Display text for editor graph node
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Dialogue")
+	FString GetEditorDisplayString(UDlgDialogue* OwnerDialogue, FName ParticipantName);
+	virtual FString GetEditorDisplayString_Implementation(UDlgDialogue* OwnerDialogue, FName ParticipantName)
+	{
+		const FString TargetPreFix = (ParticipantName != NAME_None) ? (FString(TEXT("[")) + ParticipantName.ToString() + FString(TEXT("] "))) : TEXT("");
+		return TargetPreFix + GetName();
+	}
 };
 
 // This is the same as UDlgEventCustom but it does NOT show the categories

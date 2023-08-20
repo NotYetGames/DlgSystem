@@ -23,6 +23,14 @@ public:
 	{
 		return false;
 	}
+
+	// Display text for editor graph node
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Dialogue")
+	FString GetEditorDisplayString(UDlgDialogue* OwnerDialogue, FName ParticipantName);
+	virtual FString GetEditorDisplayString_Implementation(UDlgDialogue* OwnerDialogue, FName ParticipantName)
+	{
+		return FString(TEXT("[")) + ParticipantName.ToString() + FString(TEXT("] ")) + GetName();
+	}
 };
 
 // This is the same as UDlgConditionCustom but it does NOT show the categories

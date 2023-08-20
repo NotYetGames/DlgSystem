@@ -7,6 +7,7 @@
 #include "DlgEvent.generated.h"
 
 class UDlgContext;
+class UDlgDialogue;
 
 UENUM(BlueprintType)
 enum class EDlgEventType : uint8
@@ -112,6 +113,8 @@ public:
 			|| Type == EDlgEventType::ModifyClassIntVariable
 			|| Type == EDlgEventType::ModifyClassNameVariable;
 	}
+
+	FString GetEditorDisplayString(UDlgDialogue* OwnerDialogue) const;
 
 protected:
 	bool ValidateIsParticipantValid(const UDlgContext& Context, const FString& ContextString, const UObject* Participant) const;

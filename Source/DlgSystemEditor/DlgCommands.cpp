@@ -43,6 +43,13 @@ void FDlgCommands::RegisterCommands()
 	);
 
 	UI_COMMAND(
+		ToggleShowEventsAndConditions,
+		"Events and Conditions",
+		"Toggles displaying Events and Conditions on the Graph",
+		EUserInterfaceActionType::ToggleButton, FInputChord()
+	);
+
+	UI_COMMAND(
 		ConvertSpeechSequenceNodeToSpeechNodes,
 		"Convert to speech nodes",
 		"Converts/breaks the speech sequence node to a list of speech node.",
