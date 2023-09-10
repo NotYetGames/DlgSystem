@@ -1,3 +1,10 @@
+# v17
+
+### New Features
+
+- Added Edge Text visualization on edge nodes.
+- Added Enter Events and Conditions on nodes visualization.
+
 # v16.1.0
 - Add Unreal Function event type, which calls a function on the provided participant (without any parameters).
 - Switch to TSoftClassPtr for DefaultCustomNodeDataClass setting.
