@@ -29,7 +29,12 @@ public:
 	FString GetEditorDisplayString(UDlgDialogue* OwnerDialogue, FName ParticipantName);
 	virtual FString GetEditorDisplayString_Implementation(UDlgDialogue* OwnerDialogue, FName ParticipantName)
 	{
-		return FString(TEXT("[")) + ParticipantName.ToString() + FString(TEXT("] ")) + GetName();
+		const FString TargetPreFix = ParticipantName != NAME_None ? FString::Printf(TEXT("[%s] "), *ParticipantName.ToString()) : TEXT("");
+#if WITH_EDITOR
+		return TargetPreFix + GetClass()->GetDisplayNameText().ToString();
+#else
+		return TargetPreFix + GetName();
+#endif
 	}
 };
 
