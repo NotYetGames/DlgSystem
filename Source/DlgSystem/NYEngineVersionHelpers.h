@@ -3,7 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "Templates/Casts.h"
-#include "Launch/Resources/Version.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #define NY_ENGINE_VERSION (ENGINE_MAJOR_VERSION * 100 + ENGINE_MINOR_VERSION)
 

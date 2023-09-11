@@ -1,5 +1,7 @@
 # v17
 
+- Add support for UE 5.3
+
 ### New Features
 
 - Added Edge Text visualization on edge nodes.

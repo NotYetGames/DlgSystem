@@ -213,7 +213,7 @@ public:
 	FString ToString() const;
 
 	// Is this equal with Other?
-	virtual bool IsEqual(const Self& Other)
+	virtual bool IsEqual(const Self& Other) const
 	{
 		return TextType == Other.GetTextType() &&
 			CategoryType == Other.GetCategoryType() &&
@@ -222,7 +222,7 @@ public:
 			GetParentVariableName() == Other.GetParentVariableName();
 	}
 
-	bool operator==(const Self& Other)
+	bool operator==(const Self& Other) const
 	{
 		return IsEqual(Other);
 	}
@@ -407,7 +407,7 @@ public:
 	const TWeakObjectPtr<const UDlgDialogue>& GetDialogue() const { return Dialogue; }
 	FReply OnClick() override;
 
-	bool IsEqual(const Super& Other) override
+	bool IsEqual(const Super& Other) const override
 	{
 		if (const Self* OtherSelf = static_cast<const Self*>(&Other))
 		{
@@ -438,7 +438,7 @@ public:
 	const TWeakObjectPtr<const UDialogueGraphNode>& GetGraphNode() const { return GraphNode; }
 	FReply OnClick() override;
 
-	bool IsEqual(const Super& Other) override
+	bool IsEqual(const Super& Other) const override
 	{
 		if (const Self* OtherSelf = static_cast<const Self*>(&Other))
 		{
@@ -469,7 +469,7 @@ public:
 	const TWeakObjectPtr<const UDialogueGraphNode_Edge>& GetEdgeNode() const { return EdgeNode; }
 	FReply OnClick() override;
 
-	bool IsEqual(const Super& Other) override
+	bool IsEqual(const Super& Other) const override
 	{
 		if (const Self* OtherSelf = static_cast<const Self*>(&Other))
 		{
