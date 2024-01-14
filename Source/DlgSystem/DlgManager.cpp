@@ -641,6 +641,8 @@ UWorld* UDlgManager::GetDialogueWorld()
 		}
 	}
 
-	FDlgLogger::Get().Error(TEXT("GetDialogueWorld - Could NOT find any valid world. Call SetDialoguePersistentWorldContextObject in the Being Play of your GameMode"));
+	// This log is removed as this should be unreachable from GameWorld, and is a valid case to reach it from editor
+	// E.g. custom BP conditions trigger this
+	// FDlgLogger::Get().Error(TEXT("GetDialogueWorld - Could NOT find any valid world. Call SetDialoguePersistentWorldContextObject in the Being Play of your GameMode"));
 	return nullptr;
 }

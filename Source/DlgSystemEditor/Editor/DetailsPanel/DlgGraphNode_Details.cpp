@@ -132,7 +132,11 @@ void FDlgGraphNode_Details::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder
 			{
 				return;
 			}
-			CustomCategory.AddProperty(PropertyDialogueNode->GetChildHandle(Property->GetFName()));
+			TSharedPtr<IPropertyHandle> PropertyHandle = PropertyDialogueNode->GetChildHandle(Property->GetFName());
+			if (PropertyHandle.IsValid() && PropertyHandle->IsValidHandle())
+			{
+				CustomCategory.AddProperty(PropertyHandle);
+			}
 		}
 
 		return;
