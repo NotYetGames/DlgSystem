@@ -72,7 +72,7 @@ public:
  *  Dialogues have a custom blueprint editor
  */
 UCLASS(BlueprintType, Meta = (DisplayThumbnail = "true"))
-class DLGSYSTEM_API UDlgDialogue : public UObject
+class DLGSYSTEM_API UDlgDialogue : public UObject, public IInterface_AssetUserData
 {
 	GENERATED_BODY()
 public:
@@ -767,4 +767,19 @@ protected:
 
 	// Flag that indicates that This Was Loaded was called
 	bool bWasLoaded = false;
+	
+	
+	public:
+	// Asset User Data implementation
+
+	/** Array of user data stored with the asset */
+	UPROPERTY(EditAnywhere, AdvancedDisplay, Instanced, Category = "Asset User Data")
+	TArray<TObjectPtr<UAssetUserData>> AssetUserData;
+
+	//~ Begin IInterface_AssetUserData Interface
+	virtual void AddAssetUserData(UAssetUserData* InUserData) override;
+	virtual void RemoveUserDataOfClass(TSubclassOf<UAssetUserData> InUserDataClass) override;
+	virtual UAssetUserData* GetAssetUserDataOfClass(TSubclassOf<UAssetUserData> InUserDataClass) override;
+	virtual const TArray<UAssetUserData*>* GetAssetUserDataArray() const override;
+	//~ End IInterface_AssetUserData Interface
 };
