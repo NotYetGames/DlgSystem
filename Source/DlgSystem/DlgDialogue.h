@@ -160,12 +160,24 @@ public:
 	 * @param Collector	FReferenceCollector objects to be used to collect references.
 	 */
 	static void AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector);
+#endif
 	// End UObject Interface.
+
+	//
+	// Begin IInterface_AssetUserData Interface
+	//
+	virtual void AddAssetUserData(UAssetUserData* InUserData) override;
+	virtual void RemoveUserDataOfClass(TSubclassOf<UAssetUserData> InUserDataClass) override;
+	virtual UAssetUserData* GetAssetUserDataOfClass(TSubclassOf<UAssetUserData> InUserDataClass) override;
+	virtual const TArray<UAssetUserData*>* GetAssetUserDataArray() const override;
+	//
+	// End IInterface_AssetUserData Interface
+	//
 
 	//
 	// Begin own functions
 	//
-
+#if WITH_EDITOR
 	// Broadcasts whenever a property of this dialogue changes.
 	DECLARE_EVENT_OneParam(UDlgDialogue, FDialoguePropertyChanged, const FPropertyChangedEvent& /* PropertyChangedEvent */);
 	FDialoguePropertyChanged OnDialoguePropertyChanged;
@@ -767,19 +779,10 @@ protected:
 
 	// Flag that indicates that This Was Loaded was called
 	bool bWasLoaded = false;
-	
-	
-	public:
-	// Asset User Data implementation
 
-	/** Array of user data stored with the asset */
+
+public:
+	/** Array of user data stored with the asset (for IInterface_AssetUserData implementation) */
 	UPROPERTY(EditAnywhere, AdvancedDisplay, Instanced, Category = "Asset User Data")
 	TArray<TObjectPtr<UAssetUserData>> AssetUserData;
-
-	//~ Begin IInterface_AssetUserData Interface
-	virtual void AddAssetUserData(UAssetUserData* InUserData) override;
-	virtual void RemoveUserDataOfClass(TSubclassOf<UAssetUserData> InUserDataClass) override;
-	virtual UAssetUserData* GetAssetUserDataOfClass(TSubclassOf<UAssetUserData> InUserDataClass) override;
-	virtual const TArray<UAssetUserData*>* GetAssetUserDataArray() const override;
-	//~ End IInterface_AssetUserData Interface
 };
