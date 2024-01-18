@@ -314,11 +314,16 @@ void UDlgDialogue::AddReferencedObjects(UObject* InThis, FReferenceCollector& Co
 	Collector.AddReferencedObject(This->DlgGraph, This);
 	Super::AddReferencedObjects(InThis, Collector);
 }
+
+#endif
+
 // End UObject interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin AssetUserData interface
+
+
 void UDlgDialogue::AddAssetUserData(UAssetUserData* InUserData)
 {
 	if (InUserData != nullptr)
@@ -367,6 +372,9 @@ const TArray<UAssetUserData*>* UDlgDialogue::GetAssetUserDataArray() const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Begin own functions
+
+#if WITH_EDITOR
+
 void UDlgDialogue::CreateGraph()
 {
 	// The Graph will only be null if this is the first time we are creating the graph for the Dialogue.
