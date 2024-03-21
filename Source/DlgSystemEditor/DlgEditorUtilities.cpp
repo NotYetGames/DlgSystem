@@ -78,7 +78,7 @@ void FDlgEditorUtilities::LoadAllDialoguesAndCheckGUIDs()
 			LogDlgSystemEditor,
 			Fatal,
 			TEXT("(╯°□°）╯︵ ┻━┻ Congrats, you just broke the universe, are you even human? Now please go and proove an NP complete problem."
-				"The chance of generating two equal random FGuid (picking 4, uint32 numbers) is p = 9.3132257 * 10^(-10) % (or something like this)")
+				"The chance of generating two equal random FGuid (picking 4, uint32 numbers) is p = 9.3132257 * 10^(-10) %% (or something like this)")
 		)
 	}
 }
