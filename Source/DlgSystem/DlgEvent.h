@@ -30,8 +30,8 @@ enum class EDlgEventType : uint8
 	// Modifies the value from the Participant Int Variable
 	ModifyClassIntVariable		UMETA(DisplayName = "Modify Class Int Variable"),
 
-	// Modifies the value from the Participant Float Variable
-	ModifyClassFloatVariable	UMETA(DisplayName = "Modify Class Float Variable"),
+	// Modifies the value from the Participant Float Variable (Double Precision, double for c++)
+	ModifyClassFloatVariable	UMETA(DisplayName = "Modify Class Float (Double Precision) Variable"),
 
 	// Modifies the value from the Participant Bool Variable
 	ModifyClassBoolVariable		UMETA(DisplayName = "Modify Class Bool Variable"),
@@ -143,7 +143,7 @@ public:
 
 	// The value the participant gets
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Event")
-	float FloatValue = 0.f;
+	double FloatValue = 0.f;
 
 	// The value the participant gets
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Event")

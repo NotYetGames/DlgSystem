@@ -425,7 +425,7 @@ TArray<FName> FDlgCondition_Details::GetCallbackNamesForParticipant(bool bCurren
 		{
 			FNYReflectionHelper::GetVariableNames(
 				Dialogue->GetParticipantClass(ParticipantName),
-				FFloatProperty::StaticClass(),
+				FDoubleProperty::StaticClass(),
 				Suggestions,
 				GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses
 			);

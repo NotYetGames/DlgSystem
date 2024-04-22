@@ -172,6 +172,12 @@ private:
 	bool GetActiveWordAsFloat(float& FloatValue) const;
 
 	/**
+	 * @param DoubleValue: out double value if the call succeeds
+	 * @return the active word converted, or an empty string if there isn't any
+	 */
+	bool GetActiveWordAsDouble(double& DoubleValue) const;
+
+	/**
 	 *
 	 * @param TabCount: amount of tabs at the begining of each new line
 	 * @param OutString: InOut param, new lines will be added
@@ -231,6 +237,7 @@ private:
 
 	bool GetAsBool() const;
 	float GetAsFloat() const;
+	double GetAsDouble() const;
 	int32 GetAsInt32() const;
 	int64 GetAsInt64() const;
 	FName GetAsName() const;

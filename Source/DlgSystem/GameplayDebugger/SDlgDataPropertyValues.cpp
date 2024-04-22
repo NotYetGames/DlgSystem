@@ -119,7 +119,7 @@ void SDlgDataPropertyValue::UpdateVariableNodeFromActor()
 		}
 		case EDlgDataDisplayVariableTreeNodeType::ClassFloat:
 		{
-			const float Value = FNYReflectionHelper::GetVariable<FFloatProperty, float>(Actor.Get(), VariableName);
+			const double Value = FNYReflectionHelper::GetVariable<FDoubleProperty, double>(Actor.Get(), VariableName);
 			VariableNode->SetVariableValue(FString::SanitizeFloat(Value));
 			break;
 		}
@@ -246,8 +246,8 @@ void SDlgDataTextPropertyValue::HandleTextCommitted(const FText& NewText, ETextC
 		}
 		case EDlgDataDisplayVariableTreeNodeType::ClassFloat:
 		{
-			const float Value = NewString.IsNumeric() ? FCString::Atof(*NewString) : 0.f;
-			FNYReflectionHelper::SetVariable<FFloatProperty>(Actor.Get(), VariableName, Value);
+			const double Value = NewString.IsNumeric() ? FCString::Atod(*NewString) : 0.f;
+			FNYReflectionHelper::SetVariable<FDoubleProperty>(Actor.Get(), VariableName, Value);
 			break;
 		}
 		case EDlgDataDisplayVariableTreeNodeType::ClassBool:

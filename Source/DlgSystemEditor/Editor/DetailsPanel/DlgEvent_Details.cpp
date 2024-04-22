@@ -238,7 +238,7 @@ TArray<FName> FDlgEvent_Details::GetDialoguesParticipantEventNames() const
 		{
 			FNYReflectionHelper::GetVariableNames(
 				Dialogue->GetParticipantClass(ParticipantName),
-				FFloatProperty::StaticClass(),
+				FDoubleProperty::StaticClass(),
 				Suggestions,
 				GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses
 			);
@@ -325,7 +325,7 @@ TArray<FName> FDlgEvent_Details::GetCurrentDialogueEventNames() const
 	case EDlgEventType::ModifyClassFloatVariable:
 		FNYReflectionHelper::GetVariableNames(
 			Dialogue->GetParticipantClass(ParticipantName),
-			FFloatProperty::StaticClass(),
+			FDoubleProperty::StaticClass(),
 			Suggestions,
 			GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses
 		);

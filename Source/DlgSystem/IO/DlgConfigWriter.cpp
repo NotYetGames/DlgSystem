@@ -182,6 +182,10 @@ bool FDlgConfigWriter::WritePrimitiveElementToString(const FProperty* Property,
 	{
 		return true;
 	}
+	if (WritePrimitiveElementToStringTemplated<FDoubleProperty, double>(Property, Object, bInContainer, DoubleToString, PreS, PostS, Target))
+	{
+		return true;
+	}
 	if (WritePrimitiveElementToStringTemplated<FStrProperty, FString>(Property, Object, bInContainer, StringToString, PreS, PostS, Target))
 	{
 		return true;
@@ -238,6 +242,10 @@ bool FDlgConfigWriter::WritePrimitiveArrayToString(const FProperty* Property,
 		return true;
 	}
 	if (WritePrimitiveArrayToStringTemplated<FFloatProperty, float>(ArrayProp, Object, FloatToString, PreString, PostString, Target))
+	{
+		return true;
+	}
+	if (WritePrimitiveArrayToStringTemplated<FDoubleProperty, double>(ArrayProp, Object, DoubleToString, PreString, PostString, Target))
 	{
 		return true;
 	}
@@ -591,6 +599,7 @@ bool FDlgConfigWriter::IsPrimitive(const FProperty* Property)
 		   FNYReflectionHelper::CastProperty<FIntProperty>(Property) != nullptr ||
 		   FNYReflectionHelper::CastProperty<FInt64Property>(Property) != nullptr ||
 		   FNYReflectionHelper::CastProperty<FFloatProperty>(Property) != nullptr ||
+		   FNYReflectionHelper::CastProperty<FDoubleProperty>(Property) != nullptr ||
 		   FNYReflectionHelper::CastProperty<FStrProperty>(Property) != nullptr ||
 		   FNYReflectionHelper::CastProperty<FNameProperty>(Property) != nullptr ||
 		   FNYReflectionHelper::CastProperty<FTextProperty>(Property) != nullptr ||

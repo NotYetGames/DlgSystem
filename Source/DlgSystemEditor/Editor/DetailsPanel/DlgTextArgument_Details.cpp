@@ -174,7 +174,7 @@ TArray<FName> FDlgTextArgument_Details::GetDialogueVariableNames(bool bCurrentOn
 			{
 				FNYReflectionHelper::GetVariableNames(
 					Dialogue->GetParticipantClass(ParticipantName),
-					FFloatProperty::StaticClass(),
+					FDoubleProperty::StaticClass(),
 					Suggestions,
 					GetDefault<UDlgSystemSettings>()->BlacklistedReflectionClasses
 				);

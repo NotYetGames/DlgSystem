@@ -72,7 +72,7 @@ bool FDlgCondition::IsConditionMet(const UDlgContext& Context, const UObject* Pa
 			return CheckBool(Context, IDlgDialogueParticipant::Execute_GetBoolValue(Participant, CallbackName));
 
 		case EDlgConditionType::FloatCall:
-			return CheckFloat(Context, IDlgDialogueParticipant::Execute_GetFloatValue(Participant, CallbackName));
+			return CheckFloat(Context, static_cast<double>(IDlgDialogueParticipant::Execute_GetFloatValue(Participant, CallbackName)));
 
 		case EDlgConditionType::IntCall:
 			return CheckInt(Context, IDlgDialogueParticipant::Execute_GetIntValue(Participant, CallbackName));
@@ -85,7 +85,7 @@ bool FDlgCondition::IsConditionMet(const UDlgContext& Context, const UObject* Pa
 			return CheckBool(Context, FNYReflectionHelper::GetVariable<FBoolProperty, bool>(Participant, CallbackName));
 
 		case EDlgConditionType::ClassFloatVariable:
-			return CheckFloat(Context, FNYReflectionHelper::GetVariable<FFloatProperty, float>(Participant, CallbackName));
+			return CheckFloat(Context, FNYReflectionHelper::GetVariable<FDoubleProperty, double>(Participant, CallbackName));
 
 		case EDlgConditionType::ClassIntVariable:
 			return CheckInt(Context, FNYReflectionHelper::GetVariable<FIntProperty, int32>(Participant, CallbackName));
@@ -110,9 +110,9 @@ bool FDlgCondition::IsConditionMet(const UDlgContext& Context, const UObject* Pa
 	}
 }
 
-bool FDlgCondition::CheckFloat(const UDlgContext& Context, float Value) const
+bool FDlgCondition::CheckFloat(const UDlgContext& Context, double Value) const
 {
-	float ValueToCheckAgainst = FloatValue;
+	double ValueToCheckAgainst = FloatValue;
 	if (CompareType == EDlgCompare::ToVariable || CompareType == EDlgCompare::ToClassVariable)
 	{
 		const UObject* OtherParticipant = Context.GetParticipant(OtherParticipantName);
@@ -123,11 +123,11 @@ bool FDlgCondition::CheckFloat(const UDlgContext& Context, float Value) const
 
 		if (CompareType == EDlgCompare::ToVariable)
 		{
-			ValueToCheckAgainst = IDlgDialogueParticipant::Execute_GetFloatValue(OtherParticipant, OtherVariableName);
+			ValueToCheckAgainst = static_cast<double>(IDlgDialogueParticipant::Execute_GetFloatValue(OtherParticipant, OtherVariableName));
 		}
 		else
 		{
-			ValueToCheckAgainst = FNYReflectionHelper::GetVariable<FFloatProperty, float>(OtherParticipant, OtherVariableName);
+			ValueToCheckAgainst = FNYReflectionHelper::GetVariable<FDoubleProperty, double>(OtherParticipant, OtherVariableName);
 		}
 	}
 

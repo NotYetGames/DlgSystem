@@ -59,7 +59,7 @@ void FDlgEvent::Call(UDlgContext& Context, const FString& ContextString, UObject
 			FNYReflectionHelper::ModifyVariable<FIntProperty>(Participant, EventName, IntValue, bDelta);
 			break;
 		case EDlgEventType::ModifyClassFloatVariable:
-			FNYReflectionHelper::ModifyVariable<FFloatProperty>(Participant, EventName, FloatValue, bDelta);
+			FNYReflectionHelper::ModifyVariable<FDoubleProperty>(Participant, EventName, FloatValue, bDelta);
 			break;
 		case EDlgEventType::ModifyClassBoolVariable:
 			FNYReflectionHelper::SetVariable<FBoolProperty>(Participant, EventName, bValue);

@@ -36,7 +36,7 @@ FFormatArgumentValue FDlgTextArgument::ConstructFormatArgumentValue(const UDlgCo
 			return FFormatArgumentValue(IDlgDialogueParticipant::Execute_GetFloatValue(Participant, VariableName));
 
 		case EDlgTextArgumentType::ClassFloat:
-			return FFormatArgumentValue(FNYReflectionHelper::GetVariable<FFloatProperty, float>(Participant, VariableName));
+			return FFormatArgumentValue(FNYReflectionHelper::GetVariable<FDoubleProperty, double>(Participant, VariableName));
 
 		case EDlgTextArgumentType::ClassText:
 			return FFormatArgumentValue(FNYReflectionHelper::GetVariable<FTextProperty, FText>(Participant, VariableName));

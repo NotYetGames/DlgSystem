@@ -219,6 +219,24 @@ bool FDlgConfigParser::GetActiveWordAsFloat(float& FloatValue) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool FDlgConfigParser::GetActiveWordAsDouble(double& DoubleValue) const
+{
+	if (!HasValidWord())
+	{
+		return false;
+	}
+
+	const FString DoubleString = String.Mid(From, Len);
+	if (DoubleString.Len() == 0 || !DoubleString.IsNumeric())
+	{
+		return false;
+	}
+
+	DoubleValue = FCString::Atod(*DoubleString);
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 FString FDlgConfigParser::ConstructConfigFile(const UStruct* ReferenceType, void* SourceObject)
 {
 	FString String;
@@ -470,6 +488,10 @@ bool FDlgConfigParser::TryToReadPrimitiveProperty(void* TargetObject, FProperty*
 	{
 		return true;
 	}
+	if (ReadPrimitiveProperty<double, FDoubleProperty>(TargetObject, PropertyBase, std::bind(&FDlgConfigParser::GetAsDouble, this), "double", false))
+	{
+		return true;
+	}
 	if (ReadPrimitiveProperty<int32, FIntProperty>(TargetObject, PropertyBase, std::bind(&FDlgConfigParser::GetAsInt32, this), "int32", false))
 	{
 		return true;
@@ -558,8 +580,9 @@ bool FDlgConfigParser::ReadSet(void* TargetObject, FSetProperty& Property, UObje
 		const int32 Index = Helper.AddDefaultValue_Invalid_NeedsRehash();
 		bool bDone = false;
 		uint8* ElementPtr = Helper.GetElementPtr(Index);
-		if (FNYReflectionHelper::CastProperty<FBoolProperty>(Helper.ElementProp))	   { *(bool*)ElementPtr = GetAsBool();		bDone = true; }
+		if (FNYReflectionHelper::CastProperty<FBoolProperty>(Helper.ElementProp))	   { *(bool*)ElementPtr = GetAsBool();			bDone = true; }
 		else if (FNYReflectionHelper::CastProperty<FFloatProperty>(Helper.ElementProp)) { *(float*)ElementPtr = GetAsFloat();		bDone = true; }
+		else if (FNYReflectionHelper::CastProperty<FDoubleProperty>(Helper.ElementProp)) { *(double*)ElementPtr = GetAsDouble();	bDone = true; }
 		else if (FNYReflectionHelper::CastProperty<FIntProperty>(Helper.ElementProp))   { *(int32*)ElementPtr = GetAsInt32();		bDone = true; }
 		else if (FNYReflectionHelper::CastProperty<FInt64Property>(Helper.ElementProp)) { *(int64*)ElementPtr = GetAsInt64();		bDone = true; }
 		else if (FNYReflectionHelper::CastProperty<FNameProperty>(Helper.ElementProp))  { *(FName*)ElementPtr = GetAsName();		bDone = true; }
@@ -599,13 +622,14 @@ bool FDlgConfigParser::ReadMap(void* TargetObject, FMapProperty& Property, UObje
 
 		for (int32 i = 0; i < 2; ++i)
 		{
-			if (FNYReflectionHelper::CastProperty<FBoolProperty>(Props[i]))			{ *(bool*)Ptrs[i]	 = GetAsBool();		bDone = true; }
-			else if (FNYReflectionHelper::CastProperty<FFloatProperty>(Props[i]))	{ *(float*)Ptrs[i]	 = GetAsFloat();	bDone = true; }
-			else if (FNYReflectionHelper::CastProperty<FIntProperty>(Props[i]))		{ *(int32*)Ptrs[i]	 = GetAsInt32();	bDone = true; }
-			else if (FNYReflectionHelper::CastProperty<FInt64Property>(Props[i]))	{ *(int64*)Ptrs[i]	 = GetAsInt64();	bDone = true; }
-			else if (FNYReflectionHelper::CastProperty<FNameProperty>(Props[i]))		{ *(FName*)Ptrs[i]	 = GetAsName();		bDone = true; }
-			else if (FNYReflectionHelper::CastProperty<FStrProperty>(Props[i]))		{ *(FString*)Ptrs[i] = GetAsString();	bDone = true; }
-			else if (FNYReflectionHelper::CastProperty<FTextProperty>(Props[i]))		{ *(FText*)Ptrs[i]   = GetAsText();		bDone = true; }
+			if (FNYReflectionHelper::CastProperty<FBoolProperty>(Props[i]))			{ *(bool*)Ptrs[i]		= GetAsBool();	bDone = true; }
+			else if (FNYReflectionHelper::CastProperty<FFloatProperty>(Props[i]))	{ *(float*)Ptrs[i]		= GetAsFloat();	bDone = true; }
+			else if (FNYReflectionHelper::CastProperty<FDoubleProperty>(Props[i]))	{ *(double*)Ptrs[i]		= GetAsDouble();bDone = true; }
+			else if (FNYReflectionHelper::CastProperty<FIntProperty>(Props[i]))		{ *(int32*)Ptrs[i]		= GetAsInt32();	bDone = true; }
+			else if (FNYReflectionHelper::CastProperty<FInt64Property>(Props[i]))	{ *(int64*)Ptrs[i]		= GetAsInt64();	bDone = true; }
+			else if (FNYReflectionHelper::CastProperty<FNameProperty>(Props[i]))		{ *(FName*)Ptrs[i]	= GetAsName();	bDone = true; }
+			else if (FNYReflectionHelper::CastProperty<FStrProperty>(Props[i]))		{ *(FString*)Ptrs[i]	= GetAsString();bDone = true; }
+			else if (FNYReflectionHelper::CastProperty<FTextProperty>(Props[i]))		{ *(FText*)Ptrs[i]  = GetAsText();	bDone = true; }
 			else if (i == 1 && bHasNullptr)				{ bDone = true; } // Value is nullptr, ignore
 			// else if (FNYReflectionHelper::CastProperty<FByteProperty>(Props[i]))		{ *(uint8*)Ptrs[i]	 = OnGetAsEnum();	bDone = true; } // would not work, check enum above
 
@@ -712,6 +736,14 @@ float FDlgConfigParser::GetAsFloat() const
 	float Value = 0.0f;
 	if (!GetActiveWordAsFloat(Value))
 		OnInvalidValue("Float");
+	return Value;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+double FDlgConfigParser::GetAsDouble() const
+{
+	double Value = 0.0f;
+	if (!GetActiveWordAsDouble(Value))
+		OnInvalidValue("Double");
 	return Value;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

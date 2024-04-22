@@ -279,6 +279,11 @@ private:
 		return FString::SanitizeFloat(FloatVal);
 	};
 
+	const std::function<FString(const double&)> DoubleToString = [](const double& DoubleVal) -> FString
+	{
+		return FString::SanitizeFloat(DoubleVal);
+	};
+
 	const std::function<FString(const FString&)> StringToString = [](const FString& String) -> FString
 	{
 		return FString("\"") + NormalizeEndlines(String) + "\"";

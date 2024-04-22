@@ -209,7 +209,7 @@ protected:
 	// Helper functions doing the check on the primary value based on EDlgCompare
 	//
 
-	bool CheckFloat(const UDlgContext& Context, float Value) const;
+	bool CheckFloat(const UDlgContext& Context, double Value) const;
 	bool CheckInt(const UDlgContext& Context, int32 Value) const;
 	bool CheckBool(const UDlgContext& Context, bool bValue) const;
 	bool CheckName(const UDlgContext& Context, FName Value) const;
@@ -256,7 +256,7 @@ public:
 
 	// Float the participants float is checked against
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
-	float FloatValue = 0.f;
+	double FloatValue = 0.f;
 
 	// FName the participants name is checked against
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Condition")
