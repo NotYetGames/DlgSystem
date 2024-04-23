@@ -109,7 +109,10 @@ void SDlgTextPropertyPickList::SetText(const TAttribute<FText>& InNewText)
 	const FText NewText = InNewText.Get();
 	TextAttribute.Set(NewText);
 
-	PropertyHandle->SetValueFromFormattedString(*NewText.ToString());
+	if (PropertyHandle.IsValid())
+	{
+		PropertyHandle->SetValueFromFormattedString(*NewText.ToString());
+	}
 	if (ComboButtonTextWidget.IsValid())
 	{
 		ComboButtonTextWidget->SetText(TextAttribute);
