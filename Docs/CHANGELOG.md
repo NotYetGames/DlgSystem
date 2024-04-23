@@ -1,3 +1,16 @@
+# v18
+
+### Upgrade Notes
+- From unreal 5.0, blueprint floats are actually double, this wasn't taken into account by the plugin (creating some issues) so it still used floats internally.
+This was changed in this [commit](https://github.com/NotYetGames/DlgSystem/commit/6ae9b6151ccb6c340db5bf29f8c5a92980a0fd12).
+
+### New Features
+- Add
+`UAssetUserData` support to Dialogue Objects ([commit](https://github.com/NotYetGames/DlgSystem/commit/2d48f065a7608dc409f702f2db232c638a5cc750)).
+
+### Bug Fixes
+- Prevent `SetDialoguePersistentWorldContextObject` Log Spam.
+
 # v17
 
 - Add support for UE 5.3

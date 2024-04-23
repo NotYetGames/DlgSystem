@@ -1,7 +1,10 @@
 // Copyright Csaba Molnar, Daniel Butum. All Rights Reserved.
 #pragma once
 
+#include "CoreMinimal.h"
 #include "Templates/SubclassOf.h"
+#include "Interfaces/Interface_AssetUserData.h"
+#include "Engine/AssetUserData.h"
 
 #include "IDlgEditorAccess.h"
 #include "DlgSystemSettings.h"
@@ -64,7 +67,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue|Participant", meta = (MustImplement = "/Script/DlgSystem.DlgDialogueParticipant"))
 	UClass* ParticipantClass = nullptr;
 };
-
 
 /**
  *  Dialogue asset containing the static data of a dialogue
@@ -674,6 +676,8 @@ public:
 	// Adds a new start node to this dialogue, returns the index location of the added node in the Nodes array.
 	int32 AddStartNode(UDlgNode* NodeToAdd) { return StartNodes.Add(NodeToAdd); }
 
+
+
 	/**
 	 * @param	bAddExtension	If this adds the .dlg or .dlg.json extension depending on the TextFormat.
 	 * @return The path (as a relative path) and name of the text file, or empty string if something is wrong.
@@ -779,7 +783,6 @@ protected:
 
 	// Flag that indicates that This Was Loaded was called
 	bool bWasLoaded = false;
-
 
 public:
 	/** Array of user data stored with the asset (for IInterface_AssetUserData implementation) */

@@ -8,6 +8,7 @@
 #include "CoreMinimal.h"
 #include "Runtime/Launch/Resources/Version.h"
 #include "UObject/WeakObjectPtrTemplates.h"
+#include "UObject/UnrealType.h"
 #include "NYEngineVersionHelpers.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogDlgSystemReflectionHelper, All, All)
@@ -213,7 +214,7 @@ public:
 
 		auto IsPropertyAtStartOfBlacklistedClass = [&BlacklistedClasses](FProperty* CheckProperty) -> bool
 		{
-			for (UClass* Class : BlacklistedClasses)
+			for (const UClass* Class : BlacklistedClasses)
 			{
 				if (!IsValid(Class))
 				{

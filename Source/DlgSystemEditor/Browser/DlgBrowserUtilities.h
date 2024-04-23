@@ -39,7 +39,7 @@ public:
 	// Compare two FDlgBrowserTreeNode
 	static bool PredicateCompareDialogueTreeNode(
 		const TSharedPtr<FDlgBrowserTreeNode>& FirstNode,
-		const TSharedPtr<FDlgBrowserTreeNode> SecondNode
+		const TSharedPtr<FDlgBrowserTreeNode>& SecondNode
 	)
 	{
 		check(FirstNode.IsValid());
