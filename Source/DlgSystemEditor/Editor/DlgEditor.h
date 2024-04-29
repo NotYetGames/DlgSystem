@@ -308,9 +308,8 @@ private:
 	/** Selected proxy nodes highlights their targets */
 	void UpdateNodesHighlightedByProxy(const TSet<UObject*>& NewSelection);
 
-private:
 	// The dialogue we are currently editing
-	UDlgDialogue* DialogueBeingEdited;
+	TObjectPtr<UDlgDialogue> DialogueBeingEdited;
 
 	// The dialogue system settings
 	UDlgSystemSettings* Settings = nullptr;

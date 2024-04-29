@@ -766,7 +766,7 @@ protected:
 #if WITH_EDITORONLY_DATA
 	// EdGraph based representation of the DlgDialogue class
 	UPROPERTY(Meta = (DlgNoExport))
-	UEdGraph* DlgGraph;
+	TObjectPtr<UEdGraph> DlgGraph;
 
 	// Ptr to interface to dialogue editor operations. See function SetDialogueEditorAccess for more details.
 	static TSharedPtr<IDlgEditorAccess> DialogueEditorAccess;

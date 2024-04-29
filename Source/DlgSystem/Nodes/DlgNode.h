@@ -299,7 +299,7 @@ protected:
 #if WITH_EDITORONLY_DATA
 	// Node's Graph representation, used to get position.
 	UPROPERTY(Meta = (DlgNoExport))
-	UEdGraphNode* GraphNode = nullptr;
+	TObjectPtr<UEdGraphNode> GraphNode = nullptr;
 
 	// Used to build the change event and broadcast it
 	int32 BroadcastPropertyEdgeIndexChanged = INDEX_NONE;
