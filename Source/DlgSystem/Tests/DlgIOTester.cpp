@@ -146,7 +146,7 @@ bool FDlgIOTester::TestAllParsers(FAutomationTestBase& Test)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FDlgIOAutomationTest,
 	"DlgSystem.IO.Tests",
-	EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ServerContext | EAutomationTestFlags::CommandletContext | EAutomationTestFlags::ProductFilter
 )
 	//EAutomationTestFlags::Disabled |
 	// EAutomationTestFlags::RequiresUser |

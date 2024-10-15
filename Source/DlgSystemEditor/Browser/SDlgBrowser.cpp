@@ -1097,7 +1097,7 @@ TSharedRef<SWidget> SDlgBrowser::MakeButtonWidgetForGraphNodes(
 )
 {
 	TSharedPtr<SWrapBox> Buttons = SNew(SWrapBox)
-			.PreferredWidth(600.f);
+			.PreferredSize(600.f);
 
 	// Constructs [Node 1] [Node 2]
 	const FText GraphNodeTooltip = LOCTEXT("JumpToNodeTipGraphNode", "Opens the Dialogue Editor and jumps to the Node");
