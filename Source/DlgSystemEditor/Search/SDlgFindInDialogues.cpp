@@ -136,7 +136,7 @@ void SDlgFindInDialogues::Construct(const FArguments& InArgs, const TSharedPtr<F
 			.BorderImage(FNYAppStyle::GetBrush("Menu.Background"))
 			[
 				SAssignNew(TreeView, STreeView<TSharedPtr<FDlgSearchResult>>)
-				.ItemHeight(24)
+				// .ItemHeight(24)
 				.TreeItemsSource(&ItemsFound)
 				.OnGenerateRow(this, &Self::HandleGenerateRow)
 				.OnGetChildren(this, &Self::HandleGetChildren)

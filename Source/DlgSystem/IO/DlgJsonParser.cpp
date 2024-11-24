@@ -740,7 +740,13 @@ bool FDlgJsonParser::JsonValueToProperty(const TSharedPtr<FJsonValue>& JsonValue
 	for (int32 Index = 0; Index < ItemsToRead; ++Index)
 	{
 		// ValuePtr + Index * Property->ElementSize is literally FScriptArrayHelper::GetRawPtr
-		bReturnStatus &= ConvertScalarJsonValueToProperty(ArrayValue[Index], Property, ContainerPtr, ValueIntPtr + Index * Property->ElementSize);
+#if NY_ENGINE_VERSION >= 505
+		const int32 ElementSize = Property->GetElementSize();
+#else
+		const int32 ElementSize = Property->ElementSize;
+#endif
+
+		bReturnStatus &= ConvertScalarJsonValueToProperty(ArrayValue[Index], Property, ContainerPtr, ValueIntPtr + Index * ElementSize);
 	}
 	return bReturnStatus;
 }
