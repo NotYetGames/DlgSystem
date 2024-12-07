@@ -686,7 +686,7 @@ bool UDlgContext::StartWithContext(const FString& ContextString, UDlgDialogue* I
 	}
 
 	// Evaluate edges/children of the start node
-	
+
 	for (const UDlgNode* StartNode : Dialogue->GetStartNodes())
 	{
 		for (const FDlgEdge& ChildLink : StartNode->GetNodeChildren())
@@ -968,7 +968,7 @@ bool UDlgContext::ValidateParticipantsMapForDialogue(
 		if (bLog)
 		{
 			TArray<FString> ParticipantsMissing;
-			for (const auto Name : ParticipantsRequiredSet)
+			for (const FName& Name : ParticipantsRequiredSet)
 			{
 				ParticipantsMissing.Add(Name.ToString());
 			}

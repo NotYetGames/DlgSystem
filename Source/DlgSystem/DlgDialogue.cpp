@@ -797,7 +797,7 @@ void UDlgDialogue::UpdateAndRefreshData(bool bUpdateTextsNamespacesAndKeys)
 	}
 
 	// 2. add new entries
-	for (const FName Participant : Participants)
+	for (const FName& Participant : Participants)
 	{
 		if (Participant != NAME_None)
 		{

@@ -42,7 +42,7 @@ public:
 			ItemType NewItem = ItemSource[ItemIdx];
 
 			// Look through old expansion state
-			for (const ItemType OldItem : OldExpansionState)
+			for (const ItemType& OldItem : OldExpansionState)
 			{
 				// See if this matches this new item
 				if (ComparisonFunction(OldItem, NewItem))
