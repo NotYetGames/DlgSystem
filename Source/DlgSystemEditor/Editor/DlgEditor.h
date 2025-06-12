@@ -253,7 +253,7 @@ private:
 	void OnCommandPasteNodes();
 
 	// Paste the nodes at the specified Location.
-	void PasteNodesHere(const FVector2D& Location);
+	void PasteNodesHere(const FNYVector2f& Location);
 
 	// Whether we are able to paste from the clipboard
 	bool CanPasteNodes() const;

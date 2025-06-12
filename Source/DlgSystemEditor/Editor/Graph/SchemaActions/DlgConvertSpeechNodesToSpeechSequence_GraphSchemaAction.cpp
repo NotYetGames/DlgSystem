@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgConvertSpeechNodesToSpeechSequence_GraphSchemaAction
 UEdGraphNode* FDlgConvertSpeechNodesToSpeechSequence_GraphSchemaAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin,
-	const FVector2D Location, bool bSelectNewNode/* = true*/)
+	FNYLocationVector2f Location, bool bSelectNewNode/* = true*/)
 {
 	// Should have been stopped in GetConvertActions
 	check(SelectedGraphNodes.Num() > 0);

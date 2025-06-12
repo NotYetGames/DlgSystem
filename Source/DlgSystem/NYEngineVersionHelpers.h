@@ -62,3 +62,15 @@
 		#define NY_GET_APP_STYLE_NAME() FNYAppStyle::GetStyleSetName()
 	#endif // NY_ENGINE_VERSION >= 501
 #endif // WITH_EDITOR
+
+// Unreal 5.6 switched to using float instead of double vectors in Slate code
+#if NY_ENGINE_VERSION >= 506
+	using FNYVector2f = FVector2f;
+	using FNYBox2f = FBox2f;
+	using FNYLocationVector2f = const FVector2f&; // For use in the signature of FEdGraphSchemaAction::PerformAction() overrides to avoid ugly #ifdefs
+#else
+	using FNYVector2f = FVector2D;
+	using FNYBox2f = FBox2D;
+	using FNYLocationVector2f = const FVector2D;
+#endif
+

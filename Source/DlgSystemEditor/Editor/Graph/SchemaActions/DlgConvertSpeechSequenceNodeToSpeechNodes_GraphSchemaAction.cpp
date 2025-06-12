@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FDlgConvertSpeechSequenceNodeToSpeechNodes_GraphSchemaAction
 UEdGraphNode* FDlgConvertSpeechSequenceNodeToSpeechNodes_GraphSchemaAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin,
-	const FVector2D Location, bool bSelectNewNode/* = false*/)
+	FNYLocationVector2f Location, bool bSelectNewNode/* = false*/)
 {
 	check(SelectedSpeechSequenceGraphNode);
 	check(SelectedSpeechSequenceGraphNode->IsSpeechSequenceNode());
@@ -23,8 +23,8 @@ UEdGraphNode* FDlgConvertSpeechSequenceNodeToSpeechNodes_GraphSchemaAction::Perf
 
 	UDlgDialogue* Dialogue = FDlgEditorUtilities::GetDialogueForGraph(ParentGraph);
 	const UEdGraphSchema* GraphSchema = ParentGraph->GetSchema();
-	const FVector2D PositionOffset(0.f, GetDefault<UDlgSystemSettings>()->OffsetBetweenRowsY);
-	FVector2D Position = Location;
+	const FNYVector2f PositionOffset(0.f, GetDefault<UDlgSystemSettings>()->OffsetBetweenRowsY);
+	FNYVector2f Position = Location;
 
 	const UDlgNode_SpeechSequence& SpeechSequence_DialogueNode = SelectedSpeechSequenceGraphNode->GetDialogueNode<UDlgNode_SpeechSequence>();
 	const TArray<FDlgSpeechSequenceEntry>& SpeechSequenceEntries = SpeechSequence_DialogueNode.GetNodeSpeechSequence();

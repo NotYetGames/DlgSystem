@@ -1132,7 +1132,7 @@ UK2Node_Event* FDlgEditorUtilities::BlueprintGetEvent(UBlueprint* Blueprint, FNa
 	return nullptr;
 }
 
-UEdGraphNode_Comment* FDlgEditorUtilities::BlueprintAddComment(UBlueprint* Blueprint, const FString& CommentString, FVector2D Location)
+UEdGraphNode_Comment* FDlgEditorUtilities::BlueprintAddComment(UBlueprint* Blueprint, const FString& CommentString, FNYVector2f Location)
 {
 	if (!Blueprint || Blueprint->BlueprintType != BPTYPE_Normal || Blueprint->UbergraphPages.Num() == 0)
 	{

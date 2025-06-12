@@ -171,8 +171,9 @@ void FDlgGraphConnectionDrawingPolicy::DrawConnection(
 			{
 				const FVector2D Point2 = FMath::CubicInterp(P0, P0Tangent, P1, P1Tangent, TestAlpha + StepInterval);
 
-				const FVector2D ClosestPointToSegment = FMath::ClosestPointOnSegment2D(LocalMousePosition, Point1, Point2);
-				const float DistanceSquared = (LocalMousePosition - ClosestPointToSegment).SizeSquared();
+				const FVector2D LocalMousePosition2D(LocalMousePosition.X, LocalMousePosition.Y);
+				const FVector2D ClosestPointToSegment = FMath::ClosestPointOnSegment2D(LocalMousePosition2D, Point1, Point2);
+				const float DistanceSquared = (LocalMousePosition2D - ClosestPointToSegment).SizeSquared();
 
 				if (DistanceSquared < ClosestDistanceSquared)
 				{
