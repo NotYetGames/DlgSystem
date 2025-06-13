@@ -6,6 +6,7 @@
 
 #include "Editor/Graph/DialogueGraph.h"
 #include "DlgSystem/Nodes/DlgNode.h"
+#include "DlgSystem/NYEngineVersionHelpers.h"
 
 enum class EDlgBlueprintOpenType : uint8
 {
@@ -200,11 +201,11 @@ public:
 	static EAppReturnType::Type ShowMessageBox(EAppMsgType::Type MsgType, const FString& Text, const FString& Caption);
 
 	// Returns true if the TestPoint is inside the Geometry.
-	static bool IsPointInsideGeometry(const FVector2D& TestPoint, const FGeometry& Geometry)
+	static bool IsPointInsideGeometry(const FNYVector2f& TestPoint, const FGeometry& Geometry)
 	{
-		TArray<FVector2D> GeometryPoints;
+		TArray<FNYVector2f> GeometryPoints;
 		FGeometryHelper::ConvertToPoints(Geometry, GeometryPoints);
-		return FBox2D(GeometryPoints).IsInside(TestPoint);
+		return FNYBox2f(GeometryPoints).IsInside(TestPoint);
 	}
 
 	/**
@@ -266,7 +267,7 @@ public:
 	static UK2Node_Event* BlueprintGetEvent(UBlueprint* Blueprint, FName EventName, UClass* EventClassSignature);
 
 	// Adds a comment to the Blueprint
-	static UEdGraphNode_Comment* BlueprintAddComment(UBlueprint* Blueprint, const FString& CommentString, FVector2D Location = FVector2D::ZeroVector);
+	static UEdGraphNode_Comment* BlueprintAddComment(UBlueprint* Blueprint, const FString& CommentString, FNYVector2f Location = FNYVector2f::ZeroVector);
 
 	static void RefreshDialogueEditorForGraph(const UEdGraph* Graph);
 

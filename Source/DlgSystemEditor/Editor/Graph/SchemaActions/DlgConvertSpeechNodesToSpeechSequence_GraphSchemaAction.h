@@ -3,6 +3,7 @@
 
 #include "EdGraph/EdGraphSchema.h"
 #include "Templates/SubclassOf.h"
+#include "DlgSystem/NYEngineVersionHelpers.h"
 
 #include "DlgConvertSpeechNodesToSpeechSequence_GraphSchemaAction.generated.h"
 
@@ -31,7 +32,7 @@ struct DLGSYSTEMEDITOR_API FDlgConvertSpeechNodesToSpeechSequence_GraphSchemaAct
 	) : FEdGraphSchemaAction(InNodeCategory, InMenuDesc, InToolTip, InGrouping), SelectedGraphNodes(InSelectedGraphNodes) {}
 
 	//~ Begin FEdGraphSchemaAction Interface
-	UEdGraphNode* PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode = true) override;
+	UEdGraphNode* PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, FNYLocationVector2f Location, bool bSelectNewNode = true) override;
 	//~ End FEdGraphSchemaAction Interface
 
 private:

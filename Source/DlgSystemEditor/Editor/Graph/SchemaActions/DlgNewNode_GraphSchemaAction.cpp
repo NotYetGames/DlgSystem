@@ -15,7 +15,7 @@
 UEdGraphNode* FDlgNewNode_GraphSchemaAction::PerformAction(
 	UEdGraph* ParentGraph,
 	UEdGraphPin* FromPin,
-	const FVector2D Location,
+	FNYLocationVector2f Location,
 	bool bSelectNewNode/* = true*/
 )
 {
@@ -43,7 +43,7 @@ UEdGraphNode* FDlgNewNode_GraphSchemaAction::CreateNode(
 	UDlgDialogue* Dialogue,
 	UEdGraph* ParentGraph,
 	UEdGraphPin* FromPin,
-	FVector2D Location,
+	FNYVector2f Location,
 	bool bSelectNewNode
 )
 {

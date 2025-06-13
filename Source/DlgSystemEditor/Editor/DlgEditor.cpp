@@ -515,7 +515,12 @@ void FDlgEditor::BindEditorCommands()
 		FExecuteAction::CreateLambda([this]
 		{
 			FDlgNewComment_GraphSchemaAction CommentAction;
-			CommentAction.PerformAction(DialogueBeingEdited->GetGraph(), nullptr, GraphEditorView->GetPasteLocation());
+#if NY_ENGINE_VERSION >= 506
+			FVector2f PasteLocation = GraphEditorView->GetPasteLocation2f();
+#else
+			FVector2D PasteLocation = GraphEditorView->GetPasteLocation();
+#endif
+			CommentAction.PerformAction(DialogueBeingEdited->GetGraph(), nullptr, PasteLocation);
 		})
 	);
 
@@ -1122,10 +1127,15 @@ bool FDlgEditor::CanCopyNodes() const
 
 void FDlgEditor::OnCommandPasteNodes()
 {
-	PasteNodesHere(GraphEditorView->GetPasteLocation());
+#if NY_ENGINE_VERSION >= 506
+	FVector2f PasteLocation = GraphEditorView->GetPasteLocation2f();
+#else
+	FVector2D PasteLocation = GraphEditorView->GetPasteLocation();
+#endif
+	PasteNodesHere(PasteLocation);
 }
 
-void FDlgEditor::PasteNodesHere(const FVector2D& Location)
+void FDlgEditor::PasteNodesHere(const FNYVector2f& Location)
 {
 	// Undo/Redo support
 	const FScopedTransaction Transaction(FGenericCommands::Get().Paste->GetDescription());
@@ -1149,7 +1159,7 @@ void FDlgEditor::PasteNodesHere(const FVector2D& Location)
 
 	// Step 1. Calculate average position
 	// Average position of nodes so we can move them while still maintaining relative distances to each other
-	FVector2D AvgNodePosition(0.0f, 0.0f);
+	FVector2f AvgNodePosition(0.0f, 0.0f);
 	for (UEdGraphNode* Node : PastedNodes)
 	{
 		AvgNodePosition.X += Node->NodePosX;

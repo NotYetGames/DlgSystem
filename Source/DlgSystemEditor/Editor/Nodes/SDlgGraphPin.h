@@ -131,7 +131,7 @@ protected:
 	FText GetTooltipText() const;
 
 	/** Gets the Index in the current pin LinkeTo array that corresponds to the MousePosition on the wire/spline. */
-	UEdGraphPin* GetBestLinkedToPinFromSplineMousePosition(const FVector2D& MousePosition) const;
+	UEdGraphPin* GetBestLinkedToPinFromSplineMousePosition(const FNYVector2f& MousePosition) const;
 
 	/** Gets the pin border */
 	const FSlateBrush* GetPinBorder() const
