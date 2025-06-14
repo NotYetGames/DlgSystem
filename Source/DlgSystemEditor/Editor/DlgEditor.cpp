@@ -488,7 +488,11 @@ TSharedRef<SGraphEditor> FDlgEditor::CreateGraphEditorWidget()
 	SGraphEditor::FGraphEditorEvents InEvents;
 	InEvents.OnTextCommitted = FOnNodeTextCommitted::CreateSP(this, &FDlgEditor::OnNodeTitleCommitted);
 	InEvents.OnSelectionChanged = SGraphEditor::FOnSelectionChanged::CreateSP(this, &FDlgEditor::OnSelectedNodesChanged);
+#if NY_ENGINE_VERSION >= 506
+	InEvents.OnCreateActionMenuAtLocation = SGraphEditor::FOnCreateActionMenuAtLocation::CreateSP(this, &FDlgEditor::OnCreateGraphActionMenu);
+#else
 	InEvents.OnCreateActionMenu = SGraphEditor::FOnCreateActionMenu::CreateSP(this, &FDlgEditor::OnCreateGraphActionMenu);
+#endif
 
 	return SNew(SGraphEditor)
 		.AdditionalCommands(GraphEditorCommands)
@@ -1372,7 +1376,7 @@ void FDlgEditor::OnSelectedNodesChanged(const TSet<UObject*>& NewSelection)
 
 FActionMenuContent FDlgEditor::OnCreateGraphActionMenu(
 	UEdGraph* InGraph,
-	const FVector2D& InNodePosition,
+	const FNYVector2f& InNodePosition,
 	const TArray<UEdGraphPin*>& InDraggedPins,
 	bool bAutoExpand,
 	SGraphEditor::FActionMenuClosed InOnMenuClosed

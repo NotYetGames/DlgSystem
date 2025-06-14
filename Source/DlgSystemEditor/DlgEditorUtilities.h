@@ -7,6 +7,7 @@
 #include "Editor/Graph/DialogueGraph.h"
 #include "DlgSystem/Nodes/DlgNode.h"
 #include "DlgSystem/NYEngineVersionHelpers.h"
+#include "Subsystems/AssetEditorSubsystem.h"
 
 enum class EDlgBlueprintOpenType : uint8
 {
@@ -24,6 +25,7 @@ class UDlgNode;
 class UEdGraph;
 class FSlateRect;
 class UK2Node_Event;
+class IAssetEditorInstance;
 
 class DLGSYSTEMEDITOR_API FDlgEditorUtilities
 {
