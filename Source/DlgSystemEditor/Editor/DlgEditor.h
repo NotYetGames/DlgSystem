@@ -280,7 +280,7 @@ private:
 
 	// Called to create context menu when right-clicking on graph
 	FActionMenuContent OnCreateGraphActionMenu(UEdGraph* InGraph,
-		const FVector2D& InNodePosition,
+		const FNYVector2f& InNodePosition,
 		const TArray<UEdGraphPin*>& InDraggedPins,
 		bool bAutoExpand,
 		SGraphEditor::FActionMenuClosed InOnMenuClosed);

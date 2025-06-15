@@ -6,6 +6,7 @@
 #include "GraphEditor.h"
 #include "SGraphActionMenu.h"
 #include "Widgets/Input/SEditableTextBox.h"
+#include "DlgSystem/NYEngineVersionHelpers.h"
 
 //////////////////////////////////////////////////////////////////////////
 /**
@@ -20,12 +21,12 @@ public:
 
 	SLATE_BEGIN_ARGS(Self)
 		: _Graph(nullptr)
-		, _NewNodePosition(FVector2D::ZeroVector)
+		, _NewNodePosition(FNYVector2f::ZeroVector)
 		, _AutoExpandActionMenu(true)
 	{}
 
 		SLATE_ARGUMENT(UEdGraph*, Graph)
-		SLATE_ARGUMENT(FVector2D, NewNodePosition)
+		SLATE_ARGUMENT(FNYVector2f, NewNodePosition)
 		SLATE_ARGUMENT(TArray<UEdGraphPin*>, DraggedFromPins)
 		SLATE_ARGUMENT(SGraphEditor::FActionMenuClosed, OnClosedCallback)
 		SLATE_ARGUMENT(bool, AutoExpandActionMenu)
@@ -50,7 +51,7 @@ protected:
 	TArray<UEdGraphPin*> DraggedFromPins;
 
 	/** The position of this new node */
-	FVector2D NewNodePosition;
+	FNYVector2f NewNodePosition;
 
 	/** Should expand the new menu? */
 	bool AutoExpandActionMenu = true;
