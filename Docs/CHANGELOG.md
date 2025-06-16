@@ -1,3 +1,7 @@
+# v18.0.4
+
+- Fix crash in UE 5.6 when right clicking in an empty area in the graph editor
+
 # v18.0.3
 
 - Add support for UE 5.6
