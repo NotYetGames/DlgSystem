@@ -229,11 +229,11 @@ FReply SDlgGraphPin::OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& D
 	{
 		TSharedPtr<FGraphEditorDragDropAction> DragConnectionOp = StaticCastSharedPtr<FGraphEditorDragDropAction>(Operation);
 
-		FVector2D NodeAddPosition = FVector2D::ZeroVector;
+		FVector2f NodeAddPosition = FVector2f::ZeroVector;
 		TSharedPtr<SGraphNode> OwnerNode = OwnerNodePtr.Pin();
 		if (OwnerNode.IsValid())
 		{
-			NodeAddPosition	= OwnerNode->GetPosition() + FVector2D(MyGeometry.Position);
+			NodeAddPosition	= OwnerNode->GetPosition2f() + MyGeometry.Position;
 
 			//Don't have access to bounding information for node, using fixed offset that should work for most cases.
 			const float FixedOffset = 200.0f;
@@ -244,8 +244,8 @@ FReply SDlgGraphPin::OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& D
 			// if the pin widget is nested into another compound
 			if (MyGeometry.Position == FVector2f::ZeroVector)
 			{
-				FVector2D PinOffsetPosition = FVector2D(MyGeometry.AbsolutePosition) - FVector2D(NodeWidget->GetTickSpaceGeometry().AbsolutePosition);
-				NodeAddPosition = OwnerNode->GetPosition() + PinOffsetPosition;
+				const FVector2f PinOffsetPosition = MyGeometry.AbsolutePosition - NodeWidget->GetTickSpaceGeometry().AbsolutePosition;
+				NodeAddPosition = OwnerNode->GetPosition2f() + PinOffsetPosition;
 			}
 
 			if(GetDirection() == EEdGraphPinDirection::EGPD_Input)
