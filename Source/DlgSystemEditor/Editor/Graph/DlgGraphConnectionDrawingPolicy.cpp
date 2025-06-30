@@ -144,7 +144,7 @@ void FDlgGraphConnectionDrawingPolicy::DrawConnection(
 			// The curve will include the endpoints but can extend out of a tight bounds because of the tangents
 			// P0Tangent coefficient maximizes to 4/27 at a=1/3, and P1Tangent minimizes to -4/27 at a=2/3.
 			constexpr float MaximumTangentContribution = 4.0f / 27.0f;
-			FBox2f Bounds(ForceInit);
+			FNYBox2f Bounds(ForceInit);
 
 			Bounds += FNYVector2f(P0);
 			Bounds += FNYVector2f(P0 + MaximumTangentContribution * P0Tangent);
