@@ -82,7 +82,7 @@ void SDlgGraphNode_Edge::PerformSecondPassLayout(const TMap<UObject*, TSharedRef
 	PositionBetweenTwoNodesWithOffset(StartGeom, EndGeom, NodeIndex, NumberOfEdges);
 }
 
-TArray<FOverlayWidgetInfo> SDlgGraphNode_Edge::GetOverlayWidgets(bool bSelected, const FVector2D& WidgetSize) const
+TArray<FOverlayWidgetInfo> SDlgGraphNode_Edge::GetOverlayWidgets(bool bSelected, const FNYVector2f& WidgetSize) const
 {
 	// This is called after PerformSecondPassLayout, so the Edge should be in it's final Position Already
 	TArray<FOverlayWidgetInfo> Widgets;
@@ -93,8 +93,8 @@ TArray<FOverlayWidgetInfo> SDlgGraphNode_Edge::GetOverlayWidgets(bool bSelected,
 		{
 			FOverlayWidgetInfo Overlay(ConditionOverlayWidget);
 			// Position on the top/right of the node
-			const FVector2D& NewDesiredSize = ConditionOverlayWidget->GetDesiredSize();
-			Overlay.OverlayOffset = FVector2D(WidgetSize.X - NewDesiredSize.X / 2.0f, -NewDesiredSize.Y / 2.0f);
+			const FNYVector2f NewDesiredSize{ConditionOverlayWidget->GetDesiredSize()};
+			Overlay.OverlayOffset = FNYVector2f(WidgetSize.X - NewDesiredSize.X / 2.0f, -NewDesiredSize.Y / 2.0f);
 			Widgets.Add(Overlay);
 		}
 	}

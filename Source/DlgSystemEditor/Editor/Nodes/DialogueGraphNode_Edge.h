@@ -27,7 +27,7 @@ public:
 	 *
 	 * @param PropertyChangedEvent the property that was modified
 	 */
-	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	/**
 	 * Note that the object will be modified. If we are currently recording into the
@@ -38,7 +38,7 @@ public:
 	 *								currently recording an active undo/redo transaction
 	 * @return true if the object was saved to the transaction buffer
 	 */
-	bool Modify(bool bAlwaysMarkDirty = true) override;
+	virtual bool Modify(bool bAlwaysMarkDirty = true) override;
 
 	/**
 	 * Same as the above method but it only calls the base class.
@@ -48,22 +48,22 @@ public:
 
 	// UEdGraphNode interface.
 	/** Allocate default pins for a given node, based only the NodeType, which should already be filled in. */
-	void AllocateDefaultPins() override;
+	virtual void AllocateDefaultPins() override;
 
 	/** Gets the name of this node, shown in title bar */
-	FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 
 	/** Gets the tooltip to display when over the node */
-	FText GetTooltipText() const override;
+	virtual FText GetTooltipText() const override;
 
 	/** Called when the connection list of one of the pins of this node is changed in the editor */
-	void PinConnectionListChanged(UEdGraphPin* Pin) override;
+	virtual void PinConnectionListChanged(UEdGraphPin* Pin) override;
 
 	/** Perform any fixups (deep copies of associated data, etc...) necessary after a node has been pasted in the editor */
-	void PostPasteNode() override;
+	virtual void PostPasteNode() override;
 
 	/** @return Icon to use in menu or on node */
-	FSlateIcon GetIconAndTint(FLinearColor& OutColor) const override
+	virtual FSlateIcon GetIconAndTint(FLinearColor& OutColor) const override
 	{
 		static const FSlateIcon Icon = FSlateIcon(NY_GET_APP_STYLE_NAME(), "Graph.TransitionNode.Icon");
 		OutColor = GetNodeBackgroundColor();
@@ -72,7 +72,7 @@ public:
 
 	// Begin UDialogueGraphNode_Base interface
 	/** Gets the background color of this node. */
-	FLinearColor GetNodeBackgroundColor() const override { return FColorList::White; }
+	virtual FLinearColor GetNodeBackgroundColor() const override { return FColorList::White; }
 
 	// Begin own functions
 	/** Does this edge have a parent node? */
@@ -172,7 +172,7 @@ public:
 protected:
 	// Begin UDialogueGraphNode_Base interface
 	/** Creates the input pin for this node. */
-	void CreateInputPin() override
+	virtual void CreateInputPin() override
 	{
 		static const FName PinName(TEXT("Input"));
 		static const FName CategoryName(TEXT("Transition"));
@@ -182,7 +182,7 @@ protected:
 	}
 
 	/** Creates the output pin for this node. */
-	void CreateOutputPin() override
+	virtual void CreateOutputPin() override
 	{
 		static const FName PinName(TEXT("Output"));
 		static const FName CategoryName(TEXT("Transition"));
@@ -196,7 +196,6 @@ private:
 	/** Gets the corresponding FDlgEdge that this Node actually represents from the ParentNode */
 	FDlgEdge* GetMutableDialogueEdgeFromParentNode() const;
 
-private:
 	/** The copy Dialogue Edge corresponding to this graph node. This belongs to the the Node of the Input Pin (GetParentNode) */
 	UPROPERTY(EditAnywhere, Category = DialogueGraphNode, Meta = (ShowOnlyInnerProperties))
 	FDlgEdge DialogueEdge;

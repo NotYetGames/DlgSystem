@@ -283,7 +283,11 @@ FReply SDlgGraphPin::OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& D
 			TSharedPtr<FAssetDragDropOp> AssetOp = StaticCastSharedPtr<FAssetDragDropOp>(Operation);
 			if (AssetOp->HasAssets())
 			{
+#if NY_ENGINE_VERSION >= 506
+				Node->GetSchema()->DroppedAssetsOnPin(AssetOp->GetAssets(), NodeWidget->GetPosition2f() + MyGeometry.Position, GraphPinObj);
+#else
 				Node->GetSchema()->DroppedAssetsOnPin(AssetOp->GetAssets(), NodeWidget->GetPosition() + FVector2D(MyGeometry.Position), GraphPinObj);
+#endif
 			}
 		}
 		return FReply::Handled();

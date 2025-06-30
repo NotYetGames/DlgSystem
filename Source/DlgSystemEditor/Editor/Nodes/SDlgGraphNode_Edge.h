@@ -29,36 +29,36 @@ public:
 	 * @param MyGeometry The Geometry of the widget receiving the event
 	 * @param MouseEvent Information about the input event
 	 */
-	void OnMouseEnter(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
+	virtual void OnMouseEnter(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
 
 	/**
 	 * The system will use this event to notify a widget that the cursor has left it. This event is uses a custom bubble strategy.
 	 *
 	 * @param MouseEvent Information about the input event
 	 */
-	void OnMouseLeave(const FPointerEvent& MouseEvent) override;
+	virtual void OnMouseLeave(const FPointerEvent& MouseEvent) override;
 
 	// End SWidget interface
 
 	// Begin SNodePanel::SNode Interface
 
 	/** Returns true if this node is dependent on the location of other nodes (it can only depend on the location of first-pass only nodes) */
-	bool RequiresSecondPassLayout() const override { return true; }
+	virtual bool RequiresSecondPassLayout() const override { return true; }
 
 	/** Performs second pass layout; only called if RequiresSecondPassLayout returned true */
-	void PerformSecondPassLayout(const TMap<UObject*, TSharedRef<SNode>>& InNodeToWidgetLookup) const override;
+	virtual void PerformSecondPassLayout(const TMap<UObject*, TSharedRef<SNode>>& InNodeToWidgetLookup) const override;
 
 	/** Populate the widgets array with any overlay widgets to render */
-	TArray<FOverlayWidgetInfo> GetOverlayWidgets(bool bSelected, const FVector2D& WidgetSize) const override;
+	TArray<FOverlayWidgetInfo> GetOverlayWidgets(bool bSelected, const FNYVector2f& WidgetSize) const override;
 	// End SNodePanel::SNode Interface
 
 	// Begin SGraphNode Interface
 	/** Update this GraphNode to match the data that it is observing */
-	void UpdateGraphNode() override;
+	virtual void UpdateGraphNode() override;
 	// End SGraphNode Interface
 
 	// Begin SDlgGraphNode_Base Interface
-	EVisibility GetNodeVisibility() const override
+	virtual EVisibility GetNodeVisibility() const override
 	{
 		return DialogueGraphNode_Edge && DialogueGraphNode_Edge->ShouldDrawEdge() ? EVisibility::Visible : EVisibility::Hidden;
 	}

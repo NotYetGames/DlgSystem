@@ -37,7 +37,7 @@ public:
 	 *
 	 * @param [in,out]	ContextMenuBuilder	The context (graph, dragged pin, etc...) and output menu builder.
 	 */
-	void GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const override;
+	virtual void GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const override;
 
 	/**
 	 * Gets actions that should be added to the right-click context menu for a node or pin
@@ -45,9 +45,9 @@ public:
 	 * @param	Context				The menu's context.
 	 */
 #if NY_ENGINE_VERSION >= 424
-	void GetContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
+	virtual void GetContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
 #else
-	void GetContextMenuActions(
+	virtual void GetContextMenuActions(
 		const UEdGraph* CurrentGraph,
 		const UEdGraphNode* InGraphNode,
 		const UEdGraphPin* InGraphPin,
@@ -61,11 +61,11 @@ public:
 	 *
 	 * @param	Graph			Graph to add the default nodes to
 	 */
-	void CreateDefaultNodesForGraph(UEdGraph& Graph) const override;
+	virtual void CreateDefaultNodesForGraph(UEdGraph& Graph) const override;
 
 
 	/** Break links on this pin and create links instead on MoveToPin */
-	FPinConnectionResponse MovePinLinks(
+	virtual FPinConnectionResponse MovePinLinks(
 		UEdGraphPin& MoveFromPin,
 		UEdGraphPin& MoveToPin,
 		bool bIsIntermediateMove = false,
@@ -83,7 +83,7 @@ public:
 	 *
 	 * @return	An empty string if the connection is legal, otherwise a message describing why the connection would fail.
 	 */
-	const FPinConnectionResponse CanCreateConnection(const UEdGraphPin* PinA, const UEdGraphPin* PinB) const override;
+	virtual const FPinConnectionResponse CanCreateConnection(const UEdGraphPin* PinA, const UEdGraphPin* PinB) const override;
 
 	/**
 	 * Try to make a connection between two pins.
@@ -93,7 +93,7 @@ public:
 	 *
 	 * @return	True if a connection was made/broken (graph was modified); false if the connection failed and had no side effects.
 	 */
-	bool TryCreateConnection(UEdGraphPin* PinA, UEdGraphPin* PinB) const override;
+	virtual bool TryCreateConnection(UEdGraphPin* PinA, UEdGraphPin* PinB) const override;
 
 	/**
 	 * Try to create an automatic cast or other conversion node node to facilitate a connection between two pins.
@@ -106,17 +106,17 @@ public:
 	 *
 	 * @return	True if a cast node and connection were made; false if the connection failed and had no side effects.
 	 */
-	bool CreateAutomaticConversionNodeAndConnections(UEdGraphPin* PinA, UEdGraphPin* PinB) const override;
+	virtual bool CreateAutomaticConversionNodeAndConnections(UEdGraphPin* PinA, UEdGraphPin* PinB) const override;
 
 	/** If we should disallow viewing and editing of the supplied pin */
-	bool ShouldHidePinDefaultValue(UEdGraphPin* Pin) const override;
+	virtual bool ShouldHidePinDefaultValue(UEdGraphPin* Pin) const override;
 
 	/**
 	 * Breaks all links from/to a single node
 	 *
 	 * @param	TargetNode	The node to break links on
 	 */
-	void BreakNodeLinks(UEdGraphNode& TargetNode) const override;
+	virtual void BreakNodeLinks(UEdGraphNode& TargetNode) const override;
 
 	/**
 	 * Breaks all links from/to a single pin
@@ -124,7 +124,7 @@ public:
 	 * @param	TargetPin	The pin to break links on
 	 * @param	bSendsNodeNotifcation	whether to send a notification to the node post pin connection change
 	 */
-	void BreakPinLinks(UEdGraphPin& TargetPin, bool bSendsNodeNotifcation) const override;
+	virtual void BreakPinLinks(UEdGraphPin& TargetPin, bool bSendsNodeNotifcation) const override;
 
 	/**
 	 * Breaks the link between two nodes.
@@ -132,35 +132,35 @@ public:
 	 * @param	SourcePin	The pin where the link begins.
 	 * @param	TargetPin	The pin where the link ends.
 	 */
-	void BreakSinglePinLink(UEdGraphPin* SourcePin, UEdGraphPin* TargetPin) const override;
+	virtual void BreakSinglePinLink(UEdGraphPin* SourcePin, UEdGraphPin* TargetPin) const override;
 
 	/** Called when asset(s) are dropped onto the specified node */
-	void DroppedAssetsOnGraph(const TArray<FAssetData>& Assets, const FVector2D& GraphPosition, UEdGraph* Graph) const override;
+	virtual void DroppedAssetsOnGraph(const TArray<FAssetData>& Assets, const FVector2D& GraphPosition, UEdGraph* Graph) const override;
 
 	/** Called when asset(s) are dropped onto the specified node */
-	void DroppedAssetsOnNode(const TArray<FAssetData>& Assets, const FVector2D& GraphPosition, UEdGraphNode* Node) const override;
+	virtual void DroppedAssetsOnNode(const TArray<FAssetData>& Assets, const FVector2D& GraphPosition, UEdGraphNode* Node) const override;
 
 	/**
 	 * Returns the currently selected graph node count
 	 *
 	 * @param	Graph			The active graph to find the selection count for
 	 */
-	int32 GetNodeSelectionCount(const UEdGraph* Graph) const override { return FDlgEditorUtilities::GetSelectedNodes(Graph).Num(); }
+	virtual int32 GetNodeSelectionCount(const UEdGraph* Graph) const override { return FDlgEditorUtilities::GetSelectedNodes(Graph).Num(); }
 
 	/**
 	 * When a node is removed, this method determines whether we should remove it immediately or use the old (slower) code path that
 	 * results in all node being recreated:
 	 */
-	bool ShouldAlwaysPurgeOnModification() const override { return true; }
+	virtual bool ShouldAlwaysPurgeOnModification() const override { return true; }
 
 	/** Returns schema action to create comment from implemention */
-	TSharedPtr<FEdGraphSchemaAction> GetCreateCommentAction() const override
+	virtual TSharedPtr<FEdGraphSchemaAction> GetCreateCommentAction() const override
 	{
 		return TSharedPtr<FEdGraphSchemaAction>(static_cast<FEdGraphSchemaAction*>(new FDlgNewComment_GraphSchemaAction));
 	}
 
 	/* Returns new FConnectionDrawingPolicy from this schema */
-	FConnectionDrawingPolicy* CreateConnectionDrawingPolicy(
+	virtual FConnectionDrawingPolicy* CreateConnectionDrawingPolicy(
 		int32 InBackLayerID,
 		int32 InFrontLayerID,
 		float InZoomFactor,

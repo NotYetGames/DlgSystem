@@ -73,27 +73,27 @@ public:
 	 * Do any object-specific cleanup required immediately after loading an object,
 	 * and immediately after any undo/redo.
 	 */
-	void PostLoad() override;
+	virtual void PostLoad() override;
 
 	/**
 	 * Called after importing property values for this object (paste, duplicate or .t3d import)
 	 * Allow the object to perform any cleanup for properties which shouldn't be duplicated or
 	 * are unsupported by the script serialization
 	 */
-	void PostEditImport() override;
+	virtual void PostEditImport() override;
 
 	/**
 	 * Called when a property on this object has been modified externally
 	 *
 	 * @param PropertyChangedEvent the property that was modified
 	 */
-	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	/**
 	 * This alternate version of PostEditChange is called when properties inside structs are modified.  The property that was actually modified
 	 * is located at the tail of the list.  The head of the list of the FStructProperty member variable that contains the property that was modified.
 	 */
-	void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent) override;
+	virtual void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent) override;
 
 	/**
 	 * Note that the object will be modified.  If we are currently recording into the
@@ -104,24 +104,24 @@ public:
 	 *								currently recording an active undo/redo transaction
 	 * @return true if the object was saved to the transaction buffer
 	 */
-	bool Modify(bool bAlwaysMarkDirty = true) override;
+	virtual bool Modify(bool bAlwaysMarkDirty = true) override;
 
 	//
 	// Begin UEdGraphNode interface
 	//
 
 	/** Gets the name of this node, shown in title bar */
-	FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 
 	/** Gets the tooltip to display when over the node */
-	FText GetTooltipText() const override;
-	FString GetDocumentationExcerptName() const override;
+	virtual FText GetTooltipText() const override;
+	virtual FString GetDocumentationExcerptName() const override;
 
 	/** Whether or not this node can be safely duplicated (via copy/paste, etc...) in the graph. */
-	bool CanDuplicateNode() const override { return !IsRootNode(); }
+	virtual bool CanDuplicateNode() const override { return !IsRootNode(); }
 
 	/** Perform any steps necessary prior to copying a node into the paste buffer */
-	void PrepareForCopying() override;
+	virtual void PrepareForCopying() override;
 
 	/**
 	 * Called when something external to this node has changed the connection list of any of the pins in the node
@@ -129,20 +129,20 @@ public:
 	 *	 us to do things like reconstruct the node safely without trashing pins we are already iterating on
 	 *   - Typically called after a user induced action like making a pin connection or a pin break
 	 */
-	void NodeConnectionListChanged() override
+	virtual void NodeConnectionListChanged() override
 	{
 		CheckDialogueNodeSyncWithGraphNode(true);
 		ApplyCompilerWarnings();
 	}
 
 	/** Called when the connection list of one of the pins of this node is changed in the editor */
-	void PinConnectionListChanged(UEdGraphPin* Pin) override;
+	virtual void PinConnectionListChanged(UEdGraphPin* Pin) override;
 
 	/** Gets a list of actions that can be done to this particular node */
 #if NY_ENGINE_VERSION >= 424
-	void GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
+	virtual void GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
 #else
-	void GetContextMenuActions(const FGraphNodeContextMenuBuilder& Context) const override;
+	virtual void GetContextMenuActions(const FGraphNodeContextMenuBuilder& Context) const override;
 #endif
 
 	/**
@@ -150,27 +150,27 @@ public:
 	 *
 	 * @param FromPin	The source pin that caused the new node to be created (typically a drag-release context menu creation).
 	 */
-	void AutowireNewNode(UEdGraphPin* FromPin) override;
+	virtual void AutowireNewNode(UEdGraphPin* FromPin) override;
 
 	// Begin UDialogueGraphNode_Base interface
 
 	/** Checks whether an input connection can be added to this node */
-	bool CanHaveInputConnections() const override;
+	virtual bool CanHaveInputConnections() const override;
 
 	/** Checks whether an output connection can be added from this node */
-	bool CanHaveOutputConnections() const override;
+	virtual bool CanHaveOutputConnections() const override;
 
 	/** Checks if this node has a output connection to the TargetNode. */
-	bool HasOutputConnectionToNode(const UEdGraphNode* TargetNode) const override;
+	virtual bool HasOutputConnectionToNode(const UEdGraphNode* TargetNode) const override;
 
 	/** Gets the background color of this node. */
-	FLinearColor GetNodeBackgroundColor() const override;
+	virtual FLinearColor GetNodeBackgroundColor() const override;
 
 	/** Perform any fixups (deep copies of associated data, etc...) necessary after a node has been copied in the editor. */
-	void PostCopyNode() override;
+	virtual void PostCopyNode() override;
 
 	/** Perform all checks */
-	void CheckAll() const override
+	virtual void CheckAll() const override
 	{
 #if DO_CHECK
 		Super::CheckAll();

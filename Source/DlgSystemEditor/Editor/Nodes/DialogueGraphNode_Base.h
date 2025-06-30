@@ -28,66 +28,66 @@ public:
 	 * Do any object-specific cleanup required immediately after loading an object,
 	 * and immediately after any undo/redo.
 	 */
-	void PostLoad() override;
+	virtual void PostLoad() override;
 
 	/**
 	 *  Called after duplication & serialization and before PostLoad. Used to e.g. make sure UStaticMesh's UModel gets copied as well.
 	 *  Note: NOT called on components on actor duplication (alt-drag or copy-paste).  Use PostEditImport as well to cover that case.
 	 */
-	void PostDuplicate(bool bDuplicateForPIE) override;
+	virtual void PostDuplicate(bool bDuplicateForPIE) override;
 
 	/**
 	 * Called after importing property values for this object (paste, duplicate or .t3d import)
 	 * Allow the object to perform any cleanup for properties which shouldn't be duplicated or
 	 * are unsupported by the script serialization
 	 */
-	void PostEditImport() override;
+	virtual void PostEditImport() override;
 
 	// UEdGraphNode interface.
 	/**
 	 * A chance to initialize a new node; called just once when a new node is created, before AutowireNewNode or AllocateDefaultPins is called.
 	 * This method is not called when a node is reconstructed, etc...
 	 */
-	void PostPlacedNewNode() override { RegisterListeners(); }
+	virtual void PostPlacedNewNode() override { RegisterListeners(); }
 
 	/** Allocate default pins for a given node, based only the NodeType, which should already be filled in. */
-	void AllocateDefaultPins() override;
+	virtual void AllocateDefaultPins() override;
 
 	/** Refresh the connectors on a node, preserving as many connections as it can. */
-	void ReconstructNode() override;
+	virtual void ReconstructNode() override;
 
 	/** Whether or not this node can be safely duplicated (via copy/paste, etc...) in the graph */
-	bool CanDuplicateNode() const override { return true; }
+	virtual bool CanDuplicateNode() const override { return true; }
 
 	/** Whether or not this node can be deleted by user action */
-	bool CanUserDeleteNode() const override { return true; }
+	virtual bool CanUserDeleteNode() const override { return true; }
 
 	/** Perform any steps necessary prior to copying a node into the paste buffer */
-	void PrepareForCopying() override { Super::PrepareForCopying(); }
+	virtual void PrepareForCopying() override { Super::PrepareForCopying(); }
 
 	/** IGNORED. Removes the specified pin from the node, preserving remaining pin ordering. */
-	void RemovePinAt(int32 PinIndex, EEdGraphPinDirection PinDirection) override {}
+	virtual void RemovePinAt(int32 PinIndex, EEdGraphPinDirection PinDirection) override {}
 
 	/** Whether or not struct pins belonging to this node should be allowed to be split or not. */
-	bool CanSplitPin(const UEdGraphPin* Pin) const override { return false; }
+	virtual bool CanSplitPin(const UEdGraphPin* Pin) const override { return false; }
 
 	/** Determine if this node can be created under the specified schema */
-	bool CanCreateUnderSpecifiedSchema(const UEdGraphSchema* Schema) const override
+	virtual bool CanCreateUnderSpecifiedSchema(const UEdGraphSchema* Schema) const override
 	{
 		return Schema->IsA(UDialogueGraphSchema::StaticClass());
 	}
 
 	/** Returns the link used for external documentation for the graph node. */
-	FString GetDocumentationLink() const override { return TEXT("Shared/DialogueGraphNode"); }
+	virtual FString GetDocumentationLink() const override { return TEXT("Shared/DialogueGraphNode"); }
 
 	/** Should we show the Palette Icon for this node on the node title */
-	bool ShowPaletteIconOnNode() const override { return true; }
+	virtual bool ShowPaletteIconOnNode() const override { return true; }
 
 	/** Gets the draw color of a node's title bar. */
-	FLinearColor GetNodeTitleColor() const override { return GetNodeBackgroundColor(); }
+	virtual FLinearColor GetNodeTitleColor() const override { return GetNodeBackgroundColor(); }
 
 	/** @return Icon to use in menu or on node */
-	FSlateIcon GetIconAndTint(FLinearColor& OutColor) const override
+	virtual FSlateIcon GetIconAndTint(FLinearColor& OutColor) const override
 	{
 		static const FSlateIcon Icon = FSlateIcon(NY_GET_APP_STYLE_NAME(), "Graph.StateNode.Icon");
 		OutColor = GetNodeBackgroundColor();

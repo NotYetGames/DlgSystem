@@ -27,23 +27,23 @@ public:
 	void Construct(const FArguments& InArgs, UDialogueGraphNode* InNode);
 
 	// Begin SWidget interface
-	void OnDragEnter(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override
+	virtual void OnDragEnter(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override
 	{
 		Super::OnDragEnter(MyGeometry, DragDropEvent);
 	}
-	void OnDragLeave(const FDragDropEvent& DragDropEvent) override
+	virtual void OnDragLeave(const FDragDropEvent& DragDropEvent) override
 	{
 		Super::OnDragLeave(DragDropEvent);
 	}
 
-	FReply OnDragOver(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override
+	virtual FReply OnDragOver(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override
 	{
 		return Super::OnDragOver(MyGeometry, DragDropEvent);
 	}
-	FReply OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override;
+	virtual FReply OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent) override;
 
-	FReply OnMouseButtonDoubleClick(const FGeometry& InMyGeometry, const FPointerEvent& InMouseEvent) override;
-	FReply OnMouseMove(const FGeometry& SenderGeometry, const FPointerEvent& MouseEvent) override
+	virtual FReply OnMouseButtonDoubleClick(const FGeometry& InMyGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual FReply OnMouseMove(const FGeometry& SenderGeometry, const FPointerEvent& MouseEvent) override
 	{
 		return Super::OnMouseMove(SenderGeometry, MouseEvent);
 	}
@@ -52,20 +52,19 @@ public:
 	// Begin SNodePanel::SNode Interface
 
 	/** Populate the widgets array with any overlay widgets to render */
-	TArray<FOverlayWidgetInfo> GetOverlayWidgets(bool bSelected, const FVector2D& WidgetSize) const override;
+	virtual TArray<FOverlayWidgetInfo> GetOverlayWidgets(bool bSelected, const FNYVector2f& WidgetSize) const override;
 
 	/** Populate the brushes array with any overlay brushes to render */
-	void GetOverlayBrushes(bool bSelected, const FVector2D WidgetSize, TArray<FOverlayBrushInfo>& Brushes) const override;
 	// End SNodePanel::SNode Interface
 
 	// Begin SGraphNode Interface
 
 	/** Update this GraphNode to match the data that it is observing */
-	void UpdateGraphNode() override;
+	virtual void UpdateGraphNode() override;
 	// End SGraphNode Interface
 
 	// Begin SDlgGraphNode_Base Interface
-	EVisibility GetNodeVisibility() const override
+	virtual EVisibility GetNodeVisibility() const override
 	{
 		return DialogueGraphNode && DialogueGraphNode->ShouldDrawNode() ? EVisibility::Visible : EVisibility::Hidden;
 	}
@@ -81,10 +80,10 @@ protected:
 	//
 
 	/** Override this to provide support for an 'expensive' tooltip widget that is only built on demand */
-	TSharedPtr<SToolTip> GetComplexTooltip() override { return Super::GetComplexTooltip(); }
+	virtual TSharedPtr<SToolTip> GetComplexTooltip() override { return Super::GetComplexTooltip(); }
 
 	/** Should we use low-detail node titles? Used by UpdateGraphNode() */
-	bool UseLowDetailNodeTitles() const override
+	virtual bool UseLowDetailNodeTitles() const override
 	{
 		if (const SGraphPanel* MyOwnerPanel = GetOwnerPanel().Get())
 		{
@@ -95,10 +94,10 @@ protected:
 	}
 
 	/** Return the desired comment bubble color */
-	FSlateColor GetCommentColor() const override { return DialogueGraphNode->GetNodeBackgroundColor(); }
+	virtual FSlateColor GetCommentColor() const override { return DialogueGraphNode->GetNodeBackgroundColor(); }
 
 	/* Populate a meta data tag with information about this graph node. sed by UpdateGraphNode() */
-	void PopulateMetaTag(class FGraphNodeMetaData* TagMeta) const override { Super::PopulateMetaTag(TagMeta); }
+	virtual void PopulateMetaTag(class FGraphNodeMetaData* TagMeta) const override { Super::PopulateMetaTag(TagMeta); }
 
 	//
 	// Begin own functions
