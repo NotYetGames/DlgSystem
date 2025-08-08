@@ -64,8 +64,8 @@ void UDlgNode_Speech::RebuildConstructedText(const UDlgContext& Context)
 
 bool UDlgNode_Speech::HandleNodeEnter(UDlgContext& Context, TSet<const UDlgNode*> NodesEnteredWithThisStep)
 {
-	RebuildConstructedText(Context);
 	const bool bResult = Super::HandleNodeEnter(Context, NodesEnteredWithThisStep);
+	RebuildConstructedText(Context);
 
 	// Handle virtual parent enter events for direct children
 	if (bResult && bIsVirtualParent && Context.IsValidNodeIndex(VirtualParentFirstSatisfiedDirectChildIndex))
