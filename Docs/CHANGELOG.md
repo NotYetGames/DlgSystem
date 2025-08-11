@@ -1,3 +1,7 @@
+# v18.0.6
+
+- Fix speech node text arguments being processed before enter events of the same node
+
 # v18.0.5
 
 - Fixed some graph issues with 5.6
