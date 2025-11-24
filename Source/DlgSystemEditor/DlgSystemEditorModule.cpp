@@ -60,11 +60,16 @@ void FDlgSystemEditorModule::StartupModule()
 #if NY_ENGINE_VERSION >= 424
 	// Fix blueprint Nativization https://gitlab.com/NotYetGames/DlgSystem/-/issues/28
 	const FString LongName = FPackageName::ConvertToLongScriptPackageName(TEXT("DlgSystemEditor"));
-	if (UPackage* Package = Cast<UPackage>(StaticFindObjectFast(UPackage::StaticClass(), nullptr, *LongName, false)))
+
+#if NY_ENGINE_VERSION >= 507
+	if (auto* Package = Cast<UPackage>(StaticFindObjectFast(UPackage::StaticClass(), nullptr, *LongName, EFindObjectFlags::None)))
+#else
+	if (auto* Package = Cast<UPackage>(StaticFindObjectFast(UPackage::StaticClass(), nullptr, *LongName, false)))
+#endif // NY_ENGINE_VERSION >= 507
 	{
 		Package->SetPackageFlags(PKG_EditorOnly);
 	}
-#endif
+#endif // NY_ENGINE_VERSION >= 424
 
 	UE_LOG(LogDlgSystemEditor, Log, TEXT("DlgSystemEditorModule: StartupModule"));
 	OnPostEngineInitHandle = FCoreDelegates::OnPostEngineInit.AddRaw(this, &Self::HandleOnPostEngineInit);

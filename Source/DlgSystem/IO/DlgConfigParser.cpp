@@ -7,6 +7,7 @@
 #include "UObject/UnrealType.h"
 #include "UObject/EnumProperty.h"
 #include "UObject/TextProperty.h"
+#include "UObject/StrProperty.h"
 
 #include "DlgSystem/NYReflectionHelper.h"
 
