@@ -581,7 +581,8 @@ void UDlgManager::GatherParticipantsRecursive(UObject* Object, TArray<UObject*>&
 	}
 
 	AlreadyVisited.Add(Object);
-	if (Object->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
+	if (Object->HasAllFlags(RF_Transactional) &&
+		Object->GetClass()->ImplementsInterface(UDlgDialogueParticipant::StaticClass()))
 	{
 		Array.Add(Object);
 	}
