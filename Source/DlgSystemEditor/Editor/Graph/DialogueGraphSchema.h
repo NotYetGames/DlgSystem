@@ -229,5 +229,12 @@ public:
 	 * of which end was dragged (only output pins have widgets in DlgSystem).
 	 */
 	static bool bRelinkingTail;
+
+	/**
+	 * The child node's input pin from the connection being relinked, set by the drawing policy.
+	 * Needed by CanRelinkConnectionToPin to validate the correct pair of nodes when relinking
+	 * the tail end (since the engine only passes the old source pin, not the old target pin).
+	 */
+	static UEdGraphPin* RelinkOldChildPin;
 #endif
 };

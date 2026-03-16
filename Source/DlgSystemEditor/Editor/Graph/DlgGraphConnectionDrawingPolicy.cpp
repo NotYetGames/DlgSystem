@@ -477,6 +477,7 @@ void FDlgGraphConnectionDrawingPolicy::Internal_DrawLineWithArrow(
 
 			// Tell the schema that if a relink happens, we're moving the tail (parent) end.
 			UDialogueGraphSchema::bRelinkingTail = true;
+			UDialogueGraphSchema::RelinkOldChildPin = Pin2;
 		}
 		else if (bEndHovered)
 		{
@@ -485,6 +486,7 @@ void FDlgGraphConnectionDrawingPolicy::Internal_DrawLineWithArrow(
 
 			// Tell the schema that if a relink happens, we're moving the head (child) end.
 			UDialogueGraphSchema::bRelinkingTail = false;
+			UDialogueGraphSchema::RelinkOldChildPin = nullptr;
 		}
 
 		// Draw orange grab handle circles only when not actively relinking

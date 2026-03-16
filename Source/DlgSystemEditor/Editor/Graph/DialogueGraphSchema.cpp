@@ -35,6 +35,7 @@ bool UDialogueGraphSchema::bDialogueNodeClassesInitialized = false;
 
 #if NY_ENGINE_VERSION >= 502
 bool UDialogueGraphSchema::bRelinkingTail = false;
+UEdGraphPin* UDialogueGraphSchema::RelinkOldChildPin = nullptr;
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -383,6 +384,11 @@ void UDialogueGraphSchema::DroppedAssetsOnNode(const TArray<FAssetData>& Assets,
 
 bool UDialogueGraphSchema::TryRelinkConnectionTarget(UEdGraphPin* SourcePin, UEdGraphPin* OldTargetPin, UEdGraphPin* NewTargetPin, const TArray<UEdGraphNode*>& InSelectedGraphNodes) const
 {
+	// Reset relink state regardless of outcome — this is the terminal call in the relink flow.
+	const bool bWasRelinkingTail = bRelinkingTail;
+	bRelinkingTail = false;
+	RelinkOldChildPin = nullptr;
+
 	if (!SourcePin || !OldTargetPin || !NewTargetPin)
 	{
 		return false;
@@ -407,10 +413,10 @@ bool UDialogueGraphSchema::TryRelinkConnectionTarget(UEdGraphPin* SourcePin, UEd
 		return false;
 	}
 
-	// bRelinkingTail is set by the drawing policy based on which arrow endpoint the user grabbed.
+	// bWasRelinkingTail was saved at the top of this function before resetting the static.
 	// true = dragged from the start of the arrow (changing the parent)
 	// false = dragged from the end of the arrow (changing the child)
-	const bool bRelinkingChild = !bRelinkingTail;
+	const bool bRelinkingChild = !bWasRelinkingTail;
 
 	UDialogueGraphNode* NewParentNode = bRelinkingChild ? OldParentNode : NewTargetNode;
 	UDialogueGraphNode* NewChildNode = bRelinkingChild ? NewTargetNode : OldChildNode;
@@ -436,6 +442,14 @@ bool UDialogueGraphSchema::TryRelinkConnectionTarget(UEdGraphPin* SourcePin, UEd
 
 	// Validate the new connection is allowed
 	if (NewParentNode == NewChildNode)
+	{
+		return false;
+	}
+	if (!NewParentNode->CanHaveOutputConnections())
+	{
+		return false;
+	}
+	if (!NewChildNode->CanHaveInputConnections())
 	{
 		return false;
 	}
@@ -507,7 +521,21 @@ bool UDialogueGraphSchema::IsConnectionRelinkingAllowed(UEdGraphPin* InPin) cons
 
 const FPinConnectionResponse UDialogueGraphSchema::CanRelinkConnectionToPin(const UEdGraphPin* OldSourcePin, const UEdGraphPin* TargetPinCandidate) const
 {
-	FPinConnectionResponse Response = CanCreateConnection(OldSourcePin, TargetPinCandidate);
+	// The engine always passes Pin1 (the old parent's output pin) as OldSourcePin, regardless of
+	// which end of the edge is being dragged. When relinking the tail (changing the parent), the
+	// actual new connection is TargetPinCandidate (new parent) -> old child, NOT OldSourcePin -> TargetPinCandidate.
+	// We need to validate the correct pair of nodes.
+	const UEdGraphPin* EffectiveSourcePin = OldSourcePin;
+	const UEdGraphPin* EffectiveTargetPin = TargetPinCandidate;
+
+	if (bRelinkingTail && RelinkOldChildPin)
+	{
+		// Relinking the tail: the new connection is TargetPinCandidate (new parent) -> RelinkOldChildPin (old child)
+		EffectiveSourcePin = TargetPinCandidate;
+		EffectiveTargetPin = RelinkOldChildPin;
+	}
+
+	FPinConnectionResponse Response = CanCreateConnection(EffectiveSourcePin, EffectiveTargetPin);
 	if (Response.Response != CONNECT_RESPONSE_DISALLOW)
 	{
 		Response.Message = LOCTEXT("RelinkEdgeMessage", "Relink edge");
