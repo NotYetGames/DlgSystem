@@ -173,6 +173,12 @@ public:
 	}
 	//~ End EdGraphSchema Interface
 
+#if NY_ENGINE_VERSION >= 502
+	virtual bool TryRelinkConnectionTarget(UEdGraphPin* SourcePin, UEdGraphPin* OldTargetPin, UEdGraphPin* NewTargetPin, const TArray<UEdGraphNode*>& InSelectedGraphNodes) const override;
+	virtual bool IsConnectionRelinkingAllowed(UEdGraphPin* InPin) const override;
+	virtual const FPinConnectionResponse CanRelinkConnectionToPin(const UEdGraphPin* OldSourcePin, const UEdGraphPin* TargetPinCandidate) const override;
+#endif // NY_ENGINE_VERSION >= 502
+
 	// Begin own functions
 	/**
 	 * Breaks all links from/to a single pin
@@ -213,4 +219,15 @@ private:
 
 	/** Whether the list of UDlgNode classes has been populated */
 	static bool bDialogueNodeClassesInitialized;
+
+#if NY_ENGINE_VERSION >= 502
+public:
+	/**
+	 * Flag set by the drawing policy to indicate which end of the edge is being relinked.
+	 * true = relinking the tail (start/parent), false = relinking the head (end/child).
+	 * This is needed because FDragConnection always reports the same SourcePin/TargetPin regardless
+	 * of which end was dragged (only output pins have widgets in DlgSystem).
+	 */
+	static bool bRelinkingTail;
+#endif
 };

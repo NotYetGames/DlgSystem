@@ -2,7 +2,10 @@
 #include "DlgGraphConnectionDrawingPolicy.h"
 
 #include "Rendering/DrawElements.h"
+#include "Brushes/SlateRoundedBoxBrush.h"
+#include "Styling/StyleColors.h"
 
+#include "DlgSystemEditor/Editor/Graph/DialogueGraphSchema.h"
 #include "DlgSystemEditor/Editor/Nodes/DialogueGraphNode.h"
 #include "DlgSystemEditor/Editor/Nodes/DialogueGraphNode_Edge.h"
 #include "DlgSystemEditor/Editor/Nodes/SDlgGraphNode_Edge.h"
@@ -315,6 +318,21 @@ void FDlgGraphConnectionDrawingPolicy::DrawPreviewConnector(
 	UEdGraphPin* Pin
 )
 {
+#if NY_ENGINE_VERSION >= 502
+	// When relinking the tail (start/parent) of an edge, the engine always passes the parent's
+	// output pin geometry as the start point. But we want the wire to originate from the child node
+	// instead. Since DrawPreviewConnector is called before Draw(), we don't have access to
+	// ArrangedNodes yet to look up the child node's geometry.
+	// Solution: defer the preview wire drawing to Draw() where we can look up the child node.
+	if (!RelinkConnections.IsEmpty() && UDialogueGraphSchema::bRelinkingTail)
+	{
+		bDeferredTailRelinkPreview = true;
+		DeferredPreviewEndpoint = EndPoint; // Mouse cursor position (absolute space)
+		DeferredPreviewPin = Pin;
+		return;
+	}
+#endif // NY_ENGINE_VERSION >= 502
+
 	FConnectionParams Params;
 	DetermineWiringStyle(Pin, nullptr, /*inout*/ Params);
 
@@ -351,8 +369,45 @@ void FDlgGraphConnectionDrawingPolicy::Draw(TMap<TSharedRef<SWidget>, FArrangedW
 		NodeWidgetMap.Add(ChildNode->GetNodeObj(), NodeIndex);
 	}
 
-	// Now draw
+	// Now draw all regular connections
 	Super::Draw(InPinGeometries, ArrangedNodes);
+
+#if NY_ENGINE_VERSION >= 502
+	// Draw deferred tail-relink preview wire.
+	// When the user drags the start (tail) of an arrow, the engine's preview connector would
+	// draw from the parent node to the cursor. We suppress that in DrawPreviewConnector and
+	// draw here instead, from the child node to the cursor — which is the correct direction.
+	if (bDeferredTailRelinkPreview && RelinkConnections.Num() > 0)
+	{
+		bDeferredTailRelinkPreview = false;
+
+		// RelinkConnections[0].TargetPin is the child node's input pin (set by our SplineOverlapResult remapping)
+		UEdGraphPin* ChildInputPin = RelinkConnections[0].TargetPin;
+		if (ChildInputPin)
+		{
+			UDialogueGraphNode* ChildNode = Cast<UDialogueGraphNode>(ChildInputPin->GetOwningNode());
+			if (ChildNode)
+			{
+				const int32* ChildNodeIndex = NodeWidgetMap.Find(ChildNode);
+				if (ChildNodeIndex)
+				{
+					const FGeometry& ChildGeom = ArrangedNodes[*ChildNodeIndex].Geometry;
+
+					// Draw from the closest point on the child node toward the mouse cursor
+					const FVector2f ChildAnchor = FGeometryHelper::FindClosestPointOnGeom(ChildGeom, DeferredPreviewEndpoint);
+
+					FConnectionParams Params;
+					DetermineWiringStyle(DeferredPreviewPin, nullptr, Params);
+
+					// Draw the arrow pointing from cursor to child (the new parent will be at cursor end)
+					Internal_DrawLineWithArrow(DeferredPreviewEndpoint, ChildAnchor, Params);
+				}
+			}
+		}
+
+		DeferredPreviewPin = nullptr;
+	}
+#endif // NY_ENGINE_VERSION >= 502
 }
 
 void FDlgGraphConnectionDrawingPolicy::Internal_DrawLineWithArrow(
@@ -371,16 +426,104 @@ void FDlgGraphConnectionDrawingPolicy::Internal_DrawLineWithArrow(
 	const FNYVector2f LengthBias = ArrowRadius.X * UnitDelta;
 	const FNYVector2f StartPoint = StartAnchorPoint + DirectionBias + LengthBias;
 	const FNYVector2f EndPoint = EndAnchorPoint + DirectionBias - LengthBias;
+	FLinearColor ArrowHeadColor = Params.WireColor;
 
+	const FVector2f ArrowDrawPos = EndPoint - ArrowRadius;
+	const float AngleInRadians = FMath::Atan2(DeltaPos.Y, DeltaPos.X);
+
+#if NY_ENGINE_VERSION >= 502
+	// Draw a line/spline (shorten slightly so it doesn't overlap with the arrowhead when semi-transparent)
+	DrawConnection(WireLayerID, StartPoint, EndPoint - (LengthBias * 0.8f), Params);
+
+	// Detect mouse hover on arrow endpoints for relink grab handles
+	const float ArrowLength = DeltaPos.Length();
+	const FVector2f StartHandlePoint = StartPoint + (LengthBias * 0.8f);
+
+	bool bStartHovered = false;
+	bool bEndHovered = false;
+	const FVector2f FVecMousePos = FVector2f(LocalMousePosition.X, LocalMousePosition.Y);
+	const FVector2f ClosestPoint = FMath::ClosestPointOnSegment2D(FVecMousePos, StartHandlePoint, EndPoint);
+	if ((ClosestPoint - FVecMousePos).Length() < RelinkHandleHoverRadius * ZoomFactor)
+	{
+		bStartHovered = (StartHandlePoint - LocalMousePosition).Length() < RelinkHandleHoverRadius * ZoomFactor;
+		bEndHovered = (EndPoint - LocalMousePosition).Length() < RelinkHandleHoverRadius * ZoomFactor;
+
+		// Set the spline overlap result so SGraphPanel can initiate a relink drag
+		// We must remap edge node pins to the parent/child node pins since those have actual SGraphPin widgets
+		const float SquaredDistToPin1 = (Params.AssociatedPin1 != nullptr) ? (StartPoint - LocalMousePosition).SizeSquared() : FLT_MAX;
+		const float SquaredDistToPin2 = (Params.AssociatedPin2 != nullptr) ? (EndPoint - LocalMousePosition).SizeSquared() : FLT_MAX;
+		UEdGraphPin* Pin1 = Params.AssociatedPin1; // output pin of parent node
+		UEdGraphPin* Pin2 = Params.AssociatedPin2; // input pin of edge node
+
+		// Forward edge node pins to the actual destination (child) node's input pin
+		// Only the parent/child nodes have SGraphPin widgets, the edge node does not
+		if (Pin2)
+		{
+			if (UDialogueGraphNode_Edge* EdgeNode = Cast<UDialogueGraphNode_Edge>(Pin2->GetOwningNode()))
+			{
+				if (EdgeNode->HasChildNode())
+				{
+					Pin2 = EdgeNode->GetChildNode()->GetInputPin();
+				}
+			}
+		}
+
+		if (bStartHovered)
+		{
+			// Hovering near the start (tail) of the arrow.
+			// Pin1 must be the parent node's output pin because it has an SGraphPin widget.
+			// SGraphPanel::OnMouseButtonDown uses GetPin1Handle() to find the pin widget to start the drag.
+			SplineOverlapResult = FGraphSplineOverlapResult(Pin1, Pin2, FMath::Min(SquaredDistToPin1, SquaredDistToPin2), 0.0f, FLT_MAX, true);
+
+			// Tell the schema that if a relink happens, we're moving the tail (parent) end.
+			UDialogueGraphSchema::bRelinkingTail = true;
+		}
+		else if (bEndHovered)
+		{
+			// Hovering near the end (head) of the arrow.
+			SplineOverlapResult = FGraphSplineOverlapResult(Pin1, Pin2, FMath::Min(SquaredDistToPin1, SquaredDistToPin2), FLT_MAX, 0.0f, true);
+
+			// Tell the schema that if a relink happens, we're moving the head (child) end.
+			UDialogueGraphSchema::bRelinkingTail = false;
+		}
+
+		// Draw orange grab handle circles only when not actively relinking
+		if (RelinkConnections.IsEmpty())
+		{
+			if (bStartHovered)
+			{
+				static FSlateRoundedBoxBrush RoundedBoxBrush = FSlateRoundedBoxBrush(FStyleColors::Foreground, ArrowImage->ImageSize.X * 0.5f);
+
+				FSlateDrawElement::MakeBox(DrawElementsList,
+					ArrowLayerID - 1,
+					FPaintGeometry(StartHandlePoint - ArrowRadius, ArrowImage->ImageSize * ZoomFactor, ZoomFactor),
+					&RoundedBoxBrush,
+					ESlateDrawEffect::None,
+					FStyleColors::AccentOrange.GetSpecifiedColor());
+			}
+			else if (bEndHovered)
+			{
+				static FSlateRoundedBoxBrush RoundedBoxBrush = FSlateRoundedBoxBrush(FStyleColors::Foreground, ArrowImage->ImageSize.X * 0.5f);
+
+				FSlateDrawElement::MakeBox(DrawElementsList,
+					ArrowLayerID - 1,
+					FPaintGeometry(EndPoint - ArrowRadius - (LengthBias * 0.2f), ArrowImage->ImageSize * ZoomFactor, ZoomFactor),
+					&RoundedBoxBrush,
+					ESlateDrawEffect::None,
+					FStyleColors::AccentOrange.GetSpecifiedColor());
+
+				ArrowHeadColor = FLinearColor::Black;
+			}
+		}
+	}
+#else
 	// Draw a line/spline
 	DrawConnection(WireLayerID, StartPoint, EndPoint, Params);
+#endif // NY_ENGINE_VERSION >= 502
 
 	// Draw the arrow
 	if (ArrowImage)
 	{
-		const FNYVector2f ArrowDrawPos = EndPoint - ArrowRadius;
-		const float AngleInRadians = FMath::Atan2(DeltaPos.Y, DeltaPos.X);
-
 		FSlateDrawElement::MakeRotatedBox(
 			DrawElementsList,
 			ArrowLayerID,
@@ -390,7 +533,7 @@ void FDlgGraphConnectionDrawingPolicy::Internal_DrawLineWithArrow(
 			AngleInRadians,
 			TOptional<FNYVector2f>(),
 			FSlateDrawElement::RelativeToElement,
-			Params.WireColor
+			ArrowHeadColor
 		);
 	}
 }
