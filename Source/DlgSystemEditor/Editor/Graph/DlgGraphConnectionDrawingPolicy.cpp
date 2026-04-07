@@ -10,6 +10,29 @@
 #include "DlgSystemEditor/Editor/Nodes/DialogueGraphNode_Edge.h"
 #include "DlgSystemEditor/Editor/Nodes/SDlgGraphNode_Edge.h"
 
+namespace
+{
+// Before UE 5.6, several Graph/Slate helper APIs still use FVector2D, while
+// this file uses FNYVector2f as a compatibility alias that becomes FVector2D
+// on older engines and FVector2f on newer ones.
+//
+// Keep conversions explicit at those engine API boundaries instead of relying
+// on implicit float/double vector conversions. ToSlateVector2D() is used when
+// calling Slate/Graph helpers, and ToDlgVector2() converts returned values back
+// into the plugin's cross-version vector type.
+template <typename VectorType>
+FVector2D ToSlateVector2D(const VectorType& Vector)
+{
+	return FVector2D(Vector.X, Vector.Y);
+}
+
+template <typename VectorType>
+FNYVector2f ToDlgVector2(const VectorType& Vector)
+{
+	return FNYVector2f(Vector.X, Vector.Y);
+}
+} // namespace
+
 /////////////////////////////////////////////////////
 // FDlgGraphConnectionDrawingPolicy
 FDlgGraphConnectionDrawingPolicy::FDlgGraphConnectionDrawingPolicy(
@@ -340,12 +363,12 @@ void FDlgGraphConnectionDrawingPolicy::DrawPreviewConnector(
 	if (Pin->Direction == EGPD_Output)
 	{
 		// From output pin, closest point on the SourceGeometry (source node) that goes to the EndPoint (destination node)
-		DrawSplineWithArrow(FGeometryHelper::FindClosestPointOnGeom(PinGeometry, EndPoint), EndPoint, Params);
+		DrawSplineWithArrow(ToDlgVector2(FGeometryHelper::FindClosestPointOnGeom(PinGeometry, ToSlateVector2D(EndPoint))), EndPoint, Params);
 	}
 	else
 	{
 		// From input pin, should never happen
-		DrawSplineWithArrow(FGeometryHelper::FindClosestPointOnGeom(PinGeometry, StartPoint), StartPoint, Params);
+		DrawSplineWithArrow(ToDlgVector2(FGeometryHelper::FindClosestPointOnGeom(PinGeometry, ToSlateVector2D(StartPoint))), StartPoint, Params);
 	}
 }
 
@@ -394,7 +417,7 @@ void FDlgGraphConnectionDrawingPolicy::Draw(TMap<TSharedRef<SWidget>, FArrangedW
 					const FGeometry& ChildGeom = ArrangedNodes[*ChildNodeIndex].Geometry;
 
 					// Draw from the closest point on the child node toward the mouse cursor
-					const FVector2f ChildAnchor = FGeometryHelper::FindClosestPointOnGeom(ChildGeom, DeferredPreviewEndpoint);
+					const FNYVector2f ChildAnchor = ToDlgVector2(FGeometryHelper::FindClosestPointOnGeom(ChildGeom, ToSlateVector2D(DeferredPreviewEndpoint)));
 
 					FConnectionParams Params;
 					DetermineWiringStyle(DeferredPreviewPin, nullptr, Params);
@@ -428,7 +451,7 @@ void FDlgGraphConnectionDrawingPolicy::Internal_DrawLineWithArrow(
 	const FNYVector2f EndPoint = EndAnchorPoint + DirectionBias - LengthBias;
 	FLinearColor ArrowHeadColor = Params.WireColor;
 
-	const FVector2f ArrowDrawPos = EndPoint - ArrowRadius;
+	const FNYVector2f ArrowDrawPos = EndPoint - ToDlgVector2(ArrowRadius);
 	const float AngleInRadians = FMath::Atan2(DeltaPos.Y, DeltaPos.X);
 
 #if NY_ENGINE_VERSION >= 502
@@ -436,22 +459,23 @@ void FDlgGraphConnectionDrawingPolicy::Internal_DrawLineWithArrow(
 	DrawConnection(WireLayerID, StartPoint, EndPoint - (LengthBias * 0.8f), Params);
 
 	// Detect mouse hover on arrow endpoints for relink grab handles
-	const float ArrowLength = DeltaPos.Length();
-	const FVector2f StartHandlePoint = StartPoint + (LengthBias * 0.8f);
+	const FNYVector2f StartHandlePoint = StartPoint + (LengthBias * 0.8f);
+	const FVector2D StartHandlePoint2D = ToSlateVector2D(StartHandlePoint);
+	const FVector2D EndPoint2D = ToSlateVector2D(EndPoint);
+	const FVector2D LocalMousePosition2D = ToSlateVector2D(LocalMousePosition);
 
 	bool bStartHovered = false;
 	bool bEndHovered = false;
-	const FVector2f FVecMousePos = FVector2f(LocalMousePosition.X, LocalMousePosition.Y);
-	const FVector2f ClosestPoint = FMath::ClosestPointOnSegment2D(FVecMousePos, StartHandlePoint, EndPoint);
-	if ((ClosestPoint - FVecMousePos).Length() < RelinkHandleHoverRadius * ZoomFactor)
+	const FVector2D ClosestPoint = FMath::ClosestPointOnSegment2D(LocalMousePosition2D, StartHandlePoint2D, EndPoint2D);
+	if ((ClosestPoint - LocalMousePosition2D).Length() < RelinkHandleHoverRadius * ZoomFactor)
 	{
-		bStartHovered = (StartHandlePoint - LocalMousePosition).Length() < RelinkHandleHoverRadius * ZoomFactor;
-		bEndHovered = (EndPoint - LocalMousePosition).Length() < RelinkHandleHoverRadius * ZoomFactor;
+		bStartHovered = (StartHandlePoint2D - LocalMousePosition2D).Length() < RelinkHandleHoverRadius * ZoomFactor;
+		bEndHovered = (EndPoint2D - LocalMousePosition2D).Length() < RelinkHandleHoverRadius * ZoomFactor;
 
 		// Set the spline overlap result so SGraphPanel can initiate a relink drag
 		// We must remap edge node pins to the parent/child node pins since those have actual SGraphPin widgets
-		const float SquaredDistToPin1 = (Params.AssociatedPin1 != nullptr) ? (StartPoint - LocalMousePosition).SizeSquared() : FLT_MAX;
-		const float SquaredDistToPin2 = (Params.AssociatedPin2 != nullptr) ? (EndPoint - LocalMousePosition).SizeSquared() : FLT_MAX;
+		const float SquaredDistToPin1 = (Params.AssociatedPin1 != nullptr) ? (ToSlateVector2D(StartPoint) - LocalMousePosition2D).SizeSquared() : FLT_MAX;
+		const float SquaredDistToPin2 = (Params.AssociatedPin2 != nullptr) ? (EndPoint2D - LocalMousePosition2D).SizeSquared() : FLT_MAX;
 		UEdGraphPin* Pin1 = Params.AssociatedPin1; // output pin of parent node
 		UEdGraphPin* Pin2 = Params.AssociatedPin2; // input pin of edge node
 
@@ -498,7 +522,7 @@ void FDlgGraphConnectionDrawingPolicy::Internal_DrawLineWithArrow(
 
 				FSlateDrawElement::MakeBox(DrawElementsList,
 					ArrowLayerID - 1,
-					FPaintGeometry(StartHandlePoint - ArrowRadius, ArrowImage->ImageSize * ZoomFactor, ZoomFactor),
+					FPaintGeometry(ToSlateVector2D(StartHandlePoint) - ArrowRadius, ArrowImage->ImageSize * ZoomFactor, ZoomFactor),
 					&RoundedBoxBrush,
 					ESlateDrawEffect::None,
 					FStyleColors::AccentOrange.GetSpecifiedColor());
@@ -509,7 +533,7 @@ void FDlgGraphConnectionDrawingPolicy::Internal_DrawLineWithArrow(
 
 				FSlateDrawElement::MakeBox(DrawElementsList,
 					ArrowLayerID - 1,
-					FPaintGeometry(EndPoint - ArrowRadius - (LengthBias * 0.2f), ArrowImage->ImageSize * ZoomFactor, ZoomFactor),
+					FPaintGeometry(EndPoint2D - ArrowRadius - ToSlateVector2D(LengthBias * 0.2f), ArrowImage->ImageSize * ZoomFactor, ZoomFactor),
 					&RoundedBoxBrush,
 					ESlateDrawEffect::None,
 					FStyleColors::AccentOrange.GetSpecifiedColor());

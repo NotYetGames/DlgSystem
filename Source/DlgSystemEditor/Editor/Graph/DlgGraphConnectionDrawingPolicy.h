@@ -97,7 +97,7 @@ protected:
 	 * DrawPreviewConnector is called before Draw(), so node geometries aren't available there.
 	 */
 	bool bDeferredTailRelinkPreview = false;
-	FVector2f DeferredPreviewEndpoint = FVector2f::ZeroVector;
+	FNYVector2f DeferredPreviewEndpoint = FNYVector2f::ZeroVector;
 	UEdGraphPin* DeferredPreviewPin = nullptr;
 #endif // NY_ENGINE_VERSION >= 502
 };
