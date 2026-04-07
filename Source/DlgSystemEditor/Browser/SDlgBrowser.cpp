@@ -1744,7 +1744,7 @@ TSharedRef<SHorizontalBox> SDlgBrowser::MakeCustomObjectIconAndTextWidget(
 		.OnClicked_Static(&Self::OnBrowseAssetClicked, Class)
 		[
 			SNew(SImage)
-			.Image(FNYAppStyle::GetBrush("PropertyWindow.Button_Browse"))
+			.Image(FNYAppStyle::GetBrush("Icons.BrowseContent"))
 			.ColorAndOpacity(FSlateColor::UseForeground())
 		]
 	];
@@ -1764,7 +1764,7 @@ TSharedRef<SHorizontalBox> SDlgBrowser::MakeCustomObjectIconAndTextWidget(
 		.OnClicked_Static(&Self::OnOpenAssetClicked, Class, OpenType, FunctionNameToOpen)
 		[
 			SNew(SImage)
-			 .Image(FNYAppStyle::GetBrush("PropertyWindow.Button_Edit"))
+			 .Image(FNYAppStyle::GetBrush("Icons.Edit"))
 			 .ColorAndOpacity( FSlateColor::UseForeground() )
 		]
 	];

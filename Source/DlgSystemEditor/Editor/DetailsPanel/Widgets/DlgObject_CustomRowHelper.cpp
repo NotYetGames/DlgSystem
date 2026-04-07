@@ -78,7 +78,7 @@ void FDlgObject_CustomRowHelper::Update()
 		.OnClicked(this, &Self::OnBrowseClicked)
 		[
 			SNew(SImage)
-			.Image(FNYAppStyle::GetBrush("PropertyWindow.Button_Browse"))
+			.Image(FNYAppStyle::GetBrush("Icons.BrowseContent"))
 			.ColorAndOpacity(FSlateColor::UseForeground())
 		]
 	];
@@ -98,7 +98,7 @@ void FDlgObject_CustomRowHelper::Update()
 		.OnClicked(this, &Self::OnOpenClicked)
 		[
 			SNew(SImage)
-			 .Image(FNYAppStyle::GetBrush("PropertyWindow.Button_Edit"))
+			 .Image(FNYAppStyle::GetBrush("Icons.Edit"))
 			 .ColorAndOpacity( FSlateColor::UseForeground() )
 
 			// SNew(STextBlock)
