@@ -3,7 +3,7 @@
 
 #include "PropertyHandle.h"
 #include "Widgets/Input/SSearchBox.h"
-#include "Widgets/Views/STileView.h"
+#include "Widgets/Views/SListView.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Layout/WidgetPath.h"
 
@@ -37,6 +37,7 @@ void SDlgTextPropertyPickList::Construct(const FArguments& InArgs)
 	OnTextCommitted = InArgs._OnTextCommitted;
 	OnKeyDownHandler = InArgs._OnKeyDownHandler;
 	bDelayChangeNotificationsWhileTyping = InArgs._DelayChangeNotificationsWhileTyping;
+	SuggestionTextJustification = InArgs._SuggestionTextJustification;
 
 	// Assign the main horizontal box of this widget
 	TSharedPtr<SHorizontalBox> ContentBox = SNew(SHorizontalBox);
@@ -274,12 +275,11 @@ TSharedRef<SWidget> SDlgTextPropertyPickList::GetListViewWidget()
 		.Padding(0)
 		.BorderImage(FNYAppStyle::GetBrush("NoBorder"));
 
-	ListViewWidget = SNew(STileView<TextListItem>)
+	ListViewWidget = SNew(SListView<TextListItem>)
 		.SelectionMode(ESelectionMode::Single)
 		.ListItemsSource(&Suggestions)
-		.OnGenerateTile(this, &Self::HandleListGenerateRow)
-		.OnSelectionChanged(this, &Self::HandleListSelectionChanged)
-		.ItemHeight(20);
+		.OnGenerateRow(this, &Self::HandleListGenerateRow)
+		.OnSelectionChanged(this, &Self::HandleListSelectionChanged);
 
 	ListViewContainerWidget->SetContent(CreateShadowOverlay(ListViewWidget.ToSharedRef()));
 
@@ -295,6 +295,7 @@ TSharedRef<ITableRow> SDlgTextPropertyPickList::HandleListGenerateRow(TextListIt
 			SNew(STextBlock)
 			.Text(FText::FromString(*Text.Get()))
 			.HighlightText(this, &Self::GetHighlightText)
+			.Justification(SuggestionTextJustification)
 		];
 }
 

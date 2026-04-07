@@ -37,6 +37,7 @@ public:
 		, _OnTextCommitted()
 		, _OnKeyDownHandler()
 		, _DelayChangeNotificationsWhileTyping(true)
+		, _SuggestionTextJustification(ETextJustify::Center)
 	{}
 		/** The Property handle of the property this widget represents. */
 		SLATE_ARGUMENT(TSharedPtr<IPropertyHandle>, PropertyHandle)
@@ -86,6 +87,9 @@ public:
 
 		/** Whether the SearchBox should delay notifying listeners of text changed events until the user is done typing */
 		SLATE_ARGUMENT(bool, DelayChangeNotificationsWhileTyping)
+
+		/** Text justification for the suggestion list items */
+		SLATE_ARGUMENT(ETextJustify::Type, SuggestionTextJustification)
 	SLATE_END_ARGS()
 
 	/**
@@ -288,4 +292,7 @@ private:
 
 	/** Do we display the context sensitive checkbox? */
 	bool bUseStringSuggestions = false;
+
+	/** Text justification for the suggestion list items */
+	ETextJustify::Type SuggestionTextJustification = ETextJustify::Center;
 };
