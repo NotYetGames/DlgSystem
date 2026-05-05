@@ -122,7 +122,7 @@ public:
 	 * Checks to see if this widget currently has the keyboard focus
 	 * @return  True if this widget has keyboard focus
 	 */
-	bool HasKeyboardFocus() const override { return InputTextWidget->HasKeyboardFocus(); }
+	bool HasKeyboardFocus() const override { return InputTextWidget.IsValid() && InputTextWidget->HasKeyboardFocus(); }
 
 	/**
 	 * Called when focus is given to this widget.  This event does not bubble.
@@ -134,7 +134,7 @@ public:
 	FReply OnFocusReceived(const FGeometry& MyGeometry, const FFocusEvent& InFocusEvent) override
 	{
 		// Forward keyboard focus to our editable text widget
-		if (IsEnabled() && ComboButtonWidget.IsValid() && ComboButtonWidget->IsEnabled())
+		if (IsEnabled() && ComboButtonWidget.IsValid() && ComboButtonWidget->IsEnabled() && InputTextWidget.IsValid())
 		{
 			return FReply::Handled().SetUserFocus(InputTextWidget.ToSharedRef(), InFocusEvent.GetCause());
 		}

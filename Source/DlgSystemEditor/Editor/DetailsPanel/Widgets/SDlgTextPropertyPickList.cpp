@@ -97,8 +97,11 @@ FReply SDlgTextPropertyPickList::OnPreviewKeyDown(const FGeometry& MyGeometry, c
 	if (InKeyEvent.GetKey() == EKeys::Escape)
 	{
 		// Clear any selection first to prevent the current selection being set in the text box
-		ListViewWidget->ClearSelection();
-		return FReply::Handled();
+		if (ListViewWidget.IsValid())
+		{
+			ListViewWidget->ClearSelection();
+			return FReply::Handled();
+		}
 	}
 
 	return FReply::Unhandled();
