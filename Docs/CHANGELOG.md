@@ -1,3 +1,10 @@
+# v18.0.7
+
+- Add editor support for relinking dialogue graph edge heads and tails while preserving edge data
+- Skip class default and archetype objects when gathering dialogue participants
+- Fix pre-5.6 compilation and missing Slate brush warnings
+- Improve text property pick list rows to use full-width selection and configurable text justification
+
 # v18.0.6
 
 - Fix speech node text arguments being processed before enter events of the same node
