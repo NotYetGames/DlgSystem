@@ -96,7 +96,7 @@ FReply SDlgTextPropertyPickList::OnPreviewKeyDown(const FGeometry& MyGeometry, c
 {
 	if (InKeyEvent.GetKey() == EKeys::Escape)
 	{
-		// Clear any selection first to prevent the currently selection being set in the text box
+		// Clear any selection first to prevent the current selection being set in the text box
 		ListViewWidget->ClearSelection();
 		return FReply::Handled();
 	}
@@ -337,7 +337,7 @@ void SDlgTextPropertyPickList::HandleTextCommitted(const FText& NewText, ETextCo
 	FText CommittedText;
 	if (SelectedSuggestion.IsValid() && CommitType != ETextCommit::OnCleared)
 	{
-		// Pressed selected a suggestion, set the text
+		// Pressed a selected suggestion, set the text
 		CommittedText = FText::FromString(*SelectedSuggestion.Get());
 	}
 	else
@@ -364,7 +364,7 @@ void SDlgTextPropertyPickList::HandleTextCommitted(const FText& NewText, ETextCo
 	SetText(CommittedText);
 	OnTextCommitted.ExecuteIfBound(CommittedText, CommitType);
 
-	// Only close the menu when the user did not loose focus
+	// Only close the menu when the user did not lose focus
 	if (CommitType != ETextCommit::OnUserMovedFocus)
 	{
 		ComboButtonWidget->SetIsOpen(false);
@@ -435,7 +435,7 @@ void SDlgTextPropertyPickList::HandleListSelectionChanged(TextListItem NewValue,
 		else
 		{
 			// Can happen in the case selecting the option directly (SelectInfo == ESelectInfo::Direct)
-			// HandleTextCommitted will be called automatically because it looses focus, but we want
+			// HandleTextCommitted will be called automatically because it loses focus, but we want
 			// to close the menu explicitly
 			ComboButtonWidget->SetIsOpen(false);
 		}
@@ -455,7 +455,7 @@ void SDlgTextPropertyPickList::UpdateSuggestionList()
 	const FString TypedText = InputTextWidget.IsValid() ? InputTextWidget->GetText().ToString() : TEXT("");
 	Suggestions.Empty();
 
-	// Find out what pool of suggestions ot use
+	// Find out what pool of suggestions to use
 	TArray<FString> AllSuggestions;
 	if (bUseStringSuggestions)
 	{
@@ -482,7 +482,7 @@ void SDlgTextPropertyPickList::UpdateSuggestionList()
 	}
 
 
-	// Must have typed something, but that something must be different than the set value
+	// Must have typed something, but that something must be different from the set value
 	const bool bTypedSomething = TypedText.Len() > 0 && TypedText != TextAttribute.Get().ToString();
 	for (const FString& Suggestion : AllSuggestions)
 	{

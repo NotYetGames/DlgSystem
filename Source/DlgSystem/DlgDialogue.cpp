@@ -117,12 +117,12 @@ void UDlgDialogue::PostLoad()
 		StartNodes.Add(StartNode_DEPRECATED);
 	}
 
-	// Create thew new GUID
+	// Create the new GUID
 	if (!HasGUID())
 	{
 		RegenerateGUID();
 		FDlgLogger::Get().Debugf(
-			TEXT("Creating new GUID = `%s` for Dialogue = `%s` because of of invalid GUID."),
+			TEXT("Creating new GUID = `%s` for Dialogue = `%s` because of an invalid GUID."),
 			*GUID.ToString(), *GetPathName()
 		);
 	}

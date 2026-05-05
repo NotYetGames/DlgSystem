@@ -83,7 +83,7 @@ private:
 	/* Called when a new row is being generated */
 	TSharedRef<ITableRow> HandleGenerateRow(TSharedPtr<FDlgSearchResult> InItem, const TSharedRef<STableViewBase>& OwnerTable);
 
-	/** Callback to build the context menu when right clicking in the tree */
+	/** Callback to build the context menu when right-clicking in the tree */
 	TSharedPtr<SWidget> HandleContextMenuOpening();
 
 	/** Fills in the filter menu. */

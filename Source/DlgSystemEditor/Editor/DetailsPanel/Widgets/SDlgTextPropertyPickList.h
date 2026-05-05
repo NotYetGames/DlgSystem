@@ -45,7 +45,7 @@ public:
 		/** If set to true, AvailableStringSuggestions is used instead of AvailableSuggestions */
 		SLATE_ARGUMENT(bool, UseStringSuggestions)
 
-		/** Does this pick list has a checkbox for ContextSensitive suggestions? */
+		/** Does this pick list have a checkbox for ContextSensitive suggestions? */
 		SLATE_ARGUMENT(bool, HasContextCheckbox)
 
 		/** The check status of the context sensitive checkbox. */
@@ -57,14 +57,14 @@ public:
 		/** The tooltip text for the context checkbox. */
 		SLATE_ATTRIBUTE(FText, ContextCheckBoxToolTipText)
 
-		/** Tooltip text to displayed all over  the place. */
+		/** Tooltip text to display all over the place. */
 		SLATE_ATTRIBUTE(FText, ToolTipText)
 
 		/** Hint text to display for the search text when there is no value */
 		SLATE_ATTRIBUTE(FText, HintText)
 
 		/**
-		 *  All possible suggestions for the search text If the context sensitive checkbox is true.
+		 *  All possible suggestions for the search text if the context sensitive checkbox is true.
 		 *  Aka the current context
 		 *  Only used if HasContextCheckbox is true.
 		 */
@@ -171,7 +171,7 @@ private:
 	/** Gets the text to highlight in the suggestion list */
 	FText GetHighlightText() const { return InputTextWidget->GetText(); }
 
-	/** Adds A SScrollBorder over a Table */
+	/** Adds an SScrollBorder over a Table */
 	TSharedRef<SWidget> CreateShadowOverlay(TSharedRef<STableViewBase> Table) const
 	{
 		return SNew(SScrollBorder, Table)
@@ -189,7 +189,7 @@ private:
 	/** Handles when text in the editable text box changed */
 	void HandleTextChanged(const FText& InSearchText);
 
-	/** Handles for when text in the editable text box is commited (pressed enter/click). */
+	/** Handles for when text in the editable text box is committed (pressed enter/click). */
 	void HandleTextCommitted(const FText& InSearchText, ETextCommit::Type CommitInfo);
 
 	/** Handles key down events to the editable text widget */
@@ -226,7 +226,7 @@ private:
 	/** All possible suggestions for the search text. When there is no context sensitive checkbox or the context sensitive checkbox is unchecked. */
 	TAttribute<TArray<FName>> SuggestionAttributes;
 
-	/** Used when the context sensitive checkbox is cehcked */
+	/** Used when the context sensitive checkbox is checked */
 	TAttribute<TArray<FName>> CurrentContextSuggestionAttributes;
 
 	/** Text Value to display for the search text/Combo Button */
@@ -268,7 +268,7 @@ private:
 	/** The context sensitive checkbox widget. */
 	TSharedPtr<SCheckBox> ContextCheckBoxWidget;
 
-	/** The menu content widget displyed on click. */
+	/** The menu content widget displayed on click. */
 	TSharedPtr<SVerticalBox> MenuWidget;
 
 	/** The editable text field aka the search box */

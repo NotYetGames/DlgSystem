@@ -15,7 +15,7 @@
 
 # v18.0.4
 
-- Fix crash in UE 5.6 when right clicking in an empty area in the graph editor
+- Fix crash in UE 5.6 when right-clicking in an empty area in the graph editor
 
 # v18.0.3
 
@@ -32,7 +32,7 @@
 # v18
 
 ### Upgrade Notes
-- From unreal 5.0, blueprint floats are actually double, this wasn't taken into account by the plugin (creating some issues) so it still used floats internally.
+- From Unreal 5.0, blueprint floats are actually double, this wasn't taken into account by the plugin (creating some issues) so it still used floats internally.
 This was changed in this [commit](https://github.com/NotYetGames/DlgSystem/commit/6ae9b6151ccb6c340db5bf29f8c5a92980a0fd12).
 
 ### New Features
@@ -57,7 +57,7 @@ This was changed in this [commit](https://github.com/NotYetGames/DlgSystem/commi
   - TSubclassOf forces the editor to load the class when it's loading
 settings which can be far too early for certain classes that reference
 objects in the project instead of the engine.
-- Fixed some non unity build errors.
+- Fixed some non-unity build errors.
 
 # v16.0.1 & v16.0.2
 
@@ -90,9 +90,9 @@ A new FindFirstObject API was added in 5.1 that is used internally by the engine
 - **Added** `DlgParticipantName` **variable type** with custom picker which can be used to reference and access participants in custom events and conditions.
 - **Added** different possible behaviors to handle non-end nodes without any satisfied children (Project Settings -> Editor -> Dialogue -> NoSatisfiedChildBehavior).
 - **Added new node type:** `Proxy Node`. It jumps the execution to the target node without having a visible connection to it, can be used to reduce edge overlaps.
-- `DlgContext` is modified to be more extandable, memory access is routed through it to support custom implementations (Credit goes to Marat Yakupov).
+- `DlgContext` is modified to be more extendable, memory access is routed through it to support custom implementations (Credit goes to Marat Yakupov).
 - **Added support for multiple** `Start` **nodes** to reduce visual complexity. `Start` nodes are evaluated from left to right until one has a satisfied child.
-- The Random mode of the `Selector`node was exteneded to **support avoiding repetition and cycling through options.**
+- The Random mode of the `Selector` node was extended to **support avoiding repetition and cycling through options.**
 - `Speech` and `Selector` node colors are darker, more information is displayed on `Selector` nodes.
 - Added custom node support, see `UDlgNode_Custom`
 - **Added `EnterRestriction` parameter** on DlgNodes - can be used as a quicker way to make a node only enterable once
@@ -241,7 +241,7 @@ This was done because using Arrays/Sets reference in BP can lead to some weird b
 - **Important Bug Fixed** - Fix crash on compile (opened the dialogue asset or packaged the project) for some dialogues that have edges with the `WasNodeVisited` or `HasSatisfiedChild` Condition.
 
 - **Set** namespace and key for default edge texts for "Finish" and "Next"
-- **Add** the follow new methods to the **Dialogue Context**:
+- **Add** the following new methods to the **Dialogue Context**:
   - `IsValidOptionIndex`
   - `IsValidAllOptionIndex`
   - `GetActiveNodeParticipantDisplayName`
@@ -263,7 +263,7 @@ Add the following new methods to the Dialogue:
 - `GetNode`
 - `GetNodeFromGUID`
 
-Add the follow new methods to the Dialogue Context:
+Add the following new methods to the Dialogue Context:
 - `GetActiveNodeGUID`
 - `IsValidNodeGUID`
 - `GetGUIDForNodeIndex`
@@ -324,7 +324,7 @@ as an export method in the next version
   - `UDlgContext::CanBeStarted` is now a static function
 - **Make** the Node **Children** Array to be view only (read only) and set it as settable option inside the settings (show by default)
 - **Add** to whitelist `Linux Arm 64, Mac, Android, IOS, TVOS, HTML5, XboxOne, Switch, PS4, HoloLens, Lumin`. For most of these platforms we can't build ourselves but the runtime module should be platform agnostic anyways.
-- **Add** The Dialogue Context as the first argument to `UDlgConditionCustom::IsConditionMet`. Only C++ users will have to add it manually in  their code.
+- **Add** the Dialogue Context as the first argument to `UDlgConditionCustom::IsConditionMet`. Only C++ users will have to add it manually in their code.
 - **Change** Plugin category to be `Misc`
 - **Add** better tooltips to events/conditions/text arguments, it actually tells you what method it calls and where it calls it (dialogue interface or class of the participant).
 - **Add** Custom Text Argument.
@@ -412,7 +412,7 @@ as an export method in the next version
 
 - **Improvement** Reflection code is now engine version independent (so that it supports 4.25 more nicely)
 
-- **Improvement** The Dialogue system gets the World from the game automatically (see `UDlgManager::GetDialogueWorld`), if you want to or need to set the  world manually, call `UDlgManager::SetPersistentWorldContextObject`
+- **Improvement** The Dialogue system gets the World from the game automatically (see `UDlgManager::GetDialogueWorld`), if you want to or need to set the world manually, call `UDlgManager::SetPersistentWorldContextObject`
 
 - **Fix** Null pointer check for LoadedWorld
 - **Fix** Blueprint Nativization for 4.24

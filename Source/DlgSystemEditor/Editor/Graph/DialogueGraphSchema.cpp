@@ -80,7 +80,7 @@ void UDialogueGraphSchema::GetContextMenuActions(UToolMenu* Menu, UGraphNodeCont
 {
 	if (Context->Node && !Context->bIsDebugging)
 	{
-		// Menu for right clicking on node
+		// Menu for right-clicking on node
 		FToolMenuSection& Section = Menu->AddSection("DialogueGraphSchemaNodeActions", LOCTEXT("NodeActionsMenuHeader", "Node Actions"));
 
 		// This action is handled in UDialogueGraphSchema::BreakNodeLinks, and the action is registered in SGraphEditorImpl (not by us)
@@ -103,7 +103,7 @@ void UDialogueGraphSchema::GetContextMenuActions(
 {
 	if (InGraphNode && !bIsDebugging)
 	{
-		// Menu for right clicking on node
+		// Menu for right-clicking on node
 		MenuBuilder->BeginSection("DialogueGraphSchemaNodeActions", LOCTEXT("NodeActionsMenuHeader", "Node Actions"));
 		{
 			// This action is handled in UDialogueGraphSchema::BreakNodeLinks, and the action is registered in SGraphEditorImpl (not by us)

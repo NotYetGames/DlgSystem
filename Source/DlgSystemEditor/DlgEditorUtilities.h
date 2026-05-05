@@ -230,7 +230,7 @@ public:
 	// @return True on success or false on failure.
 	static bool SaveAllDialogues();
 
-	// Deletes all teh dialogues text files
+	// Deletes all the dialogues text files
 	// @return True on success or false on failure.
 	static bool DeleteAllDialoguesTextFiles();
 

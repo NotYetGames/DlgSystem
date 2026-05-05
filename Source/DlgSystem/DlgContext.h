@@ -183,8 +183,8 @@ public:
 	TArray<FDlgEdge>& GetMutableOptionsArray() { return AvailableChildren; }
 
 	//
-	//  Use these functions bellow if you don't care about unsatisfied player options:
-	//  DO NOT missuse the indices above and bellow! The functions above expect < GetOptionsNum(), bellow < GetAllOptionsNum()
+	//  Use these functions below if you don't care about unsatisfied player options:
+	//  DO NOT misuse the indices above and below! The functions above expect < GetOptionsNum(), below < GetAllOptionsNum()
 	//
 
 	// Gets the number of options (both satisfied and unsatisfied ones are counted)

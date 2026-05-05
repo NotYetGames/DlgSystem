@@ -59,7 +59,7 @@ void UDlgNode::PostLoad()
 	Super::PostLoad();
 
 	// NOTE: We don't this here but instead we do it in the compile phase
-	// Create thew new GUID
+	// Create the new GUID
 	// if (!HasGUID())
 	// {
 	// 	RegenerateGUID();

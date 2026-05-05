@@ -10,7 +10,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 /**
- * Widget that appears after right clicking on the graph
+ * Widget that appears after right-clicking on the graph
  */
 class DLGSYSTEMEDITOR_API SDlgDialogueActionMenu : public SBorder
 {

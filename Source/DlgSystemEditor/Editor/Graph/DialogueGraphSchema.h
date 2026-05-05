@@ -33,7 +33,7 @@ public:
 
 	//~ Begin EdGraphSchema Interface
 	/**
-	 * Get all actions that can be performed when right clicking on a graph or drag-releasing on a graph from a pin
+	 * Get all actions that can be performed when right-clicking on a graph or drag-releasing on a graph from a pin
 	 *
 	 * @param [in,out]	ContextMenuBuilder	The context (graph, dragged pin, etc...) and output menu builder.
 	 */

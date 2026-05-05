@@ -23,7 +23,7 @@ void SDlgNodeOverlayWidget::Construct(const FArguments& InArgs)
 		.HAlign(HAlign_Fill)
 		.VAlign(VAlign_Fill)
 		[
-			// Add a dummy box here to make sure the widget doesnt get smaller than the brush
+			// Add a dummy box here to make sure the widget doesn't get smaller than the brush
 			SNew(SBox)
 			.WidthOverride(CircleBrush->ImageSize.X)
 			.HeightOverride(CircleBrush->ImageSize.Y)

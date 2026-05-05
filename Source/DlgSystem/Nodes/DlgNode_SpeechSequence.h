@@ -102,7 +102,7 @@ public:
 	//
 
 	// Useful for multiplayer when you replicate the GetSpeechSequenceIndex
-	// This is different from OptionSelected  because this just sets the ActualIndex = OptionIndex instead of incremeting
+	// This is different from OptionSelected because this just sets the ActualIndex = OptionIndex instead of incrementing
 	// the Actual Index
 	// TODO: Proper replicate ActualIndex instead of this hack and all the subnodes
 	bool OptionSelectedFromReplicated(int32 OptionIndex, bool bFromAll, UDlgContext& Context);
