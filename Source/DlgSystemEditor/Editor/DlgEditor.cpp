@@ -32,6 +32,9 @@
 #include "DlgSystemEditor/Search/DlgSearchManager.h"
 #include "DlgSystemEditor/Search/SDlgFindInDialogues.h"
 #include "Graph/SchemaActions/DlgConvertSpeechNodesToSpeechSequence_GraphSchemaAction.h"
+#include "DlgSystemEditor/IO/DlgJsonDialogueHelper.h"
+#include "DesktopPlatformModule.h"
+#include "IDesktopPlatform.h"
 
 #define LOCTEXT_NAMESPACE "DialogueEditor"
 
@@ -668,6 +671,18 @@ void FDlgEditor::BindEditorCommands()
 		FExecuteAction::CreateLambda([this] { SummonSearchUI(true); })
 	);
 
+	// Import JSON
+	ToolkitCommands->MapAction(
+		FDlgCommands::Get().ImportDialogueJSON,
+		FExecuteAction::CreateSP(this, &Self::OnCommandImportDialogueJSON)
+	);
+
+	// Export JSON
+	ToolkitCommands->MapAction(
+		FDlgCommands::Get().ExportDialogueJSON,
+		FExecuteAction::CreateSP(this, &Self::OnCommandExportDialogueJSON)
+	);
+
 	// Map the global actions
 	FDlgSystemEditorModule::MapActionsForFileMenuExtender(ToolkitCommands);
 	FDlgSystemEditorModule::MapActionsForHelpMenuExtender(ToolkitCommands);
@@ -783,6 +798,8 @@ void FDlgEditor::ExtendToolbar()
 					);
 
 					ToolbarBuilder.AddToolBarButton(FDlgCommands::Get().ToggleShowEventsAndConditions);
+					ToolbarBuilder.AddToolBarButton(FDlgCommands::Get().ImportDialogueJSON);
+					ToolbarBuilder.AddToolBarButton(FDlgCommands::Get().ExportDialogueJSON);
 				}
 				ToolbarBuilder.EndSection();
 			})
@@ -1456,5 +1473,127 @@ void FDlgEditor::UpdateNodesHighlightedByProxy(const TSet<UObject*>& NewSelectio
 
 // End of own functions
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void FDlgEditor::OnCommandImportDialogueJSON()
+{
+	check(DialogueBeingEdited);
+
+	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
+	if (!DesktopPlatform)
+	{
+		return;
+	}
+
+	TArray<FString> OpenFilenames;
+	const bool bOpened = DesktopPlatform->OpenFileDialog(
+		FSlateApplication::Get().FindBestParentWindowHandleForDialogs(nullptr),
+		LOCTEXT("ImportDialogueJSON_Title", "Import Dialogue JSON").ToString(),
+		FPaths::ProjectDir(),
+		TEXT(""),
+		TEXT("Dialogue JSON (*.dlg_human.json)|*.dlg_human.json"),
+		EFileDialogFlags::None,
+		OpenFilenames
+	);
+
+	if (!bOpened || OpenFilenames.Num() == 0)
+	{
+		return;
+	}
+
+	const FString& FilePath = OpenFilenames[0];
+	FString ErrorMessage;
+	
+	// Try regular import first (updates existing nodes only)
+	if (FDlgJsonDialogueHelper::ImportDialogueFromJsonFile(FilePath, DialogueBeingEdited, &ErrorMessage))
+	{
+		Refresh(false);
+		FPlatformMisc::MessageBoxExt(EAppMsgType::Ok,
+			*FString::Printf(TEXT("Successfully imported dialogue from:\n%s"), *FilePath),
+			TEXT("Import Successful"));
+		return;
+	}
+	
+	// Regular import failed - offer destructive import with WARNING
+	const EAppReturnType::Type WarningResult = FPlatformMisc::MessageBoxExt(EAppMsgType::YesNo,
+		*FString::Printf(
+			TEXT("WARNING!\n\n"
+				 "Import failed with error:\n%s\n\n"
+				 "The dialogue structure does not match the JSON file.\n\n"
+				 "Do you want to DESTRUCTIVELY OVERWRITE the dialogue?\n"
+				 "This will DELETE all existing nodes and recreate them from the JSON file.\n\n"
+				 "File: %s"),
+			*ErrorMessage, *FilePath),
+		TEXT("WARNING! Destructive Import"));
+	
+	if (WarningResult == EAppReturnType::Yes)
+	{
+		FString DestructiveError;
+		if (FDlgJsonDialogueHelper::ImportDialogueFromJsonFileDestructive(FilePath, DialogueBeingEdited, &DestructiveError))
+		{
+			Refresh(false);
+			FPlatformMisc::MessageBoxExt(EAppMsgType::Ok,
+				*FString::Printf(TEXT("Successfully imported dialogue (destructive) from:\n%s"), *FilePath),
+				TEXT("Import Successful"));
+		}
+		else
+		{
+			FPlatformMisc::MessageBoxExt(EAppMsgType::Ok,
+				*FString::Printf(TEXT("Destructive import failed:\n%s"), *DestructiveError),
+				TEXT("Import Failed"));
+		}
+	}
+}
+
+void FDlgEditor::OnCommandExportDialogueJSON()
+{
+	check(DialogueBeingEdited);
+
+	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
+	if (!DesktopPlatform)
+	{
+		return;
+	}
+
+	FString SaveFilename = DialogueBeingEdited->GetDialogueFName().ToString() + TEXT(".dlg_human.json");
+	TArray<FString> SavePaths;
+	const bool bSaved = DesktopPlatform->SaveFileDialog(
+		FSlateApplication::Get().FindBestParentWindowHandleForDialogs(nullptr),
+		LOCTEXT("ExportDialogueJSON_Title", "Export Dialogue JSON").ToString(),
+		FPaths::ProjectDir(),
+		*SaveFilename,
+		TEXT("Dialogue JSON (*.dlg_human.json)|*.dlg_human.json"),
+		EFileDialogFlags::None,
+		SavePaths
+	);
+
+	if (!bSaved || SavePaths.Num() == 0)
+	{
+		return;
+	}
+
+	const FString& SavePath = SavePaths[0];
+	FString JsonString;
+	if (FDlgJsonDialogueHelper::ExportDialogueToJson(DialogueBeingEdited, JsonString))
+	{
+		if (FFileHelper::SaveStringToFile(JsonString, *SavePath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM))
+		{
+			FPlatformMisc::MessageBoxExt(EAppMsgType::Ok,
+				*FString::Printf(TEXT("Successfully exported dialogue to:\n%s"), *SavePath),
+				TEXT("Export Successful"));
+		}
+		else
+		{
+			FPlatformMisc::MessageBoxExt(EAppMsgType::Ok,
+				*FString::Printf(TEXT("Failed to write file:\n%s"), *SavePath),
+				TEXT("Export Failed"));
+		}
+	}
+	else
+	{
+		FPlatformMisc::MessageBoxExt(EAppMsgType::Ok,
+			TEXT("Failed to serialize dialogue to JSON."),
+			TEXT("Export Failed"));
+	}
+}
 
 #undef LOCTEXT_NAMESPACE

@@ -271,6 +271,12 @@ private:
 	// Reloads the Dialogue from the file
 	void OnCommandDialogueReload() const;
 
+	// Imports the Dialogue from a JSON file
+	void OnCommandImportDialogueJSON();
+
+	// Exports the Dialogue to a JSON file
+	void OnCommandExportDialogueJSON();
+
 	//
 	// Graph events
 	//

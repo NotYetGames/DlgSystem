@@ -70,6 +70,7 @@ public class DlgSystemEditor : ModuleRules
 
 				// e.g. FPlatformApplicationMisc::ClipboardCopy
 				"ApplicationCore",
+				"DesktopPlatform",
 			});
 
 #if UE_4_24_OR_LATER

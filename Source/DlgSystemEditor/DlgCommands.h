@@ -71,6 +71,12 @@ public:
 	// Open find in current Dialogue tab
 	TSharedPtr<FUICommandInfo> FindInDialogue;
 
+	// Import dialogue from JSON
+	TSharedPtr<FUICommandInfo> ImportDialogueJSON;
+
+	// Export dialogue to JSON
+	TSharedPtr<FUICommandInfo> ExportDialogueJSON;
+
 	// Hide Selected Node
 	TSharedPtr<FUICommandInfo> HideNodes;
 

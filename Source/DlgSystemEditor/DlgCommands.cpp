@@ -136,6 +136,20 @@ void FDlgCommands::RegisterCommands()
 	);
 
 	UI_COMMAND(
+		ImportDialogueJSON,
+		"Import JSON...",
+		"Import dialogue data from a JSON file",
+		EUserInterfaceActionType::Button, FInputChord()
+	);
+
+	UI_COMMAND(
+		ExportDialogueJSON,
+		"Export JSON...",
+		"Export dialogue data to a JSON file",
+		EUserInterfaceActionType::Button, FInputChord()
+	);
+
+	UI_COMMAND(
 		HideNodes,
 		"HideNodes",
 		"Hide selected nodes",
