@@ -240,6 +240,7 @@ bool FDlgJsonDialogueHelper::ImportHumanReadableFormatIntoDialogue(const FDlgDia
 
 	bool bModified = false;
 	int32 ProcessedNodes = 0;
+	int32 MismatchedNodes = 0;
 
 	if (Format.SpeechNodes.Num() == 0 && Format.SpeechSequenceNodes.Num() == 0)
 	{
@@ -339,6 +340,7 @@ bool FDlgJsonDialogueHelper::ImportHumanReadableFormatIntoDialogue(const FDlgDia
 		UDlgNode* Node = Dialogue->GetMutableNodeFromIndex(HumanSpeechSequence.NodeIndex);
 		if (Node == nullptr)
 		{
+			MismatchedNodes++;
 			if (OutError && OutError->IsEmpty())
 			{
 				*OutError = FString::Printf(TEXT("Speech sequence node index %d from JSON not found in dialogue (dialogue has %d nodes)"),
@@ -350,6 +352,7 @@ bool FDlgJsonDialogueHelper::ImportHumanReadableFormatIntoDialogue(const FDlgDia
 		UDlgNode_SpeechSequence* NodeSpeechSequence = Cast<UDlgNode_SpeechSequence>(Node);
 		if (NodeSpeechSequence == nullptr)
 		{
+			MismatchedNodes++;
 			if (OutError && OutError->IsEmpty())
 			{
 				*OutError = FString::Printf(TEXT("Node index %d is not a speech sequence node in the dialogue"), HumanSpeechSequence.NodeIndex);
@@ -411,7 +414,14 @@ bool FDlgJsonDialogueHelper::ImportHumanReadableFormatIntoDialogue(const FDlgDia
 	{
 		if (OutError && OutError->IsEmpty())
 		{
-			*OutError = TEXT("Import completed but no nodes were processed. The JSON file may be empty or all nodes were invalid.");
+			if (MismatchedNodes > 0)
+			{
+				*OutError = FString::Printf(TEXT("Import failed. %d node(s) from JSON did not match the dialogue structure."), MismatchedNodes);
+			}
+			else
+			{
+				*OutError = TEXT("Import completed but no nodes were processed. The JSON file may be empty or all nodes were invalid.");
+			}
 		}
 		return false;
 	}
