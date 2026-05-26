@@ -102,11 +102,23 @@ bool FDlgJsonDialogueHelper::ImportDialogueFromJsonDestructive(const FString& Js
 		return false;
 	}
 
-	if (OutError)
+	FDlgJsonParser JsonParser;
+	JsonParser.InitializeParserFromString(JsonString);
+	if (!JsonParser.IsValidFile())
 	{
-		*OutError = TEXT("Destructive JSON import is unsupported because the JSON format does not preserve every dialogue node type and node-specific property.");
+		if (OutError) *OutError = TEXT("Invalid JSON format");
+		return false;
 	}
-	return false;
+
+	FDlgDialogue_FormatHumanReadable HumanFormat;
+	JsonParser.ReadAllProperty(FDlgDialogue_FormatHumanReadable::StaticStruct(), &HumanFormat);
+	if (!JsonParser.IsValidFile())
+	{
+		if (OutError) *OutError = TEXT("Failed to parse dialogue format from JSON");
+		return false;
+	}
+
+	return ImportHumanReadableFormatIntoDialogueDestructive(HumanFormat, Dialogue, OutError);
 }
 
 bool FDlgJsonDialogueHelper::ImportDialogueFromJsonFileDestructive(const FString& FilePath, UDlgDialogue* Dialogue, FString* OutError)
@@ -122,11 +134,23 @@ bool FDlgJsonDialogueHelper::ImportDialogueFromJsonFileDestructive(const FString
 		return false;
 	}
 
-	if (OutError)
+	FDlgJsonParser JsonParser;
+	JsonParser.InitializeParser(FilePath);
+	if (!JsonParser.IsValidFile())
 	{
-		*OutError = TEXT("Destructive JSON import is unsupported because the JSON format does not preserve every dialogue node type and node-specific property.");
+		if (OutError) *OutError = FString::Printf(TEXT("Failed to read/parse JSON file: %s"), *FilePath);
+		return false;
 	}
-	return false;
+
+	FDlgDialogue_FormatHumanReadable HumanFormat;
+	JsonParser.ReadAllProperty(FDlgDialogue_FormatHumanReadable::StaticStruct(), &HumanFormat);
+	if (!JsonParser.IsValidFile())
+	{
+		if (OutError) *OutError = TEXT("Failed to parse dialogue format from JSON file");
+		return false;
+	}
+
+	return ImportHumanReadableFormatIntoDialogueDestructive(HumanFormat, Dialogue, OutError);
 }
 
 bool FDlgJsonDialogueHelper::ExportDialogueToHumanReadableFormat(const UDlgDialogue& Dialogue, FDlgDialogue_FormatHumanReadable& OutFormat)
@@ -134,7 +158,7 @@ bool FDlgJsonDialogueHelper::ExportDialogueToHumanReadableFormat(const UDlgDialo
 	OutFormat.DialogueName = Dialogue.GetDialogueFName();
 	OutFormat.DialogueGUID = Dialogue.GetGUID();
 
-	// Start nodes are exported as pseudo speech nodes with negative indices: -1, -2, -3, etc.
+	// Root Nodes
 	const TArray<UDlgNode*> StartNodes = Dialogue.GetStartNodes();
 	for (int32 i = 0; i < StartNodes.Num(); ++i)
 	{
@@ -175,8 +199,8 @@ bool FDlgJsonDialogueHelper::ExportDialogueToHumanReadableFormat(const UDlgDialo
 		}
 		else
 		{
-			// Unsupported node classes are represented only by their index and edges.
-			// This is enough for non-destructive edge-text import, but not for recreating nodes.
+			// Other node types (End, Start, Proxy, Selector, Custom, etc.)
+			// Export as empty speech node so edges are preserved
 			FDlgNodeSpeech_FormatHumanReadable ExportNode;
 			ExportNode.NodeIndex = NodeIndex;
 			ExportNode.Speaker = NAME_None;
@@ -225,34 +249,30 @@ bool FDlgJsonDialogueHelper::ImportHumanReadableFormatIntoDialogue(const FDlgDia
 		return false;
 	}
 
-	// Speech nodes and exported start-node pseudo nodes.
+	// Speech nodes
 	for (const FDlgNodeSpeech_FormatHumanReadable& HumanNode : Format.SpeechNodes)
 	{
-		const bool bIsRootNode = HumanNode.NodeIndex <= RootNodeIndex;
-		if (!bIsRootNode && !HumanNode.IsValid())
+		if (!HumanNode.IsValid())
 		{
 			SkippedNodes++;
 			continue;
 		}
 
-		UDlgNode* Node = nullptr;
-		if (bIsRootNode)
-		{
-			const int32 StartNodeIndex = -HumanNode.NodeIndex - 1;
-			TArray<UDlgNode*>& StartNodes = Dialogue->GetMutableStartNodes();
-			Node = StartNodes.IsValidIndex(StartNodeIndex) ? StartNodes[StartNodeIndex] : nullptr;
-		}
-		else
-		{
-			Node = Dialogue->GetMutableNodeFromIndex(HumanNode.NodeIndex);
-		}
+		const bool bIsRootNode = HumanNode.NodeIndex <= RootNodeIndex;
+		UDlgNode* Node = bIsRootNode
+			? Dialogue->GetMutableStartNodes()[FMath::Abs(RootNodeIndex) - 1]
+			: Dialogue->GetMutableNodeFromIndex(HumanNode.NodeIndex);
 
 		if (Node == nullptr)
 		{
-			MismatchedNodes++;
-			if (OutError && OutError->IsEmpty())
+			if (!bIsRootNode)
 			{
-				*OutError = FString::Printf(TEXT("Node index %d from JSON not found in dialogue."), HumanNode.NodeIndex);
+				MismatchedNodes++;
+				if (OutError && OutError->IsEmpty())
+				{
+					*OutError = FString::Printf(TEXT("Node index %d from JSON not found in dialogue (dialogue has %d nodes)"),
+						HumanNode.NodeIndex, Dialogue->GetNodes().Num());
+				}
 			}
 			continue;
 		}
@@ -274,22 +294,27 @@ bool FDlgJsonDialogueHelper::ImportHumanReadableFormatIntoDialogue(const FDlgDia
 					bModified = true;
 				}
 			}
+			else
+			{
+				// Node exists but is not a speech node (e.g. End node) - that's ok, just skip text update
+			}
 		}
 
 		UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(Node->GetGraphNode());
-		if (GraphNode != nullptr)
+		if (GraphNode == nullptr)
 		{
-			if (SetGraphNodesNewEdgesText(GraphNode, HumanNode.Edges, HumanNode.NodeIndex, Dialogue))
-			{
-				bModified = true;
-			}
-			GraphNode->CheckAll();
+			continue;
 		}
 
+		if (SetGraphNodesNewEdgesText(GraphNode, HumanNode.Edges, HumanNode.NodeIndex, Dialogue))
+		{
+			bModified = true;
+		}
+		GraphNode->CheckAll();
 		ProcessedNodes++;
 	}
 
-	// Speech sequence nodes.
+	// Speech sequence nodes
 	for (const FDlgNodeSpeechSequence_FormatHumanReadable& HumanSpeechSequence : Format.SpeechSequenceNodes)
 	{
 		if (!HumanSpeechSequence.IsValid())
@@ -352,15 +377,16 @@ bool FDlgJsonDialogueHelper::ImportHumanReadableFormatIntoDialogue(const FDlgDia
 		}
 
 		UDialogueGraphNode* GraphNode = Cast<UDialogueGraphNode>(Node->GetGraphNode());
-		if (GraphNode != nullptr)
+		if (GraphNode == nullptr)
 		{
-			if (SetGraphNodesNewEdgesText(GraphNode, HumanSpeechSequence.Edges, HumanSpeechSequence.NodeIndex, Dialogue))
-			{
-				bModified = true;
-			}
-			GraphNode->CheckAll();
+			continue;
 		}
 
+		if (SetGraphNodesNewEdgesText(GraphNode, HumanSpeechSequence.Edges, HumanSpeechSequence.NodeIndex, Dialogue))
+		{
+			bModified = true;
+		}
+		GraphNode->CheckAll();
 		ProcessedNodes++;
 	}
 
@@ -370,29 +396,151 @@ bool FDlgJsonDialogueHelper::ImportHumanReadableFormatIntoDialogue(const FDlgDia
 		Dialogue->MarkPackageDirty();
 	}
 
-	if (ProcessedNodes == 0)
-	{
-		if (OutError && OutError->IsEmpty())
-		{
-			*OutError = SkippedNodes > 0
-				? TEXT("Import completed but no nodes were processed. All JSON nodes were invalid or incompatible.")
-				: TEXT("Import completed but no nodes were processed.");
-		}
-		return false;
-	}
-
-	if (OutError && OutError->IsEmpty())
+	if (!bModified && OutError && OutError->IsEmpty())
 	{
 		if (MismatchedNodes > 0)
 		{
-			*OutError = FString::Printf(TEXT("Import completed with %d unmatched node(s). Matching nodes were processed."), MismatchedNodes);
+			*OutError = FString::Printf(TEXT("Import completed but no changes were made. %d node(s) from JSON did not match the dialogue structure. The dialogue may have a different node count or node types than the JSON file."), MismatchedNodes);
 		}
-		else if (!bModified)
+		else if (ProcessedNodes == 0)
 		{
-			*OutError = TEXT("Import completed successfully. No changes were needed because the dialogue already matched the JSON.");
+			*OutError = TEXT("Import completed but no nodes were processed. The JSON file may be empty or all nodes were invalid.");
+		}
+		else
+		{
+			*OutError = TEXT("Import completed but no changes were needed. All text/speaker/edge data already matches.");
 		}
 	}
 
+	return bModified;
+}
+
+bool FDlgJsonDialogueHelper::ImportHumanReadableFormatIntoDialogueDestructive(
+	const FDlgDialogue_FormatHumanReadable& Format, UDlgDialogue* Dialogue, FString* OutError)
+{
+	verify(Dialogue);
+
+	if (Format.SpeechNodes.Num() == 0 && Format.SpeechSequenceNodes.Num() == 0)
+	{
+		if (OutError) *OutError = TEXT("No speech nodes or speech sequence nodes found in JSON");
+		return false;
+	}
+
+	// Clear existing graph and dialogue data
+	// IMPORTANT: Clear graph first to remove stale graph node references
+	if (Dialogue->GetGraph())
+	{
+		Dialogue->ClearGraph();
+	}
+	Dialogue->SetStartNodes(TArray<UDlgNode*>());
+	Dialogue->SetNodes(TArray<UDlgNode*>());
+
+	// Maps JSON node index -> created UDlgNode*
+	TMap<int32, UDlgNode*> CreatedNodes;
+	TMap<int32, TArray<FDlgEdge_FormatHumanReadable>> NodeEdges;
+
+	// First pass: create all nodes
+	for (const FDlgNodeSpeech_FormatHumanReadable& HumanNode : Format.SpeechNodes)
+	{
+		if (!HumanNode.IsValid())
+		{
+			continue;
+		}
+
+		const bool bIsRootNode = HumanNode.NodeIndex <= RootNodeIndex;
+		if (bIsRootNode)
+		{
+			// Create start node
+			UDlgNode_Start* StartNode = Dialogue->ConstructDialogueNode<UDlgNode_Start>();
+			Dialogue->AddStartNode(StartNode);
+			CreatedNodes.Add(HumanNode.NodeIndex, StartNode);
+			NodeEdges.Add(HumanNode.NodeIndex, HumanNode.Edges);
+		}
+		else
+		{
+			// Create speech node
+			UDlgNode_Speech* SpeechNode = Dialogue->ConstructDialogueNode<UDlgNode_Speech>();
+			SpeechNode->SetNodeParticipantName(HumanNode.Speaker);
+			SpeechNode->SetNodeText(HumanNode.Text);
+			Dialogue->AddNode(SpeechNode);
+			CreatedNodes.Add(HumanNode.NodeIndex, SpeechNode);
+			NodeEdges.Add(HumanNode.NodeIndex, HumanNode.Edges);
+		}
+	}
+
+	for (const FDlgNodeSpeechSequence_FormatHumanReadable& HumanSpeechSequence : Format.SpeechSequenceNodes)
+	{
+		if (!HumanSpeechSequence.IsValid())
+		{
+			continue;
+		}
+
+		UDlgNode_SpeechSequence* SequenceNode = Dialogue->ConstructDialogueNode<UDlgNode_SpeechSequence>();
+		SequenceNode->SetNodeParticipantName(HumanSpeechSequence.Speaker);
+		
+		TArray<FDlgSpeechSequenceEntry>& SequenceArray = *SequenceNode->GetMutableNodeSpeechSequence();
+		SequenceArray.Empty();
+		for (const FDlgSpeechSequenceEntry_FormatHumanReadable& HumanSequence : HumanSpeechSequence.Sequence)
+		{
+			FDlgSpeechSequenceEntry Entry;
+			Entry.EdgeText = HumanSequence.EdgeText;
+			Entry.Text = HumanSequence.Text;
+			Entry.Speaker = HumanSequence.Speaker;
+			SequenceArray.Add(Entry);
+		}
+		
+		Dialogue->AddNode(SequenceNode);
+		CreatedNodes.Add(HumanSpeechSequence.NodeIndex, SequenceNode);
+		NodeEdges.Add(HumanSpeechSequence.NodeIndex, HumanSpeechSequence.Edges);
+	}
+
+	// Second pass: wire up edges
+	for (const auto& Pair : NodeEdges)
+	{
+		const int32 SourceIndex = Pair.Key;
+		const TArray<FDlgEdge_FormatHumanReadable>& Edges = Pair.Value;
+		
+		UDlgNode** SourceNodePtr = CreatedNodes.Find(SourceIndex);
+		if (!SourceNodePtr || !*SourceNodePtr)
+		{
+			continue;
+		}
+		
+		UDlgNode* SourceNode = *SourceNodePtr;
+		for (const FDlgEdge_FormatHumanReadable& HumanEdge : Edges)
+		{
+			UDlgNode** TargetNodePtr = CreatedNodes.Find(HumanEdge.TargetNodeIndex);
+			if (!TargetNodePtr || !*TargetNodePtr)
+			{
+				// Target node doesn't exist - create an End node as fallback
+				UDlgNode_End* EndNode = Dialogue->ConstructDialogueNode<UDlgNode_End>();
+				Dialogue->AddNode(EndNode);
+				CreatedNodes.Add(HumanEdge.TargetNodeIndex, EndNode);
+				TargetNodePtr = CreatedNodes.Find(HumanEdge.TargetNodeIndex);
+			}
+			
+			if (TargetNodePtr && *TargetNodePtr)
+			{
+				FDlgEdge Edge;
+				Edge.TargetIndex = HumanEdge.TargetNodeIndex;
+				Edge.SetText(HumanEdge.Text);
+				SourceNode->AddNodeChild(Edge);
+			}
+		}
+	}
+
+	Dialogue->Modify();
+	Dialogue->MarkPackageDirty();
+	
+	// Rebuild the graph from the new dialogue nodes
+	if (UDialogueGraph* DialogueGraph = Cast<UDialogueGraph>(Dialogue->GetGraph()))
+	{
+		DialogueGraph->RemoveAllNodes();
+		DialogueGraph->CreateGraphNodesFromDialogue();
+		DialogueGraph->LinkGraphNodesFromDialogue();
+		DialogueGraph->AutoPositionGraphNodes();
+	}
+	
 	return true;
 }
 
