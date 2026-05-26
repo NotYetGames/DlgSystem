@@ -368,7 +368,17 @@ bool UDlgHumanReadableTextCommandlet::ImportHumanReadableFormatIntoDialogue(cons
 		const bool bIsRootNode = HumanNode.NodeIndex <= RootNodeIndex;
 
 		// Node
-		UDlgNode* Node = bIsRootNode ? Dialogue->GetMutableStartNodes()[FMath::Abs(RootNodeIndex) - 1] : Dialogue->GetMutableNodeFromIndex(HumanNode.NodeIndex);
+		const int32 StartNodeIndex = FMath::Abs(HumanNode.NodeIndex) - 1;
+		UDlgNode* Node = nullptr;
+		if (bIsRootNode)
+		{
+			TArray<UDlgNode*>& StartNodes = Dialogue->GetMutableStartNodes();
+			Node = StartNodes.IsValidIndex(StartNodeIndex) ? StartNodes[StartNodeIndex] : nullptr;
+		}
+		else
+		{
+			Node = Dialogue->GetMutableNodeFromIndex(HumanNode.NodeIndex);
+		}
 		if (Node == nullptr)
 		{
 			UE_LOG(LogDlgHumanReadableTextCommandlet, Warning, TEXT("Invalid node index = %d, in Dialogue = `%s`. Ignoring."), HumanNode.NodeIndex, *Dialogue->GetPathName());

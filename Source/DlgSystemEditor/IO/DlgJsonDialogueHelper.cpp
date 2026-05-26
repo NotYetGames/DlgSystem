@@ -256,14 +256,32 @@ bool FDlgJsonDialogueHelper::ImportHumanReadableFormatIntoDialogue(const FDlgDia
 		}
 
 		const bool bIsRootNode = HumanNode.NodeIndex <= RootNodeIndex;
-		UDlgNode* Node = bIsRootNode
-			? Dialogue->GetMutableStartNodes()[FMath::Abs(RootNodeIndex) - 1]
-			: Dialogue->GetMutableNodeFromIndex(HumanNode.NodeIndex);
+		const int32 StartNodeIndex = FMath::Abs(HumanNode.NodeIndex) - 1;
+		UDlgNode* Node = nullptr;
+		if (bIsRootNode)
+		{
+			TArray<UDlgNode*>& StartNodes = Dialogue->GetMutableStartNodes();
+			Node = StartNodes.IsValidIndex(StartNodeIndex) ? StartNodes[StartNodeIndex] : nullptr;
+		}
+		else
+		{
+			Node = Dialogue->GetMutableNodeFromIndex(HumanNode.NodeIndex);
+		}
 
 		if (Node == nullptr)
 		{
-			if (!bIsRootNode)
+			if (bIsRootNode)
 			{
+				MismatchedNodes++;
+				if (OutError && OutError->IsEmpty())
+				{
+					*OutError = FString::Printf(TEXT("Start node index %d from JSON not found in dialogue (dialogue has %d start nodes)"),
+						StartNodeIndex, Dialogue->GetStartNodes().Num());
+				}
+			}
+			else
+			{
+				MismatchedNodes++;
 				if (OutError && OutError->IsEmpty())
 				{
 					*OutError = FString::Printf(TEXT("Node index %d from JSON not found in dialogue (dialogue has %d nodes)"),

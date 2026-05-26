@@ -93,7 +93,7 @@ public:
 public:
 	// Metadata
 	UPROPERTY()
-	int32 NodeIndex = INDEX_NONE - 1;
+	int32 NodeIndex = MIN_int32;
 
 	UPROPERTY()
 	FName Speaker;
@@ -114,12 +114,12 @@ struct FDlgNodeSpeech_FormatHumanReadable
 
 public:
 	// INDEX_NONE is root node
-	bool IsValid() const { return NodeIndex >= INDEX_NONE; }
+	bool IsValid() const { return NodeIndex != MIN_int32; }
 
 public:
 	// Metadata, NodeIndex
 	UPROPERTY()
-	int32 NodeIndex = INDEX_NONE - 1;
+	int32 NodeIndex = MIN_int32;
 
 	UPROPERTY()
 	FName Speaker;
