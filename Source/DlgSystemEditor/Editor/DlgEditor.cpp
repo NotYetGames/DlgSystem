@@ -1503,8 +1503,8 @@ void FDlgEditor::OnCommandImportDialogueJSON()
 	const FString& FilePath = OpenFilenames[0];
 	FString ErrorMessage;
 	
-	// Try regular import first (updates existing nodes only)
-	if (FDlgJsonDialogueHelper::ImportDialogueFromJsonFile(FilePath, DialogueBeingEdited, &ErrorMessage))
+	// Try updating matching existing nodes before offering to replace the whole dialogue.
+	if (FDlgJsonDialogueHelper::ImportDialogueNodeUpdatesFromJsonFile(FilePath, DialogueBeingEdited, &ErrorMessage))
 	{
 		Refresh(false);
 		FPlatformMisc::MessageBoxExt(EAppMsgType::Ok,
@@ -1528,7 +1528,7 @@ void FDlgEditor::OnCommandImportDialogueJSON()
 	if (WarningResult == EAppReturnType::Yes)
 	{
 		FString DestructiveError;
-		if (FDlgJsonDialogueHelper::ImportDialogueFromJsonFileDestructive(FilePath, DialogueBeingEdited, &DestructiveError))
+		if (FDlgJsonDialogueHelper::ImportDialogueFromJsonFileAsReplacement(FilePath, DialogueBeingEdited, &DestructiveError))
 		{
 			Refresh(false);
 			FPlatformMisc::MessageBoxExt(EAppMsgType::Ok,

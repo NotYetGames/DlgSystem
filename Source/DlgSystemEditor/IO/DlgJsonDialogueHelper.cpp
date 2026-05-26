@@ -25,7 +25,7 @@ bool FDlgJsonDialogueHelper::ExportDialogueToJson(const UDlgDialogue* Dialogue, 
 	return !OutJsonString.IsEmpty();
 }
 
-bool FDlgJsonDialogueHelper::ImportDialogueFromJson(const FString& JsonString, UDlgDialogue* Dialogue, FString* OutError)
+bool FDlgJsonDialogueHelper::ImportDialogueNodeUpdatesFromJson(const FString& JsonString, UDlgDialogue* Dialogue, FString* OutError)
 {
 	if (!IsValid(Dialogue))
 	{
@@ -57,7 +57,7 @@ bool FDlgJsonDialogueHelper::ImportDialogueFromJson(const FString& JsonString, U
 	return ImportHumanReadableFormatIntoDialogue(HumanFormat, Dialogue, OutError);
 }
 
-bool FDlgJsonDialogueHelper::ImportDialogueFromJsonFile(const FString& FilePath, UDlgDialogue* Dialogue, FString* OutError)
+bool FDlgJsonDialogueHelper::ImportDialogueNodeUpdatesFromJsonFile(const FString& FilePath, UDlgDialogue* Dialogue, FString* OutError)
 {
 	if (!IsValid(Dialogue))
 	{
@@ -89,7 +89,7 @@ bool FDlgJsonDialogueHelper::ImportDialogueFromJsonFile(const FString& FilePath,
 	return ImportHumanReadableFormatIntoDialogue(HumanFormat, Dialogue, OutError);
 }
 
-bool FDlgJsonDialogueHelper::ImportDialogueFromJsonDestructive(const FString& JsonString, UDlgDialogue* Dialogue, FString* OutError)
+bool FDlgJsonDialogueHelper::ImportDialogueFromJsonAsReplacement(const FString& JsonString, UDlgDialogue* Dialogue, FString* OutError)
 {
 	if (!IsValid(Dialogue))
 	{
@@ -121,7 +121,7 @@ bool FDlgJsonDialogueHelper::ImportDialogueFromJsonDestructive(const FString& Js
 	return ImportHumanReadableFormatIntoDialogueDestructive(HumanFormat, Dialogue, OutError);
 }
 
-bool FDlgJsonDialogueHelper::ImportDialogueFromJsonFileDestructive(const FString& FilePath, UDlgDialogue* Dialogue, FString* OutError)
+bool FDlgJsonDialogueHelper::ImportDialogueFromJsonFileAsReplacement(const FString& FilePath, UDlgDialogue* Dialogue, FString* OutError)
 {
 	if (!IsValid(Dialogue))
 	{
