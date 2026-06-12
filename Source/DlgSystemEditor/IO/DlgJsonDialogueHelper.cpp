@@ -261,7 +261,7 @@ bool FDlgJsonDialogueHelper::ImportHumanReadableFormatIntoDialogue(const FDlgDia
 		UDlgNode* Node = nullptr;
 		if (bIsRootNode)
 		{
-			TArray<UDlgNode*>& StartNodes = Dialogue->GetMutableStartNodes();
+			const TArray<UDlgNode*>& StartNodes = Dialogue->GetStartNodes();
 			Node = StartNodes.IsValidIndex(StartNodeIndex) ? StartNodes[StartNodeIndex] : nullptr;
 		}
 		else
