@@ -51,6 +51,9 @@ Games that use this Plugin:
 * [Backbone](https://store.steampowered.com/app/865610/Backbone/) - Roleplaying detective adventure
 * [Revolution: Path of a Weaponsmith](https://store.steampowered.com/app/1295560/Revolution_Path_of_a_Weaponsmith/) - Third person stealth shooter
 * [The Ascent](https://store.steampowered.com/app/979690/The_Ascent/) - Cyberpunk Action-shooter RPG
+* [Echoes of the End](https://store.steampowered.com/app/2821610/Echoes_of_the_End_Enhanced_Edition/) - Third-person fantasy action-adventure game set in a unique world inspired by the raw landscapes of Iceland
+
+And hundreds of other games that decided to remain anonymous!
 
 Want to have your game showcased here? Contact us!
 
