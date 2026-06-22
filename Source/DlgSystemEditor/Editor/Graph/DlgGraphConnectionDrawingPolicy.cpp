@@ -47,6 +47,17 @@ FDlgGraphConnectionDrawingPolicy::FDlgGraphConnectionDrawingPolicy(
 {
 }
 
+// UE 5.8 renamed LocalMousePosition to AbsoluteMousePosition because SetMousePosition
+// was already passed an absolute position from AllottedGeometry.LocalToAbsolute().
+FNYVector2f FDlgGraphConnectionDrawingPolicy::GetMousePosition() const
+{
+#if NY_ENGINE_VERSION >= 508
+	return FNYVector2f(AbsoluteMousePosition.X, AbsoluteMousePosition.Y);
+#else
+	return FNYVector2f(LocalMousePosition.X, LocalMousePosition.Y);
+#endif
+}
+
 void FDlgGraphConnectionDrawingPolicy::DetermineWiringStyle(UEdGraphPin* OutputPin, UEdGraphPin* InputPin,
 	/*inout*/ FConnectionParams& Params)
 {
@@ -155,6 +166,7 @@ void FDlgGraphConnectionDrawingPolicy::DrawConnection(
 	{
 		// Distance to consider as an overlap
 		const float QueryDistanceTriggerThresholdSquared = FMath::Square(Settings->SplineHoverTolerance + Params.WireThickness * 0.5f);
+		const FNYVector2f MousePosition = GetMousePosition();
 
 #if NY_ENGINE_VERSION >= 500
 		// Distance to pass the bounding box cull test. This is used for the bCloseToSpline output that can be used as a
@@ -178,9 +190,9 @@ void FDlgGraphConnectionDrawingPolicy::DrawConnection(
 			Bounds += FNYVector2f(P1 - MaximumTangentContribution * P1Tangent);
 
 #if NY_ENGINE_VERSION >= 500
-			bCloseToSpline = Bounds.ComputeSquaredDistanceToPoint(LocalMousePosition) < QueryDistanceForCloseSquared;
+			bCloseToSpline = Bounds.ComputeSquaredDistanceToPoint(MousePosition) < QueryDistanceForCloseSquared;
 #else
-			bCloseToSpline = Bounds.ComputeSquaredDistanceToPoint(LocalMousePosition) < QueryDistanceToBoundingBoxSquared;
+			bCloseToSpline = Bounds.ComputeSquaredDistanceToPoint(MousePosition) < QueryDistanceToBoundingBoxSquared;
 #endif
 		}
 
@@ -197,9 +209,8 @@ void FDlgGraphConnectionDrawingPolicy::DrawConnection(
 			{
 				const FNYVector2f Point2 = FMath::CubicInterp(P0, P0Tangent, P1, P1Tangent, TestAlpha + StepInterval);
 
-				const FNYVector2f LocalMousePosition2D(LocalMousePosition.X, LocalMousePosition.Y);
-				const FNYVector2f ClosestPointToSegment = FMath::ClosestPointOnSegment2D(LocalMousePosition2D, Point1, Point2);
-				const float DistanceSquared = (LocalMousePosition2D - ClosestPointToSegment).SizeSquared();
+				const FNYVector2f ClosestPointToSegment = FMath::ClosestPointOnSegment2D(MousePosition, Point1, Point2);
+				const float DistanceSquared = (MousePosition - ClosestPointToSegment).SizeSquared();
 
 				if (DistanceSquared < ClosestDistanceSquared)
 				{
@@ -462,20 +473,20 @@ void FDlgGraphConnectionDrawingPolicy::Internal_DrawLineWithArrow(
 	const FNYVector2f StartHandlePoint = StartPoint + (LengthBias * 0.8f);
 	const FVector2D StartHandlePoint2D = ToSlateVector2D(StartHandlePoint);
 	const FVector2D EndPoint2D = ToSlateVector2D(EndPoint);
-	const FVector2D LocalMousePosition2D = ToSlateVector2D(LocalMousePosition);
+	const FVector2D MousePosition2D = ToSlateVector2D(GetMousePosition());
 
 	bool bStartHovered = false;
 	bool bEndHovered = false;
-	const FVector2D ClosestPoint = FMath::ClosestPointOnSegment2D(LocalMousePosition2D, StartHandlePoint2D, EndPoint2D);
-	if ((ClosestPoint - LocalMousePosition2D).Length() < RelinkHandleHoverRadius * ZoomFactor)
+	const FVector2D ClosestPoint = FMath::ClosestPointOnSegment2D(MousePosition2D, StartHandlePoint2D, EndPoint2D);
+	if ((ClosestPoint - MousePosition2D).Length() < RelinkHandleHoverRadius * ZoomFactor)
 	{
-		bStartHovered = (StartHandlePoint2D - LocalMousePosition2D).Length() < RelinkHandleHoverRadius * ZoomFactor;
-		bEndHovered = (EndPoint2D - LocalMousePosition2D).Length() < RelinkHandleHoverRadius * ZoomFactor;
+		bStartHovered = (StartHandlePoint2D - MousePosition2D).Length() < RelinkHandleHoverRadius * ZoomFactor;
+		bEndHovered = (EndPoint2D - MousePosition2D).Length() < RelinkHandleHoverRadius * ZoomFactor;
 
 		// Set the spline overlap result so SGraphPanel can initiate a relink drag
 		// We must remap edge node pins to the parent/child node pins since those have actual SGraphPin widgets
-		const float SquaredDistToPin1 = (Params.AssociatedPin1 != nullptr) ? (ToSlateVector2D(StartPoint) - LocalMousePosition2D).SizeSquared() : FLT_MAX;
-		const float SquaredDistToPin2 = (Params.AssociatedPin2 != nullptr) ? (EndPoint2D - LocalMousePosition2D).SizeSquared() : FLT_MAX;
+		const float SquaredDistToPin1 = (Params.AssociatedPin1 != nullptr) ? (ToSlateVector2D(StartPoint) - MousePosition2D).SizeSquared() : FLT_MAX;
+		const float SquaredDistToPin2 = (Params.AssociatedPin2 != nullptr) ? (EndPoint2D - MousePosition2D).SizeSquared() : FLT_MAX;
 		UEdGraphPin* Pin1 = Params.AssociatedPin1; // output pin of parent node
 		UEdGraphPin* Pin2 = Params.AssociatedPin2; // input pin of edge node
 

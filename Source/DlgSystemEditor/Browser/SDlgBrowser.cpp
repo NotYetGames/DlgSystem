@@ -46,7 +46,7 @@ public:
 			SAssignNew(ContentBorder, SBorder)
 			.BorderImage(this, &Self::GetBackgroundImage)
 			.Padding(FMargin(1.0f, 3.0f))
-			.BorderBackgroundColor(FLinearColor(.6, .6, .6, 1.0f))
+			.BorderBackgroundColor(FLinearColor(0.6f, 0.6f, 0.6f, 1.0f))
 			[
 				SNew(SHorizontalBox)
 

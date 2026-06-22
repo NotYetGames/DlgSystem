@@ -16,6 +16,7 @@
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "K2Node_Event.h"
+#include "Misc/CoreDelegates.h"
 #include "Runtime/Launch/Resources/Version.h"
 
 #include "Factories/DlgGraphFactories.h"
@@ -37,6 +38,7 @@
 #include "Editor/DetailsPanel/DlgSpeechSequenceEntry_Details.h"
 #include "DlgSystem/DlgManager.h"
 #include "DlgSystem/IDlgSystemModule.h"
+#include "DlgSystem/NYEngineVersionHelpers.h"
 #include "DlgSystem/DlgParticipantName.h"
 
 #include "DlgSystem/IO/DlgConfigWriter.h"
@@ -47,6 +49,18 @@
 //////////////////////////////////////////////////////////////////////////
 DEFINE_LOG_CATEGORY(LogDlgSystemEditor)
 //////////////////////////////////////////////////////////////////////////
+
+namespace
+{
+FSimpleMulticastDelegate& GetDlgOnPostEngineInit()
+{
+#if NY_ENGINE_VERSION >= 508
+	return FCoreDelegates::GetOnPostEngineInit();
+#else
+	return FCoreDelegates::OnPostEngineInit;
+#endif
+}
+} // namespace
 
 // Just some constants
 static const FName DIALOGUE_BROWSER_TAB_ID("DialogueBrowser");
@@ -72,7 +86,7 @@ void FDlgSystemEditorModule::StartupModule()
 #endif // NY_ENGINE_VERSION >= 424
 
 	UE_LOG(LogDlgSystemEditor, Log, TEXT("DlgSystemEditorModule: StartupModule"));
-	OnPostEngineInitHandle = FCoreDelegates::OnPostEngineInit.AddRaw(this, &Self::HandleOnPostEngineInit);
+	OnPostEngineInitHandle = GetDlgOnPostEngineInit().AddRaw(this, &Self::HandleOnPostEngineInit);
 	OnBeginPIEHandle = FEditorDelegates::BeginPIE.AddRaw(this, &Self::HandleOnBeginPIE);
 	OnPostPIEStartedHandle = FEditorDelegates::PostPIEStarted.AddRaw(this, &Self::HandleOnPostPIEStarted);
 	OnEndPIEHandle = FEditorDelegates::EndPIE.AddRaw(this, &Self::HandleOnEndPIEHandle);
@@ -287,7 +301,7 @@ void FDlgSystemEditorModule::ShutdownModule()
 	}
 	if (OnPostEngineInitHandle.IsValid())
 	{
-		FCoreDelegates::OnPostEngineInit.Remove(OnPostEngineInitHandle);
+		GetDlgOnPostEngineInit().Remove(OnPostEngineInitHandle);
 	}
 
 	UE_LOG(LogDlgSystemEditor, Log, TEXT("DlgSystemEditorModule: ShutdownModule"));

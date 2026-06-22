@@ -51,6 +51,13 @@
 	#define NY_ARRAY_COUNT ARRAY_COUNT
 #endif
 
+// UE 5.8 deprecated REN_ForceNoResetLoaders because Rename no longer resets loaders.
+#if NY_ENGINE_VERSION >= 508
+	#define NY_RENAME_NO_RESET_LOADERS REN_None
+#else
+	#define NY_RENAME_NO_RESET_LOADERS REN_ForceNoResetLoaders
+#endif
+
 #if WITH_EDITOR
 	#if NY_ENGINE_VERSION >= 501
 		#include "Styling/AppStyle.h"

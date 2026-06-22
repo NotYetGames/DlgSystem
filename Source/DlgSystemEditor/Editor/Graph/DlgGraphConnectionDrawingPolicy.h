@@ -76,6 +76,7 @@ public:
 	// End of FConnectionDrawingPolicy interface
 
 protected:
+	FNYVector2f GetMousePosition() const;
 	void Internal_DrawLineWithArrow(const FNYVector2f& StartAnchorPoint, const FNYVector2f& EndAnchorPoint, const FConnectionParams& Params);
 
 	// Map for widgets

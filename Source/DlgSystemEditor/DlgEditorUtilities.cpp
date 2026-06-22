@@ -207,7 +207,7 @@ UEdGraph* FDlgEditorUtilities::CreateNewGraph(
 		// Rename the old graph out of the way; but we have already failed at this point
 		if (ExistingGraph)
 		{
-			ExistingGraph->Rename(nullptr, ExistingGraph->GetOuter(), REN_DoNotDirty | REN_ForceNoResetLoaders);
+			ExistingGraph->Rename(nullptr, ExistingGraph->GetOuter(), REN_DoNotDirty | NY_RENAME_NO_RESET_LOADERS);
 		}
 
 		// Construct new graph with the supplied name
@@ -225,7 +225,7 @@ UEdGraph* FDlgEditorUtilities::CreateNewGraph(
 	// Now move to where we want it to. Workaround to ensure transaction buffer is correctly utilized
 	if (bRename)
 	{
-		NewGraph->Rename(*GraphName.ToString(), ParentScope, REN_DoNotDirty | REN_ForceNoResetLoaders);
+		NewGraph->Rename(*GraphName.ToString(), ParentScope, REN_DoNotDirty | NY_RENAME_NO_RESET_LOADERS);
 	}
 
 	return NewGraph;
