@@ -13,7 +13,7 @@
 		- [Code Style](#code-style)
 		- [Commit messages](#commit-messages)
 
-Supported Unreal versions: `5.5`, `5.6`, `5.7`
+Supported Unreal versions: `5.6`, `5.7`, `5.8`
 
 ## Features
 

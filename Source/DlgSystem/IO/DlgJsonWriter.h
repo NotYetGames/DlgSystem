@@ -4,8 +4,8 @@
 #include "Logging/LogMacros.h"
 #include "UObject/UnrealType.h"
 #include "Misc/FileHelper.h"
-#include "Dom/JsonValue.h"
-#include "Dom/JsonObject.h"
+
+#include "DlgJsonTypes.h"
 
 #include "IDlgWriter.h"
 
@@ -84,7 +84,7 @@ private: // UStruct -> JSON
 	 * @return False if any properties failed to write
 	 */
 	bool UStructToJsonAttributes(const UStruct* StructDefinition, const void* const ContainerPtr,
-								 TMap<FString, TSharedPtr<FJsonValue>>& OutJsonAttributes);
+								 FNYJsonAttributes& OutJsonAttributes);
 
 	/**
 	 * Converts from a UStruct to a JSON Object

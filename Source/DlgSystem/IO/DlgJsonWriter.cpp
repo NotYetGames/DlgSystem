@@ -427,7 +427,7 @@ TSharedPtr<FJsonValue> FDlgJsonWriter::PropertyToJsonValue(const FProperty* Prop
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool FDlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, const void* const ContainerPtr, TMap<FString, TSharedPtr<FJsonValue>>& OutJsonAttributes)
+bool FDlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, const void* const ContainerPtr, FNYJsonAttributes& OutJsonAttributes)
 {
 	if (StructDefinition == nullptr || ContainerPtr == nullptr)
 	{
@@ -467,7 +467,7 @@ bool FDlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, co
 		}
 
 		// Write type, Objects because they can have inheritance
-		OutJsonAttributes.Add(TEXT("__type__"), MakeShared<FJsonValueString>(UnrealObject->GetClass()->GetName()));
+		OutJsonAttributes.Add(FNYMakeJsonObjectKey(TEXT("__type__")), MakeShared<FJsonValueString>(UnrealObject->GetClass()->GetName()));
 
 		// Structure points to the child
 		StructDefinition = UnrealObject->GetClass();
@@ -557,7 +557,7 @@ bool FDlgJsonWriter::UStructToJsonAttributes(const UStruct* StructDefinition, co
 		// set the value on the output object
 		// NOTE default JSON writer makes the first letter to be lowercase, we do not want that ;) FJsonObjectConverter::StandardizeCase
 		const FString VariableName = Property->GetName();
-		OutJsonAttributes.Add(VariableName, JsonValue);
+		OutJsonAttributes.Add(FNYMakeJsonObjectKey(VariableName), JsonValue);
 	}
 
 	return true;

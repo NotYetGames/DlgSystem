@@ -2,11 +2,10 @@
 #pragma once
 
 #include "Logging/LogMacros.h"
-#include "Dom/JsonValue.h"
-#include "Dom/JsonObject.h"
+
+#include "DlgJsonTypes.h"
 
 #include "IDlgParser.h"
-#include "DlgSystem/NYEngineVersionHelpers.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogDlgJsonParser, All, All);
 
@@ -73,7 +72,7 @@ private: // JSON -> UStruct
 	 *
 	 * @return False if any properties matched but failed to deserialize
 	 */
-	bool JsonAttributesToUStruct(const TMap<FString, TSharedPtr<FJsonValue>>& JsonAttributes,
+	bool JsonAttributesToUStruct(const FNYJsonAttributes& JsonAttributes,
 								const UStruct* StructDefinition, void* ContainerPtr);
 
 	/**
