@@ -1,3 +1,8 @@
+# v18.0.8
+
+- Add support for UE 5.8
+- Fix text property pick list lazy widget access
+
 # v18.0.7
 
 - Add editor support for relinking dialogue graph edge heads and tails while preserving edge data
