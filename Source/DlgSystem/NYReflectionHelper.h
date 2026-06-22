@@ -11,6 +11,10 @@
 #include "UObject/UnrealType.h"
 #include "NYEngineVersionHelpers.h"
 
+#if NY_ENGINE_VERSION >= 506
+	#include "UObject/StrProperty.h"
+#endif
+
 DEFINE_LOG_CATEGORY_STATIC(LogDlgSystemReflectionHelper, All, All)
 
 class DLGSYSTEM_API FNYReflectionHelper
